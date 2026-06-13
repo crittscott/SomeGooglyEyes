@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
@@ -34,6 +35,11 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T living, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        // While the picker is editing this entity, only its preview layer should draw.
+        if (PickerState.isActiveTarget(living)) {
+            return;
+        }
+
         // Client global disable check
         if (ClientConfig.DISABLE_GOOGLY_EYES.get()) {
             return;

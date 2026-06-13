@@ -6,6 +6,10 @@ import net.minecraft.client.model.HierarchicalModel;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+
 /**
  * Resolver for the {@link HierarchicalModel} family (retains a named root + child maps).
  *
@@ -46,6 +50,21 @@ public class HierarchicalResolver implements EyeAttachmentResolver {
         poseStack.last().pose().set(capPose[0]);
         poseStack.last().normal().set(capNormal[0]);
         return true;
+    }
+
+    @Override
+    public List<String> enumerateParts(EntityModel<?> model) {
+        if (!(model instanceof HierarchicalModel)) {
+            return List.of();
+        }
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        ((HierarchicalModel<?>) model).root().visit(new PoseStack(), (pose, path, index, cube) -> {
+            String segment = lastSegment(path);
+            if (!segment.isEmpty()) {
+                names.add(segment);
+            }
+        });
+        return new ArrayList<>(names);
     }
 
     private static String lastSegment(String path) {

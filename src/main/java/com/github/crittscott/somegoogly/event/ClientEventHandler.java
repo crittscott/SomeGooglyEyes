@@ -3,6 +3,8 @@ package com.github.crittscott.somegoogly.event;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.picker.PickerLayer;
+import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import net.minecraft.client.Minecraft;
@@ -68,6 +70,9 @@ public class ClientEventHandler {
         // Forget the previous server's configs so they don't leak onto the next connection.
         ClientEyeConfigs.clear();
         clearTrackers();
+        // Release any picker-frozen mob and leave picker mode so NoAi can't persist.
+        PickerState.active = false;
+        PickerState.unlock();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -83,6 +88,7 @@ public class ClientEventHandler {
                 if (e.getValue() instanceof PlayerRenderer) {
                     PlayerRenderer playerRenderer = (PlayerRenderer) e.getValue();
                     playerRenderer.addLayer(new LayerGooglyEyes<>(playerRenderer));
+                    playerRenderer.addLayer(new PickerLayer<>(playerRenderer));
                     addedRenderers.add(playerRenderer);
                 }
             }
@@ -104,6 +110,7 @@ public class ClientEventHandler {
             if (entityRenderer instanceof LivingEntityRenderer) {
                 LivingEntityRenderer renderer = (LivingEntityRenderer) entityRenderer;
                 renderer.addLayer(new LayerGooglyEyes<>(renderer));
+                renderer.addLayer(new PickerLayer<>(renderer));
             }
         });
     }

@@ -26,6 +26,14 @@ public interface EyeAttachmentResolver {
      */
     boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken);
 
+    /**
+     * List selectable attachment tokens for this model, in a stable order (used by the part picker).
+     * Default: none (resolver doesn't support enumeration / picker authoring yet).
+     */
+    default java.util.List<String> enumerateParts(EntityModel<?> model) {
+        return java.util.List.of();
+    }
+
     /** Normalises a token/part-name so camelCase field names match snake_case child-map keys. */
     static String normalize(String s) {
         return s == null ? "" : s.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");

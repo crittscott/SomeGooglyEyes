@@ -6,6 +6,9 @@ import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.picker.PickerHud;
+import com.github.crittscott.somegoogly.picker.PickerInput;
+import com.github.crittscott.somegoogly.picker.PickerKeys;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,6 +46,11 @@ public class SomeGoogly {
 
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerLayerDefinitions);
+
+            // Part picker (authoring tool).
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(PickerKeys::register);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(PickerHud::register);
+            MinecraftForge.EVENT_BUS.register(new PickerInput());
         });
 
         ServerConfig.register();
