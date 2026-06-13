@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.event;
 
+import com.github.crittscott.somegoogly.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.head.HeadInfo;
@@ -111,6 +112,9 @@ public class ClientEventHandler {
                 LivingEntityRenderer renderer = (LivingEntityRenderer) entityRenderer;
                 renderer.addLayer(new LayerGooglyEyes<>(renderer));
                 renderer.addLayer(new PickerLayer<>(renderer));
+            } else {
+                // GeckoLib (GeoEntityRenderer) isn't a LivingEntityRenderer; attach via soft-dep compat.
+                GeckoCompat.tryAddLayer(entityRenderer);
             }
         });
     }

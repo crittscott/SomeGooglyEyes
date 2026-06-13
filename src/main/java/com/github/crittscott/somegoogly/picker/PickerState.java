@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
@@ -95,23 +96,37 @@ public final class PickerState {
             return "Look at a mob, then lock on.";
         }
         EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
-        if (!(renderer instanceof LivingEntityRenderer<?, ?> ler)) {
-            return "That entity has no living renderer.";
+
+        // Vanilla EntityModel path (hierarchical names or reflection #N).
+        EntityModel<?> vanillaModel = null;
+        List<String> tokens = List.of();
+        if (renderer instanceof LivingEntityRenderer<?, ?> ler) {
+            vanillaModel = ler.getModel();
+            EyeAttachmentResolver resolver = Resolvers.forModel(vanillaModel);
+            if (resolver != null) {
+                tokens = resolver.enumerateParts(vanillaModel);
+            }
         }
-        EntityModel<?> m = ler.getModel();
-        EyeAttachmentResolver resolver = Resolvers.forModel(m);
-        List<String> found = resolver == null ? List.of() : resolver.enumerateParts(m);
-        if (found.isEmpty()) {
-            return "Unsupported model (v1 is hierarchical only).";
+        // GeckoLib path (named bones), if vanilla found nothing.
+        if (tokens.isEmpty()) {
+            List<String> bones = GeckoCompat.enumerate(renderer, living);
+            if (!bones.isEmpty()) {
+                vanillaModel = null;
+                tokens = bones;
+            }
         }
+        if (tokens.isEmpty()) {
+            return "Unsupported model — no reachable vanilla parts or GeckoLib bones.";
+        }
+
         ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         boolean keepWork = newType.equals(targetType) && !heads.isEmpty();
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
-        model = m;
+        model = vanillaModel; // null for GeckoLib targets
         targetType = newType;
-        parts = new ArrayList<>(found);
+        parts = new ArrayList<>(tokens);
         partIndex = 0;
         if (!keepWork) {
             heads.clear();

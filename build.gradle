@@ -113,6 +113,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    // GeckoLib (soft dependency — compile against its API; present at runtime via the modpack).
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
@@ -130,6 +133,10 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // GeckoLib — soft dependency. compileOnly so the mod still runs without it (gated at runtime by
+    // ModList.isLoaded). Verify the exact version is available in the repo if this fails to resolve.
+    compileOnly fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.7.4")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

@@ -296,7 +296,7 @@ Make every vanilla `EntityModel`-based mob fully pickable, not just renderable.
 3. Picker lights up automatically (it's resolver-agnostic); HUD shows `#3` instead of a name — you
    identify the part visually via the gizmo.
 
-Effort: small; reflection is already proven in production. **Status: in progress.**
+Effort: small; reflection is already proven in production. **Status: done** (`ReflectionResolver`).
 
 ### Phase B — GeckoLib (soft dependency)
 
@@ -315,6 +315,17 @@ GeckoLib is a separate framework (no vanilla `EntityModel`; `GeoEntityRenderer` 
 
 No server changes (GeckoLib mobs are `LivingEntity`; decide/sync/`enabled`/`NoAi`-freeze all already
 apply). Client render + picker only. Effort: medium–large, research-heavy on the bone-transform API.
+
+**Status: implemented, pending build + GeckoLib-API verification.** Soft dep wired in `build.gradle`
+(`compileOnly` GeckoLib 4.7.4); `compat/GeckoCompat` (gate, no GeckoLib refs) → `compat/GeckoIntegration`
++ `compat/GeoBones` + `compat/GooglyGeoLayer` (all GeckoLib-referencing, loaded only when present).
+Layer injected via `AddLayers` (non-living renderers); picker `lockOn` gains a GeckoLib branch with an
+honest "no reachable vanilla parts or GeckoLib bones" message. **Unverified (I can't build):** the GeckoLib
+maven coords/version, and the 4.7.4 API surface — `GeoEntityRenderer.addRenderLayer`/`getGeoModel`,
+`GeoModel.getModelResource`/`getBakedModel`, `BakedGeoModel.topLevelBones`/`getBone`, `GeoBone`
+name/children/parent, and `RenderUtils.prepMatrixForBone`. All GeckoLib calls are `try/catch`-guarded so
+a mismatch degrades to "no GeckoLib support", not a crash. Citadel-framework mobs (e.g. Alex's Mobs
+roadrunner — `AdvancedModelBox`, not vanilla `ModelPart`) remain unsupported; would need a separate adapter.
 
 ---
 
