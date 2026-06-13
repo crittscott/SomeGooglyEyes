@@ -2,9 +2,6 @@ package com.github.crittscott.somegoogly.tracker;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -46,7 +43,7 @@ public class GooglyTracker {
             prevDeltaY = deltaY = -1F;
         }
 
-        public void update(HeadInfo helper, int head, int eye, GooglyTracker parent, double motionX, double motionY, double motionZ) {
+        public void update(GooglyTracker parent, double motionX, double motionY, double motionZ) {
             prevRotationYaw = rotationYaw;
             prevRotationPitch = rotationPitch;
             prevRotationRoll = rotationRoll;
@@ -109,10 +106,10 @@ public class GooglyTracker {
         this.parent = parent;
         this.helper = helper;
         this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
-        this.eyes = new EyeInfo[helper.getHeadCount(parent)][];
+        this.eyes = new EyeInfo[helper.getHeadCount()][];
 
         for (int i = 0; i < eyes.length; i++) {
-            this.eyes[i] = new EyeInfo[helper.getHeadInfo(parent, i).getEyeCount(parent)];
+            this.eyes[i] = new EyeInfo[helper.getEyeCount(i)];
             for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
                 this.eyes[i][i1] = new EyeInfo();
             }
@@ -138,23 +135,9 @@ public class GooglyTracker {
         prevY = parent.getY();
         prevZ = parent.getZ();
 
-        if (helper.multiModel != null) {
-            EntityRenderer<?> render = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(parent);
-            if (!(render instanceof LivingEntityRenderer)) {
-                return;
-            }
-            LivingEntityRenderer<?, ?> renderer = (LivingEntityRenderer<?, ?>) render;
-
-            if (!helper.setup(parent, renderer)) {
-                return;
-            }
-        }
-
         for (int i = 0; i < eyes.length; i++) {
-            HeadInfo childInfo = helper.getHeadInfo(parent, i);
-
             for (int i1 = 0; i1 < eyes[i].length; i1++) {
-                eyes[i][i1].update(childInfo, i, i1, this, motionX, motionY, motionZ);
+                eyes[i][i1].update(this, motionX, motionY, motionZ);
             }
         }
     }

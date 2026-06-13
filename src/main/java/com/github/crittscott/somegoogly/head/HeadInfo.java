@@ -3,38 +3,37 @@ package com.github.crittscott.somegoogly.head;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Per-entity eye configuration, loaded from {@code assets/somegoogly/entity_configs/*.json}.
+ *
+ * <p>As of M1 this class is pure data: it answers "how many heads, which attachment part, and what
+ * eyes" for an entity. The actual part resolution and positioning is done by the
+ * {@link com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver}s, by string name —
+ * no field reflection. Each head is honoured independently (multi-head mobs like the wither).
+ *
+ * <p>The {@code attachPoint} in config is the string part token handed to the resolver (e.g.
+ * {@code head}, {@code leftHead}); it is matched against the model's part names, normalised so
+ * camelCase tokens match snake_case keys.
+ */
 public class HeadInfo {
-    private static final Map<ResourceLocation, ModelPart> headModelCache = new HashMap<>();
     private static final Map<ResourceLocation, EntityConfig> entityConfigs = new HashMap<>();
     private static final Map<ResourceLocation, HeadInfo> headInfoCache = new HashMap<>();
     private static final Marker MARK = MarkerManager.getMarker(HeadInfo.class.getSimpleName());
 
-    public boolean noFaceInfo = false;
-    public ModelPart headModel = null;
-    public Object multiModel = null;
-
-    private ResourceLocation entityName;
-    private EntityConfig entityConfig;
+    private final EntityConfig entityConfig;
 
     public HeadInfo(ResourceLocation entityName) {
-        this.entityName = entityName;
         this.entityConfig = entityConfigs.get(entityName);
     }
 
@@ -69,157 +68,98 @@ public class HeadInfo {
         return headInfoCache.computeIfAbsent(entityName, HeadInfo::new);
     }
 
-    public int getHeadCount(LivingEntity entity) {
-        return entityConfig != null ? entityConfig.heads.size() : 0;
+    /** Whether this entity has any configured eyes at all. */
+    public boolean hasConfig() {
+        return entityConfig != null && entityConfig.heads != null && !entityConfig.heads.isEmpty();
     }
 
-    public int getEyeCount(LivingEntity entity) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0;
-        return entityConfig.heads.get(0).eyes.size();
+    public int getHeadCount() {
+        return hasConfig() ? entityConfig.heads.size() : 0;
     }
 
-    public HeadInfo getHeadInfo(LivingEntity entity, int headIndex) {
-        return this;
+    /** The part token (string name) the resolver should attach this head's eyes to. */
+    public String getAttachToken(int headIndex) {
+        HeadConfig head = headAt(headIndex);
+        return head != null ? head.attachPoint : "head";
     }
 
-    public boolean doesEyeGlow(LivingEntity entity, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return false;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return false;
-        return head.eyes.get(eyeIndex).glows;
+    public int getEyeCount(int headIndex) {
+        HeadConfig head = headAt(headIndex);
+        return head != null && head.eyes != null ? head.eyes.size() : 0;
     }
 
-    public boolean affectedByInvisibility(LivingEntity entity, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return true;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return true;
-        return head.eyes.get(eyeIndex).affectedByInvisibility;
+    public boolean doesEyeGlow(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null && eye.glows;
     }
 
-    public float getEyeScale(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0.75f;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return 0.75f;
-        return (float) head.eyes.get(eyeIndex).eyeScale;
+    public boolean affectedByInvisibility(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye == null || eye.affectedByInvisibility;
     }
 
-    public float getIrisScale(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0.6f;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return 0.6f;
-        return (float) head.eyes.get(eyeIndex).irisScale;
+    public float getEyeScale(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? (float) eye.eyeScale : 0.75f;
     }
 
-    public float getEyeSideOffset(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0.0f;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return 0.0f;
-        return (float) head.eyes.get(eyeIndex).sideOffset;
+    public float getIrisScale(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? (float) eye.irisScale : 0.6f;
     }
 
-    public float getEyeRotation(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0.0f;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return 0.0f;
-        return (float) head.eyes.get(eyeIndex).yRotation;
+    public float getEyeSideOffset(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? (float) eye.sideOffset : 0.0f;
     }
 
-    public float getEyeTopRotation(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) return 0.0f;
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) return 0.0f;
-        return (float) head.eyes.get(eyeIndex).xRotation;
+    public float getEyeRotation(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? (float) eye.yRotation : 0.0f;
     }
 
-    public float[] getEyeOffsetFromJoint(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) {
+    public float getEyeTopRotation(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? (float) eye.xRotation : 0.0f;
+    }
+
+    public float[] getEyeOffsetFromJoint(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        if (eye == null || eye.position == null || eye.position.length < 3) {
             return new float[]{eyeIndex == 0 ? -0.13f : 0.13f, -0.25f, -0.25f};
         }
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) {
-            return new float[]{eyeIndex == 0 ? -0.13f : 0.13f, -0.25f, -0.25f};
-        }
-        double[] pos = head.eyes.get(eyeIndex).position;
-        return new float[]{(float) pos[0], (float) pos[1], (float) pos[2]};
+        return new float[]{(float) eye.position[0], (float) eye.position[1], (float) eye.position[2]};
     }
 
-    public float[] getCorneaColours(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) {
+    public float[] getCorneaColours(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        if (eye == null || eye.corneaColors == null || eye.corneaColors.length < 3) {
             return new float[]{1.0f, 1.0f, 1.0f};
         }
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) {
-            return new float[]{1.0f, 1.0f, 1.0f};
-        }
-        double[] colors = head.eyes.get(eyeIndex).corneaColors;
-        return new float[]{(float) colors[0], (float) colors[1], (float) colors[2]};
+        return new float[]{(float) eye.corneaColors[0], (float) eye.corneaColors[1], (float) eye.corneaColors[2]};
     }
 
-    public float[] getIrisColours(LivingEntity entity, PoseStack poseStack, float partialTicks, int eyeIndex) {
-        if (entityConfig == null || entityConfig.heads.isEmpty()) {
+    public float[] getIrisColours(int headIndex, int eyeIndex) {
+        EyeConfig eye = eyeAt(headIndex, eyeIndex);
+        if (eye == null || eye.irisColors == null || eye.irisColors.length < 3) {
             return new float[]{0.0f, 0.0f, 0.0f};
         }
-        HeadConfig head = entityConfig.heads.get(0);
-        if (eyeIndex >= head.eyes.size()) {
-            return new float[]{0.0f, 0.0f, 0.0f};
-        }
-        double[] colors = head.eyes.get(eyeIndex).irisColors;
-        return new float[]{(float) colors[0], (float) colors[1], (float) colors[2]};
+        return new float[]{(float) eye.irisColors[0], (float) eye.irisColors[1], (float) eye.irisColors[2]};
     }
 
-    public boolean setup(LivingEntity entity, LivingEntityRenderer<?, ?> renderer) {
-        return entityConfig != null;
-    }
-
-    public void setHeadModel(LivingEntity entity, LivingEntityRenderer<?, ?> renderer) {
-        this.headModel = findHeadModelPart(renderer.getModel(), entityName);
-        //SomeGoogly.LOGGER.debug(MARK,"found head model part {} for entity {}", this.headModel, entityName);
-    }
-
-    public void correctPosition(LivingEntity entity, PoseStack poseStack, float partialTicks) {
-        if (headModel != null) {
-            headModel.translateAndRotate(poseStack);
-        }
-    }
-
-    public void preChildEntHeadRenderCalls(LivingEntity entity, PoseStack poseStack, LivingEntityRenderer<?, ?> renderer) {
-    }
-
-    private ModelPart findHeadModelPart(EntityModel<?> model, ResourceLocation entityName) {
-        // Check cache first
-        if (headModelCache.containsKey(entityName)) {
-            return headModelCache.get(entityName);
-        }
-
-        if (entityConfig == null || entityConfig.heads.isEmpty()) {
-            headModelCache.put(entityName, null);
+    private HeadConfig headAt(int headIndex) {
+        if (!hasConfig() || headIndex < 0 || headIndex >= entityConfig.heads.size()) {
             return null;
         }
+        return entityConfig.heads.get(headIndex);
+    }
 
-        String headFieldName = entityConfig.heads.get(0).attachPoint;
-
-        // Search for the specific field across the entire class hierarchy
-        Class<?> currentClass = model.getClass();
-        while (currentClass != null) {
-            try {
-                Field field = currentClass.getDeclaredField(headFieldName);
-                if (field.getType() == ModelPart.class) {
-                    field.setAccessible(true);
-                    ModelPart headPart = (ModelPart) field.get(model);
-                    headModelCache.put(entityName, headPart);
-                    return headPart;
-                }
-            } catch (NoSuchFieldException e) {
-                // Field not found in this class, try parent class
-            } catch (Exception e) {
-                // Other reflection errors, try parent class
-            }
-            currentClass = currentClass.getSuperclass();
+    private EyeConfig eyeAt(int headIndex, int eyeIndex) {
+        HeadConfig head = headAt(headIndex);
+        if (head == null || head.eyes == null || eyeIndex < 0 || eyeIndex >= head.eyes.size()) {
+            return null;
         }
-
-        // Field not found anywhere in the hierarchy
-        headModelCache.put(entityName, null);
-        return null;
+        return head.eyes.get(eyeIndex);
     }
 
     // Inner classes for JSON structure

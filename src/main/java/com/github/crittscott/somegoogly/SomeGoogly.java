@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(SomeGoogly.MOD_ID)
 public class SomeGoogly {
-    public static final String MOD_NAME = "Some Googlys";
+    public static final String MOD_NAME = "Some Googly Eyes";
     public static final String MOD_ID = "somegoogly";
 
     public static final Logger LOGGER = LogManager.getLogger();
