@@ -25,5 +25,13 @@ public class NetworkHandler {
                 GooglyEyePacket::decode,
                 GooglyEyePacket::handle
         );
+
+        INSTANCE.registerMessage(
+                id++,
+                EyeConfigSyncPacket.class,
+                EyeConfigSyncPacket::encode,
+                EyeConfigSyncPacket::decode,
+                EyeConfigSyncPacket::handle
+        );
     }
 }

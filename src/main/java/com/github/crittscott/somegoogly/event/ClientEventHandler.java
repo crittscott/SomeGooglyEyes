@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Marker;
@@ -54,6 +56,18 @@ public class ClientEventHandler {
             trackers.put(living, tracker);
         }
         return tracker;
+    }
+
+    /** Drop all trackers; called when configs change (sync) or on disconnect. */
+    public void clearTrackers() {
+        trackers.clear();
+    }
+
+    @SubscribeEvent
+    public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        // Forget the previous server's configs so they don't leak onto the next connection.
+        ClientEyeConfigs.clear();
+        clearTrackers();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

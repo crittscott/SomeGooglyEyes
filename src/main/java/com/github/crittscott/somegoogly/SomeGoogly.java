@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
-import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -33,8 +32,8 @@ public class SomeGoogly {
     public static ClientEventHandler clientEventHandler;
 
     public SomeGoogly() {
-        HeadInfo.loadConfigs();
-
+        // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
+        // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         NetworkHandler.register();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {

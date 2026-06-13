@@ -1,0 +1,58 @@
+{
+  "enabled": true,
+  "heads": [
+    {
+      "attachPoint": "bone",
+      "eyes": [
+        {
+          "position": [
+            -0.13,
+            -0.25,
+            -0.25
+          ],
+          "eyeScale": 0.75,
+          "irisScale": 0.6,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "glows": false,
+          "affectedByInvisibility": true
+        },
+        {
+          "position": [
+            0.13,
+            -0.25,
+            -0.25
+          ],
+          "eyeScale": 0.75,
+          "irisScale": 0.6,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "glows": false,
+          "affectedByInvisibility": true
+        }
+      ]
+    }
+  ]
+}

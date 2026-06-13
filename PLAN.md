@@ -226,7 +226,30 @@ instead: no refmap, no build plumbing, and genuinely fail-safe.
 3. **Texture/UV** (16×16 png vs 64×32 layer decl in `ModelGooglyEye`) was left as-is — not touched in
    M1; revisit only if eyes render with wrong texturing.
 
+### M2 prerequisite — datapack config system (implemented)
+
+Geometry configs moved from one bundled `minecraft.json` to per-entity datapack files, server-loaded
+and synced to clients (server-authoritative, matching the existing "server sets eyes, client only
+vetoes" model — datapack over resource pack was the deliberate choice).
+
+- **Layout:** `data/<entity-namespace>/eyes/<entity-path>.json`, one entity per file (path = entity
+  id). Per-file schema: `{ "enabled": true, "heads": [...] }`. Bundled vanilla defaults: 79 files
+  under `data/minecraft/eyes/` (split out of the old `minecraft.json`, which is removed).
+- **Load:** `EyeConfigReloadListener` (`SimpleJsonResourceReloadListener`) registered on
+  `AddReloadListenerEvent` → fills `ServerEyeConfigs`. Datapack stacking gives per-entity override
+  for free.
+- **Sync:** `OnDatapackSyncEvent` (login + `/reload`) sends `EyeConfigSyncPacket` over the existing
+  channel → `ClientEyeConfigs`. `HeadInfo` reads the client store; sync/disconnect invalidate the
+  helper cache and trackers. Server and client stores are separate (no single-player bleed).
+- **`enabled: false`:** server-authoritative hard-off in `ServerEventHandler` (beats the percent
+  roll); client respects it via `hasConfig()`. Only configured+enabled entities are eligible now.
+- **Client veto** (`ClientConfig.DISABLED_ENTITIES`, global off) unchanged.
+
+Verification (built jar): vanilla still works; drop a datapack in `world/datapacks/` overriding one
+entity → `/reload` re-syncs live to all clients; `enabled:false` removes a mob for everyone.
+
 ### Next
 
 M2 (in-world part picker) to author the per-mob pivot→face offsets visually — the residual "nose"
-placement from M0 is exactly what it solves. Then M3 (GeckoLib adapter).
+placement from M0 is exactly what it solves, and the picker now exports straight into a datapack
+(`world/datapacks/…/eyes/`) with `/reload` applying it live. Then M3 (GeckoLib adapter).

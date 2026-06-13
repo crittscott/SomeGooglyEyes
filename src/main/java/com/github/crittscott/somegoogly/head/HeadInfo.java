@@ -1,76 +1,46 @@
 package com.github.crittscott.somegoogly.head;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Per-entity eye configuration, loaded from {@code assets/somegoogly/entity_configs/*.json}.
+ * Per-entity eye configuration, as seen by the client renderer.
  *
- * <p>As of M1 this class is pure data: it answers "how many heads, which attachment part, and what
- * eyes" for an entity. The actual part resolution and positioning is done by the
- * {@link com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver}s, by string name —
- * no field reflection. Each head is honoured independently (multi-head mobs like the wither).
+ * <p>This is pure data: it answers "how many heads, which attachment part, and what eyes" for an
+ * entity. Part resolution and positioning is done by the
+ * {@link com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver}s, by string name.
  *
- * <p>The {@code attachPoint} in config is the string part token handed to the resolver (e.g.
- * {@code head}, {@code leftHead}); it is matched against the model's part names, normalised so
- * camelCase tokens match snake_case keys.
+ * <p>Configs are loaded from datapacks on the server and synced to the client; this class reads the
+ * client-side copy ({@link ClientEyeConfigs}). The {@code attachPoint} in config is the string part
+ * token handed to the resolver (e.g. {@code head}, {@code leftHead}), matched against model part
+ * names (normalised so camelCase matches snake_case).
  */
 public class HeadInfo {
-    private static final Map<ResourceLocation, EntityConfig> entityConfigs = new HashMap<>();
     private static final Map<ResourceLocation, HeadInfo> headInfoCache = new HashMap<>();
-    private static final Marker MARK = MarkerManager.getMarker(HeadInfo.class.getSimpleName());
 
     private final EntityConfig entityConfig;
 
     public HeadInfo(ResourceLocation entityName) {
-        this.entityConfig = entityConfigs.get(entityName);
-    }
-
-    public static void loadConfigs() {
-        String configPath = "/assets/somegoogly/entity_configs/";
-        String[] configFiles = {"minecraft.json"};
-
-        Gson gson = new Gson();
-        Type configType = new TypeToken<Map<String, List<EntityConfig>>>() {}.getType();
-
-        for (String fileName : configFiles) {
-            try {
-                InputStream stream = HeadInfo.class.getResourceAsStream(configPath + fileName);
-                if (stream != null) {
-                    InputStreamReader reader = new InputStreamReader(stream);
-                    Map<String, List<EntityConfig>> fileData = gson.fromJson(reader, configType);
-
-                    for (EntityConfig config : fileData.get("entities")) {
-                        ResourceLocation entityName = new ResourceLocation(config.entity);
-                        entityConfigs.put(entityName, config);
-                    }
-                    reader.close();
-                    SomeGoogly.LOGGER.info(MARK, "Loaded config file: {}", fileName);
-                }
-            } catch (Exception e) {
-                SomeGoogly.LOGGER.error(MARK, "Failed to load config file: {}", fileName, e);
-            }
-        }
+        this.entityConfig = ClientEyeConfigs.get(entityName);
     }
 
     public static HeadInfo getHelper(ResourceLocation entityName) {
         return headInfoCache.computeIfAbsent(entityName, HeadInfo::new);
     }
 
-    /** Whether this entity has any configured eyes at all. */
+    /** Drop cached helpers; called when the client receives new configs or disconnects. */
+    public static void clearCache() {
+        headInfoCache.clear();
+    }
+
+    /** Whether this entity has configured eyes that are enabled. */
     public boolean hasConfig() {
-        return entityConfig != null && entityConfig.heads != null && !entityConfig.heads.isEmpty();
+        return entityConfig != null && entityConfig.isEnabled()
+                && entityConfig.heads != null && !entityConfig.heads.isEmpty();
     }
 
     public int getHeadCount() {
@@ -162,15 +132,19 @@ public class HeadInfo {
         return head.eyes.get(eyeIndex);
     }
 
-    // Inner classes for JSON structure
+    // Inner classes for JSON structure (one file per entity; entity id comes from the file path).
     public static class EntityConfig {
-        public String entity;
+        public Boolean enabled;
         public List<HeadConfig> heads;
+
+        /** Defaults to enabled when the field is absent. */
+        public boolean isEnabled() {
+            return enabled == null || enabled;
+        }
     }
 
     public static class HeadConfig {
         public String attachPoint;
-        public String[] navigationPath;
         public List<EyeConfig> eyes;
     }
 

@@ -1,0 +1,116 @@
+{
+  "enabled": true,
+  "heads": [
+    {
+      "attachPoint": "leftHead",
+      "eyes": [
+        {
+          "position": [
+            -0.1,
+            -0.2,
+            -0.3
+          ],
+          "eyeScale": 0.6,
+          "irisScale": 0.5,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.2,
+            0.0,
+            0.0
+          ],
+          "glows": true,
+          "affectedByInvisibility": false
+        },
+        {
+          "position": [
+            0.1,
+            -0.2,
+            -0.3
+          ],
+          "eyeScale": 0.6,
+          "irisScale": 0.5,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.2,
+            0.0,
+            0.0
+          ],
+          "glows": true,
+          "affectedByInvisibility": false
+        }
+      ]
+    },
+    {
+      "attachPoint": "rightHead",
+      "eyes": [
+        {
+          "position": [
+            0.0,
+            -0.15,
+            -0.25
+          ],
+          "eyeScale": 0.5,
+          "irisScale": 0.4,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.2,
+            0.0,
+            0.0
+          ],
+          "glows": true,
+          "affectedByInvisibility": false
+        }
+      ]
+    },
+    {
+      "attachPoint": "centerHead",
+      "eyes": [
+        {
+          "position": [
+            0.0,
+            -0.15,
+            -0.25
+          ],
+          "eyeScale": 0.5,
+          "irisScale": 0.4,
+          "sideOffset": 0.0,
+          "yRotation": 0.0,
+          "xRotation": 0.0,
+          "corneaColors": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "irisColors": [
+            0.2,
+            0.0,
+            0.0
+          ],
+          "glows": true,
+          "affectedByInvisibility": false
+        }
+      ]
+    }
+  ]
+}
