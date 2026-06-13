@@ -1,0 +1,4725 @@
+{
+  "entities": [
+    {
+      "entity": "minecraft:villager",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:zombie",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:slime",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:wither",
+      "heads": [
+        {
+          "attachPoint": "leftHead",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.1,
+                -0.2,
+                -0.3
+              ],
+              "eyeScale": 0.6,
+              "irisScale": 0.5,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.2,
+                0.0,
+                0.0
+              ],
+              "glows": true,
+              "affectedByInvisibility": false
+            },
+            {
+              "position": [
+                0.1,
+                -0.2,
+                -0.3
+              ],
+              "eyeScale": 0.6,
+              "irisScale": 0.5,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.2,
+                0.0,
+                0.0
+              ],
+              "glows": true,
+              "affectedByInvisibility": false
+            }
+          ]
+        },
+        {
+          "attachPoint": "rightHead",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                0.0,
+                -0.15,
+                -0.25
+              ],
+              "eyeScale": 0.5,
+              "irisScale": 0.4,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.2,
+                0.0,
+                0.0
+              ],
+              "glows": true,
+              "affectedByInvisibility": false
+            }
+          ]
+        },
+        {
+          "attachPoint": "centerHead",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                0.0,
+                -0.15,
+                -0.25
+              ],
+              "eyeScale": 0.5,
+              "irisScale": 0.4,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.2,
+                0.0,
+                0.0
+              ],
+              "glows": true,
+              "affectedByInvisibility": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:allay",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:armor_stand",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:axolotl",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:bat",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:bee",
+      "heads": [
+        {
+          "attachPoint": "bone",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:blaze",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:camel",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:cat",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:cave_spider",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:chicken",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:cod",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:cow",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:creeper",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:dolphin",
+      "heads": [
+        {
+          "attachPoint": "body",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:donkey",
+      "heads": [
+        {
+          "attachPoint": "headParts",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:drowned",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:elder_guardian",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:enderman",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:endermite",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:evoker",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:fox",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:frog",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:ghast",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:giant",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:glow_squid",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:goat",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:guardian",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:hoglin",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:horse",
+      "heads": [
+        {
+          "attachPoint": "headParts",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:husk",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:illusioner",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:iron_golem",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:llama",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:magma_cube",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:mooshroom",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:mule",
+      "heads": [
+        {
+          "attachPoint": "headParts",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:ocelot",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:panda",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:parrot",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:phantom",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:pig",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:piglin_brute",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:piglin",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:pillager",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:polar_bear",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:pufferfish",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:rabbit",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:ravager",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:salmon",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:sheep",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:shulker",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:silverfish",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:skeleton_horse",
+      "heads": [
+        {
+          "attachPoint": "headParts",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:skeleton",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:sniffer",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:snow_golem",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:spider",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:squid",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:stray",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:strider",
+      "heads": [
+        {
+          "attachPoint": "body",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:tadpole",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:trader_llama",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:tropical_fish",
+      "heads": [
+        {
+          "attachPoint": "root",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:turtle",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:vex",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:vindicator",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:wandering_trader",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:warden",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:witch",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:wither_skeleton",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:wolf",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:zoglin",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:zombie_horse",
+      "heads": [
+        {
+          "attachPoint": "headParts",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:zombie_villager",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "minecraft:zombified_piglin",
+      "heads": [
+        {
+          "attachPoint": "head",
+          "navigationPath": [],
+          "eyes": [
+            {
+              "position": [
+                -0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.13,
+                -0.25,
+                -0.25
+              ],
+              "eyeScale": 0.75,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
