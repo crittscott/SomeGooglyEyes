@@ -8,7 +8,7 @@ import net.minecraft.client.model.EntityModel;
  * attachment part, so eyes can be drawn relative to it.
  *
  * <p>Different model frameworks expose their part trees differently (see {@link HierarchicalResolver}
- * and {@link ListModelResolver}); each converges on the same contract here. Implementations must use
+ * and {@link ReflectionResolver}); each converges on the same contract here. Implementations must use
  * <b>obfuscation-safe</b> handles only — string part names / stable indices, never obfuscated fields.
  */
 public interface EyeAttachmentResolver {

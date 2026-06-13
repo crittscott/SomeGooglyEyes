@@ -274,5 +274,59 @@ worst case is a dead key/overlay, not a crash.
 ### Next
 
 Polish the picker from real use (e.g. load an existing config as the draft starting point, color
-editing, longer lock reach), then M3 (GeckoLib adapter) — `PickerLayer`/enumeration are already
-resolver-agnostic, so it should light up for GeckoLib once that resolver exists.
+editing, longer lock reach), then the model-type expansion below.
+
+---
+
+## Other model types (Phase A & B)
+
+Coverage today: hierarchical mobs fully (render + picker); list-family render-only (head); GeckoLib
+none. These two phases close the gap. Do **A then B**.
+
+### Phase A — vanilla list-family + any non-hierarchical EntityModel
+
+Make every vanilla `EntityModel`-based mob fully pickable, not just renderable.
+
+1. Generalize `ListModelResolver` into a **reflection resolver for any `EntityModel`** (collect
+   `ModelPart` fields by type, superclass-first). `handles()` becomes a catch-all; `HierarchicalResolver`
+   still runs first so named mobs keep the better named path.
+2. **Indexed tokens** `#0…#k` (these parts have no names): `enumerateParts` returns them;
+   `toAttachmentSpace` parses `#N`. Keep the legacy `"head"→field 0` mapping so the 79 bundled configs
+   still resolve.
+3. Picker lights up automatically (it's resolver-agnostic); HUD shows `#3` instead of a name — you
+   identify the part visually via the gizmo.
+
+Effort: small; reflection is already proven in production. **Status: in progress.**
+
+### Phase B — GeckoLib (soft dependency)
+
+GeckoLib is a separate framework (no vanilla `EntityModel`; `GeoEntityRenderer` + `GeoRenderLayer`).
+
+1. Soft dep: `compileOnly` API, gated by `ModList.isLoaded("geckolib")`, all GeckoLib refs isolated in
+   classes loaded only when present.
+2. Parallel render layer: `GooglyGeoLayer extends GeoRenderLayer`, injected in the `AddLayers` event
+   (`GeoEntityRenderer.addRenderLayer`). Reuses `ModelGooglyEye`, config, tracker.
+3. Re-key the resolver seam off the **renderer** (vanilla pulls model from `LivingEntityRenderer`;
+   GeckoLib pulls `GeoModel` from `GeoEntityRenderer`). Picker + both layers share `enumerateParts` /
+   `toAttachmentSpace`; `PickerState` is already token-based.
+4. Bones are **named** (from `.geo.json`) → real names in the picker. Enumerate by walking the baked
+   `GeoModel` bone tree; position via GeckoLib's `RenderUtils`/bone matrix (exact 4.7.4 API is the main
+   unknown).
+
+No server changes (GeckoLib mobs are `LivingEntity`; decide/sync/`enabled`/`NoAi`-freeze all already
+apply). Client render + picker only. Effort: medium–large, research-heavy on the bone-transform API.
+
+---
+
+## ⚠ Deferred caveats — MUST address before "done" (currently IGNORED on purpose)
+
+1. **Mod-version drift / multiple mod versions.** Part tokens — names (hierarchical/GeckoLib) and
+   indices (`#N`, reflection) — are stable *within* a mod version but shift when a mod updates (renamed
+   parts, added fields move indices). Configs then mis-place or drop eyes silently. Need a real
+   strategy: e.g. a mod-version key per config, validation/warning when a mob's live part set doesn't
+   match the config, and/or version-scoped config sets. **This is the headline robustness problem for
+   "works across many mods."**
+2. **Baby vs adult.** `AgeableListModel` applies baby scale/offset *outside* the part tree, so one
+   config can't be right for both. Need separate adult/baby entries and an `entity.isBaby()` branch at
+   render time (schema extension + picker support for authoring both). Until then: author for adults;
+   babies will be mis-placed.
