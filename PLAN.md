@@ -248,8 +248,31 @@ vetoes" model — datapack over resource pack was the deliberate choice).
 Verification (built jar): vanilla still works; drop a datapack in `world/datapacks/` overriding one
 entity → `/reload` re-syncs live to all clients; `enabled:false` removes a mob for everyone.
 
+### M2 — in-world part picker (implemented)
+
+Self-contained, single-player, hierarchical-only authoring tool in package `picker/`. Commit-as-you-go
+model: fiddle a draft eye on the selected part → commit (appends to the head for that part; commit on
+a different part = another head) → export to the world datapack → `/reload`.
+
+- `PickerState` — target, enumerated parts, committed heads (keyed by part token), draft eye, field/step.
+- `EyeAttachmentResolver.enumerateParts` + `HierarchicalResolver` impl (via `visit`).
+- `PickerLayer` — renders committed + draft eyes and the gizmo on the locked target only;
+  `LayerGooglyEyes` is suppressed for that entity.
+- `Gizmo` + `GizmoRenderType` — RGB=XYZ axes (3 blocks), +end cube only, origin marker, depth-off
+  (custom no-mixin `RenderType` subclass to reach the protected line shards).
+- `PickerKeys` / `PickerInput` (in-world keybinds) + `PickerHud` (overlay).
+- `PickerExporter` — writes `world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json` and runs
+  `/reload`.
+
+Default keys (rebindable): K toggle · V lock · `[` `]` part · `;` `'` field · `-` `=` adjust · `\` step ·
+Enter commit · M mirror-pair · Backspace undo · G glow · I invis · P export.
+
+Build-verification risk (no build on my end): keymap/`InputEvent` wiring, `RegisterGuiOverlaysEvent`
+API, the custom no-depth `RenderType`, SP datapack-path API, programmatic `/reload`. No mixins, so
+worst case is a dead key/overlay, not a crash.
+
 ### Next
 
-M2 (in-world part picker) to author the per-mob pivot→face offsets visually — the residual "nose"
-placement from M0 is exactly what it solves, and the picker now exports straight into a datapack
-(`world/datapacks/…/eyes/`) with `/reload` applying it live. Then M3 (GeckoLib adapter).
+Polish the picker from real use (e.g. load an existing config as the draft starting point, color
+editing, longer lock reach), then M3 (GeckoLib adapter) — `PickerLayer`/enumeration are already
+resolver-agnostic, so it should light up for GeckoLib once that resolver exists.
