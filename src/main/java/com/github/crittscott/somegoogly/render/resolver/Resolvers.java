@@ -9,6 +9,7 @@ public final class Resolvers {
 
     private static final List<EyeAttachmentResolver> ALL = List.of(
             new HierarchicalResolver(),
+            new CitadelResolver(),
             new ReflectionResolver()
     );
 
