@@ -67,7 +67,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         if (!living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
             return;
         }
-        HeadInfo helper = HeadInfo.getHelper(entityType);
+        HeadInfo helper = HeadInfo.getHelper(entityType, living);
         if (helper == null || !helper.hasConfig()) {
             return;
         }

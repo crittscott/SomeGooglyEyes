@@ -1,7 +1,9 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collections;
 import java.util.Map;
@@ -16,20 +18,25 @@ import java.util.Map;
  */
 public final class ServerEyeConfigs {
 
-    private static volatile Map<ResourceLocation, EntityConfig> configs = Collections.emptyMap();
+    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
 
     private ServerEyeConfigs() {
     }
 
-    public static void replaceAll(Map<ResourceLocation, EntityConfig> next) {
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = next;
     }
 
-    public static EntityConfig get(ResourceLocation entity) {
-        return configs.get(entity);
+    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
+        RuntimeConfigSet set = configs.get(entity);
+        return set == null ? null : set.get(baby);
     }
 
-    public static Map<ResourceLocation, EntityConfig> all() {
+    public static RuntimeConfig get(ResourceLocation entity, LivingEntity living) {
+        return get(entity, living.isBaby());
+    }
+
+    public static Map<ResourceLocation, RuntimeConfigSet> all() {
         return configs;
     }
 }

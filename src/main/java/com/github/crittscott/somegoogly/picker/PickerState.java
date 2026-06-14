@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.compat.GeckoCompat;
-import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;
@@ -300,9 +300,9 @@ public final class PickerState {
         return commitOrder.size();
     }
 
-    /** Build the config from the committed heads (for export). */
-    public static EntityConfig toConfig() {
-        EntityConfig config = new EntityConfig();
+    /** Build the selected runtime config from the committed heads (for export). */
+    public static RuntimeConfig toConfig() {
+        RuntimeConfig config = new RuntimeConfig();
         config.enabled = true;
         config.heads = new ArrayList<>(heads.values());
         return config;

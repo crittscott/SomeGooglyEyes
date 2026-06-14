@@ -1,7 +1,8 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
@@ -16,13 +17,13 @@ import java.util.Map;
  */
 public final class ClientEyeConfigs {
 
-    private static volatile Map<ResourceLocation, EntityConfig> configs = Collections.emptyMap();
+    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
 
     private ClientEyeConfigs() {
     }
 
     /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
-    public static void replaceAll(Map<ResourceLocation, EntityConfig> next) {
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = next;
         HeadInfo.clearCache();
     }
@@ -33,7 +34,8 @@ public final class ClientEyeConfigs {
         HeadInfo.clearCache();
     }
 
-    public static EntityConfig get(ResourceLocation entity) {
-        return configs.get(entity);
+    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
+        RuntimeConfigSet set = configs.get(entity);
+        return set == null ? null : set.get(baby);
     }
 }

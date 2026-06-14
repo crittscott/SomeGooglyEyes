@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
 import com.google.gson.Gson;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -15,23 +15,23 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Server → client sync of the datapack-loaded eye geometry configs. Sent on player login and on
- * {@code /reload} (see {@code ServerEventHandler#onDatapackSync}). Custom datapack data isn't
- * auto-synced, so we carry it ourselves; each entity's config travels as JSON.
+ * Server → client sync of the version/age-selected eye geometry configs. Sent on player login and
+ * on {@code /reload} (see {@code ServerEventHandler#onDatapackSync}). Custom datapack data isn't
+ * auto-synced, so we carry it ourselves; each entity's selected config set travels as JSON.
  */
 public class EyeConfigSyncPacket {
 
     private static final Gson GSON = new Gson();
 
-    private final Map<ResourceLocation, EntityConfig> configs;
+    private final Map<ResourceLocation, RuntimeConfigSet> configs;
 
-    public EyeConfigSyncPacket(Map<ResourceLocation, EntityConfig> configs) {
+    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs) {
         this.configs = configs;
     }
 
     public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
         buffer.writeVarInt(packet.configs.size());
-        for (Map.Entry<ResourceLocation, EntityConfig> entry : packet.configs.entrySet()) {
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeUtf(GSON.toJson(entry.getValue()));
         }
@@ -39,10 +39,10 @@ public class EyeConfigSyncPacket {
 
     public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
         int size = buffer.readVarInt();
-        Map<ResourceLocation, EntityConfig> configs = new HashMap<>(size);
+        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
-            EntityConfig config = GSON.fromJson(buffer.readUtf(), EntityConfig.class);
+            RuntimeConfigSet config = GSON.fromJson(buffer.readUtf(), RuntimeConfigSet.class);
             configs.put(id, config);
         }
         return new EyeConfigSyncPacket(configs);

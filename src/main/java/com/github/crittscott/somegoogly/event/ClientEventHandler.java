@@ -54,7 +54,7 @@ public class ClientEventHandler {
 
     public GooglyTracker getGooglyTracker(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = trackers.get(living);
-        if (tracker == null) {
+        if (tracker == null || !tracker.matches(helper)) {
             tracker = new GooglyTracker(living, helper);
             trackers.put(living, tracker);
         }

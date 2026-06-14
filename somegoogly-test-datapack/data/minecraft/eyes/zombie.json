@@ -1,32 +1,62 @@
 {
-  "enabled": true,
-  "heads": [
+  "entries": [
     {
-      "attachPoint": "head",
-      "eyes": [
+      "version": "[1.20.1,1.21)",
+      "age": "any",
+      "enabled": true,
+      "heads": [
         {
-          "position": [-0.16, -0.28, -0.40],
-          "eyeScale": 1.25,
-          "irisScale": 0.6,
-          "sideOffset": 0.0,
-          "yRotation": 0.0,
-          "xRotation": 0.0,
-          "corneaColors": [1.0, 1.0, 1.0],
-          "irisColors": [1.0, 0.0, 0.0],
-          "glows": false,
-          "affectedByInvisibility": true
-        },
-        {
-          "position": [0.16, -0.28, -0.40],
-          "eyeScale": 1.25,
-          "irisScale": 0.6,
-          "sideOffset": 0.0,
-          "yRotation": 0.0,
-          "xRotation": 0.0,
-          "corneaColors": [1.0, 1.0, 1.0],
-          "irisColors": [1.0, 0.0, 0.0],
-          "glows": false,
-          "affectedByInvisibility": true
+          "attachPoint": "head",
+          "eyes": [
+            {
+              "position": [
+                -0.16,
+                -0.28,
+                -0.4
+              ],
+              "eyeScale": 1.25,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            },
+            {
+              "position": [
+                0.16,
+                -0.28,
+                -0.4
+              ],
+              "eyeScale": 1.25,
+              "irisScale": 0.6,
+              "sideOffset": 0.0,
+              "yRotation": 0.0,
+              "xRotation": 0.0,
+              "corneaColors": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "irisColors": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "glows": false,
+              "affectedByInvisibility": true
+            }
+          ]
         }
       ]
     }

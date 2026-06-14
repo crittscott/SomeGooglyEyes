@@ -1,4 +1,10 @@
 {
-  "enabled": false,
-  "heads": []
+  "entries": [
+    {
+      "version": "[1.20.1,1.21)",
+      "age": "any",
+      "enabled": false,
+      "heads": []
+    }
+  ]
 }

@@ -149,4 +149,8 @@ public class GooglyTracker {
     public void requireUpdate() {
         shouldUpdate = true;
     }
+
+    public boolean matches(HeadInfo helper) {
+        return this.helper.config() == helper.config();
+    }
 }

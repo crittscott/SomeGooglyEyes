@@ -58,7 +58,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
-        HeadInfo helper = HeadInfo.getHelper(entityType);
+        HeadInfo helper = HeadInfo.getHelper(entityType, living);
         if (helper == null || !helper.hasConfig()) {
             return;
         }

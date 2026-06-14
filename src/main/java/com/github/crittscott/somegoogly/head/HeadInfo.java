@@ -2,34 +2,38 @@ package com.github.crittscott.somegoogly.head;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Per-entity eye configuration, as seen by the client renderer.
+ * Per-entity, per-age eye configuration, as seen by the client renderer.
  *
  * <p>This is pure data: it answers "how many heads, which attachment part, and what eyes" for an
  * entity. Part resolution and positioning is done by the
  * {@link com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver}s, by string name.
  *
- * <p>Configs are loaded from datapacks on the server and synced to the client; this class reads the
- * client-side copy ({@link ClientEyeConfigs}). The {@code attachPoint} in config is the string part
- * token handed to the resolver (e.g. {@code head}, {@code leftHead}), matched against model part
- * names (normalised so camelCase matches snake_case).
+ * <p>Configs are loaded from datapacks on the server, selected by mod version + age, and synced to
+ * the client; this class reads the client-side selected copy ({@link ClientEyeConfigs}). The
+ * {@code attachPoint} in config is the string part token handed to the resolver.
  */
 public class HeadInfo {
-    private static final Map<ResourceLocation, HeadInfo> headInfoCache = new HashMap<>();
+    private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
 
-    private final EntityConfig entityConfig;
+    private final RuntimeConfig entityConfig;
 
-    public HeadInfo(ResourceLocation entityName) {
-        this.entityConfig = ClientEyeConfigs.get(entityName);
+    public HeadInfo(ResourceLocation entityName, boolean baby) {
+        this.entityConfig = ClientEyeConfigs.get(entityName, baby);
     }
 
-    public static HeadInfo getHelper(ResourceLocation entityName) {
-        return headInfoCache.computeIfAbsent(entityName, HeadInfo::new);
+    public static HeadInfo getHelper(ResourceLocation entityName, LivingEntity entity) {
+        return getHelper(entityName, entity.isBaby());
+    }
+
+    public static HeadInfo getHelper(ResourceLocation entityName, boolean baby) {
+        return headInfoCache.computeIfAbsent(new CacheKey(entityName, baby), key -> new HeadInfo(key.entityName, key.baby));
     }
 
     /** Drop cached helpers; called when the client receives new configs or disconnects. */
@@ -132,14 +136,54 @@ public class HeadInfo {
         return head.eyes.get(eyeIndex);
     }
 
-    // Inner classes for JSON structure (one file per entity; entity id comes from the file path).
-    public static class EntityConfig {
+    public RuntimeConfig config() {
+        return entityConfig;
+    }
+
+    private record CacheKey(ResourceLocation entityName, boolean baby) {
+    }
+
+    // Raw datapack file structure (one file per entity; entity id comes from the file path).
+    public static class ConfigFile {
+        public List<VersionedEntry> entries;
+    }
+
+    // One selectable entry in a datapack file.
+    public static class VersionedEntry {
+        public String version;
+        public String age;
         public Boolean enabled;
         public List<HeadConfig> heads;
 
         /** Defaults to enabled when the field is absent. */
         public boolean isEnabled() {
             return enabled == null || enabled;
+        }
+    }
+
+    // Runtime structure selected by version and age, then synced to clients.
+    public static class RuntimeConfig {
+        public Boolean enabled;
+        public List<HeadConfig> heads;
+
+        /** Defaults to enabled when the field is absent. */
+        public boolean isEnabled() {
+            return enabled == null || enabled;
+        }
+    }
+
+    public static class RuntimeConfigSet {
+        public RuntimeConfig adult;
+        public RuntimeConfig baby;
+        public RuntimeConfig any;
+
+        public RuntimeConfig get(boolean isBaby) {
+            RuntimeConfig ageConfig = isBaby ? baby : adult;
+            return ageConfig != null ? ageConfig : any;
+        }
+
+        public boolean hasAnyConfig() {
+            return adult != null || baby != null || any != null;
         }
     }
 

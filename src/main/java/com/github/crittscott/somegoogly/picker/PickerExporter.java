@@ -1,14 +1,20 @@
 package com.github.crittscott.somegoogly.picker;
 
-import com.github.crittscott.somegoogly.head.HeadInfo.EntityConfig;
+import com.github.crittscott.somegoogly.config.ModVersionLookup;
+import com.github.crittscott.somegoogly.head.HeadInfo.ConfigFile;
+import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,7 +44,13 @@ public final class PickerExporter {
             return "Nothing committed to export.";
         }
 
-        EntityConfig config = PickerState.toConfig();
+        LivingEntity target = PickerState.target();
+        Optional<String> version = ModVersionLookup.versionForNamespace(type.getNamespace());
+        if (target == null || version.isEmpty()) {
+            return "Export failed: couldn't resolve target mod version.";
+        }
+
+        ConfigFile config = toVersionedConfig(PickerState.toConfig(), version.get(), target.isBaby() ? "baby" : "adult");
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
         Path eyesDir = packDir.resolve("data").resolve(type.getNamespace()).resolve("eyes");
         Path file = eyesDir.resolve(type.getPath() + ".json");
@@ -57,5 +69,17 @@ public final class PickerExporter {
         // Reload on the server thread so the datapack is re-read and re-synced to the client.
         server.execute(() -> server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload"));
         return "Exported " + type + " → " + PACK_NAME + ", reloading.";
+    }
+
+    private static ConfigFile toVersionedConfig(RuntimeConfig runtime, String version, String age) {
+        VersionedEntry entry = new VersionedEntry();
+        entry.version = version;
+        entry.age = age;
+        entry.enabled = runtime.enabled;
+        entry.heads = runtime.heads;
+
+        ConfigFile file = new ConfigFile();
+        file.entries = List.of(entry);
+        return file;
     }
 }
