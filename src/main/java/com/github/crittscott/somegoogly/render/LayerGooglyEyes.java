@@ -47,10 +47,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
 
         // Client entity-specific disable check
         ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        for (String s : ClientConfig.DISABLED_ENTITIES.get()) {
-            if (new ResourceLocation(s).equals(entityType)) {
-                return;
-            }
+        if (ClientConfig.isEntityDisabled(entityType)) {
+            return;
         }
 
         // Check server decision from NBT data

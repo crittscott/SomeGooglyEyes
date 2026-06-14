@@ -5,15 +5,14 @@ Companion to [HANDOFF.md](HANDOFF.md). The handoff captures *why* the revival is
 decision). This document is the *how* against the current codebase.
 
 **Goal:** make eye attachment work in obfuscated production for a reasonable number of
-third-party mods using the vanilla `ModelPart` framework (and later GeckoLib), by replacing the
-current obfuscation-fragile field-reflection with stable, production-safe part resolution.
+third-party mods using vanilla `ModelPart`, GeckoLib, and Citadel-style model frameworks, by
+using stable runtime attachment tokens instead of obfuscation-fragile field names.
 
-**Current state (what's in this repo):** a Tier-1 prototype that resolves head parts via
-`Class.getDeclaredField(name)` reflection on the renderer's model
-([HeadInfo.findHeadModelPart](src/main/java/com/github/crittscott/somegoogly/head/HeadInfo.java)).
-This works in the dev environment (Parchment mappings → fields really are named `head`) but
-returns `null` in obfuscated production (the field is `f_xxxxx_`), so the shipped mod would
-render nothing. The layer/event/config/physics skeleton is otherwise sound and reusable.
+**Current state (what's in this repo):** the original Tier-1 prototype has been replaced. Runtime
+attachment now goes through resolver strategies (`HierarchicalResolver`, `ReflectionResolver`,
+`CitadelResolver`, and the GeckoLib layer), geometry config is datapack-driven and synced from
+server to client, and the in-world picker can author configs through the same attachment paths used
+at render time.
 
 ---
 
@@ -243,7 +242,9 @@ vetoes" model — datapack over resource pack was the deliberate choice).
   helper cache and trackers. Server and client stores are separate (no single-player bleed).
 - **`enabled: false`:** server-authoritative hard-off in `ServerEventHandler` (beats the percent
   roll); client respects it via `hasConfig()`. Only configured+enabled entities are eligible now.
-- **Client veto** (`ClientConfig.DISABLED_ENTITIES`, global off) unchanged.
+- **Client veto** (`ClientConfig.DISABLED_ENTITIES`, global off) unchanged. Malformed
+  `disabledEntities` strings are dropped entry-by-entry and logged once, so a bad client config does
+  not break layer registration or rendering.
 
 Verification (built jar): vanilla still works; drop a datapack in `world/datapacks/` overriding one
 entity → `/reload` re-syncs live to all clients; `enabled:false` removes a mob for everyone.
@@ -280,8 +281,9 @@ editing, longer lock reach), then the model-type expansion below.
 
 ## Other model types (Phase A & B)
 
-Coverage today: hierarchical mobs fully (render + picker); list-family render-only (head); GeckoLib
-none. These two phases close the gap. Do **A then B**.
+Coverage today: hierarchical mobs fully (render + picker); list-family/other vanilla `EntityModel`
+models through the reflection resolver; GeckoLib works through its own layer; Citadel-style models
+work through reflected `AdvancedModelBox` names.
 
 ### Phase A — vanilla list-family + any non-hierarchical EntityModel
 
@@ -316,16 +318,30 @@ GeckoLib is a separate framework (no vanilla `EntityModel`; `GeoEntityRenderer` 
 No server changes (GeckoLib mobs are `LivingEntity`; decide/sync/`enabled`/`NoAi`-freeze all already
 apply). Client render + picker only. Effort: medium–large, research-heavy on the bone-transform API.
 
-**Status: implemented, pending build + GeckoLib-API verification.** Soft dep wired in `build.gradle`
-(`compileOnly` GeckoLib 4.7.4); `compat/GeckoCompat` (gate, no GeckoLib refs) → `compat/GeckoIntegration`
-+ `compat/GeoBones` + `compat/GooglyGeoLayer` (all GeckoLib-referencing, loaded only when present).
-Layer injected via `AddLayers` (non-living renderers); picker `lockOn` gains a GeckoLib branch with an
-honest "no reachable vanilla parts or GeckoLib bones" message. **Unverified (I can't build):** the GeckoLib
-maven coords/version, and the 4.7.4 API surface — `GeoEntityRenderer.addRenderLayer`/`getGeoModel`,
-`GeoModel.getModelResource`/`getBakedModel`, `BakedGeoModel.topLevelBones`/`getBone`, `GeoBone`
-name/children/parent, and `RenderUtils.prepMatrixForBone`. All GeckoLib calls are `try/catch`-guarded so
-a mismatch degrades to "no GeckoLib support", not a crash. Citadel-framework mobs (e.g. Alex's Mobs
-roadrunner — `AdvancedModelBox`, not vanilla `ModelPart`) remain unsupported; would need a separate adapter.
+**Status: works.** Soft dep wired in `build.gradle` (`compileOnly` GeckoLib 4.7.4);
+`compat/GeckoCompat` (gate, no GeckoLib refs) → `compat/GeckoIntegration` + `compat/GeoBones` +
+`compat/GooglyGeoLayer` (all GeckoLib-referencing, loaded only when present). Layer injection,
+bone enumeration, and bone-space positioning have been exercised successfully. Citadel-framework
+mobs are handled separately by `CitadelResolver`.
+
+---
+
+## Sidedness conclusion
+
+This mod should remain **BOTH**, not `clientSideOnly`, if the server-authoritative behavior stays:
+
+- **Server required:** datapack eye configs are loaded server-side, selected by loaded mod version
+  and age, used to roll/store `somegoogly:hasGooglyEyes`, recomputed when age changes, and synced to
+  tracking clients. Multiplayer needs this on the logical server, including a dedicated server.
+- **Client required:** all rendering layers, `ModelGooglyEye`, picker HUD/input/export, GeckoLib
+  layer, Citadel/vanilla model resolvers, and client veto config live on the physical client.
+- **Common/shared:** network registration and payload DTOs need to exist on both sides. Packet
+  encode/decode is common; client application should stay behind client-side guards.
+
+So the conceptual split is: server decides and syncs; client renders and authors. The current open
+question is not "client-only vs both" but whether the implementation is insulated enough for a
+dedicated server, since some common-loaded classes still refer to client-only Minecraft classes.
+That server-load question is intentionally left for an experimental dedicated-server test.
 
 ---
 
@@ -337,7 +353,7 @@ roadrunner — `AdvancedModelBox`, not vanilla `ModelPart`) remain unsupported; 
    strategy: e.g. a mod-version key per config, validation/warning when a mob's live part set doesn't
    match the config, and/or version-scoped config sets. **This is the headline robustness problem for
    "works across many mods."**
-2. **Baby vs adult.** `AgeableListModel` applies baby scale/offset *outside* the part tree, so one
-   config can't be right for both. Need separate adult/baby entries and an `entity.isBaby()` branch at
-   render time (schema extension + picker support for authoring both). Until then: author for adults;
-   babies will be mis-placed.
+2. **Baby vs adult authoring.** The schema and runtime now support separate adult/baby entries, but
+   configs still have to be authored for babies where vanilla/model scaling makes adult offsets look
+   wrong. The picker exports the target's current age, so the remaining work is coverage/polish, not
+   a schema blocker.

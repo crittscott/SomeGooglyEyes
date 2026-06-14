@@ -1,11 +1,16 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGoogly;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClientConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
@@ -13,6 +18,7 @@ public class ClientConfig {
 
     public static final ForgeConfigSpec.BooleanValue DISABLE_GOOGLY_EYES;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENTITIES;
+    private static final Set<String> loggedBadDisabledEntityEntries = new HashSet<>();
 
     static {
         BUILDER.push("Client Settings");
@@ -31,5 +37,41 @@ public class ClientConfig {
 
     public static void register() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC);
+    }
+
+    public static Set<ResourceLocation> disabledEntityIds() {
+        Set<ResourceLocation> parsed = new LinkedHashSet<>();
+        for (String entry : DISABLED_ENTITIES.get()) {
+            ResourceLocation id = parseDisabledEntityId(entry);
+            if (id != null) {
+                parsed.add(id);
+            }
+        }
+        return parsed;
+    }
+
+    public static boolean isEntityDisabled(ResourceLocation entityType) {
+        return disabledEntityIds().contains(entityType);
+    }
+
+    private static ResourceLocation parseDisabledEntityId(String entry) {
+        if (entry == null || entry.trim().isEmpty()) {
+            logBadDisabledEntityEntry(entry);
+            return null;
+        }
+
+        try {
+            return new ResourceLocation(entry.trim());
+        } catch (Exception e) {
+            logBadDisabledEntityEntry(entry);
+            return null;
+        }
+    }
+
+    private static void logBadDisabledEntityEntry(String entry) {
+        String key = String.valueOf(entry);
+        if (loggedBadDisabledEntityEntries.add(key)) {
+            SomeGoogly.LOGGER.error("Dropping invalid client disabledEntities entry '{}'; expected an entity id like 'minecraft:zombie'", key);
+        }
     }
 }

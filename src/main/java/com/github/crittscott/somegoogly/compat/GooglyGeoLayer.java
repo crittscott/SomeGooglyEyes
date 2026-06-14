@@ -59,10 +59,8 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             return;
         }
         ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        for (String s : ClientConfig.DISABLED_ENTITIES.get()) {
-            if (new ResourceLocation(s).equals(entityType)) {
-                return;
-            }
+        if (ClientConfig.isEntityDisabled(entityType)) {
+            return;
         }
         if (!living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
             return;
