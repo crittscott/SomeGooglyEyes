@@ -65,6 +65,7 @@ public final class PickerState {
     public static EyeConfig draft = defaultEye();
     public static Field field = Field.POS_X;
     public static int stepIndex = 1; // 0.01
+    private static boolean draftCommitted = false;
 
     // AI-freeze bookkeeping (single-player only). Restored on unlock/exit so NoAi doesn't persist.
     private static int frozenId = -1;
@@ -132,6 +133,7 @@ public final class PickerState {
             heads.clear();
             commitOrder.clear();
             draft = defaultEye();
+            draftCommitted = false;
             field = Field.POS_X;
         }
         freeze(living);
@@ -242,29 +244,40 @@ public final class PickerState {
             case Y_ROT -> draft.yRotation += d;
             case X_ROT -> draft.xRotation += d;
         }
+        draftCommitted = false;
     }
 
     public static void toggleGlow() {
         draft.glows = !draft.glows;
+        draftCommitted = false;
     }
 
     public static void toggleInvisibility() {
         draft.affectedByInvisibility = !draft.affectedByInvisibility;
+        draftCommitted = false;
     }
 
     // ---- commit / remove -------------------------------------------------------------------
 
     public static void commit() {
+        if (draftCommitted) {
+            return;
+        }
         commitEye(copy(draft));
+        draftCommitted = true;
     }
 
     /** Commit the draft and its X-mirror in one go (symmetric pair). */
     public static void commitMirror() {
+        if (draftCommitted) {
+            return;
+        }
         commitEye(copy(draft));
         EyeConfig mirror = copy(draft);
         mirror.position[0] = -mirror.position[0];
         mirror.sideOffset = -mirror.sideOffset;
         commitEye(mirror);
+        draftCommitted = true;
     }
 
     private static void commitEye(EyeConfig eye) {
