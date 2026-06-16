@@ -1,14 +1,13 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,24 +50,29 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         }
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 
-        // Committed heads/eyes.
-        for (HeadConfig head : PickerState.heads.values()) {
+        // Saved eyes. The selected one is skipped here — it's shown live as the current eye instead.
+        for (int i = 0; i < PickerState.eyes.size(); i++) {
+            if (i == PickerState.selectedIndex) {
+                continue;
+            }
+            PickerState.ListedEye listed = PickerState.eyes.get(i);
+            if (listed.part == null) {
+                continue;
+            }
             poseStack.pushPose();
-            if (resolver.toAttachmentSpace(poseStack, model, head.attachPoint) && head.eyes != null) {
-                for (EyeConfig eye : head.eyes) {
-                    renderEye(poseStack, bufferSource, packedLight, overlay, eye);
-                }
+            if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
+                renderEye(poseStack, bufferSource, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
         }
 
-        // Draft eye + gizmo on the currently selected part.
-        String token = PickerState.selectedToken();
+        // Current eye + gizmo on the active placement part.
+        String token = PickerState.currentPart;
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
-                renderEye(poseStack, bufferSource, packedLight, overlay, PickerState.draft);
+                renderEye(poseStack, bufferSource, packedLight, overlay, PickerState.currentEye);
             }
             poseStack.popPose();
         }
@@ -77,8 +81,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
     private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay, EyeConfig eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
-        poseStack.mulPose(Axis.YP.rotationDegrees((float) eye.yRotation));
-        poseStack.mulPose(Axis.XP.rotationDegrees((float) eye.xRotation));
+        HeadInfo.applyRotation(poseStack, eye);
 
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);

@@ -18,6 +18,14 @@ public final class PickerHud {
     private static final int YELLOW = 0xFFFFE060;
     private static final int GREY = 0xFFB0B0B0;
 
+    // Translucent dark backdrop so the text stays legible over a busy scene while the mob shows
+    // through. ARGB: raise the leading alpha byte (0xA0) toward 0xFF for a more opaque panel.
+    private static final int BACKDROP = 0xA0101010;
+    private static final int LINE_HEIGHT = 10;
+    private static final int PADDING = 4;
+    private static final int ORIGIN_X = 6;
+    private static final int ORIGIN_Y = 6;
+
     private PickerHud() {
     }
 
@@ -30,11 +38,23 @@ public final class PickerHud {
             return;
         }
         Font font = Minecraft.getInstance().font;
-        int x = 6;
-        int y = 6;
-        for (Line line : lines()) {
-            graphics.drawString(font, line.text, x, y, line.color);
-            y += 10;
+        List<Line> lines = lines();
+
+        int widest = 0;
+        for (Line line : lines) {
+            widest = Math.max(widest, font.width(line.text));
+        }
+        graphics.fill(
+                ORIGIN_X - PADDING,
+                ORIGIN_Y - PADDING,
+                ORIGIN_X + widest + PADDING,
+                ORIGIN_Y + lines.size() * LINE_HEIGHT + PADDING,
+                BACKDROP);
+
+        int y = ORIGIN_Y;
+        for (Line line : lines) {
+            graphics.drawString(font, line.text, ORIGIN_X, y, line.color);
+            y += LINE_HEIGHT;
         }
     }
 
@@ -46,26 +66,32 @@ public final class PickerHud {
         out.add(new Line("Googly Eye Picker", YELLOW));
 
         if (PickerState.target() == null) {
-            out.add(new Line("Look at a hierarchical mob and press Lock (V).", GREY));
+            out.add(new Line("Look at a mob and choose it (V).", GREY));
             return out;
         }
 
         out.add(new Line("Target: " + PickerState.targetType(), WHITE));
 
-        String token = PickerState.selectedToken();
+        String token = PickerState.currentPart != null ? PickerState.currentPart : "none";
         int n = PickerState.parts.size();
         int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex, n) + 1);
         out.add(new Line("Part: " + token + "  (" + i + "/" + n + ")   [ ] to cycle", WHITE));
 
-        out.add(new Line(String.format("Field: %s = %.3f   step %.3f   - / = adjust, ; ' field, \\ step",
-                PickerState.field.label, PickerState.fieldValue(), PickerState.step()), WHITE));
+        if (PickerState.field.isAngle()) {
+            out.add(new Line(String.format("Field: %s = %.1f°   step %.1f°   - / = adjust, ; ' field, \\ step",
+                    PickerState.field.label, PickerState.fieldValue(), PickerState.step()), WHITE));
+        } else {
+            out.add(new Line(String.format("Field: %s = %.3f   step %.3f   - / = adjust, ; ' field, \\ step",
+                    PickerState.field.label, PickerState.fieldValue(), PickerState.step()), WHITE));
+        }
 
-        EyeConfig d = PickerState.draft;
-        out.add(new Line(String.format("Draft: pos[%.2f, %.2f, %.2f]  eye %.2f  iris %.2f  glow %b  invis %b",
+        EyeConfig d = PickerState.currentEye;
+        out.add(new Line(String.format("Eye: pos[%.2f, %.2f, %.2f]  eye %.2f  iris %.2f  glow %b  invis %b",
                 d.position[0], d.position[1], d.position[2], d.eyeScale, d.irisScale, d.glows, d.affectedByInvisibility), GREY));
 
-        out.add(new Line("Committed: " + PickerState.committedCount() + " eyes / " + PickerState.heads.size() + " heads", WHITE));
-        out.add(new Line("Enter commit · M mirror · Backspace undo · G glow · I invis · P export", GREY));
+        String sel = PickerState.selectedIndex >= 0 ? " · editing #" + (PickerState.selectedIndex + 1) : " · new eye";
+        out.add(new Line("Saved: " + PickerState.committedCount() + " eyes" + sel, WHITE));
+        out.add(new Line("Enter save · M mirror · Backspace undo · G glow · I invis · P export", GREY));
         return out;
     }
 }

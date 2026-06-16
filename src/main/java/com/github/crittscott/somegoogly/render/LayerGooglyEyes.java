@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,8 +50,9 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
-        // Check server decision from NBT data
-        if (!living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
+        // Check the server's spawn decision (NBT). While the picker is active we bypass this so every
+        // eye-configured mob shows eyes for authoring, without having to raise the spawn-chance config.
+        if (!PickerState.active && !living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
             return;
         }
 
@@ -99,9 +99,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
                 float[] eyes = helper.getEyeOffsetFromJoint(headIndex, eyeIndex);
                 poseStack.translate(eyes[0] + helper.getEyeSideOffset(headIndex, eyeIndex), eyes[1], eyes[2]);
 
-                // Apply individual eye rotations (for eye direction, not head orientation)
-                poseStack.mulPose(Axis.YP.rotationDegrees(helper.getEyeRotation(headIndex, eyeIndex)));
-                poseStack.mulPose(Axis.XP.rotationDegrees(helper.getEyeTopRotation(headIndex, eyeIndex)));
+                // Apply the eye's orientation (its own aim, not the head's) about the eye centre.
+                HeadInfo.applyRotation(poseStack, helper.getInclination(headIndex, eyeIndex), helper.getAzimuth(headIndex, eyeIndex));
 
                 poseStack.scale(eyeScale, eyeScale, eyeScale * 0.4F);
 
