@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
@@ -27,27 +28,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * In-world part-picker authoring state (single-player only). Workflow: lock onto a hierarchical mob,
- * cycle its named parts, fiddle a <i>draft</i> eye on the selected part, then commit it — which
- * appends it to the head for that part (creating the head if needed). Commit on a different part to
- * build a multi-head config. Export writes the accumulated config to the world datapack.
+ * In-world eye-placement authoring state (single-player only), driven by the {@code /sg} CLI and the
+ * keyboard picker, which share this state. Workflow: choose a mob, pick a part to use as the
+ * coordinate frame, shape a <i>current eye</i> (position / rotation / properties), then save it to a
+ * flat, numbered <i>eye list</i>. Re-select a saved eye to adjust it in place; export writes the list,
+ * grouped by part, to the world datapack.
  *
- * <p>Client-only singleton (static state). Append-only for v1: to redo a committed eye, remove the
- * last one and re-commit.
+ * <p>Client-only singleton (static state). Each saved eye remembers its own attach part, so the list
+ * can span multiple parts; export regroups by part into heads.
  */
 public final class PickerState {
-
-    /** Draft fields that the value keys adjust, in cycle order. */
-    public enum Field {
-        POS_X("posX"), POS_Y("posY"), POS_Z("posZ"),
-        EYE_SCALE("eyeScale"), IRIS_SCALE("irisScale"),
-        SIDE_OFFSET("sideOffset"), Y_ROT("yRotation"), X_ROT("xRotation");
-
-        public final String label;
-        Field(String label) { this.label = label; }
-    }
-
-    private static final float[] STEPS = {0.001f, 0.01f, 0.05f, 0.1f, 1.0f};
 
     public static boolean active = false;
     private static WeakReference<LivingEntity> target = new WeakReference<>(null);
@@ -57,17 +47,28 @@ public final class PickerState {
     public static List<String> parts = new ArrayList<>();
     public static int partIndex = 0;
 
-    /** Committed heads keyed by part token, insertion-ordered. */
-    public static final LinkedHashMap<String, HeadConfig> heads = new LinkedHashMap<>();
-    /** Insertion order of commits, for remove-last. */
-    private static final List<String> commitOrder = new ArrayList<>();
+    /** One saved eye plus the part token it attaches to. */
+    public static final class ListedEye {
+        public String part;
+        public EyeConfig eye;
 
-    public static EyeConfig draft = defaultEye();
-    public static Field field = Field.POS_X;
-    public static int stepIndex = 1; // 0.01
-    private static boolean draftCommitted = false;
+        public ListedEye(String part, EyeConfig eye) {
+            this.part = part;
+            this.eye = eye;
+        }
+    }
 
-    // AI-freeze bookkeeping (single-player only). Restored on unlock/exit so NoAi doesn't persist.
+    /** The session eye list, in save order (1-based to the user). */
+    public static final List<ListedEye> eyes = new ArrayList<>();
+
+    /** The eye being shaped right now (the "current eye"). */
+    public static EyeConfig currentEye = defaultEye();
+    /** The part token used as the placement frame, or {@code null} for {@code none}. */
+    public static String currentPart = null;
+    /** Index into {@link #eyes} that {@code save} writes back to, or {@code -1} to append a fresh eye. */
+    public static int selectedIndex = -1;
+
+    // AI-freeze bookkeeping (single-player only). Restored on unchoose/exit so NoAi doesn't persist.
     private static int frozenId = -1;
     private static ResourceKey<Level> frozenDim;
     private static boolean frozenPrevNoAi;
@@ -89,12 +90,12 @@ public final class PickerState {
         return active && entity == target.get();
     }
 
-    /** Lock onto the entity under the crosshair. Returns a status message. */
+    /** Choose the entity under the crosshair. Returns a status message. */
     public static String lockOn() {
         Minecraft mc = Minecraft.getInstance();
         Entity looked = mc.crosshairPickEntity;
         if (!(looked instanceof LivingEntity living)) {
-            return "Look at a mob, then lock on.";
+            return "Look at a mob, then choose.";
         }
         EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
 
@@ -121,7 +122,7 @@ public final class PickerState {
         }
 
         ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        boolean keepWork = newType.equals(targetType) && !heads.isEmpty();
+        boolean keepWork = newType.equals(targetType) && !eyes.isEmpty();
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
@@ -129,19 +130,18 @@ public final class PickerState {
         targetType = newType;
         parts = new ArrayList<>(tokens);
         partIndex = 0;
+        currentPart = parts.isEmpty() ? null : parts.get(0);
         if (!keepWork) {
-            heads.clear();
-            commitOrder.clear();
-            draft = defaultEye();
-            draftCommitted = false;
-            field = Field.POS_X;
+            eyes.clear();
+            currentEye = defaultEye();
+            selectedIndex = -1;
         }
         freeze(living);
-        return "Locked on " + newType + (keepWork ? " (kept " + committedCount() + " eyes)" : "")
+        return "Chose " + newType + (keepWork ? " (kept " + committedCount() + " eyes)" : "")
                 + " — " + parts.size() + " parts.";
     }
 
-    /** Stop targeting and release the frozen mob; committed work is kept in memory. */
+    /** Stop targeting and release the frozen mob; the saved eye list is kept in memory. */
     public static void unlock() {
         unfreeze();
         target = new WeakReference<>(null);
@@ -194,130 +194,194 @@ public final class PickerState {
         return targetType;
     }
 
+    /** The current placement-frame part token (drives the gizmo / draft preview), or {@code null}. */
     public static String selectedToken() {
-        return parts.isEmpty() ? null : parts.get(Math.floorMod(partIndex, parts.size()));
+        return currentPart;
     }
 
-    // ---- editing ---------------------------------------------------------------------------
+    // ---- part selection --------------------------------------------------------------------
 
     public static void cyclePart(int dir) {
-        if (!parts.isEmpty()) {
-            partIndex = Math.floorMod(partIndex + dir, parts.size());
-        }
-    }
-
-    public static void cycleField(int dir) {
-        Field[] all = Field.values();
-        field = all[Math.floorMod(field.ordinal() + dir, all.length)];
-    }
-
-    public static void cycleStep(int dir) {
-        stepIndex = Math.floorMod(stepIndex + dir, STEPS.length);
-    }
-
-    public static float step() {
-        return STEPS[stepIndex];
-    }
-
-    public static double fieldValue() {
-        return switch (field) {
-            case POS_X -> draft.position[0];
-            case POS_Y -> draft.position[1];
-            case POS_Z -> draft.position[2];
-            case EYE_SCALE -> draft.eyeScale;
-            case IRIS_SCALE -> draft.irisScale;
-            case SIDE_OFFSET -> draft.sideOffset;
-            case Y_ROT -> draft.yRotation;
-            case X_ROT -> draft.xRotation;
-        };
-    }
-
-    public static void adjust(int dir) {
-        float d = step() * dir;
-        switch (field) {
-            case POS_X -> draft.position[0] += d;
-            case POS_Y -> draft.position[1] += d;
-            case POS_Z -> draft.position[2] += d;
-            case EYE_SCALE -> draft.eyeScale = Math.max(0, draft.eyeScale + d);
-            case IRIS_SCALE -> draft.irisScale = Math.max(0, draft.irisScale + d);
-            case SIDE_OFFSET -> draft.sideOffset += d;
-            case Y_ROT -> draft.yRotation += d;
-            case X_ROT -> draft.xRotation += d;
-        }
-        draftCommitted = false;
-    }
-
-    public static void toggleGlow() {
-        draft.glows = !draft.glows;
-        draftCommitted = false;
-    }
-
-    public static void toggleInvisibility() {
-        draft.affectedByInvisibility = !draft.affectedByInvisibility;
-        draftCommitted = false;
-    }
-
-    // ---- commit / remove -------------------------------------------------------------------
-
-    public static void commit() {
-        if (draftCommitted) {
+        if (parts.isEmpty()) {
             return;
         }
-        commitEye(copy(draft));
-        draftCommitted = true;
+        partIndex = Math.floorMod(partIndex + dir, parts.size());
+        currentPart = parts.get(partIndex);
     }
 
-    /** Commit the draft and its X-mirror in one go (symmetric pair). */
-    public static void commitMirror() {
-        if (draftCommitted) {
-            return;
-        }
-        commitEye(copy(draft));
-        EyeConfig mirror = copy(draft);
-        mirror.position[0] = -mirror.position[0];
-        mirror.sideOffset = -mirror.sideOffset;
-        commitEye(mirror);
-        draftCommitted = true;
+    /** The CLI {@code part none} op. */
+    public static void clearPart() {
+        currentPart = null;
     }
 
-    private static void commitEye(EyeConfig eye) {
-        String token = selectedToken();
-        if (token == null) {
-            return;
+    /** The CLI {@code part <name>} op; false if no such part. */
+    public static boolean setPartByName(String token) {
+        String want = EyeAttachmentResolver.normalize(token);
+        for (int i = 0; i < parts.size(); i++) {
+            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+                partIndex = i;
+                currentPart = parts.get(i);
+                return true;
+            }
         }
-        HeadConfig head = heads.computeIfAbsent(token, t -> {
-            HeadConfig h = new HeadConfig();
-            h.attachPoint = t;
-            h.eyes = new ArrayList<>();
-            return h;
-        });
-        head.eyes.add(eye);
-        commitOrder.add(token);
+        return false;
     }
 
-    public static void removeLast() {
-        if (commitOrder.isEmpty()) {
+    /** The CLI {@code part <number>} op (1-based); false if out of range. */
+    public static boolean setPartByNumber(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= parts.size()) {
+            return false;
+        }
+        partIndex = idx;
+        currentPart = parts.get(idx);
+        return true;
+    }
+
+    private static void syncPartIndex() {
+        if (currentPart == null) {
             return;
         }
-        String token = commitOrder.remove(commitOrder.size() - 1);
-        HeadConfig head = heads.get(token);
-        if (head != null && head.eyes != null && !head.eyes.isEmpty()) {
-            head.eyes.remove(head.eyes.size() - 1);
-            if (head.eyes.isEmpty()) {
-                heads.remove(token);
+        String want = EyeAttachmentResolver.normalize(currentPart);
+        for (int i = 0; i < parts.size(); i++) {
+            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+                partIndex = i;
+                return;
             }
         }
     }
 
-    public static int committedCount() {
-        return commitOrder.size();
+    // ---- CLI current-eye ops ---------------------------------------------------------------
+
+    /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
+    public static void createEye(double x, double y, double z) {
+        currentEye = defaultEye();
+        currentEye.position[0] = x;
+        currentEye.position[1] = y;
+        currentEye.position[2] = z;
+        selectedIndex = -1;
     }
 
-    /** Build the selected runtime config from the committed heads (for export). */
+    /** The CLI {@code move x y z} op: set absolute position; {@code null} leaves that axis unchanged. */
+    public static void setPosition(Double x, Double y, Double z) {
+        if (x != null) {
+            currentEye.position[0] = x;
+        }
+        if (y != null) {
+            currentEye.position[1] = y;
+        }
+        if (z != null) {
+            currentEye.position[2] = z;
+        }
+    }
+
+    /** The CLI {@code rot inclination azimuth} op; {@code null} leaves that angle unchanged. */
+    public static void setRotation(Double inclination, Double azimuth) {
+        if (inclination != null) {
+            currentEye.inclination = inclination;
+        }
+        if (azimuth != null) {
+            currentEye.azimuth = azimuth;
+        }
+    }
+
+    public static void setEyeScale(double v) {
+        currentEye.eyeScale = Math.max(0, v);
+    }
+
+    public static void setIrisScale(double v) {
+        currentEye.irisScale = Math.max(0, v);
+    }
+
+    public static void setCorneaColor(double r, double g, double b) {
+        currentEye.corneaColors = new double[]{r, g, b};
+    }
+
+    public static void setIrisColor(double r, double g, double b) {
+        currentEye.irisColors = new double[]{r, g, b};
+    }
+
+    public static void setGlow(boolean v) {
+        currentEye.glows = v;
+    }
+
+    public static void setInvis(boolean v) {
+        currentEye.affectedByInvisibility = v;
+    }
+
+    // ---- eye list (save / select / delete) -------------------------------------------------
+
+    /**
+     * Save the current eye: overwrite the selected slot in place, or append a new one if none is
+     * selected. Returns false if there is no part to attach to. After an append the new eye becomes
+     * selected, so an immediate re-save updates it rather than duplicating it.
+     */
+    public static boolean save() {
+        if (currentPart == null) {
+            return false;
+        }
+        if (selectedIndex >= 0 && selectedIndex < eyes.size()) {
+            ListedEye le = eyes.get(selectedIndex);
+            le.part = currentPart;
+            le.eye = copy(currentEye);
+        } else {
+            eyes.add(new ListedEye(currentPart, copy(currentEye)));
+            selectedIndex = eyes.size() - 1;
+        }
+        return true;
+    }
+
+    /** The CLI {@code select <n>} op (1-based): load a saved eye for further adjustment. */
+    public static boolean select(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= eyes.size()) {
+            return false;
+        }
+        ListedEye le = eyes.get(idx);
+        currentEye = copy(le.eye);
+        currentPart = le.part;
+        syncPartIndex();
+        selectedIndex = idx;
+        return true;
+    }
+
+    /** The CLI {@code delete <n>} op (1-based). */
+    public static boolean delete(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= eyes.size()) {
+            return false;
+        }
+        eyes.remove(idx);
+        if (selectedIndex == idx) {
+            selectedIndex = -1;
+        } else if (selectedIndex > idx) {
+            selectedIndex--;
+        }
+        return true;
+    }
+
+    public static int committedCount() {
+        return eyes.size();
+    }
+
+    /** Build the selected runtime config from the saved eyes, grouped by part (for export). */
     public static RuntimeConfig toConfig() {
         RuntimeConfig config = new RuntimeConfig();
         config.enabled = true;
-        config.heads = new ArrayList<>(heads.values());
+        LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
+        for (ListedEye le : eyes) {
+            if (le.part == null) {
+                continue;
+            }
+            HeadConfig head = grouped.computeIfAbsent(le.part, t -> {
+                HeadConfig h = new HeadConfig();
+                h.attachPoint = t;
+                h.eyes = new ArrayList<>();
+                return h;
+            });
+            head.eyes.add(le.eye);
+        }
+        config.heads = new ArrayList<>(grouped.values());
         return config;
     }
 
@@ -329,8 +393,8 @@ public final class PickerState {
         e.eyeScale = 0.75;
         e.irisScale = 0.6;
         e.sideOffset = 0.0;
-        e.yRotation = 0.0;
-        e.xRotation = 0.0;
+        e.inclination = HeadInfo.DEFAULT_INCLINATION;
+        e.azimuth = HeadInfo.DEFAULT_AZIMUTH;
         e.corneaColors = new double[]{1.0, 1.0, 1.0};
         e.irisColors = new double[]{0.0, 0.0, 0.0};
         e.glows = false;
@@ -344,8 +408,8 @@ public final class PickerState {
         e.eyeScale = s.eyeScale;
         e.irisScale = s.irisScale;
         e.sideOffset = s.sideOffset;
-        e.yRotation = s.yRotation;
-        e.xRotation = s.xRotation;
+        e.inclination = s.inclination != null ? s.inclination : HeadInfo.DEFAULT_INCLINATION;
+        e.azimuth = s.azimuth != null ? s.azimuth : HeadInfo.DEFAULT_AZIMUTH;
         e.corneaColors = new double[]{s.corneaColors[0], s.corneaColors[1], s.corneaColors[2]};
         e.irisColors = new double[]{s.irisColors[0], s.irisColors[1], s.irisColors[2]};
         e.glows = s.glows;

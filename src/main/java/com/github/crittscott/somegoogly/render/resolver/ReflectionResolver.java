@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
  * one is the fallback for everything else. Every access is guarded, so an unreflectable model just
  * yields no eyes — never a crash.
  *
- * <p>Known limits (tracked in PLAN.md): indices shift if a mod renames/adds parts in an update; and
+ * <p>Known limits: indices shift if a mod renames/reorders/adds parts in an update; and
  * {@code AgeableListModel}'s baby scale/offset happens outside the part tree, so baby mobs may be
  * mis-placed.
  */

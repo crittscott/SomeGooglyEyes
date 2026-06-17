@@ -19,8 +19,16 @@ import java.util.List;
  * pose of the first cube whose final path segment matches the requested token (normalised so a
  * camelCase config token like {@code leftHead} matches a {@code left_head} key).
  *
- * <p>This is the mechanism validated in the Phase 0 spike: production-safe (string names survive
- * obfuscation) and it inherits all head/body/keyframe animation automatically.
+ * <p>This is production-safe (string names survive obfuscation) and inherits all head/body/keyframe
+ * animation automatically, because {@code visit} replays the very transforms the model used to render.
+ *
+ * <p><b>Known limitation (observed 2026-06-16, deliberately not fixed yet):</b> {@code visit} only
+ * yields parts that contain cubes. A part that is a pure pivot/group — a joint with child parts but no
+ * cubes of its own — is therefore invisible here: it can be neither listed by the picker
+ * ({@link #enumerateParts}) nor matched as an attach token ({@link #toAttachmentSpace}). We're leaving
+ * this until it actually bites in production, but recording it now because the symptom (eyes silently
+ * refusing to attach to a named empty joint, with no error) is hard to diagnose cold. A fix would walk
+ * the part tree directly via the child maps instead of relying on {@code visit}'s cube callback.
  */
 public class HierarchicalResolver implements EyeAttachmentResolver {
 

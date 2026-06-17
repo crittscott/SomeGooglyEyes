@@ -20,8 +20,10 @@ import java.util.Optional;
  * transform via {@code RenderUtils.prepMatrixForBone} — the same accumulation GeckoLib does while
  * rendering, so it reproduces the bone's animated pose.
  *
- * <p>NOTE: the exact GeckoLib 4.7.4 API (method names on {@code BakedGeoModel}/{@code GeoBone} and
- * {@code RenderUtils.prepMatrixForBone}) is the main thing to confirm on build.
+ * <p>NOTE: this binds directly to the GeckoLib 4.7.4 API ({@code BakedGeoModel#topLevelBones}/
+ * {@code getBone}, {@code GeoBone}, and {@code RenderUtils.prepMatrixForBone}). Those names can change
+ * between GeckoLib versions, so this is the first place to look if a GeckoLib update breaks bone
+ * attachment.
  */
 public final class GeoBones {
 

@@ -17,8 +17,8 @@
               "eyeScale": 0.75,
               "irisScale": 0.6,
               "sideOffset": 0.0,
-              "yRotation": 0.0,
-              "xRotation": 0.0,
+              "inclination": 90.0,
+              "azimuth": 270.0,
               "corneaColors": [
                 1.0,
                 1.0,
@@ -41,8 +41,8 @@
               "eyeScale": 0.75,
               "irisScale": 0.6,
               "sideOffset": 0.0,
-              "yRotation": 0.0,
-              "xRotation": 0.0,
+              "inclination": 90.0,
+              "azimuth": 270.0,
               "corneaColors": [
                 1.0,
                 1.0,

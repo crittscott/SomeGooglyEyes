@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.head;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -87,14 +89,36 @@ public class HeadInfo {
         return eye != null ? (float) eye.sideOffset : 0.0f;
     }
 
-    public float getEyeRotation(int headIndex, int eyeIndex) {
+    public double getInclination(int headIndex, int eyeIndex) {
         EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? (float) eye.yRotation : 0.0f;
+        return eye != null && eye.inclination != null ? eye.inclination : DEFAULT_INCLINATION;
     }
 
-    public float getEyeTopRotation(int headIndex, int eyeIndex) {
+    public double getAzimuth(int headIndex, int eyeIndex) {
         EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? (float) eye.xRotation : 0.0f;
+        return eye != null && eye.azimuth != null ? eye.azimuth : DEFAULT_AZIMUTH;
+    }
+
+    /** Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye. */
+    public static final double DEFAULT_INCLINATION = 90.0;
+    public static final double DEFAULT_AZIMUTH = 270.0;
+
+    /**
+     * Aim the eye via two angles instead of a quaternion: {@code inclination} measured from the part's
+     * +Y axis and {@code azimuth} from its +X axis (both degrees). The eye's pupil faces local -Z by
+     * default; this rotates that axis onto the direction {@code (sinθcosφ, cosθ, sinθsinφ)}. Roll is
+     * irrelevant (the eye is rotationally symmetric about its look axis), so two angles suffice.
+     */
+    public static void applyRotation(PoseStack poseStack, double inclination, double azimuth) {
+        poseStack.mulPose(Axis.YP.rotationDegrees((float) (-(azimuth + 90.0))));
+        poseStack.mulPose(Axis.XP.rotationDegrees((float) (90.0 - inclination)));
+    }
+
+    /** Apply {@link #applyRotation(PoseStack, double, double)} using an eye's angles (null = default). */
+    public static void applyRotation(PoseStack poseStack, EyeConfig eye) {
+        double inc = eye != null && eye.inclination != null ? eye.inclination : DEFAULT_INCLINATION;
+        double azi = eye != null && eye.azimuth != null ? eye.azimuth : DEFAULT_AZIMUTH;
+        applyRotation(poseStack, inc, azi);
     }
 
     public float[] getEyeOffsetFromJoint(int headIndex, int eyeIndex) {
@@ -197,8 +221,8 @@ public class HeadInfo {
         public double eyeScale;
         public double irisScale;
         public double sideOffset;
-        public double yRotation;
-        public double xRotation;
+        public Double inclination; // angle from part +Y (degrees); null = default forward
+        public Double azimuth;     // angle from part +X (degrees); null = default forward
         public double[] corneaColors;
         public double[] irisColors;
         public boolean glows;

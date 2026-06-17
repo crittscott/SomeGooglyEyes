@@ -4,14 +4,12 @@ import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.picker.Gizmo;
 import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -62,7 +60,9 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         if (ClientConfig.isEntityDisabled(entityType)) {
             return;
         }
-        if (!living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
+        // While the picker is active, force eyes on every eye-configured mob for authoring (mirrors
+        // LayerGooglyEyes); otherwise honour the server's per-mob spawn decision.
+        if (!PickerState.active && !living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
             return;
         }
         HeadInfo helper = HeadInfo.getHelper(entityType, living);
@@ -98,21 +98,27 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
     private void renderPickerPreview(PoseStack poseStack, BakedGeoModel bakedModel,
                                      MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        for (HeadConfig head : PickerState.heads.values()) {
+        // Saved eyes. The selected one is skipped here — it's shown live as the current eye instead.
+        for (int i = 0; i < PickerState.eyes.size(); i++) {
+            if (i == PickerState.selectedIndex) {
+                continue;
+            }
+            PickerState.ListedEye listed = PickerState.eyes.get(i);
+            if (listed.part == null) {
+                continue;
+            }
             poseStack.pushPose();
-            if (GeoBones.moveTo(poseStack, bakedModel, head.attachPoint) && head.eyes != null) {
-                for (EyeConfig eye : head.eyes) {
-                    renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, eye);
-                }
+            if (GeoBones.moveTo(poseStack, bakedModel, listed.part)) {
+                renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, listed.eye);
             }
             poseStack.popPose();
         }
-        String token = PickerState.selectedToken();
+        String token = PickerState.currentPart;
         if (token != null) {
             poseStack.pushPose();
             if (GeoBones.moveTo(poseStack, bakedModel, token)) {
                 Gizmo.draw(poseStack, bufferSource);
-                renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, PickerState.draft);
+                renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, PickerState.currentEye);
             }
             poseStack.popPose();
         }
@@ -123,8 +129,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         poseStack.pushPose();
         float[] off = helper.getEyeOffsetFromJoint(h, i);
         poseStack.translate(off[0] + helper.getEyeSideOffset(h, i), off[1], off[2]);
-        poseStack.mulPose(Axis.YP.rotationDegrees(helper.getEyeRotation(h, i)));
-        poseStack.mulPose(Axis.XP.rotationDegrees(helper.getEyeTopRotation(h, i)));
+        HeadInfo.applyRotation(poseStack, helper.getInclination(h, i), helper.getAzimuth(h, i));
         float scale = helper.getEyeScale(h, i);
         poseStack.scale(scale, scale, scale * 0.4F);
 
@@ -154,8 +159,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
     private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeConfig eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
-        poseStack.mulPose(Axis.YP.rotationDegrees((float) eye.yRotation));
-        poseStack.mulPose(Axis.XP.rotationDegrees((float) eye.xRotation));
+        HeadInfo.applyRotation(poseStack, eye);
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);
 
