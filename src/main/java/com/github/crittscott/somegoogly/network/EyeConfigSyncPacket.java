@@ -39,11 +39,20 @@ public class EyeConfigSyncPacket {
 
     public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
         int size = buffer.readVarInt();
-        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>(size);
+        // Don't pre-size from the wire count: an oversized value would force a large table allocation
+        // before any real data is read. Let the map grow as entries actually arrive.
+        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
-            RuntimeConfigSet config = GSON.fromJson(buffer.readUtf(), RuntimeConfigSet.class);
-            configs.put(id, config);
+            String json = buffer.readUtf();
+            // Skip a single malformed entry (e.g. schema drift between mod versions) rather than
+            // letting it abort the whole sync — which would surface as a disconnect. The id and JSON
+            // are always read first so the buffer stays aligned for the next entry.
+            try {
+                configs.put(id, GSON.fromJson(json, RuntimeConfigSet.class));
+            } catch (Exception e) {
+                SomeGoogly.LOGGER.error("Skipping malformed synced eye config for {}", id, e);
+            }
         }
         return new EyeConfigSyncPacket(configs);
     }

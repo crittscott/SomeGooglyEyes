@@ -168,6 +168,29 @@ public final class PickerState {
         });
     }
 
+    /**
+     * Restore a frozen mob's previous NoAi value <b>synchronously on the server thread</b>. Called at
+     * server stop (which fires before the final world save), so the picker's forced NoAi is never
+     * written to disk. Unlike {@link #unfreeze()} this runs inline rather than via the server task
+     * queue, which may no longer drain during shutdown.
+     *
+     * <p>Does not cover an autosave mid-edit followed by a hard crash (the forced NoAi would persist
+     * until the next clean load); that window is intentionally left, since the picker is a
+     * single-player authoring tool.
+     */
+    public static void unfreezeOnStop(MinecraftServer server) {
+        if (frozenId < 0 || frozenDim == null || server == null) {
+            return;
+        }
+        ServerLevel level = server.getLevel(frozenDim);
+        Entity e = level == null ? null : level.getEntity(frozenId);
+        if (e instanceof Mob mob) {
+            mob.setNoAi(frozenPrevNoAi);
+        }
+        frozenId = -1;
+        frozenDim = null;
+    }
+
     private static void unfreeze() {
         if (frozenId < 0 || frozenDim == null) {
             return;
