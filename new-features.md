@@ -7,15 +7,10 @@ Babies vs Adults
 
 ### Mob preview / testing command
 
-Add a command that generates every eye-compatible mob for testing.
+DONE
 
-Behavior:
+~~Add a command that generates every eye-compatible mob for testing.~~
 
-* Spawn mobs with no AI.
-* Sort mobs by name.
-* Place each mob at the center of a 3×3 square.
-* Spawn the display area in the closest cardinal direction to the direction the player is facing, making a line of mobs moving away from the player.
-* Make all spawned mobs face the player.
 
 ## 2. Eyes as Items
 
