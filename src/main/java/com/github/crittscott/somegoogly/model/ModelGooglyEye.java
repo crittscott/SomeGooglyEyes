@@ -97,6 +97,15 @@ public class ModelGooglyEye extends Model {
     }
 
     public void moveIris(float x, float y, float pupilSize) {
+        // A zero/negative iris scale divides to Infinity/NaN below, which would feed garbage iris
+        // coordinates to the GPU. There's nothing visible to move at that scale, so centre and bail.
+        if (pupilSize <= 0F) {
+            for (ModelPart part : iris) {
+                part.x = 0F;
+                part.y = 0F;
+            }
+            return;
+        }
         float shiftFactor = (1.45F - pupilSize * 0.525F) / pupilSize;
         float rotX = -x * shiftFactor;
         float rotY = -y * shiftFactor * (float)Math.cos(Math.toRadians(x * 90F));

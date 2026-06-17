@@ -19,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -75,6 +76,14 @@ public class ClientEventHandler {
         // Release any picker-frozen mob and leave picker mode so NoAi can't persist.
         PickerState.active = false;
         PickerState.unlock();
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        // Restore a picker-frozen mob's NoAi synchronously before the integrated server's final save,
+        // so the forced NoAi is never written to disk. Runs on the server thread (no task-queue race,
+        // which unlock()'s async unfreeze would risk during shutdown).
+        PickerState.unfreezeOnStop(event.getServer());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
