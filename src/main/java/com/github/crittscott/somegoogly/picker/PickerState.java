@@ -39,25 +39,6 @@ import java.util.List;
  */
 public final class PickerState {
 
-    /** Draft fields the keyboard value keys adjust, in cycle order. */
-    public enum Field {
-        POS_X("x"), POS_Y("y"), POS_Z("z"),
-        EYE_SCALE("eyeScale"), IRIS_SCALE("irisScale"),
-        SIDE_OFFSET("side"),
-        INCLINATION("inclination"), AZIMUTH("azimuth");
-
-        public final String label;
-        Field(String label) { this.label = label; }
-
-        /** Angle fields are in degrees and want the coarser step ladder. */
-        public boolean isAngle() { return this == INCLINATION || this == AZIMUTH; }
-    }
-
-    // Step ladders cycled by the step key. Angle fields are in degrees and want coarser steps than the
-    // linear fields (block units), so they get their own ladder; stepLadder() picks per field.
-    private static final float[] LINEAR_STEPS = {0.001f, 0.01f, 0.05f, 0.1f, 1.0f};
-    private static final float[] ANGLE_STEPS = {1f, 5f, 15f, 30f, 45f, 90f};
-
     public static boolean active = false;
     private static WeakReference<LivingEntity> target = new WeakReference<>(null);
     private static EntityModel<?> model;
@@ -86,9 +67,6 @@ public final class PickerState {
     public static String currentPart = null;
     /** Index into {@link #eyes} that {@code save} writes back to, or {@code -1} to append a fresh eye. */
     public static int selectedIndex = -1;
-
-    public static Field field = Field.POS_X;
-    public static int stepIndex = 1; // 0.01
 
     // AI-freeze bookkeeping (single-player only). Restored on unchoose/exit so NoAi doesn't persist.
     private static int frozenId = -1;
@@ -157,7 +135,6 @@ public final class PickerState {
             eyes.clear();
             currentEye = defaultEye();
             selectedIndex = -1;
-            field = Field.POS_X;
         }
         freeze(living);
         return "Chose " + newType + (keepWork ? " (kept " + committedCount() + " eyes)" : "")
@@ -274,66 +251,6 @@ public final class PickerState {
         }
     }
 
-    // ---- keyboard field editing ------------------------------------------------------------
-
-    public static void cycleField(int dir) {
-        Field[] all = Field.values();
-        field = all[Math.floorMod(field.ordinal() + dir, all.length)];
-    }
-
-    public static void cycleStep(int dir) {
-        stepIndex = Math.floorMod(stepIndex + dir, stepLadder().length);
-    }
-
-    public static float step() {
-        float[] ladder = stepLadder();
-        return ladder[Math.floorMod(stepIndex, ladder.length)];
-    }
-
-    /** The step ladder for the currently selected field (angle fields use coarser degree steps). */
-    private static float[] stepLadder() {
-        return field.isAngle() ? ANGLE_STEPS : LINEAR_STEPS;
-    }
-
-    public static double fieldValue() {
-        return switch (field) {
-            case POS_X -> currentEye.position[0];
-            case POS_Y -> currentEye.position[1];
-            case POS_Z -> currentEye.position[2];
-            case EYE_SCALE -> currentEye.eyeScale;
-            case IRIS_SCALE -> currentEye.irisScale;
-            case SIDE_OFFSET -> currentEye.sideOffset;
-            case INCLINATION -> inclination();
-            case AZIMUTH -> azimuth();
-        };
-    }
-
-    public static void adjust(int dir) {
-        nudge(field, step() * dir);
-    }
-
-    /** Add {@code delta} to a field — the keyboard adjust keys. */
-    public static void nudge(Field target, double delta) {
-        switch (target) {
-            case POS_X -> currentEye.position[0] += delta;
-            case POS_Y -> currentEye.position[1] += delta;
-            case POS_Z -> currentEye.position[2] += delta;
-            case EYE_SCALE -> currentEye.eyeScale = Math.max(0, currentEye.eyeScale + delta);
-            case IRIS_SCALE -> currentEye.irisScale = Math.max(0, currentEye.irisScale + delta);
-            case SIDE_OFFSET -> currentEye.sideOffset += delta;
-            case INCLINATION -> currentEye.inclination = inclination() + delta;
-            case AZIMUTH -> currentEye.azimuth = azimuth() + delta;
-        }
-    }
-
-    private static double inclination() {
-        return currentEye.inclination != null ? currentEye.inclination : HeadInfo.DEFAULT_INCLINATION;
-    }
-
-    private static double azimuth() {
-        return currentEye.azimuth != null ? currentEye.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-    }
-
     // ---- CLI current-eye ops ---------------------------------------------------------------
 
     /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
@@ -392,14 +309,6 @@ public final class PickerState {
         currentEye.affectedByInvisibility = v;
     }
 
-    public static void toggleGlow() {
-        currentEye.glows = !currentEye.glows;
-    }
-
-    public static void toggleInvisibility() {
-        currentEye.affectedByInvisibility = !currentEye.affectedByInvisibility;
-    }
-
     // ---- eye list (save / select / delete) -------------------------------------------------
 
     /**
@@ -419,22 +328,6 @@ public final class PickerState {
             eyes.add(new ListedEye(currentPart, copy(currentEye)));
             selectedIndex = eyes.size() - 1;
         }
-        return true;
-    }
-
-    /** Save the current eye and its X-mirror as a symmetric pair (keyboard only). */
-    public static boolean saveMirror() {
-        if (!save()) {
-            return false;
-        }
-        EyeConfig mirror = copy(currentEye);
-        mirror.position[0] = -mirror.position[0];
-        mirror.sideOffset = -mirror.sideOffset;
-        // Reflect the look direction across the X (left/right) plane: inclination unchanged,
-        // azimuth -> 180 - azimuth.
-        mirror.azimuth = 180.0 - azimuth();
-        eyes.add(new ListedEye(currentPart, mirror));
-        selectedIndex = eyes.size() - 1;
         return true;
     }
 
@@ -465,13 +358,6 @@ public final class PickerState {
             selectedIndex--;
         }
         return true;
-    }
-
-    /** Remove the last saved eye (keyboard undo). */
-    public static void deleteLast() {
-        if (!eyes.isEmpty()) {
-            delete(eyes.size());
-        }
     }
 
     public static int committedCount() {
