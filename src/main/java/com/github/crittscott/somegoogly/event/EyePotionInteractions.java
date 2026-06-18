@@ -1,0 +1,72 @@
+package com.github.crittscott.somegoogly.event;
+
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.potion.ModPotions;
+import com.github.crittscott.somegoogly.state.EntityEyeHolder;
+import com.github.crittscott.somegoogly.state.EyeState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.List;
+
+/**
+ * Splash "googly eyes" potion behaviour (server-side). When a thrown {@link ModPotions#GOOGLY_EYES}
+ * splash breaks, exactly <b>one</b> randomly chosen eligible mob within the splash area gets eyes —
+ * not the whole cloud.
+ *
+ * <p>We do <i>not</i> cancel the impact: the potion carries no {@code MobEffect}s, so vanilla's own
+ * splash application is inert, but it still breaks the bottle, plays the particles/sound, and discards
+ * the projectile. We just add the single-target pick on top.
+ */
+public class EyePotionInteractions {
+
+    // Mirror vanilla splash reach (ThrownPotion inflates its box by 4,2,4).
+    private static final double RADIUS_XZ = 4.0;
+    private static final double RADIUS_Y = 2.0;
+
+    @SubscribeEvent
+    public void onProjectileImpact(ProjectileImpactEvent event) {
+        if (!(event.getProjectile() instanceof ThrownPotion potion)) {
+            return;
+        }
+        Level level = potion.level();
+        if (level.isClientSide()) {
+            return;
+        }
+
+        ItemStack stack = potion.getItem();
+        if (!stack.is(Items.SPLASH_POTION) || PotionUtils.getPotion(stack) != ModPotions.GOOGLY_EYES.get()) {
+            return;
+        }
+
+        Vec3 hit = event.getRayTraceResult().getLocation();
+        AABB area = new AABB(
+                hit.x - RADIUS_XZ, hit.y - RADIUS_Y, hit.z - RADIUS_XZ,
+                hit.x + RADIUS_XZ, hit.y + RADIUS_Y, hit.z + RADIUS_XZ);
+
+        // Eligible = the entity can actually wear eyes (config-gated, which excludes players) and
+        // doesn't already have them, so a potion thrown into a partly-eyed crowd still does something.
+        List<LivingEntity> candidates = level.getEntitiesOfClass(LivingEntity.class, area,
+                e -> ServerEyeConfigs.isEligible(e) && !EyeState.hasEyes(e));
+        if (candidates.isEmpty()) {
+            return;
+        }
+
+        LivingEntity chosen = candidates.get(level.getRandom().nextInt(candidates.size()));
+
+        // Apply the potion's carried appearance (brewed in from the eye item), then turn eyes on —
+        // same order/seam as the right-click item reattach. Empty properties fall back to config.
+        EntityEyeHolder holder = new EntityEyeHolder(chosen);
+        holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
+        holder.setHasEyes(true);
+    }
+}

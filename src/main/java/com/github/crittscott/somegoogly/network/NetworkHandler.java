@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(SomeGoogly.MOD_ID, "main"),
@@ -20,10 +20,10 @@ public class NetworkHandler {
 
         INSTANCE.registerMessage(
                 id++,
-                GooglyEyePacket.class,
-                GooglyEyePacket::encode,
-                GooglyEyePacket::decode,
-                GooglyEyePacket::handle
+                EyeStatePacket.class,
+                EyeStatePacket::encode,
+                EyeStatePacket::decode,
+                EyeStatePacket::handle
         );
 
         INSTANCE.registerMessage(

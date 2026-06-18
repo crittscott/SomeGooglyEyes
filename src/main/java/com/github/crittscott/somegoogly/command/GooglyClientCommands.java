@@ -1,10 +1,12 @@
 package com.github.crittscott.somegoogly.command;
 
+import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.picker.PickerExporter;
 import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -23,9 +25,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -56,6 +62,10 @@ public class GooglyClientCommands {
             new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
+    private static final SimpleCommandExceptionType NO_TARGET =
+            new SimpleCommandExceptionType(Component.literal("Look at a mob first."));
+    private static final SimpleCommandExceptionType NO_EYES =
+            new SimpleCommandExceptionType(Component.literal("That mob has no eye config."));
 
     /** Captured at registration so chained fragments can be re-dispatched. */
     private static CommandDispatcher<CommandSourceStack> commandDispatcher;
@@ -136,6 +146,29 @@ public class GooglyClientCommands {
         });
 
         alias(sg, "ex", "export", b -> terminal(b, GooglyClientCommands::export));
+
+        // debug: force the client-side Keystone B expressions on the looked-at mob (testing only).
+        alias(sg, "db", "debug", b -> {
+            LiteralArgumentBuilder<CommandSourceStack> blink = Commands.literal("blink");
+            terminal(blink, ctx -> debugBlink(ctx, false));
+            addAlias(blink, "wink", x -> terminal(x, ctx -> debugBlink(ctx, true)));
+            b.then(blink);
+
+            LiteralArgumentBuilder<CommandSourceStack> stare = Commands.literal("stare");
+            terminal(stare, ctx -> debugStare(ctx, 60));
+            RequiredArgumentBuilder<CommandSourceStack, Integer> ticks = Commands.argument("ticks", IntegerArgumentType.integer(1));
+            terminal(ticks, ctx -> debugStare(ctx, IntegerArgumentType.getInteger(ctx, "ticks")));
+            stare.then(ticks);
+            b.then(stare);
+
+            addAlias(b, "swirl", x -> terminal(x, GooglyClientCommands::debugSwirl));
+
+            LiteralArgumentBuilder<CommandSourceStack> anger = Commands.literal("anger");
+            RequiredArgumentBuilder<CommandSourceStack, Boolean> on = Commands.argument("on", BoolArgumentType.bool());
+            terminal(on, GooglyClientCommands::debugAnger);
+            anger.then(on);
+            b.then(anger);
+        });
 
         // spawnall has no short form (and no chain tail) — the full word is required, one-off only.
         sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));
@@ -400,6 +433,54 @@ public class GooglyClientCommands {
         });
         feedback(ctx, "Spawning mobs…");
         return 1;
+    }
+
+    // ---- debug (Keystone B expression triggers) --------------------------------------------
+
+    private static int debugBlink(CommandContext<CommandSourceStack> ctx, boolean wink) throws CommandSyntaxException {
+        lookedAtTracker().forceBlink(wink);
+        feedback(ctx, wink ? "Wink." : "Blink.");
+        return 1;
+    }
+
+    private static int debugStare(CommandContext<CommandSourceStack> ctx, int ticks) throws CommandSyntaxException {
+        lookedAtTracker().forceStare(ticks);
+        feedback(ctx, "Staring for " + ticks + " ticks.");
+        return 1;
+    }
+
+    private static int debugSwirl(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        lookedAtTracker().forceSwirl();
+        feedback(ctx, "Swirl.");
+        return 1;
+    }
+
+    private static int debugAnger(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        boolean on = BoolArgumentType.getBool(ctx, "on");
+        lookedAtTracker().forceAnger(on);
+        feedback(ctx, "Anger " + (on ? "on" : "off") + ".");
+        return 1;
+    }
+
+    /** Resolve the tracker for the mob under the crosshair (creative-gated, like the picker). */
+    private static GooglyTracker lookedAtTracker() throws CommandSyntaxException {
+        requireCreative();
+        LivingEntity living = lookedAtLiving();
+        if (living == null) {
+            throw NO_TARGET.create();
+        }
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        HeadInfo helper = HeadInfo.getHelper(type, living);
+        if (helper == null || !helper.hasConfig()) {
+            throw NO_EYES.create();
+        }
+        return SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);
+    }
+
+    /** The mob under the crosshair, using the game's own entity pick (matches what you see). */
+    private static LivingEntity lookedAtLiving() {
+        Entity target = Minecraft.getInstance().crosshairPickEntity;
+        return target instanceof LivingEntity living ? living : null;
     }
 
     // ---- helpers ---------------------------------------------------------------------------

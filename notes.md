@@ -1,0 +1,45 @@
+ensure debug is feature complete. Require creative mode. 
+Only one debug, client side. Right way? Teleport client to server via packet?
+Folder organization? Client/server? Some way to cleanly separate/indicate what is client only, what is server. 
+Proper implementation of all features (shears harvest with prob only on kill)
+Enchant shears to remove without killing mob. 
+Code structure: use my logger format. Move numerics to leading variables. Local use should stay local defined. What things go in config? 
+Add alternate placements with probs to json. *not* matter for picker. 
+Can we remove (no doubt cover up) the cyclops eye? So shearing leaves it blind
+Butt eyes: horse, pig, pillager beast, bees (one)
+Deal with babies. 
+Eyes on armor stands and boats? Realistic boat mod? Minecarts?
+Make eyes emit light. 
+Eyes on players 
+Eyes on armor (helmet, shield, leggings). 
+Server does not need to update iris dynamics, only needs to know “start wink” etc. server maintains eye existence and state but not physics. Don’t need different players to agree on precise iris location or exactly when a wink starts and stops. Only color, etc. 
+nbt or capability?
+GooglyLib to expose setting eye state for other modders? Separate mod or built in?
+Switch to actual cylinder not rotated quads
+Use blockbench to put eye locators. Make json compatible so can paste
+Will it work with realistic bees?
+Can we tell if a villager is running in fear? If so, scared eye effect. 
+Effects: stare, blink, scared, colored, swirly, black and blue if injured, light emitting (squid), droopy, side eye, eye roll, cross eye
+Make blink have eyelid, colorable
+Maven upload and obfuscate 
+Dambala to design docs website 
+Contact ichun
+Fabric port
+1.21 port
+Do it the Forge way
+Assess sidedness
+
+
+
+
+
+
+
+
+
+Is nbt pot really a problem? Is there not a brew event? If not pot, then all pot things do not recognize. Do need normal pot, linger, etc. cannot make only splash? Surely an event. Just choose one target. 
+
+Do really need 2 eye as item for item frame? Again, is there not an event for addition?
+
+Assess for mc/forge way.
+

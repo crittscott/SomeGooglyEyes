@@ -5,9 +5,14 @@ import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
+import com.github.crittscott.somegoogly.event.EyeItemInteractions;
+import com.github.crittscott.somegoogly.event.EyePotionInteractions;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
+import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.potion.ModPotions;
+import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import com.github.crittscott.somegoogly.picker.PickerHud;
 import com.github.crittscott.somegoogly.picker.PickerInput;
 import com.github.crittscott.somegoogly.picker.PickerKeys;
@@ -25,6 +30,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -55,6 +61,10 @@ public class SomeGoogly {
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         NetworkHandler.register();
         COMMAND_ARGUMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModItems.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModRecipes.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModPotions.register(FMLJavaModLoadingContext.get().getModEventBus());
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientConfig.register();
@@ -75,8 +85,15 @@ public class SomeGoogly {
 
         ServerConfig.register();
         MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
+        MinecraftForge.EVENT_BUS.register(new EyeItemInteractions());
+        MinecraftForge.EVENT_BUS.register(new EyePotionInteractions());
 
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> "1", (a, b) -> true));
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        // Brewing must be registered on the main thread (the registry isn't thread-safe).
+        event.enqueueWork(ModPotions::registerBrewing);
     }
 
     @SubscribeEvent

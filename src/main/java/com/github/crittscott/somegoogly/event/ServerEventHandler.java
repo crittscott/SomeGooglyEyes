@@ -3,16 +3,18 @@ package com.github.crittscott.somegoogly.event;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.command.GooglyDebugCommand;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.GooglyEyePacket;
+import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -61,15 +63,21 @@ public class ServerEventHandler {
     }
 
     @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        GooglyDebugCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
         if (!(event.getTarget() instanceof LivingEntity living)) {
             return;
         }
 
-        boolean hasGooglyEyes = living.getPersistentData().getBoolean(HAS_EYES_KEY);
+        // Send the full current state (has-eyes + any appearance overrides applied since spawn) so a
+        // newly tracking player matches everyone else, not just the at-spawn decision.
         NetworkHandler.INSTANCE.send(
                 PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
-                new GooglyEyePacket(living.getId(), hasGooglyEyes)
+                new EyeStatePacket(living.getId(), EyeState.hasEyes(living), EyeState.overridesTagOrNull(living))
         );
     }
 
@@ -80,8 +88,7 @@ public class ServerEventHandler {
         if (ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
             // authoritative hard-off that beats the percent roll.
-            RuntimeConfig config = ServerEyeConfigs.get(entityType, living);
-            if (config != null && config.isEnabled() && config.heads != null && !config.heads.isEmpty()) {
+            if (ServerEyeConfigs.isEligible(living)) {
                 int percent = ServerConfig.percentFor(entityType);
 
                 // Seeded by UUID so the same mob always rolls the same result (the decision is stored
@@ -92,7 +99,8 @@ public class ServerEventHandler {
         }
 
         // Stored only; tracking clients learn the value when they start tracking the entity
-        // (onStartTracking). Since the decision never changes after spawn, no mid-life sync is needed.
+        // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
+        // mid-life via EyeState (shears / potion / dye / redstone), which re-syncs to trackers itself.
         living.getPersistentData().putBoolean(HAS_EYES_KEY, hasGooglyEyes);
     }
 }

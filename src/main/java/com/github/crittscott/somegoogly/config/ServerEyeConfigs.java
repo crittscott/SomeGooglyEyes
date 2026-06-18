@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -34,6 +35,18 @@ public final class ServerEyeConfigs {
 
     public static RuntimeConfig get(ResourceLocation entity, LivingEntity living) {
         return get(entity, living.isBaby());
+    }
+
+    /**
+     * Whether this entity can actually wear eyes: it has an age-appropriate config that is enabled and
+     * has at least one head. This is the shared eligibility gate used both by the at-spawn roll
+     * ({@code ServerEventHandler}) and by the splash potion ({@code EyePotionInteractions}). Players
+     * (and any other unconfigured entity) are not eligible.
+     */
+    public static boolean isEligible(LivingEntity living) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        RuntimeConfig config = get(type, living);
+        return config != null && config.isEnabled() && config.heads != null && !config.heads.isEmpty();
     }
 
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
