@@ -7,13 +7,15 @@ import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.picker.Gizmo;
 import com.github.crittscott.somegoogly.picker.PickerState;
+import com.github.crittscott.somegoogly.render.GooglyEyeRenderer;
+import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.EyeState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,10 +32,6 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
  * <p>Only loaded when GeckoLib is present (referenced via {@link GeckoCompat}).
  */
 public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
-
-    private static final ResourceLocation TEX = new ResourceLocation("somegoogly", "textures/model/modelgooglyeye.png");
-    private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
-    private static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 
     private final ModelGooglyEye modelGooglyEye;
 
@@ -70,9 +68,17 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             return;
         }
 
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item / potion), the same as the
+        // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
+        EyeProperties overrides = EyeState.readProperties(living);
+
         GooglyTracker tracker = SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);
         tracker.setLastUpdateRequest();
         tracker.requireUpdate();
+
+        // Keystone B: interpolate the per-mob expression scalars once for this frame (blink, hurt-grow,
+        // anger tint, stare, swirl). Shared with the vanilla layer so both render identically.
+        GooglyEyeRenderer.Frame frame = GooglyEyeRenderer.Frame.capture(tracker, partialTick);
 
         int headCount = helper.getHeadCount();
         for (int h = 0; h < headCount; h++) {
@@ -86,10 +92,8 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
                     if (helper.getEyeScale(h, i) <= 0F) {
                         continue;
                     }
-                    GooglyTracker.EyeInfo eye = tracker.eyes[h][i];
-                    float dx = eye.prevDeltaX + (eye.deltaX - eye.prevDeltaX) * partialTick;
-                    float dy = eye.prevDeltaY + (eye.deltaY - eye.prevDeltaY) * partialTick;
-                    renderEye(poseStack, bufferSource, packedLight, packedOverlay, living, helper, h, i, dx, dy);
+                    GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight,
+                            packedOverlay, frame, tracker, helper, overrides, h, i, partialTick);
                 }
             }
             poseStack.popPose();
@@ -124,38 +128,6 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
     }
 
-    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay,
-                           LivingEntity living, HeadInfo helper, int h, int i, float irisDx, float irisDy) {
-        poseStack.pushPose();
-        float[] off = helper.getEyeOffsetFromJoint(h, i);
-        poseStack.translate(off[0] + helper.getEyeSideOffset(h, i), off[1], off[2]);
-        HeadInfo.applyRotation(poseStack, helper.getInclination(h, i), helper.getAzimuth(h, i));
-        float scale = helper.getEyeScale(h, i);
-        poseStack.scale(scale, scale, scale * 0.4F);
-
-        VertexConsumer buf = bufferSource.getBuffer(RENDER_TYPE);
-        float[] cornea = helper.getCorneaColours(h, i);
-        modelGooglyEye.renderCornea(poseStack, buf, packedLight, packedOverlay, cornea[0], cornea[1], cornea[2], 1F);
-
-        float[] iris = helper.getIrisColours(h, i);
-        float irisScale = helper.getIrisScale(h, i);
-        poseStack.pushPose();
-        poseStack.scale(irisScale, irisScale, 1F);
-        modelGooglyEye.moveIris(irisDx, irisDy, irisScale);
-        modelGooglyEye.renderIris(poseStack, buf, packedLight, packedOverlay, iris[0], iris[1], iris[2], 1F);
-        poseStack.popPose();
-
-        if (helper.doesEyeGlow(h, i)) {
-            VertexConsumer glow = bufferSource.getBuffer(RENDER_TYPE_EYES);
-            modelGooglyEye.renderCornea(poseStack, glow, packedLight, packedOverlay, cornea[0], cornea[1], cornea[2], 1F);
-            poseStack.pushPose();
-            poseStack.scale(irisScale, irisScale, 1F);
-            modelGooglyEye.renderIris(poseStack, glow, packedLight, packedOverlay, iris[0], iris[1], iris[2], 1F);
-            poseStack.popPose();
-        }
-        poseStack.popPose();
-    }
-
     private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeConfig eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
@@ -163,7 +135,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);
 
-        VertexConsumer buf = bufferSource.getBuffer(RENDER_TYPE);
+        VertexConsumer buf = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
         double[] cornea = eye.corneaColors;
         modelGooglyEye.renderCornea(poseStack, buf, packedLight, packedOverlay, (float) cornea[0], (float) cornea[1], (float) cornea[2], 1F);
 

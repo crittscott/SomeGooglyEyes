@@ -87,8 +87,10 @@ public class ServerEventHandler {
 
         if (ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
-            // authoritative hard-off that beats the percent roll.
-            if (ServerEyeConfigs.isEligible(living)) {
+            // authoritative hard-off that beats the percent roll. Use the age-independent check: this
+            // decision is stored for life, so a baby with only an adult config must still roll (it'll
+            // show eyes once grown) rather than being locked out forever.
+            if (ServerEyeConfigs.canEverWearEyes(living)) {
                 int percent = ServerConfig.percentFor(entityType);
 
                 // Seeded by UUID so the same mob always rolls the same result (the decision is stored
