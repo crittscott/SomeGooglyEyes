@@ -23,6 +23,7 @@ public class ServerConfig {
 
     public static final ForgeConfigSpec.BooleanValue GOOGLY_EYES_ENABLED;
     public static final ForgeConfigSpec.IntValue GLOBAL_PERCENT;
+    public static final ForgeConfigSpec.IntValue HARVEST_ON_KILL_PERCENT;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_OVERRIDES;
 
     // Compiled view of ENTITY_OVERRIDES, rebuilt whenever the underlying config list instance changes
@@ -40,6 +41,11 @@ public class ServerConfig {
         GLOBAL_PERCENT = BUILDER
                 .comment("Default percentage chance for an eligible entity to get googly eyes (overridable per entity below)")
                 .defineInRange("globalPercent", 2, 0, 100);
+
+        HARVEST_ON_KILL_PERCENT = BUILDER
+                .comment("Percentage chance that an eyed mob killed by a player wielding plain shears drops its googly eyes.",
+                        "The Optometrist enchantment bypasses this by letting shears harvest eyes non-lethally on right-click.")
+                .defineInRange("harvestOnKillPercent", 25, 0, 100);
 
         ENTITY_OVERRIDES = BUILDER
                 .comment(

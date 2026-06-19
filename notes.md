@@ -2,7 +2,8 @@ ensure debug is feature complete. Require creative mode. 
 Only one debug, client side. Right way? Teleport client to server via packet?
 Folder organization? Client/server? Some way to cleanly separate/indicate what is client only, what is server. 
 Proper implementation of all features (shears harvest with prob only on kill)
-Enchant shears to remove without killing mob. 
+xproper behaviro of shears
+xEnchant shears to remove without killing mob. 
 Code structure: use my logger format. Move numerics to leading variables. Local use should stay local defined. What things go in config? 
 Add alternate placements with probs to json. *not* matter for picker. 
 Can we remove (no doubt cover up) the cyclops eye? So shearing leaves it blind
@@ -31,18 +32,6 @@ Assess sidedness
 Eye-bearing heads + Heads mod (§2)	Hard	Separate render path (head block/item), custom NBT, soft-dep on another mod.
 Armor slot eyes (§4)	Hard / orthogonal	Custom slot or repurposed equipment + GUI; cuts against the data-driven design.
 Eyebrows (§4)	Hard (art + state)	New model geometry beyond cornea/iris and an expression state machine. Art-heavy.
-
-
-
-
-
-
-
-
-
-Is nbt pot really a problem? Is there not a brew event? If not pot, then all pot things do not recognize. Do need normal pot, linger, etc. cannot make only splash? Surely an event. Just choose one target. 
-
-Do really need 2 eye as item for item frame? Again, is there not an event for addition?
-
-Assess for mc/forge way.
-
+eyes in item frame
+centralize hard coded values as constants in the class (or wherever makes sense).
+truly track each eye independently per mob.
