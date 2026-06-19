@@ -77,7 +77,8 @@ public class ServerEventHandler {
         // newly tracking player matches everyone else, not just the at-spawn decision.
         NetworkHandler.INSTANCE.send(
                 PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
-                new EyeStatePacket(living.getId(), EyeState.hasEyes(living), EyeState.overridesTagOrNull(living))
+                new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
+                        EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living))
         );
     }
 
@@ -104,5 +105,12 @@ public class ServerEventHandler {
         // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
         // mid-life via EyeState (shears / potion / dye / redstone), which re-syncs to trackers itself.
         living.getPersistentData().putBoolean(HAS_EYES_KEY, hasGooglyEyes);
+
+        // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
+        // later reattach/potion uses this mob's own arrangement). A separate UUID seed keeps it
+        // deterministic without perturbing the has-eyes roll above. HeadInfo.chooseVariantIndex maps
+        // this 0..1 roll onto whichever age config's weighted variants apply at render time.
+        Random variantRand = new Random(Math.abs(living.getUUID().hashCode()) * 6271L);
+        living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, variantRand.nextFloat());
     }
 }

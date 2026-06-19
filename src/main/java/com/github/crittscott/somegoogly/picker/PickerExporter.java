@@ -76,7 +76,7 @@ public final class PickerExporter {
         entry.version = version;
         entry.age = age;
         entry.enabled = runtime.enabled;
-        entry.heads = runtime.heads;
+        entry.heads = runtime.primaryHeads();
 
         ConfigFile file = new ConfigFile();
         file.entries = List.of(entry);

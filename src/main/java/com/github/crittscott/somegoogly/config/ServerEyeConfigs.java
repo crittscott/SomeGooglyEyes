@@ -60,7 +60,7 @@ public final class ServerEyeConfigs {
     }
 
     private static boolean isUsable(RuntimeConfig config) {
-        return config != null && config.isEnabled() && config.heads != null && !config.heads.isEmpty();
+        return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
     }
 
     public static Map<ResourceLocation, RuntimeConfigSet> all() {

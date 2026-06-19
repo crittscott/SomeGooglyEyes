@@ -404,7 +404,11 @@ public final class PickerState {
             });
             head.eyes.add(le.eye);
         }
-        config.heads = new ArrayList<>(grouped.values());
+        // The picker authors a single arrangement; wrap it as one weight-1 variant.
+        HeadInfo.Variant variant = new HeadInfo.Variant();
+        variant.weight = 1.0;
+        variant.heads = new ArrayList<>(grouped.values());
+        config.variants = new ArrayList<>(List.of(variant));
         return config;
     }
 

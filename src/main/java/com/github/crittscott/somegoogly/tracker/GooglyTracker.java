@@ -332,6 +332,9 @@ public class GooglyTracker {
     }
 
     public boolean matches(HeadInfo helper) {
-        return this.helper.config() == helper.config();
+        // Compare the selected variant's head list, not just the shared config: two mobs of the same
+        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
+        // shape is sized from this variant's heads/eyes).
+        return this.helper.headsRef() == helper.headsRef();
     }
 }

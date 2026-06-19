@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.head.HeadInfo.ConfigFile;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.head.HeadInfo.Variant;
 import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -12,7 +13,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -85,7 +88,30 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     private static RuntimeConfig toRuntime(VersionedEntry entry) {
         RuntimeConfig runtime = new RuntimeConfig();
         runtime.enabled = entry.enabled;
-        runtime.heads = entry.heads;
+        runtime.variants = buildVariants(entry);
         return runtime;
+    }
+
+    /**
+     * Normalise an entry's geometry into a non-empty variant list (or null when there's nothing usable):
+     * prefer an explicit {@code variants} list, dropping entries with no heads; otherwise wrap a legacy
+     * bare {@code heads} as a single weight-1 variant.
+     */
+    private static List<Variant> buildVariants(VersionedEntry entry) {
+        List<Variant> result = new ArrayList<>();
+        if (entry.variants != null) {
+            for (Variant v : entry.variants) {
+                if (v != null && v.heads != null && !v.heads.isEmpty()) {
+                    result.add(v);
+                }
+            }
+        }
+        if (result.isEmpty() && entry.heads != null && !entry.heads.isEmpty()) {
+            Variant single = new Variant();
+            single.weight = 1.0;
+            single.heads = entry.heads;
+            result.add(single);
+        }
+        return result.isEmpty() ? null : result;
     }
 }

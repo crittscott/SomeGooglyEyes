@@ -159,8 +159,11 @@ public class EyeItemInteractions {
     }
 
     private static HeadInfo helperFor(LivingEntity mob) {
+        // Server-side: resolve geometry (and the mob's chosen variant) from the authoritative server
+        // config store, not the client one — getHelper reads ClientEyeConfigs, which is empty on a
+        // dedicated server.
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        return HeadInfo.getHelper(type, mob);
+        return HeadInfo.serverHelper(type, mob);
     }
 
     private static int totalEyes(HeadInfo helper) {

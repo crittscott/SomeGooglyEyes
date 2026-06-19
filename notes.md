@@ -1,13 +1,16 @@
 ensure debug is feature complete. Require creative mode. 
 Only one debug, client side. Right way? Teleport client to server via packet?
 Folder organization? Client/server? Some way to cleanly separate/indicate what is client only, what is server. 
-Proper implementation of all features (shears harvest with prob only on kill)
-xproper behaviro of shears
-xEnchant shears to remove without killing mob. 
+Proper implementation of all features 
+
 Code structure: use my logger format. Move numerics to leading variables. Local use should stay local defined. What things go in config? 
+
 Add alternate placements with probs to json. *not* matter for picker. 
+
 Can we remove (no doubt cover up) the cyclops eye? So shearing leaves it blind
+
 Butt eyes: horse, pig, pillager beast, bees (one)
+
 Deal with babies. 
 Eyes on armor stands and boats? Realistic boat mod? Minecarts?
 Make eyes emit light. 

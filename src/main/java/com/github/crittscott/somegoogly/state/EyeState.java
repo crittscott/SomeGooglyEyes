@@ -30,6 +30,7 @@ public final class EyeState {
 
     public static final String HAS_EYES = "somegoogly:hasGooglyEyes";
     public static final String EYE_OVERRIDES = "somegoogly:eyeOverrides";
+    public static final String VARIANT_ROLL = "somegoogly:eyeVariantRoll";
 
     private EyeState() {
     }
@@ -38,6 +39,15 @@ public final class EyeState {
 
     public static boolean hasEyes(LivingEntity entity) {
         return entity.getPersistentData().getBoolean(HAS_EYES);
+    }
+
+    /**
+     * The mob's stored placement-variant roll (0..1), assigned once at spawn and locked for life. Maps
+     * onto the current age config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults
+     * to 0 (the first variant) when unset — e.g. mobs that predate the roll or aren't eye-eligible.
+     */
+    public static float getVariantRoll(LivingEntity entity) {
+        return entity.getPersistentData().getFloat(VARIANT_ROLL);
     }
 
     /**
@@ -57,6 +67,11 @@ public final class EyeState {
     public static CompoundTag overridesTagOrNull(LivingEntity entity) {
         CompoundTag data = entity.getPersistentData();
         return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+    }
+
+    /** Write the synced placement-variant roll onto the client's copy of the entity. */
+    public static void applyVariantRoll(LivingEntity entity, float roll) {
+        entity.getPersistentData().putFloat(VARIANT_ROLL, roll);
     }
 
     /** Replace (or clear, when {@code null}) the overrides compound on the client from a synced packet. */
@@ -130,7 +145,8 @@ public final class EyeState {
     }
 
     private static void sync(LivingEntity entity) {
-        EyeStatePacket packet = new EyeStatePacket(entity.getId(), hasEyes(entity), overridesTagOrNull(entity));
+        EyeStatePacket packet = new EyeStatePacket(
+                entity.getId(), hasEyes(entity), getVariantRoll(entity), overridesTagOrNull(entity));
         NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), packet);
     }
 }

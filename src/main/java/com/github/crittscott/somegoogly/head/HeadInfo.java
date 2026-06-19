@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.head;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.state.EyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.resources.ResourceLocation;
@@ -25,17 +27,36 @@ public class HeadInfo {
     private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
 
     private final RuntimeConfig entityConfig;
+    // The single placement variant chosen for this mob (by its stored roll). Null when no usable config.
+    private final List<HeadConfig> heads;
 
-    public HeadInfo(ResourceLocation entityName, boolean baby) {
-        this.entityConfig = ClientEyeConfigs.get(entityName, baby);
+    private HeadInfo(RuntimeConfig config, int variantIndex) {
+        this.entityConfig = config;
+        this.heads = headsOfVariant(config, variantIndex);
     }
 
+    /**
+     * Client-side helper for rendering: reads the synced {@link ClientEyeConfigs}, resolves the mob's
+     * placement variant from its stored roll, and caches per (entity, age, variant) so same-arrangement
+     * mobs share one instance.
+     */
     public static HeadInfo getHelper(ResourceLocation entityName, LivingEntity entity) {
-        return getHelper(entityName, entity.isBaby());
+        boolean baby = entity.isBaby();
+        RuntimeConfig config = ClientEyeConfigs.get(entityName, baby);
+        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
+        return headInfoCache.computeIfAbsent(new CacheKey(entityName, baby, variant),
+                key -> new HeadInfo(config, key.variant));
     }
 
-    public static HeadInfo getHelper(ResourceLocation entityName, boolean baby) {
-        return headInfoCache.computeIfAbsent(new CacheKey(entityName, baby), key -> new HeadInfo(key.entityName, key.baby));
+    /**
+     * Server-side helper (harvest / kill-drop): reads the authoritative {@link ServerEyeConfigs} rather
+     * than the client store, so geometry is correct on a dedicated server. Not cached — server use is
+     * infrequent and must not share the client cache (single-player runs both stores in one JVM).
+     */
+    public static HeadInfo serverHelper(ResourceLocation entityName, LivingEntity entity) {
+        RuntimeConfig config = ServerEyeConfigs.get(entityName, entity);
+        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
+        return new HeadInfo(config, variant);
     }
 
     /** Drop cached helpers; called when the client receives new configs or disconnects. */
@@ -43,14 +64,13 @@ public class HeadInfo {
         headInfoCache.clear();
     }
 
-    /** Whether this entity has configured eyes that are enabled. */
+    /** Whether this entity has a usable, enabled placement variant. */
     public boolean hasConfig() {
-        return entityConfig != null && entityConfig.isEnabled()
-                && entityConfig.heads != null && !entityConfig.heads.isEmpty();
+        return entityConfig != null && entityConfig.isEnabled() && heads != null && !heads.isEmpty();
     }
 
     public int getHeadCount() {
-        return hasConfig() ? entityConfig.heads.size() : 0;
+        return hasConfig() ? heads.size() : 0;
     }
 
     /** The part token (string name) the resolver should attach this head's eyes to. */
@@ -146,10 +166,51 @@ public class HeadInfo {
     }
 
     private HeadConfig headAt(int headIndex) {
-        if (!hasConfig() || headIndex < 0 || headIndex >= entityConfig.heads.size()) {
+        if (!hasConfig() || headIndex < 0 || headIndex >= heads.size()) {
             return null;
         }
-        return entityConfig.heads.get(headIndex);
+        return heads.get(headIndex);
+    }
+
+    /** The selected variant's head list (identity used to invalidate per-mob trackers). */
+    public List<HeadConfig> headsRef() {
+        return heads;
+    }
+
+    /**
+     * Resolve a mob's stored roll (0..1) to a variant index via cumulative weights. A {@code null}/empty
+     * config yields 0. Deterministic: the same roll + config always picks the same variant, so server
+     * and client agree without sending the resolved index.
+     */
+    public static int chooseVariantIndex(RuntimeConfig config, float roll) {
+        if (config == null || config.variants == null || config.variants.isEmpty()) {
+            return 0;
+        }
+        List<Variant> variants = config.variants;
+        double total = 0;
+        for (Variant v : variants) {
+            total += v.weight();
+        }
+        if (total <= 0) {
+            return 0;
+        }
+        double target = roll * total;
+        double acc = 0;
+        for (int i = 0; i < variants.size(); i++) {
+            acc += variants.get(i).weight();
+            if (target < acc) {
+                return i;
+            }
+        }
+        return variants.size() - 1;
+    }
+
+    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
+        if (config == null || config.variants == null || config.variants.isEmpty()) {
+            return null;
+        }
+        int clamped = Math.max(0, Math.min(variantIndex, config.variants.size() - 1));
+        return config.variants.get(clamped).heads;
     }
 
     private EyeConfig eyeAt(int headIndex, int eyeIndex) {
@@ -164,7 +225,7 @@ public class HeadInfo {
         return entityConfig;
     }
 
-    private record CacheKey(ResourceLocation entityName, boolean baby) {
+    private record CacheKey(ResourceLocation entityName, boolean baby, int variant) {
     }
 
     // Raw datapack file structure (one file per entity; entity id comes from the file path).
@@ -177,7 +238,10 @@ public class HeadInfo {
         public String version;
         public String age;
         public Boolean enabled;
+        // Legacy single arrangement; equivalent to a single weight-1 variant. Either this or `variants`.
         public List<HeadConfig> heads;
+        // Weighted placement variants (a mob picks one). Takes precedence over `heads` when present.
+        public List<Variant> variants;
 
         /** Defaults to enabled when the field is absent. */
         public boolean isEnabled() {
@@ -188,11 +252,29 @@ public class HeadInfo {
     // Runtime structure selected by version and age, then synced to clients.
     public static class RuntimeConfig {
         public Boolean enabled;
-        public List<HeadConfig> heads;
+        // One or more placement variants; a mob picks one (weighted) at spawn. The loader always fills
+        // this with at least one entry (a legacy bare `heads` becomes a single weight-1 variant).
+        public List<Variant> variants;
 
         /** Defaults to enabled when the field is absent. */
         public boolean isEnabled() {
             return enabled == null || enabled;
+        }
+
+        /** The first variant's heads (the picker authors/export a single arrangement). */
+        public List<HeadConfig> primaryHeads() {
+            return variants != null && !variants.isEmpty() ? variants.get(0).heads : null;
+        }
+    }
+
+    /** One weighted placement arrangement: a complete set of heads (each with its own eyes). */
+    public static class Variant {
+        public Double weight; // relative probability; null = 1.0
+        public List<HeadConfig> heads;
+
+        /** Negative weights are clamped to 0; absent defaults to 1. */
+        public double weight() {
+            return weight == null ? 1.0 : Math.max(0.0, weight);
         }
     }
 
