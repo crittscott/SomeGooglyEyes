@@ -20,13 +20,6 @@ public class ClientConfig {
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENTITIES;
     private static final Set<String> loggedBadDisabledEntityEntries = new HashSet<>();
 
-    // Keystone B: per-behavior toggles for the client-side eye expressions.
-    public static final ForgeConfigSpec.BooleanValue EXPRESSION_BLINK;
-    public static final ForgeConfigSpec.BooleanValue EXPRESSION_STARE;
-    public static final ForgeConfigSpec.BooleanValue EXPRESSION_HURT_GROW;
-    public static final ForgeConfigSpec.BooleanValue EXPRESSION_ANGER;
-    public static final ForgeConfigSpec.BooleanValue EXPRESSION_SWIRL;
-
     static {
         BUILDER.push("Client Settings");
 
@@ -37,26 +30,6 @@ public class ClientConfig {
         DISABLED_ENTITIES = BUILDER
                 .comment("List of entities that should not get googly eyes (client-side override)")
                 .defineList("disabledEntities", ArrayList::new, obj -> obj instanceof String);
-
-        BUILDER.pop();
-
-        BUILDER.push("Expressions");
-
-        EXPRESSION_BLINK = BUILDER
-                .comment("Eyes occasionally blink (and sometimes wink one eye)")
-                .define("blink", true);
-        EXPRESSION_STARE = BUILDER
-                .comment("Eyes occasionally stop tracking and stare straight ahead")
-                .define("stare", true);
-        EXPRESSION_HURT_GROW = BUILDER
-                .comment("Eyes briefly enlarge when the mob takes damage")
-                .define("hurtGrow", true);
-        EXPRESSION_ANGER = BUILDER
-                .comment("Eyes tint red when the mob is angry (only mobs whose aggression is visible client-side)")
-                .define("anger", true);
-        EXPRESSION_SWIRL = BUILDER
-                .comment("Villager pupils swirl when the villager levels up")
-                .define("swirl", true);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

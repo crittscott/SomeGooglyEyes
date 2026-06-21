@@ -39,9 +39,10 @@ import java.util.OptionalInt;
  * item, and entity share one schema. Deliberately not done yet (keeps the working config-load and
  * picker-export paths untouched).
  *
- * <p>FUTURE — behaviours: add an {@code effects: List<EffectRef>} field (behaviour id + params) that
- * references the registry sketched in {@link EyeBehaviors}. Left out of the record for now; the
- * optional-field codec makes adding it non-breaking.
+ * <p>NOTE — behaviours live elsewhere. The eye expressions (stare, blink, swirl, …) are <i>universal,
+ * transient effects</i> a mob plays on trigger, not per-eye properties: they're scheduled server-side
+ * and animated client-side (see {@link com.github.crittscott.somegoogly.behavior.EyeBehaviors}), with
+ * no presence in this appearance record. So nothing behaviour-related is stored here.
  */
 public record EyeProperties(OptionalInt corneaColor, OptionalInt irisColor, Optional<Boolean> glow) {
 

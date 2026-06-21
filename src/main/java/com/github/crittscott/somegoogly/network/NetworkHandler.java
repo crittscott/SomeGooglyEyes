@@ -6,7 +6,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
-    private static final String PROTOCOL_VERSION = "2";
+    private static final String PROTOCOL_VERSION = "3";
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(SomeGoogly.MOD_ID, "main"),
@@ -32,6 +32,14 @@ public class NetworkHandler {
                 EyeConfigSyncPacket::encode,
                 EyeConfigSyncPacket::decode,
                 EyeConfigSyncPacket::handle
+        );
+
+        INSTANCE.registerMessage(
+                id++,
+                EyeBehaviorTriggerPacket.class,
+                EyeBehaviorTriggerPacket::encode,
+                EyeBehaviorTriggerPacket::decode,
+                EyeBehaviorTriggerPacket::handle
         );
     }
 }

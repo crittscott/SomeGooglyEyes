@@ -1,13 +1,19 @@
 package com.github.crittscott.somegoogly.command;
 
+import com.github.crittscott.somegoogly.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,7 +72,50 @@ public final class GooglyDebugCommand {
                 .then(Commands.literal("glow")
                         .then(Commands.literal("on").executes(ctx -> glow(ctx, Boolean.TRUE)))
                         .then(Commands.literal("off").executes(ctx -> glow(ctx, Boolean.FALSE)))
-                        .then(Commands.literal("config").executes(ctx -> glow(ctx, null)))));
+                        .then(Commands.literal("config").executes(ctx -> glow(ctx, null))))
+                .then(Commands.literal("behavior")
+                        .then(Commands.argument("id", StringArgumentType.word())
+                                .suggests(BEHAVIOR_SUGGESTIONS)
+                                .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id"))))));
+    }
+
+    /** Suggests the behaviour short names plus {@code random} for {@code /sgdebug behavior <id>}. */
+    private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
+        builder.suggest("random");
+        for (EyeBehavior behavior : EyeBehaviors.all()) {
+            builder.suggest(behavior.id().getPath());
+        }
+        return builder.buildFuture();
+    };
+
+    /**
+     * Drive the server behaviour scheduler by hand: trigger {@code id} (a short name like {@code stare},
+     * a full {@code somegoogly:stare}, or {@code random}) on the looked-at mob. Exercises the full
+     * server → packet → client play path. Honours the one-at-a-time rule, so it reports if dropped.
+     */
+    private static int behavior(CommandContext<CommandSourceStack> ctx, String id) {
+        LivingEntity target = requireTarget(ctx);
+        if (target == null) return 0;
+
+        EyeBehavior behavior;
+        if (id.equalsIgnoreCase("random")) {
+            var pool = EyeBehaviors.all();
+            behavior = pool.get(target.getRandom().nextInt(pool.size()));
+        } else {
+            ResourceLocation key = id.indexOf(':') >= 0 ? ResourceLocation.tryParse(id)
+                    : new ResourceLocation("somegoogly", id);
+            behavior = key == null ? null : EyeBehaviors.byId(key);
+        }
+        if (behavior == null) {
+            ctx.getSource().sendFailure(Component.literal("[sgdebug] unknown behavior '" + id + "'"));
+            return 0;
+        }
+
+        boolean started = ServerBehaviorScheduler.trigger(
+                target, behavior, behavior.defaultDuration(), target.getRandom().nextLong());
+        return feedback(ctx, started
+                ? "playing " + behavior.id().getPath()
+                : "dropped " + behavior.id().getPath() + " (mob is busy)");
     }
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {

@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.event;
 
+import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -15,8 +16,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -69,17 +72,41 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
-        if (!(event.getTarget() instanceof LivingEntity living)) {
+        if (!(event.getTarget() instanceof LivingEntity living) || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
 
         // Send the full current state (has-eyes + any appearance overrides applied since spawn) so a
         // newly tracking player matches everyone else, not just the at-spawn decision.
         NetworkHandler.INSTANCE.send(
-                PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
+                PacketDistributor.PLAYER.with(() -> player),
                 new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
                         EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living))
         );
+
+        // Register with the behaviour scheduler (server-polite: only eyed, watched mobs) and catch the
+        // player up if the mob is already mid-behaviour.
+        ServerBehaviorScheduler.onStartTracking(living, player);
+    }
+
+    @SubscribeEvent
+    public void onStopTracking(PlayerEvent.StopTracking event) {
+        if (event.getTarget() instanceof LivingEntity living) {
+            ServerBehaviorScheduler.onStopTracking(living);
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            ServerBehaviorScheduler.serverTick();
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        // Transient cosmetic state; drop it so a single-player JVM doesn't carry one world into the next.
+        ServerBehaviorScheduler.clear();
     }
 
     private static void applyGooglyDecision(LivingEntity living) {

@@ -1,12 +1,16 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -25,6 +29,12 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue GLOBAL_PERCENT;
     public static final ForgeConfigSpec.IntValue HARVEST_ON_KILL_PERCENT;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_OVERRIDES;
+
+    // Behaviour scheduling (the server is the sole authority for which expression a mob plays, and when).
+    public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
+    public static final ForgeConfigSpec.IntValue AMBIENT_MIN_TICKS;
+    public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENABLED_BEHAVIORS;
 
     // Compiled view of ENTITY_OVERRIDES, rebuilt whenever the underlying config list instance changes
     // (ForgeConfigSpec hands back a fresh list on (re)load, so identity comparison detects reloads).
@@ -56,7 +66,59 @@ public class ServerConfig {
                 .defineList("entityOverrides", ArrayList::new, ServerConfig::validateOverride);
 
         BUILDER.pop();
+        BUILDER.push("Behaviors");
+
+        AMBIENT_BEHAVIORS = BUILDER
+                .comment("Idle eye expressions: every so often an eyed, player-tracked mob plays a random",
+                        "enabled behavior. (Real game-event triggers can be wired up later; for now this is",
+                        "the only trigger source.)")
+                .define("ambientBehaviors", true);
+
+        AMBIENT_MIN_TICKS = BUILDER
+                .comment("Minimum idle ticks between ambient behaviors on a mob (20 ticks = 1 second).")
+                .defineInRange("ambientMinTicks", 60, 1, 24000);
+
+        AMBIENT_MAX_TICKS = BUILDER
+                .comment("Maximum idle ticks between ambient behaviors on a mob (20 ticks = 1 second).")
+                .defineInRange("ambientMaxTicks", 200, 1, 24000);
+
+        ENABLED_BEHAVIORS = BUILDER
+                .comment("Which behaviors are eligible to play, by id. Remove a line to disable that one.")
+                .defineList("enabledBehaviors", defaultBehaviorIds(), ServerConfig::validateBehaviorId);
+
+        BUILDER.pop();
         SPEC = BUILDER.build();
+    }
+
+    private static List<String> defaultBehaviorIds() {
+        List<String> ids = new ArrayList<>();
+        for (EyeBehavior behavior : EyeBehaviors.all()) {
+            ids.add(behavior.id().toString());
+        }
+        return ids;
+    }
+
+    private static boolean validateBehaviorId(Object o) {
+        return o instanceof String s && ResourceLocation.tryParse(s) != null;
+    }
+
+    /**
+     * The behaviours eligible for ambient play: every registered behaviour whose id appears in
+     * {@link #ENABLED_BEHAVIORS}. Unknown ids in the config are simply ignored. Recomputed each call —
+     * it's only hit when a mob's ambient timer fires.
+     */
+    public static List<EyeBehavior> enabledBehaviors() {
+        Set<String> enabled = new LinkedHashSet<>();
+        for (String id : ENABLED_BEHAVIORS.get()) {
+            enabled.add(id);
+        }
+        List<EyeBehavior> result = new ArrayList<>();
+        for (EyeBehavior behavior : EyeBehaviors.all()) {
+            if (enabled.contains(behavior.id().toString())) {
+                result.add(behavior);
+            }
+        }
+        return result;
     }
 
     public static void register() {

@@ -73,8 +73,6 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         tracker.setLastUpdateRequest();
         tracker.requireUpdate();
 
-        // Keystone B: interpolate the per-mob expression scalars once for this frame.
-        GooglyEyeRenderer.Frame frame = GooglyEyeRenderer.Frame.capture(tracker, partialTicks);
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 
         int headCount = helper.getHeadCount();
@@ -98,7 +96,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
                 }
 
                 GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                        frame, tracker, helper, overrides, headIndex, eyeIndex, partialTicks);
+                        tracker, helper, overrides, headIndex, eyeIndex, partialTicks);
             }
 
             poseStack.popPose();

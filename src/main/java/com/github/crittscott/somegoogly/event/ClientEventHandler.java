@@ -24,6 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,6 +62,16 @@ public class ClientEventHandler {
             trackers.put(living, tracker);
         }
         return tracker;
+    }
+
+    /**
+     * The mob's existing tracker, or {@code null} if it has none yet (i.e. it isn't currently being
+     * rendered). Used by the behaviour trigger packet, which drops triggers for mobs with no tracker —
+     * an off-screen mob has nothing to animate.
+     */
+    @Nullable
+    public GooglyTracker peekGooglyTracker(LivingEntity living) {
+        return trackers.get(living);
     }
 
     /** Drop all trackers; called when configs change (sync) or on disconnect. */

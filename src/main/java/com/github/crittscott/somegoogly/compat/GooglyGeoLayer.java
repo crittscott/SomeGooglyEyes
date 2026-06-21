@@ -76,10 +76,6 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         tracker.setLastUpdateRequest();
         tracker.requireUpdate();
 
-        // Keystone B: interpolate the per-mob expression scalars once for this frame (blink, hurt-grow,
-        // anger tint, stare, swirl). Shared with the vanilla layer so both render identically.
-        GooglyEyeRenderer.Frame frame = GooglyEyeRenderer.Frame.capture(tracker, partialTick);
-
         int headCount = helper.getHeadCount();
         for (int h = 0; h < headCount; h++) {
             poseStack.pushPose();
@@ -93,7 +89,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
                         continue;
                     }
                     GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight,
-                            packedOverlay, frame, tracker, helper, overrides, h, i, partialTick);
+                            packedOverlay, tracker, helper, overrides, h, i, partialTick);
                 }
             }
             poseStack.popPose();
