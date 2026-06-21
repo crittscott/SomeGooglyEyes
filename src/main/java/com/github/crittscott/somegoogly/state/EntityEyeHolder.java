@@ -29,12 +29,12 @@ public final class EntityEyeHolder implements EyeHolder {
     }
 
     @Override
-    public EyeProperties getEyeProperties() {
+    public AppearanceOverride getEyeProperties() {
         return EyeState.readProperties(entity);
     }
 
     @Override
-    public void setEyeProperties(EyeProperties properties) {
+    public void setEyeProperties(AppearanceOverride properties) {
         EyeState.setProperties(entity, properties);
     }
 }

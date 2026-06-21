@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -113,9 +112,9 @@ public final class PickerHud {
     /**
      * Add an eye as two lines: identity/part/position, then orientation/scales/flags (indented).
      * Glow/invis are shown as {@code +G}/{@code -G} and {@code +Inv}/{@code -Inv} (set/unset) to keep
-     * the line short; cornea/iris colours follow as {@code c#RRGGBB i#RRGGBB}.
+     * the line short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
      */
-    private static void appendEye(List<Line> out, String label, String part, EyeConfig e, int colorA, int colorB) {
+    private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
         out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
                 label, part, e.position[0], e.position[1], e.position[2]), colorA));
         double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;

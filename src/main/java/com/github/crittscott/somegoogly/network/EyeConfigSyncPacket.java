@@ -4,6 +4,9 @@ import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,7 +36,9 @@ public class EyeConfigSyncPacket {
         buffer.writeVarInt(packet.configs.size());
         for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
-            buffer.writeUtf(GSON.toJson(entry.getValue()));
+            JsonElement json = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
+                    .result().orElseGet(JsonObject::new);
+            buffer.writeUtf(GSON.toJson(json));
         }
     }
 
@@ -49,7 +54,8 @@ public class EyeConfigSyncPacket {
             // letting it abort the whole sync — which would surface as a disconnect. The id and JSON
             // are always read first so the buffer stays aligned for the next entry.
             try {
-                configs.put(id, GSON.fromJson(json, RuntimeConfigSet.class));
+                JsonElement element = GSON.fromJson(json, JsonElement.class);
+                configs.put(id, RuntimeConfigSet.CODEC.parse(JsonOps.INSTANCE, element).result().orElseThrow());
             } catch (Exception e) {
                 SomeGoogly.LOGGER.error("Skipping malformed synced eye config for {}", id, e);
             }

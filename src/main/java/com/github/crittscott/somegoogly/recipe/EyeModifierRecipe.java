@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
  * recipe that <i>creates</i> an eye — this only transforms one you already have.
  *
  * <p>The output is a copy of the input eye (preserving any unrelated stack NBT) with the modifier's
- * delta folded onto its {@link EyeProperties}.
+ * delta folded onto its {@link AppearanceOverride}.
  */
 public class EyeModifierRecipe extends CustomRecipe {
 
@@ -80,7 +80,7 @@ public class EyeModifierRecipe extends CustomRecipe {
         }
         // Copy (not GooglyEyeItem.create) so any unrelated NBT on the eye survives the edit.
         ItemStack result = match.eye().copyWithCount(1);
-        EyeProperties updated = match.modifier().apply(GooglyEyeItem.getProperties(result), match.modifierStack());
+        AppearanceOverride updated = match.modifier().apply(GooglyEyeItem.getProperties(result), match.modifierStack());
         GooglyEyeItem.setProperties(result, updated);
         return result;
     }

@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.recipe;
 
-import com.github.crittscott.somegoogly.state.EyeProperties;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.state.EyeColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ import java.util.List;
  * One "what does this ingredient do to an eye" rule, used by {@link EyeModifierRecipe}.
  *
  * <p>The generalized seam for crafting-based appearance edits: a modifier recognizes an ingredient
- * stack and folds a delta onto the eye's {@link EyeProperties}. Adding a future appearance edit
+ * stack and folds a delta onto the eye's {@link AppearanceOverride}. Adding a future appearance edit
  * (glow via glowstone, etc.) is a new entry in {@link #MODIFIERS} — not a new recipe class.
  */
 public interface EyeModifier {
@@ -23,7 +23,7 @@ public interface EyeModifier {
     boolean matches(ItemStack stack);
 
     /** Return {@code current} with this modifier's change layered on (geometry stays in config). */
-    EyeProperties apply(EyeProperties current, ItemStack stack);
+    AppearanceOverride apply(AppearanceOverride current, ItemStack stack);
 
     /**
      * The registered modifiers, in match order: dye → iris colour, glowstone dust → glow on,
@@ -55,10 +55,9 @@ public interface EyeModifier {
         }
 
         @Override
-        public EyeProperties apply(EyeProperties current, ItemStack stack) {
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
             DyeColor color = ((DyeItem) stack.getItem()).getDyeColor();
-            int rgb = EyeState.packColor(color.getTextureDiffuseColors());
-            return current.withIrisColor(rgb);
+            return current.withIrisColor(EyeColor.of(color.getTextureDiffuseColors()));
         }
     }
 
@@ -70,7 +69,7 @@ public interface EyeModifier {
         }
 
         @Override
-        public EyeProperties apply(EyeProperties current, ItemStack stack) {
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
             return current.withGlow(true);
         }
     }
@@ -83,7 +82,7 @@ public interface EyeModifier {
         }
 
         @Override
-        public EyeProperties apply(EyeProperties current, ItemStack stack) {
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
             return current.withGlow(false);
         }
     }
@@ -96,8 +95,8 @@ public interface EyeModifier {
         }
 
         @Override
-        public EyeProperties apply(EyeProperties current, ItemStack stack) {
-            return EyeProperties.EMPTY;
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
+            return AppearanceOverride.EMPTY;
         }
     }
 }

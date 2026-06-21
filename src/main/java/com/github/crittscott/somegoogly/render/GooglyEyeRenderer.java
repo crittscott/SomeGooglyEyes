@@ -2,10 +2,11 @@ package com.github.crittscott.somegoogly.render;
 
 import com.github.crittscott.somegoogly.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.behavior.EyeRenderContribution;
+import com.github.crittscott.somegoogly.head.EyePlacement;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
-import com.github.crittscott.somegoogly.state.EyeProperties;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.state.EyeAppearance;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -46,13 +47,17 @@ public final class GooglyEyeRenderer {
      */
     public static void renderEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
                                  int packedLight, int overlay, GooglyTracker tracker, HeadInfo helper,
-                                 EyeProperties overrides, int headIndex, int eyeIndex, float partialTicks) {
+                                 AppearanceOverride overrides, int headIndex, int eyeIndex, float partialTicks) {
         pose.pushPose();
 
+        // Placement (geometry) from config; effective appearance is config with the per-mob override on top.
+        EyePlacement placement = helper.placementAt(headIndex, eyeIndex);
+        EyeAppearance look = helper.appearanceAt(headIndex, eyeIndex).overlay(overrides);
+
         // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its centre.
-        float[] eyes = helper.getEyeOffsetFromJoint(headIndex, eyeIndex);
-        pose.translate(eyes[0] + helper.getEyeSideOffset(headIndex, eyeIndex), eyes[1], eyes[2]);
-        HeadInfo.applyRotation(pose, helper.getInclination(headIndex, eyeIndex), helper.getAzimuth(headIndex, eyeIndex));
+        float[] eyes = placement.positionArray();
+        pose.translate(eyes[0] + placement.sideOffset(), eyes[1], eyes[2]);
+        HeadInfo.applyRotation(pose, placement);
 
         GooglyTracker.EyeInfo eyeInfo = tracker.eyes[headIndex][eyeIndex];
 
@@ -65,24 +70,20 @@ public final class GooglyEyeRenderer {
         }
 
         // Grow scales the whole eye; blink squashes it vertically.
-        float eyeScale = helper.getEyeScale(headIndex, eyeIndex) * c.eyeScaleMul;
+        float eyeScale = (float) placement.eyeScale() * c.eyeScaleMul;
         pose.scale(eyeScale, eyeScale * c.squashY, eyeScale * 0.4F);
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
 
-        float[] corneaColours = overrides.corneaColor().isPresent()
-                ? EyeState.unpackColor(overrides.corneaColor().getAsInt())
-                : helper.getCorneaColours(headIndex, eyeIndex);
-        // Colour-change behaviour blends the cornea toward its target colour.
+        float[] corneaColors = look.cornea().toArray();
+        // Color-change behavior blends the cornea toward its target color.
         if (c.corneaTint != null && c.tintAmount > 0F) {
-            corneaColours = lerpColor(corneaColours, c.corneaTint, c.tintAmount);
+            corneaColors = lerpColor(corneaColors, c.corneaTint, c.tintAmount);
         }
-        model.renderCornea(pose, buffer, packedLight, overlay, corneaColours[0], corneaColours[1], corneaColours[2], 1F);
+        model.renderCornea(pose, buffer, packedLight, overlay, corneaColors[0], corneaColors[1], corneaColors[2], 1F);
 
-        float[] irisColours = overrides.irisColor().isPresent()
-                ? EyeState.unpackColor(overrides.irisColor().getAsInt())
-                : helper.getIrisColours(headIndex, eyeIndex);
-        float irisScale = helper.getIrisScale(headIndex, eyeIndex);
+        float[] irisColors = look.iris().toArray();
+        float irisScale = (float) placement.irisScale();
 
         pose.pushPose();
         pose.scale(irisScale, irisScale, 1F);
@@ -94,19 +95,17 @@ public final class GooglyEyeRenderer {
         float irisX = physicsX * (1F - c.irisWeight) + c.irisTargetX * c.irisWeight;
         float irisY = physicsY * (1F - c.irisWeight) + c.irisTargetY * c.irisWeight;
         model.moveIris(irisX, irisY, irisScale);
-        model.renderIris(pose, buffer, packedLight, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
+        model.renderIris(pose, buffer, packedLight, overlay, irisColors[0], irisColors[1], irisColors[2], 1F);
         pose.popPose();
 
-        boolean glow = overrides.glow().isPresent()
-                ? overrides.glow().get()
-                : helper.doesEyeGlow(headIndex, eyeIndex);
+        boolean glow = look.glow();
         if (glow) {
             buffer = bufferSource.getBuffer(RENDER_TYPE_EYES);
-            model.renderCornea(pose, buffer, packedLight, overlay, corneaColours[0], corneaColours[1], corneaColours[2], 1F);
+            model.renderCornea(pose, buffer, packedLight, overlay, corneaColors[0], corneaColors[1], corneaColors[2], 1F);
 
             pose.pushPose();
             pose.scale(irisScale, irisScale, 1F);
-            model.renderIris(pose, buffer, packedLight, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
+            model.renderIris(pose, buffer, packedLight, overlay, irisColors[0], irisColors[1], irisColors[2], 1F);
             pose.popPose();
         }
 

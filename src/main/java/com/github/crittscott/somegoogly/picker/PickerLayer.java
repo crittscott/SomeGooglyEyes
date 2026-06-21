@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
@@ -78,10 +77,10 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         }
     }
 
-    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay, EyeConfig eye) {
+    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
-        HeadInfo.applyRotation(poseStack, eye);
+        HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
 
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);

@@ -13,7 +13,7 @@ package com.github.crittscott.somegoogly.state;
  *   <li>a held/dropped eye-item stack (render the eye on the item model itself),</li>
  *   <li>a mob head block/item that "remembers" the eyes it dropped with.</li>
  * </ul>
- * Each would store/read its {@link EyeProperties} from its own backing (stack NBT, block entity, …)
+ * Each would store/read its {@link AppearanceOverride} from its own backing (stack NBT, block entity, …)
  * while reusing the same harvest/reattach verbs.
  */
 public interface EyeHolder {
@@ -24,9 +24,9 @@ public interface EyeHolder {
     /** Turn the eyes on/off (for a mob this is the spawn/harvest flag; for an item, presence). */
     void setHasEyes(boolean hasEyes);
 
-    /** The holder's current appearance ({@link EyeProperties#EMPTY} when none). */
-    EyeProperties getEyeProperties();
+    /** The holder's current appearance ({@link AppearanceOverride#EMPTY} when none). */
+    AppearanceOverride getEyeProperties();
 
     /** Replace the holder's appearance. */
-    void setEyeProperties(EyeProperties properties);
+    void setEyeProperties(AppearanceOverride properties);
 }

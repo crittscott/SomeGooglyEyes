@@ -51,15 +51,12 @@ public final class EyeState {
     }
 
     /**
-     * Read the mob's appearance override as {@link EyeProperties} ({@link EyeProperties#EMPTY} when
-     * none). The override compound is serialized via the shared {@code EyeProperties} codec — the same
-     * schema an eye item carries — so item↔mob transfer is a straight property copy.
-     *
-     * <p>FUTURE — unify everything: the datapack geometry ({@code HeadInfo.EyeConfig}) could also move
-     * onto this codec so config, override, and item share one schema (see {@link EyeProperties}).
+     * Read the mob's appearance override as {@link AppearanceOverride} ({@link AppearanceOverride#EMPTY}
+     * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
+     * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
      */
-    public static EyeProperties readProperties(LivingEntity entity) {
-        return EyeProperties.fromNbt(overridesTagOrNull(entity));
+    public static AppearanceOverride readProperties(LivingEntity entity) {
+        return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
     }
 
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */
@@ -83,25 +80,6 @@ public final class EyeState {
         }
     }
 
-    /** Unpack a stored {@code 0xRRGGBB} colour into the {@code float[3]} (0..1) the renderer expects. */
-    public static float[] unpackColor(int rgb) {
-        return new float[]{
-                ((rgb >> 16) & 0xFF) / 255F,
-                ((rgb >> 8) & 0xFF) / 255F,
-                (rgb & 0xFF) / 255F
-        };
-    }
-
-    /** Pack a {@code float[3]} (0..1) colour into {@code 0xRRGGBB} (used when capturing config colours). */
-    public static int packColor(float[] rgb) {
-        return (channel(rgb[0]) << 16) | (channel(rgb[1]) << 8) | channel(rgb[2]);
-    }
-
-    private static int channel(float v) {
-        int i = Math.round(v * 255F);
-        return i < 0 ? 0 : Math.min(i, 255);
-    }
-
     // --- Mutations (server-only; write NBT then broadcast) -------------------
 
     public static void setHasEyes(LivingEntity entity, boolean hasEyes) {
@@ -109,16 +87,16 @@ public final class EyeState {
         sync(entity);
     }
 
-    public static void setIrisTint(LivingEntity entity, int rgb) {
-        setProperties(entity, readProperties(entity).withIrisColor(rgb));
+    public static void setIrisTint(LivingEntity entity, EyeColor color) {
+        setProperties(entity, readProperties(entity).withIrisColor(color));
     }
 
     public static void clearIrisTint(LivingEntity entity) {
         setProperties(entity, readProperties(entity).withIrisColor(null));
     }
 
-    public static void setCorneaTint(LivingEntity entity, int rgb) {
-        setProperties(entity, readProperties(entity).withCorneaColor(rgb));
+    public static void setCorneaTint(LivingEntity entity, EyeColor color) {
+        setProperties(entity, readProperties(entity).withCorneaColor(color));
     }
 
     public static void clearCorneaTint(LivingEntity entity) {
@@ -132,9 +110,9 @@ public final class EyeState {
 
     /**
      * Replace the mob's whole appearance override (used by {@link EyeHolder} / item reattach). Writes
-     * the {@link EyeProperties} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
+     * the {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
-    public static void setProperties(LivingEntity entity, EyeProperties properties) {
+    public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
         CompoundTag data = entity.getPersistentData();
         if (properties.isEmpty()) {
             data.remove(EYE_OVERRIDES);

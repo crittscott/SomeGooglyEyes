@@ -69,7 +69,7 @@ public final class ModPotions {
                 if (isInput(input) && isIngredient(ingredient)) {
                     ItemStack out = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), GOOGLY_EYES.get());
                     // Carry the eye's appearance (iris/cornea tint, glow) onto the potion so the splash
-                    // applies it to its target. Same EyeProperties schema the eye item and mobs share.
+                    // applies it to its target. Same AppearanceOverride schema the eye item and mobs share.
                     GooglyEyeItem.setProperties(out, GooglyEyeItem.getProperties(ingredient));
                     return out;
                 }

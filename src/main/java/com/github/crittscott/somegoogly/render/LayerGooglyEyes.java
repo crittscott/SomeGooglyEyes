@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
-import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,8 +59,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         }
 
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
-        // shared config below. Same EyeProperties an eye item carries.
-        EyeProperties overrides = EyeState.readProperties(living);
+        // shared config below. Same AppearanceOverride an eye item carries.
+        AppearanceOverride overrides = EyeState.readProperties(living);
 
         // Resolve the part-tree strategy for this model family (string names / stable indices).
         M model = this.getParentModel();

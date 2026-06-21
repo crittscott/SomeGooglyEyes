@@ -3,8 +3,8 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
-import com.github.crittscott.somegoogly.state.EyeProperties;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.state.EyeColor;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,7 +22,7 @@ import java.util.Random;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
- * {@link EyeProperties}. Reuses the in-world eye model so the item and the mob eyes can't drift.
+ * {@link AppearanceOverride}. Reuses the in-world eye model so the item and the mob eyes can't drift.
  *
  * <p>When the item is <b>held</b> (any hand context) the pupil is alive — a small standalone googly
  * physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
@@ -64,11 +64,9 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        EyeProperties props = GooglyEyeItem.getProperties(stack);
-        float[] cornea = props.corneaColor().isPresent()
-                ? EyeState.unpackColor(props.corneaColor().getAsInt()) : new float[]{1F, 1F, 1F};
-        float[] iris = props.irisColor().isPresent()
-                ? EyeState.unpackColor(props.irisColor().getAsInt()) : new float[]{0F, 0F, 0F};
+        AppearanceOverride props = GooglyEyeItem.getProperties(stack);
+        float[] cornea = props.cornea().orElse(EyeColor.WHITE).toArray();
+        float[] iris = props.iris().orElse(EyeColor.BLACK).toArray();
         boolean glow = props.glow().orElse(false);
 
         float irisX = 0F;

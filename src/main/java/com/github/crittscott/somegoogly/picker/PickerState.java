@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
@@ -50,9 +49,9 @@ public final class PickerState {
     /** One saved eye plus the part token it attaches to. */
     public static final class ListedEye {
         public String part;
-        public EyeConfig eye;
+        public EyeDraft eye;
 
-        public ListedEye(String part, EyeConfig eye) {
+        public ListedEye(String part, EyeDraft eye) {
             this.part = part;
             this.eye = eye;
         }
@@ -62,7 +61,7 @@ public final class PickerState {
     public static final List<ListedEye> eyes = new ArrayList<>();
 
     /** The eye being shaped right now (the "current eye"). */
-    public static EyeConfig currentEye = defaultEye();
+    public static EyeDraft currentEye = defaultEye();
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
     public static String currentPart = null;
     /** Index into {@link #eyes} that {@code save} writes back to, or {@code -1} to append a fresh eye. */
@@ -402,7 +401,7 @@ public final class PickerState {
                 h.eyes = new ArrayList<>();
                 return h;
             });
-            head.eyes.add(le.eye);
+            head.eyes.add(le.eye.toDefinition());
         }
         // The picker authors a single arrangement; wrap it as one weight-1 variant.
         HeadInfo.Variant variant = new HeadInfo.Variant();
@@ -414,33 +413,11 @@ public final class PickerState {
 
     // ---- helpers ---------------------------------------------------------------------------
 
-    private static EyeConfig defaultEye() {
-        EyeConfig e = new EyeConfig();
-        e.position = new double[]{-0.13, -0.25, -0.25};
-        e.eyeScale = 0.75;
-        e.irisScale = 0.6;
-        e.sideOffset = 0.0;
-        e.inclination = HeadInfo.DEFAULT_INCLINATION;
-        e.azimuth = HeadInfo.DEFAULT_AZIMUTH;
-        e.corneaColors = new double[]{1.0, 1.0, 1.0};
-        e.irisColors = new double[]{0.0, 0.0, 0.0};
-        e.glows = false;
-        e.affectedByInvisibility = true;
-        return e;
+    private static EyeDraft defaultEye() {
+        return new EyeDraft();
     }
 
-    private static EyeConfig copy(EyeConfig s) {
-        EyeConfig e = new EyeConfig();
-        e.position = new double[]{s.position[0], s.position[1], s.position[2]};
-        e.eyeScale = s.eyeScale;
-        e.irisScale = s.irisScale;
-        e.sideOffset = s.sideOffset;
-        e.inclination = s.inclination != null ? s.inclination : HeadInfo.DEFAULT_INCLINATION;
-        e.azimuth = s.azimuth != null ? s.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-        e.corneaColors = new double[]{s.corneaColors[0], s.corneaColors[1], s.corneaColors[2]};
-        e.irisColors = new double[]{s.irisColors[0], s.irisColors[1], s.irisColors[2]};
-        e.glows = s.glows;
-        e.affectedByInvisibility = s.affectedByInvisibility;
-        return e;
+    private static EyeDraft copy(EyeDraft s) {
+        return s.copy();
     }
 }

@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.head.HeadInfo.Variant;
 import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -37,7 +38,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
             try {
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), GSON.fromJson(entry.getValue(), ConfigFile.class));
+                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).result().orElse(null);
+                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
                 if (config != null && config.hasAnyConfig()) {
                     selected.put(entry.getKey(), config);
                 }

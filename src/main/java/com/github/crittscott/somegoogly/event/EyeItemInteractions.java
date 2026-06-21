@@ -6,7 +6,7 @@ import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.state.EntityEyeHolder;
 import com.github.crittscott.somegoogly.state.EyeHolder;
-import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -98,7 +98,7 @@ public class EyeItemInteractions {
         ItemStack drop = buildEyeDrop(helper, holder.getEyeProperties());
         mob.spawnAtLocation(drop);
 
-        holder.setEyeProperties(EyeProperties.EMPTY); // appearance now lives in the item
+        holder.setEyeProperties(AppearanceOverride.EMPTY); // appearance now lives in the item
         holder.setHasEyes(false);
 
         stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(event.getHand()));
@@ -146,15 +146,13 @@ public class EyeItemInteractions {
 
     /**
      * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
-     * colours/glow (sampled from head 0 / eye 0) with any per-mob override layered on top — at a count
+     * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top — at a count
      * equal to the mob's total eye count.
      */
-    private static ItemStack buildEyeDrop(HeadInfo helper, EyeProperties override) {
-        EyeProperties configProps = EyeProperties.EMPTY
-                .withCorneaColor(EyeState.packColor(helper.getCorneaColours(0, 0)))
-                .withIrisColor(EyeState.packColor(helper.getIrisColours(0, 0)))
-                .withGlow(helper.doesEyeGlow(0, 0));
-        EyeProperties harvested = configProps.merge(override);
+    private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
+        // Effective appearance = the mob's config appearance (head 0 / eye 0) with its override on top,
+        // captured as a fully-populated override so the item carries the exact look.
+        AppearanceOverride harvested = helper.appearanceAt(0, 0).overlay(override).toOverride();
         return GooglyEyeItem.create(harvested, totalEyes(helper));
     }
 

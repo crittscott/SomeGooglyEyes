@@ -41,7 +41,7 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
 
     @Override
     public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        float offsetX = helper.getEyeOffsetFromJoint(head, eye)[0];
+        float offsetX = helper.placementAt(head, eye).positionArray()[0];
         // Centred/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
         float dir = offsetX != 0f ? Math.signum(offsetX) : (eye % 2 == 0 ? 1f : -1f);
         float magnitude = Curves.lerp(i.prevX, i.x, pt);

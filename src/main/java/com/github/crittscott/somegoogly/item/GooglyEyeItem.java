@@ -1,7 +1,8 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
-import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.state.EyeColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
@@ -17,12 +18,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * A single eye, as an item. Its appearance lives in stack NBT as {@link EyeProperties} (the same
+ * A single eye, as an item. Its appearance lives in stack NBT as {@link AppearanceOverride} (the same
  * codec-serialized schema a mob carries), so it round-trips through drops and — once recipe
  * serializers exist — through crafting.
  *
  * <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it to
- * a mob reuses the mob's configured placement (see {@link EyeProperties}).
+ * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
  */
 public class GooglyEyeItem extends Item {
 
@@ -32,11 +33,11 @@ public class GooglyEyeItem extends Item {
         super(properties);
     }
 
-    public static EyeProperties getProperties(ItemStack stack) {
-        return EyeProperties.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
+    public static AppearanceOverride getProperties(ItemStack stack) {
+        return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
     }
 
-    public static void setProperties(ItemStack stack, EyeProperties properties) {
+    public static void setProperties(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
@@ -48,7 +49,7 @@ public class GooglyEyeItem extends Item {
     }
 
     /** A new eye-item stack carrying {@code properties}. */
-    public static ItemStack create(EyeProperties properties, int count) {
+    public static ItemStack create(AppearanceOverride properties, int count) {
         ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
         setProperties(stack, properties);
         return stack;
@@ -56,7 +57,7 @@ public class GooglyEyeItem extends Item {
 
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        // Render the item as the real 3D eye model (tinted by its EyeProperties, googly when held).
+        // Render the item as the real 3D eye model (tinted by its AppearanceOverride, googly when held).
         consumer.accept(new IClientItemExtensions() {
             private GooglyEyeItemRenderer renderer;
 
@@ -72,11 +73,11 @@ public class GooglyEyeItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        EyeProperties props = getProperties(stack);
-        props.irisColor().ifPresent(rgb ->
-                tooltip.add(Component.literal("Iris: #" + String.format("%06X", rgb)).withStyle(ChatFormatting.GRAY)));
-        props.corneaColor().ifPresent(rgb ->
-                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", rgb)).withStyle(ChatFormatting.GRAY)));
+        AppearanceOverride props = getProperties(stack);
+        props.iris().ifPresent(color ->
+                tooltip.add(Component.literal("Iris: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+        props.cornea().ifPresent(color ->
+                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
         props.glow().ifPresent(glow ->
                 tooltip.add(Component.literal("Glow: " + glow).withStyle(ChatFormatting.GRAY)));
     }

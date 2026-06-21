@@ -2,15 +2,19 @@ package com.github.crittscott.somegoogly.head;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.state.EyeAppearance;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Per-entity, per-age eye configuration, as seen by the client renderer.
@@ -22,9 +26,17 @@ import java.util.Map;
  * <p>Configs are loaded from datapacks on the server, selected by mod version + age, and synced to
  * the client; this class reads the client-side selected copy ({@link ClientEyeConfigs}). The
  * {@code attachPoint} in config is the string part token handed to the resolver.
+ *
+ * <p>Each eye is an {@link EyeDefinition} ({@link EyePlacement} + {@link EyeAppearance}); the whole
+ * config tree (file → entries → variants → heads → eyes) serializes through the {@link Codec}s on the
+ * nested classes here, shared by the datapack loader, the sync packet, and the picker exporter.
  */
 public class HeadInfo {
     private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
+
+    /** Re-exported from {@link EyePlacement} so existing callers (picker) keep their reference. */
+    public static final double DEFAULT_INCLINATION = EyePlacement.DEFAULT_INCLINATION;
+    public static final double DEFAULT_AZIMUTH = EyePlacement.DEFAULT_AZIMUTH;
 
     private final RuntimeConfig entityConfig;
     // The single placement variant chosen for this mob (by its stored roll). Null when no usable config.
@@ -76,7 +88,7 @@ public class HeadInfo {
     /** The part token (string name) the resolver should attach this head's eyes to. */
     public String getAttachToken(int headIndex) {
         HeadConfig head = headAt(headIndex);
-        return head != null ? head.attachPoint : "head";
+        return head != null && head.attachPoint != null ? head.attachPoint : "head";
     }
 
     public int getEyeCount(int headIndex) {
@@ -84,44 +96,25 @@ public class HeadInfo {
         return head != null && head.eyes != null ? head.eyes.size() : 0;
     }
 
-    public boolean doesEyeGlow(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null && eye.glows;
+    /** The eye's placement (geometry), or {@link EyePlacement#DEFAULT} when out of range. */
+    public EyePlacement placementAt(int headIndex, int eyeIndex) {
+        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? eye.placement() : EyePlacement.DEFAULT;
+    }
+
+    /** The eye's config appearance (color/glow), or {@link EyeAppearance#DEFAULT} when out of range. */
+    public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
+        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? eye.appearance() : EyeAppearance.DEFAULT;
     }
 
     public boolean affectedByInvisibility(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye == null || eye.affectedByInvisibility;
+        return placementAt(headIndex, eyeIndex).affectedByInvisibility();
     }
 
     public float getEyeScale(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? (float) eye.eyeScale : 0.75f;
+        return (float) placementAt(headIndex, eyeIndex).eyeScale();
     }
-
-    public float getIrisScale(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? (float) eye.irisScale : 0.6f;
-    }
-
-    public float getEyeSideOffset(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? (float) eye.sideOffset : 0.0f;
-    }
-
-    public double getInclination(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null && eye.inclination != null ? eye.inclination : DEFAULT_INCLINATION;
-    }
-
-    public double getAzimuth(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        return eye != null && eye.azimuth != null ? eye.azimuth : DEFAULT_AZIMUTH;
-    }
-
-    /** Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye. */
-    public static final double DEFAULT_INCLINATION = 90.0;
-    public static final double DEFAULT_AZIMUTH = 270.0;
 
     /**
      * Aim the eye via two angles instead of a quaternion: {@code inclination} measured from the part's
@@ -134,35 +127,9 @@ public class HeadInfo {
         poseStack.mulPose(Axis.XP.rotationDegrees((float) (90.0 - inclination)));
     }
 
-    /** Apply {@link #applyRotation(PoseStack, double, double)} using an eye's angles (null = default). */
-    public static void applyRotation(PoseStack poseStack, EyeConfig eye) {
-        double inc = eye != null && eye.inclination != null ? eye.inclination : DEFAULT_INCLINATION;
-        double azi = eye != null && eye.azimuth != null ? eye.azimuth : DEFAULT_AZIMUTH;
-        applyRotation(poseStack, inc, azi);
-    }
-
-    public float[] getEyeOffsetFromJoint(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        if (eye == null || eye.position == null || eye.position.length < 3) {
-            return new float[]{eyeIndex == 0 ? -0.13f : 0.13f, -0.25f, -0.25f};
-        }
-        return new float[]{(float) eye.position[0], (float) eye.position[1], (float) eye.position[2]};
-    }
-
-    public float[] getCorneaColours(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        if (eye == null || eye.corneaColors == null || eye.corneaColors.length < 3) {
-            return new float[]{1.0f, 1.0f, 1.0f};
-        }
-        return new float[]{(float) eye.corneaColors[0], (float) eye.corneaColors[1], (float) eye.corneaColors[2]};
-    }
-
-    public float[] getIrisColours(int headIndex, int eyeIndex) {
-        EyeConfig eye = eyeAt(headIndex, eyeIndex);
-        if (eye == null || eye.irisColors == null || eye.irisColors.length < 3) {
-            return new float[]{0.0f, 0.0f, 0.0f};
-        }
-        return new float[]{(float) eye.irisColors[0], (float) eye.irisColors[1], (float) eye.irisColors[2]};
+    /** Apply {@link #applyRotation(PoseStack, double, double)} using an eye placement's angles. */
+    public static void applyRotation(PoseStack poseStack, EyePlacement placement) {
+        applyRotation(poseStack, placement.inclination(), placement.azimuth());
     }
 
     private HeadConfig headAt(int headIndex) {
@@ -213,7 +180,7 @@ public class HeadInfo {
         return config.variants.get(clamped).heads;
     }
 
-    private EyeConfig eyeAt(int headIndex, int eyeIndex) {
+    private EyeDefinition eyeAt(int headIndex, int eyeIndex) {
         HeadConfig head = headAt(headIndex);
         if (head == null || head.eyes == null || eyeIndex < 0 || eyeIndex >= head.eyes.size()) {
             return null;
@@ -228,9 +195,20 @@ public class HeadInfo {
     private record CacheKey(ResourceLocation entityName, boolean baby, int variant) {
     }
 
-    // Raw datapack file structure (one file per entity; entity id comes from the file path).
+    // --- Datapack structure (mutable POJOs, each with a Codec; the file path supplies the entity id) ---
+
+    // Raw datapack file structure (one file per entity).
     public static class ConfigFile {
         public List<VersionedEntry> entries;
+
+        public static final Codec<ConfigFile> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                VersionedEntry.CODEC.listOf().optionalFieldOf("entries", List.of())
+                        .forGetter(f -> f.entries != null ? f.entries : List.of())
+        ).apply(inst, entries -> {
+            ConfigFile f = new ConfigFile();
+            f.entries = entries;
+            return f;
+        }));
     }
 
     // One selectable entry in a datapack file.
@@ -247,6 +225,22 @@ public class HeadInfo {
         public boolean isEnabled() {
             return enabled == null || enabled;
         }
+
+        public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.STRING.optionalFieldOf("version", "").forGetter(e -> e.version != null ? e.version : ""),
+                Codec.STRING.optionalFieldOf("age", "any").forGetter(e -> e.age != null ? e.age : "any"),
+                Codec.BOOL.optionalFieldOf("enabled").forGetter(e -> Optional.ofNullable(e.enabled)),
+                HeadConfig.CODEC.listOf().optionalFieldOf("heads").forGetter(e -> Optional.ofNullable(e.heads)),
+                Variant.CODEC.listOf().optionalFieldOf("variants").forGetter(e -> Optional.ofNullable(e.variants))
+        ).apply(inst, (version, age, enabled, heads, variants) -> {
+            VersionedEntry e = new VersionedEntry();
+            e.version = version;
+            e.age = age;
+            e.enabled = enabled.orElse(null);
+            e.heads = heads.orElse(null);
+            e.variants = variants.orElse(null);
+            return e;
+        }));
     }
 
     // Runtime structure selected by version and age, then synced to clients.
@@ -265,6 +259,17 @@ public class HeadInfo {
         public List<HeadConfig> primaryHeads() {
             return variants != null && !variants.isEmpty() ? variants.get(0).heads : null;
         }
+
+        public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.BOOL.optionalFieldOf("enabled").forGetter(c -> Optional.ofNullable(c.enabled)),
+                Variant.CODEC.listOf().optionalFieldOf("variants", List.of())
+                        .forGetter(c -> c.variants != null ? c.variants : List.of())
+        ).apply(inst, (enabled, variants) -> {
+            RuntimeConfig c = new RuntimeConfig();
+            c.enabled = enabled.orElse(null);
+            c.variants = variants;
+            return c;
+        }));
     }
 
     /** One weighted placement arrangement: a complete set of heads (each with its own eyes). */
@@ -276,6 +281,17 @@ public class HeadInfo {
         public double weight() {
             return weight == null ? 1.0 : Math.max(0.0, weight);
         }
+
+        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.DOUBLE.optionalFieldOf("weight").forGetter(v -> Optional.ofNullable(v.weight)),
+                HeadConfig.CODEC.listOf().optionalFieldOf("heads", List.of())
+                        .forGetter(v -> v.heads != null ? v.heads : List.of())
+        ).apply(inst, (weight, heads) -> {
+            Variant v = new Variant();
+            v.weight = weight.orElse(null);
+            v.heads = heads;
+            return v;
+        }));
     }
 
     public static class RuntimeConfigSet {
@@ -291,23 +307,34 @@ public class HeadInfo {
         public boolean hasAnyConfig() {
             return adult != null || baby != null || any != null;
         }
+
+        public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                RuntimeConfig.CODEC.optionalFieldOf("adult").forGetter(s -> Optional.ofNullable(s.adult)),
+                RuntimeConfig.CODEC.optionalFieldOf("baby").forGetter(s -> Optional.ofNullable(s.baby)),
+                RuntimeConfig.CODEC.optionalFieldOf("any").forGetter(s -> Optional.ofNullable(s.any))
+        ).apply(inst, (adult, baby, any) -> {
+            RuntimeConfigSet s = new RuntimeConfigSet();
+            s.adult = adult.orElse(null);
+            s.baby = baby.orElse(null);
+            s.any = any.orElse(null);
+            return s;
+        }));
     }
 
     public static class HeadConfig {
         public String attachPoint;
-        public List<EyeConfig> eyes;
-    }
+        public List<EyeDefinition> eyes;
 
-    public static class EyeConfig {
-        public double[] position;
-        public double eyeScale;
-        public double irisScale;
-        public double sideOffset;
-        public Double inclination; // angle from part +Y (degrees); null = default forward
-        public Double azimuth;     // angle from part +X (degrees); null = default forward
-        public double[] corneaColors;
-        public double[] irisColors;
-        public boolean glows;
-        public boolean affectedByInvisibility;
+        public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.STRING.optionalFieldOf("attachPoint", "head")
+                        .forGetter(h -> h.attachPoint != null ? h.attachPoint : "head"),
+                EyeDefinition.CODEC.listOf().optionalFieldOf("eyes", List.of())
+                        .forGetter(h -> h.eyes != null ? h.eyes : List.of())
+        ).apply(inst, (attachPoint, eyes) -> {
+            HeadConfig h = new HeadConfig();
+            h.attachPoint = attachPoint;
+            h.eyes = eyes;
+            return h;
+        }));
     }
 }

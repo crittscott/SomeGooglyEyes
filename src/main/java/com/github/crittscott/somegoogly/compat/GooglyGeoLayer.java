@@ -3,12 +3,12 @@ package com.github.crittscott.somegoogly.compat;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
+import com.github.crittscott.somegoogly.picker.EyeDraft;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.picker.Gizmo;
 import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.render.GooglyEyeRenderer;
-import com.github.crittscott.somegoogly.state.EyeProperties;
+import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -70,7 +70,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
         // Per-mob appearance overrides (dye / redstone / harvested-eye item / potion), the same as the
         // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
-        EyeProperties overrides = EyeState.readProperties(living);
+        AppearanceOverride overrides = EyeState.readProperties(living);
 
         GooglyTracker tracker = SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);
         tracker.setLastUpdateRequest();
@@ -124,10 +124,10 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
     }
 
-    private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeConfig eye) {
+    private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
-        HeadInfo.applyRotation(poseStack, eye);
+        HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);
 

@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.command;
 import com.github.crittscott.somegoogly.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.state.EyeColor;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -129,13 +130,13 @@ public final class GooglyDebugCommand {
                                             int r = IntegerArgumentType.getInteger(ctx, "r");
                                             int g = IntegerArgumentType.getInteger(ctx, "g");
                                             int b = IntegerArgumentType.getInteger(ctx, "b");
-                                            int rgb = (r << 16) | (g << 8) | b;
+                                            EyeColor color = new EyeColor(r / 255F, g / 255F, b / 255F);
                                             if (iris) {
-                                                EyeState.setIrisTint(target, rgb);
+                                                EyeState.setIrisTint(target, color);
                                             } else {
-                                                EyeState.setCorneaTint(target, rgb);
+                                                EyeState.setCorneaTint(target, color);
                                             }
-                                            return feedback(ctx, name + " tint = #" + String.format("%06X", rgb));
+                                            return feedback(ctx, name + " tint = #" + String.format("%06X", color.toRgb24()));
                                         }))));
     }
 

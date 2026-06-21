@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.command;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
+import com.github.crittscott.somegoogly.picker.EyeDraft;
 import com.github.crittscott.somegoogly.picker.PickerExporter;
 import com.github.crittscott.somegoogly.picker.PickerState;
 import com.github.crittscott.somegoogly.picker.PickerState.ListedEye;
@@ -253,7 +253,7 @@ public class GooglyClientCommands {
         PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
                 opt(MaybeFloatArgumentType.get(ctx, "y")),
                 opt(MaybeFloatArgumentType.get(ctx, "z")));
-        EyeConfig e = PickerState.currentEye;
+        EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
         return 1;
     }
@@ -263,7 +263,7 @@ public class GooglyClientCommands {
         requireChosen();
         PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
-        EyeConfig e = PickerState.currentEye;
+        EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Rotation incl %.1f° azi %.1f°.", incl(e), azi(e)));
         return 1;
     }
@@ -317,7 +317,7 @@ public class GooglyClientCommands {
         feedback(ctx, "Eyes (" + list.size() + "):");
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
-            EyeConfig e = le.eye;
+            EyeDraft e = le.eye;
             String mark = i == PickerState.selectedIndex ? " *" : "";
             feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
                     i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
@@ -410,11 +410,11 @@ public class GooglyClientCommands {
         return value.map(Float::doubleValue).orElse(null);
     }
 
-    private static double incl(EyeConfig e) {
+    private static double incl(EyeDraft e) {
         return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
     }
 
-    private static double azi(EyeConfig e) {
+    private static double azi(EyeDraft e) {
         return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
     }
 
