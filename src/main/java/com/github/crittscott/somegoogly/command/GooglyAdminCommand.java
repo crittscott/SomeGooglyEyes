@@ -9,6 +9,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,29 +27,40 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 /**
- * Temporary dev/verification command for Keystone A. Exercises the full per-mob override loop
- * (server NBT write → {@link EyeState} broadcast → client apply → renderer override) against the
- * {@link LivingEntity} the running player is looking at.
+ * The {@code admin} subtree of {@code /sg} — operator-only (permission level 2) tools that mutate the
+ * live {@link LivingEntity} the running player is looking at: its has-eyes flag, iris/cornea tint, glow
+ * mode, and active cosmetic behaviour. Exercises the full per-mob override loop (server NBT write →
+ * {@link EyeState} broadcast → client apply → renderer override) and the server-owned behaviour schedule.
  *
- * <p>Not a user-facing feature — the real shears / potion / dye / redstone features will call the
- * same {@link EyeState} API. Op-only.
+ * <p>Server-authoritative: registered on the server dispatcher and grafted under a server-side
+ * {@code /sg} root. The client {@code /sg} picker verbs and these admin verbs live on disjoint paths
+ * ({@code admin …} vs the picker verbs), so Minecraft/Forge command fall-through routes each side's input
+ * to the side that owns it — one command name, two registration sources. Real shears / potion / dye /
+ * redstone gameplay calls the same {@link EyeState} API; this is the manual driver for it.
  *
  * <ul>
- *   <li>{@code /sgdebug eyes <true|false>} — toggle the has-eyes flag</li>
- *   <li>{@code /sgdebug tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a colour (0-255)</li>
- *   <li>{@code /sgdebug tint clear} — drop both colour overrides</li>
- *   <li>{@code /sgdebug glow <on|off|config>} — force glow on/off, or revert to per-eye config</li>
+ *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag</li>
+ *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a colour (0-255)</li>
+ *   <li>{@code /sg admin tint clear} — drop both colour overrides</li>
+ *   <li>{@code /sg admin glow <on|off|config>} — force glow on/off, or revert to per-eye config</li>
+ *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behaviour now</li>
  * </ul>
  */
-public final class GooglyDebugCommand {
+public final class GooglyAdminCommand {
 
     private static final double REACH = 20.0;
 
-    private GooglyDebugCommand() {
+    private GooglyAdminCommand() {
     }
 
+    /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("sgdebug")
+        dispatcher.register(Commands.literal("sg").then(adminTree()));
+    }
+
+    /** The {@code admin} subtree (op-gated), grafted under {@code /sg} by {@link #register}. */
+    private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
+        return Commands.literal("admin")
                 .requires(src -> src.hasPermission(2))
                 .then(Commands.literal("eyes")
                         .then(Commands.argument("value", BoolArgumentType.bool())
@@ -77,10 +89,10 @@ public final class GooglyDebugCommand {
                 .then(Commands.literal("behavior")
                         .then(Commands.argument("id", StringArgumentType.word())
                                 .suggests(BEHAVIOR_SUGGESTIONS)
-                                .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id"))))));
+                                .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id")))));
     }
 
-    /** Suggests the behaviour short names plus {@code random} for {@code /sgdebug behavior <id>}. */
+    /** Suggests the behaviour short names plus {@code random} for {@code /sg admin behavior <id>}. */
     private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest("random");
         for (EyeBehavior behavior : EyeBehaviors.all()) {
@@ -108,7 +120,7 @@ public final class GooglyDebugCommand {
             behavior = key == null ? null : EyeBehaviors.byId(key);
         }
         if (behavior == null) {
-            ctx.getSource().sendFailure(Component.literal("[sgdebug] unknown behavior '" + id + "'"));
+            ctx.getSource().sendFailure(Component.literal("[sg admin] unknown behavior '" + id + "'"));
             return 0;
         }
 
@@ -119,7 +131,7 @@ public final class GooglyDebugCommand {
                 : "dropped " + behavior.id().getPath() + " (mob is busy)");
     }
 
-    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {
+    private static LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {
         return Commands.literal(name)
                 .then(Commands.argument("r", IntegerArgumentType.integer(0, 255))
                         .then(Commands.argument("g", IntegerArgumentType.integer(0, 255))
@@ -153,7 +165,7 @@ public final class GooglyDebugCommand {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayer();
         if (player == null) {
-            source.sendFailure(Component.literal("[sgdebug] must be run by a player"));
+            source.sendFailure(Component.literal("[sg admin] must be run by a player"));
             return null;
         }
 
@@ -171,12 +183,12 @@ public final class GooglyDebugCommand {
         if (target instanceof LivingEntity living) {
             return living;
         }
-        source.sendFailure(Component.literal("[sgdebug] not looking at a living entity"));
+        source.sendFailure(Component.literal("[sg admin] not looking at a living entity"));
         return null;
     }
 
     private static int feedback(CommandContext<CommandSourceStack> ctx, String message) {
-        ctx.getSource().sendSuccess(() -> Component.literal("[sgdebug] " + message), false);
+        ctx.getSource().sendSuccess(() -> Component.literal("[sg admin] " + message), false);
         return 1;
     }
 }

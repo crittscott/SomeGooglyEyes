@@ -57,13 +57,9 @@ public class GooglyClientCommands {
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
 
-    /** Captured at registration so chained fragments can be re-dispatched. */
-    private static CommandDispatcher<CommandSourceStack> commandDispatcher;
-
     @SubscribeEvent
     public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
-        commandDispatcher = event.getDispatcher();
-        register(commandDispatcher);
+        register(event.getDispatcher());
     }
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -137,7 +133,7 @@ public class GooglyClientCommands {
 
         alias(sg, "ex", "export", b -> terminal(b, GooglyClientCommands::export));
 
-        // Behaviour testing lives in the server-side /sgdebug command (the schedule is server-owned).
+        // Behaviour testing lives in the server-side /sg admin command (the schedule is server-owned).
 
         // spawnall has no short form (and no chain tail) — the full word is required, one-off only.
         sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));
@@ -174,28 +170,9 @@ public class GooglyClientCommands {
                 .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
     }
 
-    /**
-     * Make a command's terminal node both executable on its own and the head of an {@code &}-separated
-     * chain: {@code <args>} runs {@code leaf}; {@code <args> & <more>} runs {@code leaf} then dispatches
-     * {@code /sg <more>}, which re-enters the tree and peels off the next fragment. A space must precede
-     * the {@code &} (so Brigadier ends the preceding argument); a space must follow it (the {@code &}
-     * literal needs a separator).
-     */
+    /** Mark a node executable: running it does this verb's own work. */
     private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
         node.executes(leaf);
-        node.then(Commands.literal("&").then(
-                Commands.argument("rest", StringArgumentType.greedyString()).executes(chain(leaf))));
-    }
-
-    private static Command<CommandSourceStack> chain(Command<CommandSourceStack> leaf) {
-        return ctx -> {
-            leaf.run(ctx); // this fragment's own work first
-            String rest = StringArgumentType.getString(ctx, "rest").trim();
-            if (rest.isEmpty()) {
-                return 1;
-            }
-            return commandDispatcher.execute("sg " + rest, ctx.getSource());
-        };
     }
 
     // ---- executors -------------------------------------------------------------------------

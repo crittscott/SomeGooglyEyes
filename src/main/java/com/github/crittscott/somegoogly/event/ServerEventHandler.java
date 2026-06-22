@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.command.GooglyDebugCommand;
+import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
@@ -67,7 +67,7 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyDebugCommand.register(event.getDispatcher());
+        GooglyAdminCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent
