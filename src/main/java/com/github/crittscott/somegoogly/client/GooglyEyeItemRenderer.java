@@ -56,7 +56,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     private ModelGooglyEye model() {
         if (model == null) {
-            model = new ModelGooglyEye(Minecraft.getInstance().getEntityModels().bakeLayer(SomeGoogly.GOOGLY_EYE_LAYER));
+            model = new ModelGooglyEye();
         }
         return model;
     }

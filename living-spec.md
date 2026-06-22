@@ -191,7 +191,7 @@ For each surviving eye, rendering combines:
 4. at most one active behavior contribution;
 5. normal and, when configured, glowing render passes.
 
-The eye model is shared between mob eyes and eye items. Its iris is moved independently inside the cornea, giving the object its wobble.
+The eye model is shared between mob eyes, picker previews, and eye items. Its cornea and iris are separate, closed 16-sided shallow cylinders; the iris is moved independently in front of the cornea, giving the object its wobble.
 
 ### 7.2 Attachment resolvers
 

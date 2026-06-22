@@ -11,7 +11,6 @@ import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -26,7 +25,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
 
     public LayerGooglyEyes(RenderLayerParent<T, M> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye(Minecraft.getInstance().getEntityModels().bakeLayer(SomeGoogly.GOOGLY_EYE_LAYER));
+        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override

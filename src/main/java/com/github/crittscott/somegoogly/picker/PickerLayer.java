@@ -1,13 +1,11 @@
 package com.github.crittscott.somegoogly.picker;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.render.resolver.Resolvers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -32,7 +30,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
 
     public PickerLayer(RenderLayerParent<T, M> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye(Minecraft.getInstance().getEntityModels().bakeLayer(SomeGoogly.GOOGLY_EYE_LAYER));
+        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override

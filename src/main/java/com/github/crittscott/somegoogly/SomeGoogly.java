@@ -10,23 +10,19 @@ import com.github.crittscott.somegoogly.event.EyePotionInteractions;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.potion.ModPotions;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import com.github.crittscott.somegoogly.picker.PickerHud;
 import com.github.crittscott.somegoogly.picker.PickerInput;
 import com.github.crittscott.somegoogly.picker.PickerKeys;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -44,8 +40,6 @@ public class SomeGoogly {
     public static final String MOD_ID = "somegoogly";
 
     public static final Logger LOGGER = LogManager.getLogger();
-
-    public static final ModelLayerLocation GOOGLY_EYE_LAYER = new ModelLayerLocation(new ResourceLocation("somegoogly:googly_eye"), "main");
 
     // Custom command argument type for the /sg CLI (the "float or ~" no-op used by move/rot).
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENTS =
@@ -74,7 +68,6 @@ public class SomeGoogly {
             MinecraftForge.EVENT_BUS.register(clientEventHandler = new ClientEventHandler());
 
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerLayerDefinitions);
 
             // Part picker (authoring tool).
             FMLJavaModLoadingContext.get().getModEventBus().addListener(PickerKeys::register);
@@ -96,11 +89,6 @@ public class SomeGoogly {
     private void commonSetup(FMLCommonSetupEvent event) {
         // Brewing must be registered on the main thread (the registry isn't thread-safe).
         event.enqueueWork(ModPotions::registerBrewing);
-    }
-
-    @SubscribeEvent
-    public void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(GOOGLY_EYE_LAYER, ModelGooglyEye::createBodyLayer);
     }
 
     private void addLayers(EntityRenderersEvent.AddLayers event) {

@@ -13,7 +13,6 @@ import com.github.crittscott.somegoogly.state.EyeState;
 import com.github.crittscott.somegoogly.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -37,7 +36,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
     public GooglyGeoLayer(GeoRenderer<T> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye(Minecraft.getInstance().getEntityModels().bakeLayer(SomeGoogly.GOOGLY_EYE_LAYER));
+        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override

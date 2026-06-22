@@ -2,117 +2,125 @@ package com.github.crittscott.somegoogly.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
-public class ModelGooglyEye extends Model {
-    private final ModelPart cornea1;
-    private final ModelPart cornea2;
-    private final ModelPart cornea3;
-    private final ModelPart cornea4;
-    private final ModelPart cornea5;
-    private final ModelPart cornea6;
-    private final ModelPart[] iris = new ModelPart[3];
+/**
+ * Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
+ *
+ * <p>The cornea and iris are two complete shallow cylinders, each with front and rear caps. The
+ * iris stays physically in front of the cornea, so their surfaces never overlap or need z-fighting
+ * offsets. The 16-sided rim reads as round at item scale while remaining inexpensive.
+ */
+public final class ModelGooglyEye {
 
-    public ModelGooglyEye(ModelPart root) {
-        super(RenderType::entityCutout);
+    private static final int SIDES = 16;
+    /** ModelPart cube coordinates are pixels; custom vertices use the same conversion. */
+    private static final float MODEL_UNIT = 1.0F / 16.0F;
 
-        this.cornea1 = root.getChild("cornea1");
-        this.cornea2 = root.getChild("cornea2");
-        this.cornea3 = root.getChild("cornea3");
-        this.cornea4 = root.getChild("cornea4");
-        this.cornea5 = root.getChild("cornea5");
-        this.cornea6 = root.getChild("cornea6");
+    // Local dimensions preserve the former model's visible diameter and approximate depth.
+    private static final float CORNEA_RADIUS = 1.865F;
+    private static final float CORNEA_FRONT_Z = -1.00F;
+    private static final float CORNEA_BACK_Z = 0.00F;
+    private static final float IRIS_RADIUS = 1.00F;
+    private static final float IRIS_FRONT_Z = -1.50F;
+    private static final float IRIS_BACK_Z = -1.05F;
 
-        this.iris[0] = root.getChild("iris1");
-        this.iris[1] = root.getChild("iris2");
-        this.iris[2] = root.getChild("iris3");
-    }
+    private static final float[] RING_X = new float[SIDES];
+    private static final float[] RING_Y = new float[SIDES];
 
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition meshdefinition = new MeshDefinition();
-        PartDefinition partdefinition = meshdefinition.getRoot();
-
-        partdefinition.addOrReplaceChild("cornea1", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-0.5F, -1.865F, -1.03F, 1, 3.73F, 1), PartPose.ZERO);
-
-        partdefinition.addOrReplaceChild("cornea2", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -1.865F, -1.0F, 1, 3.73F, 1),
-                PartPose.rotation(0.0F, 0.0F, 0.5235987755982988F));
-
-        partdefinition.addOrReplaceChild("cornea3", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -1.865F, -1.02F, 1, 3.73F, 1),
-                PartPose.rotation(0.0F, 0.0F, 1.0471975511965976F));
-
-        partdefinition.addOrReplaceChild("cornea4", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -1.865F, -0.99F, 1, 3.73F, 1),
-                PartPose.rotation(0.0F, 0.0F, 1.5707963267948966F));
-
-        partdefinition.addOrReplaceChild("cornea5", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -1.865F, -1.01F, 1, 3.73F, 1),
-                PartPose.rotation(0.0F, 0.0F, 2.0943951023931953F));
-
-        partdefinition.addOrReplaceChild("cornea6", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -1.865F, -0.98F, 1, 3.73F, 1),
-                PartPose.rotation(0.0F, 0.0F, 2.6179938779914944F));
-
-        partdefinition.addOrReplaceChild("iris1", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -0.8665F, -1.51F, 1, 1.733F, 1),
-                PartPose.rotation(0.0F, 0.0F, 2.0943951023931953F));
-
-        partdefinition.addOrReplaceChild("iris2", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-0.5F, -0.8665F, -1.5F, 1, 1.733F, 1),
-                PartPose.rotation(0.0F, 0.0F, 1.0471975511965976F));
-
-        partdefinition.addOrReplaceChild("iris3", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-0.5F, -0.8665F, -1.49F, 1, 1.733F, 1), PartPose.ZERO);
-
-        return LayerDefinition.create(meshdefinition, 64, 32);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        // Empty - we render parts manually
-    }
-
-    public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        cornea1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        cornea2.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        cornea3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        cornea4.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        cornea5.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        cornea6.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-    }
-
-    public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        for (int i = 0; i < iris.length; i++) {
-            iris[i].render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    static {
+        for (int i = 0; i < SIDES; i++) {
+            double angle = Math.PI * 2.0 * i / SIDES;
+            RING_X[i] = (float) Math.cos(angle);
+            RING_Y[i] = (float) Math.sin(angle);
         }
     }
 
+    private float irisOffsetX;
+    private float irisOffsetY;
+
+    public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
+                              float red, float green, float blue, float alpha) {
+        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+                0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z);
+    }
+
+    public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
+                            float red, float green, float blue, float alpha) {
+        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z);
+    }
+
+    /** Preserve the former iris-motion conversion so wobble and behavior values retain their range. */
     public void moveIris(float x, float y, float pupilSize) {
-        // A zero/negative iris scale divides to Infinity/NaN below, which would feed garbage iris
-        // coordinates to the GPU. There's nothing visible to move at that scale, so centre and bail.
         if (pupilSize <= 0F) {
-            for (ModelPart part : iris) {
-                part.x = 0F;
-                part.y = 0F;
-            }
+            irisOffsetX = 0F;
+            irisOffsetY = 0F;
             return;
         }
-        float shiftFactor = (1.45F - pupilSize * 0.525F) / pupilSize;
-        float rotX = -x * shiftFactor;
-        float rotY = -y * shiftFactor * (float)Math.cos(Math.toRadians(x * 90F));
 
-        for (int i = 0; i < iris.length; i++) {
-            iris[i].x = rotX;
-            iris[i].y = rotY;
+        float shiftFactor = (1.45F - pupilSize * 0.525F) / pupilSize;
+        irisOffsetX = -x * shiftFactor;
+        irisOffsetY = -y * shiftFactor * (float) Math.cos(Math.toRadians(x * 90F));
+    }
+
+    private static void renderCylinder(PoseStack poseStack, VertexConsumer buffer, int packedLight,
+                                       int packedOverlay, float red, float green, float blue, float alpha,
+                                       float centerX, float centerY, float radius, float frontZ, float backZ) {
+        PoseStack.Pose pose = poseStack.last();
+        Matrix4f matrix = pose.pose();
+        Matrix3f normalMatrix = pose.normal();
+
+        for (int i = 0; i < SIDES; i++) {
+            int next = (i + 1) % SIDES;
+
+            float x0 = centerX + RING_X[i] * radius;
+            float y0 = centerY + RING_Y[i] * radius;
+            float x1 = centerX + RING_X[next] * radius;
+            float y1 = centerY + RING_Y[next] * radius;
+
+            // Entity-cutout buffers draw quads, so each cap triangle is a degenerate quad.
+            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+
+            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x0, y0, backZ, 0F, 0F, 1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x1, y1, backZ, 0F, 0F, 1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+
+            // Per-vertex radial normals make the rim shade smoothly.
+            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, RING_X[i], RING_Y[i], 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, RING_X[next], RING_Y[next], 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x1, y1, backZ, RING_X[next], RING_Y[next], 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, matrix, normalMatrix, x0, y0, backZ, RING_X[i], RING_Y[i], 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
         }
+    }
+
+    private static void emit(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix,
+                             float x, float y, float z, float normalX, float normalY, float normalZ,
+                             int packedLight, int packedOverlay, float red, float green, float blue,
+                             float alpha) {
+        buffer.vertex(matrix, x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
+                .color(red, green, blue, alpha)
+                .uv(0.5F, 0.5F)
+                .overlayCoords(packedOverlay)
+                .uv2(packedLight)
+                .normal(normalMatrix, normalX, normalY, normalZ)
+                .endVertex();
     }
 }
