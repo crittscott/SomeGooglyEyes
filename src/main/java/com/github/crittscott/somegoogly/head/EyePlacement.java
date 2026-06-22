@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
  * {@code azimuth} from its +X axis (degrees). The eye's pupil faces local -Z by default; roll is
  * irrelevant (the eye is rotationally symmetric about its look axis), so two angles suffice.
  */
-public record EyePlacement(Vec3 position, double eyeScale, double irisScale, double sideOffset,
+public record EyePlacement(Vec3 position, double eyeScale, double irisScale,
                            double inclination, double azimuth, boolean affectedByInvisibility) {
 
     /** Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye. */
@@ -22,15 +22,15 @@ public record EyePlacement(Vec3 position, double eyeScale, double irisScale, dou
     public static final double DEFAULT_AZIMUTH = 270.0;
 
     public static final EyePlacement DEFAULT = new EyePlacement(
-            new Vec3(-0.13, -0.25, -0.25), 0.75, 0.6, 0.0,
+            new Vec3(-0.13, -0.25, -0.25), 0.75, 0.6,
             DEFAULT_INCLINATION, DEFAULT_AZIMUTH, true);
 
-    /** {@link MapCodec} (flat fields) so {@link EyeDefinition} can sit placement beside appearance. */
+    /** {@link MapCodec} (flat fields) so {@link EyeDefinition} can sit placement beside appearance.
+     *  A stray {@code sideOffset} key in old data is harmlessly ignored (it was always a no-op duplicate of position.x). */
     public static final MapCodec<EyePlacement> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Vec3.CODEC.optionalFieldOf("position", DEFAULT.position).forGetter(EyePlacement::position),
             Codec.DOUBLE.optionalFieldOf("eyeScale", 0.75).forGetter(EyePlacement::eyeScale),
             Codec.DOUBLE.optionalFieldOf("irisScale", 0.6).forGetter(EyePlacement::irisScale),
-            Codec.DOUBLE.optionalFieldOf("sideOffset", 0.0).forGetter(EyePlacement::sideOffset),
             Codec.DOUBLE.optionalFieldOf("inclination", DEFAULT_INCLINATION).forGetter(EyePlacement::inclination),
             Codec.DOUBLE.optionalFieldOf("azimuth", DEFAULT_AZIMUTH).forGetter(EyePlacement::azimuth),
             Codec.BOOL.optionalFieldOf("affectedByInvisibility", true).forGetter(EyePlacement::affectedByInvisibility)

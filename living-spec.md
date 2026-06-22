@@ -135,7 +135,6 @@ Each object in `eyes` is flat rather than nested:
 | `position` | `[-0.13, -0.25, -0.25]` | Local offset from the attachment point. |
 | `eyeScale` | `0.75` | Base eye size. Non-positive eyes are skipped. |
 | `irisScale` | `0.6` | Iris/pupil size. |
-| `sideOffset` | `0.0` | Additional local horizontal offset. |
 | `inclination` | `90.0` | Aim angle from local positive Y, in degrees. |
 | `azimuth` | `270.0` | Aim angle from local positive X, in degrees. |
 | `corneaColors` | `[1, 1, 1]` | RGB cornea colour, stored as three floats. |
@@ -154,7 +153,7 @@ The sampled shipped definitions for axolotl, bee, and warden use the simple `hea
 | `googlyEyesEnabled` | `true` | Global master switch for new spawn decisions. |
 | `globalPercent` | `2` | Default percentage chance for an eligible entity to get eyes at first spawn. |
 | `entityOverrides` | empty | Lines of `entity-or-glob,percent`. Exact ids beat wildcard entries; otherwise the first matching wildcard wins. |
-| `harvestOnKillPercent` | `25` | Chance for an eyed mob killed directly with plain shears to drop eye items. |
+| `harvestOnKillPercent` | `25` | Chance for an eyed mob killed directly with a shears item (any `ShearsItem`, no enchantment needed) to drop eye items. |
 | `ambientBehaviors` | `true` | Enables idle cosmetic expressions. |
 | `ambientMinTicks` / `ambientMaxTicks` | configured range | Random delay range between ambient expression attempts. |
 | `enabledBehaviors` | all built-ins | Expression ids allowed in the ambient pool. Unknown ids are ignored. |
@@ -166,9 +165,10 @@ Spawn percentage controls how often a *new* eligible entity receives eyes. Chang
 | Setting | Behavior |
 | --- | --- |
 | `disableGooglyEyes` | Local master render veto. |
-| `disabledEntities` | Local list of entity ids whose eyes are not rendered. |
+| `disabledEntities` | Local list of entity ids (e.g. `minecraft:zombie`) whose eyes are not rendered. |
+| `disabledMods` | Local list of mod namespaces (e.g. `minecraft`) whose entities' eyes are not rendered. |
 
-Malformed `disabledEntities` values are dropped and logged once rather than crashing setup or rendering.
+Malformed `disabledEntities` values are dropped and logged once rather than crashing setup or rendering. The parsed views of both lists are cached and rebuilt only when the client config (re)loads, rather than on every render call.
 
 ## 7. Rendering and attachment
 
@@ -250,8 +250,8 @@ When rendered in a hand, the item runs the same wobble step as a mob eye. In inv
 
 | Action | Result | Status |
 | --- | --- | --- |
-| Right-click an eyed mob with Optometrist-enchanted shears | Removes its eyes without damage, drops eye items carrying the mob's effective appearance. | Implemented |
-| Kill an eyed mob with a direct plain-shears attack | May drop the same eye items, using the server harvest chance. | Implemented |
+| Right-click an eyed mob with Optometrist-enchanted shears (any `ShearsItem`, vanilla or modded) | Removes its eyes without damage, drops eye items carrying the mob's effective appearance. | Implemented |
+| Kill an eyed mob with a direct shears attack (any `ShearsItem`, no enchantment) | May drop the same eye items, using the server harvest chance. | Implemented |
 | Right-click an eligible eyeless mob with a googly-eye item | Applies item appearance and turns its eyes on. | Implemented |
 
 Harvested stacks use the mob's total configured eye count, but sample the effective appearance from the first configured eye. The current override model is per-mob rather than per-eye, so asymmetric eye colours are not preserved as separate item properties.
@@ -277,7 +277,7 @@ On impact, the server chooses exactly one random nearby eligible, currently eyel
 
 ### 9.5 Enchantment
 
-`somegoogly:optometrist` is a treasure-only enchantment restricted to vanilla shears. Its purpose is non-lethal harvesting.
+`somegoogly:optometrist` is a treasure-only enchantment restricted to shears (any `ShearsItem`, vanilla or modded). Its purpose is non-lethal harvesting.
 
 ## 10. Placement picker and authoring workflow
 
@@ -312,7 +312,6 @@ The picker previews saved and current eyes with a centred iris and a local RGB t
 ### 10.3 Picker limitations
 
 - **Partial:** it exports a single legacy `heads` layout; it does not author weighted variants.
-- **Partial:** it has no `/sg` verb for `sideOffset`, even though the data model supports it.
 - **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
 - **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
 - **Deferred:** remote/multiplayer export is intentionally unsupported.

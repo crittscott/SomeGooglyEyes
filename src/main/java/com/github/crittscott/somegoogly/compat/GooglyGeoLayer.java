@@ -125,7 +125,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
     private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeDraft eye) {
         poseStack.pushPose();
-        poseStack.translate(eye.position[0] + eye.sideOffset, eye.position[1], eye.position[2]);
+        poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
         HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * 0.4F);

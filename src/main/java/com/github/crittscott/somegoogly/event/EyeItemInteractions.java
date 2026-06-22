@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -39,7 +39,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *       apply the item's appearance and turn the mob's eyes on (placement comes from the mob's config).</li>
  * </ul>
  *
- * <p>Both harvest paths use vanilla {@link Items#SHEARS} and capture the mob's appearance from head 0 /
+ * <p>Both harvest paths accept any {@link ShearsItem} (vanilla or modded) and capture the mob's appearance from head 0 /
  * eye 0 (per-eye appearance would need the override model to go per-eye, which it isn't yet).
  */
 public class EyeItemInteractions {
@@ -59,7 +59,7 @@ public class EyeItemInteractions {
 
         if (stack.getItem() instanceof GooglyEyeItem) {
             reattach(event, player, mob, stack, holder);
-        } else if (stack.is(Items.SHEARS) && holder.hasEyes() && hasOptometrist(stack)) {
+        } else if (stack.getItem() instanceof ShearsItem && holder.hasEyes() && hasOptometrist(stack)) {
             harvest(event, player, mob, stack, holder);
         }
     }
@@ -123,7 +123,7 @@ public class EyeItemInteractions {
             return;
         }
         ItemStack weapon = player.getMainHandItem();
-        if (!weapon.is(Items.SHEARS)) {
+        if (!(weapon.getItem() instanceof ShearsItem)) {
             return;
         }
 

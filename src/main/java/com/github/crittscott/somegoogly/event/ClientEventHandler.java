@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 public class ClientEventHandler {
@@ -102,9 +101,8 @@ public class ClientEventHandler {
         HashSet<LivingEntityRenderer> addedRenderers = new HashSet<>();
 
         EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
-        Set<ResourceLocation> disabledEntities = ClientConfig.disabledEntityIds();
 
-        if (!disabledEntities.contains(new ResourceLocation("minecraft", "player"))) {
+        if (!ClientConfig.isEntityDisabled(new ResourceLocation("minecraft", "player"))) {
             Map<String, EntityRenderer<? extends Player>> skinMap = renderManager.getSkinMap();
 
             for (Map.Entry<String, EntityRenderer<? extends Player>> e : skinMap.entrySet()) {
@@ -123,7 +121,7 @@ public class ClientEventHandler {
             }
 
             ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
-            if (disabledEntities.contains(rl)) {
+            if (ClientConfig.isEntityDisabled(rl)) {
                 return;
             }
 

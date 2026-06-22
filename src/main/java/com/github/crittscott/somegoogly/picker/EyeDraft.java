@@ -15,7 +15,6 @@ public class EyeDraft {
     public double[] position = {-0.13, -0.25, -0.25};
     public double eyeScale = 0.75;
     public double irisScale = 0.6;
-    public double sideOffset = 0.0;
     public Double inclination = EyePlacement.DEFAULT_INCLINATION; // null = default forward
     public Double azimuth = EyePlacement.DEFAULT_AZIMUTH;
     public double[] corneaColors = {1.0, 1.0, 1.0};
@@ -36,7 +35,6 @@ public class EyeDraft {
         d.position = new double[]{position[0], position[1], position[2]};
         d.eyeScale = eyeScale;
         d.irisScale = irisScale;
-        d.sideOffset = sideOffset;
         d.inclination = aimInclination();
         d.azimuth = aimAzimuth();
         d.corneaColors = new double[]{corneaColors[0], corneaColors[1], corneaColors[2]};
@@ -50,7 +48,7 @@ public class EyeDraft {
     public EyeDefinition toDefinition() {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                eyeScale, irisScale, sideOffset, aimInclination(), aimAzimuth(), affectedByInvisibility);
+                eyeScale, irisScale, aimInclination(), aimAzimuth(), affectedByInvisibility);
         EyeAppearance appearance = new EyeAppearance(
                 new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),
                 new EyeColor((float) irisColors[0], (float) irisColors[1], (float) irisColors[2]),

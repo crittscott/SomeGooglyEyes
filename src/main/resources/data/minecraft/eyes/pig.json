@@ -19,7 +19,6 @@
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
-                  "sideOffset": 0.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -43,7 +42,6 @@
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
-                  "sideOffset": 0.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -77,7 +75,6 @@
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
-                  "sideOffset": 0.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -101,7 +98,6 @@
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
-                  "sideOffset": 0.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [

@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.enchant;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
@@ -16,9 +16,9 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
  */
 public class OptometristEnchantment extends Enchantment {
 
-    /** Custom category restricting the enchantment to vanilla shears. */
+    /** Custom category restricting the enchantment to shears (vanilla or any modded {@link ShearsItem}). */
     public static final EnchantmentCategory SHEARS_CATEGORY =
-            EnchantmentCategory.create("somegoogly_shears", item -> item == Items.SHEARS);
+            EnchantmentCategory.create("somegoogly_shears", item -> item instanceof ShearsItem);
 
     public OptometristEnchantment() {
         super(Rarity.RARE, SHEARS_CATEGORY, new EquipmentSlot[]{EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND});

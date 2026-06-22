@@ -16,7 +16,6 @@
               ],
               "eyeScale": 1.25,
               "irisScale": 0.6,
-              "sideOffset": 0.0,
               "yRotation": 0.0,
               "xRotation": 0.0,
               "corneaColors": [
@@ -40,7 +39,6 @@
               ],
               "eyeScale": 1.25,
               "irisScale": 0.6,
-              "sideOffset": 0.0,
               "yRotation": 0.0,
               "xRotation": 0.0,
               "corneaColors": [
