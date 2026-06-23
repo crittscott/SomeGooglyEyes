@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;

@@ -2,12 +2,12 @@ package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.state.EntityEyeHolder;
-import com.github.crittscott.somegoogly.state.EyeHolder;
-import com.github.crittscott.somegoogly.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EntityEyeHolder;
+import com.github.crittscott.somegoogly.eye.state.EyeHolder;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;

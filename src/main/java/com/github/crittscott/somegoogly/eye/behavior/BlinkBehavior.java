@@ -1,6 +1,6 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 
 /**
  * Squashes between 1 and N of the mob's eyes shut and open again. The participating set is chosen once

@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;

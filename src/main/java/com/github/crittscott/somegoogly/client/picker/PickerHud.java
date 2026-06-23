@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

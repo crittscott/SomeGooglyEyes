@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

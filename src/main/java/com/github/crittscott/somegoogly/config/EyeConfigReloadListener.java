@@ -1,11 +1,11 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
-import com.github.crittscott.somegoogly.head.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.head.HeadInfo.Variant;
-import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
+import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.eye.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;

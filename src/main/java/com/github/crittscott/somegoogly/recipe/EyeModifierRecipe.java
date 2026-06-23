@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;

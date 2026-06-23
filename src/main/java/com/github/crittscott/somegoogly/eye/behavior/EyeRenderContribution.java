@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
 /**
  * The per-eye render delta a single active {@link EyeBehavior} contributes for one frame. The renderer

@@ -1,5 +1,6 @@
-package com.github.crittscott.somegoogly.head;
+package com.github.crittscott.somegoogly.eye;
 
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * The placement (geometry) of a single eye on a mob: offset from the attach joint, sizes, aim, and
  * whether invisibility hides it. Config-only — never carried on an eye item (that's appearance, see
- * {@link com.github.crittscott.somegoogly.state.AppearanceOverride}).
+ * {@link AppearanceOverride}).
  *
  * <p>Aim is two angles, not a quaternion: {@code inclination} from the part's +Y axis and
  * {@code azimuth} from its +X axis (degrees). The eye's pupil faces local -Z by default; roll is

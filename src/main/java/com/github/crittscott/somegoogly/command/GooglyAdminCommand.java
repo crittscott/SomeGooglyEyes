@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.command;
 
-import com.github.crittscott.somegoogly.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
-import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
-import com.github.crittscott.somegoogly.state.EyeColor;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

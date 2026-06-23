@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

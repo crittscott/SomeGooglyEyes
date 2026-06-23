@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
-import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.HeadConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;

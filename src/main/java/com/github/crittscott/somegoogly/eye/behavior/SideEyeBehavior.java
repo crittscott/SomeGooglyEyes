@@ -1,6 +1,6 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 
 /**
  * Pupils snap to center, then slide slowly to one side (chosen from the seed) and hold there. Drives the

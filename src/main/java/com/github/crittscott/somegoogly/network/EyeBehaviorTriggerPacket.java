@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
-import com.github.crittscott.somegoogly.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

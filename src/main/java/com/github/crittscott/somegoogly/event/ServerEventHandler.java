@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.event;
 
-import com.github.crittscott.somegoogly.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

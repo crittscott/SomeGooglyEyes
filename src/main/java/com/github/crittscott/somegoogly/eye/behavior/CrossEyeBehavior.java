@@ -1,6 +1,6 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 
 /**
  * Pupils center, then roll inward toward each other (cross-eyed) and hold. Each eye's "inward" is the

@@ -1,6 +1,6 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 
 /** Pupils glide to center and hold, then drift back to the physics wobble. Drives the iris channel. */
 final class StareBehavior extends AbstractEyeBehavior {

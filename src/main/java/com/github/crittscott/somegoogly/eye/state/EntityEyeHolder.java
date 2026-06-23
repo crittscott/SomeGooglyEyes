@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
 import net.minecraft.world.entity.LivingEntity;
 

@@ -1,12 +1,13 @@
 package com.github.crittscott.somegoogly.client.render;
 
-import com.github.crittscott.somegoogly.behavior.BehaviorInstance;
-import com.github.crittscott.somegoogly.behavior.EyeRenderContribution;
-import com.github.crittscott.somegoogly.head.EyePlacement;
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
+import com.github.crittscott.somegoogly.eye.behavior.EyeRenderContribution;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
-import com.github.crittscott.somegoogly.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -21,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
  * apart: a mob looks the same whether its model is vanilla or GeckoLib.
  *
  * <p>Each eye is drawn from a <b>baseline</b> — physics-driven iris wobble, configured scale, effective
- * cornea color — with the mob's single active {@link com.github.crittscott.somegoogly.behavior.EyeBehavior}
+ * cornea color — with the mob's single active {@link EyeBehavior}
  * (if any) folded on top via its {@link EyeRenderContribution}. There's at most one behavior at a time,
  * so no multi-behavior composition is needed.
  *

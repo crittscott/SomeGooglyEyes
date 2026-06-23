@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.client.tracker;
 
-import com.github.crittscott.somegoogly.behavior.BehaviorInstance;
-import com.github.crittscott.somegoogly.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;

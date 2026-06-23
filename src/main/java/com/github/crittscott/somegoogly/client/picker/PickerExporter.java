@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
-import com.github.crittscott.somegoogly.head.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
+import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

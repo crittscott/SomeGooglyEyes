@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.command;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;

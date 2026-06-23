@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
 /**
  * A thing that can carry eyes — the attachment seam between an eye item and whatever it's applied to.

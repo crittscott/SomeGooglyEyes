@@ -1,10 +1,10 @@
-package com.github.crittscott.somegoogly.head;
+package com.github.crittscott.somegoogly.eye;
 
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.state.EyeAppearance;
-import com.github.crittscott.somegoogly.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;

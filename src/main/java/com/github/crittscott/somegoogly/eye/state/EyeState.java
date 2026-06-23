@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 /**
  * Per-mob, mutable, mid-life eye state — the "Keystone A" override layer that sits on top of the
- * shared datapack config ({@link com.github.crittscott.somegoogly.head.HeadInfo}).
+ * shared datapack config ({@link com.github.crittscott.somegoogly.eye.HeadInfo}).
  *
  * <p>State lives in the entity's persistent data (saved by Forge under {@code ForgeData}, so it
  * survives reload / dimension change / growing up). Two pieces:

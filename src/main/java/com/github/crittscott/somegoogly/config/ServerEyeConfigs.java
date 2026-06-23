@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;

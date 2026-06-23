@@ -1,6 +1,6 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 
 /** Eyes briefly bulge larger and settle back. Drives the eye-scale channel. */
 final class GrowBehavior extends AbstractEyeBehavior {

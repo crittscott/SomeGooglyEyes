@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
 /** Small easing/envelope helpers shared by the behaviors. */
 final class Curves {

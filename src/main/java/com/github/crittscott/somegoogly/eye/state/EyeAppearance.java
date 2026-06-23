@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -10,13 +10,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * {@link AppearanceOverride}.
  *
  * <p>Serialized with the flat field names the datapack JSON already uses ({@code corneaColors},
- * {@code irisColors}, {@code glows}), so it embeds directly into {@link com.github.crittscott.somegoogly.head.EyeDefinition}.
+ * {@code irisColors}, {@code glows}), so it embeds directly into {@link com.github.crittscott.somegoogly.eye.EyeDefinition}.
  */
 public record EyeAppearance(EyeColor cornea, EyeColor iris, boolean glow) {
 
     public static final EyeAppearance DEFAULT = new EyeAppearance(EyeColor.WHITE, EyeColor.BLACK, false);
 
-    /** A {@link MapCodec} so {@link com.github.crittscott.somegoogly.head.EyeDefinition} can flatten these
+    /** A {@link MapCodec} so {@link com.github.crittscott.somegoogly.eye.EyeDefinition} can flatten these
      *  fields next to placement at the same JSON level. */
     public static final MapCodec<EyeAppearance> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             EyeColor.CODEC.optionalFieldOf("corneaColors", EyeColor.WHITE).forGetter(EyeAppearance::cornea),

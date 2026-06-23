@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.behavior;
+package com.github.crittscott.somegoogly.eye.behavior;
 
 import net.minecraft.resources.ResourceLocation;
 

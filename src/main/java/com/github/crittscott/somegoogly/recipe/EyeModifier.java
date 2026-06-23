@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.recipe;
 
-import com.github.crittscott.somegoogly.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;

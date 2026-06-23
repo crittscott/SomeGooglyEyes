@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
-import com.github.crittscott.somegoogly.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;

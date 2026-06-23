@@ -1,5 +1,6 @@
-package com.github.crittscott.somegoogly.state;
+package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
@@ -25,11 +26,11 @@ import java.util.Optional;
  * </ul>
  *
  * <p><b>Appearance only.</b> Placement — position, scale, angles, attach part — is never here; it always
- * comes from the mob's datapack config ({@link com.github.crittscott.somegoogly.head.EyePlacement}). An
+ * comes from the mob's datapack config ({@link com.github.crittscott.somegoogly.eye.EyePlacement}). An
  * eye item carries "what the eye looks like", and attaching it reuses that mob's configured placement.
  *
  * <p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have no
- * presence here (see {@link com.github.crittscott.somegoogly.behavior.EyeBehaviors}).
+ * presence here (see {@link EyeBehaviors}).
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 
