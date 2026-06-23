@@ -36,7 +36,26 @@ public final class ModPotions {
     public static final RegistryObject<Potion> GOOGLY_EYES =
             POTIONS.register("googly_eyes", () -> new Potion("googly_eyes"));
 
+    /**
+     * Fixed purple tint for every googly-eyes splash, written as the vanilla {@code CustomPotionColor}
+     * tag. The potion carries no effects, so without this it would render as plain water-blue; the tag
+     * also colours the splash burst and (unlike our {@code EyeProperties}) survives potion-fluid
+     * round-trips, so the bottle still reads as "the googly potion" after such a trip.
+     */
+    private static final int POTION_COLOR = 0x8E44AD;
+
     private ModPotions() {
+    }
+
+    /**
+     * A googly-eyes splash potion stack, tinted {@link #POTION_COLOR}. The single creation point for
+     * the item so the brewing output and the creative-tab entry can't drift; appearance
+     * ({@code EyeProperties}) is layered on by the brewing output on top of this.
+     */
+    private static ItemStack newGooglySplash() {
+        ItemStack stack = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), GOOGLY_EYES.get());
+        stack.getOrCreateTag().putInt("CustomPotionColor", POTION_COLOR);
+        return stack;
     }
 
     /** Wire on the mod event bus (from {@code SomeGoogly}). */
@@ -67,7 +86,7 @@ public final class ModPotions {
             @Override
             public ItemStack getOutput(ItemStack input, ItemStack ingredient) {
                 if (isInput(input) && isIngredient(ingredient)) {
-                    ItemStack out = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), GOOGLY_EYES.get());
+                    ItemStack out = newGooglySplash();
                     // Carry the eye's appearance (iris/cornea tint, glow) onto the potion so the splash
                     // applies it to its target. Same AppearanceOverride schema the eye item and mobs share.
                     GooglyEyeItem.setProperties(out, GooglyEyeItem.getProperties(ingredient));
@@ -81,7 +100,7 @@ public final class ModPotions {
     private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             // Surface the splash form (the only one with behaviour) for testing/creative.
-            event.accept(PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), GOOGLY_EYES.get()));
+            event.accept(newGooglySplash());
         }
     }
 }

@@ -82,8 +82,13 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         ModelGooglyEye m = model();
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
-        // Face the pupil (model -Z) at the viewer and let it hang down; winding-safe (pure rotation).
-        pose.mulPose(Axis.XP.rotationDegrees(180));
+        // Face the pupil (model -Z) at the viewer; winding-safe (pure rotation). Hand/GUI/ground view the
+        // eye from its +Z side, so flip 180° about X to bring the pupil — and iris — forward. An item
+        // frame (FIXED) mounts the eye facing the other way, so that same flip buries the iris behind the
+        // cornea; the unflipped model already aims the pupil out of the frame at the viewer.
+        if (ctx != ItemDisplayContext.FIXED) {
+            pose.mulPose(Axis.XP.rotationDegrees(180));
+        }
         pose.scale(scale, scale, scale * 0.4F);
 
         drawEye(m, pose, buffer.getBuffer(RenderType.entityCutout(TEX)), light, overlay, cornea, iris, irisX, irisY);
