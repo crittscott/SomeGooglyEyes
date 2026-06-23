@@ -1,7 +1,7 @@
 # Some Googly Eyes: Living Specification
 
 > **Status:** implementation-grounded, living document.  
-> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-21.  
+> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-22.  
 > **Validation status:** this document records source-level behavior; it is not evidence that every path has been tested in-game or on a dedicated server.
 
 ## 1. Purpose
@@ -191,7 +191,22 @@ For each surviving eye, rendering combines:
 4. at most one active behavior contribution;
 5. normal and, when configured, glowing render passes.
 
-The eye model is shared between mob eyes, picker previews, and eye items. Its cornea and iris are separate, closed 16-sided shallow cylinders; the iris is moved independently in front of the cornea, giving the object its wobble.
+The eye model is shared between mob eyes, picker previews, and eye items. Its cornea and iris are separate, closed 16-sided shallow cylinders; the iris is moved independently in front of the cornea, giving the object its wobble. The iris position maps linearly onto the full circular interior of the cornea, so the pupil can travel anywhere up to the rim.
+
+### 7.4 Iris wobble physics
+
+The wobble is a client-only, per-eye physical simulation, ticked at the client tick rate and interpolated at render time. The same simulation drives mob eyes and a held eye item, so they behave identically.
+
+Each eye is modelled as a point-mass pupil moving in the eye's local plane, constrained to a unit disk that maps onto the cornea's full circular interior:
+
+- **Gravity** pulls the pupil toward the bottom of the eye (local down).
+- **Pseudo-forces** push the pupil opposite the eye socket's acceleration: the holder's linear acceleration (projected so sideways movement and jumping/falling register) and the holder's head yaw/pitch angular acceleration. Because the forcing is acceleration-based, steady motion at constant speed produces no movement; starts, stops, turns, and jumps are what throw the pupil around.
+- **Collision** with the circular rim reflects the pupil radially with a coefficient of restitution below one, plus tangential friction, so it bounces a number of times and then settles. Rest and slide cutoffs zero out residual motion so it parks cleanly at the bottom instead of jittering forever.
+- A small per-eye noise term keeps multiple eyes on one entity from moving in perfect lockstep.
+
+The simulation state is transient and client-only: it is never persisted or synchronized. Each eye is an independent simulation, so the number of eyes per head is unconstrained.
+
+At most one active behavior (see §8) is blended over this baseline: a behavior that drives the pupil pulls it off the physics position toward the behavior's target by a weight, while behaviors that leave the pupil alone let the wobble show through unchanged.
 
 ### 7.2 Attachment resolvers
 
