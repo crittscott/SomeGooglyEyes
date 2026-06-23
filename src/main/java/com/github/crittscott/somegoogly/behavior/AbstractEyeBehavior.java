@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.behavior;
 
 import net.minecraft.resources.ResourceLocation;
 
-/** Common id/duration plumbing for the concrete behaviours. */
+/** Common id/duration plumbing for the concrete behaviors. */
 abstract class AbstractEyeBehavior implements EyeBehavior {
 
     private final ResourceLocation id;

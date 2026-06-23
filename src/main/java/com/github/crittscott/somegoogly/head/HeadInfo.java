@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.head;
 
+import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.state.EyeAppearance;
@@ -21,7 +22,7 @@ import java.util.Optional;
  *
  * <p>This is pure data: it answers "how many heads, which attachment part, and what eyes" for an
  * entity. Part resolution and positioning is done by the
- * {@link com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver}s, by string name.
+ * {@link EyeAttachmentResolver}s, by string name.
  *
  * <p>Configs are loaded from datapacks on the server, selected by mod version + age, and synced to
  * the client; this class reads the client-side selected copy ({@link ClientEyeConfigs}). The

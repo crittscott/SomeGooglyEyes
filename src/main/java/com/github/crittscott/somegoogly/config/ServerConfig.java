@@ -30,7 +30,7 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue HARVEST_ON_KILL_PERCENT;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_OVERRIDES;
 
-    // Behaviour scheduling (the server is the sole authority for which expression a mob plays, and when).
+    // Behavior scheduling (the server is the sole authority for which expression a mob plays, and when).
     public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
     public static final ForgeConfigSpec.IntValue AMBIENT_MIN_TICKS;
     public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
@@ -103,7 +103,7 @@ public class ServerConfig {
     }
 
     /**
-     * The behaviours eligible for ambient play: every registered behaviour whose id appears in
+     * The behaviors eligible for ambient play: every registered behavior whose id appears in
      * {@link #ENABLED_BEHAVIORS}. Unknown ids in the config are simply ignored. Recomputed each call —
      * it's only hit when a mob's ambient timer fires.
      */

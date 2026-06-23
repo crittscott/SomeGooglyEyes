@@ -2,10 +2,10 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeColor;
-import com.github.crittscott.somegoogly.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -26,7 +26,7 @@ import java.util.Random;
  *
  * <p>When the item is <b>held</b> (any hand context) the pupil is alive — a small standalone googly
  * physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
- * ground it's static (pupil centred) for a clean icon.
+ * ground it's static (pupil centered) for a clean icon.
  *
  * <p>This is the "item-model" {@code EyeHolder} render path foreshadowed in {@code EyeHolder}.
  *
@@ -42,7 +42,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final float MODEL_SCALE = 0.22F;
     /**
      * Inventory size is set HERE, not in the model json: the GUI render path ignores a BEWLR's
-     * {@code gui} display transform (the other contexts honour theirs), so this is the inventory knob.
+     * {@code gui} display transform (the other contexts honor theirs), so this is the inventory knob.
      */
     private static final float GUI_SCALE = 1.8F;
     private static final float IRIS_SCALE = 0.6F;
@@ -117,14 +117,14 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     /**
      * Googly physics for a held eye, using the <b>same</b> {@link GooglyTracker.EyeInfo} per-tick step
-     * as mob eyes (fed the holder's look + position deltas), so the behaviour is identical: it reacts
+     * as mob eyes (fed the holder's look + position deltas), so the behavior is identical: it reacts
      * to movement and settles to rest when you stand still. Advanced with a fixed-timestep accumulator
      * off wall-clock time so it ticks ~20 Hz regardless of framerate.
      */
     private static final class HeldWobble {
         private final Random rand = new Random();
         private final GooglyTracker.EyeInfo eye = new GooglyTracker.EyeInfo();
-        private boolean initialised;
+        private boolean initialized;
         private long lastNanos;
         private double accumulatorTicks;
         private double prevX;
@@ -138,8 +138,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             }
             long now = System.nanoTime();
 
-            if (!initialised) {
-                initialised = true;
+            if (!initialized) {
+                initialized = true;
                 lastNanos = now;
                 prevX = player.getX();
                 prevY = player.getY();

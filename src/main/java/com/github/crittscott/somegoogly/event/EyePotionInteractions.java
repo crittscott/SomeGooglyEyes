@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.List;
 
 /**
- * Splash "googly eyes" potion behaviour (server-side). When a thrown {@link ModPotions#GOOGLY_EYES}
+ * Splash "googly eyes" potion behavior (server-side). When a thrown {@link ModPotions#GOOGLY_EYES}
  * splash breaks, exactly <b>one</b> randomly chosen eligible mob within the splash area gets eyes —
  * not the whole cloud.
  *

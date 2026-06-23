@@ -4,17 +4,17 @@ import com.github.crittscott.somegoogly.head.HeadInfo;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * One named eye expression (stare, blink, grow, …). Behaviours are stateless singletons registered in
- * {@link EyeBehaviors} under a {@link ResourceLocation} id; the server names a behaviour by id in the
+ * One named eye expression (stare, blink, grow, …). Behaviors are stateless singletons registered in
+ * {@link EyeBehaviors} under a {@link ResourceLocation} id; the server names a behavior by id in the
  * trigger packet and the client looks it up to play. All per-play state lives in a
  * {@link BehaviorInstance}.
  *
- * <p>A mob plays at most one behaviour at a time (the server enforces this), so behaviours never
- * compose: each frame the renderer asks the single active behaviour to fill an
+ * <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never
+ * compose: each frame the renderer asks the single active behavior to fill an
  * {@link EyeRenderContribution} per eye, layered over the eye's physics-driven baseline.
  *
  * <p>Implementations must stay free of client-only imports: the server class-loads this registry to
- * pick and schedule behaviours, and only the client ever calls {@link #tick}/{@link #contribute}.
+ * pick and schedule behaviors, and only the client ever calls {@link #tick}/{@link #contribute}.
  */
 public interface EyeBehavior {
 
@@ -24,7 +24,7 @@ public interface EyeBehavior {
     /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
     int defaultDuration();
 
-    /** Resolve seeded params (blink mask, colour, direction) and prime the prev/current scalars. */
+    /** Resolve seeded params (blink mask, color, direction) and prime the prev/current scalars. */
     default void onStart(BehaviorInstance instance) {
     }
 
@@ -34,7 +34,7 @@ public interface EyeBehavior {
 
     /**
      * Fill {@code out} (already reset) with this eye's contribution for the current frame, interpolating
-     * the instance's scalars by {@code partialTicks}. Called per eye, so per-eye behaviours (blink mask,
+     * the instance's scalars by {@code partialTicks}. Called per eye, so per-eye behaviors (blink mask,
      * cross-eye inward direction) can vary their output by {@code head}/{@code eye} using {@code helper}.
      */
     void contribute(BehaviorInstance instance, HeadInfo helper, int head, int eye,

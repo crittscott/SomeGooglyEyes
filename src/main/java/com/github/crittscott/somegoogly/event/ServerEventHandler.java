@@ -85,8 +85,8 @@ public class ServerEventHandler {
                         EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living))
         );
 
-        // Register with the behaviour scheduler (server-polite: only eyed, watched mobs) and catch the
-        // player up if the mob is already mid-behaviour.
+        // Register with the behavior scheduler (server-polite: only eyed, watched mobs) and catch the
+        // player up if the mob is already mid-behavior.
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 

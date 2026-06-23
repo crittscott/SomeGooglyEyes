@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.compat;
+package com.github.crittscott.somegoogly.client.compat;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

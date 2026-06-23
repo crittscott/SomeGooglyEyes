@@ -1,13 +1,13 @@
-package com.github.crittscott.somegoogly.render;
+package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.behavior.EyeRenderContribution;
 import com.github.crittscott.somegoogly.head.EyePlacement;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeAppearance;
-import com.github.crittscott.somegoogly.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,13 +17,13 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Shared eye drawing used by both render layers — the vanilla {@link LayerGooglyEyes} and the
  * GeckoLib {@code GooglyGeoLayer}. Keeping the appearance overrides (dye / harvested-eye item /
- * potion / NBT) and the Keystone&nbsp;B behaviour composition here means the two layers can't drift
+ * potion / NBT) and the Keystone&nbsp;B behavior composition here means the two layers can't drift
  * apart: a mob looks the same whether its model is vanilla or GeckoLib.
  *
  * <p>Each eye is drawn from a <b>baseline</b> — physics-driven iris wobble, configured scale, effective
- * cornea colour — with the mob's single active {@link com.github.crittscott.somegoogly.behavior.EyeBehavior}
- * (if any) folded on top via its {@link EyeRenderContribution}. There's at most one behaviour at a time,
- * so no multi-behaviour composition is needed.
+ * cornea color — with the mob's single active {@link com.github.crittscott.somegoogly.behavior.EyeBehavior}
+ * (if any) folded on top via its {@link EyeRenderContribution}. There's at most one behavior at a time,
+ * so no multi-behavior composition is needed.
  *
  * <p>The caller is responsible only for moving the pose into the head's animated attachment space;
  * this class handles everything from the eye's own offset/rotation inward.
@@ -34,14 +34,14 @@ public final class GooglyEyeRenderer {
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 
-    // Reused per eye on the single render thread, so behaviour composition allocates nothing per frame.
+    // Reused per eye on the single render thread, so behavior composition allocates nothing per frame.
     private static final EyeRenderContribution CONTRIBUTION = new EyeRenderContribution();
 
     private GooglyEyeRenderer() {
     }
 
     /**
-     * Draw a single eye, applying both the per-mob {@code overrides} and the mob's active behaviour.
+     * Draw a single eye, applying both the per-mob {@code overrides} and the mob's active behavior.
      * The pose is expected to already sit in the head's attachment space; this method applies the eye's
      * own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it found it.
      */
@@ -54,14 +54,14 @@ public final class GooglyEyeRenderer {
         EyePlacement placement = helper.placementAt(headIndex, eyeIndex);
         EyeAppearance look = helper.appearanceAt(headIndex, eyeIndex).overlay(overrides);
 
-        // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its centre.
+        // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its center.
         float[] eyes = placement.positionArray();
         pose.translate(eyes[0], eyes[1], eyes[2]);
         HeadInfo.applyRotation(pose, placement);
 
         GooglyTracker.EyeInfo eyeInfo = tracker.eyes[headIndex][eyeIndex];
 
-        // The active behaviour's per-eye contribution over the neutral baseline (or just the baseline).
+        // The active behavior's per-eye contribution over the neutral baseline (or just the baseline).
         EyeRenderContribution c = CONTRIBUTION;
         c.reset();
         BehaviorInstance active = tracker.active;
@@ -88,13 +88,13 @@ public final class GooglyEyeRenderer {
         pose.pushPose();
         pose.scale(irisScale, irisScale, 1F);
 
-        // Iris position: physics wobble pulled toward the behaviour's target by its weight (0 = pure
-        // wobble for behaviours that don't drive the pupil; 1 = the behaviour fully owns it).
+        // Iris position: physics wobble pulled toward the behavior's target by its weight (0 = pure
+        // wobble for behaviors that don't drive the pupil; 1 = the behavior fully owns it).
         float physicsX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
         float physicsY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
         float irisX = physicsX * (1F - c.irisWeight) + c.irisTargetX * c.irisWeight;
         float irisY = physicsY * (1F - c.irisWeight) + c.irisTargetY * c.irisWeight;
-        // The unit disk maps to the full cornea circle; clamp so blended behaviour targets can't push
+        // The unit disk maps to the full cornea circle; clamp so blended behavior targets can't push
         // the iris past the rim.
         float m2 = irisX * irisX + irisY * irisY;
         if (m2 > 1F) {

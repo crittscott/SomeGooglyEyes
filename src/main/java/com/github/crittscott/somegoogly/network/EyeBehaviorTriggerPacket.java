@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.network;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.behavior.EyeBehaviors;
-import com.github.crittscott.somegoogly.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -16,14 +16,14 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * Server → client: "play behaviour {@code behaviourId} on entity {@code entityId} for {@code duration}
- * ticks, seeded with {@code seed}." Sent to a mob's trackers when the server scheduler starts a behaviour
+ * Server → client: "play behavior {@code behaviorId} on entity {@code entityId} for {@code duration}
+ * ticks, seeded with {@code seed}." Sent to a mob's trackers when the server scheduler starts a behavior
  * (and to a newly-tracking player mid-effect, with the remaining duration), so every viewer animates the
  * same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
  * animation locally.
  *
  * <p>The client drops the trigger if it has no tracker for the mob yet (not currently rendering it) or if
- * a behaviour is already playing — the same "one at a time, non-interruptable" rule the server enforces.
+ * a behavior is already playing — the same "one at a time, non-interruptable" rule the server enforces.
  */
 public class EyeBehaviorTriggerPacket {
 
@@ -61,7 +61,7 @@ public class EyeBehaviorTriggerPacket {
     public static void handle(EyeBehaviorTriggerPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() ->
-                // Client-only: start the behaviour on the mob's tracker. Guarded so the dedicated server
+                // Client-only: start the behavior on the mob's tracker. Guarded so the dedicated server
                 // never class-loads client classes via this path.
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> play(packet)));
         context.setPacketHandled(true);

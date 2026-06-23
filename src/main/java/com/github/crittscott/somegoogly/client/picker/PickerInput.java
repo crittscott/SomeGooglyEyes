@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.picker;
+package com.github.crittscott.somegoogly.client.picker;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

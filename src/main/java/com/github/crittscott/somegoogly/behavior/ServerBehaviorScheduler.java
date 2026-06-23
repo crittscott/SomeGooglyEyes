@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * The single authority for which eye behaviour a mob is playing, and when. Behaviours are cosmetic and
+ * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
  * client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
  * rule holds across every viewer and so server-only game events (a villager levelling up, …) can drive
  * the same path later. For now the only trigger is the ambient idle timer below.
@@ -34,9 +34,9 @@ public final class ServerBehaviorScheduler {
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
     private static final class MobState {
         int trackers;                 // how many players are watching this mob
-        long busyUntil;               // scheduler tick the active behaviour ends (0 = idle)
-        long startedAt;               // scheduler tick the active behaviour started (for mid-join catch-up)
-        ResourceLocation activeId;    // the playing behaviour (for mid-join catch-up)
+        long busyUntil;               // scheduler tick the active behavior ends (0 = idle)
+        long startedAt;               // scheduler tick the active behavior started (for mid-join catch-up)
+        ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
         int activeDuration;
         long activeSeed;
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
@@ -63,7 +63,7 @@ public final class ServerBehaviorScheduler {
         });
         state.trackers++;
 
-        // Mid-effect join: send just this player the active behaviour with how far in it already is, so
+        // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
         if (state.busyUntil != 0 && state.activeId != null) {
             int elapsed = (int) Math.max(0, now - state.startedAt);
@@ -98,7 +98,7 @@ public final class ServerBehaviorScheduler {
                 it.remove();
                 continue;
             }
-            // Retire a finished behaviour back to idle.
+            // Retire a finished behavior back to idle.
             if (state.busyUntil != 0 && now >= state.busyUntil) {
                 state.busyUntil = 0;
                 state.activeId = null;
@@ -123,8 +123,8 @@ public final class ServerBehaviorScheduler {
     // --- manual trigger (debug command, and the seam future game events will call) -------------
 
     /**
-     * Try to start {@code behavior} on {@code mob} now, honouring "one at a time, non-interruptable":
-     * dropped (returns {@code false}) if the mob is already mid-behaviour. Works even for a mob with no
+     * Try to start {@code behavior} on {@code mob} now, honoring "one at a time, non-interruptable":
+     * dropped (returns {@code false}) if the mob is already mid-behavior. Works even for a mob with no
      * tracking state yet (creates one), so the debug command can drive any looked-at mob.
      */
     public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {

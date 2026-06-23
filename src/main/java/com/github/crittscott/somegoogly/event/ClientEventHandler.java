@@ -1,13 +1,13 @@
 package com.github.crittscott.somegoogly.event;
 
-import com.github.crittscott.somegoogly.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.picker.PickerLayer;
-import com.github.crittscott.somegoogly.picker.PickerState;
-import com.github.crittscott.somegoogly.render.LayerGooglyEyes;
-import com.github.crittscott.somegoogly.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.picker.PickerLayer;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
+import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
+import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -65,7 +65,7 @@ public class ClientEventHandler {
 
     /**
      * The mob's existing tracker, or {@code null} if it has none yet (i.e. it isn't currently being
-     * rendered). Used by the behaviour trigger packet, which drops triggers for mobs with no tracker —
+     * rendered). Used by the behavior trigger packet, which drops triggers for mobs with no tracker —
      * an off-screen mob has nothing to animate.
      */
     @Nullable

@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.behavior;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 
 /**
- * Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the centre as the effect
+ * Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as the effect
  * ends. Fully overrides the iris channel ({@code irisWeight = 1}). The target position is stored
  * directly in the instance's x/y so a tick's worth of rotation interpolates smoothly.
  */

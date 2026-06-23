@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 /**
  * The {@code admin} subtree of {@code /sg} — operator-only (permission level 2) tools that mutate the
  * live {@link LivingEntity} the running player is looking at: its has-eyes flag, iris/cornea tint, glow
- * mode, and active cosmetic behaviour. Exercises the full per-mob override loop (server NBT write →
- * {@link EyeState} broadcast → client apply → renderer override) and the server-owned behaviour schedule.
+ * mode, and active cosmetic behavior. Exercises the full per-mob override loop (server NBT write →
+ * {@link EyeState} broadcast → client apply → renderer override) and the server-owned behavior schedule.
  *
  * <p>Server-authoritative: registered on the server dispatcher and grafted under a server-side
  * {@code /sg} root. The client {@code /sg} picker verbs and these admin verbs live on disjoint paths
@@ -40,10 +40,10 @@ import javax.annotation.Nullable;
  *
  * <ul>
  *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag</li>
- *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a colour (0-255)</li>
- *   <li>{@code /sg admin tint clear} — drop both colour overrides</li>
+ *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a color (0-255)</li>
+ *   <li>{@code /sg admin tint clear} — drop both color overrides</li>
  *   <li>{@code /sg admin glow <on|off|config>} — force glow on/off, or revert to per-eye config</li>
- *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behaviour now</li>
+ *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behavior now</li>
  * </ul>
  */
 public final class GooglyAdminCommand {
@@ -92,7 +92,7 @@ public final class GooglyAdminCommand {
                                 .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id")))));
     }
 
-    /** Suggests the behaviour short names plus {@code random} for {@code /sg admin behavior <id>}. */
+    /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
     private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest("random");
         for (EyeBehavior behavior : EyeBehaviors.all()) {
@@ -102,9 +102,9 @@ public final class GooglyAdminCommand {
     };
 
     /**
-     * Drive the server behaviour scheduler by hand: trigger {@code id} (a short name like {@code stare},
+     * Drive the server behavior scheduler by hand: trigger {@code id} (a short name like {@code stare},
      * a full {@code somegoogly:stare}, or {@code random}) on the looked-at mob. Exercises the full
-     * server → packet → client play path. Honours the one-at-a-time rule, so it reports if dropped.
+     * server → packet → client play path. Honors the one-at-a-time rule, so it reports if dropped.
      */
     private static int behavior(CommandContext<CommandSourceStack> ctx, String id) {
         LivingEntity target = requireTarget(ctx);

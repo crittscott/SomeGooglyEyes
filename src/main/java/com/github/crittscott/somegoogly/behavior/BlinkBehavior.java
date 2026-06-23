@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.head.HeadInfo;
 
 /**
  * Squashes between 1 and N of the mob's eyes shut and open again. The participating set is chosen once
- * from the seed, so a "wink" (one eye) and a full blink are the same behaviour at different counts.
+ * from the seed, so a "wink" (one eye) and a full blink are the same behavior at different counts.
  * Drives the squash channel only — the pupil keeps wobbling underneath.
  */
 final class BlinkBehavior extends AbstractEyeBehavior {

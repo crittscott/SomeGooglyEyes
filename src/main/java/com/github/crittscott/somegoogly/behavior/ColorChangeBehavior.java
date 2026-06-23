@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.head.HeadInfo;
 import net.minecraft.util.Mth;
 
 /**
- * Blends the cornea toward a colour and back. The colour is chosen from the seed (a random hue), so this
+ * Blends the cornea toward a color and back. The color is chosen from the seed (a random hue), so this
  * is the general form of what the old hardwired anger-tint did. Drives the cornea-tint channel.
  */
 final class ColorChangeBehavior extends AbstractEyeBehavior {
@@ -27,7 +27,7 @@ final class ColorChangeBehavior extends AbstractEyeBehavior {
     @Override
     public void tick(BehaviorInstance i) {
         i.prevTint = i.tint;
-        // Ease in, hold the colour, ease out.
+        // Ease in, hold the color, ease out.
         i.tint = Curves.trapezoid((float) i.age / i.duration, 0.2f, 0.2f);
     }
 

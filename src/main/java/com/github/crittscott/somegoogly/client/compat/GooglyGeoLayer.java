@@ -1,16 +1,16 @@
-package com.github.crittscott.somegoogly.compat;
+package com.github.crittscott.somegoogly.client.compat;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.picker.EyeDraft;
-import com.github.crittscott.somegoogly.model.ModelGooglyEye;
-import com.github.crittscott.somegoogly.picker.Gizmo;
-import com.github.crittscott.somegoogly.picker.PickerState;
-import com.github.crittscott.somegoogly.render.GooglyEyeRenderer;
+import com.github.crittscott.somegoogly.client.picker.EyeDraft;
+import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.picker.Gizmo;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
-import com.github.crittscott.somegoogly.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -58,7 +58,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             return;
         }
         // While the picker is active, force eyes on every eye-configured mob for authoring (mirrors
-        // LayerGooglyEyes); otherwise honour the server's per-mob spawn decision.
+        // LayerGooglyEyes); otherwise honor the server's per-mob spawn decision.
         if (!PickerState.active && !living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
             return;
         }

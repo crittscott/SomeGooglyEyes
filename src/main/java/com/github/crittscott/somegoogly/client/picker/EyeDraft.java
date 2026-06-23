@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.picker;
+package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.head.EyeDefinition;
 import com.github.crittscott.somegoogly.head.EyePlacement;

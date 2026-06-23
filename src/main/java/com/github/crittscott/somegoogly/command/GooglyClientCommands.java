@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.command;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.picker.EyeDraft;
-import com.github.crittscott.somegoogly.picker.PickerExporter;
-import com.github.crittscott.somegoogly.picker.PickerState;
-import com.github.crittscott.somegoogly.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.client.picker.EyeDraft;
+import com.github.crittscott.somegoogly.client.picker.PickerExporter;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
+import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -133,7 +133,7 @@ public class GooglyClientCommands {
 
         alias(sg, "ex", "export", b -> terminal(b, GooglyClientCommands::export));
 
-        // Behaviour testing lives in the server-side /sg admin command (the schedule is server-owned).
+        // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
         // spawnall has no short form (and no chain tail) — the full word is required, one-off only.
         sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));

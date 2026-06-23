@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.behavior;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 
 /**
- * Pupils snap to centre, then slide slowly to one side (chosen from the seed) and hold there. Drives the
+ * Pupils snap to center, then slide slowly to one side (chosen from the seed) and hold there. Drives the
  * iris channel: {@code irisWeight} ramps to 1 during the brief centring, then {@code x} eases out to the
  * side over the bulk of the duration.
  */

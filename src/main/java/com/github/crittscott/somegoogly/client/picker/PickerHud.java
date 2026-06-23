@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.picker;
+package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public final class PickerHud {
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int YELLOW = 0xFFFFE060;
-    private static final int GREY = 0xFFB0B0B0;
+    private static final int GRAY = 0xFFB0B0B0;
 
     // Translucent dark backdrop so the text stays legible over a busy scene while the mob shows
     // through. ARGB: raise the leading alpha byte (0xA0) toward 0xFF for a more opaque panel.
@@ -77,7 +77,7 @@ public final class PickerHud {
         out.add(new Line("Googly Eye Picker", YELLOW));
 
         if (PickerState.target() == null) {
-            out.add(new Line("Look at a mob and choose it (V).", GREY));
+            out.add(new Line("Look at a mob and choose it (V).", GRAY));
             return out;
         }
 
@@ -98,7 +98,7 @@ public final class PickerHud {
             if (idx == PickerState.selectedIndex) {
                 appendEye(out, "▶ #" + (idx + 1), partOrNone(PickerState.currentPart), PickerState.currentEye, YELLOW, YELLOW);
             } else {
-                appendEye(out, "#" + (idx + 1), partOrNone(listed.part), listed.eye, WHITE, GREY);
+                appendEye(out, "#" + (idx + 1), partOrNone(listed.part), listed.eye, WHITE, GRAY);
             }
         }
 

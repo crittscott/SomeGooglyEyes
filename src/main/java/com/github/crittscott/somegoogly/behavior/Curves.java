@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.behavior;
 
-/** Small easing/envelope helpers shared by the behaviours. */
+/** Small easing/envelope helpers shared by the behaviors. */
 final class Curves {
 
     private Curves() {

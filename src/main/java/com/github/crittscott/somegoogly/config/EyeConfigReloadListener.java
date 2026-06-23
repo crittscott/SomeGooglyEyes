@@ -95,7 +95,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * Normalise an entry's geometry into a non-empty variant list (or null when there's nothing usable):
+     * Normalize an entry's geometry into a non-empty variant list (or null when there's nothing usable):
      * prefer an explicit {@code variants} list, dropping entries with no heads; otherwise wrap a legacy
      * bare {@code heads} as a single weight-1 variant.
      */

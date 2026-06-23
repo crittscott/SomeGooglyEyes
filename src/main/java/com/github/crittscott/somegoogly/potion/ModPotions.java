@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 /**
  * The "googly eyes" potion. Deliberately carries <b>no {@link net.minecraft.world.effect.MobEffect}s</b>:
- * the eye-giving behaviour is single-target, applied by {@code EyePotionInteractions} on splash impact,
+ * the eye-giving behavior is single-target, applied by {@code EyePotionInteractions} on splash impact,
  * not by vanilla's area-of-effect potion machinery (which would hit every mob in the cloud). With no
  * effects, vanilla's own splash application is an inert no-op, so we still get its throw arc, break
  * particles, sound, and projectile cleanup for free while layering the single-target logic on top.
@@ -39,7 +39,7 @@ public final class ModPotions {
     /**
      * Fixed purple tint for every googly-eyes splash, written as the vanilla {@code CustomPotionColor}
      * tag. The potion carries no effects, so without this it would render as plain water-blue; the tag
-     * also colours the splash burst and (unlike our {@code EyeProperties}) survives potion-fluid
+     * also colors the splash burst and (unlike our {@code EyeProperties}) survives potion-fluid
      * round-trips, so the bottle still reads as "the googly potion" after such a trip.
      */
     private static final int POTION_COLOR = 0x8E44AD;
@@ -99,7 +99,7 @@ public final class ModPotions {
 
     private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            // Surface the splash form (the only one with behaviour) for testing/creative.
+            // Surface the splash form (the only one with behavior) for testing/creative.
             event.accept(newGooglySplash());
         }
     }

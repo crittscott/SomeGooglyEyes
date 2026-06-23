@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.behavior;
 import com.github.crittscott.somegoogly.head.HeadInfo;
 
 /**
- * Pupils centre, then roll inward toward each other (cross-eyed) and hold. Each eye's "inward" is the
+ * Pupils center, then roll inward toward each other (cross-eyed) and hold. Each eye's "inward" is the
  * sign of its configured horizontal offset, so the left and right eyes converge regardless of layout.
  * Drives the iris channel; the magnitude eases out in {@code x} while {@code weight} ramps to 1.
  *
@@ -42,7 +42,7 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
     @Override
     public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
         float offsetX = helper.placementAt(head, eye).positionArray()[0];
-        // Centred/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
+        // Centered/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
         float dir = offsetX != 0f ? Math.signum(offsetX) : (eye % 2 == 0 ? 1f : -1f);
         float magnitude = Curves.lerp(i.prevX, i.x, pt);
         out.irisTargetX = INWARD_SIGN * dir * magnitude;

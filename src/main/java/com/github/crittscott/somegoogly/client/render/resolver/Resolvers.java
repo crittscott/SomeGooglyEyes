@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.render.resolver;
+package com.github.crittscott.somegoogly.client.render.resolver;
 
 import net.minecraft.client.model.EntityModel;
 

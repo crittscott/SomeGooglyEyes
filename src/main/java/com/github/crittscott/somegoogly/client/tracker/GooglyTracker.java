@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.tracker;
+package com.github.crittscott.somegoogly.client.tracker;
 
 import com.github.crittscott.somegoogly.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.behavior.EyeBehavior;
@@ -27,8 +27,8 @@ public class GooglyTracker {
 
     public EyeInfo[][] eyes;
 
-    // --- Keystone B: the one behaviour this mob is currently playing (or null when idle) ----------
-    // Behaviours are scheduled server-side, one at a time and non-interruptable; the client just plays
+    // --- Keystone B: the one behavior this mob is currently playing (or null when idle) ----------
+    // Behaviors are scheduled server-side, one at a time and non-interruptable; the client just plays
     // the active instance, advancing it each tick and interpolating it at render time. All of its state
     // is transient and client-only (no NBT, no sync of progress — only the trigger is sent).
     @Nullable
@@ -91,7 +91,7 @@ public class GooglyTracker {
          * ringing forever.
          *
          * <p>Decoupled from the tracker so it can be reused for a held eye item (see
-         * {@code GooglyEyeItemRenderer}) — the behaviour must be identical to mob eyes.
+         * {@code GooglyEyeItemRenderer}) — the behavior must be identical to mob eyes.
          *
          * @param rand      randomness source (per-tracker / per-held-eye)
          * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
@@ -217,8 +217,8 @@ public class GooglyTracker {
         prevY = parent.getY();
         prevZ = parent.getZ();
 
-        // Advance the active behaviour (if any), retiring it when it runs out. Done before the physics
-        // so a behaviour and the wobble share the same tick's prev/current snapshot.
+        // Advance the active behavior (if any), retiring it when it runs out. Done before the physics
+        // so a behavior and the wobble share the same tick's prev/current snapshot.
         if (active != null) {
             active.age++;
             active.behavior.tick(active);
@@ -235,11 +235,11 @@ public class GooglyTracker {
     }
 
     /**
-     * Start a behaviour now, unless one is already playing — the "one at a time, non-interruptable"
+     * Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
      * rule. Returns whether it started (a dropped trigger returns {@code false}). Called from the
      * trigger packet on the client.
      *
-     * <p>{@code elapsed} fast-forwards the behaviour by that many ticks before it's shown, so a player
+     * <p>{@code elapsed} fast-forwards the behavior by that many ticks before it's shown, so a player
      * who starts watching a mob mid-effect picks it up in sync with everyone else (the server sends how
      * far in the effect already is). It's deterministic — the seeded {@code onStart} plus replaying
      * {@code tick} reproduces the exact same state other viewers are at.
@@ -261,7 +261,7 @@ public class GooglyTracker {
         return true;
     }
 
-    /** Whether a behaviour is currently playing (used to drop overlapping triggers client-side). */
+    /** Whether a behavior is currently playing (used to drop overlapping triggers client-side). */
     public boolean isBusy() {
         return active != null;
     }

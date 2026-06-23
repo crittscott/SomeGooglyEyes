@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.compat;
+package com.github.crittscott.somegoogly.client.compat;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;

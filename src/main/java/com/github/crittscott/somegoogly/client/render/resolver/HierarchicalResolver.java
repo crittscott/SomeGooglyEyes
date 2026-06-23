@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.render.resolver;
+package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
@@ -16,7 +16,7 @@ import java.util.List;
  * <p>Uses the public {@link net.minecraft.client.model.geom.ModelPart#visit} walk: it applies every
  * ancestor's {@code translateAndRotate} and yields each cube's fully-accumulated pose plus a path
  * string built from the modder's string child-map keys (e.g. {@code /root/body/head}). We capture the
- * pose of the first cube whose final path segment matches the requested token (normalised so a
+ * pose of the first cube whose final path segment matches the requested token (normalized so a
  * camelCase config token like {@code leftHead} matches a {@code left_head} key).
  *
  * <p>This is production-safe (string names survive obfuscation) and inherits all head/body/keyframe

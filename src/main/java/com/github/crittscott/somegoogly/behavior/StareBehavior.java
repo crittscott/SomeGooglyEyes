@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.behavior;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
 
-/** Pupils glide to centre and hold, then drift back to the physics wobble. Drives the iris channel. */
+/** Pupils glide to center and hold, then drift back to the physics wobble. Drives the iris channel. */
 final class StareBehavior extends AbstractEyeBehavior {
 
     StareBehavior() {
@@ -12,7 +12,7 @@ final class StareBehavior extends AbstractEyeBehavior {
     @Override
     public void tick(BehaviorInstance i) {
         i.prevWeight = i.weight;
-        // Ease in over the first 25%, hold centred, ease back out over the last 25%.
+        // Ease in over the first 25%, hold centered, ease back out over the last 25%.
         i.weight = Curves.trapezoid((float) i.age / i.duration, 0.25f, 0.25f);
     }
 

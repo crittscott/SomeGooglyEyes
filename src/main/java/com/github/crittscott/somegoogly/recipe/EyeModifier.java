@@ -26,7 +26,7 @@ public interface EyeModifier {
     AppearanceOverride apply(AppearanceOverride current, ItemStack stack);
 
     /**
-     * The registered modifiers, in match order: dye → iris colour, glowstone dust → glow on,
+     * The registered modifiers, in match order: dye → iris color, glowstone dust → glow on,
      * redstone → glow off, cobweb → strip all overrides back to a bare eye. They match disjoint
      * ingredients, so order is not significant.
      */
@@ -47,7 +47,7 @@ public interface EyeModifier {
         return null;
     }
 
-    /** 1 eye + 1 of the 16 vanilla dyes → that dye's colour on the iris (set, not blended). */
+    /** 1 eye + 1 of the 16 vanilla dyes → that dye's color on the iris (set, not blended). */
     final class DyeEyeModifier implements EyeModifier {
         @Override
         public boolean matches(ItemStack stack) {

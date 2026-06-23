@@ -39,6 +39,8 @@ The mod id is `somegoogly`.
 
 Conceptually this is a **both-sides mod**. A server without the client merely owns data and state; a client without the server can render only after it receives the server-selected configuration and state. Client registrations are guarded by distribution checks, but dedicated-server loadability is still **experimental** and must not be treated as verified.
 
+The package layout mirrors this split: client-only code (rendering, the wobble tracker, the placement picker, GeckoLib compatibility, the shared eye model, client config, and the `/sg` picker commands) lives under `com.github.crittscott.somegoogly.client`, while shared and server-only code stays directly under `com.github.crittscott.somegoogly`. The boundary is structural only — the runtime ownership above is unchanged.
+
 ## 4. Runtime model
 
 ### 4.1 Entity state
@@ -49,7 +51,7 @@ Each living entity may have these values in persistent Forge data:
 | --- | --- |
 | `somegoogly:hasGooglyEyes` | Whether the entity currently displays eyes. |
 | `somegoogly:eyeVariantRoll` | A stable random roll used to choose one weighted placement variant. |
-| `somegoogly:eyeOverrides` | Optional appearance override: cornea colour, iris colour, and glow. |
+| `somegoogly:eyeOverrides` | Optional appearance override: cornea color, iris color, and glow. |
 
 `hasGooglyEyes` and the variant roll are assigned the first time the entity joins the server level. The eye flag is a once-at-spawn decision, but it can later be changed by gameplay actions. It is retained through saves, dimension changes, and aging. The variant roll is likewise retained, so an entity keeps the same visual arrangement for life.
 
@@ -139,8 +141,8 @@ Each object in `eyes` is flat rather than nested:
 | `irisScale` | `0.6` | Iris/pupil size. |
 | `inclination` | `90.0` | Aim angle from local positive Y, in degrees. |
 | `azimuth` | `270.0` | Aim angle from local positive X, in degrees. |
-| `corneaColors` | `[1, 1, 1]` | RGB cornea colour, stored as three floats. |
-| `irisColors` | `[0, 0, 0]` | RGB iris colour, stored as three floats. |
+| `corneaColors` | `[1, 1, 1]` | RGB cornea color, stored as three floats. |
+| `irisColors` | `[0, 0, 0]` | RGB iris color, stored as three floats. |
 | `glows` | `false` | Whether the eye receives the glowing-eye render pass. |
 | `affectedByInvisibility` | `true` | Whether entity invisibility hides this eye. |
 
@@ -199,7 +201,7 @@ The eye model is shared between mob eyes, picker previews, and eye items. Its co
 
 The wobble is a client-only, per-eye physical simulation, ticked at the client tick rate and interpolated at render time. The same simulation drives mob eyes and a held eye item, so they behave identically.
 
-Each eye is modelled as a point-mass pupil moving in the eye's local plane, constrained to a unit disk that maps onto the cornea's full circular interior:
+Each eye is modeled as a point-mass pupil moving in the eye's local plane, constrained to a unit disk that maps onto the cornea's full circular interior:
 
 - **Gravity** pulls the pupil toward the bottom of the eye (local down).
 - **Pseudo-forces** push the pupil opposite the eye socket's acceleration: the holder's linear acceleration (projected so sideways movement and jumping/falling register) and the holder's head yaw/pitch angular acceleration. Because the forcing is acceleration-based, steady motion at constant speed produces no movement; starts, stops, turns, and jumps are what throw the pupil around.
@@ -235,13 +237,13 @@ Built-in behaviors are:
 
 | Id | Visual effect |
 | --- | --- |
-| `stare` | Pupils ease to centre, hold, then release to wobble. |
+| `stare` | Pupils ease to center, hold, then release to wobble. |
 | `blink` | A seeded random subset of eyes squashes shut and opens. |
 | `grow` | Eyes bulge and settle. |
 | `color_change` | Corneas blend toward a seeded hue and back. |
-| `swirl` | Pupils spiral toward centre. |
-| `side_eye` | Pupils centre, then slide to one seeded side. |
-| `cross_eye` | Pupils centre and move inward according to their configured horizontal position. |
+| `swirl` | Pupils spiral toward center. |
+| `side_eye` | Pupils center, then slide to one seeded side. |
+| `cross_eye` | Pupils center and move inward according to their configured horizontal position. |
 
 Only one behavior may run on an entity at a time. They do not persist to NBT and are cosmetic; after a reload they simply start fresh.
 
@@ -261,7 +263,7 @@ Ambient scheduling only considers entities that both have eyes and are being tra
 
 An absent property falls back to the recipient mob's per-eye datapack appearance. The item deliberately contains no position, scale, rotation, or attachment data.
 
-When rendered in a hand, the item runs the same wobble step as a mob eye. In inventories, frames, and ground contexts its iris is centred.
+When rendered in a hand, the item runs the same wobble step as a mob eye. In inventories, frames, and ground contexts its iris is centered.
 
 ### 9.2 Harvest
 
@@ -274,7 +276,7 @@ Both harvest paths also apply to a player who currently has eyes (a player is a 
 
 Right-clicking a mob or player with a googly-eye item does **nothing**: the item is purely a brewing/crafting ingredient, and the splash potion (§9.4) is the only way to give an entity eyes. Right-clicking a googly-eye item into an item frame remains ordinary vanilla behavior and is unaffected.
 
-Harvested stacks use the mob's total configured eye count, but sample the effective appearance from the first configured eye. The current override model is per-mob rather than per-eye, so asymmetric eye colours are not preserved as separate item properties.
+Harvested stacks use the mob's total configured eye count, but sample the effective appearance from the first configured eye. The current override model is per-mob rather than per-eye, so asymmetric eye colors are not preserved as separate item properties.
 
 ### 9.3 Crafting
 
@@ -282,7 +284,7 @@ The special `eye_modifier` recipe accepts exactly one googly-eye item and one mo
 
 | Ingredient | Effect |
 | --- | --- |
-| Any vanilla dye | Set iris colour. |
+| Any vanilla dye | Set iris color. |
 | Glowstone dust | Force glow on. |
 | Redstone | Force glow off. |
 | Cobweb | Remove all overrides and fall back to a recipient's config appearance. |
@@ -321,13 +323,13 @@ It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests
 
 ### 10.2 `/sg` command surface
 
-The client command tree supports short and long aliases for choosing a target, selecting a part, creating/moving/rotating an eye, changing scale/colour/glow/invisibility, saving/selecting/deleting/listing eyes, exporting, and spawning an authoring grid of living entity types in single-player.
+The client command tree supports short and long aliases for choosing a target, selecting a part, creating/moving/rotating an eye, changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, exporting, and spawning an authoring grid of living entity types in single-player.
 
 `~` in movement/rotation leaves that component unchanged.
 
 `/sg` is a single user-facing command name, but it is registered from two sides: these picker verbs are client commands, while the operator-only `admin` subtree (see §11) is a server command grafted under the same root. The two occupy disjoint paths, so command fall-through routes each input to the side that owns it — confirmed in single-player; the dedicated-server client→server hop is unverified (see §13's dedicated-server caveat). There is no client-to-server command packet; the picker verbs mutate client `PickerState`, and the `admin` verbs run server-side with normal command permissions and context.
 
-The picker previews saved and current eyes with a centred iris and a local RGB transform gizmo. While previewing its target, ordinary eye rendering is suppressed to prevent duplicate eyes.
+The picker previews saved and current eyes with a centered iris and a local RGB transform gizmo. While previewing its target, ordinary eye rendering is suppressed to prevent duplicate eyes.
 
 ### 10.3 Picker limitations
 

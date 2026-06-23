@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.model;
+package com.github.crittscott.somegoogly.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -65,7 +65,7 @@ public final class ModelGooglyEye {
             return;
         }
 
-        // Max cornea-unit travel of the iris CENTRE that keeps the iris disk inside the cornea.
+        // Max cornea-unit travel of the iris CENTER that keeps the iris disk inside the cornea.
         float maxCenter = CORNEA_RADIUS - IRIS_RADIUS * pupilSize;
         float preScale = maxCenter / pupilSize;
         // Render space is -Y up / -X right, so a physics +Y (up) pupil must render toward -Y.

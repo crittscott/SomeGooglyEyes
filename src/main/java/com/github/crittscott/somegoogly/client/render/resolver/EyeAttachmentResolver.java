@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.render.resolver;
+package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
@@ -34,7 +34,7 @@ public interface EyeAttachmentResolver {
         return java.util.List.of();
     }
 
-    /** Normalises a token/part-name so camelCase field names match snake_case child-map keys. */
+    /** Normalizes a token/part-name so camelCase field names match snake_case child-map keys. */
     static String normalize(String s) {
         return s == null ? "" : s.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");
     }

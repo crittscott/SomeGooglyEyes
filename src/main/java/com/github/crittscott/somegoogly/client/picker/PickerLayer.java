@@ -1,9 +1,9 @@
-package com.github.crittscott.somegoogly.picker;
+package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.model.ModelGooglyEye;
-import com.github.crittscott.somegoogly.render.resolver.EyeAttachmentResolver;
-import com.github.crittscott.somegoogly.render.resolver.Resolvers;
+import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
+import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Picker preview layer: renders the committed eyes plus the live draft eye and the selection gizmo,
- * but <b>only</b> for the entity the picker is locked onto. Eyes are previewed with a centred iris
+ * but <b>only</b> for the entity the picker is locked onto. Eyes are previewed with a centered iris
  * (no physics) — placement is what matters here. The real {@code LayerGooglyEyes} is suppressed for
  * this entity while the picker is active, so you see only the work-in-progress.
  */
@@ -91,7 +91,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         double[] iris = eye.irisColors;
         poseStack.pushPose();
         poseStack.scale(irisScale, irisScale, 1.0F);
-        modelGooglyEye.moveIris(0.0F, 0.0F, irisScale); // centred preview, no physics
+        modelGooglyEye.moveIris(0.0F, 0.0F, irisScale); // centered preview, no physics
         modelGooglyEye.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1], (float) iris[2], 1.0F);
         poseStack.popPose();
 
