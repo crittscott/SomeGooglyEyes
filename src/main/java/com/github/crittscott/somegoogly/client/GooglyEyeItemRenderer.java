@@ -2,10 +2,8 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

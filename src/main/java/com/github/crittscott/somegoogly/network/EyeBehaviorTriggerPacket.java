@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.network;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
-import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.GooglyTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

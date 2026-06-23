@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.client.tracker;
+package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;

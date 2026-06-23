@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.picker.PickerLayer;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
-import com.github.crittscott.somegoogly.client.tracker.GooglyTracker;
+import com.github.crittscott.somegoogly.client.GooglyTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;

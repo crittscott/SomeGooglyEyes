@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.client.model.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.mojang.blaze3d.vertex.PoseStack;
