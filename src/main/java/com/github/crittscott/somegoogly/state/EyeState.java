@@ -109,7 +109,7 @@ public final class EyeState {
     }
 
     /**
-     * Replace the mob's whole appearance override (used by {@link EyeHolder} / item reattach). Writes
+     * Replace the mob's whole appearance override (used by {@link EyeHolder}, the potion, and harvest). Writes
      * the {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {

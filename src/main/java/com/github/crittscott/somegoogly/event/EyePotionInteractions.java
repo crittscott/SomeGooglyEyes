@@ -64,7 +64,7 @@ public class EyePotionInteractions {
         LivingEntity chosen = candidates.get(level.getRandom().nextInt(candidates.size()));
 
         // Apply the potion's carried appearance (brewed in from the eye item), then turn eyes on —
-        // same order/seam as the right-click item reattach. Empty properties fall back to config.
+        // the potion is the only way to give a mob (or player) eyes. Empty properties fall back to config.
         EntityEyeHolder holder = new EntityEyeHolder(chosen);
         holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
         holder.setHasEyes(true);

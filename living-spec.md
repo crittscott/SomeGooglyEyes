@@ -11,7 +11,7 @@ Some Googly Eyes adds configurable, animated googly eyes to living Minecraft ent
 - Datapacks describe *where* eyes belong on a particular entity model and what their default appearance is.
 - The server decides *whether* an individual entity has eyes, persists that decision, and synchronizes it.
 - The client draws the eyes, simulates their wobble, applies client preferences, and provides an in-world authoring tool for new placements.
-- Eye items carry a portable *appearance*, not a portable placement. Applying an item to a mob uses that mob's datapack placement.
+- Eye items carry a portable *appearance*, not a portable placement. When that appearance is applied to a mob (only via the splash potion), the mob's datapack placement is used.
 
 The mod id is `somegoogly`.
 
@@ -55,11 +55,13 @@ Each living entity may have these values in persistent Forge data:
 
 An entity is eligible for the initial roll only when the server has a usable enabled definition for it at either its current or alternate age. This prevents a baby that only has an adult definition from being permanently excluded before it grows.
 
+**Players are a deliberate exception.** A player has an eye definition (`data/minecraft/eyes/player.json`, a humanoid head arrangement) and renders eyes when it has them, but the server never includes players in the at-spawn roll: a player always starts with no eyes and can only gain them mid-life from the splash potion (§9.4). Because the flag lives in ordinary persistent data, which Forge clears on respawn, a player's eyes are lost on death.
+
 ### 4.2 Lifecycle
 
 1. The server reload listener reads `data/<namespace>/eyes/*.json` from active datapacks.
 2. It selects the definitions matching the namespace's loaded mod version and each definition's age selector.
-3. At first entity join, the server determines an eye flag using the global/per-entity spawn chance and stores a placement-variant roll.
+3. At first entity join, the server determines an eye flag using the global/per-entity spawn chance (players are always excluded and start with no eyes) and stores a placement-variant roll.
 4. On datapack sync, the selected definitions are sent to every client. On entity tracking, its current eye state is sent to the new observer.
 5. State mutations broadcast the full state to every tracking client immediately.
 6. Client render layers read the synced definition plus the entity's synced persistent state and draw the result.
@@ -174,7 +176,7 @@ Malformed `disabledEntities` values are dropped and logged once rather than cras
 
 ### 7.1 Normal rendering
 
-The client adds a googly-eye layer to every vanilla `LivingEntityRenderer`. The layer returns without drawing when any of the following applies:
+The client adds a googly-eye layer to every vanilla `LivingEntityRenderer`, including both player skin models (default and slim). The layer returns without drawing when any of the following applies:
 
 - the picker is actively previewing that entity;
 - the client global or per-entity veto is active;
@@ -245,7 +247,7 @@ Only one behavior may run on an entity at a time. They do not persist to NBT and
 
 Ambient scheduling only considers entities that both have eyes and are being tracked by at least one player. This avoids scans over all loaded entities.
 
-**Known behavioral gap — Partial:** the scheduler adds an entity on `StartTracking` only if it already has eyes. If an eyeless entity gains eyes through a potion or reattachment while it is already being watched, its visual state syncs and renders, but it is not newly registered for ambient behaviors until tracking restarts. This conclusion is source-derived and awaits runtime confirmation.
+**Known behavioral gap — Partial:** the scheduler adds an entity on `StartTracking` only if it already has eyes. If an eyeless entity gains eyes through the potion while it is already being watched, its visual state syncs and renders, but it is not newly registered for ambient behaviors until tracking restarts. This conclusion is source-derived and awaits runtime confirmation.
 
 ## 9. Gameplay systems
 
@@ -261,13 +263,16 @@ An absent property falls back to the recipient mob's per-eye datapack appearance
 
 When rendered in a hand, the item runs the same wobble step as a mob eye. In inventories, frames, and ground contexts its iris is centred.
 
-### 9.2 Harvest and reattachment
+### 9.2 Harvest
 
 | Action | Result | Status |
 | --- | --- | --- |
 | Right-click an eyed mob with Optometrist-enchanted shears (any `ShearsItem`, vanilla or modded) | Removes its eyes without damage, drops eye items carrying the mob's effective appearance. | Implemented |
 | Kill an eyed mob with a direct shears attack (any `ShearsItem`, no enchantment) | May drop the same eye items, using the server harvest chance. | Implemented |
-| Right-click an eligible eyeless mob with a googly-eye item | Applies item appearance and turns its eyes on. | Implemented |
+
+Both harvest paths also apply to a player who currently has eyes (a player is a living entity with a definition). Shears-killing an eyed player therefore drops eye items as for any mob.
+
+Right-clicking a mob or player with a googly-eye item does **nothing**: the item is purely a brewing/crafting ingredient, and the splash potion (§9.4) is the only way to give an entity eyes. Right-clicking a googly-eye item into an item frame remains ordinary vanilla behavior and is unaffected.
 
 Harvested stacks use the mob's total configured eye count, but sample the effective appearance from the first configured eye. The current override model is per-mob rather than per-eye, so asymmetric eye colours are not preserved as separate item properties.
 
@@ -288,7 +293,7 @@ The output preserves unrelated NBT from the source eye item.
 
 An awkward splash potion brewed with a googly-eye item becomes the `somegoogly:googly_eyes` splash potion and inherits the eye item's appearance.
 
-On impact, the server chooses exactly one random nearby eligible, currently eyeless living entity and applies the potion's appearance before turning eyes on. It does not cancel vanilla impact handling; the custom potion carries no normal mob effects.
+On impact, the server chooses exactly one random nearby eligible, currently eyeless living entity—players included, since they have a definition but never spawn with eyes—and applies the potion's appearance before turning eyes on. This is the only way to give an entity eyes. It does not cancel vanilla impact handling; the custom potion carries no normal mob effects.
 
 ### 9.5 Enchantment
 

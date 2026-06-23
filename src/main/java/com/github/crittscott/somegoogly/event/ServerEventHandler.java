@@ -13,6 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -113,7 +114,8 @@ public class ServerEventHandler {
         boolean hasGooglyEyes = false;
         ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
 
-        if (ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+        // Players never roll eyes at spawn — they can only receive them mid-life (the googly potion).
+        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
             // authoritative hard-off that beats the percent roll. Use the age-independent check: this
             // decision is stored for life, so a baby with only an adult config must still roll (it'll

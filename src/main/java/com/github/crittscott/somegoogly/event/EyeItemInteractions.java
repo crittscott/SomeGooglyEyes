@@ -9,7 +9,6 @@ import com.github.crittscott.somegoogly.state.EyeHolder;
 import com.github.crittscott.somegoogly.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,8 +23,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The thin-slice eye-item verbs (server-side). Both directions go through the {@link EyeHolder} seam
- * rather than {@link EyeState} directly, so future holders (item frames, item models) reuse them.
+ * The thin-slice eye-<i>harvest</i> verbs (server-side). Harvest goes through the {@link EyeHolder} seam
+ * rather than {@link EyeState} directly, so future holders (item frames, item models) reuse it.
  *
  * <ul>
  *   <li><b>Harvest (non-lethal)</b> — right-click an eyed mob with shears enchanted with
@@ -35,9 +34,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *   <li><b>Harvest (on kill)</b> — killing an eyed mob with a direct shears melee blow has a configurable
  *       chance ({@link ServerConfig#HARVEST_ON_KILL_PERCENT}) to drop the same {@code googly_eye}; see
  *       {@link #onLivingDrops}.</li>
- *   <li><b>Reattach</b> — right-click an eyeless but eye-<i>configured</i> mob with a {@code googly_eye}:
- *       apply the item's appearance and turn the mob's eyes on (placement comes from the mob's config).</li>
  * </ul>
+ *
+ * <p>Eyes are <i>given</i> only by the googly potion ({@link EyePotionInteractions}); the eye item is a
+ * brewing/crafting ingredient, not a direct right-click apply, so there is no reattach verb here.
  *
  * <p>Both harvest paths accept any {@link ShearsItem} (vanilla or modded) and capture the mob's appearance from head 0 /
  * eye 0 (per-eye appearance would need the override model to go per-eye, which it isn't yet).
@@ -57,35 +57,15 @@ public class EyeItemInteractions {
         ItemStack stack = event.getItemStack();
         EntityEyeHolder holder = new EntityEyeHolder(mob);
 
-        if (stack.getItem() instanceof GooglyEyeItem) {
-            reattach(event, player, mob, stack, holder);
-        } else if (stack.getItem() instanceof ShearsItem && holder.hasEyes() && hasOptometrist(stack)) {
+        // Eyes are given only by the googly potion; the eye item is for brewing/crafting, not a direct
+        // right-click apply. Shears (with Optometrist) remain the non-lethal harvest path.
+        if (stack.getItem() instanceof ShearsItem && holder.hasEyes() && hasOptometrist(stack)) {
             harvest(event, player, mob, stack, holder);
         }
     }
 
     private static boolean hasOptometrist(ItemStack stack) {
         return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.OPTOMETRIST.get(), stack) > 0;
-    }
-
-    private static void reattach(PlayerInteractEvent.EntityInteract event, Player player, LivingEntity mob,
-                                 ItemStack stack, EyeHolder holder) {
-        HeadInfo helper = helperFor(mob);
-        if (helper == null || !helper.hasConfig()) {
-            player.displayClientMessage(Component.literal("This mob can't wear googly eyes."), true);
-            consume(event, InteractionResult.FAIL);
-            return;
-        }
-        if (holder.hasEyes()) {
-            return; // already has eyes — leave other interactions alone
-        }
-
-        holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
-        holder.setHasEyes(true);
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
-        consume(event, InteractionResult.SUCCESS);
     }
 
     private static void harvest(PlayerInteractEvent.EntityInteract event, Player player, LivingEntity mob,
