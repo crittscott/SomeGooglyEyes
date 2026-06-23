@@ -52,17 +52,26 @@ public final class ModelGooglyEye {
                 irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z);
     }
 
-    /** Preserve the former iris-motion conversion so wobble and behavior values retain their range. */
-    public void moveIris(float x, float y, float pupilSize) {
+    /**
+     * Position the iris from a unit-disk pupil position {@code (normX, normY)} in [-1,1], mapped
+     * linearly onto the full travel circle so the iris edge just kisses the cornea rim at
+     * {@code |norm| = 1}. The renderer applies the {@code pupilSize} (irisScale) on the pose, so the
+     * offset is expressed in the iris's own pre-scale units (hence the {@code / pupilSize}).
+     */
+    public void moveIris(float normX, float normY, float pupilSize) {
         if (pupilSize <= 0F) {
             irisOffsetX = 0F;
             irisOffsetY = 0F;
             return;
         }
 
-        float shiftFactor = (1.45F - pupilSize * 0.525F) / pupilSize;
-        irisOffsetX = -x * shiftFactor;
-        irisOffsetY = -y * shiftFactor * (float) Math.cos(Math.toRadians(x * 90F));
+        // Max cornea-unit travel of the iris CENTRE that keeps the iris disk inside the cornea.
+        float maxCenter = CORNEA_RADIUS - IRIS_RADIUS * pupilSize;
+        float preScale = maxCenter / pupilSize;
+        // Render space is -Y up / -X right, so a physics +Y (up) pupil must render toward -Y.
+        // Without this flip the pupil rests at the top and falls upward.
+        irisOffsetX = -normX * preScale;
+        irisOffsetY = -normY * preScale;
     }
 
     private static void renderCylinder(PoseStack poseStack, VertexConsumer buffer, int packedLight,

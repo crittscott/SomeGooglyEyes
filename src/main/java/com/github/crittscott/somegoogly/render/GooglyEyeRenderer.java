@@ -94,6 +94,14 @@ public final class GooglyEyeRenderer {
         float physicsY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
         float irisX = physicsX * (1F - c.irisWeight) + c.irisTargetX * c.irisWeight;
         float irisY = physicsY * (1F - c.irisWeight) + c.irisTargetY * c.irisWeight;
+        // The unit disk maps to the full cornea circle; clamp so blended behaviour targets can't push
+        // the iris past the rim.
+        float m2 = irisX * irisX + irisY * irisY;
+        if (m2 > 1F) {
+            float m = (float) Math.sqrt(m2);
+            irisX /= m;
+            irisY /= m;
+        }
         model.moveIris(irisX, irisY, irisScale);
         model.renderIris(pose, buffer, packedLight, overlay, irisColors[0], irisColors[1], irisColors[2], 1F);
         pose.popPose();

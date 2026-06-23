@@ -35,27 +35,63 @@ public class GooglyTracker {
     public BehaviorInstance active;
 
     public static class EyeInfo {
+        // Head orientation, kept across ticks to differentiate into angular velocity/acceleration.
         public float prevRotationYaw;
         public float rotationYaw;
         public float prevRotationPitch;
         public float rotationPitch;
-        public float prevRotationRoll;
-        public float rotationRoll;
 
+        // Pupil position in [-1,1], living in a unit disk (|p| <= 1) mapped onto the full cornea circle.
         public float prevDeltaX;
         public float prevDeltaY;
         public float deltaX;
         public float deltaY;
+        // Pupil velocity.
         public float momentumX;
         public float momentumY;
+
+        // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
+        private boolean primed;
+        private float prevYawRate;
+        private float prevPitchRate;
+        private double prevMotionX;
+        private double prevMotionY;
+        private double prevMotionZ;
+
+        // --- tuning (normalized units; boundary radius = 1) ---------------------------------------
+        private static final float R_GRAVITY = 0.03f;          // constant downward pull (units/tick^2)
+        private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
+        private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
+        private static final float R_AIR = 1.0f;               // free-flight velocity damping per tick (1 = none)
+        // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
+        // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
+        private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
+        private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
+        private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
+        private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
+        private static final float R_K_LIN = 12.0f;            // mob horizontal accel -> sideways kick (per blk/tick^2)
+        private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
+        private static final float R_FORCE_CLAMP = 0.96f;      // cap any single tick's forcing (jump spikes)
+        private static final float R_NOISE = 0.005f;           // tiny per-eye jitter so eyes don't lock-step
 
         public EyeInfo() {
             prevDeltaY = deltaY = -1F;
         }
 
         /**
-         * One tick of googly physics. Decoupled from the tracker so it can be reused for a held eye
-         * item (see {@code GooglyEyeItemRenderer}) — the behaviour must be identical to mob eyes.
+         * One tick of googly physics: a point-mass pupil in the eye's local plane (+X right, +Y up),
+         * constrained to the unit disk (the full cornea circle once mapped by {@code moveIris}).
+         * Semi-implicit Euler: accumulate forces -> integrate velocity -> integrate position -> resolve
+         * the circular wall.
+         *
+         * <p>Forcing: constant local-down gravity, plus pseudo-forces from the holder's linear
+         * acceleration and head angular acceleration (so the pupil lags and overshoots when the mob
+         * jerks or whips its head). Walls reflect radially with restitution {@code < 1}; tangential
+         * friction plus rest/slide cutoffs bleed the last energy so it parks at the bottom instead of
+         * ringing forever.
+         *
+         * <p>Decoupled from the tracker so it can be reused for a held eye item (see
+         * {@code GooglyEyeItemRenderer}) — the behaviour must be identical to mob eyes.
          *
          * @param rand      randomness source (per-tracker / per-held-eye)
          * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
@@ -63,60 +99,88 @@ public class GooglyTracker {
          * @param motionX/Y/Z the holder's position delta this tick
          */
         public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ) {
-            prevRotationYaw = rotationYaw;
-            prevRotationPitch = rotationPitch;
-            prevRotationRoll = rotationRoll;
-
-            rotationYaw = headYaw;
-            rotationPitch = headPitch;
-            rotationRoll = 0.0f; // Most entities don't roll
-
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
-            float yawDiff = rotationYaw - prevRotationYaw;
-            float pitchDiff = rotationPitch - prevRotationPitch;
-            float rollDiff = rotationRoll - prevRotationRoll;
-
-            momentumY += motionY * 1.5F + (motionX + motionZ) * rand.nextGaussian() * (0.75F) + (pitchDiff / 45F) + (yawDiff / 180F) + rollDiff * rand.nextGaussian() * (0.05F);
-            momentumX -= (motionX + motionZ) * rand.nextGaussian() * 0.4F + (yawDiff / 45F) + rollDiff * rand.nextGaussian() * (0.05F);
-
-            float momentumLoss = 0.9F;
-            float newDeltaX = deltaX + momentumX;
-            float newDeltaY = deltaY + momentumY;
-            if (newDeltaX < -1F || newDeltaX > 1F) {
-                float newMo = momentumX * -momentumLoss;
-                float randFloat = 0.8F + rand.nextFloat() * 0.2F;
-                momentumX = newMo * randFloat;
-                momentumY += newMo * (randFloat) * (rand.nextFloat() > 0.5F ? 1F : -1F);
-            }
-            if (newDeltaY < -1F || newDeltaY > 1F) {
-                float newMo = momentumY * -momentumLoss;
-                float randFloat = 0.8F + rand.nextFloat() * 0.2F;
-                momentumY = newMo * randFloat;
-                momentumX += newMo * (1F - randFloat) * (rand.nextFloat() > 0.5F ? 1F : -1F);
-            } else {
-                momentumY -= Mth.clamp(1F + deltaY, 0F, 0.1999F);
+            // Prime the differentiators on the first tick so we don't see a spike from zero baselines.
+            if (!primed) {
+                primed = true;
+                rotationYaw = prevRotationYaw = headYaw;
+                rotationPitch = prevRotationPitch = headPitch;
+                prevYawRate = 0F;
+                prevPitchRate = 0F;
+                prevMotionX = motionX;
+                prevMotionY = motionY;
+                prevMotionZ = motionZ;
+                return;
             }
 
-            momentumX *= 0.95F;
-            deltaX *= 0.95F;
+            prevRotationYaw = rotationYaw;
+            prevRotationPitch = rotationPitch;
+            rotationYaw = headYaw;
+            rotationPitch = headPitch;
 
-            if (Math.abs(momentumX) < 0.03F) {
-                momentumX = 0F;
-            }
-            if (Math.abs(deltaX) < 0.03F) {
-                deltaX = 0F;
-            }
+            // Angular acceleration (deg/tick^2); wrap yaw so the 180/-180 seam doesn't read as a spin.
+            float yawRate = Mth.wrapDegrees(rotationYaw - prevRotationYaw);
+            float pitchRate = rotationPitch - prevRotationPitch;
+            float yawAccel = yawRate - prevYawRate;
+            float pitchAccel = pitchRate - prevPitchRate;
+            prevYawRate = yawRate;
+            prevPitchRate = pitchRate;
 
-            float maxMomentum = 1.3F;
-            momentumX = Mth.clamp(momentumX, -maxMomentum, maxMomentum);
-            momentumY = Mth.clamp(momentumY, -maxMomentum, maxMomentum);
+            // Linear acceleration (blocks/tick^2); project the horizontal part onto the head's right axis.
+            double laccx = motionX - prevMotionX;
+            double laccy = motionY - prevMotionY;
+            double laccz = motionZ - prevMotionZ;
+            prevMotionX = motionX;
+            prevMotionY = motionY;
+            prevMotionZ = motionZ;
+
+            double yawRad = Math.toRadians(rotationYaw);
+            float rightX = (float) Math.cos(yawRad);
+            float rightZ = (float) Math.sin(yawRad);
+            float horizRight = (float) (laccx * rightX + laccz * rightZ);
+
+            // Pseudo-forces oppose the socket's acceleration; gravity is constant local-down.
+            float fx = -R_K_YAW * yawAccel - R_K_LIN * horizRight + (float) rand.nextGaussian() * R_NOISE;
+            float fy = -R_GRAVITY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy
+                    + (float) rand.nextGaussian() * R_NOISE;
+            fx = Mth.clamp(fx, -R_FORCE_CLAMP, R_FORCE_CLAMP);
+            fy = Mth.clamp(fy, -R_FORCE_CLAMP, R_FORCE_CLAMP);
+
+            momentumX = (momentumX + fx) * R_AIR;
+            momentumY = (momentumY + fy) * R_AIR;
 
             deltaX += momentumX;
             deltaY += momentumY;
-            deltaX = Mth.clamp(deltaX, -1F, 1F);
-            deltaY = Mth.clamp(deltaY, -1F, 1F);
+
+            // Circular wall: reflect the outward normal component, friction the tangential, project back.
+            float r2 = deltaX * deltaX + deltaY * deltaY;
+            if (r2 > 1F) {
+                float r = (float) Math.sqrt(r2);
+                float nx = deltaX / r;
+                float ny = deltaY / r;
+                float vn = momentumX * nx + momentumY * ny;
+                float tvx = momentumX - vn * nx;
+                float tvy = momentumY - vn * ny;
+
+                tvx *= (1F - R_TANGENT_FRICTION);
+                tvy *= (1F - R_TANGENT_FRICTION);
+                if (tvx * tvx + tvy * tvy < R_SLIDE_CUTOFF * R_SLIDE_CUTOFF) {
+                    tvx = 0F;
+                    tvy = 0F;
+                }
+
+                float rn = vn > 0F ? -R_RESTITUTION * vn : vn;
+                if (Math.abs(rn) < R_REST_CUTOFF) {
+                    rn = 0F;
+                }
+
+                momentumX = tvx + rn * nx;
+                momentumY = tvy + rn * ny;
+                deltaX = nx;
+                deltaY = ny;
+            }
         }
     }
 
