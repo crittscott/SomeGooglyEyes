@@ -14,10 +14,6 @@ public final class EntityEyeHolder implements EyeHolder {
         this.entity = entity;
     }
 
-    public LivingEntity entity() {
-        return entity;
-    }
-
     @Override
     public boolean hasEyes() {
         return EyeState.hasEyes(entity);

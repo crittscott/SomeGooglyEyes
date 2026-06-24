@@ -40,7 +40,6 @@ public final class PickerState {
 
     public static boolean active = false;
     private static WeakReference<LivingEntity> target = new WeakReference<>(null);
-    private static EntityModel<?> model;
     private static ResourceLocation targetType;
 
     public static List<String> parts = new ArrayList<>();
@@ -89,10 +88,6 @@ public final class PickerState {
         return target.get();
     }
 
-    public static EntityModel<?> model() {
-        return model;
-    }
-
     public static boolean isActiveTarget(LivingEntity entity) {
         return active && entity == target.get();
     }
@@ -107,10 +102,9 @@ public final class PickerState {
         EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
 
         // Vanilla EntityModel path (hierarchical names or reflection #N).
-        EntityModel<?> vanillaModel = null;
         List<String> tokens = List.of();
         if (renderer instanceof LivingEntityRenderer<?, ?> ler) {
-            vanillaModel = ler.getModel();
+            EntityModel<?> vanillaModel = ler.getModel();
             EyeAttachmentResolver resolver = Resolvers.forModel(vanillaModel);
             if (resolver != null) {
                 tokens = resolver.enumerateParts(vanillaModel);
@@ -120,7 +114,6 @@ public final class PickerState {
         if (tokens.isEmpty()) {
             List<String> bones = GeckoCompat.enumerate(renderer, living);
             if (!bones.isEmpty()) {
-                vanillaModel = null;
                 tokens = bones;
             }
         }
@@ -133,7 +126,6 @@ public final class PickerState {
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
-        model = vanillaModel; // null for GeckoLib targets
         targetType = newType;
         parts = new ArrayList<>(tokens);
         partIndex = 0;
@@ -150,7 +142,6 @@ public final class PickerState {
     public static void unlock() {
         unfreeze();
         target = new WeakReference<>(null);
-        model = null;
     }
 
     private static void freeze(LivingEntity clientEntity) {

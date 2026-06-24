@@ -18,8 +18,8 @@ import java.util.Random;
 /**
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
  * client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
- * rule holds across every viewer and so server-only game events (a villager levelling up, …) can drive
- * the same path later. For now the only trigger is the ambient idle timer below.
+ * rule holds across every viewer and so server-only game events drive the same path. Triggers are the
+ * ambient idle timer below plus game-event reactions (hurt → grow, trade/heal → swirl).
  *
  * <p><b>Server-polite:</b> only mobs that have eyes <i>and</i> are currently tracked by a player are
  * considered. The tracked set is maintained from {@code StartTracking}/{@code StopTracking} (so we never

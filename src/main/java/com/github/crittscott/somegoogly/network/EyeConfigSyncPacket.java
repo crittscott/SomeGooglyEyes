@@ -26,6 +26,12 @@ public class EyeConfigSyncPacket {
 
     private static final Gson GSON = new Gson();
 
+    // Per-entity JSON length cap. Well above any realistic authored config (the bundled files are a few
+    // KB), but far below {@code FriendlyByteBuf}'s implicit 32767-char {@code writeUtf} default — which a
+    // heavily authored entity (many variants × eyes) could overrun, throwing mid-encode and aborting the
+    // whole sync. A bound is still kept so a malformed/oversized payload can't force a huge allocation.
+    private static final int MAX_CONFIG_JSON_CHARS = 1024 * 1024;
+
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
 
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs) {
@@ -38,7 +44,7 @@ public class EyeConfigSyncPacket {
             buffer.writeResourceLocation(entry.getKey());
             JsonElement json = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
                     .result().orElseGet(JsonObject::new);
-            buffer.writeUtf(GSON.toJson(json));
+            buffer.writeUtf(GSON.toJson(json), MAX_CONFIG_JSON_CHARS);
         }
     }
 
@@ -49,7 +55,7 @@ public class EyeConfigSyncPacket {
         Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
-            String json = buffer.readUtf();
+            String json = buffer.readUtf(MAX_CONFIG_JSON_CHARS);
             // Skip a single malformed entry (e.g. schema drift between mod versions) rather than
             // letting it abort the whole sync — which would surface as a disconnect. The id and JSON
             // are always read first so the buffer stays aligned for the next entry.

@@ -38,10 +38,6 @@ public record EyeColor(float r, float g, float b) {
         return (channel(r) << 16) | (channel(g) << 8) | channel(b);
     }
 
-    public EyeColor lerp(EyeColor to, float t) {
-        return new EyeColor(r + (to.r - r) * t, g + (to.g - g) * t, b + (to.b - b) * t);
-    }
-
     private static int channel(float v) {
         int i = Math.round(v * 255F);
         return i < 0 ? 0 : Math.min(i, 255);

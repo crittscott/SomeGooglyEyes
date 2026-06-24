@@ -189,10 +189,6 @@ public class HeadInfo {
         return head.eyes.get(eyeIndex);
     }
 
-    public RuntimeConfig config() {
-        return entityConfig;
-    }
-
     private record CacheKey(ResourceLocation entityName, boolean baby, int variant) {
     }
 

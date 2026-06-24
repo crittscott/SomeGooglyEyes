@@ -76,8 +76,8 @@ public class ServerConfig {
 
         AMBIENT_BEHAVIORS = BUILDER
                 .comment("Idle eye expressions: every so often an eyed, player-tracked mob plays a random",
-                        "enabled behavior. (Real game-event triggers can be wired up later; for now this is",
-                        "the only trigger source.)")
+                        "enabled behavior. Event-driven behaviors (grow on hit, swirl on trade/heal) are",
+                        "separate and controlled by their own settings below.")
                 .define("ambientBehaviors", true);
 
         AMBIENT_MIN_TICKS = BUILDER

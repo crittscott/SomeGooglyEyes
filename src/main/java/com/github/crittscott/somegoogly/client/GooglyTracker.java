@@ -261,11 +261,6 @@ public class GooglyTracker {
         return true;
     }
 
-    /** Whether a behavior is currently playing (used to drop overlapping triggers client-side). */
-    public boolean isBusy() {
-        return active != null;
-    }
-
     public void setLastUpdateRequest() {
         lastUpdateRequest = ClientEventHandler.clientTicks;
     }

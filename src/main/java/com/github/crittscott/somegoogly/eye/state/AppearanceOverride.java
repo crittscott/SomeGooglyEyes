@@ -1,10 +1,7 @@
 package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -47,14 +44,6 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
     }
 
-    /** Return a copy with {@code over}'s present fields layered on top of this one's. */
-    public AppearanceOverride merge(AppearanceOverride over) {
-        return new AppearanceOverride(
-                over.cornea.isPresent() ? over.cornea : cornea,
-                over.iris.isPresent() ? over.iris : iris,
-                over.glow.isPresent() ? over.glow : glow);
-    }
-
     /** {@code null} clears the field. */
     public AppearanceOverride withCorneaColor(@Nullable EyeColor color) {
         return new AppearanceOverride(Optional.ofNullable(color), iris, glow);
@@ -68,7 +57,7 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return new AppearanceOverride(cornea, iris, Optional.ofNullable(value));
     }
 
-    // --- Serialization (one Codec → NBT for item/entity, JSON for the config bridge) ---
+    // --- Serialization (one Codec → NBT for the eye item, entity override, and sync payload) ---
 
     public CompoundTag toNbt() {
         Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
@@ -77,13 +66,5 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
 
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
         return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
-    }
-
-    public JsonElement toJson() {
-        return CODEC.encodeStart(JsonOps.INSTANCE, this).result().orElseGet(JsonObject::new);
-    }
-
-    public static AppearanceOverride fromJson(JsonElement json) {
-        return CODEC.parse(JsonOps.INSTANCE, json).result().orElse(EMPTY);
     }
 }
