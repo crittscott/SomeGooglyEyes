@@ -97,12 +97,13 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
     private void renderPickerPreview(PoseStack poseStack, BakedGeoModel bakedModel,
                                      MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        // Saved eyes. The selected one is skipped here — it's shown live as the current eye instead.
-        for (int i = 0; i < PickerState.eyes.size(); i++) {
+        // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
+        java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
+        for (int i = 0; i < eyes.size(); i++) {
             if (i == PickerState.selectedIndex) {
                 continue;
             }
-            PickerState.ListedEye listed = PickerState.eyes.get(i);
+            PickerState.ListedEye listed = eyes.get(i);
             if (listed.part == null) {
                 continue;
             }

@@ -88,13 +88,17 @@ public final class PickerHud {
         int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex, n) + 1);
         out.add(new Line("Part: " + token + "  (" + i + "/" + n + ")   [ ] cycle", WHITE));
 
-        out.add(new Line("Eyes (" + PickerState.committedCount() + "):", WHITE));
+        out.add(new Line(String.format("Variant %d/%d  (weight %.2f)",
+                PickerState.variantIndex + 1, PickerState.variantCount(), PickerState.currentVariant().weight), WHITE));
 
-        // One block per saved eye (two lines). The eye being edited via /sg (selectedIndex) is drawn
-        // live from currentEye and highlighted; if nothing is selected, the in-progress currentEye is
-        // appended as a trailing "new (unsaved)" block — that's what /sg save would commit.
-        for (int idx = 0; idx < PickerState.eyes.size(); idx++) {
-            PickerState.ListedEye listed = PickerState.eyes.get(idx);
+        out.add(new Line("Eyes (" + PickerState.currentEyeCount() + "):", WHITE));
+
+        // One block per saved eye in the current variant (two lines). The eye being edited via /sg
+        // (selectedIndex) is drawn live from currentEye and highlighted; if nothing is selected, the
+        // in-progress currentEye is appended as a trailing "new (unsaved)" block — what /sg save commits.
+        java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
+        for (int idx = 0; idx < eyes.size(); idx++) {
+            PickerState.ListedEye listed = eyes.get(idx);
             if (idx == PickerState.selectedIndex) {
                 appendEye(out, "▶ #" + (idx + 1), partOrNone(PickerState.currentPart), PickerState.currentEye, YELLOW, YELLOW);
             } else {

@@ -42,7 +42,7 @@ public final class PickerExporter {
             return "Export needs single-player.";
         }
         ResourceLocation type = PickerState.targetType();
-        if (type == null || PickerState.committedCount() == 0) {
+        if (type == null || PickerState.totalEyeCount() == 0) {
             return "Nothing committed to export.";
         }
 
@@ -79,7 +79,7 @@ public final class PickerExporter {
         entry.version = version;
         entry.age = age;
         entry.enabled = runtime.enabled;
-        entry.heads = runtime.primaryHeads();
+        entry.variants = runtime.variants;
 
         ConfigFile file = new ConfigFile();
         file.entries = List.of(entry);

@@ -90,29 +90,23 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     private static RuntimeConfig toRuntime(VersionedEntry entry) {
         RuntimeConfig runtime = new RuntimeConfig();
         runtime.enabled = entry.enabled;
-        runtime.variants = buildVariants(entry);
+        runtime.variants = usableVariants(entry);
         return runtime;
     }
 
     /**
-     * Normalize an entry's geometry into a non-empty variant list (or null when there's nothing usable):
-     * prefer an explicit {@code variants} list, dropping entries with no heads; otherwise wrap a legacy
-     * bare {@code heads} as a single weight-1 variant.
+     * Filter an entry's {@code variants} down to the usable ones (those with at least one head),
+     * or {@code null} when none remain. Variants are the only placement shape on disk.
      */
-    private static List<Variant> buildVariants(VersionedEntry entry) {
-        List<Variant> result = new ArrayList<>();
-        if (entry.variants != null) {
-            for (Variant v : entry.variants) {
-                if (v != null && v.heads != null && !v.heads.isEmpty()) {
-                    result.add(v);
-                }
-            }
+    private static List<Variant> usableVariants(VersionedEntry entry) {
+        if (entry.variants == null) {
+            return null;
         }
-        if (result.isEmpty() && entry.heads != null && !entry.heads.isEmpty()) {
-            Variant single = new Variant();
-            single.weight = 1.0;
-            single.heads = entry.heads;
-            result.add(single);
+        List<Variant> result = new ArrayList<>();
+        for (Variant v : entry.variants) {
+            if (v != null && v.heads != null && !v.heads.isEmpty()) {
+                result.add(v);
+            }
         }
         return result.isEmpty() ? null : result;
     }

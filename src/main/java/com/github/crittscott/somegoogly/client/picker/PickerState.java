@@ -57,14 +57,22 @@ public final class PickerState {
         }
     }
 
-    /** The session eye list, in save order (1-based to the user). */
-    public static final List<ListedEye> eyes = new ArrayList<>();
+    /** One weighted placement arrangement being authored: its relative weight plus its own eye list. */
+    public static final class DraftVariant {
+        public double weight = 1.0;
+        public final List<ListedEye> eyes = new ArrayList<>();
+    }
+
+    /** The session's placement variants, in order (1-based to the user); always at least one. */
+    public static final List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
+    /** Index into {@link #variants} of the variant currently being edited. */
+    public static int variantIndex = 0;
 
     /** The eye being shaped right now (the "current eye"). */
     public static EyeDraft currentEye = defaultEye();
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
     public static String currentPart = null;
-    /** Index into {@link #eyes} that {@code save} writes back to, or {@code -1} to append a fresh eye. */
+    /** Index into the current variant's eye list that {@code save} writes back to, or {@code -1} to append. */
     public static int selectedIndex = -1;
 
     // AI-freeze bookkeeping (single-player only). Restored on unchoose/exit so NoAi doesn't persist.
@@ -121,7 +129,7 @@ public final class PickerState {
         }
 
         ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        boolean keepWork = newType.equals(targetType) && !eyes.isEmpty();
+        boolean keepWork = newType.equals(targetType) && totalEyeCount() > 0;
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
@@ -131,12 +139,10 @@ public final class PickerState {
         partIndex = 0;
         currentPart = parts.isEmpty() ? null : parts.get(0);
         if (!keepWork) {
-            eyes.clear();
-            currentEye = defaultEye();
-            selectedIndex = -1;
+            resetWork();
         }
         freeze(living);
-        return "Chose " + newType + (keepWork ? " (kept " + committedCount() + " eyes)" : "")
+        return "Chose " + newType + (keepWork ? " (kept " + totalEyeCount() + " eyes)" : "")
                 + " — " + parts.size() + " parts.";
     }
 
@@ -273,6 +279,91 @@ public final class PickerState {
         }
     }
 
+    // ---- variants --------------------------------------------------------------------------
+
+    /** The variant currently being edited (never null; the list always holds at least one). */
+    public static DraftVariant currentVariant() {
+        variantIndex = Math.max(0, Math.min(variantIndex, variants.size() - 1));
+        return variants.get(variantIndex);
+    }
+
+    /** The current variant's eye list — what save/select/delete and the preview operate on. */
+    public static List<ListedEye> currentEyes() {
+        return currentVariant().eyes;
+    }
+
+    public static int variantCount() {
+        return variants.size();
+    }
+
+    /** Eyes saved in the current variant. */
+    public static int currentEyeCount() {
+        return currentEyes().size();
+    }
+
+    /** Eyes saved across all variants (the export guard). */
+    public static int totalEyeCount() {
+        int n = 0;
+        for (DraftVariant v : variants) {
+            n += v.eyes.size();
+        }
+        return n;
+    }
+
+    /** Reset the whole eye list to a single empty variant. Used on (re)choose and unchoose. */
+    public static void resetWork() {
+        variants.clear();
+        variants.add(new DraftVariant());
+        variantIndex = 0;
+        currentEye = defaultEye();
+        currentPart = parts.isEmpty() ? null : parts.get(partIndex);
+        selectedIndex = -1;
+    }
+
+    /** The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its 1-based index. */
+    public static int newVariant() {
+        variants.add(new DraftVariant());
+        variantIndex = variants.size() - 1;
+        currentEye = defaultEye();
+        selectedIndex = -1;
+        return variantIndex + 1;
+    }
+
+    /** The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of range. */
+    public static boolean selectVariant(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= variants.size()) {
+            return false;
+        }
+        variantIndex = idx;
+        currentEye = defaultEye();
+        selectedIndex = -1;
+        return true;
+    }
+
+    /**
+     * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is always
+     * at least one). Returns false if out of range or it would empty the list.
+     */
+    public static boolean deleteVariant(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= variants.size() || variants.size() <= 1) {
+            return false;
+        }
+        variants.remove(idx);
+        if (variantIndex >= idx) {
+            variantIndex = Math.max(0, variantIndex - 1);
+        }
+        currentEye = defaultEye();
+        selectedIndex = -1;
+        return true;
+    }
+
+    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */
+    public static void setVariantWeight(double w) {
+        currentVariant().weight = Math.max(0, w);
+    }
+
     // ---- CLI current-eye ops ---------------------------------------------------------------
 
     /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
@@ -342,6 +433,7 @@ public final class PickerState {
         if (currentPart == null) {
             return false;
         }
+        List<ListedEye> eyes = currentEyes();
         if (selectedIndex >= 0 && selectedIndex < eyes.size()) {
             ListedEye le = eyes.get(selectedIndex);
             le.part = currentPart;
@@ -353,8 +445,9 @@ public final class PickerState {
         return true;
     }
 
-    /** The CLI {@code select <n>} op (1-based): load a saved eye for further adjustment. */
+    /** The CLI {@code select <n>} op (1-based): load a saved eye from the current variant for adjustment. */
     public static boolean select(int oneBased) {
+        List<ListedEye> eyes = currentEyes();
         int idx = oneBased - 1;
         if (idx < 0 || idx >= eyes.size()) {
             return false;
@@ -367,8 +460,9 @@ public final class PickerState {
         return true;
     }
 
-    /** The CLI {@code delete <n>} op (1-based). */
+    /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
     public static boolean delete(int oneBased) {
+        List<ListedEye> eyes = currentEyes();
         int idx = oneBased - 1;
         if (idx < 0 || idx >= eyes.size()) {
             return false;
@@ -382,32 +476,33 @@ public final class PickerState {
         return true;
     }
 
-    public static int committedCount() {
-        return eyes.size();
-    }
-
-    /** Build the selected runtime config from the saved eyes, grouped by part (for export). */
+    /** Build the runtime config from all authored variants, each grouped by part into heads (for export). */
     public static RuntimeConfig toConfig() {
         RuntimeConfig config = new RuntimeConfig();
         config.enabled = true;
-        LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
-        for (ListedEye le : eyes) {
-            if (le.part == null) {
-                continue;
+        config.variants = new ArrayList<>();
+        for (DraftVariant dv : variants) {
+            LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
+            for (ListedEye le : dv.eyes) {
+                if (le.part == null) {
+                    continue;
+                }
+                HeadConfig head = grouped.computeIfAbsent(le.part, t -> {
+                    HeadConfig h = new HeadConfig();
+                    h.attachPoint = t;
+                    h.eyes = new ArrayList<>();
+                    return h;
+                });
+                head.eyes.add(le.eye.toDefinition());
             }
-            HeadConfig head = grouped.computeIfAbsent(le.part, t -> {
-                HeadConfig h = new HeadConfig();
-                h.attachPoint = t;
-                h.eyes = new ArrayList<>();
-                return h;
-            });
-            head.eyes.add(le.eye.toDefinition());
+            if (grouped.isEmpty()) {
+                continue; // skip empty arrangements rather than export a variant with no eyes
+            }
+            HeadInfo.Variant variant = new HeadInfo.Variant();
+            variant.weight = dv.weight;
+            variant.heads = new ArrayList<>(grouped.values());
+            config.variants.add(variant);
         }
-        // The picker authors a single arrangement; wrap it as one weight-1 variant.
-        HeadInfo.Variant variant = new HeadInfo.Variant();
-        variant.weight = 1.0;
-        variant.heads = new ArrayList<>(grouped.values());
-        config.variants = new ArrayList<>(List.of(variant));
         return config;
     }
 

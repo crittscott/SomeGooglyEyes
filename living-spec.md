@@ -1,7 +1,7 @@
 # Some Googly Eyes: Living Specification
 
 > **Status:** implementation-grounded, living document.  
-> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-22.  
+> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-23.  
 > **Validation status:** this document records source-level behavior; it is not evidence that every path has been tested in-game or on a dedicated server.
 
 ## 1. Purpose
@@ -89,7 +89,7 @@ For example, the entity id `minecraft:axolotl` maps to `data/minecraft/eyes/axol
       "version": "[1.20.1,1.21)",
       "age": "any",
       "enabled": true,
-      "heads": [ ... ]
+      "variants": [ ... ]
     }
   ]
 }
@@ -102,8 +102,9 @@ Each entry is selected independently by `version` and `age`.
 | `version` | Exact version or a bracket range such as `[lower,upper)`. It is matched against the loaded version of the file's namespace. |
 | `age` | `adult`, `baby`, or `any`. An age-specific match takes precedence over `any`. |
 | `enabled` | Defaults to `true`. `false` is a server-authoritative hard disable for this configuration. |
-| `heads` | Legacy/simple form: one eye arrangement, treated as a single variant of weight one. |
-| `variants` | Preferred extended form: one or more weighted complete arrangements. It takes precedence over `heads` when usable variants exist. |
+| `variants` | One or more weighted complete arrangements; the entity rolls one for life. This is the only placement shape — even a single arrangement is one weight-one variant. |
+
+Entry-level `heads` is no longer a valid shape; a bare `heads` list is silently ignored. There is no backward compatibility — all shipped files were migrated to `variants` by `scripts/migrate_eyes_to_variants.py`.
 
 If multiple matching entries target the same entity and age slot, the first is kept and later matching entries are ignored with a warning. Invalid files are logged and skipped without aborting the complete reload.
 
@@ -146,7 +147,7 @@ Each object in `eyes` is flat rather than nested:
 | `glows` | `false` | Whether the eye receives the glowing-eye render pass. |
 | `affectedByInvisibility` | `true` | Whether entity invisibility hides this eye. |
 
-The sampled shipped definitions for axolotl, bee, and warden use the simple `heads` form, one enabled `any` entry for `[1.20.1,1.21)`, and two symmetric black-on-white eyes. Axolotl and warden attach to `head`; bee attaches to `bone`.
+The sampled shipped definitions for axolotl, bee, and warden each have one enabled `any` entry for `[1.20.1,1.21)` holding a single weight-one variant with two symmetric black-on-white eyes. Axolotl and warden attach to `head`; bee attaches to `bone`. Pig ships two variants, so different pigs roll different arrangements.
 
 ## 6. Configuration
 
@@ -319,11 +320,13 @@ The exporter writes:
 <world>/datapacks/somegoogly-picker/data/<namespace>/eyes/<entity>.json
 ```
 
-It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests `/reload`. The exported file contains one exact-version, age-specific entry and one legacy `heads` arrangement.
+It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests `/reload`. The exported file contains one exact-version, age-specific entry whose `variants` list holds every authored arrangement with its weight.
 
 ### 10.2 `/sg` command surface
 
-The client command tree supports short and long aliases for choosing a target, selecting a part, creating/moving/rotating an eye, changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, exporting, and spawning an authoring grid of living entity types in single-player.
+The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye, changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player.
+
+Variants are authored explicitly: `/sg variant new` appends and switches to a fresh arrangement, `/sg variant <n>` switches to one, `/sg variant del <n>` removes one (the last variant cannot be deleted), and `/sg variant weight <w>` sets the current variant's relative weight. All other eye-editing verbs act on the variant currently being edited; the HUD shows the active variant and weight.
 
 `~` in movement/rotation leaves that component unchanged.
 
@@ -333,7 +336,7 @@ The picker previews saved and current eyes with a centered iris and a local RGB 
 
 ### 10.3 Picker limitations
 
-- **Partial:** it exports a single legacy `heads` layout; it does not author weighted variants.
+- **Partial:** it authors fresh from the live model and never reads back a mob's committed config, so editing an existing placement means re-authoring it.
 - **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
 - **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
 - **Deferred:** remote/multiplayer export is intentionally unsupported.

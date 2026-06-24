@@ -217,9 +217,7 @@ public class HeadInfo {
         public String version;
         public String age;
         public Boolean enabled;
-        // Legacy single arrangement; equivalent to a single weight-1 variant. Either this or `variants`.
-        public List<HeadConfig> heads;
-        // Weighted placement variants (a mob picks one). Takes precedence over `heads` when present.
+        // Weighted placement variants; a mob picks one at spawn. The only placement shape on disk.
         public List<Variant> variants;
 
         /** Defaults to enabled when the field is absent. */
@@ -231,14 +229,12 @@ public class HeadInfo {
                 Codec.STRING.optionalFieldOf("version", "").forGetter(e -> e.version != null ? e.version : ""),
                 Codec.STRING.optionalFieldOf("age", "any").forGetter(e -> e.age != null ? e.age : "any"),
                 Codec.BOOL.optionalFieldOf("enabled").forGetter(e -> Optional.ofNullable(e.enabled)),
-                HeadConfig.CODEC.listOf().optionalFieldOf("heads").forGetter(e -> Optional.ofNullable(e.heads)),
                 Variant.CODEC.listOf().optionalFieldOf("variants").forGetter(e -> Optional.ofNullable(e.variants))
-        ).apply(inst, (version, age, enabled, heads, variants) -> {
+        ).apply(inst, (version, age, enabled, variants) -> {
             VersionedEntry e = new VersionedEntry();
             e.version = version;
             e.age = age;
             e.enabled = enabled.orElse(null);
-            e.heads = heads.orElse(null);
             e.variants = variants.orElse(null);
             return e;
         }));
@@ -254,11 +250,6 @@ public class HeadInfo {
         /** Defaults to enabled when the field is absent. */
         public boolean isEnabled() {
             return enabled == null || enabled;
-        }
-
-        /** The first variant's heads (the picker authors/export a single arrangement). */
-        public List<HeadConfig> primaryHeads() {
-            return variants != null && !variants.isEmpty() ? variants.get(0).heads : null;
         }
 
         public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(

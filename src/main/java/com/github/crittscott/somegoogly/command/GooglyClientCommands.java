@@ -56,6 +56,10 @@ public class GooglyClientCommands {
             new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
+    private static final DynamicCommandExceptionType BAD_VARIANT =
+            new DynamicCommandExceptionType(n -> Component.literal("No variant #" + n + "."));
+    private static final SimpleCommandExceptionType CANT_DELETE_LAST_VARIANT =
+            new SimpleCommandExceptionType(Component.literal("Can't delete the last variant — there's always at least one."));
 
     @SubscribeEvent
     public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
@@ -65,17 +69,17 @@ public class GooglyClientCommands {
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
 
-        alias(sg, "ch", "choose", b -> terminal(b, GooglyClientCommands::choose));
-        alias(sg, "un", "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
+        addAlias(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
+        addAlias(sg, "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
 
-        alias(sg, "pa", "part", b -> {
+        addAlias(sg, "part", b -> {
             RequiredArgumentBuilder<CommandSourceStack, String> target =
                     Commands.argument("target", StringArgumentType.word());
             terminal(target, GooglyClientCommands::part);
             b.then(target);
         });
 
-        alias(sg, "cr", "create", b -> {
+        addAlias(sg, "create", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Float> z =
                     Commands.argument("z", FloatArgumentType.floatArg());
             terminal(z, GooglyClientCommands::create);
@@ -83,46 +87,60 @@ public class GooglyClientCommands {
                     .then(Commands.argument("y", FloatArgumentType.floatArg()).then(z)));
         });
 
-        // move: mv / mo / move (all the same), with ~ supported per axis.
-        Consumer<LiteralArgumentBuilder<CommandSourceStack>> moveCfg = b -> {
+        // move: ~ supported per axis to leave an axis unchanged.
+        addAlias(sg, "move", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
                     Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
             terminal(z, GooglyClientCommands::move);
             b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
                     .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
-        };
-        addAlias(sg, "mv", moveCfg);
-        addAlias(sg, "mo", moveCfg);
-        addAlias(sg, "move", moveCfg);
+        });
 
-        alias(sg, "ro", "rot", b -> {
+        addAlias(sg, "rot", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
                     Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
             terminal(azimuth, GooglyClientCommands::rot);
             b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
         });
 
-        alias(sg, "sa", "save", b -> terminal(b, GooglyClientCommands::save));
+        addAlias(sg, "save", b -> terminal(b, GooglyClientCommands::save));
 
-        alias(sg, "se", "select", b -> {
+        addAlias(sg, "select", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
             terminal(n, GooglyClientCommands::select);
             b.then(n);
         });
-        alias(sg, "de", "delete", b -> {
+        addAlias(sg, "delete", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
             terminal(n, GooglyClientCommands::delete);
             b.then(n);
         });
 
-        alias(sg, "li", "list", b -> {
-            addAlias(b, "pa", x -> terminal(x, GooglyClientCommands::listParts));
-            addAlias(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
-            addAlias(b, "ey", x -> terminal(x, GooglyClientCommands::listEyes));
-            addAlias(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
+        // variant: new / <n> (switch) / del <n> / weight <w>. Literals resolve before the bare integer arg.
+        addAlias(sg, "variant", b -> {
+            addAlias(b, "new", x -> terminal(x, GooglyClientCommands::variantNew));
+            addAlias(b, "weight", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Float> w = Commands.argument("w", FloatArgumentType.floatArg(0));
+                terminal(w, GooglyClientCommands::variantWeight);
+                x.then(w);
+            });
+            addAlias(b, "del", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+                terminal(n, GooglyClientCommands::variantDelete);
+                x.then(n);
+            });
+            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+            terminal(n, GooglyClientCommands::variantSelect);
+            b.then(n);
         });
 
-        alias(sg, "pr", "properties", b -> {
+        addAlias(sg, "list", b -> {
+            addAlias(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
+            addAlias(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
+            addAlias(b, "variants", x -> terminal(x, GooglyClientCommands::listVariants));
+        });
+
+        addAlias(sg, "properties", b -> {
             b.then(prop("eyescale", FloatArgumentType.floatArg(0), GooglyClientCommands::propEyeScale));
             b.then(prop("irisscale", FloatArgumentType.floatArg(0), GooglyClientCommands::propIrisScale));
             b.then(Commands.literal("corneacolor").then(rgb(GooglyClientCommands::propCorneaColor)));
@@ -131,23 +149,17 @@ public class GooglyClientCommands {
             b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
         });
 
-        alias(sg, "ex", "export", b -> terminal(b, GooglyClientCommands::export));
+        addAlias(sg, "export", b -> terminal(b, GooglyClientCommands::export));
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
-        // spawnall has no short form (and no chain tail) — the full word is required, one-off only.
+        // spawnall has no chain tail — one-off only.
         sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));
 
         dispatcher.register(sg);
     }
 
     // ---- builder helpers -------------------------------------------------------------------
-
-    private static void alias(LiteralArgumentBuilder<CommandSourceStack> root, String shortName, String fullName,
-                              Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
-        addAlias(root, shortName, config);
-        addAlias(root, fullName, config);
-    }
 
     private static void addAlias(LiteralArgumentBuilder<CommandSourceStack> root, String name,
                                  Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
@@ -251,7 +263,8 @@ public class GooglyClientCommands {
         if (!PickerState.save()) {
             throw NO_PART.create();
         }
-        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex + 1) + " (" + PickerState.committedCount() + " total).");
+        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex + 1) + " (variant "
+                + (PickerState.variantIndex + 1) + ", " + PickerState.currentEyeCount() + " eyes).");
         return 1;
     }
 
@@ -273,7 +286,7 @@ public class GooglyClientCommands {
         if (!PickerState.delete(n)) {
             throw BAD_INDEX.create(n);
         }
-        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.committedCount() + " left).");
+        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.currentEyeCount() + " left).");
         return 1;
     }
 
@@ -290,14 +303,68 @@ public class GooglyClientCommands {
     private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
-        List<ListedEye> list = PickerState.eyes;
-        feedback(ctx, "Eyes (" + list.size() + "):");
+        List<ListedEye> list = PickerState.currentEyes();
+        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex + 1) + " (" + list.size() + "):");
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
             String mark = i == PickerState.selectedIndex ? " *" : "";
             feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
                     i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
+        }
+        return 1;
+    }
+
+    private static int variantNew(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = PickerState.newVariant();
+        feedback(ctx, "Added variant #" + n + " (" + PickerState.variantCount() + " total). Now editing it.");
+        return 1;
+    }
+
+    private static int variantSelect(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (!PickerState.selectVariant(n)) {
+            throw BAD_VARIANT.create(n);
+        }
+        feedback(ctx, "Editing variant #" + n + " (" + PickerState.currentEyeCount() + " eyes).");
+        return 1;
+    }
+
+    private static int variantDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (n > PickerState.variantCount()) {
+            throw BAD_VARIANT.create(n);
+        }
+        if (!PickerState.deleteVariant(n)) {
+            throw CANT_DELETE_LAST_VARIANT.create();
+        }
+        feedback(ctx, "Deleted variant #" + n + " (" + PickerState.variantCount() + " left).");
+        return 1;
+    }
+
+    private static int variantWeight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        float w = FloatArgumentType.getFloat(ctx, "w");
+        PickerState.setVariantWeight(w);
+        feedback(ctx, "Variant #" + (PickerState.variantIndex + 1) + " weight = " + w + ".");
+        return 1;
+    }
+
+    private static int listVariants(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        feedback(ctx, "Variants (" + PickerState.variantCount() + "):");
+        for (int i = 0; i < PickerState.variantCount(); i++) {
+            PickerState.DraftVariant v = PickerState.variants.get(i);
+            String mark = i == PickerState.variantIndex ? " *" : "";
+            feedback(ctx, String.format("  %d. weight %.2f, %d eyes%s", i + 1, v.weight, v.eyes.size(), mark));
         }
         return 1;
     }
