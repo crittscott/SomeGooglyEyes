@@ -161,7 +161,11 @@ The sampled shipped definitions for axolotl, bee, and warden each have one enabl
 | `harvestOnKillPercent` | `25` | Chance for an eyed mob killed directly with a shears item (any `ShearsItem`, no enchantment needed) to drop eye items. |
 | `ambientBehaviors` | `true` | Enables idle cosmetic expressions. |
 | `ambientMinTicks` / `ambientMaxTicks` | configured range | Random delay range between ambient expression attempts. |
-| `enabledBehaviors` | all built-ins | Expression ids allowed in the ambient pool. Unknown ids are ignored. |
+| `ambientBehaviorPool` | `blink, side_eye, stare, cross_eye` | Expression ids the idle timer may play. Unknown ids are ignored. Event-driven behaviors are not in this pool. |
+| `growOnHitPercent` | `20` | Chance an eyed mob plays `grow` when a player damages it. `0` disables. |
+| `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader plays `swirl`. |
+| `swirlOnHeal` | `true` | An eyed mob being healed plays `swirl` (rate-limited per mob). |
+| `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob. |
 
 Spawn percentage controls how often a *new* eligible entity receives eyes. Changing it does not reroll an entity that already has stored state.
 
@@ -234,23 +238,25 @@ If GeckoLib is installed, non-vanilla Geo entity renderers receive `GooglyGeoLay
 
 The server owns the schedule; clients own the visual playback. A behavior trigger contains an entity id, behavior id, duration, seed, and elapsed time. The seed lets every observer reconstruct random choices consistently, while a newly tracking observer can start partway through an existing effect.
 
-Built-in behaviors are:
+Built-in behaviors and their trigger sources are:
 
-| Id | Visual effect |
-| --- | --- |
-| `stare` | Pupils ease to center, hold, then release to wobble. |
-| `blink` | A seeded random subset of eyes squashes shut and opens. |
-| `grow` | Eyes bulge and settle. |
-| `color_change` | Corneas blend toward a seeded hue and back. |
-| `swirl` | Pupils spiral toward center. |
-| `side_eye` | Pupils center, then slide to one seeded side. |
-| `cross_eye` | Pupils center and move inward according to their configured horizontal position. |
+| Id | Visual effect | Trigger |
+| --- | --- | --- |
+| `stare` | Pupils ease to center, hold, then release to wobble. | Ambient |
+| `blink` | A seeded random subset of eyes squashes shut and opens. | Ambient |
+| `side_eye` | Pupils center, then slide to one seeded side. | Ambient |
+| `cross_eye` | Pupils center and move inward according to their configured horizontal position. | Ambient |
+| `grow` | Eyes bulge and settle. | A player damages the mob (`growOnHitPercent`) |
+| `swirl` | Pupils spiral toward center. | A trade completes with the villager/wandering trader, or the mob is healed (`swirlOnTrade` / `swirlOnHeal`) |
+| `color_change` | Corneas blend toward a seeded hue and back. | None — registered and debug-triggerable only |
 
-Only one behavior may run on an entity at a time. They do not persist to NBT and are cosmetic; after a reload they simply start fresh.
+Triggers fall into two tracks. **Ambient** behaviors are chosen at random from the configured pool (§6.1) by the idle timer. **Event-driven** behaviors (`grow`, `swirl`) are started from server game events — `LivingHurtEvent`, `LivingHealEvent`, and Forge's `TradeWithVillagerEvent` — and are not in the ambient pool. `color_change` ships in neither track but stays registered so `/sg admin` can play it.
 
-Ambient scheduling only considers entities that both have eyes and are being tracked by at least one player. This avoids scans over all loaded entities.
+Only one behavior may run on an entity at a time, and the rule is non-interruptable for every trigger source: an event reaction that arrives while a behavior is already playing is dropped, not queued. Behaviors do not persist to NBT and are cosmetic; after a reload they simply start fresh.
 
-**Known behavioral gap — Partial:** the scheduler adds an entity on `StartTracking` only if it already has eyes. If an eyeless entity gains eyes through the potion while it is already being watched, its visual state syncs and renders, but it is not newly registered for ambient behaviors until tracking restarts. This conclusion is source-derived and awaits runtime confirmation.
+Every event trigger is gated to entities that both have eyes and are currently tracked by a player — the same condition ambient scheduling uses, checked by reusing the per-mob schedule state that only exists for tracked, eyed mobs. Reactions therefore never fire for off-screen or eyeless mobs, and the client independently drops a trigger for any mob it is not actively rendering. The heal trigger additionally enforces a per-mob cooldown (`swirlHealCooldownTicks`), armed only when a swirl actually starts, so a regenerating mob does not swirl back-to-back.
+
+**Known behavioral gap — Partial:** the scheduler adds an entity on `StartTracking` only if it already has eyes. If an eyeless entity gains eyes through the potion while it is already being watched, its visual state syncs and renders, but it is registered for neither ambient nor event-driven behaviors until tracking restarts. This conclusion is source-derived and awaits runtime confirmation.
 
 ## 9. Gameplay systems
 
@@ -324,7 +330,7 @@ It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests
 
 ### 10.2 `/sg` command surface
 
-The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye, changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player.
+The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player.
 
 Variants are authored explicitly: `/sg variant new` appends and switches to a fresh arrangement, `/sg variant <n>` switches to one, `/sg variant del <n>` removes one (the last variant cannot be deleted), and `/sg variant weight <w>` sets the current variant's relative weight. All other eye-editing verbs act on the variant currently being edited; the HUD shows the active variant and weight.
 
@@ -364,7 +370,7 @@ Malformed individual entries in a config-sync payload are logged and skipped so 
 | Item | Status | Notes |
 | --- | --- | --- |
 | Per-eye mutable appearance overrides | Deferred | Current overrides apply uniformly to a mob. |
-| Game-event behavior triggers | Deferred | Ambient scheduling and `/sg admin` are current trigger sources. |
+| Game-event behavior triggers | Implemented | `grow` on player hit and `swirl` on trade/heal are wired; ambient scheduling and `/sg admin` remain the other trigger sources. |
 | Additional `EyeHolder` implementations | Deferred | The interface anticipates item frames, item stacks, or head blocks, but entities are the only concrete holder. |
 | Dedicated-server compatibility certification | Experimental | Code has side guards, but no runtime result is recorded here. |
 | Robust generic model attachment | Partial | Reflection and external-framework integrations intentionally trade completeness for broad coverage. |

@@ -34,7 +34,13 @@ public class ServerConfig {
     public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
     public static final ForgeConfigSpec.IntValue AMBIENT_MIN_TICKS;
     public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENABLED_BEHAVIORS;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> AMBIENT_BEHAVIOR_POOL;
+
+    // Event-driven behaviors (triggered by game events rather than the idle timer; not in the ambient pool).
+    public static final ForgeConfigSpec.IntValue GROW_ON_HIT_PERCENT;
+    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
+    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
+    public static final ForgeConfigSpec.IntValue SWIRL_HEAL_COOLDOWN_TICKS;
 
     // Compiled view of ENTITY_OVERRIDES, rebuilt whenever the underlying config list instance changes
     // (ForgeConfigSpec hands back a fresh list on (re)load, so identity comparison detects reloads).
@@ -82,20 +88,43 @@ public class ServerConfig {
                 .comment("Maximum idle ticks between ambient behaviors on a mob (20 ticks = 1 second).")
                 .defineInRange("ambientMaxTicks", 200, 1, 24000);
 
-        ENABLED_BEHAVIORS = BUILDER
-                .comment("Which behaviors are eligible to play, by id. Remove a line to disable that one.")
-                .defineList("enabledBehaviors", defaultBehaviorIds(), ServerConfig::validateBehaviorId);
+        AMBIENT_BEHAVIOR_POOL = BUILDER
+                .comment("Which behaviors the idle timer may play, by id. Remove a line to drop it from the",
+                        "ambient pool. Event-driven behaviors (grow on hit, swirl on trade/heal) are not in this",
+                        "pool and are controlled by their own settings below; color_change ships in neither.")
+                .defineList("ambientBehaviorPool", defaultAmbientBehaviorIds(), ServerConfig::validateBehaviorId);
+
+        GROW_ON_HIT_PERCENT = BUILDER
+                .comment("Percentage chance an eyed mob plays the 'grow' behavior when a player damages it.",
+                        "0 disables grow-on-hit. Only fires while the mob is tracked by a player (i.e. visible).")
+                .defineInRange("growOnHitPercent", 20, 0, 100);
+
+        SWIRL_ON_TRADE = BUILDER
+                .comment("When true, completing a trade with an eyed villager (or wandering trader) plays 'swirl'.")
+                .define("swirlOnTrade", true);
+
+        SWIRL_ON_HEAL = BUILDER
+                .comment("When true, an eyed mob being healed plays 'swirl' (rate-limited by the cooldown below).")
+                .define("swirlOnHeal", true);
+
+        SWIRL_HEAL_COOLDOWN_TICKS = BUILDER
+                .comment("Minimum ticks between heal-triggered swirls on a single mob (20 ticks = 1 second).",
+                        "Keep this comfortably above the swirl animation length so a regenerating mob doesn't",
+                        "swirl back-to-back.")
+                .defineInRange("swirlHealCooldownTicks", 200, 1, 24000);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
     }
 
-    private static List<String> defaultBehaviorIds() {
-        List<String> ids = new ArrayList<>();
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
-            ids.add(behavior.id().toString());
-        }
-        return ids;
+    /** The behaviors the ambient idle timer plays by default: the ambient set only (not the event-driven
+     *  grow/swirl, nor the dormant color_change). */
+    private static List<String> defaultAmbientBehaviorIds() {
+        return new ArrayList<>(List.of(
+                "somegoogly:blink",
+                "somegoogly:side_eye",
+                "somegoogly:stare",
+                "somegoogly:cross_eye"));
     }
 
     private static boolean validateBehaviorId(Object o) {
@@ -104,12 +133,12 @@ public class ServerConfig {
 
     /**
      * The behaviors eligible for ambient play: every registered behavior whose id appears in
-     * {@link #ENABLED_BEHAVIORS}. Unknown ids in the config are simply ignored. Recomputed each call —
+     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored. Recomputed each call —
      * it's only hit when a mob's ambient timer fires.
      */
     public static List<EyeBehavior> enabledBehaviors() {
         Set<String> enabled = new LinkedHashSet<>();
-        for (String id : ENABLED_BEHAVIORS.get()) {
+        for (String id : AMBIENT_BEHAVIOR_POOL.get()) {
             enabled.add(id);
         }
         List<EyeBehavior> result = new ArrayList<>();

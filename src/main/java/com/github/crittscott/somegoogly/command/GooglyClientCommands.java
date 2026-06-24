@@ -39,8 +39,8 @@ import java.util.function.Consumer;
  * (via {@link RegisterClientCommandsEvent}) because the editing they drive lives entirely in the
  * client-side {@link PickerState}. Like the keyboard picker, they require <b>creative mode</b>.
  *
- * <p>Each verb has a short and a full literal sharing one builder (e.g. {@code mv}/{@code move}). The
- * picker keyboard and this CLI call the same {@link PickerState} methods, so they stay in lock-step.
+ * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
+ * call the same {@link PickerState} methods, so they stay in lock-step.
  */
 public class GooglyClientCommands {
 
@@ -69,17 +69,17 @@ public class GooglyClientCommands {
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
 
-        addAlias(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
-        addAlias(sg, "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
+        verb(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
+        verb(sg, "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
 
-        addAlias(sg, "part", b -> {
+        verb(sg, "part", b -> {
             RequiredArgumentBuilder<CommandSourceStack, String> target =
                     Commands.argument("target", StringArgumentType.word());
             terminal(target, GooglyClientCommands::part);
             b.then(target);
         });
 
-        addAlias(sg, "create", b -> {
+        verb(sg, "create", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Float> z =
                     Commands.argument("z", FloatArgumentType.floatArg());
             terminal(z, GooglyClientCommands::create);
@@ -88,7 +88,7 @@ public class GooglyClientCommands {
         });
 
         // move: ~ supported per axis to leave an axis unchanged.
-        addAlias(sg, "move", b -> {
+        verb(sg, "move", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
                     Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
             terminal(z, GooglyClientCommands::move);
@@ -96,35 +96,47 @@ public class GooglyClientCommands {
                     .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
         });
 
-        addAlias(sg, "rot", b -> {
+        verb(sg, "rot", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
                     Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
             terminal(azimuth, GooglyClientCommands::rot);
             b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
         });
 
-        addAlias(sg, "save", b -> terminal(b, GooglyClientCommands::save));
+        // posrot: move + rot in one go (the common case). ~ supported per component to leave it unchanged.
+        verb(sg, "posrot", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
+                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
+            terminal(azimuth, GooglyClientCommands::posrot);
+            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat())
+                            .then(Commands.argument("z", MaybeFloatArgumentType.maybeFloat())
+                                    .then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat())
+                                            .then(azimuth)))));
+        });
 
-        addAlias(sg, "select", b -> {
+        verb(sg, "save", b -> terminal(b, GooglyClientCommands::save));
+
+        verb(sg, "select", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
             terminal(n, GooglyClientCommands::select);
             b.then(n);
         });
-        addAlias(sg, "delete", b -> {
+        verb(sg, "delete", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
             terminal(n, GooglyClientCommands::delete);
             b.then(n);
         });
 
         // variant: new / <n> (switch) / del <n> / weight <w>. Literals resolve before the bare integer arg.
-        addAlias(sg, "variant", b -> {
-            addAlias(b, "new", x -> terminal(x, GooglyClientCommands::variantNew));
-            addAlias(b, "weight", x -> {
+        verb(sg, "variant", b -> {
+            verb(b, "new", x -> terminal(x, GooglyClientCommands::variantNew));
+            verb(b, "weight", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Float> w = Commands.argument("w", FloatArgumentType.floatArg(0));
                 terminal(w, GooglyClientCommands::variantWeight);
                 x.then(w);
             });
-            addAlias(b, "del", x -> {
+            verb(b, "del", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
                 terminal(n, GooglyClientCommands::variantDelete);
                 x.then(n);
@@ -134,13 +146,13 @@ public class GooglyClientCommands {
             b.then(n);
         });
 
-        addAlias(sg, "list", b -> {
-            addAlias(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
-            addAlias(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
-            addAlias(b, "variants", x -> terminal(x, GooglyClientCommands::listVariants));
+        verb(sg, "list", b -> {
+            verb(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
+            verb(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
+            verb(b, "variants", x -> terminal(x, GooglyClientCommands::listVariants));
         });
 
-        addAlias(sg, "properties", b -> {
+        verb(sg, "properties", b -> {
             b.then(prop("eyescale", FloatArgumentType.floatArg(0), GooglyClientCommands::propEyeScale));
             b.then(prop("irisscale", FloatArgumentType.floatArg(0), GooglyClientCommands::propIrisScale));
             b.then(Commands.literal("corneacolor").then(rgb(GooglyClientCommands::propCorneaColor)));
@@ -149,7 +161,7 @@ public class GooglyClientCommands {
             b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
         });
 
-        addAlias(sg, "export", b -> terminal(b, GooglyClientCommands::export));
+        verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
@@ -161,8 +173,9 @@ public class GooglyClientCommands {
 
     // ---- builder helpers -------------------------------------------------------------------
 
-    private static void addAlias(LiteralArgumentBuilder<CommandSourceStack> root, String name,
-                                 Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
+    /** Add a child literal {@code name} to {@code root}, letting {@code config} build out its subtree. */
+    private static void verb(LiteralArgumentBuilder<CommandSourceStack> root, String name,
+                             Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
         LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(name);
         config.accept(node);
         root.then(node);
@@ -254,6 +267,20 @@ public class GooglyClientCommands {
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
         EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Rotation incl %.1f° azi %.1f°.", incl(e), azi(e)));
+        return 1;
+    }
+
+    private static int posrot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
+                opt(MaybeFloatArgumentType.get(ctx, "y")),
+                opt(MaybeFloatArgumentType.get(ctx, "z")));
+        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
+                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.1f° azi %.1f°.",
+                e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
         return 1;
     }
 
