@@ -44,6 +44,52 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  */
 public class EyeItemInteractions {
 
+    /**
+     * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
+     * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top — at a count
+     * equal to the mob's total eye count.
+     */
+    private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
+        // Effective appearance = the mob's config appearance (head 0 / eye 0) with its override on top,
+        // captured as a fully-populated override so the item carries the exact look.
+        AppearanceOverride harvested = helper.appearanceAt(0, 0).overlay(override).toOverride();
+        return GooglyEyeItem.create(harvested, totalEyes(helper));
+    }
+
+    private static void consume(PlayerInteractEvent.EntityInteract event, InteractionResult result) {
+        event.setCanceled(true);
+        event.setCancellationResult(result);
+    }
+
+    private static void harvest(PlayerInteractEvent.EntityInteract event, Player player, LivingEntity mob,
+                                ItemStack stack, EyeHolder holder) {
+        HeadInfo helper = helperFor(mob);
+        if (helper == null || !helper.hasConfig()) {
+            return; // shouldn't happen while hasEyes is true, but guard anyway
+        }
+
+        ItemStack drop = buildEyeDrop(helper, holder.getEyeProperties());
+        mob.spawnAtLocation(drop);
+
+        holder.setEyeProperties(AppearanceOverride.EMPTY); // appearance now lives in the item
+        holder.setHasEyes(false);
+
+        stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(event.getHand()));
+        consume(event, InteractionResult.SUCCESS);
+    }
+
+    private static boolean hasOptometrist(ItemStack stack) {
+        return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.OPTOMETRIST.get(), stack) > 0;
+    }
+
+    private static HeadInfo helperFor(LivingEntity mob) {
+        // Server-side: resolve geometry (and the mob's chosen variant) from the authoritative server
+        // config store, not the client one — getHelper reads ClientEyeConfigs, which is empty on a
+        // dedicated server.
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+        return HeadInfo.serverHelper(type, mob);
+    }
+
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         if (event.getLevel().isClientSide()) {
@@ -62,27 +108,6 @@ public class EyeItemInteractions {
         if (stack.getItem() instanceof ShearsItem && holder.hasEyes() && hasOptometrist(stack)) {
             harvest(event, player, mob, stack, holder);
         }
-    }
-
-    private static boolean hasOptometrist(ItemStack stack) {
-        return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.OPTOMETRIST.get(), stack) > 0;
-    }
-
-    private static void harvest(PlayerInteractEvent.EntityInteract event, Player player, LivingEntity mob,
-                                ItemStack stack, EyeHolder holder) {
-        HeadInfo helper = helperFor(mob);
-        if (helper == null || !helper.hasConfig()) {
-            return; // shouldn't happen while hasEyes is true, but guard anyway
-        }
-
-        ItemStack drop = buildEyeDrop(helper, holder.getEyeProperties());
-        mob.spawnAtLocation(drop);
-
-        holder.setEyeProperties(AppearanceOverride.EMPTY); // appearance now lives in the item
-        holder.setHasEyes(false);
-
-        stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(event.getHand()));
-        consume(event, InteractionResult.SUCCESS);
     }
 
     /**
@@ -124,36 +149,11 @@ public class EyeItemInteractions {
         weapon.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
     }
 
-    /**
-     * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
-     * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top — at a count
-     * equal to the mob's total eye count.
-     */
-    private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
-        // Effective appearance = the mob's config appearance (head 0 / eye 0) with its override on top,
-        // captured as a fully-populated override so the item carries the exact look.
-        AppearanceOverride harvested = helper.appearanceAt(0, 0).overlay(override).toOverride();
-        return GooglyEyeItem.create(harvested, totalEyes(helper));
-    }
-
-    private static HeadInfo helperFor(LivingEntity mob) {
-        // Server-side: resolve geometry (and the mob's chosen variant) from the authoritative server
-        // config store, not the client one — getHelper reads ClientEyeConfigs, which is empty on a
-        // dedicated server.
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        return HeadInfo.serverHelper(type, mob);
-    }
-
     private static int totalEyes(HeadInfo helper) {
         int total = 0;
         for (int head = 0; head < helper.getHeadCount(); head++) {
             total += helper.getEyeCount(head);
         }
         return Math.max(1, total);
-    }
-
-    private static void consume(PlayerInteractEvent.EntityInteract event, InteractionResult result) {
-        event.setCanceled(true);
-        event.setCancellationResult(result);
     }
 }

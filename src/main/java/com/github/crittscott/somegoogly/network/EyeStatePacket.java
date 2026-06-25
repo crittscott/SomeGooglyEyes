@@ -23,15 +23,23 @@ public class EyeStatePacket {
 
     private final int entityId;
     private final boolean hasGooglyEyes;
-    private final float variantRoll;
     @Nullable
     private final CompoundTag overrides;
+    private final float variantRoll;
 
     public EyeStatePacket(int entityId, boolean hasGooglyEyes, float variantRoll, @Nullable CompoundTag overrides) {
         this.entityId = entityId;
         this.hasGooglyEyes = hasGooglyEyes;
         this.variantRoll = variantRoll;
         this.overrides = overrides;
+    }
+
+    public static EyeStatePacket decode(FriendlyByteBuf buffer) {
+        int entityId = buffer.readInt();
+        boolean hasGooglyEyes = buffer.readBoolean();
+        float variantRoll = buffer.readFloat();
+        CompoundTag overrides = buffer.readBoolean() ? buffer.readNbt() : null;
+        return new EyeStatePacket(entityId, hasGooglyEyes, variantRoll, overrides);
     }
 
     public static void encode(EyeStatePacket packet, FriendlyByteBuf buffer) {
@@ -42,14 +50,6 @@ public class EyeStatePacket {
         if (packet.overrides != null) {
             buffer.writeNbt(packet.overrides);
         }
-    }
-
-    public static EyeStatePacket decode(FriendlyByteBuf buffer) {
-        int entityId = buffer.readInt();
-        boolean hasGooglyEyes = buffer.readBoolean();
-        float variantRoll = buffer.readFloat();
-        CompoundTag overrides = buffer.readBoolean() ? buffer.readNbt() : null;
-        return new EyeStatePacket(entityId, hasGooglyEyes, variantRoll, overrides);
     }
 
     public static void handle(EyeStatePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {

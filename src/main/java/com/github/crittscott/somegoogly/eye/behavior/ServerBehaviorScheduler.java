@@ -31,30 +31,86 @@ import java.util.Random;
  */
 public final class ServerBehaviorScheduler {
 
-    /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
-    private static final class MobState {
-        int trackers;                 // how many players are watching this mob
-        long busyUntil;               // scheduler tick the active behavior ends (0 = idle)
-        long startedAt;               // scheduler tick the active behavior started (for mid-join catch-up)
-        ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
-        int activeDuration;
-        long activeSeed;
-        int ambientCooldown;          // idle ticks remaining before the next ambient roll
-        long healSwirlReadyAt;        // earliest scheduler tick a heal may trigger another swirl (0 = ready)
-    }
-
-    private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
-    private static final Random RANDOM = new Random();
-    private static long now; // monotonic scheduler tick, advanced once per server tick
-
-    // Event-driven behaviors, resolved once. Null only on a build where the id was renamed/removed.
+    // Event-driven 'grow' (hit reaction), resolved once. Null only on a build where the id was renamed/removed.
     private static final EyeBehavior GROW = EyeBehaviors.byId(new ResourceLocation("somegoogly", "grow"));
+    private static final Random RANDOM = new Random();
+    private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
+    // Event-driven 'swirl' (trade/heal reaction), resolved once. Null only on a build where the id was renamed/removed.
     private static final EyeBehavior SWIRL = EyeBehaviors.byId(new ResourceLocation("somegoogly", "swirl"));
+
+    private static long now; // monotonic scheduler tick, advanced once per server tick
 
     private ServerBehaviorScheduler() {
     }
 
-    // --- tracking bookkeeping (called from ServerEventHandler) --------------------------------
+    /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
+    private static final class MobState {
+        int activeDuration;
+        ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
+        long activeSeed;
+        int ambientCooldown;          // idle ticks remaining before the next ambient roll
+        long busyUntil;               // scheduler tick the active behavior ends (0 = idle)
+        long healSwirlReadyAt;        // earliest scheduler tick a heal may trigger another swirl (0 = ready)
+        long startedAt;               // scheduler tick the active behavior started (for mid-join catch-up)
+        int trackers;                 // how many players are watching this mob
+    }
+
+    /** Forget all state (server stop), so a single-player JVM doesn't bleed one world into the next. */
+    public static void clear() {
+        STATES.clear();
+        now = 0;
+    }
+
+    /**
+     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state only exists
+     * for mobs a player is tracking (created in {@link #onStartTracking}), and we re-check {@code hasEyes}
+     * in case it lost its eyes while still tracked. Returns {@code null} (caller no-ops) otherwise — so
+     * reactions never fire for off-screen or eyeless mobs, and never create lingering state.
+     */
+    private static MobState eventTarget(LivingEntity mob) {
+        MobState state = STATES.get(mob);
+        if (state == null || !EyeState.hasEyes(mob)) {
+            return null;
+        }
+        return state;
+    }
+
+    private static int nextCooldown() {
+        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
+        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
+        if (max <= min) {
+            return min;
+        }
+        return min + RANDOM.nextInt(max - min);
+    }
+
+    /** {@code mob} was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it. */
+    public static void onHealed(LivingEntity mob) {
+        if (SWIRL == null || !ServerConfig.SWIRL_ON_HEAL.get()) {
+            return;
+        }
+        MobState state = eventTarget(mob);
+        if (state == null || now < state.healSwirlReadyAt) {
+            return;
+        }
+        // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
+        // (non-interruptable), and the next heal once free can still react.
+        if (start(mob, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong())) {
+            state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
+        }
+    }
+
+    /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
+    public static void onPlayerHurt(LivingEntity mob) {
+        if (GROW == null) {
+            return;
+        }
+        MobState state = eventTarget(mob);
+        if (state == null || RANDOM.nextInt(100) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
+            return;
+        }
+        start(mob, state, GROW, GROW.defaultDuration(), RANDOM.nextLong());
+    }
 
     /** A player started tracking {@code mob}. Registers it (if eyed) and catches the player up mid-effect. */
     public static void onStartTracking(LivingEntity mob, ServerPlayer player) {
@@ -88,7 +144,27 @@ public final class ServerBehaviorScheduler {
         }
     }
 
-    // --- per-tick driver (called from ServerEventHandler on ServerTickEvent END) --------------
+    /** {@code villager} completed a trade with a player: play 'swirl' (if enabled). */
+    public static void onTrade(LivingEntity villager) {
+        if (SWIRL == null || !ServerConfig.SWIRL_ON_TRADE.get()) {
+            return;
+        }
+        MobState state = eventTarget(villager);
+        if (state == null) {
+            return;
+        }
+        start(villager, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong());
+    }
+
+    private static void rollAmbient(LivingEntity mob, MobState state) {
+        state.ambientCooldown = nextCooldown();
+        List<EyeBehavior> pool = ServerConfig.enabledBehaviors();
+        if (pool.isEmpty()) {
+            return;
+        }
+        EyeBehavior behavior = pool.get(RANDOM.nextInt(pool.size()));
+        start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
+    }
 
     public static void serverTick() {
         now++;
@@ -115,88 +191,6 @@ public final class ServerBehaviorScheduler {
         }
     }
 
-    private static void rollAmbient(LivingEntity mob, MobState state) {
-        state.ambientCooldown = nextCooldown();
-        List<EyeBehavior> pool = ServerConfig.enabledBehaviors();
-        if (pool.isEmpty()) {
-            return;
-        }
-        EyeBehavior behavior = pool.get(RANDOM.nextInt(pool.size()));
-        start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
-    }
-
-    // --- manual trigger (debug command, and the seam future game events will call) -------------
-
-    /**
-     * Try to start {@code behavior} on {@code mob} now, honoring "one at a time, non-interruptable":
-     * dropped (returns {@code false}) if the mob is already mid-behavior. Works even for a mob with no
-     * tracking state yet (creates one), so the debug command can drive any looked-at mob.
-     */
-    public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {
-        MobState state = STATES.computeIfAbsent(mob, m -> {
-            MobState s = new MobState();
-            s.ambientCooldown = nextCooldown();
-            return s;
-        });
-        return start(mob, state, behavior, duration, seed);
-    }
-
-    // --- game-event reactions (called from EyeReactionHandler) ---------------------------------
-
-    /**
-     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state only exists
-     * for mobs a player is tracking (created in {@link #onStartTracking}), and we re-check {@code hasEyes}
-     * in case it lost its eyes while still tracked. Returns {@code null} (caller no-ops) otherwise — so
-     * reactions never fire for off-screen or eyeless mobs, and never create lingering state.
-     */
-    private static MobState eventTarget(LivingEntity mob) {
-        MobState state = STATES.get(mob);
-        if (state == null || !EyeState.hasEyes(mob)) {
-            return null;
-        }
-        return state;
-    }
-
-    /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
-    public static void onPlayerHurt(LivingEntity mob) {
-        if (GROW == null) {
-            return;
-        }
-        MobState state = eventTarget(mob);
-        if (state == null || RANDOM.nextInt(100) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
-            return;
-        }
-        start(mob, state, GROW, GROW.defaultDuration(), RANDOM.nextLong());
-    }
-
-    /** {@code villager} completed a trade with a player: play 'swirl' (if enabled). */
-    public static void onTrade(LivingEntity villager) {
-        if (SWIRL == null || !ServerConfig.SWIRL_ON_TRADE.get()) {
-            return;
-        }
-        MobState state = eventTarget(villager);
-        if (state == null) {
-            return;
-        }
-        start(villager, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong());
-    }
-
-    /** {@code mob} was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it. */
-    public static void onHealed(LivingEntity mob) {
-        if (SWIRL == null || !ServerConfig.SWIRL_ON_HEAL.get()) {
-            return;
-        }
-        MobState state = eventTarget(mob);
-        if (state == null || now < state.healSwirlReadyAt) {
-            return;
-        }
-        // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
-        // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong())) {
-            state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
-        }
-    }
-
     private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, int duration, long seed) {
         if (state.busyUntil != 0) {
             return false; // already playing something — drop the trigger
@@ -211,18 +205,17 @@ public final class ServerBehaviorScheduler {
         return true;
     }
 
-    private static int nextCooldown() {
-        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
-        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
-        if (max <= min) {
-            return min;
-        }
-        return min + RANDOM.nextInt(max - min);
-    }
-
-    /** Forget all state (server stop), so a single-player JVM doesn't bleed one world into the next. */
-    public static void clear() {
-        STATES.clear();
-        now = 0;
+    /**
+     * Try to start {@code behavior} on {@code mob} now, honoring "one at a time, non-interruptable":
+     * dropped (returns {@code false}) if the mob is already mid-behavior. Works even for a mob with no
+     * tracking state yet (creates one), so the debug command can drive any looked-at mob.
+     */
+    public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {
+        MobState state = STATES.computeIfAbsent(mob, m -> {
+            MobState s = new MobState();
+            s.ambientCooldown = nextCooldown();
+            return s;
+        });
+        return start(mob, state, behavior, duration, seed);
     }
 }

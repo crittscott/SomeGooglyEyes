@@ -31,17 +31,26 @@ import java.util.Optional;
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 
-    public static final AppearanceOverride EMPTY =
-            new AppearanceOverride(Optional.empty(), Optional.empty(), Optional.empty());
-
     public static final Codec<AppearanceOverride> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             EyeColor.CODEC.optionalFieldOf("corneaColor").forGetter(AppearanceOverride::cornea),
             EyeColor.CODEC.optionalFieldOf("irisColor").forGetter(AppearanceOverride::iris),
             Codec.BOOL.optionalFieldOf("glow").forGetter(AppearanceOverride::glow)
     ).apply(inst, AppearanceOverride::new));
 
+    public static final AppearanceOverride EMPTY =
+            new AppearanceOverride(Optional.empty(), Optional.empty(), Optional.empty());
+
+    public static AppearanceOverride fromNbt(@Nullable Tag tag) {
+        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
+    }
+
     public boolean isEmpty() {
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
+    }
+
+    public CompoundTag toNbt() {
+        Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
+        return tag instanceof CompoundTag compound ? compound : new CompoundTag();
     }
 
     /** {@code null} clears the field. */
@@ -49,22 +58,11 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return new AppearanceOverride(Optional.ofNullable(color), iris, glow);
     }
 
-    public AppearanceOverride withIrisColor(@Nullable EyeColor color) {
-        return new AppearanceOverride(cornea, Optional.ofNullable(color), glow);
-    }
-
     public AppearanceOverride withGlow(@Nullable Boolean value) {
         return new AppearanceOverride(cornea, iris, Optional.ofNullable(value));
     }
 
-    // --- Serialization (one Codec → NBT for the eye item, entity override, and sync payload) ---
-
-    public CompoundTag toNbt() {
-        Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
-        return tag instanceof CompoundTag compound ? compound : new CompoundTag();
-    }
-
-    public static AppearanceOverride fromNbt(@Nullable Tag tag) {
-        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
+    public AppearanceOverride withIrisColor(@Nullable EyeColor color) {
+        return new AppearanceOverride(cornea, Optional.ofNullable(color), glow);
     }
 }

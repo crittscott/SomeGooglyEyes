@@ -34,55 +34,6 @@ public class ReflectionResolver implements EyeAttachmentResolver {
     // Resolved part list per model instance (models are singletons per renderer; render thread only).
     private static final Map<EntityModel<?>, List<ModelPart>> CACHE = new WeakHashMap<>();
 
-    @Override
-    public boolean handles(EntityModel<?> model) {
-        return true; // catch-all fallback (HierarchicalResolver is tried first)
-    }
-
-    @Override
-    public List<String> enumerateParts(EntityModel<?> model) {
-        int count = partsOf(model).size();
-        List<String> tokens = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            tokens.add("#" + i);
-        }
-        return tokens;
-    }
-
-    @Override
-    public boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
-        List<ModelPart> parts = partsOf(model);
-        int index = indexFor(partToken);
-        if (index < 0 || index >= parts.size()) {
-            return false;
-        }
-        // Top-level parts have no animated ancestors, so a single translateAndRotate is the pose.
-        parts.get(index).translateAndRotate(poseStack);
-        return true;
-    }
-
-    private static int indexFor(String token) {
-        if (token != null && token.startsWith("#")) {
-            try {
-                return Integer.parseInt(token.substring(1));
-            } catch (NumberFormatException ignored) {
-                return -1;
-            }
-        }
-        // Legacy name tokens (e.g. "head") from bundled configs → the head (first field).
-        return 0;
-    }
-
-    private static List<ModelPart> partsOf(EntityModel<?> model) {
-        return CACHE.computeIfAbsent(model, ReflectionResolver::collectModelPartFields);
-    }
-
-    private static List<ModelPart> collectModelPartFields(EntityModel<?> model) {
-        List<ModelPart> result = new ArrayList<>();
-        collect(model, model.getClass(), result);
-        return result;
-    }
-
     private static void collect(EntityModel<?> model, Class<?> cls, List<ModelPart> out) {
         if (cls == null || cls == Object.class) {
             return;
@@ -101,5 +52,54 @@ public class ReflectionResolver implements EyeAttachmentResolver {
         } catch (Throwable accessDenied) {
             // Module/access restriction or anything else: degrade to "no eyes" for this model.
         }
+    }
+
+    private static List<ModelPart> collectModelPartFields(EntityModel<?> model) {
+        List<ModelPart> result = new ArrayList<>();
+        collect(model, model.getClass(), result);
+        return result;
+    }
+
+    @Override
+    public List<String> enumerateParts(EntityModel<?> model) {
+        int count = partsOf(model).size();
+        List<String> tokens = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            tokens.add("#" + i);
+        }
+        return tokens;
+    }
+
+    @Override
+    public boolean handles(EntityModel<?> model) {
+        return true; // catch-all fallback (HierarchicalResolver is tried first)
+    }
+
+    private static int indexFor(String token) {
+        if (token != null && token.startsWith("#")) {
+            try {
+                return Integer.parseInt(token.substring(1));
+            } catch (NumberFormatException ignored) {
+                return -1;
+            }
+        }
+        // Legacy name tokens (e.g. "head") from bundled configs → the head (first field).
+        return 0;
+    }
+
+    private static List<ModelPart> partsOf(EntityModel<?> model) {
+        return CACHE.computeIfAbsent(model, ReflectionResolver::collectModelPartFields);
+    }
+
+    @Override
+    public boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
+        List<ModelPart> parts = partsOf(model);
+        int index = indexFor(partToken);
+        if (index < 0 || index >= parts.size()) {
+            return false;
+        }
+        // Top-level parts have no animated ancestors, so a single translateAndRotate is the pose.
+        parts.get(index).translateAndRotate(poseStack);
+        return true;
     }
 }

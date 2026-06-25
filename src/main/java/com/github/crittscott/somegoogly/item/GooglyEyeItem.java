@@ -32,19 +32,15 @@ public class GooglyEyeItem extends Item {
         super(properties);
     }
 
-    public static AppearanceOverride getProperties(ItemStack stack) {
-        return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
-    }
-
-    public static void setProperties(ItemStack stack, AppearanceOverride properties) {
-        if (properties.isEmpty()) {
-            CompoundTag tag = stack.getTag();
-            if (tag != null) {
-                tag.remove(TAG_EYE_PROPERTIES);
-            }
-        } else {
-            stack.getOrCreateTag().put(TAG_EYE_PROPERTIES, properties.toNbt());
-        }
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        AppearanceOverride props = getProperties(stack);
+        props.iris().ifPresent(color ->
+                tooltip.add(Component.literal("Iris: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+        props.cornea().ifPresent(color ->
+                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+        props.glow().ifPresent(glow ->
+                tooltip.add(Component.literal("Glow: " + glow).withStyle(ChatFormatting.GRAY)));
     }
 
     /** A new eye-item stack carrying {@code properties}. */
@@ -52,6 +48,10 @@ public class GooglyEyeItem extends Item {
         ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
         setProperties(stack, properties);
         return stack;
+    }
+
+    public static AppearanceOverride getProperties(ItemStack stack) {
+        return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
     }
 
     @Override
@@ -70,14 +70,14 @@ public class GooglyEyeItem extends Item {
         });
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        AppearanceOverride props = getProperties(stack);
-        props.iris().ifPresent(color ->
-                tooltip.add(Component.literal("Iris: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
-        props.cornea().ifPresent(color ->
-                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
-        props.glow().ifPresent(glow ->
-                tooltip.add(Component.literal("Glow: " + glow).withStyle(ChatFormatting.GRAY)));
+    public static void setProperties(ItemStack stack, AppearanceOverride properties) {
+        if (properties.isEmpty()) {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                tag.remove(TAG_EYE_PROPERTIES);
+            }
+        } else {
+            stack.getOrCreateTag().put(TAG_EYE_PROPERTIES, properties.toNbt());
+        }
     }
 }

@@ -21,55 +21,50 @@ import java.util.List;
  */
 public final class PickerHud {
 
-    private static final int WHITE = 0xFFFFFFFF;
-    private static final int YELLOW = 0xFFFFE060;
-    private static final int GRAY = 0xFFB0B0B0;
-
     // Translucent dark backdrop so the text stays legible over a busy scene while the mob shows
     // through. ARGB: raise the leading alpha byte (0xA0) toward 0xFF for a more opaque panel.
     private static final int BACKDROP = 0xA0101010;
+    private static final int GRAY = 0xFFB0B0B0;
     private static final int LINE_HEIGHT = 10;
     private static final int PADDING = 4;
-    private static final int TOP_MARGIN = 6;
     private static final int RIGHT_MARGIN = 6;
+    private static final int TOP_MARGIN = 6;
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int YELLOW = 0xFFFFE060;
 
     private PickerHud() {
     }
 
-    public static void register(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("somegoogly_picker", (IGuiOverlay) PickerHud::render);
-    }
-
-    private static void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
-        if (!PickerState.active) {
-            return;
-        }
-        Font font = Minecraft.getInstance().font;
-        List<Line> lines = lines();
-
-        int widest = 0;
-        for (Line line : lines) {
-            widest = Math.max(widest, font.width(line.text));
-        }
-
-        // Anchor the panel against the right edge and grow downward from the top.
-        int right = width - RIGHT_MARGIN;
-        int left = right - widest;
-        graphics.fill(
-                left - PADDING,
-                TOP_MARGIN - PADDING,
-                right + PADDING,
-                TOP_MARGIN + lines.size() * LINE_HEIGHT + PADDING,
-                BACKDROP);
-
-        int y = TOP_MARGIN;
-        for (Line line : lines) {
-            graphics.drawString(font, line.text, left, y, line.color);
-            y += LINE_HEIGHT;
-        }
-    }
-
     private record Line(String text, int color) {
+    }
+
+    /**
+     * Add an eye as two lines: identity/part/position, then orientation/scales/flags (indented).
+     * Glow/invis are shown as {@code +G}/{@code -G} and {@code +Inv}/{@code -Inv} (set/unset) to keep
+     * the line short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
+     */
+    private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
+        out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
+                label, part, e.position[0], e.position[1], e.position[2]), colorA));
+        double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
+        double azi = e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
+        out.add(new Line(String.format("    incl %.1f°  azi %.1f°  eye %.2f  iris %.2f  %sG %sInv  c%s i%s",
+                incl, azi, e.eyeScale, e.irisScale,
+                e.glows ? "+" : "-", e.affectedByInvisibility ? "+" : "-",
+                hex(e.corneaColors), hex(e.irisColors)), colorB));
+    }
+
+    private static int channel(double v) {
+        int c = (int) Math.round(v * 255.0);
+        return c < 0 ? 0 : Math.min(c, 255);
+    }
+
+    /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded), or a placeholder if absent/malformed. */
+    private static String hex(double[] rgb) {
+        if (rgb == null || rgb.length < 3) {
+            return "#------";
+        }
+        return String.format("#%02X%02X%02X", channel(rgb[0]), channel(rgb[1]), channel(rgb[2]));
     }
 
     private static List<Line> lines() {
@@ -113,36 +108,40 @@ public final class PickerHud {
         return out;
     }
 
-    /**
-     * Add an eye as two lines: identity/part/position, then orientation/scales/flags (indented).
-     * Glow/invis are shown as {@code +G}/{@code -G} and {@code +Inv}/{@code -Inv} (set/unset) to keep
-     * the line short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
-     */
-    private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
-        out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
-                label, part, e.position[0], e.position[1], e.position[2]), colorA));
-        double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
-        double azi = e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-        out.add(new Line(String.format("    incl %.1f°  azi %.1f°  eye %.2f  iris %.2f  %sG %sInv  c%s i%s",
-                incl, azi, e.eyeScale, e.irisScale,
-                e.glows ? "+" : "-", e.affectedByInvisibility ? "+" : "-",
-                hex(e.corneaColors), hex(e.irisColors)), colorB));
-    }
-
     private static String partOrNone(String part) {
         return part != null ? part : "none";
     }
 
-    /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded), or a placeholder if absent/malformed. */
-    private static String hex(double[] rgb) {
-        if (rgb == null || rgb.length < 3) {
-            return "#------";
-        }
-        return String.format("#%02X%02X%02X", channel(rgb[0]), channel(rgb[1]), channel(rgb[2]));
+    public static void register(RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("somegoogly_picker", (IGuiOverlay) PickerHud::render);
     }
 
-    private static int channel(double v) {
-        int c = (int) Math.round(v * 255.0);
-        return c < 0 ? 0 : Math.min(c, 255);
+    private static void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        if (!PickerState.active) {
+            return;
+        }
+        Font font = Minecraft.getInstance().font;
+        List<Line> lines = lines();
+
+        int widest = 0;
+        for (Line line : lines) {
+            widest = Math.max(widest, font.width(line.text));
+        }
+
+        // Anchor the panel against the right edge and grow downward from the top.
+        int right = width - RIGHT_MARGIN;
+        int left = right - widest;
+        graphics.fill(
+                left - PADDING,
+                TOP_MARGIN - PADDING,
+                right + PADDING,
+                TOP_MARGIN + lines.size() * LINE_HEIGHT + PADDING,
+                BACKDROP);
+
+        int y = TOP_MARGIN;
+        for (Line line : lines) {
+            graphics.drawString(font, line.text, left, y, line.color);
+            y += LINE_HEIGHT;
+        }
     }
 }

@@ -21,19 +21,19 @@ package com.github.crittscott.somegoogly.eye.behavior;
  */
 public final class EyeRenderContribution {
 
+    /** Target cornea color to blend toward, or {@code null} for no color change. */
+    public float[] corneaTint;
+
+    /** Multiplies the configured eye scale (1 = unchanged). */
+    public float eyeScaleMul;
+
     /** Where the behavior wants the pupil, and how strongly to pull it off the physics wobble (0..1). */
     public float irisTargetX;
     public float irisTargetY;
     public float irisWeight;
 
-    /** Multiplies the configured eye scale (1 = unchanged). */
-    public float eyeScaleMul;
-
     /** Multiplies the eye's vertical scale (1 = unchanged, &lt;1 = squashed for a blink). */
     public float squashY;
-
-    /** Target cornea color to blend toward, or {@code null} for no color change. */
-    public float[] corneaTint;
 
     /** How far to blend the cornea toward {@link #corneaTint} (0..1). */
     public float tintAmount;

@@ -16,6 +16,13 @@ final class BlinkBehavior extends AbstractEyeBehavior {
     }
 
     @Override
+    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+        if (i.mask != null && head < i.mask.length && eye < i.mask[head].length && i.mask[head][eye]) {
+            out.squashY = Curves.lerp(i.prevSquash, i.squash, pt);
+        }
+    }
+
+    @Override
     public void onStart(BehaviorInstance i) {
         int heads = i.helper.getHeadCount();
         i.mask = new boolean[heads][];
@@ -52,12 +59,5 @@ final class BlinkBehavior extends AbstractEyeBehavior {
     public void tick(BehaviorInstance i) {
         i.prevSquash = i.squash;
         i.squash = 1f - SQUASH * Curves.sinPulse((float) i.age / i.duration);
-    }
-
-    @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        if (i.mask != null && head < i.mask.length && eye < i.mask[head].length && i.mask[head][eye]) {
-            out.squashY = Curves.lerp(i.prevSquash, i.squash, pt);
-        }
     }
 }

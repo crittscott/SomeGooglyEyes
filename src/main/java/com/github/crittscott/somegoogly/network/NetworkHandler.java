@@ -6,6 +6,8 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
+    // PROTOCOL_VERSION precedes INSTANCE by necessity: INSTANCE's initializer reads it by simple name,
+    // and a forward reference there is a compile error (JLS 8.3.3) even though it is a constant.
     private static final String PROTOCOL_VERSION = "3";
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(

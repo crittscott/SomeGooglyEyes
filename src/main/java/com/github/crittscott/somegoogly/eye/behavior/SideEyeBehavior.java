@@ -18,17 +18,15 @@ final class SideEyeBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void onStart(BehaviorInstance i) {
-        i.dirSign = i.rand.nextBoolean() ? 1 : -1;
+    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+        out.irisTargetX = Curves.lerp(i.prevX, i.x, pt);
+        out.irisTargetY = 0f;
+        out.irisWeight = Curves.lerp(i.prevWeight, i.weight, pt);
     }
 
     @Override
-    public void tick(BehaviorInstance i) {
-        i.prevWeight = i.weight;
-        i.prevX = i.x;
-        float t = (float) i.age / i.duration;
-        i.weight = Curves.ease(t / CENTER_FRAC); // ease() clamps to 1
-        i.x = i.dirSign * AMOUNT * slide(t);
+    public void onStart(BehaviorInstance i) {
+        i.dirSign = i.rand.nextBoolean() ? 1 : -1;
     }
 
     /** 0 while centring, eases 0 → 1 across the middle, holds 1 at the end. */
@@ -41,9 +39,11 @@ final class SideEyeBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        out.irisTargetX = Curves.lerp(i.prevX, i.x, pt);
-        out.irisTargetY = 0f;
-        out.irisWeight = Curves.lerp(i.prevWeight, i.weight, pt);
+    public void tick(BehaviorInstance i) {
+        i.prevWeight = i.weight;
+        i.prevX = i.x;
+        float t = (float) i.age / i.duration;
+        i.weight = Curves.ease(t / CENTER_FRAC); // ease() clamps to 1
+        i.x = i.dirSign * AMOUNT * slide(t);
     }
 }

@@ -18,7 +18,6 @@ import java.util.Map;
  */
 public final class EyeBehaviors {
 
-    private static final Map<ResourceLocation, EyeBehavior> BY_ID = new LinkedHashMap<>();
     private static final List<EyeBehavior> ALL = List.of(
             new StareBehavior(),
             new BlinkBehavior(),
@@ -28,6 +27,7 @@ public final class EyeBehaviors {
             new SideEyeBehavior(),
             new CrossEyeBehavior()
     );
+    private static final Map<ResourceLocation, EyeBehavior> BY_ID = new LinkedHashMap<>();
 
     static {
         for (EyeBehavior behavior : ALL) {

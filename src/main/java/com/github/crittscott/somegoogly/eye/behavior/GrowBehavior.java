@@ -12,13 +12,13 @@ final class GrowBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void tick(BehaviorInstance i) {
-        i.prevScale = i.scale;
-        i.scale = 1f + GROW * Curves.sinPulse((float) i.age / i.duration);
+    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+        out.eyeScaleMul = Curves.lerp(i.prevScale, i.scale, pt);
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        out.eyeScaleMul = Curves.lerp(i.prevScale, i.scale, pt);
+    public void tick(BehaviorInstance i) {
+        i.prevScale = i.scale;
+        i.scale = 1f + GROW * Curves.sinPulse((float) i.age / i.duration);
     }
 }

@@ -31,70 +31,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class ClientEventHandler {
+    private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
     public static int clientTicks = 0;
     protected WeakHashMap<LivingEntity, GooglyTracker> trackers = new WeakHashMap<>();
-    private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
-
-    @SubscribeEvent
-    public void onWorldTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            clientTicks++;
-            if (Minecraft.getInstance().level != null && !Minecraft.getInstance().isPaused()) {
-                Iterator<Map.Entry<LivingEntity, GooglyTracker>> ite = trackers.entrySet().iterator();
-                while (ite.hasNext()) {
-                    Map.Entry<LivingEntity, GooglyTracker> e = ite.next();
-                    GooglyTracker tracker = e.getValue();
-                    if (clientTicks - tracker.lastUpdateRequest > 10) {
-                        ite.remove();
-                    } else {
-                        tracker.update();
-                    }
-                }
-            }
-        }
-    }
-
-    public GooglyTracker getGooglyTracker(LivingEntity living, HeadInfo helper) {
-        GooglyTracker tracker = trackers.get(living);
-        if (tracker == null || !tracker.matches(helper)) {
-            tracker = new GooglyTracker(living, helper);
-            trackers.put(living, tracker);
-        }
-        return tracker;
-    }
-
-    /**
-     * The mob's existing tracker, or {@code null} if it has none yet (i.e. it isn't currently being
-     * rendered). Used by the behavior trigger packet, which drops triggers for mobs with no tracker —
-     * an off-screen mob has nothing to animate.
-     */
-    @Nullable
-    public GooglyTracker peekGooglyTracker(LivingEntity living) {
-        return trackers.get(living);
-    }
-
-    /** Drop all trackers; called when configs change (sync) or on disconnect. */
-    public void clearTrackers() {
-        trackers.clear();
-    }
-
-    @SubscribeEvent
-    public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        // Forget the previous server's configs so they don't leak onto the next connection.
-        ClientEyeConfigs.clear();
-        clearTrackers();
-        // Release any picker-frozen mob and leave picker mode so NoAi can't persist.
-        PickerState.active = false;
-        PickerState.unlock();
-    }
-
-    @SubscribeEvent
-    public void onServerStopping(ServerStoppingEvent event) {
-        // Restore a picker-frozen mob's NoAi synchronously before the integrated server's final save,
-        // so the forced NoAi is never written to disk. Runs on the server thread (no task-queue race,
-        // which unlock()'s async unfreeze would risk during shutdown).
-        PickerState.unfreezeOnStop(event.getServer());
-    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void addLayers() {
@@ -134,5 +73,66 @@ public class ClientEventHandler {
                 GeckoCompat.tryAddLayer(entityRenderer);
             }
         });
+    }
+
+    /** Drop all trackers; called when configs change (sync) or on disconnect. */
+    public void clearTrackers() {
+        trackers.clear();
+    }
+
+    public GooglyTracker getGooglyTracker(LivingEntity living, HeadInfo helper) {
+        GooglyTracker tracker = trackers.get(living);
+        if (tracker == null || !tracker.matches(helper)) {
+            tracker = new GooglyTracker(living, helper);
+            trackers.put(living, tracker);
+        }
+        return tracker;
+    }
+
+    @SubscribeEvent
+    public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        // Forget the previous server's configs so they don't leak onto the next connection.
+        ClientEyeConfigs.clear();
+        clearTrackers();
+        // Release any picker-frozen mob and leave picker mode so NoAi can't persist.
+        PickerState.active = false;
+        PickerState.unlock();
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        // Restore a picker-frozen mob's NoAi synchronously before the integrated server's final save,
+        // so the forced NoAi is never written to disk. Runs on the server thread (no task-queue race,
+        // which unlock()'s async unfreeze would risk during shutdown).
+        PickerState.unfreezeOnStop(event.getServer());
+    }
+
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            clientTicks++;
+            if (Minecraft.getInstance().level != null && !Minecraft.getInstance().isPaused()) {
+                Iterator<Map.Entry<LivingEntity, GooglyTracker>> ite = trackers.entrySet().iterator();
+                while (ite.hasNext()) {
+                    Map.Entry<LivingEntity, GooglyTracker> e = ite.next();
+                    GooglyTracker tracker = e.getValue();
+                    if (clientTicks - tracker.lastUpdateRequest > 10) {
+                        ite.remove();
+                    } else {
+                        tracker.update();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The mob's existing tracker, or {@code null} if it has none yet (i.e. it isn't currently being
+     * rendered). Used by the behavior trigger packet, which drops triggers for mobs with no tracker —
+     * an off-screen mob has nothing to animate.
+     */
+    @Nullable
+    public GooglyTracker peekGooglyTracker(LivingEntity living) {
+        return trackers.get(living);
     }
 }

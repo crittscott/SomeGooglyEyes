@@ -34,7 +34,42 @@ public class GooglyTracker {
     @Nullable
     public BehaviorInstance active;
 
+    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
+        this.parent = parent;
+        this.helper = helper;
+        this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
+        this.eyes = new EyeInfo[helper.getHeadCount()][];
+
+        for (int i = 0; i < eyes.length; i++) {
+            this.eyes[i] = new EyeInfo[helper.getEyeCount(i)];
+            for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
+                this.eyes[i][i1] = new EyeInfo();
+            }
+        }
+
+        this.prevX = parent.getX();
+        this.prevY = parent.getY();
+        this.prevZ = parent.getZ();
+        update();
+    }
+
     public static class EyeInfo {
+        // --- tuning (normalized units; boundary radius = 1) ---------------------------------------
+        private static final float R_AIR = 1.0f;               // free-flight velocity damping per tick (1 = none)
+        private static final float R_FORCE_CLAMP = 0.96f;      // cap any single tick's forcing (jump spikes)
+        private static final float R_GRAVITY = 0.03f;          // constant downward pull (units/tick^2)
+        private static final float R_K_LIN = 12.0f;            // mob horizontal accel -> sideways kick (per blk/tick^2)
+        private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
+        private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
+        private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
+        private static final float R_NOISE = 0.005f;           // tiny per-eye jitter so eyes don't lock-step
+        // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
+        // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
+        private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
+        private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
+        private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
+        private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
+
         // Head orientation, kept across ticks to differentiate into angular velocity/acceleration.
         public float prevRotationYaw;
         public float rotationYaw;
@@ -57,22 +92,6 @@ public class GooglyTracker {
         private double prevMotionX;
         private double prevMotionY;
         private double prevMotionZ;
-
-        // --- tuning (normalized units; boundary radius = 1) ---------------------------------------
-        private static final float R_GRAVITY = 0.03f;          // constant downward pull (units/tick^2)
-        private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
-        private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
-        private static final float R_AIR = 1.0f;               // free-flight velocity damping per tick (1 = none)
-        // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
-        // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
-        private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
-        private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
-        private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
-        private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
-        private static final float R_K_LIN = 12.0f;            // mob horizontal accel -> sideways kick (per blk/tick^2)
-        private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
-        private static final float R_FORCE_CLAMP = 0.96f;      // cap any single tick's forcing (jump spikes)
-        private static final float R_NOISE = 0.005f;           // tiny per-eye jitter so eyes don't lock-step
 
         public EyeInfo() {
             prevDeltaY = deltaY = -1F;
@@ -184,23 +203,46 @@ public class GooglyTracker {
         }
     }
 
-    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
-        this.parent = parent;
-        this.helper = helper;
-        this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
-        this.eyes = new EyeInfo[helper.getHeadCount()][];
+    public boolean matches(HeadInfo helper) {
+        // Compare the selected variant's head list, not just the shared config: two mobs of the same
+        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
+        // shape is sized from this variant's heads/eyes).
+        return this.helper.headsRef() == helper.headsRef();
+    }
 
-        for (int i = 0; i < eyes.length; i++) {
-            this.eyes[i] = new EyeInfo[helper.getEyeCount(i)];
-            for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
-                this.eyes[i][i1] = new EyeInfo();
-            }
+    public void requireUpdate() {
+        shouldUpdate = true;
+    }
+
+    public void setLastUpdateRequest() {
+        lastUpdateRequest = ClientEventHandler.clientTicks;
+    }
+
+    /**
+     * Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
+     * rule. Returns whether it started (a dropped trigger returns {@code false}). Called from the
+     * trigger packet on the client.
+     *
+     * <p>{@code elapsed} fast-forwards the behavior by that many ticks before it's shown, so a player
+     * who starts watching a mob mid-effect picks it up in sync with everyone else (the server sends how
+     * far in the effect already is). It's deterministic — the seeded {@code onStart} plus replaying
+     * {@code tick} reproduces the exact same state other viewers are at.
+     */
+    public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
+        if (active != null) {
+            return false;
         }
-
-        this.prevX = parent.getX();
-        this.prevY = parent.getY();
-        this.prevZ = parent.getZ();
-        update();
+        BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
+        behavior.onStart(instance);
+        for (int t = 0; t < elapsed && instance.age < instance.duration; t++) {
+            instance.age++;
+            behavior.tick(instance);
+        }
+        if (instance.age >= instance.duration) {
+            return false; // already finished by the time we'd show it (stale catch-up); nothing to play
+        }
+        active = instance;
+        return true;
     }
 
     public void update() {
@@ -232,47 +274,5 @@ public class GooglyTracker {
                 eyes[i][i1].update(rand, parent.getYHeadRot(), parent.getXRot(), motionX, motionY, motionZ);
             }
         }
-    }
-
-    /**
-     * Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
-     * rule. Returns whether it started (a dropped trigger returns {@code false}). Called from the
-     * trigger packet on the client.
-     *
-     * <p>{@code elapsed} fast-forwards the behavior by that many ticks before it's shown, so a player
-     * who starts watching a mob mid-effect picks it up in sync with everyone else (the server sends how
-     * far in the effect already is). It's deterministic — the seeded {@code onStart} plus replaying
-     * {@code tick} reproduces the exact same state other viewers are at.
-     */
-    public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
-        if (active != null) {
-            return false;
-        }
-        BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
-        behavior.onStart(instance);
-        for (int t = 0; t < elapsed && instance.age < instance.duration; t++) {
-            instance.age++;
-            behavior.tick(instance);
-        }
-        if (instance.age >= instance.duration) {
-            return false; // already finished by the time we'd show it (stale catch-up); nothing to play
-        }
-        active = instance;
-        return true;
-    }
-
-    public void setLastUpdateRequest() {
-        lastUpdateRequest = ClientEventHandler.clientTicks;
-    }
-
-    public void requireUpdate() {
-        shouldUpdate = true;
-    }
-
-    public boolean matches(HeadInfo helper) {
-        // Compare the selected variant's head list, not just the shared config: two mobs of the same
-        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
-        // shape is sized from this variant's heads/eyes).
-        return this.helper.headsRef() == helper.headsRef();
     }
 }

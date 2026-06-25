@@ -22,12 +22,12 @@ public class EyeDraft {
     public boolean glows = false;
     public boolean affectedByInvisibility = true;
 
-    public double aimInclination() {
-        return inclination != null ? inclination : EyePlacement.DEFAULT_INCLINATION;
-    }
-
     public double aimAzimuth() {
         return azimuth != null ? azimuth : EyePlacement.DEFAULT_AZIMUTH;
+    }
+
+    public double aimInclination() {
+        return inclination != null ? inclination : EyePlacement.DEFAULT_INCLINATION;
     }
 
     public EyeDraft copy() {

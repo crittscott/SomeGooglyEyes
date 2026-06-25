@@ -12,10 +12,10 @@ public final class PickerKeys {
     // The keyboard picker is navigation + a live view only; all eye editing is done via the /sg CLI.
     // The one thing the keyboard keeps because it's far quicker than typing is choosing the mob and
     // cycling parts to find the one to attach an eye to.
-    public static final KeyMapping TOGGLE = make("toggle", GLFW.GLFW_KEY_K);
     public static final KeyMapping LOCK = make("lock", GLFW.GLFW_KEY_V);
-    public static final KeyMapping PART_PREV = make("part_prev", GLFW.GLFW_KEY_LEFT_BRACKET);
     public static final KeyMapping PART_NEXT = make("part_next", GLFW.GLFW_KEY_RIGHT_BRACKET);
+    public static final KeyMapping PART_PREV = make("part_prev", GLFW.GLFW_KEY_LEFT_BRACKET);
+    public static final KeyMapping TOGGLE = make("toggle", GLFW.GLFW_KEY_K);
 
     private PickerKeys() {
     }

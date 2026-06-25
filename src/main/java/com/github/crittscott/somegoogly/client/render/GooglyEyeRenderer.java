@@ -31,14 +31,24 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class GooglyEyeRenderer {
 
+    // Reused per eye on the single render thread, so behavior composition allocates nothing per frame.
+    private static final EyeRenderContribution CONTRIBUTION = new EyeRenderContribution();
+
+    // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
+    // and a forward reference there is a compile error (JLS 8.3.3).
     private static final ResourceLocation TEX = new ResourceLocation("somegoogly", "textures/model/modelgooglyeye.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 
-    // Reused per eye on the single render thread, so behavior composition allocates nothing per frame.
-    private static final EyeRenderContribution CONTRIBUTION = new EyeRenderContribution();
-
     private GooglyEyeRenderer() {
+    }
+
+    static float lerp(float a, float b, float t) {
+        return a + (b - a) * t;
+    }
+
+    static float[] lerpColor(float[] from, float[] to, float t) {
+        return new float[]{lerp(from[0], to[0], t), lerp(from[1], to[1], t), lerp(from[2], to[2], t)};
     }
 
     /**
@@ -119,13 +129,5 @@ public final class GooglyEyeRenderer {
         }
 
         pose.popPose();
-    }
-
-    static float lerp(float a, float b, float t) {
-        return a + (b - a) * t;
-    }
-
-    static float[] lerpColor(float[] from, float[] to, float t) {
-        return new float[]{lerp(from[0], to[0], t), lerp(from[1], to[1], t), lerp(from[2], to[2], t)};
     }
 }

@@ -19,12 +19,6 @@ import java.util.List;
  */
 public interface EyeModifier {
 
-    /** Whether this modifier applies to the given (non-eye) ingredient stack. */
-    boolean matches(ItemStack stack);
-
-    /** Return {@code current} with this modifier's change layered on (geometry stays in config). */
-    AppearanceOverride apply(AppearanceOverride current, ItemStack stack);
-
     /**
      * The registered modifiers, in match order: dye → iris color, glowstone dust → glow on,
      * redstone → glow off, cobweb → strip all overrides back to a bare eye. They match disjoint
@@ -35,6 +29,62 @@ public interface EyeModifier {
             new GlowEyeModifier(),
             new UnglowEyeModifier(),
             new StripEyeModifier());
+
+    /** 1 eye + 1 of the 16 vanilla dyes → that dye's color on the iris (set, not blended). */
+    final class DyeEyeModifier implements EyeModifier {
+        @Override
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
+            DyeColor color = ((DyeItem) stack.getItem()).getDyeColor();
+            return current.withIrisColor(EyeColor.of(color.getTextureDiffuseColors()));
+        }
+
+        @Override
+        public boolean matches(ItemStack stack) {
+            return stack.getItem() instanceof DyeItem;
+        }
+    }
+
+    /** Glowstone dust → make the eye glow (explicit on, overriding config). */
+    final class GlowEyeModifier implements EyeModifier {
+        @Override
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
+            return current.withGlow(true);
+        }
+
+        @Override
+        public boolean matches(ItemStack stack) {
+            return stack.is(Items.GLOWSTONE_DUST);
+        }
+    }
+
+    /** Cobweb → strip every override, leaving a bare eye that falls back to config appearance. */
+    final class StripEyeModifier implements EyeModifier {
+        @Override
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
+            return AppearanceOverride.EMPTY;
+        }
+
+        @Override
+        public boolean matches(ItemStack stack) {
+            return stack.is(Items.COBWEB);
+        }
+    }
+
+    /** Redstone dust → turn the glow off (explicit off, overriding config). */
+    final class UnglowEyeModifier implements EyeModifier {
+        @Override
+        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
+            return current.withGlow(false);
+        }
+
+        @Override
+        public boolean matches(ItemStack stack) {
+            return stack.is(Items.REDSTONE);
+        }
+    }
+
+    /** Return {@code current} with this modifier's change layered on (geometry stays in config). */
+    AppearanceOverride apply(AppearanceOverride current, ItemStack stack);
 
     /** The first modifier that handles {@code stack}, or {@code null} if none does. */
     @Nullable
@@ -47,56 +97,6 @@ public interface EyeModifier {
         return null;
     }
 
-    /** 1 eye + 1 of the 16 vanilla dyes → that dye's color on the iris (set, not blended). */
-    final class DyeEyeModifier implements EyeModifier {
-        @Override
-        public boolean matches(ItemStack stack) {
-            return stack.getItem() instanceof DyeItem;
-        }
-
-        @Override
-        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
-            DyeColor color = ((DyeItem) stack.getItem()).getDyeColor();
-            return current.withIrisColor(EyeColor.of(color.getTextureDiffuseColors()));
-        }
-    }
-
-    /** Glowstone dust → make the eye glow (explicit on, overriding config). */
-    final class GlowEyeModifier implements EyeModifier {
-        @Override
-        public boolean matches(ItemStack stack) {
-            return stack.is(Items.GLOWSTONE_DUST);
-        }
-
-        @Override
-        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
-            return current.withGlow(true);
-        }
-    }
-
-    /** Redstone dust → turn the glow off (explicit off, overriding config). */
-    final class UnglowEyeModifier implements EyeModifier {
-        @Override
-        public boolean matches(ItemStack stack) {
-            return stack.is(Items.REDSTONE);
-        }
-
-        @Override
-        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
-            return current.withGlow(false);
-        }
-    }
-
-    /** Cobweb → strip every override, leaving a bare eye that falls back to config appearance. */
-    final class StripEyeModifier implements EyeModifier {
-        @Override
-        public boolean matches(ItemStack stack) {
-            return stack.is(Items.COBWEB);
-        }
-
-        @Override
-        public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
-            return AppearanceOverride.EMPTY;
-        }
-    }
+    /** Whether this modifier applies to the given (non-eye) ingredient stack. */
+    boolean matches(ItemStack stack);
 }

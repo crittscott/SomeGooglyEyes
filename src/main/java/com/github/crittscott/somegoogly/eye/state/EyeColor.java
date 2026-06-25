@@ -15,7 +15,6 @@ import java.util.List;
  */
 public record EyeColor(float r, float g, float b) {
 
-    public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
     public static final EyeColor BLACK = new EyeColor(0F, 0F, 0F);
 
     public static final Codec<EyeColor> CODEC = Codec.FLOAT.listOf().comapFlatMap(
@@ -23,6 +22,13 @@ public record EyeColor(float r, float g, float b) {
                     ? DataResult.success(new EyeColor(list.get(0), list.get(1), list.get(2)))
                     : DataResult.error(() -> "Expected 3 color channels, got " + list.size()),
             color -> List.of(color.r, color.g, color.b));
+
+    public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
+
+    private static int channel(float v) {
+        int i = Math.round(v * 255F);
+        return i < 0 ? 0 : Math.min(i, 255);
+    }
 
     public static EyeColor of(float[] rgb) {
         return new EyeColor(rgb[0], rgb[1], rgb[2]);
@@ -36,10 +42,5 @@ public record EyeColor(float r, float g, float b) {
     /** Pack to {@code 0xRRGGBB} for hex display (tooltips). */
     public int toRgb24() {
         return (channel(r) << 16) | (channel(g) << 8) | channel(b);
-    }
-
-    private static int channel(float v) {
-        int i = Math.round(v * 255F);
-        return i < 0 ? 0 : Math.min(i, 255);
     }
 }

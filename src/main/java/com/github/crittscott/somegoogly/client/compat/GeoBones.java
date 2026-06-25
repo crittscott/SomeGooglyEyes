@@ -30,14 +30,6 @@ public final class GeoBones {
     private GeoBones() {
     }
 
-    public static List<String> enumerate(BakedGeoModel model) {
-        List<String> names = new ArrayList<>();
-        for (GeoBone bone : model.topLevelBones()) {
-            collect(bone, names);
-        }
-        return names;
-    }
-
     private static void collect(GeoBone bone, List<String> out) {
         if (bone.getName() != null && !bone.getName().isEmpty()) {
             out.add(bone.getName());
@@ -45,6 +37,14 @@ public final class GeoBones {
         for (GeoBone child : bone.getChildBones()) {
             collect(child, out);
         }
+    }
+
+    public static List<String> enumerate(BakedGeoModel model) {
+        List<String> names = new ArrayList<>();
+        for (GeoBone bone : model.topLevelBones()) {
+            collect(bone, names);
+        }
+        return names;
     }
 
     /** Move {@code poseStack} from the model base into the named bone's animated space. */

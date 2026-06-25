@@ -24,8 +24,20 @@ public final class ServerEyeConfigs {
     private ServerEyeConfigs() {
     }
 
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
+    public static Map<ResourceLocation, RuntimeConfigSet> all() {
+        return configs;
+    }
+
+    /**
+     * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
+     * roll ({@code ServerEventHandler}): that decision is stored for life, so a baby that only has an
+     * adult config must still be allowed to roll — otherwise it stores {@code hasGooglyEyes=false} and
+     * never re-rolls, locking it out of eyes forever even after it grows up. The client swaps in the
+     * age-appropriate geometry as the mob ages.
+     */
+    public static boolean canEverWearEyes(LivingEntity living) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        return isUsable(get(type, false)) || isUsable(get(type, true));
     }
 
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
@@ -47,23 +59,11 @@ public final class ServerEyeConfigs {
         return isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
     }
 
-    /**
-     * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
-     * roll ({@code ServerEventHandler}): that decision is stored for life, so a baby that only has an
-     * adult config must still be allowed to roll — otherwise it stores {@code hasGooglyEyes=false} and
-     * never re-rolls, locking it out of eyes forever even after it grows up. The client swaps in the
-     * age-appropriate geometry as the mob ages.
-     */
-    public static boolean canEverWearEyes(LivingEntity living) {
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        return isUsable(get(type, false)) || isUsable(get(type, true));
-    }
-
     private static boolean isUsable(RuntimeConfig config) {
         return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
     }
 
-    public static Map<ResourceLocation, RuntimeConfigSet> all() {
-        return configs;
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
+        configs = next;
     }
 }

@@ -22,12 +22,6 @@ public final class ClientEyeConfigs {
     private ClientEyeConfigs() {
     }
 
-    /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
-        HeadInfo.clearCache();
-    }
-
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
         configs = Collections.emptyMap();
@@ -37,5 +31,11 @@ public final class ClientEyeConfigs {
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
+    }
+
+    /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
+        configs = next;
+        HeadInfo.clearCache();
     }
 }

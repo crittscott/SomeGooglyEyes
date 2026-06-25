@@ -27,11 +27,11 @@ import java.util.function.Supplier;
  */
 public class EyeBehaviorTriggerPacket {
 
-    private final int entityId;
     private final ResourceLocation behaviorId;
     private final int duration;
-    private final long seed;
     private final int elapsed;
+    private final int entityId;
+    private final long seed;
 
     public EyeBehaviorTriggerPacket(int entityId, ResourceLocation behaviorId, int duration, long seed, int elapsed) {
         this.entityId = entityId;
@@ -41,14 +41,6 @@ public class EyeBehaviorTriggerPacket {
         this.elapsed = elapsed;
     }
 
-    public static void encode(EyeBehaviorTriggerPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeInt(packet.entityId);
-        buffer.writeResourceLocation(packet.behaviorId);
-        buffer.writeVarInt(packet.duration);
-        buffer.writeLong(packet.seed);
-        buffer.writeVarInt(packet.elapsed);
-    }
-
     public static EyeBehaviorTriggerPacket decode(FriendlyByteBuf buffer) {
         int entityId = buffer.readInt();
         ResourceLocation behaviorId = buffer.readResourceLocation();
@@ -56,6 +48,14 @@ public class EyeBehaviorTriggerPacket {
         long seed = buffer.readLong();
         int elapsed = buffer.readVarInt();
         return new EyeBehaviorTriggerPacket(entityId, behaviorId, duration, seed, elapsed);
+    }
+
+    public static void encode(EyeBehaviorTriggerPacket packet, FriendlyByteBuf buffer) {
+        buffer.writeInt(packet.entityId);
+        buffer.writeResourceLocation(packet.behaviorId);
+        buffer.writeVarInt(packet.duration);
+        buffer.writeLong(packet.seed);
+        buffer.writeVarInt(packet.elapsed);
     }
 
     public static void handle(EyeBehaviorTriggerPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {

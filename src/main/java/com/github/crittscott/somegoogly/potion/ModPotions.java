@@ -47,6 +47,13 @@ public final class ModPotions {
     private ModPotions() {
     }
 
+    private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            // Surface the splash form (the only one with behavior) for testing/creative.
+            event.accept(newGooglySplash());
+        }
+    }
+
     /**
      * A googly-eyes splash potion stack, tinted {@link #POTION_COLOR}. The single creation point for
      * the item so the brewing output and the creative-tab entry can't drift; appearance
@@ -95,12 +102,5 @@ public final class ModPotions {
                 return ItemStack.EMPTY;
             }
         });
-    }
-
-    private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            // Surface the splash form (the only one with behavior) for testing/creative.
-            event.accept(newGooglySplash());
-        }
     }
 }

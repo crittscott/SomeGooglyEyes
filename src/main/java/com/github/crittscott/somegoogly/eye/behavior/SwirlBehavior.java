@@ -17,6 +17,13 @@ final class SwirlBehavior extends AbstractEyeBehavior {
     }
 
     @Override
+    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+        out.irisTargetX = Curves.lerp(i.prevX, i.x, pt);
+        out.irisTargetY = Curves.lerp(i.prevY, i.y, pt);
+        out.irisWeight = 1f;
+    }
+
+    @Override
     public void onStart(BehaviorInstance i) {
         i.prevWeight = i.weight = 1f;
     }
@@ -29,12 +36,5 @@ final class SwirlBehavior extends AbstractEyeBehavior {
         float radius = RADIUS * (1f - (float) i.age / i.duration); // shrink to 0
         i.x = (float) Math.cos(angle) * radius;
         i.y = (float) Math.sin(angle) * radius;
-    }
-
-    @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        out.irisTargetX = Curves.lerp(i.prevX, i.x, pt);
-        out.irisTargetY = Curves.lerp(i.prevY, i.y, pt);
-        out.irisWeight = 1f;
     }
 }

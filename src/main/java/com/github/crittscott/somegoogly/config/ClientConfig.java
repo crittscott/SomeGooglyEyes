@@ -16,12 +16,11 @@ import java.util.Set;
 
 public class ClientConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SPEC;
-
     public static final ForgeConfigSpec.BooleanValue DISABLE_GOOGLY_EYES;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENTITIES;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DISABLED_MODS;
     private static final Set<String> loggedBadDisabledEntityEntries = new HashSet<>();
+    public static final ForgeConfigSpec SPEC;
 
     // Parsed-and-cached views of the two list configs, rebuilt only when the config (re)loads rather than
     // on every render call. Guarded by needing a parse only after invalidation; access is single-threaded
@@ -48,25 +47,6 @@ public class ClientConfig {
         SPEC = BUILDER.build();
     }
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC);
-        // Drop the parsed caches whenever this config is (re)loaded or edited in-game, so disabledEntities /
-        // disabledMods take effect without restart and without re-parsing on every render call.
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientConfig::onConfigChanged);
-    }
-
-    private static void onConfigChanged(ModConfigEvent event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            invalidateCaches();
-        }
-    }
-
-    /** Drop the parsed caches so the next access re-reads the (re)loaded config. */
-    public static void invalidateCaches() {
-        cachedDisabledEntityIds = null;
-        cachedDisabledMods = null;
-    }
-
     public static Set<ResourceLocation> disabledEntityIds() {
         Set<ResourceLocation> cached = cachedDisabledEntityIds;
         if (cached == null) {
@@ -90,19 +70,27 @@ public class ClientConfig {
         return cached;
     }
 
+    /** Drop the parsed caches so the next access re-reads the (re)loaded config. */
+    public static void invalidateCaches() {
+        cachedDisabledEntityIds = null;
+        cachedDisabledMods = null;
+    }
+
     public static boolean isEntityDisabled(ResourceLocation entityType) {
         return disabledMods().contains(entityType.getNamespace()) || disabledEntityIds().contains(entityType);
     }
 
-    private static Set<ResourceLocation> parseEntityIds(List<? extends String> entries) {
-        Set<ResourceLocation> parsed = new LinkedHashSet<>();
-        for (String entry : entries) {
-            ResourceLocation id = parseDisabledEntityId(entry);
-            if (id != null) {
-                parsed.add(id);
-            }
+    private static void logBadDisabledEntityEntry(String entry) {
+        String key = String.valueOf(entry);
+        if (loggedBadDisabledEntityEntries.add(key)) {
+            SomeGoogly.LOGGER.error("Dropping invalid client disabledEntities entry '{}'; expected an entity id like 'minecraft:zombie'", key);
         }
-        return parsed;
+    }
+
+    private static void onConfigChanged(ModConfigEvent event) {
+        if (event.getConfig().getSpec() == SPEC) {
+            invalidateCaches();
+        }
     }
 
     private static ResourceLocation parseDisabledEntityId(String entry) {
@@ -119,10 +107,21 @@ public class ClientConfig {
         }
     }
 
-    private static void logBadDisabledEntityEntry(String entry) {
-        String key = String.valueOf(entry);
-        if (loggedBadDisabledEntityEntries.add(key)) {
-            SomeGoogly.LOGGER.error("Dropping invalid client disabledEntities entry '{}'; expected an entity id like 'minecraft:zombie'", key);
+    private static Set<ResourceLocation> parseEntityIds(List<? extends String> entries) {
+        Set<ResourceLocation> parsed = new LinkedHashSet<>();
+        for (String entry : entries) {
+            ResourceLocation id = parseDisabledEntityId(entry);
+            if (id != null) {
+                parsed.add(id);
+            }
         }
+        return parsed;
+    }
+
+    public static void register() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC);
+        // Drop the parsed caches whenever this config is (re)loaded or edited in-game, so disabledEntities /
+        // disabledMods take effect without restart and without re-parsing on every render call.
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientConfig::onConfigChanged);
     }
 }

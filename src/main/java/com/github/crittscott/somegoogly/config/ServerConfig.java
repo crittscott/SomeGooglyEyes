@@ -22,25 +22,20 @@ import java.util.regex.Pattern;
  * eyes.
  */
 public class ServerConfig {
-    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SPEC;
-
-    public static final ForgeConfigSpec.BooleanValue GOOGLY_EYES_ENABLED;
-    public static final ForgeConfigSpec.IntValue GLOBAL_PERCENT;
-    public static final ForgeConfigSpec.IntValue HARVEST_ON_KILL_PERCENT;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_OVERRIDES;
-
-    // Behavior scheduling (the server is the sole authority for which expression a mob plays, and when).
-    public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
-    public static final ForgeConfigSpec.IntValue AMBIENT_MIN_TICKS;
-    public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> AMBIENT_BEHAVIOR_POOL;
-
-    // Event-driven behaviors (triggered by game events rather than the idle timer; not in the ambient pool).
+    public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
+    public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
+    public static final ForgeConfigSpec.IntValue AMBIENT_MIN_TICKS;
+    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> ENTITY_OVERRIDES;
+    public static final ForgeConfigSpec.IntValue GLOBAL_PERCENT;
+    public static final ForgeConfigSpec.BooleanValue GOOGLY_EYES_ENABLED;
     public static final ForgeConfigSpec.IntValue GROW_ON_HIT_PERCENT;
-    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
-    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
+    public static final ForgeConfigSpec.IntValue HARVEST_ON_KILL_PERCENT;
+    public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.IntValue SWIRL_HEAL_COOLDOWN_TICKS;
+    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
+    public static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
 
     // Compiled view of ENTITY_OVERRIDES, rebuilt whenever the underlying config list instance changes
     // (ForgeConfigSpec hands back a fresh list on (re)load, so identity comparison detects reloads).
@@ -117,6 +112,10 @@ public class ServerConfig {
         SPEC = BUILDER.build();
     }
 
+    /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
+    private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
+    }
+
     /** The behaviors the ambient idle timer plays by default: the ambient set only (not the event-driven
      *  grow/swirl, nor the dormant color_change). */
     private static List<String> defaultAmbientBehaviorIds() {
@@ -125,10 +124,6 @@ public class ServerConfig {
                 "somegoogly:side_eye",
                 "somegoogly:stare",
                 "somegoogly:cross_eye"));
-    }
-
-    private static boolean validateBehaviorId(Object o) {
-        return o instanceof String s && ResourceLocation.tryParse(s) != null;
     }
 
     /**
@@ -150,8 +145,41 @@ public class ServerConfig {
         return result;
     }
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC);
+    /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
+    private static String globToRegex(String glob) {
+        StringBuilder regex = new StringBuilder();
+        int literalStart = 0;
+        for (int i = 0; i < glob.length(); i++) {
+            if (glob.charAt(i) == '*') {
+                regex.append(Pattern.quote(glob.substring(literalStart, i)));
+                regex.append(".*");
+                literalStart = i + 1;
+            }
+        }
+        regex.append(Pattern.quote(glob.substring(literalStart)));
+        return regex.toString();
+    }
+
+    /** Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
+     *  already ran, but reloads can still surface bad entries, so we stay defensive). */
+    private static Override parse(String entry) {
+        String[] split = entry.split(",");
+        if (split.length != 2) {
+            return null;
+        }
+        String pattern = split[0].trim();
+        int percent;
+        try {
+            percent = Integer.parseInt(split[1].trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        if (pattern.isEmpty() || percent < 0 || percent > 100) {
+            return null;
+        }
+        return pattern.indexOf('*') < 0
+                ? new Override(true, pattern, null, percent)
+                : new Override(false, null, Pattern.compile(globToRegex(pattern)), percent);
     }
 
     /**
@@ -190,26 +218,12 @@ public class ServerConfig {
         lastParsedSource = source;
     }
 
-    /** Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
-     *  already ran, but reloads can still surface bad entries, so we stay defensive). */
-    private static Override parse(String entry) {
-        String[] split = entry.split(",");
-        if (split.length != 2) {
-            return null;
-        }
-        String pattern = split[0].trim();
-        int percent;
-        try {
-            percent = Integer.parseInt(split[1].trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        if (pattern.isEmpty() || percent < 0 || percent > 100) {
-            return null;
-        }
-        return pattern.indexOf('*') < 0
-                ? new Override(true, pattern, null, percent)
-                : new Override(false, null, Pattern.compile(globToRegex(pattern)), percent);
+    public static void register() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC);
+    }
+
+    private static boolean validateBehaviorId(Object o) {
+        return o instanceof String s && ResourceLocation.tryParse(s) != null;
     }
 
     private static boolean validateOverride(Object o) {
@@ -231,24 +245,5 @@ public class ServerConfig {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
-    private static String globToRegex(String glob) {
-        StringBuilder regex = new StringBuilder();
-        int literalStart = 0;
-        for (int i = 0; i < glob.length(); i++) {
-            if (glob.charAt(i) == '*') {
-                regex.append(Pattern.quote(glob.substring(literalStart, i)));
-                regex.append(".*");
-                literalStart = i + 1;
-            }
-        }
-        regex.append(Pattern.quote(glob.substring(literalStart)));
-        return regex.toString();
-    }
-
-    /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
-    private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
     }
 }

@@ -51,6 +51,14 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         SomeGoogly.LOGGER.info("Loaded {} selected eye configs from {} files", selected.size(), files.size());
     }
 
+    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
+        if (existing != null) {
+            SomeGoogly.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
+            return existing;
+        }
+        return next;
+    }
+
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file) {
         if (file == null || file.entries == null || file.entries.isEmpty()) {
             return null;
@@ -77,14 +85,6 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             }
         }
         return set;
-    }
-
-    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
-        if (existing != null) {
-            SomeGoogly.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
-            return existing;
-        }
-        return next;
     }
 
     private static RuntimeConfig toRuntime(VersionedEntry entry) {

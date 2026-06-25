@@ -22,6 +22,17 @@ public final class Gizmo {
     private Gizmo() {
     }
 
+    private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
+                             float r, float g, float b) {
+        line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
+        line(ps, vc, 0, 0, 0, -x, -y, -z, r * 0.4f, g * 0.4f, b * 0.4f); // negative (dim)
+    }
+
+    private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
+                             float h, float r, float g, float b) {
+        LevelRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
+    }
+
     public static void draw(PoseStack poseStack, MultiBufferSource buffers) {
         VertexConsumer vc = buffers.getBuffer(GizmoRenderType.GIZMO_LINES);
 
@@ -39,12 +50,6 @@ public final class Gizmo {
         cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, 1.0f, 1.0f, 1.0f);
     }
 
-    private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
-                             float r, float g, float b) {
-        line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(ps, vc, 0, 0, 0, -x, -y, -z, r * 0.4f, g * 0.4f, b * 0.4f); // negative (dim)
-    }
-
     private static void line(PoseStack ps, VertexConsumer vc,
                              float x1, float y1, float z1, float x2, float y2, float z2,
                              float r, float g, float b) {
@@ -59,10 +64,5 @@ public final class Gizmo {
         }
         vc.vertex(m, x1, y1, z1).color(r, g, b, 1.0f).normal(n, nx, ny, nz).endVertex();
         vc.vertex(m, x2, y2, z2).color(r, g, b, 1.0f).normal(n, nx, ny, nz).endVertex();
-    }
-
-    private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
-                             float h, float r, float g, float b) {
-        LevelRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
     }
 }

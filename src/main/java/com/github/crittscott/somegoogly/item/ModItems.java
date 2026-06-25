@@ -20,15 +20,15 @@ public final class ModItems {
     private ModItems() {
     }
 
-    /** Wire on the mod event bus (from {@code SomeGoogly}). */
-    public static void register(IEventBus modBus) {
-        ITEMS.register(modBus);
-        modBus.addListener(ModItems::addToCreativeTabs);
-    }
-
     private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(GOOGLY_EYE);
         }
+    }
+
+    /** Wire on the mod event bus (from {@code SomeGoogly}). */
+    public static void register(IEventBus modBus) {
+        ITEMS.register(modBus);
+        modBus.addListener(ModItems::addToCreativeTabs);
     }
 }

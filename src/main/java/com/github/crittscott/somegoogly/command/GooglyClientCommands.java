@@ -44,26 +44,222 @@ import java.util.function.Consumer;
  */
 public class GooglyClientCommands {
 
-    private static final SimpleCommandExceptionType SINGLEPLAYER_ONLY =
-            new SimpleCommandExceptionType(Component.literal("Spawn-all only works in single-player."));
-    private static final SimpleCommandExceptionType NOT_CREATIVE =
-            new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
-    private static final SimpleCommandExceptionType NOT_CHOSEN =
-            new SimpleCommandExceptionType(Component.literal("Choose a mob first (/sg choose)."));
-    private static final SimpleCommandExceptionType NO_PART =
-            new SimpleCommandExceptionType(Component.literal("Pick a part first (/sg part <name>)."));
-    private static final DynamicCommandExceptionType BAD_PART =
-            new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
+    private static final DynamicCommandExceptionType BAD_PART =
+            new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
     private static final DynamicCommandExceptionType BAD_VARIANT =
             new DynamicCommandExceptionType(n -> Component.literal("No variant #" + n + "."));
     private static final SimpleCommandExceptionType CANT_DELETE_LAST_VARIANT =
             new SimpleCommandExceptionType(Component.literal("Can't delete the last variant — there's always at least one."));
+    private static final SimpleCommandExceptionType NO_PART =
+            new SimpleCommandExceptionType(Component.literal("Pick a part first (/sg part <name>)."));
+    private static final SimpleCommandExceptionType NOT_CHOSEN =
+            new SimpleCommandExceptionType(Component.literal("Choose a mob first (/sg choose)."));
+    private static final SimpleCommandExceptionType NOT_CREATIVE =
+            new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
+    private static final SimpleCommandExceptionType SINGLEPLAYER_ONLY =
+            new SimpleCommandExceptionType(Component.literal("Spawn-all only works in single-player."));
+
+    private static double azi(EyeDraft e) {
+        return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
+    }
+
+    private static int choose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        PickerState.active = true; // turn the picker on so the preview/gizmo render
+        feedback(ctx, PickerState.lockOn());
+        return 1;
+    }
+
+    private static int create(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        double x = FloatArgumentType.getFloat(ctx, "x");
+        double y = FloatArgumentType.getFloat(ctx, "y");
+        double z = FloatArgumentType.getFloat(ctx, "z");
+        PickerState.createEye(x, y, z);
+        feedback(ctx, String.format("Created eye at [%.3f, %.3f, %.3f].", x, y, z));
+        return 1;
+    }
+
+    private static int delete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (!PickerState.delete(n)) {
+            throw BAD_INDEX.create(n);
+        }
+        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.currentEyeCount() + " left).");
+        return 1;
+    }
+
+    private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        feedback(ctx, PickerExporter.export());
+        return 1;
+    }
+
+    private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
+        ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
+    }
+
+    private static double incl(EyeDraft e) {
+        return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
+    }
+
+    private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        List<ListedEye> list = PickerState.currentEyes();
+        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex + 1) + " (" + list.size() + "):");
+        for (int i = 0; i < list.size(); i++) {
+            ListedEye le = list.get(i);
+            EyeDraft e = le.eye;
+            String mark = i == PickerState.selectedIndex ? " *" : "";
+            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
+                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
+        }
+        return 1;
+    }
+
+    private static int listParts(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        feedback(ctx, "Parts (" + PickerState.parts.size() + "):");
+        for (int i = 0; i < PickerState.parts.size(); i++) {
+            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts.get(i));
+        }
+        return 1;
+    }
+
+    private static int listVariants(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        feedback(ctx, "Variants (" + PickerState.variantCount() + "):");
+        for (int i = 0; i < PickerState.variantCount(); i++) {
+            PickerState.DraftVariant v = PickerState.variants.get(i);
+            String mark = i == PickerState.variantIndex ? " *" : "";
+            feedback(ctx, String.format("  %d. weight %.2f, %d eyes%s", i + 1, v.weight, v.eyes.size(), mark));
+        }
+        return 1;
+    }
+
+    private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
+                opt(MaybeFloatArgumentType.get(ctx, "y")),
+                opt(MaybeFloatArgumentType.get(ctx, "z")));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
+        return 1;
+    }
 
     @SubscribeEvent
     public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
         register(event.getDispatcher());
+    }
+
+    private static Double opt(Optional<Float> value) {
+        return value.map(Float::doubleValue).orElse(null);
+    }
+
+    private static int part(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        String target = StringArgumentType.getString(ctx, "target");
+        if (target.equalsIgnoreCase("none")) {
+            PickerState.clearPart();
+            feedback(ctx, "Part cleared (none).");
+            return 1;
+        }
+        boolean ok;
+        try {
+            ok = PickerState.setPartByNumber(Integer.parseInt(target));
+        } catch (NumberFormatException notANumber) {
+            ok = PickerState.setPartByName(target);
+        }
+        if (!ok) {
+            throw BAD_PART.create(target);
+        }
+        feedback(ctx, "Part: " + PickerState.currentPart);
+        return 1;
+    }
+
+    private static int posrot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
+                opt(MaybeFloatArgumentType.get(ctx, "y")),
+                opt(MaybeFloatArgumentType.get(ctx, "z")));
+        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
+                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.1f° azi %.1f°.",
+                e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
+        return 1;
+    }
+
+    private static <T> LiteralArgumentBuilder<CommandSourceStack> prop(String name, ArgumentType<T> type,
+                                                                       Command<CommandSourceStack> exec) {
+        RequiredArgumentBuilder<CommandSourceStack, T> v = Commands.argument("v", type);
+        terminal(v, exec);
+        return Commands.literal(name).then(v);
+    }
+
+    private static int propCorneaColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        feedback(ctx, "corneaColors set.");
+        return 1;
+    }
+
+    private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        float v = FloatArgumentType.getFloat(ctx, "v");
+        PickerState.setEyeScale(v);
+        feedback(ctx, "eyeScale = " + v);
+        return 1;
+    }
+
+    private static int propGlow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        boolean v = BoolArgumentType.getBool(ctx, "v");
+        PickerState.setGlow(v);
+        feedback(ctx, "glow = " + v);
+        return 1;
+    }
+
+    private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        boolean v = BoolArgumentType.getBool(ctx, "v");
+        PickerState.setInvis(v);
+        feedback(ctx, "affectedByInvisibility = " + v);
+        return 1;
+    }
+
+    private static int propIrisColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        feedback(ctx, "irisColors set.");
+        return 1;
+    }
+
+    private static int propIrisScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        float v = FloatArgumentType.getFloat(ctx, "v");
+        PickerState.setIrisScale(v);
+        feedback(ctx, "irisScale = " + v);
+        return 1;
     }
 
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -171,21 +367,17 @@ public class GooglyClientCommands {
         dispatcher.register(sg);
     }
 
-    // ---- builder helpers -------------------------------------------------------------------
-
-    /** Add a child literal {@code name} to {@code root}, letting {@code config} build out its subtree. */
-    private static void verb(LiteralArgumentBuilder<CommandSourceStack> root, String name,
-                             Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
-        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(name);
-        config.accept(node);
-        root.then(node);
+    private static void requireChosen() throws CommandSyntaxException {
+        if (!PickerState.active || PickerState.target() == null) {
+            throw NOT_CHOSEN.create();
+        }
     }
 
-    private static <T> LiteralArgumentBuilder<CommandSourceStack> prop(String name, ArgumentType<T> type,
-                                                                       Command<CommandSourceStack> exec) {
-        RequiredArgumentBuilder<CommandSourceStack, T> v = Commands.argument("v", type);
-        terminal(v, exec);
-        return Commands.literal(name).then(v);
+    private static void requireCreative() throws CommandSyntaxException {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || !player.isCreative()) {
+            throw NOT_CREATIVE.create();
+        }
     }
 
     private static RequiredArgumentBuilder<CommandSourceStack, Float> rgb(Command<CommandSourceStack> exec) {
@@ -195,71 +387,6 @@ public class GooglyClientCommands {
                 .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
     }
 
-    /** Mark a node executable: running it does this verb's own work. */
-    private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
-        node.executes(leaf);
-    }
-
-    // ---- executors -------------------------------------------------------------------------
-
-    private static int choose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        PickerState.active = true; // turn the picker on so the preview/gizmo render
-        feedback(ctx, PickerState.lockOn());
-        return 1;
-    }
-
-    private static int unchoose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        PickerState.unlock();
-        feedback(ctx, "Selection cleared.");
-        return 1;
-    }
-
-    private static int part(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        String target = StringArgumentType.getString(ctx, "target");
-        if (target.equalsIgnoreCase("none")) {
-            PickerState.clearPart();
-            feedback(ctx, "Part cleared (none).");
-            return 1;
-        }
-        boolean ok;
-        try {
-            ok = PickerState.setPartByNumber(Integer.parseInt(target));
-        } catch (NumberFormatException notANumber) {
-            ok = PickerState.setPartByName(target);
-        }
-        if (!ok) {
-            throw BAD_PART.create(target);
-        }
-        feedback(ctx, "Part: " + PickerState.currentPart);
-        return 1;
-    }
-
-    private static int create(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        double x = FloatArgumentType.getFloat(ctx, "x");
-        double y = FloatArgumentType.getFloat(ctx, "y");
-        double z = FloatArgumentType.getFloat(ctx, "z");
-        PickerState.createEye(x, y, z);
-        feedback(ctx, String.format("Created eye at [%.3f, %.3f, %.3f].", x, y, z));
-        return 1;
-    }
-
-    private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
-                opt(MaybeFloatArgumentType.get(ctx, "y")),
-                opt(MaybeFloatArgumentType.get(ctx, "z")));
-        EyeDraft e = PickerState.currentEye;
-        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
-        return 1;
-    }
-
     private static int rot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
@@ -267,20 +394,6 @@ public class GooglyClientCommands {
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
         EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Rotation incl %.1f° azi %.1f°.", incl(e), azi(e)));
-        return 1;
-    }
-
-    private static int posrot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
-                opt(MaybeFloatArgumentType.get(ctx, "y")),
-                opt(MaybeFloatArgumentType.get(ctx, "z")));
-        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
-                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
-        EyeDraft e = PickerState.currentEye;
-        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.1f° azi %.1f°.",
-                e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
         return 1;
     }
 
@@ -306,39 +419,48 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int delete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int spawnAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        Minecraft mc = Minecraft.getInstance();
+        MinecraftServer server = mc.getSingleplayerServer();
+        if (server == null || mc.player == null) {
+            throw SINGLEPLAYER_ONLY.create();
+        }
+        // Spawning is server-side work; resolve the server-side player on the server thread and run there.
+        UUID uuid = mc.player.getUUID();
+        server.execute(() -> {
+            ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+            if (player != null) {
+                SpawnAllCommand.spawn(player);
+            }
+        });
+        feedback(ctx, "Spawning mobs…");
+        return 1;
+    }
+
+    /** Mark a node executable: running it does this verb's own work. */
+    private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
+        node.executes(leaf);
+    }
+
+    private static int unchoose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        PickerState.unlock();
+        feedback(ctx, "Selection cleared.");
+        return 1;
+    }
+
+    private static int variantDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
-        if (!PickerState.delete(n)) {
-            throw BAD_INDEX.create(n);
+        if (n > PickerState.variantCount()) {
+            throw BAD_VARIANT.create(n);
         }
-        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.currentEyeCount() + " left).");
-        return 1;
-    }
-
-    private static int listParts(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        feedback(ctx, "Parts (" + PickerState.parts.size() + "):");
-        for (int i = 0; i < PickerState.parts.size(); i++) {
-            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts.get(i));
+        if (!PickerState.deleteVariant(n)) {
+            throw CANT_DELETE_LAST_VARIANT.create();
         }
-        return 1;
-    }
-
-    private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        List<ListedEye> list = PickerState.currentEyes();
-        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex + 1) + " (" + list.size() + "):");
-        for (int i = 0; i < list.size(); i++) {
-            ListedEye le = list.get(i);
-            EyeDraft e = le.eye;
-            String mark = i == PickerState.selectedIndex ? " *" : "";
-            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
-                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
-        }
+        feedback(ctx, "Deleted variant #" + n + " (" + PickerState.variantCount() + " left).");
         return 1;
     }
 
@@ -361,20 +483,6 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int variantDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        int n = IntegerArgumentType.getInteger(ctx, "n");
-        if (n > PickerState.variantCount()) {
-            throw BAD_VARIANT.create(n);
-        }
-        if (!PickerState.deleteVariant(n)) {
-            throw CANT_DELETE_LAST_VARIANT.create();
-        }
-        feedback(ctx, "Deleted variant #" + n + " (" + PickerState.variantCount() + " left).");
-        return 1;
-    }
-
     private static int variantWeight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
@@ -384,125 +492,11 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int listVariants(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        feedback(ctx, "Variants (" + PickerState.variantCount() + "):");
-        for (int i = 0; i < PickerState.variantCount(); i++) {
-            PickerState.DraftVariant v = PickerState.variants.get(i);
-            String mark = i == PickerState.variantIndex ? " *" : "";
-            feedback(ctx, String.format("  %d. weight %.2f, %d eyes%s", i + 1, v.weight, v.eyes.size(), mark));
-        }
-        return 1;
-    }
-
-    private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        float v = FloatArgumentType.getFloat(ctx, "v");
-        PickerState.setEyeScale(v);
-        feedback(ctx, "eyeScale = " + v);
-        return 1;
-    }
-
-    private static int propIrisScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        float v = FloatArgumentType.getFloat(ctx, "v");
-        PickerState.setIrisScale(v);
-        feedback(ctx, "irisScale = " + v);
-        return 1;
-    }
-
-    private static int propCorneaColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "corneaColors set.");
-        return 1;
-    }
-
-    private static int propIrisColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "irisColors set.");
-        return 1;
-    }
-
-    private static int propGlow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        boolean v = BoolArgumentType.getBool(ctx, "v");
-        PickerState.setGlow(v);
-        feedback(ctx, "glow = " + v);
-        return 1;
-    }
-
-    private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        boolean v = BoolArgumentType.getBool(ctx, "v");
-        PickerState.setInvis(v);
-        feedback(ctx, "affectedByInvisibility = " + v);
-        return 1;
-    }
-
-    private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        feedback(ctx, PickerExporter.export());
-        return 1;
-    }
-
-    private static int spawnAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        Minecraft mc = Minecraft.getInstance();
-        MinecraftServer server = mc.getSingleplayerServer();
-        if (server == null || mc.player == null) {
-            throw SINGLEPLAYER_ONLY.create();
-        }
-        // Spawning is server-side work; resolve the server-side player on the server thread and run there.
-        UUID uuid = mc.player.getUUID();
-        server.execute(() -> {
-            ServerPlayer player = server.getPlayerList().getPlayer(uuid);
-            if (player != null) {
-                SpawnAllCommand.spawn(player);
-            }
-        });
-        feedback(ctx, "Spawning mobs…");
-        return 1;
-    }
-
-    // ---- helpers ---------------------------------------------------------------------------
-
-    private static Double opt(Optional<Float> value) {
-        return value.map(Float::doubleValue).orElse(null);
-    }
-
-    private static double incl(EyeDraft e) {
-        return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
-    }
-
-    private static double azi(EyeDraft e) {
-        return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-    }
-
-    private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
-        ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
-    }
-
-    private static void requireChosen() throws CommandSyntaxException {
-        if (!PickerState.active || PickerState.target() == null) {
-            throw NOT_CHOSEN.create();
-        }
-    }
-
-    private static void requireCreative() throws CommandSyntaxException {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !player.isCreative()) {
-            throw NOT_CREATIVE.create();
-        }
+    /** Add a child literal {@code name} to {@code root}, letting {@code config} build out its subtree. */
+    private static void verb(LiteralArgumentBuilder<CommandSourceStack> root, String name,
+                             Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
+        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(name);
+        config.accept(node);
+        root.then(node);
     }
 }

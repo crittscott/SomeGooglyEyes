@@ -38,16 +38,6 @@ public class EyeConfigSyncPacket {
         this.configs = configs;
     }
 
-    public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeVarInt(packet.configs.size());
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
-            buffer.writeResourceLocation(entry.getKey());
-            JsonElement json = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
-                    .result().orElseGet(JsonObject::new);
-            buffer.writeUtf(GSON.toJson(json), MAX_CONFIG_JSON_CHARS);
-        }
-    }
-
     public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
         int size = buffer.readVarInt();
         // Don't pre-size from the wire count: an oversized value would force a large table allocation
@@ -67,6 +57,16 @@ public class EyeConfigSyncPacket {
             }
         }
         return new EyeConfigSyncPacket(configs);
+    }
+
+    public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
+        buffer.writeVarInt(packet.configs.size());
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
+            buffer.writeResourceLocation(entry.getKey());
+            JsonElement json = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
+                    .result().orElseGet(JsonObject::new);
+            buffer.writeUtf(GSON.toJson(json), MAX_CONFIG_JSON_CHARS);
+        }
     }
 
     public static void handle(EyeConfigSyncPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {

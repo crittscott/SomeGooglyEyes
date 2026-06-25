@@ -18,11 +18,19 @@ import net.minecraft.resources.ResourceLocation;
  */
 public interface EyeBehavior {
 
-    /** The registry id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
-    ResourceLocation id();
+    /**
+     * Fill {@code out} (already reset) with this eye's contribution for the current frame, interpolating
+     * the instance's scalars by {@code partialTicks}. Called per eye, so per-eye behaviors (blink mask,
+     * cross-eye inward direction) can vary their output by {@code head}/{@code eye} using {@code helper}.
+     */
+    void contribute(BehaviorInstance instance, HeadInfo helper, int head, int eye,
+                    float partialTicks, EyeRenderContribution out);
 
     /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
     int defaultDuration();
+
+    /** The registry id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
+    ResourceLocation id();
 
     /** Resolve seeded params (blink mask, color, direction) and prime the prev/current scalars. */
     default void onStart(BehaviorInstance instance) {
@@ -31,12 +39,4 @@ public interface EyeBehavior {
     /** Advance one client tick: shift current scalars into prev, recompute current from {@code age}. */
     default void tick(BehaviorInstance instance) {
     }
-
-    /**
-     * Fill {@code out} (already reset) with this eye's contribution for the current frame, interpolating
-     * the instance's scalars by {@code partialTicks}. Called per eye, so per-eye behaviors (blink mask,
-     * cross-eye inward direction) can vary their output by {@code head}/{@code eye} using {@code helper}.
-     */
-    void contribute(BehaviorInstance instance, HeadInfo helper, int head, int eye,
-                    float partialTicks, EyeRenderContribution out);
 }

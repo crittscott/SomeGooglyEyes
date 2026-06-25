@@ -28,9 +28,9 @@ import java.nio.file.Path;
 public final class PickerExporter {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String PACK_NAME = "somegoogly-picker";
     private static final String PACK_MCMETA =
             "{\n  \"pack\": {\n    \"pack_format\": 15,\n    \"description\": \"SomeGoogly picker output\"\n  }\n}\n";
+    private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExporter() {
     }

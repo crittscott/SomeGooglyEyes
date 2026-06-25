@@ -49,6 +49,25 @@ public final class SpawnAllCommand {
     private SpawnAllCommand() {
     }
 
+    /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
+    private record Candidate(ResourceLocation id, Entity entity) {
+    }
+
+    /**
+     * Whether a mob needs to be in water to survive (so it should be pocketed in water rather than
+     * left to flop on land). Inferred at runtime from the vanilla aquatic bases ({@link WaterAnimal},
+     * {@link Guardian}) plus the water spawn categories, which also catches modded aquatic mobs.
+     */
+    private static boolean requiresWater(Entity entity) {
+        if (entity instanceof WaterAnimal || entity instanceof Guardian) {
+            return true;
+        }
+        MobCategory category = entity.getType().getCategory();
+        return category == MobCategory.WATER_CREATURE
+                || category == MobCategory.WATER_AMBIENT
+                || category == MobCategory.UNDERGROUND_WATER_CREATURE;
+    }
+
     /** Spawn the grid around {@code player} (must run on the server thread). Reports the result. */
     public static void spawn(ServerPlayer player) {
         ServerLevel level = player.serverLevel();
@@ -146,22 +165,4 @@ public final class SpawnAllCommand {
         return (float) Mth.wrapDegrees(Math.toDegrees(Math.atan2(-dx, dz)));
     }
 
-    /**
-     * Whether a mob needs to be in water to survive (so it should be pocketed in water rather than
-     * left to flop on land). Inferred at runtime from the vanilla aquatic bases ({@link WaterAnimal},
-     * {@link Guardian}) plus the water spawn categories, which also catches modded aquatic mobs.
-     */
-    private static boolean requiresWater(Entity entity) {
-        if (entity instanceof WaterAnimal || entity instanceof Guardian) {
-            return true;
-        }
-        MobCategory category = entity.getType().getCategory();
-        return category == MobCategory.WATER_CREATURE
-                || category == MobCategory.WATER_AMBIENT
-                || category == MobCategory.UNDERGROUND_WATER_CREATURE;
-    }
-
-    /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
-    private record Candidate(ResourceLocation id, Entity entity) {
-    }
 }

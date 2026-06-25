@@ -25,8 +25,8 @@ public class OptometristEnchantment extends Enchantment {
     }
 
     @Override
-    public boolean isTreasureOnly() {
-        return true;
+    public int getMaxCost(int level) {
+        return getMinCost(level) + 30;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class OptometristEnchantment extends Enchantment {
     }
 
     @Override
-    public int getMaxCost(int level) {
-        return getMinCost(level) + 30;
+    public boolean isTreasureOnly() {
+        return true;
     }
 }

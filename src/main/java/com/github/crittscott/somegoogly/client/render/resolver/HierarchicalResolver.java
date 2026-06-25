@@ -33,8 +33,28 @@ import java.util.List;
 public class HierarchicalResolver implements EyeAttachmentResolver {
 
     @Override
+    public List<String> enumerateParts(EntityModel<?> model) {
+        if (!(model instanceof HierarchicalModel)) {
+            return List.of();
+        }
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        ((HierarchicalModel<?>) model).root().visit(new PoseStack(), (pose, path, index, cube) -> {
+            String segment = lastSegment(path);
+            if (!segment.isEmpty()) {
+                names.add(segment);
+            }
+        });
+        return new ArrayList<>(names);
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return model instanceof HierarchicalModel;
+    }
+
+    private static String lastSegment(String path) {
+        int slash = path.lastIndexOf('/');
+        return slash < 0 ? path : path.substring(slash + 1);
     }
 
     @Override
@@ -58,25 +78,5 @@ public class HierarchicalResolver implements EyeAttachmentResolver {
         poseStack.last().pose().set(capPose[0]);
         poseStack.last().normal().set(capNormal[0]);
         return true;
-    }
-
-    @Override
-    public List<String> enumerateParts(EntityModel<?> model) {
-        if (!(model instanceof HierarchicalModel)) {
-            return List.of();
-        }
-        LinkedHashSet<String> names = new LinkedHashSet<>();
-        ((HierarchicalModel<?>) model).root().visit(new PoseStack(), (pose, path, index, cube) -> {
-            String segment = lastSegment(path);
-            if (!segment.isEmpty()) {
-                names.add(segment);
-            }
-        });
-        return new ArrayList<>(names);
-    }
-
-    private static String lastSegment(String path) {
-        int slash = path.lastIndexOf('/');
-        return slash < 0 ? path : path.substring(slash + 1);
     }
 }

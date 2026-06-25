@@ -5,8 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 /** Common id/duration plumbing for the concrete behaviors. */
 abstract class AbstractEyeBehavior implements EyeBehavior {
 
-    private final ResourceLocation id;
     private final int defaultDuration;
+    private final ResourceLocation id;
 
     AbstractEyeBehavior(String name, int defaultDuration) {
         this.id = new ResourceLocation("somegoogly", name);
@@ -14,12 +14,12 @@ abstract class AbstractEyeBehavior implements EyeBehavior {
     }
 
     @Override
-    public ResourceLocation id() {
-        return id;
+    public int defaultDuration() {
+        return defaultDuration;
     }
 
     @Override
-    public int defaultDuration() {
-        return defaultDuration;
+    public ResourceLocation id() {
+        return id;
     }
 }

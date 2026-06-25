@@ -82,10 +82,104 @@ public final class PickerState {
     private PickerState() {
     }
 
-    // ---- target / lifecycle ----------------------------------------------------------------
+    /** The CLI {@code part none} op. */
+    public static void clearPart() {
+        currentPart = null;
+    }
 
-    public static LivingEntity target() {
-        return target.get();
+    private static EyeDraft copy(EyeDraft s) {
+        return s.copy();
+    }
+
+    /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
+    public static void createEye(double x, double y, double z) {
+        currentEye = defaultEye();
+        currentEye.position[0] = x;
+        currentEye.position[1] = y;
+        currentEye.position[2] = z;
+        selectedIndex = -1;
+    }
+
+    /** Eyes saved in the current variant. */
+    public static int currentEyeCount() {
+        return currentEyes().size();
+    }
+
+    /** The current variant's eye list — what save/select/delete and the preview operate on. */
+    public static List<ListedEye> currentEyes() {
+        return currentVariant().eyes;
+    }
+
+    /** The variant currently being edited (never null; the list always holds at least one). */
+    public static DraftVariant currentVariant() {
+        variantIndex = Math.max(0, Math.min(variantIndex, variants.size() - 1));
+        return variants.get(variantIndex);
+    }
+
+    public static void cyclePart(int dir) {
+        if (parts.isEmpty()) {
+            return;
+        }
+        partIndex = Math.floorMod(partIndex + dir, parts.size());
+        currentPart = parts.get(partIndex);
+    }
+
+    private static EyeDraft defaultEye() {
+        return new EyeDraft();
+    }
+
+    /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
+    public static boolean delete(int oneBased) {
+        List<ListedEye> eyes = currentEyes();
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= eyes.size()) {
+            return false;
+        }
+        eyes.remove(idx);
+        if (selectedIndex == idx) {
+            selectedIndex = -1;
+        } else if (selectedIndex > idx) {
+            selectedIndex--;
+        }
+        return true;
+    }
+
+    /**
+     * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is always
+     * at least one). Returns false if out of range or it would empty the list.
+     */
+    public static boolean deleteVariant(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= variants.size() || variants.size() <= 1) {
+            return false;
+        }
+        variants.remove(idx);
+        if (variantIndex >= idx) {
+            variantIndex = Math.max(0, variantIndex - 1);
+        }
+        currentEye = defaultEye();
+        selectedIndex = -1;
+        return true;
+    }
+
+    private static void freeze(LivingEntity clientEntity) {
+        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
+        if (server == null) {
+            return; // can't freeze a mob on a remote server
+        }
+        frozenId = clientEntity.getId();
+        frozenDim = clientEntity.level().dimension();
+        final int id = frozenId;
+        final ResourceKey<Level> dim = frozenDim;
+        server.execute(() -> {
+            ServerLevel level = server.getLevel(dim);
+            Entity e = level == null ? null : level.getEntity(id);
+            if (e instanceof Mob mob) {
+                frozenPrevNoAi = mob.isNoAi();
+                mob.setNoAi(true);
+                mob.setDeltaMovement(Vec3.ZERO);
+            }
+        });
     }
 
     public static boolean isActiveTarget(LivingEntity entity) {
@@ -138,167 +232,13 @@ public final class PickerState {
                 + " — " + parts.size() + " parts.";
     }
 
-    /** Stop targeting and release the frozen mob; the saved eye list is kept in memory. */
-    public static void unlock() {
-        unfreeze();
-        target = new WeakReference<>(null);
-    }
-
-    private static void freeze(LivingEntity clientEntity) {
-        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
-        if (server == null) {
-            return; // can't freeze a mob on a remote server
-        }
-        frozenId = clientEntity.getId();
-        frozenDim = clientEntity.level().dimension();
-        final int id = frozenId;
-        final ResourceKey<Level> dim = frozenDim;
-        server.execute(() -> {
-            ServerLevel level = server.getLevel(dim);
-            Entity e = level == null ? null : level.getEntity(id);
-            if (e instanceof Mob mob) {
-                frozenPrevNoAi = mob.isNoAi();
-                mob.setNoAi(true);
-                mob.setDeltaMovement(Vec3.ZERO);
-            }
-        });
-    }
-
-    /**
-     * Restore a frozen mob's previous NoAi value <b>synchronously on the server thread</b>. Called at
-     * server stop (which fires before the final world save), so the picker's forced NoAi is never
-     * written to disk. Unlike {@link #unfreeze()} this runs inline rather than via the server task
-     * queue, which may no longer drain during shutdown.
-     *
-     * <p>Does not cover an autosave mid-edit followed by a hard crash (the forced NoAi would persist
-     * until the next clean load); that window is intentionally left, since the picker is a
-     * single-player authoring tool.
-     */
-    public static void unfreezeOnStop(MinecraftServer server) {
-        if (frozenId < 0 || frozenDim == null || server == null) {
-            return;
-        }
-        ServerLevel level = server.getLevel(frozenDim);
-        Entity e = level == null ? null : level.getEntity(frozenId);
-        if (e instanceof Mob mob) {
-            mob.setNoAi(frozenPrevNoAi);
-        }
-        frozenId = -1;
-        frozenDim = null;
-    }
-
-    private static void unfreeze() {
-        if (frozenId < 0 || frozenDim == null) {
-            return;
-        }
-        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
-        final int id = frozenId;
-        final ResourceKey<Level> dim = frozenDim;
-        final boolean prev = frozenPrevNoAi;
-        frozenId = -1;
-        frozenDim = null;
-        if (server == null) {
-            return;
-        }
-        server.execute(() -> {
-            ServerLevel level = server.getLevel(dim);
-            Entity e = level == null ? null : level.getEntity(id);
-            if (e instanceof Mob mob) {
-                mob.setNoAi(prev);
-            }
-        });
-    }
-
-    public static ResourceLocation targetType() {
-        return targetType;
-    }
-
-    /** The current placement-frame part token (drives the gizmo / draft preview), or {@code null}. */
-    public static String selectedToken() {
-        return currentPart;
-    }
-
-    // ---- part selection --------------------------------------------------------------------
-
-    public static void cyclePart(int dir) {
-        if (parts.isEmpty()) {
-            return;
-        }
-        partIndex = Math.floorMod(partIndex + dir, parts.size());
-        currentPart = parts.get(partIndex);
-    }
-
-    /** The CLI {@code part none} op. */
-    public static void clearPart() {
-        currentPart = null;
-    }
-
-    /** The CLI {@code part <name>} op; false if no such part. */
-    public static boolean setPartByName(String token) {
-        String want = EyeAttachmentResolver.normalize(token);
-        for (int i = 0; i < parts.size(); i++) {
-            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
-                partIndex = i;
-                currentPart = parts.get(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** The CLI {@code part <number>} op (1-based); false if out of range. */
-    public static boolean setPartByNumber(int oneBased) {
-        int idx = oneBased - 1;
-        if (idx < 0 || idx >= parts.size()) {
-            return false;
-        }
-        partIndex = idx;
-        currentPart = parts.get(idx);
-        return true;
-    }
-
-    private static void syncPartIndex() {
-        if (currentPart == null) {
-            return;
-        }
-        String want = EyeAttachmentResolver.normalize(currentPart);
-        for (int i = 0; i < parts.size(); i++) {
-            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
-                partIndex = i;
-                return;
-            }
-        }
-    }
-
-    // ---- variants --------------------------------------------------------------------------
-
-    /** The variant currently being edited (never null; the list always holds at least one). */
-    public static DraftVariant currentVariant() {
-        variantIndex = Math.max(0, Math.min(variantIndex, variants.size() - 1));
-        return variants.get(variantIndex);
-    }
-
-    /** The current variant's eye list — what save/select/delete and the preview operate on. */
-    public static List<ListedEye> currentEyes() {
-        return currentVariant().eyes;
-    }
-
-    public static int variantCount() {
-        return variants.size();
-    }
-
-    /** Eyes saved in the current variant. */
-    public static int currentEyeCount() {
-        return currentEyes().size();
-    }
-
-    /** Eyes saved across all variants (the export guard). */
-    public static int totalEyeCount() {
-        int n = 0;
-        for (DraftVariant v : variants) {
-            n += v.eyes.size();
-        }
-        return n;
+    /** The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its 1-based index. */
+    public static int newVariant() {
+        variants.add(new DraftVariant());
+        variantIndex = variants.size() - 1;
+        currentEye = defaultEye();
+        selectedIndex = -1;
+        return variantIndex + 1;
     }
 
     /** Reset the whole eye list to a single empty variant. Used on (re)choose and unchoose. */
@@ -310,110 +250,6 @@ public final class PickerState {
         currentPart = parts.isEmpty() ? null : parts.get(partIndex);
         selectedIndex = -1;
     }
-
-    /** The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its 1-based index. */
-    public static int newVariant() {
-        variants.add(new DraftVariant());
-        variantIndex = variants.size() - 1;
-        currentEye = defaultEye();
-        selectedIndex = -1;
-        return variantIndex + 1;
-    }
-
-    /** The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of range. */
-    public static boolean selectVariant(int oneBased) {
-        int idx = oneBased - 1;
-        if (idx < 0 || idx >= variants.size()) {
-            return false;
-        }
-        variantIndex = idx;
-        currentEye = defaultEye();
-        selectedIndex = -1;
-        return true;
-    }
-
-    /**
-     * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is always
-     * at least one). Returns false if out of range or it would empty the list.
-     */
-    public static boolean deleteVariant(int oneBased) {
-        int idx = oneBased - 1;
-        if (idx < 0 || idx >= variants.size() || variants.size() <= 1) {
-            return false;
-        }
-        variants.remove(idx);
-        if (variantIndex >= idx) {
-            variantIndex = Math.max(0, variantIndex - 1);
-        }
-        currentEye = defaultEye();
-        selectedIndex = -1;
-        return true;
-    }
-
-    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */
-    public static void setVariantWeight(double w) {
-        currentVariant().weight = Math.max(0, w);
-    }
-
-    // ---- CLI current-eye ops ---------------------------------------------------------------
-
-    /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
-    public static void createEye(double x, double y, double z) {
-        currentEye = defaultEye();
-        currentEye.position[0] = x;
-        currentEye.position[1] = y;
-        currentEye.position[2] = z;
-        selectedIndex = -1;
-    }
-
-    /** The CLI {@code move x y z} op: set absolute position; {@code null} leaves that axis unchanged. */
-    public static void setPosition(Double x, Double y, Double z) {
-        if (x != null) {
-            currentEye.position[0] = x;
-        }
-        if (y != null) {
-            currentEye.position[1] = y;
-        }
-        if (z != null) {
-            currentEye.position[2] = z;
-        }
-    }
-
-    /** The CLI {@code rot inclination azimuth} op; {@code null} leaves that angle unchanged. */
-    public static void setRotation(Double inclination, Double azimuth) {
-        if (inclination != null) {
-            currentEye.inclination = inclination;
-        }
-        if (azimuth != null) {
-            currentEye.azimuth = azimuth;
-        }
-    }
-
-    public static void setEyeScale(double v) {
-        currentEye.eyeScale = Math.max(0, v);
-    }
-
-    public static void setIrisScale(double v) {
-        currentEye.irisScale = Math.max(0, v);
-    }
-
-    public static void setCorneaColor(double r, double g, double b) {
-        currentEye.corneaColors = new double[]{r, g, b};
-    }
-
-    public static void setIrisColor(double r, double g, double b) {
-        currentEye.irisColors = new double[]{r, g, b};
-    }
-
-    public static void setGlow(boolean v) {
-        currentEye.glows = v;
-    }
-
-    public static void setInvis(boolean v) {
-        currentEye.affectedByInvisibility = v;
-    }
-
-    // ---- eye list (save / select / delete) -------------------------------------------------
 
     /**
      * Save the current eye: overwrite the selected slot in place, or append a new one if none is
@@ -451,20 +287,118 @@ public final class PickerState {
         return true;
     }
 
-    /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
-    public static boolean delete(int oneBased) {
-        List<ListedEye> eyes = currentEyes();
+    /** The current placement-frame part token (drives the gizmo / draft preview), or {@code null}. */
+    public static String selectedToken() {
+        return currentPart;
+    }
+
+    /** The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of range. */
+    public static boolean selectVariant(int oneBased) {
         int idx = oneBased - 1;
-        if (idx < 0 || idx >= eyes.size()) {
+        if (idx < 0 || idx >= variants.size()) {
             return false;
         }
-        eyes.remove(idx);
-        if (selectedIndex == idx) {
-            selectedIndex = -1;
-        } else if (selectedIndex > idx) {
-            selectedIndex--;
-        }
+        variantIndex = idx;
+        currentEye = defaultEye();
+        selectedIndex = -1;
         return true;
+    }
+
+    public static void setCorneaColor(double r, double g, double b) {
+        currentEye.corneaColors = new double[]{r, g, b};
+    }
+
+    public static void setEyeScale(double v) {
+        currentEye.eyeScale = Math.max(0, v);
+    }
+
+    public static void setGlow(boolean v) {
+        currentEye.glows = v;
+    }
+
+    public static void setInvis(boolean v) {
+        currentEye.affectedByInvisibility = v;
+    }
+
+    public static void setIrisColor(double r, double g, double b) {
+        currentEye.irisColors = new double[]{r, g, b};
+    }
+
+    public static void setIrisScale(double v) {
+        currentEye.irisScale = Math.max(0, v);
+    }
+
+    /** The CLI {@code part <name>} op; false if no such part. */
+    public static boolean setPartByName(String token) {
+        String want = EyeAttachmentResolver.normalize(token);
+        for (int i = 0; i < parts.size(); i++) {
+            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+                partIndex = i;
+                currentPart = parts.get(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The CLI {@code part <number>} op (1-based); false if out of range. */
+    public static boolean setPartByNumber(int oneBased) {
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= parts.size()) {
+            return false;
+        }
+        partIndex = idx;
+        currentPart = parts.get(idx);
+        return true;
+    }
+
+    /** The CLI {@code move x y z} op: set absolute position; {@code null} leaves that axis unchanged. */
+    public static void setPosition(Double x, Double y, Double z) {
+        if (x != null) {
+            currentEye.position[0] = x;
+        }
+        if (y != null) {
+            currentEye.position[1] = y;
+        }
+        if (z != null) {
+            currentEye.position[2] = z;
+        }
+    }
+
+    /** The CLI {@code rot inclination azimuth} op; {@code null} leaves that angle unchanged. */
+    public static void setRotation(Double inclination, Double azimuth) {
+        if (inclination != null) {
+            currentEye.inclination = inclination;
+        }
+        if (azimuth != null) {
+            currentEye.azimuth = azimuth;
+        }
+    }
+
+    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */
+    public static void setVariantWeight(double w) {
+        currentVariant().weight = Math.max(0, w);
+    }
+
+    private static void syncPartIndex() {
+        if (currentPart == null) {
+            return;
+        }
+        String want = EyeAttachmentResolver.normalize(currentPart);
+        for (int i = 0; i < parts.size(); i++) {
+            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+                partIndex = i;
+                return;
+            }
+        }
+    }
+
+    public static LivingEntity target() {
+        return target.get();
+    }
+
+    public static ResourceLocation targetType() {
+        return targetType;
     }
 
     /** Build the runtime config from all authored variants, each grouped by part into heads (for export). */
@@ -497,13 +431,67 @@ public final class PickerState {
         return config;
     }
 
-    // ---- helpers ---------------------------------------------------------------------------
-
-    private static EyeDraft defaultEye() {
-        return new EyeDraft();
+    /** Eyes saved across all variants (the export guard). */
+    public static int totalEyeCount() {
+        int n = 0;
+        for (DraftVariant v : variants) {
+            n += v.eyes.size();
+        }
+        return n;
     }
 
-    private static EyeDraft copy(EyeDraft s) {
-        return s.copy();
+    private static void unfreeze() {
+        if (frozenId < 0 || frozenDim == null) {
+            return;
+        }
+        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
+        final int id = frozenId;
+        final ResourceKey<Level> dim = frozenDim;
+        final boolean prev = frozenPrevNoAi;
+        frozenId = -1;
+        frozenDim = null;
+        if (server == null) {
+            return;
+        }
+        server.execute(() -> {
+            ServerLevel level = server.getLevel(dim);
+            Entity e = level == null ? null : level.getEntity(id);
+            if (e instanceof Mob mob) {
+                mob.setNoAi(prev);
+            }
+        });
+    }
+
+    /**
+     * Restore a frozen mob's previous NoAi value <b>synchronously on the server thread</b>. Called at
+     * server stop (which fires before the final world save), so the picker's forced NoAi is never
+     * written to disk. Unlike {@link #unfreeze()} this runs inline rather than via the server task
+     * queue, which may no longer drain during shutdown.
+     *
+     * <p>Does not cover an autosave mid-edit followed by a hard crash (the forced NoAi would persist
+     * until the next clean load); that window is intentionally left, since the picker is a
+     * single-player authoring tool.
+     */
+    public static void unfreezeOnStop(MinecraftServer server) {
+        if (frozenId < 0 || frozenDim == null || server == null) {
+            return;
+        }
+        ServerLevel level = server.getLevel(frozenDim);
+        Entity e = level == null ? null : level.getEntity(frozenId);
+        if (e instanceof Mob mob) {
+            mob.setNoAi(frozenPrevNoAi);
+        }
+        frozenId = -1;
+        frozenDim = null;
+    }
+
+    /** Stop targeting and release the frozen mob; the saved eye list is kept in memory. */
+    public static void unlock() {
+        unfreeze();
+        target = new WeakReference<>(null);
+    }
+
+    public static int variantCount() {
+        return variants.size();
     }
 }

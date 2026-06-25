@@ -14,20 +14,23 @@ import org.joml.Matrix4f;
  */
 public final class ModelGooglyEye {
 
-    private static final int SIDES = 16;
+    // Local dimensions preserve the former model's visible diameter and approximate depth.
+    private static final float CORNEA_BACK_Z = 0.00F;
+    private static final float CORNEA_FRONT_Z = -1.00F;
+    private static final float CORNEA_RADIUS = 1.865F;
+    private static final float IRIS_BACK_Z = -1.05F;
+    private static final float IRIS_FRONT_Z = -1.50F;
+    private static final float IRIS_RADIUS = 1.00F;
     /** ModelPart cube coordinates are pixels; custom vertices use the same conversion. */
     private static final float MODEL_UNIT = 1.0F / 16.0F;
-
-    // Local dimensions preserve the former model's visible diameter and approximate depth.
-    private static final float CORNEA_RADIUS = 1.865F;
-    private static final float CORNEA_FRONT_Z = -1.00F;
-    private static final float CORNEA_BACK_Z = 0.00F;
-    private static final float IRIS_RADIUS = 1.00F;
-    private static final float IRIS_FRONT_Z = -1.50F;
-    private static final float IRIS_BACK_Z = -1.05F;
-
+    // SIDES precedes the RING_* tables by necessity: their initializers read it by simple name, and a
+    // forward reference there is a compile error (JLS 8.3.3).
+    private static final int SIDES = 16;
     private static final float[] RING_X = new float[SIDES];
     private static final float[] RING_Y = new float[SIDES];
+
+    private float irisOffsetX;
+    private float irisOffsetY;
 
     static {
         for (int i = 0; i < SIDES; i++) {
@@ -37,19 +40,17 @@ public final class ModelGooglyEye {
         }
     }
 
-    private float irisOffsetX;
-    private float irisOffsetY;
-
-    public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                              float red, float green, float blue, float alpha) {
-        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z);
-    }
-
-    public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                            float red, float green, float blue, float alpha) {
-        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z);
+    private static void emit(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix,
+                             float x, float y, float z, float normalX, float normalY, float normalZ,
+                             int packedLight, int packedOverlay, float red, float green, float blue,
+                             float alpha) {
+        buffer.vertex(matrix, x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
+                .color(red, green, blue, alpha)
+                .uv(0.5F, 0.5F)
+                .overlayCoords(packedOverlay)
+                .uv2(packedLight)
+                .normal(normalMatrix, normalX, normalY, normalZ)
+                .endVertex();
     }
 
     /**
@@ -72,6 +73,12 @@ public final class ModelGooglyEye {
         // Without this flip the pupil rests at the top and falls upward.
         irisOffsetX = -normX * preScale;
         irisOffsetY = -normY * preScale;
+    }
+
+    public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
+                              float red, float green, float blue, float alpha) {
+        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+                0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z);
     }
 
     private static void renderCylinder(PoseStack poseStack, VertexConsumer buffer, int packedLight,
@@ -120,16 +127,9 @@ public final class ModelGooglyEye {
         }
     }
 
-    private static void emit(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix,
-                             float x, float y, float z, float normalX, float normalY, float normalZ,
-                             int packedLight, int packedOverlay, float red, float green, float blue,
-                             float alpha) {
-        buffer.vertex(matrix, x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
-                .color(red, green, blue, alpha)
-                .uv(0.5F, 0.5F)
-                .overlayCoords(packedOverlay)
-                .uv2(packedLight)
-                .normal(normalMatrix, normalX, normalY, normalZ)
-                .endVertex();
+    public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
+                            float red, float green, float blue, float alpha) {
+        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z);
     }
 }

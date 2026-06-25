@@ -21,10 +21,6 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "0.5", "~", "-1.25");
 
-    public static MaybeFloatArgumentType maybeFloat() {
-        return new MaybeFloatArgumentType();
-    }
-
     /** Read the parsed argument; empty means {@code ~} (unchanged). */
     @SuppressWarnings("unchecked")
     public static Optional<Float> get(CommandContext<?> ctx, String name) {
@@ -32,12 +28,8 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
     }
 
     @Override
-    public Optional<Float> parse(StringReader reader) throws CommandSyntaxException {
-        if (reader.canRead() && reader.peek() == '~') {
-            reader.skip();
-            return Optional.empty();
-        }
-        return Optional.of(reader.readFloat());
+    public Collection<String> getExamples() {
+        return EXAMPLES;
     }
 
     @Override
@@ -48,8 +40,16 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
         return builder.buildFuture();
     }
 
+    public static MaybeFloatArgumentType maybeFloat() {
+        return new MaybeFloatArgumentType();
+    }
+
     @Override
-    public Collection<String> getExamples() {
-        return EXAMPLES;
+    public Optional<Float> parse(StringReader reader) throws CommandSyntaxException {
+        if (reader.canRead() && reader.peek() == '~') {
+            reader.skip();
+            return Optional.empty();
+        }
+        return Optional.of(reader.readFloat());
     }
 }

@@ -16,6 +16,18 @@ import org.lwjgl.glfw.GLFW;
  */
 public class PickerInput {
 
+    private static boolean inCreative() {
+        Minecraft mc = Minecraft.getInstance();
+        return mc.player != null && mc.player.isCreative();
+    }
+
+    private static void message(String text) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            mc.player.displayClientMessage(Component.literal("[Googly] " + text), true);
+        }
+    }
+
     @SubscribeEvent
     public void onKey(InputEvent.Key event) {
         // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
@@ -62,18 +74,6 @@ public class PickerInput {
             PickerState.cyclePart(-1);
         } else if (PickerKeys.PART_NEXT.matches(key, sc)) {
             PickerState.cyclePart(1);
-        }
-    }
-
-    private static boolean inCreative() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.player.isCreative();
-    }
-
-    private static void message(String text) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            mc.player.displayClientMessage(Component.literal("[Googly] " + text), true);
         }
     }
 }

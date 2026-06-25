@@ -13,8 +13,21 @@ import net.minecraft.client.model.EntityModel;
  */
 public interface EyeAttachmentResolver {
 
+    /**
+     * List selectable attachment tokens for this model, in a stable order (used by the part picker).
+     * Default: none (resolver doesn't support enumeration / picker authoring yet).
+     */
+    default java.util.List<String> enumerateParts(EntityModel<?> model) {
+        return java.util.List.of();
+    }
+
     /** Whether this resolver knows how to walk the given model's part tree. */
     boolean handles(EntityModel<?> model);
+
+    /** Normalizes a token/part-name so camelCase field names match snake_case child-map keys. */
+    static String normalize(String s) {
+        return s == null ? "" : s.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");
+    }
 
     /**
      * Move {@code poseStack} into the named part's current (this-frame, post-animation) space.
@@ -25,17 +38,4 @@ public interface EyeAttachmentResolver {
      *         should skip drawing for this head)
      */
     boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken);
-
-    /**
-     * List selectable attachment tokens for this model, in a stable order (used by the part picker).
-     * Default: none (resolver doesn't support enumeration / picker authoring yet).
-     */
-    default java.util.List<String> enumerateParts(EntityModel<?> model) {
-        return java.util.List.of();
-    }
-
-    /** Normalizes a token/part-name so camelCase field names match snake_case child-map keys. */
-    static String normalize(String s) {
-        return s == null ? "" : s.toLowerCase(java.util.Locale.ROOT).replaceAll("[^a-z0-9]", "");
-    }
 }

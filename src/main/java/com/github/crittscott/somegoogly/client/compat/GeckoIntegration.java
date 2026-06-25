@@ -20,15 +20,6 @@ final class GeckoIntegration {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    static boolean tryAddLayer(EntityRenderer<?> renderer) {
-        if (!(renderer instanceof GeoEntityRenderer geo)) {
-            return false;
-        }
-        geo.addRenderLayer(new GooglyGeoLayer(geo));
-        return true;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
     static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
@@ -37,5 +28,14 @@ final class GeckoIntegration {
         ResourceLocation location = model.getModelResource((GeoAnimatable) living);
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    static boolean tryAddLayer(EntityRenderer<?> renderer) {
+        if (!(renderer instanceof GeoEntityRenderer geo)) {
+            return false;
+        }
+        geo.addRenderLayer(new GooglyGeoLayer(geo));
+        return true;
     }
 }

@@ -32,6 +32,24 @@ public class EyeModifierRecipe extends CustomRecipe {
     private record Match(ItemStack eye, ItemStack modifierStack, EyeModifier modifier) {
     }
 
+    @Override
+    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+        Match match = find(container);
+        if (match == null) {
+            return ItemStack.EMPTY;
+        }
+        // Copy (not GooglyEyeItem.create) so any unrelated NBT on the eye survives the edit.
+        ItemStack result = match.eye().copyWithCount(1);
+        AppearanceOverride updated = match.modifier().apply(GooglyEyeItem.getProperties(result), match.modifierStack());
+        GooglyEyeItem.setProperties(result, updated);
+        return result;
+    }
+
+    @Override
+    public boolean canCraftInDimensions(int width, int height) {
+        return width * height >= 2;
+    }
+
     @Nullable
     private static Match find(CraftingContainer container) {
         ItemStack eye = ItemStack.EMPTY;
@@ -68,29 +86,6 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
-        return find(container) != null;
-    }
-
-    @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
-        Match match = find(container);
-        if (match == null) {
-            return ItemStack.EMPTY;
-        }
-        // Copy (not GooglyEyeItem.create) so any unrelated NBT on the eye survives the edit.
-        ItemStack result = match.eye().copyWithCount(1);
-        AppearanceOverride updated = match.modifier().apply(GooglyEyeItem.getProperties(result), match.modifierStack());
-        GooglyEyeItem.setProperties(result, updated);
-        return result;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
-    }
-
-    @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         // Representative stack for recipe-book display; the real output is computed in assemble().
         return new ItemStack(ModItems.GOOGLY_EYE.get());
@@ -99,5 +94,10 @@ public class EyeModifierRecipe extends CustomRecipe {
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipes.EYE_MODIFIER.get();
+    }
+
+    @Override
+    public boolean matches(CraftingContainer container, Level level) {
+        return find(container) != null;
     }
 }

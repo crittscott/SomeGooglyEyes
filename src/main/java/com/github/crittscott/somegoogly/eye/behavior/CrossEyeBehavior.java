@@ -23,12 +23,14 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void tick(BehaviorInstance i) {
-        i.prevWeight = i.weight;
-        i.prevX = i.x;
-        float t = (float) i.age / i.duration;
-        i.weight = Curves.ease(t / CENTER_FRAC);
-        i.x = AMOUNT * slide(t); // magnitude; per-eye direction applied in contribute
+    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+        float offsetX = helper.placementAt(head, eye).positionArray()[0];
+        // Centered/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
+        float dir = offsetX != 0f ? Math.signum(offsetX) : (eye % 2 == 0 ? 1f : -1f);
+        float magnitude = Curves.lerp(i.prevX, i.x, pt);
+        out.irisTargetX = INWARD_SIGN * dir * magnitude;
+        out.irisTargetY = 0f;
+        out.irisWeight = Curves.lerp(i.prevWeight, i.weight, pt);
     }
 
     private static float slide(float t) {
@@ -40,13 +42,11 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        float offsetX = helper.placementAt(head, eye).positionArray()[0];
-        // Centered/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
-        float dir = offsetX != 0f ? Math.signum(offsetX) : (eye % 2 == 0 ? 1f : -1f);
-        float magnitude = Curves.lerp(i.prevX, i.x, pt);
-        out.irisTargetX = INWARD_SIGN * dir * magnitude;
-        out.irisTargetY = 0f;
-        out.irisWeight = Curves.lerp(i.prevWeight, i.weight, pt);
+    public void tick(BehaviorInstance i) {
+        i.prevWeight = i.weight;
+        i.prevX = i.x;
+        float t = (float) i.age / i.duration;
+        i.weight = Curves.ease(t / CENTER_FRAC);
+        i.x = AMOUNT * slide(t); // magnitude; per-eye direction applied in contribute
     }
 }

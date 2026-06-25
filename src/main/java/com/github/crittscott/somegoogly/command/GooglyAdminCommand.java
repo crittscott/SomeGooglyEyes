@@ -48,14 +48,18 @@ import javax.annotation.Nullable;
  */
 public final class GooglyAdminCommand {
 
+    /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
+    private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
+        builder.suggest("random");
+        for (EyeBehavior behavior : EyeBehaviors.all()) {
+            builder.suggest(behavior.id().getPath());
+        }
+        return builder.buildFuture();
+    };
+
     private static final double REACH = 20.0;
 
     private GooglyAdminCommand() {
-    }
-
-    /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("sg").then(adminTree()));
     }
 
     /** The {@code admin} subtree (op-gated), grafted under {@code /sg} by {@link #register}. */
@@ -91,15 +95,6 @@ public final class GooglyAdminCommand {
                                 .suggests(BEHAVIOR_SUGGESTIONS)
                                 .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id")))));
     }
-
-    /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
-    private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
-        builder.suggest("random");
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
-            builder.suggest(behavior.id().getPath());
-        }
-        return builder.buildFuture();
-    };
 
     /**
      * Drive the server behavior scheduler by hand: trigger {@code id} (a short name like {@code stare},
@@ -152,11 +147,21 @@ public final class GooglyAdminCommand {
                                         }))));
     }
 
+    private static int feedback(CommandContext<CommandSourceStack> ctx, String message) {
+        ctx.getSource().sendSuccess(() -> Component.literal("[sg admin] " + message), false);
+        return 1;
+    }
+
     private static int glow(CommandContext<CommandSourceStack> ctx, @Nullable Boolean value) {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
         EyeState.setGlow(target, value);
         return feedback(ctx, "glow = " + (value == null ? "config" : value));
+    }
+
+    /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("sg").then(adminTree()));
     }
 
     /** The living entity the source player is looking at, or {@code null} (with feedback) if none. */
@@ -185,10 +190,5 @@ public final class GooglyAdminCommand {
         }
         source.sendFailure(Component.literal("[sg admin] not looking at a living entity"));
         return null;
-    }
-
-    private static int feedback(CommandContext<CommandSourceStack> ctx, String message) {
-        ctx.getSource().sendSuccess(() -> Component.literal("[sg admin] " + message), false);
-        return 1;
     }
 }

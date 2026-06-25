@@ -33,11 +33,10 @@ import java.util.Optional;
  * nested classes here, shared by the datapack loader, the sync packet, and the picker exporter.
  */
 public class HeadInfo {
-    private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
-
+    public static final double DEFAULT_AZIMUTH = EyePlacement.DEFAULT_AZIMUTH;
     /** Re-exported from {@link EyePlacement} so existing callers (picker) keep their reference. */
     public static final double DEFAULT_INCLINATION = EyePlacement.DEFAULT_INCLINATION;
-    public static final double DEFAULT_AZIMUTH = EyePlacement.DEFAULT_AZIMUTH;
+    private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
 
     private final RuntimeConfig entityConfig;
     // The single placement variant chosen for this mob (by its stored roll). Null when no usable config.
@@ -48,73 +47,151 @@ public class HeadInfo {
         this.heads = headsOfVariant(config, variantIndex);
     }
 
-    /**
-     * Client-side helper for rendering: reads the synced {@link ClientEyeConfigs}, resolves the mob's
-     * placement variant from its stored roll, and caches per (entity, age, variant) so same-arrangement
-     * mobs share one instance.
-     */
-    public static HeadInfo getHelper(ResourceLocation entityName, LivingEntity entity) {
-        boolean baby = entity.isBaby();
-        RuntimeConfig config = ClientEyeConfigs.get(entityName, baby);
-        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
-        return headInfoCache.computeIfAbsent(new CacheKey(entityName, baby, variant),
-                key -> new HeadInfo(config, key.variant));
+    private record CacheKey(ResourceLocation entityName, boolean baby, int variant) {
     }
 
-    /**
-     * Server-side helper (harvest / kill-drop): reads the authoritative {@link ServerEyeConfigs} rather
-     * than the client store, so geometry is correct on a dedicated server. Not cached — server use is
-     * infrequent and must not share the client cache (single-player runs both stores in one JVM).
-     */
-    public static HeadInfo serverHelper(ResourceLocation entityName, LivingEntity entity) {
-        RuntimeConfig config = ServerEyeConfigs.get(entityName, entity);
-        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
-        return new HeadInfo(config, variant);
+    // --- Datapack structure (mutable POJOs, each with a Codec; the file path supplies the entity id) ---
+
+    // Raw datapack file structure (one file per entity).
+    public static class ConfigFile {
+        public static final Codec<ConfigFile> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                VersionedEntry.CODEC.listOf().optionalFieldOf("entries", List.of())
+                        .forGetter(f -> f.entries != null ? f.entries : List.of())
+        ).apply(inst, entries -> {
+            ConfigFile f = new ConfigFile();
+            f.entries = entries;
+            return f;
+        }));
+
+        public List<VersionedEntry> entries;
     }
 
-    /** Drop cached helpers; called when the client receives new configs or disconnects. */
-    public static void clearCache() {
-        headInfoCache.clear();
+    public static class HeadConfig {
+        public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.STRING.optionalFieldOf("attachPoint", "head")
+                        .forGetter(h -> h.attachPoint != null ? h.attachPoint : "head"),
+                EyeDefinition.CODEC.listOf().optionalFieldOf("eyes", List.of())
+                        .forGetter(h -> h.eyes != null ? h.eyes : List.of())
+        ).apply(inst, (attachPoint, eyes) -> {
+            HeadConfig h = new HeadConfig();
+            h.attachPoint = attachPoint;
+            h.eyes = eyes;
+            return h;
+        }));
+
+        public String attachPoint;
+        public List<EyeDefinition> eyes;
     }
 
-    /** Whether this entity has a usable, enabled placement variant. */
-    public boolean hasConfig() {
-        return entityConfig != null && entityConfig.isEnabled() && heads != null && !heads.isEmpty();
+    // Runtime structure selected by version and age, then synced to clients.
+    public static class RuntimeConfig {
+        public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.BOOL.optionalFieldOf("enabled").forGetter(c -> Optional.ofNullable(c.enabled)),
+                Variant.CODEC.listOf().optionalFieldOf("variants", List.of())
+                        .forGetter(c -> c.variants != null ? c.variants : List.of())
+        ).apply(inst, (enabled, variants) -> {
+            RuntimeConfig c = new RuntimeConfig();
+            c.enabled = enabled.orElse(null);
+            c.variants = variants;
+            return c;
+        }));
+
+        public Boolean enabled;
+        // One or more placement variants; a mob picks one (weighted) at spawn. The loader always fills
+        // this with at least one entry (a legacy bare `heads` becomes a single weight-1 variant).
+        public List<Variant> variants;
+
+        /** Defaults to enabled when the field is absent. */
+        public boolean isEnabled() {
+            return enabled == null || enabled;
+        }
     }
 
-    public int getHeadCount() {
-        return hasConfig() ? heads.size() : 0;
+    public static class RuntimeConfigSet {
+        public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                RuntimeConfig.CODEC.optionalFieldOf("adult").forGetter(s -> Optional.ofNullable(s.adult)),
+                RuntimeConfig.CODEC.optionalFieldOf("baby").forGetter(s -> Optional.ofNullable(s.baby)),
+                RuntimeConfig.CODEC.optionalFieldOf("any").forGetter(s -> Optional.ofNullable(s.any))
+        ).apply(inst, (adult, baby, any) -> {
+            RuntimeConfigSet s = new RuntimeConfigSet();
+            s.adult = adult.orElse(null);
+            s.baby = baby.orElse(null);
+            s.any = any.orElse(null);
+            return s;
+        }));
+
+        public RuntimeConfig adult;
+        public RuntimeConfig any;
+        public RuntimeConfig baby;
+
+        public RuntimeConfig get(boolean isBaby) {
+            RuntimeConfig ageConfig = isBaby ? baby : adult;
+            return ageConfig != null ? ageConfig : any;
+        }
+
+        public boolean hasAnyConfig() {
+            return adult != null || baby != null || any != null;
+        }
     }
 
-    /** The part token (string name) the resolver should attach this head's eyes to. */
-    public String getAttachToken(int headIndex) {
-        HeadConfig head = headAt(headIndex);
-        return head != null && head.attachPoint != null ? head.attachPoint : "head";
+    /** One weighted placement arrangement: a complete set of heads (each with its own eyes). */
+    public static class Variant {
+        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.DOUBLE.optionalFieldOf("weight").forGetter(v -> Optional.ofNullable(v.weight)),
+                HeadConfig.CODEC.listOf().optionalFieldOf("heads", List.of())
+                        .forGetter(v -> v.heads != null ? v.heads : List.of())
+        ).apply(inst, (weight, heads) -> {
+            Variant v = new Variant();
+            v.weight = weight.orElse(null);
+            v.heads = heads;
+            return v;
+        }));
+
+        public List<HeadConfig> heads;
+        public Double weight; // relative probability; null = 1.0
+
+        /** Negative weights are clamped to 0; absent defaults to 1. */
+        public double weight() {
+            return weight == null ? 1.0 : Math.max(0.0, weight);
+        }
     }
 
-    public int getEyeCount(int headIndex) {
-        HeadConfig head = headAt(headIndex);
-        return head != null && head.eyes != null ? head.eyes.size() : 0;
-    }
+    // One selectable entry in a datapack file.
+    public static class VersionedEntry {
+        public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.STRING.optionalFieldOf("version", "").forGetter(e -> e.version != null ? e.version : ""),
+                Codec.STRING.optionalFieldOf("age", "any").forGetter(e -> e.age != null ? e.age : "any"),
+                Codec.BOOL.optionalFieldOf("enabled").forGetter(e -> Optional.ofNullable(e.enabled)),
+                Variant.CODEC.listOf().optionalFieldOf("variants").forGetter(e -> Optional.ofNullable(e.variants))
+        ).apply(inst, (version, age, enabled, variants) -> {
+            VersionedEntry e = new VersionedEntry();
+            e.version = version;
+            e.age = age;
+            e.enabled = enabled.orElse(null);
+            e.variants = variants.orElse(null);
+            return e;
+        }));
 
-    /** The eye's placement (geometry), or {@link EyePlacement#DEFAULT} when out of range. */
-    public EyePlacement placementAt(int headIndex, int eyeIndex) {
-        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? eye.placement() : EyePlacement.DEFAULT;
-    }
+        public String age;
+        public Boolean enabled;
+        // Weighted placement variants; a mob picks one at spawn. The only placement shape on disk.
+        public List<Variant> variants;
+        public String version;
 
-    /** The eye's config appearance (color/glow), or {@link EyeAppearance#DEFAULT} when out of range. */
-    public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
-        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
-        return eye != null ? eye.appearance() : EyeAppearance.DEFAULT;
+        /** Defaults to enabled when the field is absent. */
+        public boolean isEnabled() {
+            return enabled == null || enabled;
+        }
     }
 
     public boolean affectedByInvisibility(int headIndex, int eyeIndex) {
         return placementAt(headIndex, eyeIndex).affectedByInvisibility();
     }
 
-    public float getEyeScale(int headIndex, int eyeIndex) {
-        return (float) placementAt(headIndex, eyeIndex).eyeScale();
+    /** The eye's config appearance (color/glow), or {@link EyeAppearance#DEFAULT} when out of range. */
+    public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
+        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? eye.appearance() : EyeAppearance.DEFAULT;
     }
 
     /**
@@ -131,18 +208,6 @@ public class HeadInfo {
     /** Apply {@link #applyRotation(PoseStack, double, double)} using an eye placement's angles. */
     public static void applyRotation(PoseStack poseStack, EyePlacement placement) {
         applyRotation(poseStack, placement.inclination(), placement.azimuth());
-    }
-
-    private HeadConfig headAt(int headIndex) {
-        if (!hasConfig() || headIndex < 0 || headIndex >= heads.size()) {
-            return null;
-        }
-        return heads.get(headIndex);
-    }
-
-    /** The selected variant's head list (identity used to invalidate per-mob trackers). */
-    public List<HeadConfig> headsRef() {
-        return heads;
     }
 
     /**
@@ -173,12 +238,9 @@ public class HeadInfo {
         return variants.size() - 1;
     }
 
-    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
-        if (config == null || config.variants == null || config.variants.isEmpty()) {
-            return null;
-        }
-        int clamped = Math.max(0, Math.min(variantIndex, config.variants.size() - 1));
-        return config.variants.get(clamped).heads;
+    /** Drop cached helpers; called when the client receives new configs or disconnects. */
+    public static void clearCache() {
+        headInfoCache.clear();
     }
 
     private EyeDefinition eyeAt(int headIndex, int eyeIndex) {
@@ -189,140 +251,77 @@ public class HeadInfo {
         return head.eyes.get(eyeIndex);
     }
 
-    private record CacheKey(ResourceLocation entityName, boolean baby, int variant) {
+    /** The part token (string name) the resolver should attach this head's eyes to. */
+    public String getAttachToken(int headIndex) {
+        HeadConfig head = headAt(headIndex);
+        return head != null && head.attachPoint != null ? head.attachPoint : "head";
     }
 
-    // --- Datapack structure (mutable POJOs, each with a Codec; the file path supplies the entity id) ---
-
-    // Raw datapack file structure (one file per entity).
-    public static class ConfigFile {
-        public List<VersionedEntry> entries;
-
-        public static final Codec<ConfigFile> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                VersionedEntry.CODEC.listOf().optionalFieldOf("entries", List.of())
-                        .forGetter(f -> f.entries != null ? f.entries : List.of())
-        ).apply(inst, entries -> {
-            ConfigFile f = new ConfigFile();
-            f.entries = entries;
-            return f;
-        }));
+    public int getEyeCount(int headIndex) {
+        HeadConfig head = headAt(headIndex);
+        return head != null && head.eyes != null ? head.eyes.size() : 0;
     }
 
-    // One selectable entry in a datapack file.
-    public static class VersionedEntry {
-        public String version;
-        public String age;
-        public Boolean enabled;
-        // Weighted placement variants; a mob picks one at spawn. The only placement shape on disk.
-        public List<Variant> variants;
+    public float getEyeScale(int headIndex, int eyeIndex) {
+        return (float) placementAt(headIndex, eyeIndex).eyeScale();
+    }
 
-        /** Defaults to enabled when the field is absent. */
-        public boolean isEnabled() {
-            return enabled == null || enabled;
+    public int getHeadCount() {
+        return hasConfig() ? heads.size() : 0;
+    }
+
+    /**
+     * Client-side helper for rendering: reads the synced {@link ClientEyeConfigs}, resolves the mob's
+     * placement variant from its stored roll, and caches per (entity, age, variant) so same-arrangement
+     * mobs share one instance.
+     */
+    public static HeadInfo getHelper(ResourceLocation entityName, LivingEntity entity) {
+        boolean baby = entity.isBaby();
+        RuntimeConfig config = ClientEyeConfigs.get(entityName, baby);
+        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
+        return headInfoCache.computeIfAbsent(new CacheKey(entityName, baby, variant),
+                key -> new HeadInfo(config, key.variant));
+    }
+
+    /** Whether this entity has a usable, enabled placement variant. */
+    public boolean hasConfig() {
+        return entityConfig != null && entityConfig.isEnabled() && heads != null && !heads.isEmpty();
+    }
+
+    private HeadConfig headAt(int headIndex) {
+        if (!hasConfig() || headIndex < 0 || headIndex >= heads.size()) {
+            return null;
         }
-
-        public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.optionalFieldOf("version", "").forGetter(e -> e.version != null ? e.version : ""),
-                Codec.STRING.optionalFieldOf("age", "any").forGetter(e -> e.age != null ? e.age : "any"),
-                Codec.BOOL.optionalFieldOf("enabled").forGetter(e -> Optional.ofNullable(e.enabled)),
-                Variant.CODEC.listOf().optionalFieldOf("variants").forGetter(e -> Optional.ofNullable(e.variants))
-        ).apply(inst, (version, age, enabled, variants) -> {
-            VersionedEntry e = new VersionedEntry();
-            e.version = version;
-            e.age = age;
-            e.enabled = enabled.orElse(null);
-            e.variants = variants.orElse(null);
-            return e;
-        }));
+        return heads.get(headIndex);
     }
 
-    // Runtime structure selected by version and age, then synced to clients.
-    public static class RuntimeConfig {
-        public Boolean enabled;
-        // One or more placement variants; a mob picks one (weighted) at spawn. The loader always fills
-        // this with at least one entry (a legacy bare `heads` becomes a single weight-1 variant).
-        public List<Variant> variants;
-
-        /** Defaults to enabled when the field is absent. */
-        public boolean isEnabled() {
-            return enabled == null || enabled;
+    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
+        if (config == null || config.variants == null || config.variants.isEmpty()) {
+            return null;
         }
-
-        public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.BOOL.optionalFieldOf("enabled").forGetter(c -> Optional.ofNullable(c.enabled)),
-                Variant.CODEC.listOf().optionalFieldOf("variants", List.of())
-                        .forGetter(c -> c.variants != null ? c.variants : List.of())
-        ).apply(inst, (enabled, variants) -> {
-            RuntimeConfig c = new RuntimeConfig();
-            c.enabled = enabled.orElse(null);
-            c.variants = variants;
-            return c;
-        }));
+        int clamped = Math.max(0, Math.min(variantIndex, config.variants.size() - 1));
+        return config.variants.get(clamped).heads;
     }
 
-    /** One weighted placement arrangement: a complete set of heads (each with its own eyes). */
-    public static class Variant {
-        public Double weight; // relative probability; null = 1.0
-        public List<HeadConfig> heads;
-
-        /** Negative weights are clamped to 0; absent defaults to 1. */
-        public double weight() {
-            return weight == null ? 1.0 : Math.max(0.0, weight);
-        }
-
-        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.DOUBLE.optionalFieldOf("weight").forGetter(v -> Optional.ofNullable(v.weight)),
-                HeadConfig.CODEC.listOf().optionalFieldOf("heads", List.of())
-                        .forGetter(v -> v.heads != null ? v.heads : List.of())
-        ).apply(inst, (weight, heads) -> {
-            Variant v = new Variant();
-            v.weight = weight.orElse(null);
-            v.heads = heads;
-            return v;
-        }));
+    /** The selected variant's head list (identity used to invalidate per-mob trackers). */
+    public List<HeadConfig> headsRef() {
+        return heads;
     }
 
-    public static class RuntimeConfigSet {
-        public RuntimeConfig adult;
-        public RuntimeConfig baby;
-        public RuntimeConfig any;
-
-        public RuntimeConfig get(boolean isBaby) {
-            RuntimeConfig ageConfig = isBaby ? baby : adult;
-            return ageConfig != null ? ageConfig : any;
-        }
-
-        public boolean hasAnyConfig() {
-            return adult != null || baby != null || any != null;
-        }
-
-        public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                RuntimeConfig.CODEC.optionalFieldOf("adult").forGetter(s -> Optional.ofNullable(s.adult)),
-                RuntimeConfig.CODEC.optionalFieldOf("baby").forGetter(s -> Optional.ofNullable(s.baby)),
-                RuntimeConfig.CODEC.optionalFieldOf("any").forGetter(s -> Optional.ofNullable(s.any))
-        ).apply(inst, (adult, baby, any) -> {
-            RuntimeConfigSet s = new RuntimeConfigSet();
-            s.adult = adult.orElse(null);
-            s.baby = baby.orElse(null);
-            s.any = any.orElse(null);
-            return s;
-        }));
+    /** The eye's placement (geometry), or {@link EyePlacement#DEFAULT} when out of range. */
+    public EyePlacement placementAt(int headIndex, int eyeIndex) {
+        EyeDefinition eye = eyeAt(headIndex, eyeIndex);
+        return eye != null ? eye.placement() : EyePlacement.DEFAULT;
     }
 
-    public static class HeadConfig {
-        public String attachPoint;
-        public List<EyeDefinition> eyes;
-
-        public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.optionalFieldOf("attachPoint", "head")
-                        .forGetter(h -> h.attachPoint != null ? h.attachPoint : "head"),
-                EyeDefinition.CODEC.listOf().optionalFieldOf("eyes", List.of())
-                        .forGetter(h -> h.eyes != null ? h.eyes : List.of())
-        ).apply(inst, (attachPoint, eyes) -> {
-            HeadConfig h = new HeadConfig();
-            h.attachPoint = attachPoint;
-            h.eyes = eyes;
-            return h;
-        }));
+    /**
+     * Server-side helper (harvest / kill-drop): reads the authoritative {@link ServerEyeConfigs} rather
+     * than the client store, so geometry is correct on a dedicated server. Not cached — server use is
+     * infrequent and must not share the client cache (single-player runs both stores in one JVM).
+     */
+    public static HeadInfo serverHelper(ResourceLocation entityName, LivingEntity entity) {
+        RuntimeConfig config = ServerEyeConfigs.get(entityName, entity);
+        int variant = chooseVariantIndex(config, EyeState.getVariantRoll(entity));
+        return new HeadInfo(config, variant);
     }
 }

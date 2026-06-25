@@ -21,18 +21,6 @@ public final class GeckoCompat {
     private GeckoCompat() {
     }
 
-    /** Attach the googly-eye layer if this is a GeckoLib renderer. No-op without GeckoLib. */
-    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
-        if (!LOADED) {
-            return false;
-        }
-        try {
-            return GeckoIntegration.tryAddLayer(renderer);
-        } catch (Throwable t) {
-            return false;
-        }
-    }
-
     /** Bone names for a GeckoLib mob (for the picker), or empty if not GeckoLib / unavailable. */
     public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
         if (!LOADED) {
@@ -42,6 +30,18 @@ public final class GeckoCompat {
             return GeckoIntegration.enumerate(renderer, living);
         } catch (Throwable t) {
             return List.of();
+        }
+    }
+
+    /** Attach the googly-eye layer if this is a GeckoLib renderer. No-op without GeckoLib. */
+    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
+        if (!LOADED) {
+            return false;
+        }
+        try {
+            return GeckoIntegration.tryAddLayer(renderer);
+        } catch (Throwable t) {
+            return false;
         }
     }
 }

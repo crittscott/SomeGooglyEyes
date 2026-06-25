@@ -19,8 +19,8 @@ public record EyePlacement(Vec3 position, double eyeScale, double irisScale,
                            double inclination, double azimuth, boolean affectedByInvisibility) {
 
     /** Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye. */
-    public static final double DEFAULT_INCLINATION = 90.0;
     public static final double DEFAULT_AZIMUTH = 270.0;
+    public static final double DEFAULT_INCLINATION = 90.0;
 
     public static final EyePlacement DEFAULT = new EyePlacement(
             new Vec3(-0.13, -0.25, -0.25), 0.75, 0.6,

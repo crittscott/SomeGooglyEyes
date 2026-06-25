@@ -18,15 +18,15 @@ package com.github.crittscott.somegoogly.eye.state;
  */
 public interface EyeHolder {
 
-    /** Whether eyes are currently present/shown on this holder. */
-    boolean hasEyes();
-
-    /** Turn the eyes on/off (for a mob this is the spawn/harvest flag; for an item, presence). */
-    void setHasEyes(boolean hasEyes);
-
     /** The holder's current appearance ({@link AppearanceOverride#EMPTY} when none). */
     AppearanceOverride getEyeProperties();
 
+    /** Whether eyes are currently present/shown on this holder. */
+    boolean hasEyes();
+
     /** Replace the holder's appearance. */
     void setEyeProperties(AppearanceOverride properties);
+
+    /** Turn the eyes on/off (for a mob this is the spawn/harvest flag; for an item, presence). */
+    void setHasEyes(boolean hasEyes);
 }

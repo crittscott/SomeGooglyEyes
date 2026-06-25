@@ -16,10 +16,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  */
 public record EyeDefinition(EyePlacement placement, EyeAppearance appearance) {
 
-    public static final EyeDefinition DEFAULT = new EyeDefinition(EyePlacement.DEFAULT, EyeAppearance.DEFAULT);
-
     public static final Codec<EyeDefinition> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             EyePlacement.MAP_CODEC.forGetter(EyeDefinition::placement),
             EyeAppearance.MAP_CODEC.forGetter(EyeDefinition::appearance)
     ).apply(inst, EyeDefinition::new));
+
+    public static final EyeDefinition DEFAULT = new EyeDefinition(EyePlacement.DEFAULT, EyeAppearance.DEFAULT);
 }

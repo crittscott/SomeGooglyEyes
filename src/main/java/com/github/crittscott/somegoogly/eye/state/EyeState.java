@@ -28,47 +28,11 @@ import javax.annotation.Nullable;
  */
 public final class EyeState {
 
-    public static final String HAS_EYES = "somegoogly:hasGooglyEyes";
     public static final String EYE_OVERRIDES = "somegoogly:eyeOverrides";
+    public static final String HAS_EYES = "somegoogly:hasGooglyEyes";
     public static final String VARIANT_ROLL = "somegoogly:eyeVariantRoll";
 
     private EyeState() {
-    }
-
-    // --- Reads (side-safe) ---------------------------------------------------
-
-    public static boolean hasEyes(LivingEntity entity) {
-        return entity.getPersistentData().getBoolean(HAS_EYES);
-    }
-
-    /**
-     * The mob's stored placement-variant roll (0..1), assigned once at spawn and locked for life. Maps
-     * onto the current age config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults
-     * to 0 (the first variant) when unset — e.g. mobs that predate the roll or aren't eye-eligible.
-     */
-    public static float getVariantRoll(LivingEntity entity) {
-        return entity.getPersistentData().getFloat(VARIANT_ROLL);
-    }
-
-    /**
-     * Read the mob's appearance override as {@link AppearanceOverride} ({@link AppearanceOverride#EMPTY}
-     * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
-     * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
-     */
-    public static AppearanceOverride readProperties(LivingEntity entity) {
-        return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
-    }
-
-    /** The overrides compound, or {@code null} if absent (used by the sync packet). */
-    @Nullable
-    public static CompoundTag overridesTagOrNull(LivingEntity entity) {
-        CompoundTag data = entity.getPersistentData();
-        return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
-    }
-
-    /** Write the synced placement-variant roll onto the client's copy of the entity. */
-    public static void applyVariantRoll(LivingEntity entity, float roll) {
-        entity.getPersistentData().putFloat(VARIANT_ROLL, roll);
     }
 
     /** Replace (or clear, when {@code null}) the overrides compound on the client from a synced packet. */
@@ -80,7 +44,56 @@ public final class EyeState {
         }
     }
 
-    // --- Mutations (server-only; write NBT then broadcast) -------------------
+    /** Write the synced placement-variant roll onto the client's copy of the entity. */
+    public static void applyVariantRoll(LivingEntity entity, float roll) {
+        entity.getPersistentData().putFloat(VARIANT_ROLL, roll);
+    }
+
+    public static void clearCorneaTint(LivingEntity entity) {
+        setProperties(entity, readProperties(entity).withCorneaColor(null));
+    }
+
+    public static void clearIrisTint(LivingEntity entity) {
+        setProperties(entity, readProperties(entity).withIrisColor(null));
+    }
+
+    /**
+     * The mob's stored placement-variant roll (0..1), assigned once at spawn and locked for life. Maps
+     * onto the current age config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults
+     * to 0 (the first variant) when unset — e.g. mobs that predate the roll or aren't eye-eligible.
+     */
+    public static float getVariantRoll(LivingEntity entity) {
+        return entity.getPersistentData().getFloat(VARIANT_ROLL);
+    }
+
+    public static boolean hasEyes(LivingEntity entity) {
+        return entity.getPersistentData().getBoolean(HAS_EYES);
+    }
+
+    /** The overrides compound, or {@code null} if absent (used by the sync packet). */
+    @Nullable
+    public static CompoundTag overridesTagOrNull(LivingEntity entity) {
+        CompoundTag data = entity.getPersistentData();
+        return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+    }
+
+    /**
+     * Read the mob's appearance override as {@link AppearanceOverride} ({@link AppearanceOverride#EMPTY}
+     * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
+     * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
+     */
+    public static AppearanceOverride readProperties(LivingEntity entity) {
+        return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
+    }
+
+    public static void setCorneaTint(LivingEntity entity, EyeColor color) {
+        setProperties(entity, readProperties(entity).withCorneaColor(color));
+    }
+
+    /** {@code null} clears the override (eyes fall back to per-eye config glow). */
+    public static void setGlow(LivingEntity entity, @Nullable Boolean glow) {
+        setProperties(entity, readProperties(entity).withGlow(glow));
+    }
 
     public static void setHasEyes(LivingEntity entity, boolean hasEyes) {
         entity.getPersistentData().putBoolean(HAS_EYES, hasEyes);
@@ -89,23 +102,6 @@ public final class EyeState {
 
     public static void setIrisTint(LivingEntity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withIrisColor(color));
-    }
-
-    public static void clearIrisTint(LivingEntity entity) {
-        setProperties(entity, readProperties(entity).withIrisColor(null));
-    }
-
-    public static void setCorneaTint(LivingEntity entity, EyeColor color) {
-        setProperties(entity, readProperties(entity).withCorneaColor(color));
-    }
-
-    public static void clearCorneaTint(LivingEntity entity) {
-        setProperties(entity, readProperties(entity).withCorneaColor(null));
-    }
-
-    /** {@code null} clears the override (eyes fall back to per-eye config glow). */
-    public static void setGlow(LivingEntity entity, @Nullable Boolean glow) {
-        setProperties(entity, readProperties(entity).withGlow(glow));
     }
 
     /**

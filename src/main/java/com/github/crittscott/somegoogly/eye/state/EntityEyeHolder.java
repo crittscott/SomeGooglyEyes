@@ -15,22 +15,22 @@ public final class EntityEyeHolder implements EyeHolder {
     }
 
     @Override
-    public boolean hasEyes() {
-        return EyeState.hasEyes(entity);
-    }
-
-    @Override
-    public void setHasEyes(boolean hasEyes) {
-        EyeState.setHasEyes(entity, hasEyes);
-    }
-
-    @Override
     public AppearanceOverride getEyeProperties() {
         return EyeState.readProperties(entity);
     }
 
     @Override
+    public boolean hasEyes() {
+        return EyeState.hasEyes(entity);
+    }
+
+    @Override
     public void setEyeProperties(AppearanceOverride properties) {
         EyeState.setProperties(entity, properties);
+    }
+
+    @Override
+    public void setHasEyes(boolean hasEyes) {
+        EyeState.setHasEyes(entity, hasEyes);
     }
 }

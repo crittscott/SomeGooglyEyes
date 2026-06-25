@@ -24,6 +24,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class EyeReactionHandler {
 
     @SubscribeEvent
+    public void onLivingHeal(LivingHealEvent event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
+        ServerBehaviorScheduler.onHealed(event.getEntity());
+    }
+
+    @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
         if (event.getEntity().level().isClientSide()) {
             return;
@@ -31,14 +39,6 @@ public class EyeReactionHandler {
         if (event.getSource().getEntity() instanceof Player) {
             ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
         }
-    }
-
-    @SubscribeEvent
-    public void onLivingHeal(LivingHealEvent event) {
-        if (event.getEntity().level().isClientSide()) {
-            return;
-        }
-        ServerBehaviorScheduler.onHealed(event.getEntity());
     }
 
     @SubscribeEvent
