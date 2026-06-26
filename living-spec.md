@@ -1,8 +1,8 @@
 # Some Googly Eyes: Living Specification
 
 > **Status:** implementation-grounded, living document.  
-> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-23.  
-> **Validation status:** this document records source-level behavior; it is not evidence that every path has been tested in-game or on a dedicated server.
+> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-25.  
+> **Validation status:** server-side logic is now partly covered by an automated Forge GameTest suite (§14), run headless via `runGameTestServer`. The covered paths are noted there; rendering, client wobble, GeckoLib, the picker, and dedicated-server loadability are not exercised by those tests and remain source-derived.
 
 ## 1. Purpose
 
@@ -375,7 +375,36 @@ Malformed individual entries in a config-sync payload are logged and skipped so 
 | Dedicated-server compatibility certification | Experimental | Code has side guards, but no runtime result is recorded here. |
 | Robust generic model attachment | Partial | Reflection and external-framework integrations intentionally trade completeness for broad coverage. |
 
-## 14. Maintenance rules for this document
+## 14. Automated tests
+
+A server-side Forge GameTest suite lives in `src/main/java/com/github/crittscott/somegoogly/gametest/`,
+registered under the `somegoogly` namespace and run headless with `./gradlew runGameTestServer` (it boots
+a `GameTestServer`, runs every registered test, and exits non-zero on any failure). The suite is
+**server-only by construction**: it needs no client and no other mod, and — by deliberate constraint —
+adds no testability hooks to production code. Anything reachable only through a client class or a private
+internal seam is therefore out of scope. Pure-logic checks are written as world-less `@GameTest` methods
+(assert, then `succeed()`); integration checks spawn into the shared `empty` structure template.
+
+Covered:
+
+| Area | What the tests pin |
+| --- | --- |
+| Version selection | `VersionRangeMatcher` bracket bounds, exact match, zero-padding (`1.20` ≡ `1.20.0`), malformed input |
+| Variant selection | `chooseVariantIndex` determinism and cumulative-weight boundaries; weight default/clamp |
+| Serialization | flat-JSON eye codec round-trip + absent-field defaults; sparse `AppearanceOverride` NBT; all three packets by encode→decode→encode byte-idempotence |
+| Eye state | sparse override writes, tint clearing, `setGlow(null)` fallback, compound removal when empty |
+| Behaviors | every behavior is seed-deterministic over its run; blink mask selection; catch-up replay equals natural playback |
+| Config | `percentFor` exact-beats-wildcard resolution; shipped configs load (including `player`, and `pig`'s two variants) |
+| Spawn | at-spawn roll endpoints (0% never, 100% always for an eligible mob); variant roll in `[0, 1)` |
+| Recipe | `eye_modifier` transforms (dye / glowstone / redstone / cobweb), unrelated-NBT preservation, two-eye rejection |
+
+Not covered — still source-derived or manual: the `ServerBehaviorScheduler` schedule internals
+(one-at-a-time, heal cooldown, event gating, the mid-life potion-while-tracked path), splash-potion target
+selection, the harvest paths, datapack-reload precedence / duplicate / invalid-age edge cases, and
+everything client-side (rendering, wobble, GeckoLib, picker) or dedicated-server. These keep their stated
+Implemented / Partial / Experimental status without a recorded automated check.
+
+## 15. Maintenance rules for this document
 
 When changing the mod, update this document in the same change when any of the following changes:
 
@@ -384,6 +413,7 @@ When changing the mod, update this document in the same change when any of the f
 - persisted NBT keys or eye-item NBT schema;
 - user-visible item, recipe, potion, enchantment, command, or picker behavior;
 - resolver support or known model-framework limitations;
-- an item moves between Implemented, Partial, Experimental, and Deferred.
+- an item moves between Implemented, Partial, Experimental, and Deferred;
+- the GameTest suite (§14) gains or loses coverage — keep its tests in the main source set and free of production-code testability hooks, and keep the §14 covered/not-covered lists in step.
 
-Do not promote a compatibility claim—especially dedicated-server support or external model-framework behavior—from Experimental without a recorded runtime check.
+Do not promote a compatibility claim—especially dedicated-server support or external model-framework behavior—from Experimental without a recorded runtime check. A passing GameTest counts as a recorded runtime check for the specific server-side path it exercises; it says nothing about client rendering or dedicated-server loadability.
