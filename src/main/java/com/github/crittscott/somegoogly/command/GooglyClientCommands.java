@@ -361,8 +361,14 @@ public class GooglyClientCommands {
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
-        // spawnall has no chain tail — one-off only.
-        sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));
+        // spawnall [mod] — bare spawns every mod; an optional namespace narrows it (a debugging aid).
+        verb(sg, "spawnall", b -> {
+            terminal(b, GooglyClientCommands::spawnAll);
+            RequiredArgumentBuilder<CommandSourceStack, String> mod =
+                    Commands.argument("mod", StringArgumentType.word());
+            terminal(mod, GooglyClientCommands::spawnAll);
+            b.then(mod);
+        });
 
         dispatcher.register(sg);
     }
@@ -426,15 +432,23 @@ public class GooglyClientCommands {
         if (server == null || mc.player == null) {
             throw SINGLEPLAYER_ONLY.create();
         }
+        // The mod-namespace filter is optional; absent when the bare `spawnall` node executes.
+        String mod;
+        try {
+            mod = StringArgumentType.getString(ctx, "mod");
+        } catch (IllegalArgumentException noArg) {
+            mod = null;
+        }
         // Spawning is server-side work; resolve the server-side player on the server thread and run there.
         UUID uuid = mc.player.getUUID();
+        String modFilter = mod;
         server.execute(() -> {
             ServerPlayer player = server.getPlayerList().getPlayer(uuid);
             if (player != null) {
-                SpawnAllCommand.spawn(player);
+                SpawnAllCommand.spawn(player, modFilter);
             }
         });
-        feedback(ctx, "Spawning mobs…");
+        feedback(ctx, mod == null ? "Spawning mobs…" : "Spawning " + mod + " mobs…");
         return 1;
     }
 

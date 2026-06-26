@@ -1,7 +1,7 @@
 # Some Googly Eyes: Living Specification
 
 > **Status:** implementation-grounded, living document.  
-> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-25.  
+> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-26.  
 > **Validation status:** server-side logic is now partly covered by an automated Forge GameTest suite (§14), run headless via `runGameTestServer`. The covered paths are noted there; rendering, client wobble, GeckoLib, the picker, and dedicated-server loadability are not exercised by those tests and remain source-derived.
 
 ## 1. Purpose
@@ -330,7 +330,7 @@ It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests
 
 ### 10.2 `/sg` command surface
 
-The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player.
+The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player (`/sg spawnall`, see §10.4).
 
 Variants are authored explicitly: `/sg variant new` appends and switches to a fresh arrangement, `/sg variant <n>` switches to one, `/sg variant del <n>` removes one (the last variant cannot be deleted), and `/sg variant weight <w>` sets the current variant's relative weight. All other eye-editing verbs act on the variant currently being edited; the HUD shows the active variant and weight.
 
@@ -346,6 +346,19 @@ The picker previews saved and current eyes with a centered iris and a local RGB 
 - **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
 - **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
 - **Deferred:** remote/multiplayer export is intentionally unsupported.
+
+### 10.4 Spawn-all authoring grid
+
+`/sg spawnall [mod]` is a single-player, creative-only convenience that spawns one instance of every registered living entity type (the player excluded), so the picker can reach any mob without hunting it down. Types are grouped by mod namespace into rows and sorted by id within each row; non-living and uncreatable types are dropped. Every spawned mob has its AI disabled (`NoAi`), is marked persistence-required so it cannot despawn, and faces the player.
+
+An optional mod-namespace argument restricts the grid to one mod (`/sg spawnall minecraft`) and additionally reports each type in that namespace that could not be placed and why (`create()` threw, `create()` returned null, or `addFreshEntity` refused) — a debugging aid for mods whose mobs do not appear.
+
+Placement has two modes, chosen by whether the block beneath the player is air:
+
+- **On terrain (solid below):** each mob sits on its per-column heightmap; water-dwellers get a short water column sized to the mob.
+- **Over air (a deliberate void-display setup):** the per-column terrain is ignored and the whole grid is laid on a flat sandstone floor pinned to the player's level — a 5×5 tile under each mob, a walled 3×3 sandstone basin for water mobs, and a sandstone roof eight blocks up (glowstone directly over each mob) that blocks the sky so sun-sensitive mobs do not burn. It freely overwrites existing blocks and is intended for throwaway test worlds.
+
+This is an authoring/debug tool only: it writes no datapack output and does not affect shipped behavior.
 
 ## 11. Debug and administrative commands
 
