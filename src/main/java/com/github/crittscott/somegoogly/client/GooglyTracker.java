@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.event.ClientEventHandler;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -12,16 +12,14 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class GooglyTracker {
-    public final LivingEntity parent;
     public final HeadInfo helper;
+    public final LivingEntity parent;
     public final Random rand;
 
-    public boolean shouldUpdate = true;
     public int lastUpdateRequest;
+    public boolean shouldUpdate = true;
 
-    public double motionX;
-    public double motionY;
-    public double motionZ;
+    public double motionX, motionY, motionZ;
 
     private double prevX, prevY, prevZ;
 
@@ -71,27 +69,27 @@ public class GooglyTracker {
         private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
 
         // Head orientation, kept across ticks to differentiate into angular velocity/acceleration.
-        public float prevRotationYaw;
-        public float rotationYaw;
         public float prevRotationPitch;
+        public float prevRotationYaw;
         public float rotationPitch;
+        public float rotationYaw;
 
         // Pupil position in [-1,1], living in a unit disk (|p| <= 1) mapped onto the full cornea circle.
-        public float prevDeltaX;
-        public float prevDeltaY;
         public float deltaX;
         public float deltaY;
+        public float prevDeltaX;
+        public float prevDeltaY;
         // Pupil velocity.
         public float momentumX;
         public float momentumY;
 
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
-        private boolean primed;
-        private float prevYawRate;
-        private float prevPitchRate;
         private double prevMotionX;
         private double prevMotionY;
         private double prevMotionZ;
+        private float prevPitchRate;
+        private float prevYawRate;
+        private boolean primed;
 
         public EyeInfo() {
             prevDeltaY = deltaY = -1F;

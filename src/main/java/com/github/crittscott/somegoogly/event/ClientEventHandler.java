@@ -1,13 +1,13 @@
 package com.github.crittscott.somegoogly.event;
 
+import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
-import com.github.crittscott.somegoogly.config.ClientConfig;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.picker.PickerLayer;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
-import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;

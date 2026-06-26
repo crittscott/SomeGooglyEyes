@@ -1,14 +1,14 @@
 package com.github.crittscott.somegoogly.client.render;
 
-import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
-import com.github.crittscott.somegoogly.eye.behavior.EyeRenderContribution;
+import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.EyeRenderContribution;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

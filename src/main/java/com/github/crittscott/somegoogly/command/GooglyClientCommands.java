@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.command;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;

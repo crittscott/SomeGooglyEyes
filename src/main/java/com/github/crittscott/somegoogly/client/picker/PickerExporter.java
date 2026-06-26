@@ -15,10 +15,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Writes the committed picker config to a datapack in the current single-player world

@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.potion.ModPotions;
 import com.github.crittscott.somegoogly.eye.state.EntityEyeHolder;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.potion.ModPotions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.ItemStack;

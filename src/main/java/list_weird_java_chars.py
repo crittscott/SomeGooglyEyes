@@ -4,7 +4,6 @@ import argparse
 import unicodedata
 from pathlib import Path
 
-
 ALLOWED_CONTROLS = {"\t", "\n", "\r"}
 
 

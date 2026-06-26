@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;

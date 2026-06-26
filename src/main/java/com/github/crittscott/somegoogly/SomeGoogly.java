@@ -1,22 +1,22 @@
 package com.github.crittscott.somegoogly;
 
+import com.github.crittscott.somegoogly.client.picker.PickerHud;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
+import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.EyeItemInteractions;
 import com.github.crittscott.somegoogly.event.EyePotionInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.potion.ModPotions;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
-import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerInput;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -63,7 +63,7 @@ public class SomeGoogly {
         ModItems.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModPotions.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModRecipes.register(FMLJavaModLoadingContext.get().getModEventBus());
-        
+
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
