@@ -53,8 +53,9 @@ public class EyePotionInteractions {
                 hit.x - RADIUS_XZ, hit.y - RADIUS_Y, hit.z - RADIUS_XZ,
                 hit.x + RADIUS_XZ, hit.y + RADIUS_Y, hit.z + RADIUS_XZ);
 
-        // Eligible = the entity can actually wear eyes (config-gated, which excludes players) and
-        // doesn't already have them, so a potion thrown into a partly-eyed crowd still does something.
+        // Eligible = the entity can actually wear eyes (config-gated; players have a definition and so
+        // qualify) and doesn't already have them, so a potion thrown into a partly-eyed crowd still
+        // does something.
         List<LivingEntity> candidates = level.getEntitiesOfClass(LivingEntity.class, area,
                 e -> ServerEyeConfigs.isEligible(e) && !EyeState.hasEyes(e));
         if (candidates.isEmpty()) {

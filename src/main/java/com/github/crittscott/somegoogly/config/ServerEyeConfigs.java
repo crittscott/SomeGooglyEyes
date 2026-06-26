@@ -53,7 +53,8 @@ public final class ServerEyeConfigs {
      * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
      * config that is enabled and has at least one head. Used by the splash potion
      * ({@code EyePotionInteractions}), which should only target mobs the eyes would visibly appear on
-     * immediately. Players (and any other unconfigured entity) are not eligible.
+     * immediately. Players have a definition ({@code player.json}) and so are eligible; only an
+     * unconfigured entity is not.
      */
     public static boolean isEligible(LivingEntity living) {
         return isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
