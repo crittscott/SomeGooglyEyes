@@ -59,7 +59,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
         // While the picker is active, force eyes on every eye-configured mob for authoring (mirrors
         // LayerGooglyEyes); otherwise honor the server's per-mob spawn decision.
-        if (!PickerState.active && !living.getPersistentData().getBoolean("somegoogly:hasGooglyEyes")) {
+        if (!PickerState.active && !EyeState.hasEyes(living)) {
             return;
         }
         HeadInfo helper = HeadInfo.getHelper(entityType, living);

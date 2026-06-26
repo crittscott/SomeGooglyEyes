@@ -21,10 +21,12 @@ import java.util.Random;
  * rule holds across every viewer and so server-only game events drive the same path. Triggers are the
  * ambient idle timer below plus game-event reactions (hurt → grow, trade/heal → swirl).
  *
- * <p><b>Server-polite:</b> only mobs that have eyes <i>and</i> are currently tracked by a player are
- * considered. The tracked set is maintained from {@code StartTracking}/{@code StopTracking} (so we never
- * scan all loaded entities), and each tick only walks that small map. All state is transient — nothing
- * is saved; a reload starts fresh.
+ * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
+ * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities), and
+ * each tick only walks that small map. A tracked mob is registered regardless of whether it has eyes yet,
+ * so a mob that gains eyes mid-life (the potion) while already watched still schedules; whether a behavior
+ * actually plays is gated on {@code hasEyes} at execution time (see {@link #eventTarget} and the ambient
+ * roll in {@link #serverTick}). All state is transient — nothing is saved; a reload starts fresh.
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
@@ -62,10 +64,10 @@ public final class ServerBehaviorScheduler {
     }
 
     /**
-     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state only exists
-     * for mobs a player is tracking (created in {@link #onStartTracking}), and we re-check {@code hasEyes}
-     * in case it lost its eyes while still tracked. Returns {@code null} (caller no-ops) otherwise — so
-     * reactions never fire for off-screen or eyeless mobs, and never create lingering state.
+     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
+     * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
+     * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
+     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
      */
     private static MobState eventTarget(LivingEntity mob) {
         MobState state = STATES.get(mob);
@@ -112,11 +114,13 @@ public final class ServerBehaviorScheduler {
         start(mob, state, GROW, GROW.defaultDuration(), RANDOM.nextLong());
     }
 
-    /** A player started tracking {@code mob}. Registers it (if eyed) and catches the player up mid-effect. */
+    /**
+     * A player started tracking {@code mob}. Registers it regardless of current eye state — so a mob that
+     * gains eyes mid-life (the potion) while already watched still schedules, instead of staying silent
+     * until it is untracked and tracked again. Whether a behavior actually plays is gated on {@code hasEyes}
+     * at execution time. Also catches the player up if the mob is already mid-effect.
+     */
     public static void onStartTracking(LivingEntity mob, ServerPlayer player) {
-        if (!EyeState.hasEyes(mob)) {
-            return;
-        }
         MobState state = STATES.computeIfAbsent(mob, m -> {
             MobState s = new MobState();
             s.ambientCooldown = nextCooldown();

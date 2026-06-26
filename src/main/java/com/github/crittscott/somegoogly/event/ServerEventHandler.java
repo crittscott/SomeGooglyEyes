@@ -27,7 +27,6 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.Random;
 
 public class ServerEventHandler {
-    private static final String HAS_EYES_KEY = "somegoogly:hasGooglyEyes";
 
     private static void applyGooglyDecision(LivingEntity living) {
         boolean hasGooglyEyes = false;
@@ -52,7 +51,7 @@ public class ServerEventHandler {
         // Stored only; tracking clients learn the value when they start tracking the entity
         // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
         // mid-life via EyeState (shears / potion / dye / redstone), which re-syncs to trackers itself.
-        living.getPersistentData().putBoolean(HAS_EYES_KEY, hasGooglyEyes);
+        living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
 
         // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
         // later reattach/potion uses this mob's own arrangement). A separate UUID seed keeps it
@@ -94,7 +93,7 @@ public class ServerEventHandler {
         // (Whether babies and adults should differ is a separate, deferred question; for now a mob's
         // having-eyes answer is fixed at spawn and the client just swaps in the age-appropriate
         // geometry as the mob grows.)
-        if (!living.getPersistentData().contains(HAS_EYES_KEY)) {
+        if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);
         }
     }
