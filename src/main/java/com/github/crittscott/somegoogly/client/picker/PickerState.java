@@ -25,6 +25,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * In-world eye-placement authoring state (single-player only), driven by the {@code /sg} CLI and the
@@ -62,8 +63,19 @@ public final class PickerState {
         public final List<ListedEye> eyes = new ArrayList<>();
     }
 
-    /** The session's placement variants, in order (1-based to the user); always at least one. */
-    public static final List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
+    /**
+     * Per-entity authored drafts, retained across mob switches so one picker session can author many
+     * mobs and {@code exportall} can emit them all. Keyed by entity type; the entry for the chosen mob
+     * is the live {@link #variants} list.
+     */
+    private static final Map<ResourceLocation, List<DraftVariant>> authored = new LinkedHashMap<>();
+
+    /**
+     * The placement variants of the mob currently being edited (1-based to the user); always at least
+     * one. Reassigned by {@link #lockOn()} to point at the chosen entity's entry in {@link #authored},
+     * so saves land directly in that entity's retained draft.
+     */
+    public static List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
     /** Index into {@link #variants} of the variant currently being edited. */
     public static int variantIndex = 0;
 
@@ -233,7 +245,6 @@ public final class PickerState {
         }
 
         ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        boolean keepWork = newType.equals(targetType) && totalEyeCount() > 0;
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
@@ -241,11 +252,15 @@ public final class PickerState {
         parts = new ArrayList<>(tokens);
         partIndex = 0;
         currentPart = parts.isEmpty() ? null : parts.get(0);
-        if (!keepWork) {
-            resetWork();
-        }
+        // Switch to this entity's own draft (an empty one on first sighting), so each mob keeps its saved
+        // eyes across switches and exportall can emit them all.
+        variants = authored.computeIfAbsent(newType, t -> new ArrayList<>(List.of(new DraftVariant())));
+        variantIndex = 0;
+        currentEye = defaultEye();
+        selectedIndex = -1;
         freeze(living);
-        return "Chose " + newType + (keepWork ? " (kept " + totalEyeCount() + " eyes)" : "")
+        int kept = totalEyeCount();
+        return "Chose " + newType + (kept > 0 ? " (kept " + kept + " eyes)" : "")
                 + " — " + parts.size() + " parts.";
     }
 
@@ -256,16 +271,6 @@ public final class PickerState {
         currentEye = defaultEye();
         selectedIndex = -1;
         return variantIndex + 1;
-    }
-
-    /** Reset the whole eye list to a single empty variant. Used on (re)choose and unchoose. */
-    public static void resetWork() {
-        variants.clear();
-        variants.add(new DraftVariant());
-        variantIndex = 0;
-        currentEye = defaultEye();
-        currentPart = parts.isEmpty() ? null : parts.get(partIndex);
-        selectedIndex = -1;
     }
 
     /**
@@ -418,12 +423,33 @@ public final class PickerState {
         return targetType;
     }
 
-    /** Build the runtime config from all authored variants, each grouped by part into heads (for export). */
+    /** Build the runtime config for the mob being edited, grouped by part into heads (for export). */
     public static RuntimeConfig toConfig() {
+        return toConfig(variants);
+    }
+
+    /**
+     * Every authored entity's draft as a runtime config, keyed by type, skipping mobs that were chosen
+     * but have no saved eyes. Lets {@code exportall} emit mobs that were saved but never individually
+     * exported.
+     */
+    public static Map<ResourceLocation, RuntimeConfig> authoredConfigs() {
+        Map<ResourceLocation, RuntimeConfig> out = new LinkedHashMap<>();
+        for (Map.Entry<ResourceLocation, List<DraftVariant>> entry : authored.entrySet()) {
+            RuntimeConfig config = toConfig(entry.getValue());
+            if (!config.variants.isEmpty()) {
+                out.put(entry.getKey(), config);
+            }
+        }
+        return out;
+    }
+
+    /** Group a draft's variants by part into heads, dropping any variant that ended up with no eyes. */
+    private static RuntimeConfig toConfig(List<DraftVariant> draftVariants) {
         RuntimeConfig config = new RuntimeConfig();
         config.enabled = true;
         config.variants = new ArrayList<>();
-        for (DraftVariant dv : variants) {
+        for (DraftVariant dv : draftVariants) {
             LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
             for (ListedEye le : dv.eyes) {
                 if (le.part == null) {

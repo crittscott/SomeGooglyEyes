@@ -24,9 +24,11 @@ import net.minecraft.world.phys.Vec3;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Writes picker configs out as datapack JSON. Two entry points:
@@ -34,10 +36,10 @@ import java.util.Optional;
  *   <li>{@link #export()} — the single committed mob, written into the single-player world
  *       ({@code world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}) and {@code /reload}ed
  *       so it persists and re-syncs through the normal path.</li>
- *   <li>{@link #exportAll()} — a plain dump of <i>every</i> eye config currently live in the running
- *       game (the synced {@link ClientEyeConfigs}), into {@code <gameDir>/somegoogly-export/data/…}.
- *       This captures the assembled runtime state regardless of the picker's one-mob draft, for copying
- *       straight into the mod's {@code resources/}.</li>
+ *   <li>{@link #exportAll()} — a dump of <i>every</i> eye config into {@code <gameDir>/somegoogly-export/data/…}:
+ *       the synced runtime state ({@link ClientEyeConfigs}) for untouched entities, overlaid with the
+ *       picker's per-entity drafts ({@link PickerState#authoredConfigs()}) so a mob saved-but-never-exported
+ *       is included too. For copying straight into the mod's {@code resources/}.</li>
  * </ul>
  *
  * <p>Both write the <b>complete, canonical</b> form — every field explicit, in the shipped field order,
@@ -102,33 +104,44 @@ public final class PickerExporter {
     }
 
     /**
-     * Dump every eye config the client currently has (the synced runtime state) to one canonical file
-     * per entity under {@code <gameDir>/somegoogly-export/data/<ns>/eyes/<entity>.json}. Unlike the
-     * per-mob export this needs no committed picker target and triggers no reload — it just captures
-     * what is live so it can be copied into the mod's {@code resources/}.
+     * Dump every eye config to one canonical file per entity under
+     * {@code <gameDir>/somegoogly-export/data/<ns>/eyes/<entity>.json}: the synced runtime state for
+     * untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported mobs
+     * are written too). Unlike the per-mob export this needs no committed picker target and triggers no
+     * reload — it just captures what's authored/live so it can be copied into the mod's {@code resources/}.
      *
      * <p>The declared version range is re-synthesized from the currently-loaded version of each entity's
      * namespace ({@link #versionRange}); the original entry's declared range isn't preserved in the
      * runtime config, so it can't be recovered.
      */
     public static String exportAll() {
-        Map<ResourceLocation, RuntimeConfigSet> all = ClientEyeConfigs.all();
-        if (all.isEmpty()) {
+        Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
+        Map<ResourceLocation, RuntimeConfig> drafts = PickerState.authoredConfigs();
+        if (synced.isEmpty() && drafts.isEmpty()) {
             return "No eye configs loaded to export.";
         }
+
+        // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker drafts.
+        // A draft wins over the synced state for the same entity, so a mob saved-but-never-exported still
+        // gets written — this is what makes exportall "export all", not just the last reloaded mob.
+        Set<ResourceLocation> ids = new LinkedHashSet<>(synced.keySet());
+        ids.addAll(drafts.keySet());
 
         Path root = Minecraft.getInstance().gameDirectory.toPath().resolve(DUMP_DIR);
         int files = 0;
         try {
-            for (Map.Entry<ResourceLocation, RuntimeConfigSet> e : all.entrySet()) {
-                ResourceLocation id = e.getKey();
+            for (ResourceLocation id : ids) {
                 Optional<String> version = ModVersionLookup.versionForNamespace(id.getNamespace());
                 if (version.isEmpty()) {
                     continue; // namespace's mod isn't loaded; can't tag a version
                 }
-                JsonObject json = setToConfigJson(e.getValue(), versionRange(version.get()));
+                String range = versionRange(version.get());
+                RuntimeConfig draft = drafts.get(id);
+                JsonObject json = draft != null
+                        ? draftFileJson(draft, range)
+                        : setToConfigJson(synced.get(id), range);
                 if (json == null) {
-                    continue; // nothing usable in this set
+                    continue; // nothing usable for this entity
                 }
                 Path dir = root.resolve("data").resolve(id.getNamespace()).resolve("eyes");
                 Files.createDirectories(dir);
@@ -139,6 +152,15 @@ public final class PickerExporter {
             return "Export-all failed: " + e.getMessage();
         }
         return "Dumped " + files + " eye configs to " + root + " — copy data/ into resources/.";
+    }
+
+    /** A single-entry file for one authored draft (age {@code "any"}, like {@link #export()}), or null if empty. */
+    private static JsonObject draftFileJson(RuntimeConfig draft, String versionRange) {
+        JsonArray variants = variantsJson(draft.variants);
+        if (variants.isEmpty()) {
+            return null;
+        }
+        return fileJson(entryJson(versionRange, "any", draft.isEnabled(), variants));
     }
 
     // --- Shared canonical serialization (complete fields, shipped order) ---
@@ -214,7 +236,7 @@ public final class PickerExporter {
                 continue; // skip arrangements with no usable eyes
             }
             JsonObject variant = new JsonObject();
-            variant.addProperty("weight", v.weight());
+            variant.addProperty("weight", round(v.weight()));
             variant.add("heads", heads);
             out.add(variant);
         }
@@ -227,10 +249,10 @@ public final class PickerExporter {
         EyeAppearance a = def.appearance();
         JsonObject o = new JsonObject();
         o.add("position", vec3(p.position()));
-        o.addProperty("eyeScale", p.eyeScale());
-        o.addProperty("irisScale", p.irisScale());
-        o.addProperty("inclination", p.inclination());
-        o.addProperty("azimuth", p.azimuth());
+        o.addProperty("eyeScale", round(p.eyeScale()));
+        o.addProperty("irisScale", round(p.irisScale()));
+        o.addProperty("inclination", round(p.inclination()));
+        o.addProperty("azimuth", round(p.azimuth()));
         o.add("corneaColors", colors(a.cornea()));
         o.add("irisColors", colors(a.iris()));
         o.addProperty("glows", a.glow());
@@ -238,19 +260,28 @@ public final class PickerExporter {
         return o;
     }
 
+    /**
+     * Round to one part in a thousand. The {@code /sg} CLI parses inputs as {@code float}, so a typed
+     * {@code 0.22} widens to {@code 0.2199999988079071} as a double; this snaps such float-widening noise
+     * back to the authored value before it's written to the (human-edited) source data.
+     */
+    private static double round(double v) {
+        return Math.round(v * 1000.0) / 1000.0;
+    }
+
     private static JsonArray vec3(Vec3 v) {
         JsonArray array = new JsonArray();
-        array.add(v.x);
-        array.add(v.y);
-        array.add(v.z);
+        array.add(round(v.x));
+        array.add(round(v.y));
+        array.add(round(v.z));
         return array;
     }
 
     private static JsonArray colors(EyeColor c) {
         JsonArray array = new JsonArray();
-        array.add(c.r());
-        array.add(c.g());
-        array.add(c.b());
+        array.add(round(c.r()));
+        array.add(round(c.g()));
+        array.add(round(c.b()));
         return array;
     }
 

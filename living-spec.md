@@ -328,15 +328,15 @@ The picker is an in-world, creative-mode authoring system. It is client-state dr
 
 It creates `pack.mcmeta` when needed. The file holds one entry whose `variants` list carries every authored arrangement with its weight.
 
-`/sg exportall` instead dumps **every eye config currently live in the running game** (the synced `ClientEyeConfigs`, i.e. the assembled runtime state, not the picker's one-mob draft) to one file per entity, with no `/reload`:
+`/sg exportall` instead dumps **every eye config** to one file per entity, with no `/reload`:
 
 ```text
 <gameDir>/somegoogly-export/data/<namespace>/eyes/<entity>.json
 ```
 
-It needs no committed target and is meant for copying `data/` straight into the mod's `resources/`. It re-synthesizes each entry's version range from the namespace's currently-loaded version (the original declared range isn't kept in the runtime config), and preserves whatever age slots (`adult`/`baby`/`any`) the live config holds.
+It writes the union of two sources: the synced runtime state (`ClientEyeConfigs`) for untouched entities, with each picker draft overlaid on its entity. The picker retains a **separate draft per entity type** for the whole session (see §10.3), so a mob that was saved but never individually `/sg export`ed is still written — its draft wins over the synced state. It needs no committed target and is meant for copying `data/` straight into the mod's `resources/`. For a draft-sourced entity it writes a single `age:"any"` entry (as `/sg export` does); for a synced-only entity it preserves whatever age slots (`adult`/`baby`/`any`) the live config holds. Either way the version range is re-synthesized from the namespace's currently-loaded version (the original declared range isn't kept in the runtime config).
 
-Both paths share one serializer that writes the **complete canonical form** — every field explicit, in the shipped field order — rather than the loader's default-eliding codec output, and tags `/sg export` entries `age:"any"` with a version *range* (e.g. `[1.20.1,1.21)`). This keeps generated files equivalent to the hand-authored ones and immune to silent meaning-drift if a code default later changes.
+Both paths share one serializer that writes the **complete canonical form** — every field explicit, in the shipped field order, each number rounded to one part in a thousand (the `/sg` CLI parses inputs as `float`, so this snaps widening noise like `0.2199999988` back to `0.22`) — rather than the loader's default-eliding codec output, and tags `/sg export` entries `age:"any"` with a version *range* (e.g. `[1.20.1,1.21)`). This keeps generated files equivalent to the hand-authored ones and immune to silent meaning-drift if a code default later changes.
 
 ### 10.2 `/sg` command surface
 
@@ -352,7 +352,7 @@ The picker previews saved and current eyes with a centered iris and a local RGB 
 
 ### 10.3 Picker limitations
 
-- **Partial:** it authors fresh from the live model and never reads back a mob's committed config, so editing an existing placement means re-authoring it.
+- **Partial:** it retains a separate draft per entity type for the session, so switching among several mobs keeps each one's saved eyes (and `/sg exportall` can emit them all). But it never seeds a draft from a mob's already-committed or shipped config, so editing an existing placement still means re-authoring it from the live model.
 - **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
 - **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
 - **Deferred:** remote/multiplayer export is intentionally unsupported.
