@@ -100,6 +100,12 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    private static int exportAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        feedback(ctx, PickerExporter.exportAll());
+        return 1;
+    }
+
     private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
         ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
     }
@@ -358,6 +364,7 @@ public class GooglyClientCommands {
         });
 
         verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
+        verb(sg, "exportall", b -> terminal(b, GooglyClientCommands::exportAll));
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 

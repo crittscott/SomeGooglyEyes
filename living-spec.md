@@ -318,19 +318,29 @@ The picker is an in-world, creative-mode authoring system. It is client-state dr
 2. Look at a living entity and lock it (default `V`). The integrated server freezes a mob target by temporarily setting `NoAi`.
 3. Select an attachment part with the bracket keys or `/sg part`.
 4. Create or edit a draft eye through `/sg` commands, save it, and inspect the HUD preview.
-5. Export with `/sg export`.
+5. Export the committed mob with `/sg export`, or dump every loaded config with `/sg exportall`.
 
-The exporter writes:
+`/sg export` writes the single committed mob to the single-player world and `/reload`s so it persists and re-syncs through the normal path:
 
 ```text
 <world>/datapacks/somegoogly-picker/data/<namespace>/eyes/<entity>.json
 ```
 
-It creates `pack.mcmeta` when needed, writes a pretty-printed file, and requests `/reload`. The exported file contains one exact-version, age-specific entry whose `variants` list holds every authored arrangement with its weight.
+It creates `pack.mcmeta` when needed. The file holds one entry whose `variants` list carries every authored arrangement with its weight.
+
+`/sg exportall` instead dumps **every eye config currently live in the running game** (the synced `ClientEyeConfigs`, i.e. the assembled runtime state, not the picker's one-mob draft) to one file per entity, with no `/reload`:
+
+```text
+<gameDir>/somegoogly-export/data/<namespace>/eyes/<entity>.json
+```
+
+It needs no committed target and is meant for copying `data/` straight into the mod's `resources/`. It re-synthesizes each entry's version range from the namespace's currently-loaded version (the original declared range isn't kept in the runtime config), and preserves whatever age slots (`adult`/`baby`/`any`) the live config holds.
+
+Both paths share one serializer that writes the **complete canonical form** — every field explicit, in the shipped field order — rather than the loader's default-eliding codec output, and tags `/sg export` entries `age:"any"` with a version *range* (e.g. `[1.20.1,1.21)`). This keeps generated files equivalent to the hand-authored ones and immune to silent meaning-drift if a code default later changes.
 
 ### 10.2 `/sg` command surface
 
-The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting, and spawning an authoring grid of living entity types in single-player (`/sg spawnall`, see §10.4).
+The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting the committed mob (`/sg export`) or dumping all live configs (`/sg exportall`, see §10.1), and spawning an authoring grid of living entity types in single-player (`/sg spawnall`, see §10.4).
 
 Variants are authored explicitly: `/sg variant new` appends and switches to a fresh arrangement, `/sg variant <n>` switches to one, `/sg variant del <n>` removes one (the last variant cannot be deleted), and `/sg variant weight <w>` sets the current variant's relative weight. All other eye-editing verbs act on the variant currently being edited; the HUD shows the active variant and weight.
 

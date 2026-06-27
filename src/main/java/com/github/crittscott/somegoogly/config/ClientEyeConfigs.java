@@ -22,6 +22,11 @@ public final class ClientEyeConfigs {
     private ClientEyeConfigs() {
     }
 
+    /** The whole synced config set, by entity (used by the picker's {@code exportall} dump). */
+    public static Map<ResourceLocation, RuntimeConfigSet> all() {
+        return configs;
+    }
+
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
         configs = Collections.emptyMap();

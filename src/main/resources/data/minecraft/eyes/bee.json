@@ -9,15 +9,15 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "bone",
+              "attachPoint": "#0",
               "eyes": [
                 {
                   "position": [
                     -0.13,
-                    -0.25,
-                    -0.25
+                    0.05000000074505806,
+                    -0.3149999976158142
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.8999999761581421,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
@@ -36,11 +36,11 @@
                 },
                 {
                   "position": [
-                    0.13,
-                    -0.25,
-                    -0.25
+                    0.12999999523162842,
+                    0.05000000074505806,
+                    -0.3149999976158142
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.8999999761581421,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
