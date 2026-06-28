@@ -76,7 +76,8 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         }
     }
 
-    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay, EyeDraft eye) {
+    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
+                           int overlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
         HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
@@ -86,14 +87,16 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
         double[] cornea = eye.corneaColors;
-        modelGooglyEye.renderCornea(poseStack, buffer, packedLight, overlay, (float) cornea[0], (float) cornea[1], (float) cornea[2], 1.0F);
+        modelGooglyEye.renderCornea(poseStack, buffer, packedLight, overlay, (float) cornea[0], (float) cornea[1],
+                (float) cornea[2], 1.0F);
 
         float irisScale = (float) eye.irisScale;
         double[] iris = eye.irisColors;
         poseStack.pushPose();
         poseStack.scale(irisScale, irisScale, 1.0F);
         modelGooglyEye.moveIris(0.0F, 0.0F, irisScale); // centered preview, no physics
-        modelGooglyEye.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1], (float) iris[2], 1.0F);
+        modelGooglyEye.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1],
+                (float) iris[2], 1.0F);
         poseStack.popPose();
 
         poseStack.popPose();

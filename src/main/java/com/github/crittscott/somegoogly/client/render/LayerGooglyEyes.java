@@ -29,7 +29,9 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T living, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T living,
+                       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
+                       float netHeadYaw, float headPitch) {
         // While the picker is editing this entity, only its preview layer should draw.
         if (PickerState.isActiveTarget(living)) {
             return;

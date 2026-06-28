@@ -25,8 +25,7 @@ public class GooglyTracker {
 
     public EyeInfo[][] eyes;
 
-    // --- Keystone B: the one behavior this mob is currently playing (or null when idle) ----------
-    // Behaviors are scheduled server-side, one at a time and non-interruptable; the client just plays
+        // Behaviors are scheduled server-side, one at a time and non-interruptable; the client just plays
     // the active instance, advancing it each tick and interpolating it at render time. All of its state
     // is transient and client-only (no NBT, no sync of progress — only the trigger is sent).
     @Nullable

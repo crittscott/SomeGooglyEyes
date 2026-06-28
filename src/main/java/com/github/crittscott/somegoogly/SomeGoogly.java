@@ -89,7 +89,8 @@ public class SomeGoogly {
         MinecraftForge.EVENT_BUS.register(new EyeReactionHandler());
         MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
 
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> "1", (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+                () -> new IExtensionPoint.DisplayTest(() -> "1", (a, b) -> true));
     }
 
     private void addLayers(EntityRenderersEvent.AddLayers event) {

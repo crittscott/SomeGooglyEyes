@@ -23,14 +23,14 @@ public final class GizmoRenderType extends RenderType {
             false,
             false,
             RenderType.CompositeState.builder()
-                    .setShaderState(RENDERTYPE_LINES_SHADER)
-                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
-                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setOutputState(MAIN_TARGET)
-                    .setWriteMaskState(COLOR_DEPTH_WRITE)
                     .setCullState(NO_CULL)
                     .setDepthTestState(NO_DEPTH_TEST)
+                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+                    .setOutputState(MAIN_TARGET)
+                    .setShaderState(RENDERTYPE_LINES_SHADER)
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setWriteMaskState(COLOR_DEPTH_WRITE)
                     .createCompositeState(false)
     );
 

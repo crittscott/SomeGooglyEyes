@@ -24,7 +24,7 @@ import java.util.Random;
  *
  * <p>When the item is <b>held</b> (any hand context) the pupil is alive — a small standalone googly
  * physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
- * ground it's static (pupil centered) for a clean icon.
+ * ground it's static (pupil centered).
  *
  * <p>This is the "item-model" {@code EyeHolder} render path foreshadowed in {@code EyeHolder}.
  *

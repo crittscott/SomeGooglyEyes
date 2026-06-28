@@ -25,9 +25,9 @@ public final class PickerKeys {
     }
 
     public static void register(RegisterKeyMappingsEvent event) {
-        event.register(TOGGLE);
         event.register(LOCK);
-        event.register(PART_PREV);
         event.register(PART_NEXT);
+        event.register(PART_PREV);
+        event.register(TOGGLE);
     }
 }

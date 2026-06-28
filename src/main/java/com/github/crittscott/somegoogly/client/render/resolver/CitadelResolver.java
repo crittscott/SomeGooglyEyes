@@ -44,7 +44,8 @@ public class CitadelResolver implements EyeAttachmentResolver {
                 Field boxName = boxClass.getField("boxName");
                 return new Handles(modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
             } catch (Throwable ignored) {
-                return new Handles(null, null, null, null, null, null);
+                return new Handles(null, null, null, null,
+                        null, null);
             }
         }
     }

@@ -199,11 +199,11 @@ public final class ServerBehaviorScheduler {
         if (state.busyUntil != 0) {
             return false; // already playing something — drop the trigger
         }
+        state.activeDuration = duration;
+        state.activeId = behavior.id();
+        state.activeSeed = seed;
         state.busyUntil = now + duration;
         state.startedAt = now;
-        state.activeId = behavior.id();
-        state.activeDuration = duration;
-        state.activeSeed = seed;
         NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> mob),
                 new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
         return true;

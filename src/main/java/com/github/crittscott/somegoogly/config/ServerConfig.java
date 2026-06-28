@@ -121,9 +121,9 @@ public class ServerConfig {
     private static List<String> defaultAmbientBehaviorIds() {
         return new ArrayList<>(List.of(
                 "somegoogly:blink",
+                "somegoogly:cross_eye",
                 "somegoogly:side_eye",
-                "somegoogly:stare",
-                "somegoogly:cross_eye"));
+                "somegoogly:stare"));
     }
 
     /**

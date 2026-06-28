@@ -124,7 +124,8 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
     }
 
-    private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, EyeDraft eye) {
+    private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
+                                  int packedOverlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
         HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
@@ -133,14 +134,16 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
         VertexConsumer buf = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
         double[] cornea = eye.corneaColors;
-        modelGooglyEye.renderCornea(poseStack, buf, packedLight, packedOverlay, (float) cornea[0], (float) cornea[1], (float) cornea[2], 1F);
+        modelGooglyEye.renderCornea(poseStack, buf, packedLight, packedOverlay, (float) cornea[0], (float) cornea[1],
+                (float) cornea[2], 1F);
 
         float irisScale = (float) eye.irisScale;
         double[] iris = eye.irisColors;
         poseStack.pushPose();
         poseStack.scale(irisScale, irisScale, 1F);
         modelGooglyEye.moveIris(0F, 0F, irisScale);
-        modelGooglyEye.renderIris(poseStack, buf, packedLight, packedOverlay, (float) iris[0], (float) iris[1], (float) iris[2], 1F);
+        modelGooglyEye.renderIris(poseStack, buf, packedLight, packedOverlay, (float) iris[0], (float) iris[1],
+                (float) iris[2], 1F);
         poseStack.popPose();
 
         poseStack.popPose();

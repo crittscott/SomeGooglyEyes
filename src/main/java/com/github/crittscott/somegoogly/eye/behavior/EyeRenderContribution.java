@@ -44,12 +44,12 @@ public final class EyeRenderContribution {
 
     /** Restore the neutral "no behavior" state. */
     public void reset() {
+        corneaTint = null;
+        eyeScaleMul = 1f;
         irisTargetX = 0f;
         irisTargetY = 0f;
         irisWeight = 0f;
-        eyeScaleMul = 1f;
         squashY = 1f;
-        corneaTint = null;
         tintAmount = 0f;
     }
 }
