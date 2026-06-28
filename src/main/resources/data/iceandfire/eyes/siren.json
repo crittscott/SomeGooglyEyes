@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "[1.20.1,1.21)",
+      "version": "[2.1.13-1.20.1,2.2)",
       "age": "any",
       "enabled": true,
       "variants": [
@@ -9,13 +9,13 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0",
+              "attachPoint": "#10",
               "eyes": [
                 {
                   "position": [
-                    -0.16,
-                    -0.03,
-                    -0.5
+                    -0.13,
+                    -0.25,
+                    -0.25
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -36,9 +36,9 @@
                 },
                 {
                   "position": [
-                    0.16,
-                    -0.03,
-                    -0.5
+                    0.13,
+                    -0.25,
+                    -0.25
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

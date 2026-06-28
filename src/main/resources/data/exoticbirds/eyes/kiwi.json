@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "(,)",
+      "version": "[1.0.0,1.1)",
       "age": "any",
       "enabled": true,
       "variants": [
