@@ -65,6 +65,15 @@ public final class ModPotions {
         return stack;
     }
 
+    /**
+     * The canonical googly-eyes splash stack with no appearance override — the representative brewing
+     * output for displays like JEI ({@code SomeGooglyJeiPlugin}). Routes through {@link #newGooglySplash()}
+     * so the shown output can't drift from the real brew or the creative-tab entry.
+     */
+    public static ItemStack representativeSplash() {
+        return newGooglySplash();
+    }
+
     /** Wire on the mod event bus (from {@code SomeGoogly}). */
     public static void register(IEventBus modBus) {
         POTIONS.register(modBus);

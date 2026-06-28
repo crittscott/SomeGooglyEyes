@@ -65,6 +65,13 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+# JEI — optional, client-only. We load AFTER it so our @JeiPlugin's brewing entry is registered cleanly.
+[[dependencies.${mod_id}]]
+    modId="jei"
+    mandatory=false
+    versionRange="*"
+    ordering="AFTER"
+    side="CLIENT"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

@@ -256,7 +256,7 @@ Only one behavior may run on an entity at a time, and the rule is non-interrupta
 
 Every event trigger is gated to entities that both have eyes and are currently tracked by a player — the same condition ambient scheduling uses, checked by reusing the per-mob schedule state that only exists for tracked, eyed mobs. Reactions therefore never fire for off-screen or eyeless mobs, and the client independently drops a trigger for any mob it is not actively rendering. The heal trigger additionally enforces a per-mob cooldown (`swirlHealCooldownTicks`), armed only when a swirl actually starts, so a regenerating mob does not swirl back-to-back.
 
-**Known behavioral gap — Partial:** the scheduler adds an entity on `StartTracking` only if it already has eyes. If an eyeless entity gains eyes through the potion while it is already being watched, its visual state syncs and renders, but it is registered for neither ambient nor event-driven behaviors until tracking restarts. This conclusion is source-derived and awaits runtime confirmation.
+**Mid-life eye gain — Implemented:** the scheduler registers a per-mob schedule state on `StartTracking` for every tracked mob, regardless of whether it currently has eyes. Eligibility is instead checked at execution time — each ambient roll and every event reaction gates on `hasEyes` — so an eyeless entity that gains eyes through the potion while it is already being watched begins scheduling ambient and event-driven behaviors without waiting for tracking to restart. This conclusion is source-derived; the path is not exercised by the GameTest suite (§14).
 
 ## 9. Gameplay systems
 
@@ -300,9 +300,15 @@ The output preserves unrelated NBT from the source eye item.
 
 ### 9.4 Potion
 
-An awkward splash potion brewed with a googly-eye item becomes the `somegoogly:googly_eyes` splash potion and inherits the eye item's appearance.
+An awkward splash potion brewed with a googly-eye item becomes the `somegoogly:googly_eyes` splash potion and inherits the eye item's appearance. The brew is a custom Forge `IBrewingRecipe` (not the static `BrewingRecipe` class) because it copies the eye item's appearance NBT onto the output, which a fixed-stack recipe cannot do.
 
 On impact, the server chooses exactly one random nearby eligible, currently eyeless living entity—players included, since they have a definition but never spawn with eyes—and applies the potion's appearance before turning eyes on. This is the only way to give an entity eyes. It does not cancel vanilla impact handling; the custom potion carries no normal mob effects.
+
+### 9.6 JEI integration
+
+JEI's brewing scanner only introspects vanilla and the static Forge `BrewingRecipe`, so it cannot display the custom `IBrewingRecipe` above on its own (it logs `Can't handle brewing recipe class`). A client-side `@JeiPlugin` (`client.compat.jei.SomeGooglyJeiPlugin`) registers a representative entry in JEI's brewing category — awkward splash + googly eye → googly-eyes splash — so the brew is discoverable. The displayed eye and output carry no appearance override; the real recipe still copies whatever the eye item holds. JEI is a compile-only soft dependency: the plugin class is referenced only by JEI's annotation scan, so with JEI absent it is never loaded.
+
+The `eye_modifier` crafting recipe (§9.3) is a special `CustomRecipe` and is **not** registered with JEI; its dye/glowstone/redstone/cobweb transforms remain undiscoverable in the recipe lookup. **Status: Partial.**
 
 ### 9.5 Enchantment
 
