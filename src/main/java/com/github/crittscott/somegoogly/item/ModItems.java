@@ -1,9 +1,7 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,15 +18,9 @@ public final class ModItems {
     private ModItems() {
     }
 
-    private static void addToCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(GOOGLY_EYE);
-        }
-    }
-
-    /** Wire on the mod event bus (from {@code SomeGoogly}). */
+    /** Wire on the mod event bus (from {@code SomeGoogly}). The eye is shown in the mod's own creative
+     * tab ({@code ModCreativeTabs}), not a vanilla one. */
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);
-        modBus.addListener(ModItems::addToCreativeTabs);
     }
 }

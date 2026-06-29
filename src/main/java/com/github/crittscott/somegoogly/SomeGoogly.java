@@ -13,6 +13,7 @@ import com.github.crittscott.somegoogly.event.EyeItemInteractions;
 import com.github.crittscott.somegoogly.event.EyePotionInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
+import com.github.crittscott.somegoogly.item.ModCreativeTabs;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.potion.ModPotions;
@@ -61,6 +62,7 @@ public class SomeGoogly {
         COMMAND_ARGUMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchantments.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModItems.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModCreativeTabs.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModPotions.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModRecipes.register(FMLJavaModLoadingContext.get().getModEventBus());
 

@@ -26,6 +26,9 @@ import java.util.List;
  *
  * <p>This class is referenced only by JEI's own {@code @JeiPlugin} annotation scan, never by mod code, so
  * the JEI API stays a compile-only soft dependency: with JEI absent the class is simply never loaded.
+ *
+ * <p>The brew comes in two bottles — a drinkable (awkward potion + eye) and a splash (awkward splash +
+ * eye) — so we register one representative entry per bottle.
  */
 @JeiPlugin
 public class SomeGooglyJeiPlugin implements IModPlugin {
@@ -40,15 +43,19 @@ public class SomeGooglyJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         IVanillaRecipeFactory factory = registration.getVanillaRecipeFactory();
+        ItemStack eye = new ItemStack(ModItems.GOOGLY_EYE.get());
 
-        // Awkward splash potion + googly eye → googly-eyes splash. The displayed eye/output carry no
-        // appearance override; the real brew copies whatever the eye item holds onto its output.
+        // Awkward (drinkable) potion + googly eye → drinkable googly-eyes, and awkward splash + googly
+        // eye → googly-eyes splash. The displayed eye/output carry no appearance override; the real brew
+        // copies whatever the eye item holds onto its output.
+        ItemStack awkwardDrink = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD);
         ItemStack awkwardSplash = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), Potions.AWKWARD);
-        IJeiBrewingRecipe brewing = factory.createBrewingRecipe(
-                List.of(new ItemStack(ModItems.GOOGLY_EYE.get())),
-                awkwardSplash,
-                ModPotions.representativeSplash());
 
-        registration.addRecipes(RecipeTypes.BREWING, List.of(brewing));
+        IJeiBrewingRecipe drink = factory.createBrewingRecipe(
+                List.of(eye), awkwardDrink, ModPotions.representativeDrink());
+        IJeiBrewingRecipe splash = factory.createBrewingRecipe(
+                List.of(eye), awkwardSplash, ModPotions.representativeSplash());
+
+        registration.addRecipes(RecipeTypes.BREWING, List.of(drink, splash));
     }
 }

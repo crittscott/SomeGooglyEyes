@@ -14,18 +14,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
 
 /**
- * Splash "googly eyes" potion behavior (server-side). When a thrown {@link ModPotions#GOOGLY_EYES}
- * splash breaks, exactly <b>one</b> randomly chosen eligible mob within the splash area gets eyes —
- * not the whole cloud.
+ * "Googly eyes" potion behavior (server-side), in two forms:
  *
- * <p>We do <i>not</i> cancel the impact: the potion carries no {@code MobEffect}s, so vanilla's own
- * splash application is inert, but it still breaks the bottle, plays the particles/sound, and discards
- * the projectile. We just add the single-target pick on top.
+ * <ul>
+ *   <li><b>Splash</b>: when a thrown {@link ModPotions#GOOGLY_EYES} splash breaks, exactly <b>one</b>
+ *   randomly chosen eligible mob within the splash area gets eyes — not the whole cloud.</li>
+ *   <li><b>Drinkable</b>: when a living entity finishes drinking the potion, that drinker gets its own
+ *   eyes (the form that lets a player eye themselves).</li>
+ * </ul>
+ *
+ * <p>For the splash we do <i>not</i> cancel the impact: the potion carries no {@code MobEffect}s, so
+ * vanilla's own splash application is inert, but it still breaks the bottle, plays the particles/sound,
+ * and discards the projectile. We just add the single-target pick on top. The drinkable form likewise
+ * carries no effects, so vanilla's drink is an inert no-op (bottle returned, sound played) and we layer
+ * the self-apply on top.
  */
 public class EyePotionInteractions {
 
@@ -67,6 +75,30 @@ public class EyePotionInteractions {
         // Apply the potion's carried appearance (brewed in from the eye item), then turn eyes on —
         // the potion is the only way to give a mob (or player) eyes. Empty properties fall back to config.
         EntityEyeHolder holder = new EntityEyeHolder(chosen);
+        holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
+        holder.setHasEyes(true);
+    }
+
+    @SubscribeEvent
+    public void onUseItemFinish(LivingEntityUseItemEvent.Finish event) {
+        LivingEntity drinker = event.getEntity();
+        if (drinker.level().isClientSide()) {
+            return;
+        }
+
+        ItemStack stack = event.getItem();
+        if (!stack.is(Items.POTION) || PotionUtils.getPotion(stack) != ModPotions.GOOGLY_EYES.get()) {
+            return;
+        }
+
+        // Only entities that can actually show eyes at their current age (players included — they have a
+        // definition). Drinking re-applies appearance even if the drinker already has eyes, so a player
+        // can recolor by drinking a differently-tinted brew. Empty properties fall back to config.
+        if (!ServerEyeConfigs.isEligible(drinker)) {
+            return;
+        }
+
+        EntityEyeHolder holder = new EntityEyeHolder(drinker);
         holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
         holder.setHasEyes(true);
     }
