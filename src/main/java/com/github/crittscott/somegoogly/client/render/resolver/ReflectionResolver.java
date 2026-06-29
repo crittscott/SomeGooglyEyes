@@ -18,8 +18,8 @@ import java.util.WeakHashMap;
  * head — declared first in the vanilla bases ({@code HumanoidModel}, {@code QuadrupedModel}) — is
  * index 0.
  *
- * <p>Tokens are {@code #N} (the field index). For backward compatibility, any non-{@code #} token
- * (e.g. the legacy {@code "head"} in bundled configs) maps to index 0.
+ * <p>Tokens are {@code #N} (the field index) only. A name token can't be resolved by this model family
+ * (there are no obfuscation-stable names to match), so it fails rather than being remapped.
  *
  * <p>Registered after {@link HierarchicalResolver} so named models keep the better named path; this
  * one is the fallback for everything else. Every access is guarded, so an unreflectable model just
@@ -71,6 +71,15 @@ public class ReflectionResolver implements EyeAttachmentResolver {
     }
 
     @Override
+    public String canonicalToken(EntityModel<?> model, String storedToken) {
+        int index = indexFor(storedToken);
+        if (index < 0 || index >= partsOf(model).size()) {
+            return storedToken; // can't place it; leave the token as authored
+        }
+        return "#" + index;
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return true; // catch-all fallback (HierarchicalResolver is tried first)
     }
@@ -83,8 +92,9 @@ public class ReflectionResolver implements EyeAttachmentResolver {
                 return -1;
             }
         }
-        // Legacy name tokens (e.g. "head") from bundled configs → the head (first field).
-        return 0;
+        // Index-only models address parts by #N exclusively. A name token can't be resolved here (there
+        // are no production-stable names to match against), so it fails rather than guessing the head.
+        return -1;
     }
 
     private static List<ModelPart> partsOf(EntityModel<?> model) {

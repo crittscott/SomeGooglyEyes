@@ -128,6 +128,27 @@ public class CitadelResolver implements EyeAttachmentResolver {
     }
 
     @Override
+    public String canonicalToken(EntityModel<?> model, String storedToken) {
+        if (!handles(model)) {
+            return storedToken;
+        }
+        List<Object> parts = partsOf(model);
+        Object target = storedToken != null && storedToken.startsWith("#")
+                ? byIndex(parts, storedToken)
+                : byName(parts, storedToken);
+        if (target == null) {
+            return storedToken;
+        }
+        for (int i = 0; i < parts.size(); i++) {
+            if (parts.get(i) == target) {
+                // enumerateParts is index-aligned with parts, so its token for this slot is canonical.
+                return enumerateParts(model).get(i);
+            }
+        }
+        return storedToken;
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return HANDLES.available() && HANDLES.modelClass.isInstance(model);
     }

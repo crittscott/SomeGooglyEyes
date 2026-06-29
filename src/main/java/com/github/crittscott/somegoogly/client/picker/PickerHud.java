@@ -48,7 +48,7 @@ public final class PickerHud {
                 label, part, e.position[0], e.position[1], e.position[2]), colorA));
         double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
         double azi = e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-        out.add(new Line(String.format("    incl %.1f°  azi %.1f°  eye %.2f  iris %.2f  %sG %sInv  c%s i%s",
+        out.add(new Line(String.format("    incl %.0f°  azi %.0f°  eye %.2f  iris %.2f  %sG %sInv  c%s i%s",
                 incl, azi, e.eyeScale, e.irisScale,
                 e.glows ? "+" : "-", e.affectedByInvisibility ? "+" : "-",
                 hex(e.corneaColors), hex(e.irisColors)), colorB));

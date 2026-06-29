@@ -30,6 +30,26 @@ public class EyeDraft {
         return inclination != null ? inclination : EyePlacement.DEFAULT_INCLINATION;
     }
 
+    /** Build a working draft from an immutable definition (the inverse of {@link #toDefinition()}). */
+    public static EyeDraft fromDefinition(EyeDefinition def) {
+        EyePlacement p = def.placement();
+        EyeAppearance a = def.appearance();
+        EyeColor cornea = a.cornea();
+        EyeColor iris = a.iris();
+        EyeDraft d = new EyeDraft();
+        Vec3 pos = p.position();
+        d.position = new double[]{pos.x, pos.y, pos.z};
+        d.eyeScale = p.eyeScale();
+        d.irisScale = p.irisScale();
+        d.inclination = p.inclination();
+        d.azimuth = p.azimuth();
+        d.corneaColors = new double[]{cornea.r(), cornea.g(), cornea.b()};
+        d.irisColors = new double[]{iris.r(), iris.g(), iris.b()};
+        d.glows = a.glow();
+        d.affectedByInvisibility = p.affectedByInvisibility();
+        return d;
+    }
+
     public EyeDraft copy() {
         EyeDraft d = new EyeDraft();
         d.position = new double[]{position[0], position[1], position[2]};

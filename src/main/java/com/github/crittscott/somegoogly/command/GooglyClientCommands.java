@@ -123,7 +123,7 @@ public class GooglyClientCommands {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
             String mark = i == PickerState.selectedIndex ? " *" : "";
-            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
+            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s",
                     i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
         }
         return 1;
@@ -202,7 +202,7 @@ public class GooglyClientCommands {
         PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
         EyeDraft e = PickerState.currentEye;
-        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.1f° azi %.1f°.",
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.0f° azi %.0f°.",
                 e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
         return 1;
     }
@@ -406,7 +406,7 @@ public class GooglyClientCommands {
         PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
         EyeDraft e = PickerState.currentEye;
-        feedback(ctx, String.format("Rotation incl %.1f° azi %.1f°.", incl(e), azi(e)));
+        feedback(ctx, String.format("Rotation incl %.0f° azi %.0f°.", incl(e), azi(e)));
         return 1;
     }
 

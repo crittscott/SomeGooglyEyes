@@ -3,9 +3,12 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -224,13 +227,18 @@ public final class PickerState {
         }
         EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
 
-        // Vanilla EntityModel path (hierarchical names or reflection #N).
+        // Vanilla EntityModel path (hierarchical names or reflection #N). Hold onto the model + resolver
+        // so a first-sighting draft can be seeded from the mob's existing config in this same vocabulary.
         List<String> tokens = List.of();
+        EntityModel<?> seedModel = null;
+        EyeAttachmentResolver seedResolver = null;
         if (renderer instanceof LivingEntityRenderer<?, ?> ler) {
             EntityModel<?> vanillaModel = ler.getModel();
             EyeAttachmentResolver resolver = Resolvers.forModel(vanillaModel);
             if (resolver != null) {
                 tokens = resolver.enumerateParts(vanillaModel);
+                seedModel = vanillaModel;
+                seedResolver = resolver;
             }
         }
         // GeckoLib path (named bones), if vanilla found nothing.
@@ -252,16 +260,58 @@ public final class PickerState {
         parts = new ArrayList<>(tokens);
         partIndex = 0;
         currentPart = parts.isEmpty() ? null : parts.get(0);
-        // Switch to this entity's own draft (an empty one on first sighting), so each mob keeps its saved
-        // eyes across switches and exportall can emit them all.
-        variants = authored.computeIfAbsent(newType, t -> new ArrayList<>(List.of(new DraftVariant())));
+        // Switch to this entity's own draft, so each mob keeps its saved eyes across switches and exportall
+        // can emit them all. On first sighting, seed from the mob's existing (synced) config so editing an
+        // existing placement starts from it rather than a blank slate; a never-configured mob gets an empty
+        // draft. The retained draft (computeIfAbsent) wins on re-choose, so in-session edits aren't lost.
+        boolean baby = living.isBaby();
+        EntityModel<?> model = seedModel;
+        EyeAttachmentResolver resolver = seedResolver;
+        variants = authored.computeIfAbsent(newType, t -> seedDraft(t, baby, model, resolver));
         variantIndex = 0;
         currentEye = defaultEye();
         selectedIndex = -1;
         freeze(living);
         int kept = totalEyeCount();
-        return "Chose " + newType + (kept > 0 ? " (kept " + kept + " eyes)" : "")
+        return "Chose " + newType + (kept > 0 ? " (" + kept + " eyes)" : "")
                 + " — " + parts.size() + " parts.";
+    }
+
+    /**
+     * Build a fresh draft for a mob being chosen for the first time this session. Seeds from its synced
+     * config for the given age ({@link ClientEyeConfigs}) so editing an existing placement starts from it;
+     * returns a single empty variant when the mob has no usable config. Attach tokens are canonicalized to
+     * the model's enumeration vocabulary (e.g. a legacy {@code "head"} on an index-only model becomes
+     * {@code "#0"}), so the seeded draft, HUD, and export all speak the same token the part picker shows.
+     */
+    private static List<DraftVariant> seedDraft(ResourceLocation type, boolean baby,
+                                                EntityModel<?> model, EyeAttachmentResolver resolver) {
+        RuntimeConfig config = ClientEyeConfigs.get(type, baby);
+        List<DraftVariant> seeded = new ArrayList<>();
+        if (config != null && config.isEnabled() && config.variants != null) {
+            for (Variant v : config.variants) {
+                DraftVariant dv = new DraftVariant();
+                dv.weight = v.weight();
+                if (v.heads != null) {
+                    for (HeadConfig head : v.heads) {
+                        if (head == null || head.eyes == null) {
+                            continue;
+                        }
+                        String raw = head.attachPoint != null ? head.attachPoint : "head";
+                        String part = model != null && resolver != null
+                                ? resolver.canonicalToken(model, raw) : raw;
+                        for (EyeDefinition def : head.eyes) {
+                            dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
+                        }
+                    }
+                }
+                seeded.add(dv);
+            }
+        }
+        if (seeded.isEmpty()) {
+            seeded.add(new DraftVariant());
+        }
+        return seeded;
     }
 
     /** The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its 1-based index. */

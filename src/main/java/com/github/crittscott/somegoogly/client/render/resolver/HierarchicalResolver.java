@@ -48,6 +48,20 @@ public class HierarchicalResolver implements EyeAttachmentResolver {
     }
 
     @Override
+    public String canonicalToken(EntityModel<?> model, String storedToken) {
+        if (!(model instanceof HierarchicalModel)) {
+            return storedToken;
+        }
+        String wanted = EyeAttachmentResolver.normalize(storedToken);
+        for (String name : enumerateParts(model)) {
+            if (EyeAttachmentResolver.normalize(name).equals(wanted)) {
+                return name; // the model's own spelling for this part
+            }
+        }
+        return storedToken; // no cube-bearing part matches (e.g. an empty pivot); leave as authored
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return model instanceof HierarchicalModel;
     }

@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
+import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
@@ -15,8 +17,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
@@ -29,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 /**
  * Writes picker configs out as datapack JSON. Two entry points:
@@ -77,7 +86,8 @@ public final class PickerExporter {
             return "Export failed: couldn't resolve target mod version.";
         }
 
-        JsonArray variants = variantsJson(PickerState.toConfig().variants);
+        // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
+        JsonArray variants = variantsJson(PickerState.toConfig().variants, UnaryOperator.identity());
         if (variants.isEmpty()) {
             return "Nothing committed to export.";
         }
@@ -129,6 +139,8 @@ public final class PickerExporter {
 
         Path root = Minecraft.getInstance().gameDirectory.toPath().resolve(DUMP_DIR);
         int files = 0;
+        // Types whose model couldn't be resolved (so synced tokens were written verbatim, not canonicalized).
+        int verbatim = 0;
         try {
             for (ResourceLocation id : ids) {
                 Optional<String> version = ModVersionLookup.versionForNamespace(id.getNamespace());
@@ -137,9 +149,21 @@ public final class PickerExporter {
                 }
                 String range = versionRange(version.get());
                 RuntimeConfig draft = drafts.get(id);
-                JsonObject json = draft != null
-                        ? draftFileJson(draft, range)
-                        : setToConfigJson(synced.get(id), range);
+                JsonObject json;
+                if (draft != null) {
+                    // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
+                    json = draftFileJson(draft, range);
+                } else {
+                    // Synced (shipped) tokens may be legacy, so canonicalize them against the model — this
+                    // migrates e.g. a reflection-model "head" to "#0". The model comes from a throwaway
+                    // entity instance, so every config converts in one pass regardless of what's loaded.
+                    UnaryOperator<String> canon = canonicalizer(id);
+                    if (canon == null) {
+                        verbatim++;
+                        canon = UnaryOperator.identity();
+                    }
+                    json = setToConfigJson(synced.get(id), range, canon);
+                }
                 if (json == null) {
                     continue; // nothing usable for this entity
                 }
@@ -151,16 +175,63 @@ public final class PickerExporter {
         } catch (IOException e) {
             return "Export-all failed: " + e.getMessage();
         }
-        return "Dumped " + files + " eye configs to " + root + " — copy data/ into resources/.";
+        String note = verbatim > 0
+                ? " (" + verbatim + " types' models couldn't be resolved — tokens left verbatim)"
+                : "";
+        return "Dumped " + files + " eye configs to " + root + note + " — copy data/ into resources/.";
     }
 
     /** A single-entry file for one authored draft (age {@code "any"}, like {@link #export()}), or null if empty. */
     private static JsonObject draftFileJson(RuntimeConfig draft, String versionRange) {
-        JsonArray variants = variantsJson(draft.variants);
+        JsonArray variants = variantsJson(draft.variants, UnaryOperator.identity());
         if (variants.isEmpty()) {
             return null;
         }
         return fileJson(entryJson(versionRange, "any", draft.isEnabled(), variants));
+    }
+
+    /**
+     * A throwaway instance of an entity type, solely to reach its renderer/model — never added to the
+     * world. Created on demand so token canonicalization doesn't depend on what's loaded near the player.
+     * Players can't be constructed this way, so the local player stands in for {@code minecraft:player}.
+     */
+    private static LivingEntity sampleFor(ResourceLocation id) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
+            return mc.player;
+        }
+        ClientLevel level = mc.level;
+        EntityType<?> type = level == null ? null : BuiltInRegistries.ENTITY_TYPE.get(id);
+        if (type == null) {
+            return null;
+        }
+        try {
+            return type.create(level) instanceof LivingEntity living ? living : null;
+        } catch (Throwable constructionFailed) {
+            return null; // some types refuse a bare create(); their tokens stay verbatim
+        }
+    }
+
+    /**
+     * A token canonicalizer for one entity: resolves attach tokens to the model's enumeration vocabulary
+     * via the same resolver the renderer uses. Returns {@code null} when the type's model can't be reached
+     * (the caller then writes its tokens verbatim and counts it).
+     */
+    private static UnaryOperator<String> canonicalizer(ResourceLocation id) {
+        LivingEntity sample = sampleFor(id);
+        if (sample == null) {
+            return null;
+        }
+        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(sample);
+        if (!(renderer instanceof LivingEntityRenderer<?, ?> living)) {
+            return null;
+        }
+        EntityModel<?> model = living.getModel();
+        EyeAttachmentResolver resolver = Resolvers.forModel(model);
+        if (resolver == null) {
+            return null;
+        }
+        return token -> resolver.canonicalToken(model, token);
     }
 
     // --- Shared canonical serialization (complete fields, shipped order) ---
@@ -185,11 +256,11 @@ public final class PickerExporter {
     }
 
     /** Serialize a whole age-set as a multi-entry file, one entry per non-empty age config, or null. */
-    private static JsonObject setToConfigJson(RuntimeConfigSet set, String versionRange) {
+    private static JsonObject setToConfigJson(RuntimeConfigSet set, String versionRange, UnaryOperator<String> canon) {
         JsonArray entries = new JsonArray();
-        addAgeEntry(entries, "adult", set.adult, versionRange);
-        addAgeEntry(entries, "baby", set.baby, versionRange);
-        addAgeEntry(entries, "any", set.any, versionRange);
+        addAgeEntry(entries, "adult", set.adult, versionRange, canon);
+        addAgeEntry(entries, "baby", set.baby, versionRange, canon);
+        addAgeEntry(entries, "any", set.any, versionRange, canon);
         if (entries.isEmpty()) {
             return null;
         }
@@ -198,18 +269,20 @@ public final class PickerExporter {
         return root;
     }
 
-    private static void addAgeEntry(JsonArray entries, String age, RuntimeConfig config, String versionRange) {
+    private static void addAgeEntry(JsonArray entries, String age, RuntimeConfig config, String versionRange,
+                                    UnaryOperator<String> canon) {
         if (config == null) {
             return;
         }
-        JsonArray variants = variantsJson(config.variants);
+        JsonArray variants = variantsJson(config.variants, canon);
         if (variants.isEmpty()) {
             return;
         }
         entries.add(entryJson(versionRange, age, config.isEnabled(), variants));
     }
 
-    private static JsonArray variantsJson(List<Variant> variants) {
+    /** Serialize variants, mapping each head's attach token through {@code canon} (its canonical form). */
+    private static JsonArray variantsJson(List<Variant> variants, UnaryOperator<String> canon) {
         JsonArray out = new JsonArray();
         if (variants == null) {
             return out;
@@ -228,7 +301,7 @@ public final class PickerExporter {
                     eyes.add(eyeJson(def));
                 }
                 JsonObject head = new JsonObject();
-                head.addProperty("attachPoint", h.attachPoint != null ? h.attachPoint : "head");
+                head.addProperty("attachPoint", canon.apply(h.attachPoint != null ? h.attachPoint : "head"));
                 head.add("eyes", eyes);
                 heads.add(head);
             }

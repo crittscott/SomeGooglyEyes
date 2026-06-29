@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Shared eye drawing used by both render layers — the vanilla {@link LayerGooglyEyes} and the
  * GeckoLib {@code GooglyGeoLayer}. Keeping the appearance overrides (dye / harvested-eye item /
- * potion / NBT) and the Keystone&nbsp;B behavior composition here means the two layers can't drift
+ * potion / NBT) and the behavior composition here means the two layers can't drift
  * apart: a mob looks the same whether its model is vanilla or GeckoLib.
  *
  * <p>Each eye is drawn from a <b>baseline</b> — physics-driven iris wobble, configured scale, effective

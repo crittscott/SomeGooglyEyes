@@ -129,7 +129,7 @@ If multiple matching entries target the same entity and age slot, the first is k
 - A variant is a complete visual arrangement, not merely an alternate individual eye.
 - Weights are relative; omitted weights default to one and negative weights behave as zero.
 - The entity's stored variant roll is mapped deterministically onto the applicable age configuration, so client and server agree without sending a resolved index.
-- A head is an attachment group. `attachPoint` is passed to the active model resolver; it defaults to `head`.
+- A head is an attachment group. `attachPoint` is the resolver's **canonical enumeration token** — a part *name* where the model exposes one (hierarchical/Citadel/GeckoLib), or `#N` (a part index) for index-only reflection models. There is no legacy fallback: a bare name on an index-only model does not resolve. It defaults to `head` (valid only for models with a real `head` part).
 
 ### 5.4 Eye definition
 
@@ -223,7 +223,7 @@ At most one active behavior (see §8) is blended over this baseline: a behavior 
 | --- | --- | --- | --- |
 | Hierarchical | `HierarchicalModel` | Normalized part names | Implemented |
 | Citadel | Citadel/LLibrary-style advanced models | Unique box names or `#index` | Implemented / compatibility-sensitive |
-| Reflection fallback | Other vanilla-style entity models | `#index`; legacy non-index token means the first part | Implemented / brittle by design |
+| Reflection fallback | Other vanilla-style entity models | `#index` only (no name tokens) | Implemented / brittle by design |
 | GeckoLib | GeckoLib `GeoEntityRenderer` models | Bone names | Implemented / version-sensitive |
 
 The hierarchical resolver replays animated model transforms, but it discovers parts through cube visitation. A pivot/group part containing no cube cannot currently be selected or used as an attachment point; the result is a silent skipped head. This is a known **Partial** limitation.
@@ -344,6 +344,8 @@ It writes the union of two sources: the synced runtime state (`ClientEyeConfigs`
 
 Both paths share one serializer that writes the **complete canonical form** — every field explicit, in the shipped field order, each number rounded to one part in a thousand (the `/sg` CLI parses inputs as `float`, so this snaps widening noise like `0.2199999988` back to `0.22`) — rather than the loader's default-eliding codec output, and tags `/sg export` entries `age:"any"` with a version *range* (e.g. `[1.20.1,1.21)`). This keeps generated files equivalent to the hand-authored ones and immune to silent meaning-drift if a code default later changes.
 
+Attach tokens are also written in canonical form. Picker drafts already hold canonical tokens (authored/seeded in the enumeration vocabulary), so `/sg export` and the draft side of `/sg exportall` pass them through unchanged. For synced-only entities, `/sg exportall` canonicalizes each stored token against the entity's model — resolved from a throwaway instance, so it converts every config in one pass regardless of what's loaded — which is what migrates a legacy name on an index-only model (e.g. `head` → `#0`). A type whose model can't be reached is written verbatim and reported in the result count.
+
 ### 10.2 `/sg` command surface
 
 The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting the committed mob (`/sg export`) or dumping all live configs (`/sg exportall`, see §10.1), and spawning an authoring grid of living entity types in single-player (`/sg spawnall`, see §10.4).
@@ -358,7 +360,7 @@ The picker previews saved and current eyes with a centered iris and a local RGB 
 
 ### 10.3 Picker limitations
 
-- **Partial:** it retains a separate draft per entity type for the session, so switching among several mobs keeps each one's saved eyes (and `/sg exportall` can emit them all). But it never seeds a draft from a mob's already-committed or shipped config, so editing an existing placement still means re-authoring it from the live model.
+- **Implemented:** it retains a separate draft per entity type for the session, so switching among several mobs keeps each one's saved eyes (and `/sg exportall` can emit them all). On first sighting of a type it seeds the draft from the mob's existing synced config for its current age, so editing an existing placement starts from it rather than a blank slate; a never-configured mob gets an empty draft. The in-session draft wins on re-choose, so edits aren't lost. Seeded attach tokens are canonicalized to the model's enumeration vocabulary (the same token the part picker shows).
 - **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
 - **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
 - **Deferred:** remote/multiplayer export is intentionally unsupported.

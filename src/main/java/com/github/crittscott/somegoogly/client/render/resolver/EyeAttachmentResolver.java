@@ -21,6 +21,20 @@ public interface EyeAttachmentResolver {
         return java.util.List.of();
     }
 
+    /**
+     * Translate a (possibly legacy or differently-spelled) stored attach token into the <i>canonical</i>
+     * token this resolver would enumerate for the same part — the single vocabulary the picker, HUD, and
+     * exported configs all speak. For an index-only model that means {@code #N}; for a named model the
+     * enumerated name (in the model's own spelling). Returns the token unchanged when it can't be
+     * resolved to a part (so unknown tokens pass through untouched rather than being silently remapped).
+     *
+     * <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
+     * named bones).
+     */
+    default String canonicalToken(EntityModel<?> model, String storedToken) {
+        return storedToken;
+    }
+
     /** Whether this resolver knows how to walk the given model's part tree. */
     boolean handles(EntityModel<?> model);
 

@@ -10,7 +10,7 @@ import net.minecraftforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 
 /**
- * Per-mob, mutable, mid-life eye state — the "Keystone A" override layer that sits on top of the
+ * Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
  * shared datapack config ({@link com.github.crittscott.somegoogly.eye.HeadInfo}).
  *
  * <p>State lives in the entity's persistent data (saved by Forge under {@code ForgeData}, so it

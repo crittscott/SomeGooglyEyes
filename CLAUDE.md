@@ -1,0 +1,1 @@
+This is an unreleased Minecraft 1.20.1/Forge mod, not a mission-critical enterprise suite. There is to be no legacy support; no concern for backward compatibility. If we change data formats, we update all the stored data at the time of the change. Unless the data needs an AI to work out the new format, use deterministic tools (CLI utilities, python, etc).
