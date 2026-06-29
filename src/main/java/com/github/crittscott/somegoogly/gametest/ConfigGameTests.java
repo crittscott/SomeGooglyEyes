@@ -67,11 +67,11 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
+    public static void shippedPigHasOneVariant(GameTestHelper helper) {
         RuntimeConfig pig = ServerEyeConfigs.get(new ResourceLocation("minecraft", "pig"), false);
         helper.assertTrue(usable(pig), "pig should have a usable shipped eye config");
-        helper.assertTrue(pig.variants.size() == 2,
-                "pig ships two placement variants (got " + pig.variants.size() + ")");
+        helper.assertTrue(pig.variants.size() == 1,
+                "pig ships one placement variant (got " + pig.variants.size() + ")");
         helper.succeed();
     }
 }

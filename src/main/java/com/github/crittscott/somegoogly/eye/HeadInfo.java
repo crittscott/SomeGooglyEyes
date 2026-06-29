@@ -68,8 +68,7 @@ public class HeadInfo {
 
     public static class HeadConfig {
         public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.optionalFieldOf("attachPoint", "head")
-                        .forGetter(h -> h.attachPoint != null ? h.attachPoint : "head"),
+                Codec.STRING.fieldOf("attachPoint").forGetter(h -> h.attachPoint),
                 EyeDefinition.CODEC.listOf().optionalFieldOf("eyes", List.of())
                         .forGetter(h -> h.eyes != null ? h.eyes : List.of())
         ).apply(inst, (attachPoint, eyes) -> {
@@ -97,8 +96,8 @@ public class HeadInfo {
         }));
 
         public Boolean enabled;
-        // One or more placement variants; a mob picks one (weighted) at spawn. The loader always fills
-        // this with at least one entry (a legacy bare `heads` becomes a single weight-1 variant).
+        // One or more placement variants; a mob picks one (weighted) at spawn. The loader keeps only
+        // entries with at least one usable variant (see EyeConfigReloadListener#usableVariants).
         public List<Variant> variants;
 
         /** Defaults to enabled when the field is absent. */
@@ -254,7 +253,7 @@ public class HeadInfo {
     /** The part token (string name) the resolver should attach this head's eyes to. */
     public String getAttachToken(int headIndex) {
         HeadConfig head = headAt(headIndex);
-        return head != null && head.attachPoint != null ? head.attachPoint : "head";
+        return head != null ? head.attachPoint : null;
     }
 
     public int getEyeCount(int headIndex) {

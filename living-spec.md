@@ -104,7 +104,7 @@ Each entry is selected independently by `version` and `age`.
 | `enabled` | Defaults to `true`. `false` is a server-authoritative hard disable for this configuration. |
 | `variants` | One or more weighted complete arrangements; the entity rolls one for life. This is the only placement shape — even a single arrangement is one weight-one variant. |
 
-Entry-level `heads` is no longer a valid shape; a bare `heads` list is silently ignored. There is no backward compatibility — all shipped files were migrated to `variants` by `scripts/migrate_eyes_to_variants.py`.
+Entry-level `heads` is no longer a valid shape; a bare `heads` list is silently ignored. There is no backward compatibility — all shipped files use `variants`.
 
 If multiple matching entries target the same entity and age slot, the first is kept and later matching entries are ignored with a warning. Invalid files are logged and skipped without aborting the complete reload.
 
@@ -129,7 +129,7 @@ If multiple matching entries target the same entity and age slot, the first is k
 - A variant is a complete visual arrangement, not merely an alternate individual eye.
 - Weights are relative; omitted weights default to one and negative weights behave as zero.
 - The entity's stored variant roll is mapped deterministically onto the applicable age configuration, so client and server agree without sending a resolved index.
-- A head is an attachment group. `attachPoint` is the resolver's **canonical enumeration token** — a part *name* where the model exposes one (hierarchical/Citadel/GeckoLib), or `#N` (a part index) for index-only reflection models. There is no legacy fallback: a bare name on an index-only model does not resolve. It defaults to `head` (valid only for models with a real `head` part).
+- A head is an attachment group. `attachPoint` is **required** — there is no default, because a part token is meaningless without a model to resolve it against. It is the resolver's **canonical enumeration token**: a part *name* where the model exposes one (hierarchical/Citadel/GeckoLib), or `#N` (a part index) for index-only reflection models. There is no legacy fallback: a bare name on an index-only model does not resolve, and a file that omits `attachPoint` fails to load that head.
 
 ### 5.4 Eye definition
 
@@ -147,7 +147,7 @@ Each object in `eyes` is flat rather than nested:
 | `glows` | `false` | Whether the eye receives the glowing-eye render pass. |
 | `affectedByInvisibility` | `true` | Whether entity invisibility hides this eye. |
 
-The sampled shipped definitions for axolotl, bee, and warden each have one enabled `any` entry for `[1.20.1,1.21)` holding a single weight-one variant with two symmetric black-on-white eyes. Axolotl and warden attach to `head`; bee attaches to `bone`. Pig ships two variants, so different pigs roll different arrangements.
+The sampled shipped definitions for axolotl, bee, and warden each have one enabled `any` entry for `[1.20.1,1.21)` holding a single weight-one variant with two symmetric black-on-white eyes. Warden attaches to `head` (hierarchical model); axolotl attaches to `#0` (index-only reflection model); bee attaches to `bone`. Every shipped definition currently holds a single variant; the `variants` list is the format's only placement shape (a single arrangement is one weight-one variant), and multi-variant selection is exercised by the GameTest suite (§14) with synthetic configs rather than shipped data.
 
 ## 6. Configuration
 
@@ -425,7 +425,7 @@ Covered:
 | Serialization | flat-JSON eye codec round-trip + absent-field defaults; sparse `AppearanceOverride` NBT; all three packets by encode→decode→encode byte-idempotence |
 | Eye state | sparse override writes, tint clearing, `setGlow(null)` fallback, compound removal when empty |
 | Behaviors | every behavior is seed-deterministic over its run; blink mask selection; catch-up replay equals natural playback |
-| Config | `percentFor` exact-beats-wildcard resolution; shipped configs load (including `player`, and `pig`'s two variants) |
+| Config | `percentFor` exact-beats-wildcard resolution; shipped configs load (including `player`, and `pig` as a single variant) |
 | Spawn | at-spawn roll endpoints (0% never, 100% always for an eligible mob); variant roll in `[0, 1)` |
 | Recipe | `eye_modifier` transforms (dye / glowstone / redstone / cobweb), unrelated-NBT preservation, two-eye rejection |
 

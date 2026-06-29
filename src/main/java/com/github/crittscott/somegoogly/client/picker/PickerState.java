@@ -297,7 +297,7 @@ public final class PickerState {
                         if (head == null || head.eyes == null) {
                             continue;
                         }
-                        String raw = head.attachPoint != null ? head.attachPoint : "head";
+                        String raw = head.attachPoint;
                         String part = model != null && resolver != null
                                 ? resolver.canonicalToken(model, raw) : raw;
                         for (EyeDefinition def : head.eyes) {

@@ -26,8 +26,7 @@ public record EyePlacement(Vec3 position, double eyeScale, double irisScale,
             new Vec3(-0.13, -0.25, -0.25), 0.75, 0.6,
             DEFAULT_INCLINATION, DEFAULT_AZIMUTH, true);
 
-    /** {@link MapCodec} (flat fields) so {@link EyeDefinition} can sit placement beside appearance.
-     *  A stray {@code sideOffset} key in old data is harmlessly ignored (it was always a no-op duplicate of position.x). */
+    /** {@link MapCodec} (flat fields) so {@link EyeDefinition} can sit placement beside appearance. */
     public static final MapCodec<EyePlacement> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Vec3.CODEC.optionalFieldOf("position", DEFAULT.position).forGetter(EyePlacement::position),
             Codec.DOUBLE.optionalFieldOf("eyeScale", 0.75).forGetter(EyePlacement::eyeScale),

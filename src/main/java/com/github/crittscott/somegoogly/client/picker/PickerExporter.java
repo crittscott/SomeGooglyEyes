@@ -301,7 +301,7 @@ public final class PickerExporter {
                     eyes.add(eyeJson(def));
                 }
                 JsonObject head = new JsonObject();
-                head.addProperty("attachPoint", canon.apply(h.attachPoint != null ? h.attachPoint : "head"));
+                head.addProperty("attachPoint", canon.apply(h.attachPoint));
                 head.add("eyes", eyes);
                 heads.add(head);
             }
