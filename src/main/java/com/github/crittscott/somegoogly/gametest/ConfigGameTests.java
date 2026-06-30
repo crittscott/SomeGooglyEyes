@@ -3,7 +3,10 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +14,7 @@ import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Read-only checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
@@ -64,6 +68,40 @@ public final class ConfigGameTests {
         RuntimeConfig player = ServerEyeConfigs.get(new ResourceLocation("minecraft", "player"), false);
         helper.assertTrue(usable(player), "player should have a usable shipped eye config");
         helper.succeed();
+    }
+
+    /**
+     * Migration guard: every head in every shipped config must carry a non-blank attach token. The
+     * attachPoint is required (no default), so a token that resolved to {@code null}/empty means a botched
+     * data edit — this catches a token-migration ({@code /sg migratetokens} + {@code migrate_attach_tokens.py})
+     * that blanked or dropped a token across all 80+ files in one cheap headless check. It does not (and
+     * can't, on the dedicated server) verify the token resolves to a real model part — see the manual
+     * in-client checklist in at-usage.md for that.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : ServerEyeConfigs.all().entrySet()) {
+            RuntimeConfigSet set = entry.getValue();
+            assertTokens(helper, entry.getKey(), set.adult);
+            assertTokens(helper, entry.getKey(), set.baby);
+            assertTokens(helper, entry.getKey(), set.any);
+        }
+        helper.succeed();
+    }
+
+    private static void assertTokens(GameTestHelper helper, ResourceLocation id, RuntimeConfig config) {
+        if (config == null || config.variants == null) {
+            return;
+        }
+        for (Variant variant : config.variants) {
+            if (variant == null || variant.heads == null) {
+                continue;
+            }
+            for (HeadConfig head : variant.heads) {
+                helper.assertTrue(head != null && head.attachPoint != null && !head.attachPoint.isBlank(),
+                        "config " + id + " has a head with a blank attach token");
+            }
+        }
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)

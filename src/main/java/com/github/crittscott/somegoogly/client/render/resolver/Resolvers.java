@@ -4,13 +4,19 @@ import net.minecraft.client.model.EntityModel;
 
 import java.util.List;
 
-/** Picks the first {@link EyeAttachmentResolver} that handles a given model. */
+/**
+ * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
+ * named-model resolvers come first (they give the cleanest, most stable tokens), and
+ * {@link ChildMapResolver} is the catch-all last (it handles every model, falling back to positional
+ * root names where no stable name exists).
+ */
 public final class Resolvers {
 
     private static final List<EyeAttachmentResolver> ALL = List.of(
             new HierarchicalResolver(),
+            new AgeableListResolver(),
             new CitadelResolver(),
-            new ReflectionResolver()
+            new ChildMapResolver()
     );
 
     private Resolvers() {

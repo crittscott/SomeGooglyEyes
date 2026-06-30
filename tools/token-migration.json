@@ -1,0 +1,217 @@
+{
+  "minecraft:skeleton_horse": {
+    "#0": "body"
+  },
+  "minecraft:dolphin": {
+    "body": "root/body"
+  },
+  "minecraft:elder_guardian": {
+    "head": "root/head"
+  },
+  "immersiveengineering:fusilier": {
+    "head": "root/head"
+  },
+  "minecraft:strider": {
+    "body": "root/body"
+  },
+  "minecraft:wither_skeleton": {
+    "#0": "head"
+  },
+  "minecraft:goat": {
+    "#0": "head"
+  },
+  "minecraft:piglin_brute": {
+    "#0": "head"
+  },
+  "minecraft:fox": {
+    "#0": "head"
+  },
+  "minecraft:mule": {
+    "#1": "head"
+  },
+  "minecraft:giant": {
+    "#0": "head"
+  },
+  "minecraft:zombie_villager": {
+    "#0": "head"
+  },
+  "minecraft:frog": {
+    "head": "root/body/head"
+  },
+  "minecraft:sheep": {
+    "#0": "head"
+  },
+  "minecraft:guardian": {
+    "head": "root/head"
+  },
+  "minecraft:husk": {
+    "#0": "head"
+  },
+  "minecraft:cat": {
+    "#6": "head"
+  },
+  "minecraft:iron_golem": {
+    "head": "root/head"
+  },
+  "minecraft:tadpole": {
+    "#0": "head"
+  },
+  "minecraft:zombie_horse": {
+    "#1": "head"
+  },
+  "minecraft:sniffer": {
+    "head": "root/bone/body/head"
+  },
+  "minecraft:bee": {
+    "#0": "body"
+  },
+  "minecraft:cow": {
+    "#0": "head"
+  },
+  "immersiveengineering:bulwark": {
+    "head": "root/head"
+  },
+  "minecraft:spider": {
+    "head": "root/head"
+  },
+  "minecraft:witch": {
+    "head": "root/head"
+  },
+  "minecraft:snow_golem": {
+    "head": "root/head"
+  },
+  "minecraft:wither": {
+    "center_head": "root/center_head",
+    "left_head": "root/left_head",
+    "right_head": "root/right_head"
+  },
+  "minecraft:zoglin": {
+    "#0": "head"
+  },
+  "immersiveengineering:commando": {
+    "head": "root/head"
+  },
+  "minecraft:creeper": {
+    "head": "root/head"
+  },
+  "minecraft:stray": {
+    "#0": "head"
+  },
+  "minecraft:illusioner": {
+    "head": "root/head"
+  },
+  "minecraft:polar_bear": {
+    "#0": "head"
+  },
+  "minecraft:turtle": {
+    "#0": "head"
+  },
+  "minecraft:wandering_trader": {
+    "head": "root/head"
+  },
+  "minecraft:cave_spider": {
+    "head": "root/head"
+  },
+  "minecraft:villager": {
+    "head": "root/head"
+  },
+  "minecraft:wolf": {
+    "#0": "head"
+  },
+  "minecraft:ocelot": {
+    "#6": "head"
+  },
+  "minecraft:vex": {
+    "head": "root/head"
+  },
+  "minecraft:hoglin": {
+    "#0": "head"
+  },
+  "minecraft:pillager": {
+    "head": "root/head"
+  },
+  "minecraft:pig": {
+    "#0": "head"
+  },
+  "minecraft:zombified_piglin": {
+    "#0": "head"
+  },
+  "minecraft:magma_cube": {
+    "cube0": "root/cube0"
+  },
+  "minecraft:allay": {
+    "head": "root/head"
+  },
+  "minecraft:drowned": {
+    "#0": "head"
+  },
+  "minecraft:zombie": {
+    "#0": "head"
+  },
+  "minecraft:ghast": {
+    "body": "root/body"
+  },
+  "minecraft:bat": {
+    "head": "root/head"
+  },
+  "minecraft:camel": {
+    "head": "root/body/head"
+  },
+  "minecraft:player": {
+    "#0": "head"
+  },
+  "minecraft:blaze": {
+    "head": "root/head"
+  },
+  "minecraft:piglin": {
+    "#0": "head"
+  },
+  "minecraft:chicken": {
+    "#6": "head1"
+  },
+  "minecraft:slime": {
+    "right_eye": "root/right_eye"
+  },
+  "minecraft:axolotl": {
+    "#0": "body/tail"
+  },
+  "minecraft:panda": {
+    "#0": "head"
+  },
+  "minecraft:mooshroom": {
+    "#0": "head"
+  },
+  "minecraft:ravager": {
+    "head": "root/neck/head"
+  },
+  "minecraft:armor_stand": {
+    "#0": "head"
+  },
+  "minecraft:donkey": {
+    "#1": "head"
+  },
+  "minecraft:horse": {
+    "#0": "body"
+  },
+  "minecraft:skeleton": {
+    "#0": "head"
+  },
+  "minecraft:evoker": {
+    "head": "root/head"
+  },
+  "minecraft:parrot": {
+    "head": "root/head"
+  },
+  "minecraft:warden": {
+    "head": "root/bone/body/head"
+  },
+  "minecraft:vindicator": {
+    "head": "root/head"
+  },
+  "exoticbirds:kiwi": {
+    "#0": "body"
+  },
+  "minecraft:enderman": {
+    "#0": "head"
+  }
+}

@@ -32,15 +32,15 @@ public class ClientConfig {
         BUILDER.push("Client Settings");
 
         DISABLE_GOOGLY_EYES = BUILDER
-                .comment("Disable all googly eyes (client-side override)")
+                .comment("Disable display of all googly eyes on this client.")
                 .define("disableGooglyEyes", false);
 
         DISABLED_ENTITIES = BUILDER
-                .comment("List of entity ids that should not get googly eyes, e.g. \"minecraft:zombie\" (client-side override)")
+                .comment("List of entity ids that should not display googly eyes on this client, e.g. \"minecraft:zombie\".")
                 .defineList("disabledEntities", ArrayList::new, obj -> obj instanceof String);
 
         DISABLED_MODS = BUILDER
-                .comment("List of mod namespaces whose entities should not get googly eyes, e.g. \"minecraft\" (client-side override)")
+                .comment("List of mod namespaces whose entities should not display googly eyes on this client, e.g. \"minecraft\"")
                 .defineList("disabledMods", ArrayList::new, obj -> obj instanceof String);
 
         BUILDER.pop();

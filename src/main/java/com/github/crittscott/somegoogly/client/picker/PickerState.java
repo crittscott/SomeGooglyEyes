@@ -400,11 +400,14 @@ public final class PickerState {
         currentEye.irisScale = Math.max(0, v);
     }
 
-    /** The CLI {@code part <name>} op; false if no such part. */
+    /**
+     * The CLI {@code part <name>} op; false if no such part. The typed token is suffix-matched against the
+     * enumerated path tokens, so a bare leaf (e.g. {@code head}) selects {@code root/body/head}; the
+     * selected {@code currentPart} is the full canonical path it matched.
+     */
     public static boolean setPartByName(String token) {
-        String want = EyeAttachmentResolver.normalize(token);
         for (int i = 0; i < parts.size(); i++) {
-            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+            if (EyeAttachmentResolver.pathMatches(token, parts.get(i))) {
                 partIndex = i;
                 currentPart = parts.get(i);
                 return true;
@@ -456,9 +459,8 @@ public final class PickerState {
         if (currentPart == null) {
             return;
         }
-        String want = EyeAttachmentResolver.normalize(currentPart);
         for (int i = 0; i < parts.size(); i++) {
-            if (EyeAttachmentResolver.normalize(parts.get(i)).equals(want)) {
+            if (EyeAttachmentResolver.pathMatches(currentPart, parts.get(i))) {
                 partIndex = i;
                 return;
             }
