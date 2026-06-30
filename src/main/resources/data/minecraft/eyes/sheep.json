@@ -14,10 +14,10 @@
                 {
                   "position": [
                     -0.13,
-                    -0.25,
-                    -0.25
+                    -0.11,
+                    -0.38
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
@@ -37,10 +37,10 @@
                 {
                   "position": [
                     0.13,
-                    -0.25,
-                    -0.25
+                    -0.11,
+                    -0.38
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
