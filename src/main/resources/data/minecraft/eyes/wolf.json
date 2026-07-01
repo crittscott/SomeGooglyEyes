@@ -36,11 +36,11 @@
                 },
                 {
                   "position": [
-                    0.13,
-                    -0.25,
-                    -0.25
+                    0.15,
+                    -0.03,
+                    -0.12
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.5,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
