@@ -1,86 +1,81 @@
-# Some Googly Eyes: Living Specification
+# Some Googly Eyes: Architecture Overview
 
-> **Status:** implementation-grounded, living document.  
-> **Scope:** current Java implementation and the shipped data format, reviewed 2026-06-26.  
-> **Validation status:** server-side logic is now partly covered by an automated Forge GameTest suite (§14), run headless via `runGameTestServer`. The covered paths are noted there; rendering, client wobble, GeckoLib, the picker, and dedicated-server loadability are not exercised by those tests and remain source-derived.
+> **Status:** implementation-grounded overview.  
+> **Scope:** current Java implementation and shipped data format, reviewed from the existing living specification.  
+> **Audience:** AI assistants and maintainers who need a compact mental model of the mod before working on a small part of the codebase. This is not intended to restate every implementation branch or test case.
 
 ## 1. Purpose
 
-Some Googly Eyes adds configurable, animated googly eyes to living Minecraft entities. It is designed around a clean separation:
+Some Googly Eyes adds configurable, animated googly eyes to living Minecraft entities.
 
-- Datapacks describe *where* eyes belong on a particular entity model and what their default appearance is.
-- The server decides *whether* an individual entity has eyes, persists that decision, and synchronizes it.
-- The client draws the eyes, simulates their wobble, applies client preferences, and provides an in-world authoring tool for new placements.
-- Eye items carry a portable *appearance*, not a portable placement. When that appearance is applied to a mob (only via the splash potion), the mob's datapack placement is used.
+The core design separates four concerns:
+
+- **Datapacks** describe where eyes attach to an entity model and what their default appearance is.
+- **The server** decides whether a particular entity has eyes, persists that state, chooses stable placement variants, and synchronizes authoritative data.
+- **The client** renders eyes, runs the local wobble simulation, applies local visibility preferences, and hosts the in-world placement picker.
+- **Eye items** carry portable appearance only. They do not carry placement. When an appearance is applied to an entity, the entity's datapack placement is used.
 
 The mod id is `somegoogly`.
 
 ## 2. Status vocabulary
 
-| Status | Meaning |
+- **Implemented:** present in normal runtime registration.
+- **Partial:** present but intentionally limited.
+- **Experimental:** implemented, but not verified by runtime compatibility testing.
+- **Deferred:** architectural seam or intended feature without complete gameplay implementation.
+
+Use these labels conservatively. In particular, dedicated-server support and external renderer compatibility should not be promoted without a recorded runtime check.
+
+## 3. Architectural ownership
+
+This is a **both-sides mod**.
+
+The server owns datapack loading, definition selection, entity eye state, appearance overrides, spawn rolls, gameplay mutations, behavior scheduling, and synchronization. A server without the client can own state but cannot render anything.
+
+The client owns rendering, wobble simulation, local render vetoes, picker previews, model attachment resolution, GeckoLib rendering integration, and most authoring commands. A client without the server can render only from server-selected definitions and synchronized entity state.
+
+Package layout reflects this split. Client-only systems live under `com.github.crittscott.somegoogly.client`; shared and server-side systems live under `com.github.crittscott.somegoogly`. The package boundary is a useful orientation aid, but runtime side ownership is the real rule.
+
+## 4. Runtime lifecycle
+
+The normal flow is:
+
+1. Server reload reads `data/<namespace>/eyes/*.json` from active datapacks.
+2. Definitions are selected by namespace mod version and age selector.
+3. When an entity first joins a server level, the server may assign eyes and stores a stable placement-variant roll.
+4. Selected definitions are synced to clients during datapack sync.
+5. Entity eye state is synced when a client starts tracking that entity and whenever the state changes.
+6. Client render layers combine synced placement, synced entity state, local wobble, optional behavior playback, and local preferences.
+
+The server-selected datapack configuration is authoritative. The client should not invent placements outside picker preview mode.
+
+## 5. Persistent entity state
+
+Living entities may carry these Forge persistent-data keys:
+
+| Key | Purpose |
 | --- | --- |
-| **Implemented** | Present in the Java source and part of normal runtime registration. |
-| **Partial** | Present, but intentionally limited or missing an important intended extension. |
-| **Experimental** | Implemented code exists, but compatibility has not been established by runtime testing. |
-| **Deferred** | Named architectural seam or intended feature with no complete gameplay implementation. |
-
-## 3. Side ownership
-
-| Concern | Owner | Status |
-| --- | --- | --- |
-| Read datapack eye definitions | Server | Implemented |
-| Select version and age appropriate definitions | Server | Implemented |
-| Decide whether a newly seen entity has eyes | Server | Implemented |
-| Persist per-entity state and appearance overrides | Server | Implemented |
-| Synchronize definitions, state, and expression triggers | Server to client | Implemented |
-| Draw eyes and simulate idle wobble | Client | Implemented |
-| Respect local disable preferences | Client | Implemented |
-| Run the placement picker and `/sg` authoring commands | Client, single-player export only | Implemented / Partial |
-
-Conceptually this is a **both-sides mod**. A server without the client merely owns data and state; a client without the server can render only after it receives the server-selected configuration and state. Client registrations are guarded by distribution checks, but dedicated-server loadability is still **experimental** and must not be treated as verified.
-
-The package layout mirrors this split: client-only code (rendering, the wobble tracker, the placement picker, GeckoLib compatibility, the shared eye model, client config, and the `/sg` picker commands) lives under `com.github.crittscott.somegoogly.client`, while shared and server-only code stays directly under `com.github.crittscott.somegoogly`. The boundary is structural only — the runtime ownership above is unchanged.
-
-## 4. Runtime model
-
-### 4.1 Entity state
-
-Each living entity may have these values in persistent Forge data:
-
-| Key | Meaning |
-| --- | --- |
-| `somegoogly:hasGooglyEyes` | Whether the entity currently displays eyes. |
-| `somegoogly:eyeVariantRoll` | A stable random roll used to choose one weighted placement variant. |
+| `somegoogly:hasGooglyEyes` | Whether the entity currently has eyes. |
+| `somegoogly:eyeVariantRoll` | Stable random value used to select one weighted placement variant. |
 | `somegoogly:eyeOverrides` | Optional appearance override: cornea color, iris color, and glow. |
 
-`hasGooglyEyes` and the variant roll are assigned the first time the entity joins the server level. The eye flag is a once-at-spawn decision, but it can later be changed by gameplay actions. It is retained through saves, dimension changes, and aging. The variant roll is likewise retained, so an entity keeps the same visual arrangement for life.
+The eye flag is initially a spawn-time decision, but gameplay can later change it. The variant roll is stable for the entity's life so the visual arrangement does not reroll on save/load, tracking changes, dimension changes, or aging.
 
-An entity is eligible for the initial roll only when the server has a usable enabled definition for it at either its current or alternate age. This prevents a baby that only has an adult definition from being permanently excluded before it grows.
+Eligibility for initial eyes depends on whether the server has a usable enabled definition for the entity's current or alternate age. This prevents an entity from being permanently excluded just because it is currently a baby or adult while only the other age has a definition.
 
-**Players are a deliberate exception.** A player has an eye definition (`data/minecraft/eyes/player.json`, a humanoid head arrangement) and renders eyes when it has them, but the server never includes players in the at-spawn roll: a player always starts with no eyes and can only gain them mid-life from the splash potion (§9.4). Because the flag lives in ordinary persistent data, which Forge clears on respawn, a player's eyes are lost on death.
+Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only through the splash potion. Because the state is ordinary persistent data, player eyes are lost on respawn.
 
-### 4.2 Lifecycle
+## 6. Datapack definition model
 
-1. The server reload listener reads `data/<namespace>/eyes/*.json` from active datapacks.
-2. It selects the definitions matching the namespace's loaded mod version and each definition's age selector.
-3. At first entity join, the server determines an eye flag using the global/per-entity spawn chance (players are always excluded and start with no eyes) and stores a placement-variant roll.
-4. On datapack sync, the selected definitions are sent to every client. On entity tracking, its current eye state is sent to the new observer.
-5. State mutations broadcast the full state to every tracking client immediately.
-6. Client render layers read the synced definition plus the entity's synced persistent state and draw the result.
-
-## 5. Datapack definition format
-
-### 5.1 Location
-
-An eye-definition file belongs at:
+An entity's eye file is located at:
 
 ```text
 data/<entity namespace>/eyes/<entity path>.json
 ```
 
-For example, the entity id `minecraft:axolotl` maps to `data/minecraft/eyes/axolotl.json`.
+For example, `minecraft:axolotl` maps to `data/minecraft/eyes/axolotl.json`.
 
-### 5.2 Top-level schema
+The supported top-level shape is:
 
 ```json
 {
@@ -89,36 +84,15 @@ For example, the entity id `minecraft:axolotl` maps to `data/minecraft/eyes/axol
       "version": "[1.20.1,1.21)",
       "age": "any",
       "enabled": true,
-      "variants": [ ... ]
-    }
-  ]
-}
-```
-
-Each entry is selected independently by `version` and `age`.
-
-| Field | Meaning |
-| --- | --- |
-| `version` | Exact version or a bracket range such as `[lower,upper)`. It is matched against the loaded version of the file's namespace. |
-| `age` | `adult`, `baby`, or `any`. An age-specific match takes precedence over `any`. |
-| `enabled` | Defaults to `true`. `false` is a server-authoritative hard disable for this configuration. |
-| `variants` | One or more weighted complete arrangements; the entity rolls one for life. This is the only placement shape — even a single arrangement is one weight-one variant. |
-
-Entry-level `heads` is no longer a valid shape; a bare `heads` list is silently ignored. There is no backward compatibility — all shipped files use `variants`.
-
-If multiple matching entries target the same entity and age slot, the first is kept and later matching entries are ignored with a warning. Invalid files are logged and skipped without aborting the complete reload.
-
-### 5.3 Variants and heads
-
-```json
-{
-  "variants": [
-    {
-      "weight": 1.0,
-      "heads": [
+      "variants": [
         {
-          "attachPoint": "head",
-          "eyes": [ ... ]
+          "weight": 1.0,
+          "heads": [
+            {
+              "attachPoint": "head",
+              "eyes": [ ... ]
+            }
+          ]
         }
       ]
     }
@@ -126,325 +100,196 @@ If multiple matching entries target the same entity and age slot, the first is k
 }
 ```
 
-- A variant is a complete visual arrangement, not merely an alternate individual eye.
-- Weights are relative; omitted weights default to one and negative weights behave as zero.
-- The entity's stored variant roll is mapped deterministically onto the applicable age configuration, so client and server agree without sending a resolved index.
-- A head is an attachment group. `attachPoint` is **required** — there is no default, because a part token is meaningless without a model to resolve it against. It is the resolver's **canonical enumeration token**: a part *name* where the model exposes one (hierarchical/Citadel/GeckoLib), or `#N` (a part index) for index-only reflection models. There is no legacy fallback: a bare name on an index-only model does not resolve, and a file that omits `attachPoint` fails to load that head.
+Each entry is selected by namespace version and age. `age` may be `adult`, `baby`, or `any`; an age-specific entry takes precedence over `any`. `enabled:false` is a server-authoritative disable.
 
-### 5.4 Eye definition
+`variants` are complete arrangements. A single arrangement is still represented as a one-element `variants` list. Variant weights are relative, and the stored per-entity roll maps deterministically onto the selected age configuration.
 
-Each object in `eyes` is flat rather than nested:
+Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a model part or bone name when available, or `#N` for index-only reflection models.
 
-| Field | Default | Meaning |
-| --- | --- | --- |
-| `position` | `[-0.13, -0.25, -0.25]` | Local offset from the attachment point. |
-| `eyeScale` | `0.75` | Base eye size. Non-positive eyes are skipped. |
-| `irisScale` | `0.6` | Iris/pupil size. |
-| `inclination` | `90.0` | Aim angle from local positive Y, in degrees. |
-| `azimuth` | `270.0` | Aim angle from local positive X, in degrees. |
-| `corneaColors` | `[1, 1, 1]` | RGB cornea color, stored as three floats. |
-| `irisColors` | `[0, 0, 0]` | RGB iris color, stored as three floats. |
-| `glows` | `false` | Whether the eye receives the glowing-eye render pass. |
-| `affectedByInvisibility` | `true` | Whether entity invisibility hides this eye. |
+Each eye is a flat object containing placement, scale, direction, color, glow, and invisibility behavior. The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
 
-The sampled shipped definitions for axolotl, bee, and warden each have one enabled `any` entry for `[1.20.1,1.21)` holding a single weight-one variant with two symmetric black-on-white eyes. Warden attaches to `head` (hierarchical model); axolotl attaches to `#0` (index-only reflection model); bee attaches to `bone`. Every shipped definition currently holds a single variant; the `variants` list is the format's only placement shape (a single arrangement is one weight-one variant), and multi-variant selection is exercised by the GameTest suite (§14) with synthetic configs rather than shipped data.
+Legacy entry-level `heads` is not a supported placement shape. Current data uses `variants`.
 
-## 6. Configuration
+## 7. Configuration
 
-### 6.1 Server configuration
+Server configuration controls the creation and behavior of eyed entities. The major categories are:
 
-| Setting | Default | Behavior |
-| --- | ---: | --- |
-| `googlyEyesEnabled` | `true` | Global master switch for new spawn decisions. |
-| `globalPercent` | `2` | Default percentage chance for an eligible entity to get eyes at first spawn. |
-| `entityOverrides` | empty | Lines of `entity-or-glob,percent`. Exact ids beat wildcard entries; otherwise the first matching wildcard wins. |
-| `harvestOnKillPercent` | `25` | Chance for an eyed mob killed directly with a shears item (any `ShearsItem`, no enchantment needed) to drop eye items. |
-| `ambientBehaviors` | `true` | Enables idle cosmetic expressions. |
-| `ambientMinTicks` / `ambientMaxTicks` | configured range | Random delay range between ambient expression attempts. |
-| `ambientBehaviorPool` | `blink, side_eye, stare, cross_eye` | Expression ids the idle timer may play. Unknown ids are ignored. Event-driven behaviors are not in this pool. |
-| `growOnHitPercent` | `20` | Chance an eyed mob plays `grow` when a player damages it. `0` disables. |
-| `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader plays `swirl`. |
-| `swirlOnHeal` | `true` | An eyed mob being healed plays `swirl` (rate-limited per mob). |
-| `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob. |
+- global enable/disable for new spawn decisions;
+- global and per-entity spawn percentages;
+- harvest chance when killed with shears;
+- ambient behavior scheduling;
+- event-driven behavior toggles and cooldowns.
 
-Spawn percentage controls how often a *new* eligible entity receives eyes. Changing it does not reroll an entity that already has stored state.
+Changing spawn percentages affects newly initialized eligible entities. It does not reroll stored entities.
 
-### 6.2 Client configuration
+Client configuration is local and only affects rendering. It can disable all googly eyes, specific entity ids, or entire mod namespaces. These preferences are not authoritative gameplay state and are not synced back to the server.
 
-| Setting | Behavior |
-| --- | --- |
-| `disableGooglyEyes` | Local master render veto. |
-| `disabledEntities` | Local list of entity ids (e.g. `minecraft:zombie`) whose eyes are not rendered. |
-| `disabledMods` | Local list of mod namespaces (e.g. `minecraft`) whose entities' eyes are not rendered. |
+## 8. Rendering and attachment
 
-Malformed `disabledEntities` values are dropped and logged once rather than crashing setup or rendering. The parsed views of both lists are cached and rebuilt only when the client config (re)loads, rather than on every render call.
+The client adds googly-eye render layers to vanilla living-entity renderers, including player skin models. GeckoLib entity renderers receive a separate compatibility layer when GeckoLib is present.
 
-## 7. Rendering and attachment
+A render pass requires all of the following:
 
-### 7.1 Normal rendering
+- the entity is not currently being previewed by the picker;
+- local client preferences allow rendering;
+- the entity has synced eye state;
+- there is a synced enabled definition for the entity;
+- the model has a usable attachment resolver;
+- the eye is not suppressed by invisibility or invalid scale.
 
-The client adds a googly-eye layer to every vanilla `LivingEntityRenderer`, including both player skin models (default and slim). The layer returns without drawing when any of the following applies:
+Rendering combines datapack placement, effective appearance, local wobble state, at most one active cosmetic behavior, and normal/glowing passes as needed.
 
-- the picker is actively previewing that entity;
-- the client global or per-entity veto is active;
-- the entity has no synced `hasGooglyEyes` flag, outside picker mode;
-- no enabled client-synced geometry exists;
-- the model has no usable attachment resolver;
-- the eye is hidden by invisibility or has a non-positive scale.
+Attachment is resolved by model type:
 
-For each surviving eye, rendering combines:
-
-1. its datapack placement;
-2. datapack appearance overlaid by the entity's optional appearance override;
-3. local, client-only wobble physics;
-4. at most one active behavior contribution;
-5. normal and, when configured, glowing render passes.
-
-The eye model is shared between mob eyes, picker previews, and eye items. Its cornea and iris are separate, closed 16-sided shallow cylinders; the iris is moved independently in front of the cornea, giving the object its wobble. The iris position maps linearly onto the full circular interior of the cornea, so the pupil can travel anywhere up to the rim.
-
-### 7.4 Iris wobble physics
-
-The wobble is a client-only, per-eye physical simulation, ticked at the client tick rate and interpolated at render time. The same simulation drives mob eyes and a held eye item, so they behave identically.
-
-Each eye is modeled as a point-mass pupil moving in the eye's local plane, constrained to a unit disk that maps onto the cornea's full circular interior:
-
-- **Gravity** pulls the pupil toward the bottom of the eye (local down).
-- **Pseudo-forces** push the pupil opposite the eye socket's acceleration: the holder's linear acceleration (projected so sideways movement and jumping/falling register) and the holder's head yaw/pitch angular acceleration. Because the forcing is acceleration-based, steady motion at constant speed produces no movement; starts, stops, turns, and jumps are what throw the pupil around.
-- **Collision** with the circular rim reflects the pupil radially with a coefficient of restitution below one, plus tangential friction, so it bounces a number of times and then settles. Rest and slide cutoffs zero out residual motion so it parks cleanly at the bottom instead of jittering forever.
-- A small per-eye noise term keeps multiple eyes on one entity from moving in perfect lockstep.
-
-The simulation state is transient and client-only: it is never persisted or synchronized. Each eye is an independent simulation, so the number of eyes per head is unconstrained.
-
-At most one active behavior (see §8) is blended over this baseline: a behavior that drives the pupil pulls it off the physics position toward the behavior's target by a weight, while behaviors that leave the pupil alone let the wobble show through unchanged.
-
-### 7.2 Attachment resolvers
-
-| Resolver | Target models | Token form | Status |
+| Resolver | Target | Token style | Status |
 | --- | --- | --- | --- |
-| Hierarchical | `HierarchicalModel` | Normalized part names | Implemented |
-| Citadel | Citadel/LLibrary-style advanced models | Unique box names or `#index` | Implemented / compatibility-sensitive |
-| Reflection fallback | Other vanilla-style entity models | `#index` only (no name tokens) | Implemented / brittle by design |
-| GeckoLib | GeckoLib `GeoEntityRenderer` models | Bone names | Implemented / version-sensitive |
+| Hierarchical | `HierarchicalModel` | part names | Implemented, but cube-less pivot parts are not selectable |
+| Citadel | Citadel/LLibrary-style models | box names or `#index` | Implemented, compatibility-sensitive |
+| Reflection fallback | other vanilla-style models | `#index` only | Implemented, brittle by design |
+| GeckoLib | `GeoEntityRenderer` models | bone names | Implemented, version-sensitive |
 
-The hierarchical resolver replays animated model transforms, but it discovers parts through cube visitation. A pivot/group part containing no cube cannot currently be selected or used as an attachment point; the result is a silent skipped head. This is a known **Partial** limitation.
+The reflection fallback intentionally trades robustness for broad coverage. External renderer integrations should be treated as compatibility surfaces, not core guarantees.
 
-The reflection fallback depends on class field order. It exists to broaden model coverage, but may shift when an upstream model changes. Ageable list-model scaling is also outside its part-tree transform and can misplace baby eyes.
+## 9. Wobble and cosmetic behaviors
 
-### 7.3 GeckoLib compatibility
+Wobble is client-only and transient. It is not persisted or synchronized. The same simulation concept drives mob eyes and held eye items, so they feel consistent.
 
-If GeckoLib is installed, non-vanilla Geo entity renderers receive `GooglyGeoLayer`. It mirrors the normal layer's state checks, override composition, wobble, behavior display, invisibility handling, and picker preview. Bone traversal uses the GeckoLib API directly, so changes to that API can break attachment until this compatibility layer is updated.
+The server owns behavior scheduling and triggers; the client owns visual playback. A behavior trigger identifies the entity, behavior id, duration, seed, and elapsed time. The seed makes playback deterministic across observers, and elapsed time lets newly tracking clients join an in-progress effect.
 
-## 8. Cosmetic behaviors
+Built-in behavior ids are:
 
-The server owns the schedule; clients own the visual playback. A behavior trigger contains an entity id, behavior id, duration, seed, and elapsed time. The seed lets every observer reconstruct random choices consistently, while a newly tracking observer can start partway through an existing effect.
+- `stare`
+- `blink`
+- `side_eye`
+- `cross_eye`
+- `grow`
+- `swirl`
+- `color_change`
 
-Built-in behaviors and their trigger sources are:
+Ambient behaviors are selected from the configured ambient pool. Event-driven behaviors currently include `grow` when a player damages an eyed mob and `swirl` for trade or heal events. `color_change` is registered for debug/admin triggering but is not part of normal ambient or event tracks.
 
-| Id | Visual effect | Trigger |
-| --- | --- | --- |
-| `stare` | Pupils ease to center, hold, then release to wobble. | Ambient |
-| `blink` | A seeded random subset of eyes squashes shut and opens. | Ambient |
-| `side_eye` | Pupils center, then slide to one seeded side. | Ambient |
-| `cross_eye` | Pupils center and move inward according to their configured horizontal position. | Ambient |
-| `grow` | Eyes bulge and settle. | A player damages the mob (`growOnHitPercent`) |
-| `swirl` | Pupils spiral toward center. | A trade completes with the villager/wandering trader, or the mob is healed (`swirlOnTrade` / `swirlOnHeal`) |
-| `color_change` | Corneas blend toward a seeded hue and back. | None — registered and debug-triggerable only |
+Only one behavior runs on an entity at a time. Later triggers are dropped while one is active. Behaviors are cosmetic and do not persist.
 
-Triggers fall into two tracks. **Ambient** behaviors are chosen at random from the configured pool (§6.1) by the idle timer. **Event-driven** behaviors (`grow`, `swirl`) are started from server game events — `LivingHurtEvent`, `LivingHealEvent`, and Forge's `TradeWithVillagerEvent` — and are not in the ambient pool. `color_change` ships in neither track but stays registered so `/sg admin` can play it.
+## 10. Gameplay systems
 
-Only one behavior may run on an entity at a time, and the rule is non-interruptable for every trigger source: an event reaction that arrives while a behavior is already playing is dropped, not queued. Behaviors do not persist to NBT and are cosmetic; after a reload they simply start fresh.
+### Eye item
 
-Every event trigger is gated to entities that both have eyes and are currently tracked by a player — the same condition ambient scheduling uses, checked by reusing the per-mob schedule state that only exists for tracked, eyed mobs. Reactions therefore never fire for off-screen or eyeless mobs, and the client independently drops a trigger for any mob it is not actively rendering. The heal trigger additionally enforces a per-mob cooldown (`swirlHealCooldownTicks`), armed only when a swirl actually starts, so a regenerating mob does not swirl back-to-back.
+`somegoogly:googly_eye` is a 3D item. Its NBT stores sparse appearance overrides: cornea color, iris color, and glow. It stores no placement, attachment, rotation, scale, or entity-specific geometry.
 
-**Mid-life eye gain — Implemented:** the scheduler registers a per-mob schedule state on `StartTracking` for every tracked mob, regardless of whether it currently has eyes. Eligibility is instead checked at execution time — each ambient roll and every event reaction gates on `hasEyes` — so an eyeless entity that gains eyes through the potion while it is already being watched begins scheduling ambient and event-driven behaviors without waiting for tracking to restart. This conclusion is source-derived; the path is not exercised by the GameTest suite (§14).
+In hand, the item uses the same wobble concept as mob eyes. In static item contexts, the iris is centered.
 
-## 9. Gameplay systems
+### Harvest
 
-### 9.1 Eye item and appearance
+Eyed mobs can be harvested in two ways:
 
-`somegoogly:googly_eye` is a 3D item. Its `EyeProperties` NBT stores a sparse `AppearanceOverride`:
+- right-click with Optometrist-enchanted shears removes eyes non-lethally;
+- direct shears kill may drop eye items according to the server harvest chance.
 
-- optional cornea RGB;
-- optional iris RGB;
-- optional glow state.
+Harvested eye items carry the mob's effective appearance. Current overrides are per-mob, not per-eye, so asymmetric colors are not preserved as separate item properties.
 
-An absent property falls back to the recipient mob's per-eye datapack appearance. The item deliberately contains no position, scale, rotation, or attachment data.
+Players with eyes are living entities for these systems and can be harvested like mobs.
 
-When rendered in a hand, the item runs the same wobble step as a mob eye. In inventories, frames, and ground contexts its iris is centered.
+### Crafting
 
-### 9.2 Harvest
+The special `eye_modifier` recipe modifies a googly-eye item's appearance. Dyes set iris color, glowstone forces glow on, redstone forces glow off, and cobweb clears overrides back to datapack defaults. The recipe preserves unrelated NBT.
 
-| Action | Result | Status |
-| --- | --- | --- |
-| Right-click an eyed mob with Optometrist-enchanted shears (any `ShearsItem`, vanilla or modded) | Removes its eyes without damage, drops eye items carrying the mob's effective appearance. | Implemented |
-| Kill an eyed mob with a direct shears attack (any `ShearsItem`, no enchantment) | May drop the same eye items, using the server harvest chance. | Implemented |
+### Potion
 
-Both harvest paths also apply to a player who currently has eyes (a player is a living entity with a definition). Shears-killing an eyed player therefore drops eye items as for any mob.
+A custom brewing recipe turns an awkward splash potion plus a googly-eye item into the `somegoogly:googly_eyes` splash potion and copies the eye item's appearance to the output.
 
-Right-clicking a mob or player with a googly-eye item does **nothing**: the item is purely a brewing/crafting ingredient, and the splash potion (§9.4) is the only way to give an entity eyes. Right-clicking a googly-eye item into an item frame remains ordinary vanilla behavior and is unaffected.
+On impact, the server chooses one nearby eligible eyeless living entity, including players, applies the potion appearance, and turns eyes on. This is the only normal gameplay path for giving an existing eyeless entity eyes.
 
-Harvested stacks use the mob's total configured eye count, but sample the effective appearance from the first configured eye. The current override model is per-mob rather than per-eye, so asymmetric eye colors are not preserved as separate item properties.
+### Enchantment
 
-### 9.3 Crafting
+`somegoogly:optometrist` is a treasure-only shears enchantment used for non-lethal harvesting.
 
-The special `eye_modifier` recipe accepts exactly one googly-eye item and one modifier:
+### JEI
 
-| Ingredient | Effect |
-| --- | --- |
-| Any vanilla dye | Set iris color. |
-| Glowstone dust | Force glow on. |
-| Redstone | Force glow off. |
-| Cobweb | Remove all overrides and fall back to a recipient's config appearance. |
+JEI integration registers a representative brewing display for the custom splash-potion recipe. The real recipe still copies item appearance NBT. The custom `eye_modifier` recipe is not currently exposed through JEI and remains Partial.
 
-The output preserves unrelated NBT from the source eye item.
+## 11. Picker and authoring workflow
 
-### 9.4 Potion
+The picker is a client-driven in-world authoring tool. It is intended for creative-mode placement work. Writing datapack output is restricted to a single-player integrated server.
 
-An awkward splash potion brewed with a googly-eye item becomes the `somegoogly:googly_eyes` splash potion and inherits the eye item's appearance. The brew is a custom Forge `IBrewingRecipe` (not the static `BrewingRecipe` class) because it copies the eye item's appearance NBT onto the output, which a fixed-stack recipe cannot do.
+The basic workflow is:
 
-On impact, the server chooses exactly one random nearby eligible, currently eyeless living entity—players included, since they have a definition but never spawn with eyes—and applies the potion's appearance before turning eyes on. This is the only way to give an entity eyes. It does not cancel vanilla impact handling; the custom potion carries no normal mob effects.
+1. Enable the picker.
+2. Lock a living entity target.
+3. Choose an attachment part.
+4. Add, move, aim, scale, color, and save draft eyes.
+5. Export the selected entity or export all known configs.
 
-### 9.6 JEI integration
-
-JEI's brewing scanner only introspects vanilla and the static Forge `BrewingRecipe`, so it cannot display the custom `IBrewingRecipe` above on its own (it logs `Can't handle brewing recipe class`). A client-side `@JeiPlugin` (`client.compat.jei.SomeGooglyJeiPlugin`) registers a representative entry in JEI's brewing category — awkward splash + googly eye → googly-eyes splash — so the brew is discoverable. The displayed eye and output carry no appearance override; the real recipe still copies whatever the eye item holds. JEI is a compile-only soft dependency: the plugin class is referenced only by JEI's annotation scan, so with JEI absent it is never loaded.
-
-The `eye_modifier` crafting recipe (§9.3) is a special `CustomRecipe` and is **not** registered with JEI; its dye/glowstone/redstone/cobweb transforms remain undiscoverable in the recipe lookup. **Status: Partial.**
-
-### 9.5 Enchantment
-
-`somegoogly:optometrist` is a treasure-only enchantment restricted to shears (any `ShearsItem`, vanilla or modded). Its purpose is non-lethal harvesting.
-
-## 10. Placement picker and authoring workflow
-
-The picker is an in-world, creative-mode authoring system. It is client-state driven, but writing output is intentionally restricted to a single-player integrated server.
-
-### 10.1 Workflow
-
-1. Enable the picker with the configurable toggle key (default `K`).
-2. Look at a living entity and lock it (default `V`). The integrated server freezes a mob target by temporarily setting `NoAi`.
-3. Select an attachment part with the bracket keys or `/sg part`.
-4. Create or edit a draft eye through `/sg` commands, save it, and inspect the HUD preview.
-5. Export the committed mob with `/sg export`, or dump every loaded config with `/sg exportall`.
-
-`/sg export` writes the single committed mob to the single-player world and `/reload`s so it persists and re-syncs through the normal path:
+`/sg export` writes the committed target into the single-player world's datapack and reloads it:
 
 ```text
 <world>/datapacks/somegoogly-picker/data/<namespace>/eyes/<entity>.json
 ```
 
-It creates `pack.mcmeta` when needed. The file holds one entry whose `variants` list carries every authored arrangement with its weight.
-
-`/sg exportall` instead dumps **every eye config** to one file per entity, with no `/reload`:
+`/sg exportall` writes all synced configs plus in-session drafts to:
 
 ```text
 <gameDir>/somegoogly-export/data/<namespace>/eyes/<entity>.json
 ```
 
-It writes the union of two sources: the synced runtime state (`ClientEyeConfigs`) for untouched entities, with each picker draft overlaid on its entity. The picker retains a **separate draft per entity type** for the whole session (see §10.3), so a mob that was saved but never individually `/sg export`ed is still written — its draft wins over the synced state. It needs no committed target and is meant for copying `data/` straight into the mod's `resources/`. For a draft-sourced entity it writes a single `age:"any"` entry (as `/sg export` does); for a synced-only entity it preserves whatever age slots (`adult`/`baby`/`any`) the live config holds. Either way the version range is re-synthesized from the namespace's currently-loaded version (the original declared range isn't kept in the runtime config).
+Picker drafts are retained per entity type for the session. Drafts seed from existing synced config when available, so editing an existing placement starts from current data instead of a blank state.
 
-Both paths share one serializer that writes the **complete canonical form** — every field explicit, in the shipped field order, each number rounded to one part in a thousand (the `/sg` CLI parses inputs as `float`, so this snaps widening noise like `0.2199999988` back to `0.22`) — rather than the loader's default-eliding codec output, and tags `/sg export` entries `age:"any"` with a version *range* (e.g. `[1.20.1,1.21)`). This keeps generated files equivalent to the hand-authored ones and immune to silent meaning-drift if a code default later changes.
+The picker also includes a single-player spawn grid command for authoring and debugging many living entity types. It is a development convenience and does not affect shipped runtime behavior.
 
-Attach tokens are also written in canonical form. Picker drafts already hold canonical tokens (authored/seeded in the enumeration vocabulary), so `/sg export` and the draft side of `/sg exportall` pass them through unchanged. For synced-only entities, `/sg exportall` canonicalizes each stored token against the entity's model — resolved from a throwaway instance, so it converts every config in one pass regardless of what's loaded — which is what migrates a legacy name on an index-only model (e.g. `head` → `#0`). A type whose model can't be reached is written verbatim and reported in the result count.
+Known picker limits: remote/multiplayer export is deferred, cube-less pivot authoring depends on resolver support, and a crash can theoretically persist temporary `NoAi` state used while freezing targets.
 
-### 10.2 `/sg` command surface
+## 12. Commands
 
-The client command tree uses full verb names only (no short aliases) for choosing a target, selecting a part, creating/moving/rotating an eye (with `/sg posrot` setting position and rotation together for the common move-and-aim case), changing scale/color/glow/invisibility, saving/selecting/deleting/listing eyes, managing variants, exporting the committed mob (`/sg export`) or dumping all live configs (`/sg exportall`, see §10.1), and spawning an authoring grid of living entity types in single-player (`/sg spawnall`, see §10.4).
+`/sg` is the user-facing root.
 
-Variants are authored explicitly: `/sg variant new` appends and switches to a fresh arrangement, `/sg variant <n>` switches to one, `/sg variant del <n>` removes one (the last variant cannot be deleted), and `/sg variant weight <w>` sets the current variant's relative weight. All other eye-editing verbs act on the variant currently being edited; the HUD shows the active variant and weight.
+Client-side picker commands handle authoring and export. Server-side `/sg admin` commands are operator-only development tools for toggling eyes, changing appearance, and triggering behaviors on the looked-at living entity.
 
-`~` in movement/rotation leaves that component unchanged.
+The client and server subtrees share the same root but occupy distinct paths. Single-player command fall-through is confirmed; dedicated-server client-to-server command behavior is not verified here.
 
-`/sg` is a single user-facing command name, but it is registered from two sides: these picker verbs are client commands, while the operator-only `admin` subtree (see §11) is a server command grafted under the same root. The two occupy disjoint paths, so command fall-through routes each input to the side that owns it — confirmed in single-player; the dedicated-server client→server hop is unverified (see §13's dedicated-server caveat). There is no client-to-server command packet; the picker verbs mutate client `PickerState`, and the `admin` verbs run server-side with normal command permissions and context.
+## 13. Network protocol
 
-The picker previews saved and current eyes with a centered iris and a local RGB transform gizmo. While previewing its target, ordinary eye rendering is suppressed to prevent duplicate eyes.
-
-### 10.3 Picker limitations
-
-- **Implemented:** it retains a separate draft per entity type for the session, so switching among several mobs keeps each one's saved eyes (and `/sg exportall` can emit them all). On first sighting of a type it seeds the draft from the mob's existing synced config for its current age, so editing an existing placement starts from it rather than a blank slate; a never-configured mob gets an empty draft. The in-session draft wins on re-choose, so edits aren't lost. Seeded attach tokens are canonicalized to the model's enumeration vocabulary (the same token the part picker shows).
-- **Partial:** it cannot author an empty pivot joint if the relevant resolver cannot enumerate it.
-- **Partial:** freezing is restored on ordinary unlock/logout and synchronously at integrated-server stop. An autosave followed by a hard crash can still persist temporary `NoAi`.
-- **Deferred:** remote/multiplayer export is intentionally unsupported.
-
-### 10.4 Spawn-all authoring grid
-
-`/sg spawnall [mod]` is a single-player, creative-only convenience that spawns one instance of every registered living entity type (the player excluded), so the picker can reach any mob without hunting it down. Types are grouped by mod namespace into rows and sorted by id within each row; non-living and uncreatable types are dropped. Every spawned mob has its AI disabled (`NoAi`), is marked persistence-required so it cannot despawn, and faces the player.
-
-An optional mod-namespace argument restricts the grid to one mod (`/sg spawnall minecraft`) and additionally reports each type in that namespace that could not be placed and why (`create()` threw, `create()` returned null, or `addFreshEntity` refused) — a debugging aid for mods whose mobs do not appear.
-
-Placement has two modes, chosen by whether the block beneath the player is air:
-
-- **On terrain (solid below):** each mob sits on its per-column heightmap; water-dwellers get a short water column sized to the mob.
-- **Over air (a deliberate void-display setup):** the per-column terrain is ignored and the whole grid is laid on a flat sandstone floor pinned to the player's level — a 5×5 tile under each mob, a walled 3×3 sandstone basin for water mobs, and a sandstone roof eight blocks up (glowstone directly over each mob) that blocks the sky so sun-sensitive mobs do not burn. It freely overwrites existing blocks and is intended for throwaway test worlds.
-
-This is an authoring/debug tool only: it writes no datapack output and does not affect shipped behavior.
-
-## 11. Debug and administrative commands
-
-`/sg admin` is an operator-only (permission level 2) subtree of `/sg`, intended for development and verification. It targets the living entity under the player's crosshair and can toggle eyes, adjust iris/cornea tint, change glow behavior, and trigger a named or random cosmetic behavior.
-
-It is a server command registered under the shared `/sg` root (see §10.2), and is gated by `requires(hasPermission(2))`, so the whole subtree is hidden from non-operators in suggestions. It is registered in normal server event handling despite being intended as development tooling, so it should be treated as an active, non-player-facing interface rather than dead code.
-
-## 12. Network protocol
-
-The mod uses one SimpleChannel with protocol version `3` and three server-to-client packet types:
+The mod uses one `SimpleChannel` with protocol version `3` and three server-to-client packet types:
 
 | Packet | Purpose |
 | --- | --- |
-| `EyeStatePacket` | Entity id, eye flag, variant roll, and optional override NBT. |
-| `EyeConfigSyncPacket` | The server-selected runtime geometry definitions, serialized one entity at a time. |
-| `EyeBehaviorTriggerPacket` | Transient behavior id, timing, seed, and elapsed time. |
+| `EyeStatePacket` | Per-entity eye flag, variant roll, and optional appearance override. |
+| `EyeConfigSyncPacket` | Server-selected runtime geometry definitions. |
+| `EyeBehaviorTriggerPacket` | Transient cosmetic behavior trigger data. |
 
-Malformed individual entries in a config-sync payload are logged and skipped so later entries can still be applied. The client clears its synced definitions and render trackers on disconnect.
+Clients clear synced definitions and render trackers on disconnect. Malformed config-sync entries are logged and skipped rather than aborting the whole payload.
 
-## 13. Non-goals and deferred seams
+## 14. Non-goals, seams, and compatibility limits
 
-| Item | Status | Notes |
+Current important seams and limits:
+
+| Item | Status | Architectural meaning |
 | --- | --- | --- |
-| Per-eye mutable appearance overrides | Deferred | Current overrides apply uniformly to a mob. |
-| Game-event behavior triggers | Implemented | `grow` on player hit and `swirl` on trade/heal are wired; ambient scheduling and `/sg admin` remain the other trigger sources. |
-| Additional `EyeHolder` implementations | Deferred | The interface anticipates item frames, item stacks, or head blocks, but entities are the only concrete holder. |
-| Dedicated-server compatibility certification | Experimental | Code has side guards, but no runtime result is recorded here. |
-| Robust generic model attachment | Partial | Reflection and external-framework integrations intentionally trade completeness for broad coverage. |
+| Per-eye mutable appearance | Deferred | Overrides currently apply uniformly to a mob. |
+| Additional `EyeHolder` implementations | Deferred | The abstraction anticipates non-entity holders, but entities are the only concrete gameplay holder. |
+| Dedicated-server compatibility certification | Experimental | Side guards exist, but runtime loadability is not recorded as verified. |
+| Generic model attachment | Partial | Reflection and external renderer support favor coverage over perfect robustness. |
+| JEI support for `eye_modifier` | Partial | Brewing is represented; modifier crafting is not. |
 
-## 14. Automated tests
+Do not treat source-derived compatibility as proven runtime behavior unless a test or manual check has recorded it.
 
-A server-side Forge GameTest suite lives in `src/main/java/com/github/crittscott/somegoogly/gametest/`,
-registered under the `somegoogly` namespace and run headless with `./gradlew runGameTestServer` (it boots
-a `GameTestServer`, runs every registered test, and exits non-zero on any failure). The suite is
-**server-only by construction**: it needs no client and no other mod, and — by deliberate constraint —
-adds no testability hooks to production code. Anything reachable only through a client class or a private
-internal seam is therefore out of scope. Pure-logic checks are written as world-less `@GameTest` methods
-(assert, then `succeed()`); integration checks spawn into the shared `empty` structure template.
+## 15. Automated tests
 
-Covered:
+A server-side Forge GameTest suite exists under `src/main/java/com/github/crittscott/somegoogly/gametest/` and runs headless through `runGameTestServer`.
 
-| Area | What the tests pin |
-| --- | --- |
-| Version selection | `VersionRangeMatcher` bracket bounds, exact match, zero-padding (`1.20` ≡ `1.20.0`), malformed input |
-| Variant selection | `chooseVariantIndex` determinism and cumulative-weight boundaries; weight default/clamp |
-| Serialization | flat-JSON eye codec round-trip + absent-field defaults; sparse `AppearanceOverride` NBT; all three packets by encode→decode→encode byte-idempotence |
-| Eye state | sparse override writes, tint clearing, `setGlow(null)` fallback, compound removal when empty |
-| Behaviors | every behavior is seed-deterministic over its run; blink mask selection; catch-up replay equals natural playback |
-| Config | `percentFor` exact-beats-wildcard resolution; shipped configs load (including `player`, and `pig` as a single variant) |
-| Spawn | at-spawn roll endpoints (0% never, 100% always for an eligible mob); variant roll in `[0, 1)` |
-| Recipe | `eye_modifier` transforms (dye / glowstone / redstone / cobweb), unrelated-NBT preservation, two-eye rejection |
+The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, recipe transforms, and shipped config loading.
 
-Not covered — still source-derived or manual: the `ServerBehaviorScheduler` schedule internals
-(one-at-a-time, heal cooldown, event gating, the mid-life potion-while-tracked path), splash-potion target
-selection, the harvest paths, datapack-reload precedence / duplicate / invalid-age edge cases, and
-everything client-side (rendering, wobble, GeckoLib, picker) or dedicated-server. These keep their stated
-Implemented / Partial / Experimental status without a recorded automated check.
+It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, harvest integration, potion target selection, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
 
-## 15. Maintenance rules for this document
+## 16. Maintenance rules
 
-When changing the mod, update this document in the same change when any of the following changes:
+Update this overview when a change alters the system's public or architectural contract, including:
 
-- datapack schema, default values, selection precedence, or migration expectations;
-- server/client ownership or packet contents;
-- persisted NBT keys or eye-item NBT schema;
-- user-visible item, recipe, potion, enchantment, command, or picker behavior;
-- resolver support or known model-framework limitations;
-- an item moves between Implemented, Partial, Experimental, and Deferred;
-- the GameTest suite (§14) gains or loses coverage — keep its tests in the main source set and free of production-code testability hooks, and keep the §14 covered/not-covered lists in step.
+- datapack schema or selection rules;
+- server/client ownership;
+- persisted NBT keys;
+- packet contents;
+- gameplay behavior for items, recipes, potions, enchantments, commands, picker, or harvesting;
+- resolver support or compatibility status;
+- status labels such as Implemented, Partial, Experimental, or Deferred;
+- GameTest coverage at the level needed to avoid misleading confidence claims.
 
-Do not promote a compatibility claim—especially dedicated-server support or external model-framework behavior—from Experimental without a recorded runtime check. A passing GameTest counts as a recorded runtime check for the specific server-side path it exercises; it says nothing about client rendering or dedicated-server loadability.
+Keep this file as an overview. If a detail is only needed to understand a single implementation branch, prefer code comments, tests, or a focused subsystem note instead of adding it here.
