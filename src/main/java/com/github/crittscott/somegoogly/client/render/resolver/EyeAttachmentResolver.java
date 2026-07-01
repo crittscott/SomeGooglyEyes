@@ -27,13 +27,12 @@ public interface EyeAttachmentResolver {
     }
 
     /**
-     * Translate a (possibly legacy or differently-spelled) stored attach token into the <i>canonical</i>
+     * Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
      * path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
      * and exported configs all speak. That is the full slash path ({@code root/body/head}), with a
-     * positional segment ({@code #N}) only where a part has no obfuscation-stable name. A legacy {@code #N}
-     * token is mapped forward to that part's path (this is what the token migration writes). Returns the
-     * token unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather
-     * than being silently remapped).
+     * positional segment ({@code #N}) only where a part has no obfuscation-stable name. Returns the token
+     * unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather than
+     * being silently remapped).
      *
      * <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
      * named bones).

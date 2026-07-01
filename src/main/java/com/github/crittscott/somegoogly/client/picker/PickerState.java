@@ -281,8 +281,8 @@ public final class PickerState {
      * Build a fresh draft for a mob being chosen for the first time this session. Seeds from its synced
      * config for the given age ({@link ClientEyeConfigs}) so editing an existing placement starts from it;
      * returns a single empty variant when the mob has no usable config. Attach tokens are canonicalized to
-     * the model's enumeration vocabulary (e.g. a legacy {@code "head"} on an index-only model becomes
-     * {@code "#0"}), so the seeded draft, HUD, and export all speak the same token the part picker shows.
+     * the model's enumeration vocabulary (e.g. a bare {@code "head"} snaps to its full path {@code "root/head"}),
+     * so the seeded draft, HUD, and export all speak the same token the part picker shows.
      */
     private static List<DraftVariant> seedDraft(ResourceLocation type, boolean baby,
                                                 EntityModel<?> model, EyeAttachmentResolver resolver) {

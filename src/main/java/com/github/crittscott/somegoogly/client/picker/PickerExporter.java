@@ -154,10 +154,10 @@ public final class PickerExporter {
                     // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
                     json = draftFileJson(draft, range);
                 } else {
-                    // Synced (shipped) tokens may be legacy, so canonicalize them against the model — this
-                    // migrates a legacy "#0" to its name "head" (and "#6" to e.g. "#0/head1"). The model comes
-                    // from a throwaway entity instance, so every config converts in one pass regardless of
-                    // what's loaded.
+                    // Canonicalize each token against the model so the dump speaks the resolver's own
+                    // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model
+                    // comes from a throwaway entity instance, so every config converts regardless of what's
+                    // loaded near the player.
                     UnaryOperator<String> canon = canonicalizer(id);
                     if (canon == null) {
                         verbatim++;
@@ -180,89 +180,6 @@ public final class PickerExporter {
                 ? " (" + verbatim + " types' models couldn't be resolved — tokens left verbatim)"
                 : "";
         return "Dumped " + files + " eye configs to " + root + note + " — copy data/ into resources/.";
-    }
-
-    /**
-     * Dump a token-migration map — {@code { "ns:entity": { "<oldToken>": "<newToken>", … }, … }} — to
-     * {@code <gameDir>/somegoogly-migration/token-migration.json}, for the {@code migrate_attach_tokens.py}
-     * script to apply to the mod's source {@code data/**\/eyes/*.json} in place. Only tokens that actually
-     * change are listed; entities whose model can't be reached (e.g. their mod isn't loaded) are recorded
-     * under {@code _unresolved} so they can be migrated in a later pass with that mod present.
-     *
-     * <p>Reads the live synced configs ({@link ClientEyeConfigs}) and resolves each token through the same
-     * resolver the renderer uses ({@link #canonicalizer}), so {@code #0 → head}, {@code #6 → #0/head1}, etc.
-     * Run once in a client that has every content mod loaded for a complete map.
-     */
-    public static String dumpTokenMigration() {
-        Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
-        if (synced.isEmpty()) {
-            return "No eye configs loaded to migrate.";
-        }
-
-        JsonObject root = new JsonObject();
-        JsonArray unresolved = new JsonArray();
-        int entitiesChanged = 0;
-        int tokensChanged = 0;
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : synced.entrySet()) {
-            ResourceLocation id = entry.getKey();
-            UnaryOperator<String> canon = canonicalizer(id);
-            if (canon == null) {
-                unresolved.add(id.toString());
-                continue;
-            }
-            JsonObject map = new JsonObject();
-            for (String token : collectTokens(entry.getValue())) {
-                String canonical = canon.apply(token);
-                if (!canonical.equals(token)) {
-                    map.addProperty(token, canonical);
-                    tokensChanged++;
-                }
-            }
-            if (map.size() > 0) {
-                root.add(id.toString(), map);
-                entitiesChanged++;
-            }
-        }
-        if (unresolved.size() > 0) {
-            root.add("_unresolved", unresolved);
-        }
-
-        Path dir = Minecraft.getInstance().gameDirectory.toPath().resolve("somegoogly-migration");
-        Path file = dir.resolve("token-migration.json");
-        try {
-            Files.createDirectories(dir);
-            Files.writeString(file, GSON.toJson(root) + "\n");
-        } catch (IOException e) {
-            return "Migration dump failed: " + e.getMessage();
-        }
-        return "Wrote " + tokensChanged + " token change(s) across " + entitiesChanged + " entit(ies) to "
-                + file + (unresolved.size() > 0 ? " (" + unresolved.size() + " unresolved — see _unresolved)" : "")
-                + ". Run tools/migrate_attach_tokens.py to apply.";
-    }
-
-    /** Every distinct attach token across an age-set's variants/heads (all ages). */
-    private static Set<String> collectTokens(RuntimeConfigSet set) {
-        Set<String> tokens = new LinkedHashSet<>();
-        collectTokens(set.adult, tokens);
-        collectTokens(set.baby, tokens);
-        collectTokens(set.any, tokens);
-        return tokens;
-    }
-
-    private static void collectTokens(RuntimeConfig config, Set<String> out) {
-        if (config == null || config.variants == null) {
-            return;
-        }
-        for (Variant v : config.variants) {
-            if (v == null || v.heads == null) {
-                continue;
-            }
-            for (HeadConfig h : v.heads) {
-                if (h != null && h.attachPoint != null) {
-                    out.add(h.attachPoint);
-                }
-            }
-        }
     }
 
     /** A single-entry file for one authored draft (age {@code "any"}, like {@link #export()}), or null if empty. */

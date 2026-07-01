@@ -104,7 +104,7 @@ Each entry is selected by namespace version and age. `age` may be `adult`, `baby
 
 `variants` are complete arrangements. A single arrangement is still represented as a one-element `variants` list. Variant weights are relative, and the stored per-entity roll maps deterministically onto the selected age configuration.
 
-Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a model part or bone name when available, or `#N` for index-only reflection models.
+Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a slash-joined part/bone path (e.g. `root/body/head`), matched by normalized suffix so a bare leaf like `head` still attaches. A path segment is `#N` only for a nameless positional root (models with no obfuscation-stable name for that part).
 
 Each eye is a flat object containing placement, scale, direction, color, glow, and invisibility behavior. The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
 

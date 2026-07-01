@@ -71,12 +71,11 @@ public final class ConfigGameTests {
     }
 
     /**
-     * Migration guard: every head in every shipped config must carry a non-blank attach token. The
-     * attachPoint is required (no default), so a token that resolved to {@code null}/empty means a botched
-     * data edit — this catches a token-migration ({@code /sg migratetokens} + {@code migrate_attach_tokens.py})
-     * that blanked or dropped a token across all 80+ files in one cheap headless check. It does not (and
-     * can't, on the dedicated server) verify the token resolves to a real model part — see the manual
-     * in-client checklist in at-usage.md for that.
+     * Every head in every shipped config must carry a non-blank attach token. The attachPoint is required
+     * (no default), so a token that loads as {@code null}/empty means a corrupt data edit — this catches
+     * that across all 80+ files in one cheap headless check. It does not (and can't, on the dedicated
+     * server, where the client-only resolvers don't load) verify the token resolves to a real model part;
+     * that needs an in-client pass.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {

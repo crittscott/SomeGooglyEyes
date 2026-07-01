@@ -21,13 +21,9 @@ import java.util.WeakHashMap;
  *
  * <p>Roots get positional names ({@code #0}, {@code #1}, … in superclass-first field order), but every
  * descendant below a root is named by its real {@code children}-map key (made readable by the mod's access
- * transformer). So a model that nests named parts under a root yields stable paths like {@code #0/head1}
- * (recoverable where the old index-only fallback could only ever say {@code #0}); a model whose head is a
- * bare nameless root still resolves as {@code #0}. Matching is the shared suffix match, so a stored
- * {@code head1} attaches regardless of which positional root it hangs under.
- *
- * <p>Replaces the former {@code ReflectionResolver}: same root-by-type reflection, but now with real
- * descendant names and proper per-level pose accumulation from {@link ModelPartTreeResolver}.
+ * transformer). So a model that nests named parts under a root yields stable paths like {@code #0/head1},
+ * while a model whose head is a bare nameless root resolves as {@code #0}. Matching is the shared suffix
+ * match, so a stored {@code head1} attaches regardless of which positional root it hangs under.
  */
 public class ChildMapResolver extends ModelPartTreeResolver {
 

@@ -13,12 +13,12 @@
               "eyes": [
                 {
                   "position": [
-                    -0.13,
-                    -0.25,
-                    -0.25
+                    0.0,
+                    1.05,
+                    -0.5
                   ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
+                  "eyeScale": 1.85,
+                  "irisScale": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -27,34 +27,11 @@
                     1.0
                   ],
                   "irisColors": [
-                    0.0,
+                    1.0,
                     0.0,
                     0.0
                   ],
-                  "glows": false,
-                  "affectedByInvisibility": true
-                },
-                {
-                  "position": [
-                    0.13,
-                    -0.25,
-                    -0.25
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "inclination": 90.0,
-                  "azimuth": 270.0,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 }
               ]

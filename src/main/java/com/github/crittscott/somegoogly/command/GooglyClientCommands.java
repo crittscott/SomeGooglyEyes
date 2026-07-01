@@ -106,12 +106,6 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int migrateTokens(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        feedback(ctx, PickerExporter.dumpTokenMigration());
-        return 1;
-    }
-
     private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
         ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
     }
@@ -371,7 +365,6 @@ public class GooglyClientCommands {
 
         verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
         verb(sg, "exportall", b -> terminal(b, GooglyClientCommands::exportAll));
-        verb(sg, "migratetokens", b -> terminal(b, GooglyClientCommands::migrateTokens));
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 

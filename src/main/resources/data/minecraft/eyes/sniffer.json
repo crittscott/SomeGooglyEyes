@@ -13,14 +13,14 @@
               "eyes": [
                 {
                   "position": [
-                    -0.13,
-                    -0.25,
-                    -0.25
+                    -0.4,
+                    -0.15,
+                    -0.55
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
+                  "azimuth": 180.0,
                   "corneaColors": [
                     1.0,
                     1.0,
@@ -36,14 +36,14 @@
                 },
                 {
                   "position": [
-                    0.13,
-                    -0.25,
-                    -0.25
+                    0.4,
+                    -0.15,
+                    -0.55
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
+                  "azimuth": 0.0,
                   "corneaColors": [
                     1.0,
                     1.0,
