@@ -327,6 +327,10 @@ public final class PickerExporter {
         o.addProperty("irisScale", round(p.irisScale()));
         o.addProperty("inclination", round(p.inclination()));
         o.addProperty("azimuth", round(p.azimuth()));
+        // crossTarget is a within-head index; only written when set (default -1 = no cross-eye partner).
+        if (p.crossTarget() >= 0) {
+            o.addProperty("crossTarget", p.crossTarget());
+        }
         o.add("corneaColors", colors(a.cornea()));
         o.add("irisColors", colors(a.iris()));
         o.addProperty("glows", a.glow());

@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -9,22 +8,23 @@ import net.minecraft.resources.ResourceLocation;
  * trigger packet and the client looks it up to play. All per-play state lives in a
  * {@link BehaviorInstance}.
  *
- * <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never
- * compose: each frame the renderer asks the single active behavior to fill an
- * {@link EyeRenderContribution} per eye, layered over the eye's physics-driven baseline.
+ * <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never compose.
+ * They participate in the eye <b>physics simulation</b>, not the renderer: once per simulation tick the
+ * simulator asks the single active behavior to fill an {@link EyeInfluence} per eye — a pupil spring
+ * (anchor + stiffness) and/or the non-physical overlays (scale, squash, tint). The renderer then just
+ * interpolates and draws the resulting eye state; it never touches behaviors.
  *
  * <p>Implementations must stay free of client-only imports: the server class-loads this registry to
- * pick and schedule behaviors, and only the client ever calls {@link #tick}/{@link #contribute}.
+ * pick and schedule behaviors, and only the client ever calls {@link #influence}.
  */
 public interface EyeBehavior {
 
     /**
-     * Fill {@code out} (already reset) with this eye's contribution for the current frame, interpolating
-     * the instance's scalars by {@code partialTicks}. Called per eye, so per-eye behaviors (blink mask,
-     * cross-eye inward direction) can vary their output by {@code head}/{@code eye} using {@code helper}.
+     * Fill {@code out} (already reset) with this eye's influence for the current simulation tick, derived
+     * from {@code instance.age}. Called per eye, so per-eye behaviors (blink mask, cross-eye target
+     * direction) can vary their output by {@code head}/{@code eye} via {@code instance.helper}.
      */
-    void contribute(BehaviorInstance instance, HeadInfo helper, int head, int eye,
-                    float partialTicks, EyeRenderContribution out);
+    void influence(BehaviorInstance instance, int head, int eye, EyeInfluence out);
 
     /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
     int defaultDuration();
@@ -32,11 +32,7 @@ public interface EyeBehavior {
     /** The registry id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
     ResourceLocation id();
 
-    /** Resolve seeded params (blink mask, color, direction) and prime the prev/current scalars. */
+    /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
     default void onStart(BehaviorInstance instance) {
-    }
-
-    /** Advance one client tick: shift current scalars into prev, recompute current from {@code age}. */
-    default void tick(BehaviorInstance instance) {
     }
 }

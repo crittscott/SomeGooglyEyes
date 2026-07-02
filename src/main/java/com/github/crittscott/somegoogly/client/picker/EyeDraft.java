@@ -21,6 +21,13 @@ public class EyeDraft {
     public double[] irisColors = {0.0, 0.0, 0.0};
     public boolean glows = false;
     public boolean affectedByInvisibility = true;
+    /**
+     * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, {@code -1} =
+     * none) — authoring space, matching what {@code /sg list eyes} shows. It's resolved to the on-disk
+     * <i>within-head</i> index only at export ({@link com.github.crittscott.somegoogly.client.picker.PickerState}),
+     * so this stays valid as eyes move between heads while authoring.
+     */
+    public int crossTarget = -1;
 
     public double aimAzimuth() {
         return azimuth != null ? azimuth : EyePlacement.DEFAULT_AZIMUTH;
@@ -61,14 +68,20 @@ public class EyeDraft {
         d.irisColors = new double[]{irisColors[0], irisColors[1], irisColors[2]};
         d.glows = glows;
         d.affectedByInvisibility = affectedByInvisibility;
+        d.crossTarget = crossTarget;
         return d;
     }
 
-    /** Snapshot this draft as the immutable datapack definition the rest of the mod uses. */
-    public EyeDefinition toDefinition() {
+    /**
+     * Snapshot this draft as the immutable datapack definition, baking in {@code resolvedCrossTarget} —
+     * the on-disk <i>within-head</i> index the caller computed from this draft's flat {@link #crossTarget}
+     * (the draft's own value is authoring-space and never written directly).
+     */
+    public EyeDefinition toDefinition(int resolvedCrossTarget) {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                eyeScale, irisScale, aimInclination(), aimAzimuth(), affectedByInvisibility);
+                eyeScale, irisScale, aimInclination(), aimAzimuth(), affectedByInvisibility,
+                resolvedCrossTarget);
         EyeAppearance appearance = new EyeAppearance(
                 new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),
                 new EyeColor((float) irisColors[0], (float) irisColors[1], (float) irisColors[2]),

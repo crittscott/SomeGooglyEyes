@@ -1,11 +1,11 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.util.Mth;
 
 /**
  * Blends the cornea toward a color and back. The color is chosen from the seed (a random hue), so this
- * is the general form of what the old hardwired anger-tint did. Drives the cornea-tint channel.
+ * is the general form of what the old hardwired anger-tint did. Non-physical overlay: drives the
+ * cornea-tint channel.
  */
 final class ColorChangeBehavior extends AbstractEyeBehavior {
 
@@ -14,9 +14,10 @@ final class ColorChangeBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+    public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
         out.corneaTint = i.tintColor;
-        out.tintAmount = Curves.lerp(i.prevTint, i.tint, pt);
+        // Ease in, hold the color, ease out.
+        out.tintAmount = Curves.trapezoid((float) i.age / i.duration, 0.2f, 0.2f);
     }
 
     @Override
@@ -28,12 +29,5 @@ final class ColorChangeBehavior extends AbstractEyeBehavior {
                 ((rgb >> 8) & 0xFF) / 255f,
                 (rgb & 0xFF) / 255f
         };
-    }
-
-    @Override
-    public void tick(BehaviorInstance i) {
-        i.prevTint = i.tint;
-        // Ease in, hold the color, ease out.
-        i.tint = Curves.trapezoid((float) i.age / i.duration, 0.2f, 0.2f);
     }
 }

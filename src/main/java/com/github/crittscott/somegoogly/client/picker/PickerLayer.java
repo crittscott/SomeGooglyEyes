@@ -64,13 +64,16 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
             poseStack.popPose();
         }
 
-        // Current eye + gizmo on the active placement part.
+        // Gizmo on the active placement part, plus the live draft eye — but only when one is being
+        // shaped. With no draft (the empty state) the mob shows just its saved eyes, or nothing at all.
         String token = PickerState.currentPart;
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
-                renderEye(poseStack, bufferSource, packedLight, overlay, PickerState.currentEye);
+                if (PickerState.currentEye != null) {
+                    renderEye(poseStack, bufferSource, packedLight, overlay, PickerState.currentEye);
+                }
             }
             poseStack.popPose();
         }

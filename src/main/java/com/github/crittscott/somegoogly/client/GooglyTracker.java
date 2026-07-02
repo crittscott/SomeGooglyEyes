@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -12,6 +13,10 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class GooglyTracker {
+    // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
+    // active behavior into the simulation allocates nothing per tick.
+    private static final EyeInfluence INFLUENCE = new EyeInfluence();
+
     public final HeadInfo helper;
     public final LivingEntity parent;
     public final Random rand;
@@ -82,6 +87,20 @@ public class GooglyTracker {
         public float momentumX;
         public float momentumY;
 
+        // World-down projected into this eye's pupil plane, in the (deltaX, deltaY) convention. Refreshed
+        // each render (GooglyEyeRenderer) from the eye's actual animated world orientation, so the pupil
+        // sags toward true down rather than eye-local down. (0, -1) — straight down — until the first
+        // render, so an off-screen or not-yet-drawn eye behaves like the old fixed local gravity.
+        public float gravX = 0F;
+        public float gravY = -1F;
+
+        // Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+        // and interpolated by partialTicks at render. Kept per-eye so the blink mask varies by eye.
+        public float scaleMul = 1F, prevScaleMul = 1F;   // grow
+        public float squashY = 1F, prevSquashY = 1F;     // blink
+        public float tintAmount, prevTintAmount;         // color-change blend amount
+        public float[] tintColor;                        // color-change target (set instantly, not lerped)
+
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
         private double prevMotionX;
         private double prevMotionY;
@@ -109,12 +128,20 @@ public class GooglyTracker {
          * <p>Decoupled from the tracker so it can be reused for a held eye item (see
          * {@code GooglyEyeItemRenderer}) — the behavior must be identical to mob eyes.
          *
+         * <p>An active behavior participates as a <b>spring</b>: it supplies an {@code anchor} and a
+         * {@code stiffness}, and the pupil is pulled toward the anchor (with velocity damping) on top of
+         * the ordinary forces. {@code stiffness == 0} means no behavior drives the pupil, so it wobbles
+         * freely; when a fading behavior lets stiffness fall to 0, gravity takes the pupil back naturally.
+         *
          * @param rand      randomness source (per-tracker / per-held-eye)
          * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
          * @param headPitch the holder's pitch this tick ({@code getXRot})
          * @param motionX/Y/Z the holder's position delta this tick
+         * @param anchorX/Y the behavior spring's target in the unit disk (ignored when stiffness is 0)
+         * @param stiffness the behavior spring's stiffness (0 = no behavior force on the pupil)
          */
-        public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ) {
+        public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
+                           float anchorX, float anchorY, float stiffness) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
@@ -157,15 +184,36 @@ public class GooglyTracker {
             float rightZ = (float) Math.sin(yawRad);
             float horizRight = (float) (laccx * rightX + laccz * rightZ);
 
-            // Pseudo-forces oppose the socket's acceleration; gravity is constant local-down.
-            float fx = -R_K_YAW * yawAccel - R_K_LIN * horizRight + (float) rand.nextGaussian() * R_NOISE;
-            float fy = -R_GRAVITY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy
+            // Pseudo-forces oppose the socket's acceleration. Gravity points along this eye's copy of
+            // world-down (gravX/gravY), captured each render from the eye's animated orientation, so the
+            // pupil rests at true down instead of eye-local down. Its in-plane magnitude naturally shrinks
+            // as the eye turns to face up/down (world-down leaves the pupil plane). The pseudo-forces stay
+            // eye-local — only the resting direction was the reported problem. Default (0, -1) = the old
+            // constant local-down.
+            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel - R_K_LIN * horizRight
+                    + (float) rand.nextGaussian() * R_NOISE;
+            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy
                     + (float) rand.nextGaussian() * R_NOISE;
             fx = Mth.clamp(fx, -R_FORCE_CLAMP, R_FORCE_CLAMP);
             fy = Mth.clamp(fy, -R_FORCE_CLAMP, R_FORCE_CLAMP);
 
-            momentumX = (momentumX + fx) * R_AIR;
-            momentumY = (momentumY + fy) * R_AIR;
+            momentumX += fx;
+            momentumY += fy;
+
+            if (stiffness > 0F) {
+                // Behavior spring (unclamped, so it can overcome gravity): Hooke pull toward the anchor,
+                // plus velocity damping applied implicitly (divide, never multiply) so it stays stable at
+                // any stiffness and settles without ringing. As stiffness fades the damping fades with it,
+                // handing the pupil back to free-flight gravity for a natural drop.
+                momentumX += stiffness * (anchorX - deltaX);
+                momentumY += stiffness * (anchorY - deltaY);
+                float keep = 1F / (1F + 2F * (float) Math.sqrt(stiffness));
+                momentumX *= keep;
+                momentumY *= keep;
+            } else {
+                momentumX *= R_AIR;
+                momentumY *= R_AIR;
+            }
 
             deltaX += momentumX;
             deltaY += momentumY;
@@ -231,10 +279,9 @@ public class GooglyTracker {
         }
         BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
         behavior.onStart(instance);
-        for (int t = 0; t < elapsed && instance.age < instance.duration; t++) {
-            instance.age++;
-            behavior.tick(instance);
-        }
+        // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
+        // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
+        instance.age = Math.max(0, Math.min(elapsed, instance.duration));
         if (instance.age >= instance.duration) {
             return false; // already finished by the time we'd show it (stale catch-up); nothing to play
         }
@@ -256,19 +303,39 @@ public class GooglyTracker {
         prevY = parent.getY();
         prevZ = parent.getZ();
 
-        // Advance the active behavior (if any), retiring it when it runs out. Done before the physics
-        // so a behavior and the wobble share the same tick's prev/current snapshot.
+        // Advance the active behavior (if any), retiring it when it runs out. Done before the physics so
+        // this tick's simulation already sees the retired (null) behavior on its final step.
         if (active != null) {
             active.age++;
-            active.behavior.tick(active);
             if (active.age >= active.duration) {
                 active = null;
             }
         }
 
+        float headYaw = parent.getYHeadRot();
+        float headPitch = parent.getXRot();
         for (int i = 0; i < eyes.length; i++) {
             for (int i1 = 0; i1 < eyes[i].length; i1++) {
-                eyes[i][i1].update(rand, parent.getYHeadRot(), parent.getXRot(), motionX, motionY, motionZ);
+                EyeInfo info = eyes[i][i1];
+
+                // Ask the single active behavior for this eye's influence (spring + overlays), or neutral.
+                INFLUENCE.reset();
+                if (active != null) {
+                    active.behavior.influence(active, i, i1, INFLUENCE);
+                }
+
+                // Fold the non-physical overlays into the eye's render state (prev/current for lerping).
+                info.prevScaleMul = info.scaleMul;
+                info.scaleMul = INFLUENCE.eyeScaleMul;
+                info.prevSquashY = info.squashY;
+                info.squashY = INFLUENCE.squashY;
+                info.prevTintAmount = info.tintAmount;
+                info.tintAmount = INFLUENCE.tintAmount;
+                info.tintColor = INFLUENCE.corneaTint;
+
+                // Step the pupil physics, with the behavior's spring folded in as a force.
+                info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
+                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness);
             }
         }
     }

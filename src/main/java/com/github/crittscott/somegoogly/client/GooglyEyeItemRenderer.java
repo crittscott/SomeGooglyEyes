@@ -81,7 +81,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
                 prevY = player.getY();
                 prevZ = player.getZ();
                 // Prime prev-rotation so the first real step doesn't see a spike from zero.
-                eye.update(rand, player.getYHeadRot(), player.getXRot(), 0, 0, 0);
+                // A held eye plays no behavior, so the pupil has no spring (stiffness 0) — pure physics.
+                eye.update(rand, player.getYHeadRot(), player.getXRot(), 0, 0, 0, 0F, 0F, 0F);
                 return;
             }
 
@@ -105,7 +106,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
                     prevZ = player.getZ();
                     motionApplied = true;
                 }
-                eye.update(rand, player.getYHeadRot(), player.getXRot(), mx, my, mz);
+                eye.update(rand, player.getYHeadRot(), player.getXRot(), mx, my, mz, 0F, 0F, 0F);
             }
         }
 

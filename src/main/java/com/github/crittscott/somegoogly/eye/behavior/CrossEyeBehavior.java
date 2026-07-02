@@ -1,36 +1,51 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * Pupils center, then roll inward toward each other (cross-eyed) and hold. Each eye's "inward" is the
- * sign of its configured horizontal offset, so the left and right eyes converge regardless of layout.
- * Drives the iris channel; the magnitude eases out in {@code x} while {@code weight} ramps to 1.
- *
- * <p>The inward sign is derived from the eye's config x-offset and may need flipping per how a given
- * model's local axes fall — tunable via {@link #INWARD_SIGN} after seeing it in-game.
+ * Pupils are sprung to center, then their anchors slide toward each eye's configured cross-target — the
+ * other eye it should look at ({@link EyePlacement#crossTarget()}, an index within the same head) — and
+ * hold before the spring releases. Each eye aims the direction to its partner, projected into its own
+ * pupil-plane, so convergence is correct regardless of how many eyes a head has or how they're aimed.
+ * An eye with no configured target (the default) simply doesn't cross.
  */
 final class CrossEyeBehavior extends AbstractEyeBehavior {
 
     private static final float AMOUNT = 0.8f;
     private static final float CENTER_FRAC = 0.1f;
     private static final float HOLD_FRAC = 0.1f;
-    /** Flip if eyes diverge instead of converging on a given model. */
-    private static final float INWARD_SIGN = -1f;
+    private static final float STIFFNESS = 1.5f;
 
     CrossEyeBehavior() {
         super("cross_eye", 70);
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        float offsetX = helper.placementAt(head, eye).positionArray()[0];
-        // Centered/ambiguous eyes (offset ~0) fall back to alternating by index so they still cross.
-        float dir = offsetX != 0f ? Math.signum(offsetX) : (eye % 2 == 0 ? 1f : -1f);
-        float magnitude = Curves.lerp(i.prevX, i.x, pt);
-        out.irisTargetX = INWARD_SIGN * dir * magnitude;
-        out.irisTargetY = 0f;
-        out.irisWeight = Curves.lerp(i.prevWeight, i.weight, pt);
+    public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
+        EyePlacement self = i.helper.placementAt(head, eye);
+        int targetIdx = self.crossTarget();
+        // No partner, self-reference, or a stale/out-of-range index → this eye stays neutral.
+        if (targetIdx < 0 || targetIdx == eye || targetIdx >= i.helper.getEyeCount(head)) {
+            return;
+        }
+
+        // Direction from this eye to its target, in the head frame, projected into this eye's pupil plane.
+        Vec3 d = i.helper.placementAt(head, targetIdx).position().subtract(self.position());
+        float[] dir = HeadInfo.projectToPupilPlane(self.inclination(), self.azimuth(), d.x, d.y, d.z);
+        float len = (float) Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
+
+        float t = (float) i.age / i.duration;
+        float mag = AMOUNT * slide(t);
+        // Negate: ModelGooglyEye#moveIris renders the pupil at -(normX, normY) (render space is -Y up /
+        // -X right), so the pupil coordinate that visually points toward the target is the negated
+        // projection. Without this the pupil rolls away from its partner instead of toward it.
+        if (len > 1e-4f) {
+            out.anchorX = -dir[0] / len * mag;
+            out.anchorY = -dir[1] / len * mag;
+        }
+        out.stiffness = STIFFNESS * Curves.trapezoid(t, CENTER_FRAC, HOLD_FRAC);
     }
 
     private static float slide(float t) {
@@ -39,14 +54,5 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
         }
         float moveSpan = 1f - CENTER_FRAC - HOLD_FRAC;
         return Curves.ease((t - CENTER_FRAC) / moveSpan);
-    }
-
-    @Override
-    public void tick(BehaviorInstance i) {
-        i.prevWeight = i.weight;
-        i.prevX = i.x;
-        float t = (float) i.age / i.duration;
-        i.weight = Curves.ease(t / CENTER_FRAC);
-        i.x = AMOUNT * slide(t); // magnitude; per-eye direction applied in contribute
     }
 }

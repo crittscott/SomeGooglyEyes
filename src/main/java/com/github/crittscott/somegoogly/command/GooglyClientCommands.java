@@ -44,6 +44,9 @@ import java.util.function.Consumer;
  */
 public class GooglyClientCommands {
 
+    private static final DynamicCommandExceptionType BAD_CROSS_TARGET =
+            new DynamicCommandExceptionType(n -> Component.literal(
+                    "Can't cross toward eye #" + n + " (must be a different eye on the same part)."));
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
     private static final DynamicCommandExceptionType BAD_PART =
@@ -52,6 +55,9 @@ public class GooglyClientCommands {
             new DynamicCommandExceptionType(n -> Component.literal("No variant #" + n + "."));
     private static final SimpleCommandExceptionType CANT_DELETE_LAST_VARIANT =
             new SimpleCommandExceptionType(Component.literal("Can't delete the last variant — there's always at least one."));
+    private static final SimpleCommandExceptionType NO_DRAFT =
+            new SimpleCommandExceptionType(Component.literal(
+                    "No eye being edited. Start one with /sg create <x> <y> <z> (or /sg select <n>)."));
     private static final SimpleCommandExceptionType NO_PART =
             new SimpleCommandExceptionType(Component.literal("Pick a part first (/sg part <name>)."));
     private static final SimpleCommandExceptionType NOT_CHOSEN =
@@ -123,8 +129,9 @@ public class GooglyClientCommands {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
             String mark = i == PickerState.selectedIndex ? " *" : "";
-            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s",
-                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
+            String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
+            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s%s",
+                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), cross, mark));
         }
         return 1;
     }
@@ -154,6 +161,7 @@ public class GooglyClientCommands {
     private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
                 opt(MaybeFloatArgumentType.get(ctx, "y")),
                 opt(MaybeFloatArgumentType.get(ctx, "z")));
@@ -196,6 +204,7 @@ public class GooglyClientCommands {
     private static int posrot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
                 opt(MaybeFloatArgumentType.get(ctx, "y")),
                 opt(MaybeFloatArgumentType.get(ctx, "z")));
@@ -214,9 +223,23 @@ public class GooglyClientCommands {
         return Commands.literal(name).then(v);
     }
 
+    private static int propCrossTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        int n = IntegerArgumentType.getInteger(ctx, "v");
+        if (!PickerState.setCrossTarget(n)) {
+            throw BAD_CROSS_TARGET.create(n);
+        }
+        int target = PickerState.currentEye.crossTarget;
+        feedback(ctx, target < 0 ? "crossTarget cleared." : "crossTarget = eye #" + (target + 1) + ".");
+        return 1;
+    }
+
     private static int propCorneaColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
                 FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
         feedback(ctx, "corneaColors set.");
@@ -226,6 +249,7 @@ public class GooglyClientCommands {
     private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
         PickerState.setEyeScale(v);
         feedback(ctx, "eyeScale = " + v);
@@ -235,6 +259,7 @@ public class GooglyClientCommands {
     private static int propGlow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setGlow(v);
         feedback(ctx, "glow = " + v);
@@ -244,6 +269,7 @@ public class GooglyClientCommands {
     private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setInvis(v);
         feedback(ctx, "affectedByInvisibility = " + v);
@@ -253,6 +279,7 @@ public class GooglyClientCommands {
     private static int propIrisColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
                 FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
         feedback(ctx, "irisColors set.");
@@ -262,6 +289,7 @@ public class GooglyClientCommands {
     private static int propIrisScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
         PickerState.setIrisScale(v);
         feedback(ctx, "irisScale = " + v);
@@ -361,6 +389,8 @@ public class GooglyClientCommands {
             b.then(Commands.literal("iriscolor").then(rgb(GooglyClientCommands::propIrisColor)));
             b.then(prop("glow", BoolArgumentType.bool(), GooglyClientCommands::propGlow));
             b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
+            // crosstarget <n>: cross-eye partner as a 1-based eye list index; 0 clears it.
+            b.then(prop("crosstarget", IntegerArgumentType.integer(0), GooglyClientCommands::propCrossTarget));
         });
 
         verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
@@ -386,6 +416,13 @@ public class GooglyClientCommands {
         }
     }
 
+    /** Guard the shaping verbs (move/rot/properties/save): they need a live draft, never auto-vivify one. */
+    private static void requireDraft() throws CommandSyntaxException {
+        if (!PickerState.hasDraft()) {
+            throw NO_DRAFT.create();
+        }
+    }
+
     private static void requireCreative() throws CommandSyntaxException {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || !player.isCreative()) {
@@ -403,6 +440,7 @@ public class GooglyClientCommands {
     private static int rot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
         EyeDraft e = PickerState.currentEye;
@@ -413,6 +451,7 @@ public class GooglyClientCommands {
     private static int save(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         if (!PickerState.save()) {
             throw NO_PART.create();
         }

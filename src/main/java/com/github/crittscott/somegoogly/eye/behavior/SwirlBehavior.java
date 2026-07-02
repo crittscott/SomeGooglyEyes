@@ -1,40 +1,27 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
-
 /**
  * Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as the effect
- * ends. Fully overrides the iris channel ({@code irisWeight = 1}). The target position is stored
- * directly in the instance's x/y so a tick's worth of rotation interpolates smoothly.
+ * ends. Drives the pupil with a firm spring to a moving anchor; because the anchor itself spirals to
+ * center, the pupil ends near center and the release is soft (no drop from the rim).
  */
 final class SwirlBehavior extends AbstractEyeBehavior {
 
     private static final float RADIUS = 0.8f;
-    private static final float SPEED = 0.6f; // radians per tick
+    private static final float SPEED = 0.6f;     // radians per tick
+    private static final float STIFFNESS = 3.0f; // firm so the pupil tracks the fast orbit
 
     SwirlBehavior() {
         super("swirl", 70);
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
-        out.irisTargetX = Curves.lerp(i.prevX, i.x, pt);
-        out.irisTargetY = Curves.lerp(i.prevY, i.y, pt);
-        out.irisWeight = 1f;
-    }
-
-    @Override
-    public void onStart(BehaviorInstance i) {
-        i.prevWeight = i.weight = 1f;
-    }
-
-    @Override
-    public void tick(BehaviorInstance i) {
-        i.prevX = i.x;
-        i.prevY = i.y;
+    public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
+        float t = (float) i.age / i.duration;
         double angle = SPEED * i.age;
-        float radius = RADIUS * (1f - (float) i.age / i.duration); // shrink to 0
-        i.x = (float) Math.cos(angle) * radius;
-        i.y = (float) Math.sin(angle) * radius;
+        float radius = RADIUS * (1f - t); // shrink to 0
+        out.anchorX = (float) Math.cos(angle) * radius;
+        out.anchorY = (float) Math.sin(angle) * radius;
+        out.stiffness = STIFFNESS;
     }
 }

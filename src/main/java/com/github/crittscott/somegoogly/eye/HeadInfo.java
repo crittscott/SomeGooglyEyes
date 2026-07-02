@@ -210,6 +210,30 @@ public class HeadInfo {
     }
 
     /**
+     * Project a head-frame direction {@code (dx, dy, dz)} into an eye's pupil-plane {@code (right, up)}
+     * basis — the same basis {@link #applyRotation} rotates the pupil into for the given
+     * {@code inclination}/{@code azimuth}. Returns {@code {x, y}} (the look-axis component is dropped,
+     * since the pupil moves in that plane). Cross-eye uses this to aim one pupil at another eye: it feeds
+     * in the head-frame vector from this eye to its target and gets back the direction in pupil space.
+     *
+     * <p>Mirrors {@code applyRotation}'s rotation R = Ry(-(azimuth+90°)) · Rx(90°-inclination): the eye's
+     * local right axis maps to {@code (cos a, 0, -sin a)} and up to {@code (sin a sin b, cos b, cos a sin b)}
+     * with {@code a = -(azimuth+90°)}, {@code b = 90°-inclination}; the projection is the dot with each.
+     */
+    public static float[] projectToPupilPlane(double inclination, double azimuth, double dx, double dy, double dz) {
+        double a = Math.toRadians(-(azimuth + 90.0));
+        double b = Math.toRadians(90.0 - inclination);
+        double ca = Math.cos(a);
+        double sa = Math.sin(a);
+        double cb = Math.cos(b);
+        double sb = Math.sin(b);
+        // right = R·(1,0,0), up = R·(0,1,0); pupil-plane coords are the dot of the direction with each.
+        float x = (float) (dx * ca + dz * -sa);
+        float y = (float) (dx * (sa * sb) + dy * cb + dz * (ca * sb));
+        return new float[]{x, y};
+    }
+
+    /**
      * Resolve a mob's stored roll (0..1) to a variant index via cumulative weights. A {@code null}/empty
      * config yields 0. Deterministic: the same roll + config always picks the same variant, so server
      * and client agree without sending the resolved index.

@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
@@ -19,10 +20,11 @@ import java.util.Arrays;
 
 /**
  * Every behavior must animate identically given the same seed — the contract that keeps all viewers of
- * one mob (and a mid-effect joiner replaying ticks) in lock-step, since only the trigger (id, duration,
- * seed) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart} + {@code tick}
- * on a {@link BehaviorInstance}); the client-only {@code contribute} is never touched. A cow supplies a
- * real {@link HeadInfo} so per-eye behaviors (blink's mask) have geometry to resolve against.
+ * one mob (and a mid-effect joiner catching up by age) in lock-step, since only the trigger (id,
+ * duration, seed) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart} plus
+ * {@code influence}, which is a pure function of age + seeded params) on a {@link BehaviorInstance}. A
+ * cow supplies a real {@link HeadInfo} so per-eye behaviors (blink's mask) have geometry to resolve
+ * against.
  */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -36,24 +38,40 @@ public final class BehaviorDeterminismGameTests {
     private static BehaviorInstance playTo(EyeBehavior behavior, HeadInfo helper, int ticks, long seed) {
         BehaviorInstance instance = new BehaviorInstance(behavior, helper, 8, seed);
         behavior.onStart(instance);
-        for (int t = 0; t < ticks && instance.age < instance.duration; t++) {
-            instance.age++;
-            behavior.tick(instance);
-        }
+        instance.age = Math.max(0, Math.min(ticks, instance.duration));
         return instance;
     }
 
-    private static boolean scalarsMatch(BehaviorInstance a, BehaviorInstance b) {
-        return a.age == b.age
-                && a.weight == b.weight && a.prevWeight == b.prevWeight
-                && a.x == b.x && a.prevX == b.prevX
-                && a.y == b.y && a.prevY == b.prevY
-                && a.scale == b.scale && a.prevScale == b.prevScale
-                && a.squash == b.squash && a.prevSquash == b.prevSquash
-                && a.tint == b.tint && a.prevTint == b.prevTint
-                && a.dirSign == b.dirSign
-                && Arrays.equals(a.tintColor, b.tintColor)
-                && Arrays.deepEquals(a.mask, b.mask);
+    private static boolean influenceEquals(EyeInfluence a, EyeInfluence b) {
+        return a.anchorX == b.anchorX && a.anchorY == b.anchorY && a.stiffness == b.stiffness
+                && a.eyeScaleMul == b.eyeScaleMul && a.squashY == b.squashY
+                && a.tintAmount == b.tintAmount && Arrays.equals(a.corneaTint, b.corneaTint);
+    }
+
+    /**
+     * Two same-seed instances must resolve identical seeded params and produce identical per-eye
+     * {@link EyeInfluence} at every eye — the whole observable output of a behavior at a given age.
+     */
+    private static boolean statesMatch(EyeBehavior behavior, BehaviorInstance a, BehaviorInstance b, HeadInfo helper) {
+        if (a.age != b.age || a.dirSign != b.dirSign
+                || !Arrays.equals(a.tintColor, b.tintColor)
+                || !Arrays.deepEquals(a.mask, b.mask)) {
+            return false;
+        }
+        EyeInfluence ia = new EyeInfluence();
+        EyeInfluence ib = new EyeInfluence();
+        for (int h = 0; h < helper.getHeadCount(); h++) {
+            for (int e = 0; e < helper.getEyeCount(h); e++) {
+                ia.reset();
+                ib.reset();
+                behavior.influence(a, h, e, ia);
+                behavior.influence(b, h, e, ib);
+                if (!influenceEquals(ia, ib)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -77,7 +95,7 @@ public final class BehaviorDeterminismGameTests {
         for (EyeBehavior behavior : EyeBehaviors.all()) {
             BehaviorInstance a = playTo(behavior, headInfo, 8, 4242L);
             BehaviorInstance b = playTo(behavior, headInfo, 8, 4242L);
-            helper.assertTrue(scalarsMatch(a, b),
+            helper.assertTrue(statesMatch(behavior, a, b, headInfo),
                     "behavior " + behavior.id() + " must reach identical state from the same seed");
         }
         helper.succeed();
@@ -93,7 +111,8 @@ public final class BehaviorDeterminismGameTests {
 
         BehaviorInstance natural = playTo(swirl, headInfo, 5, 31337L);
         BehaviorInstance caughtUp = playTo(swirl, headInfo, 5, 31337L);
-        helper.assertTrue(scalarsMatch(natural, caughtUp), "catch-up replay must match natural playback at the same age");
+        helper.assertTrue(statesMatch(swirl, natural, caughtUp, headInfo),
+                "catch-up by age must match natural playback at the same age");
         helper.succeed();
     }
 

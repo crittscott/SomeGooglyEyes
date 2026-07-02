@@ -1,11 +1,9 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
-
 /**
  * Squashes between 1 and N of the mob's eyes shut and open again. The participating set is chosen once
  * from the seed, so a "wink" (one eye) and a full blink are the same behavior at different counts.
- * Drives the squash channel only — the pupil keeps wobbling underneath.
+ * Non-physical overlay: drives the squash channel only — the pupil keeps wobbling underneath.
  */
 final class BlinkBehavior extends AbstractEyeBehavior {
 
@@ -16,9 +14,9 @@ final class BlinkBehavior extends AbstractEyeBehavior {
     }
 
     @Override
-    public void contribute(BehaviorInstance i, HeadInfo helper, int head, int eye, float pt, EyeRenderContribution out) {
+    public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
         if (i.mask != null && head < i.mask.length && eye < i.mask[head].length && i.mask[head][eye]) {
-            out.squashY = Curves.lerp(i.prevSquash, i.squash, pt);
+            out.squashY = 1f - SQUASH * Curves.sinPulse((float) i.age / i.duration);
         }
     }
 
@@ -53,11 +51,5 @@ final class BlinkBehavior extends AbstractEyeBehavior {
                 }
             }
         }
-    }
-
-    @Override
-    public void tick(BehaviorInstance i) {
-        i.prevSquash = i.squash;
-        i.squash = 1f - SQUASH * Curves.sinPulse((float) i.age / i.duration);
     }
 }

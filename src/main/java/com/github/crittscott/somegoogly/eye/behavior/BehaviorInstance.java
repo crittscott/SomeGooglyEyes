@@ -9,11 +9,12 @@ import java.util.Random;
  * stateless singletons ({@link EyeBehaviors}); all per-play state lives here, on the mob's client
  * tracker, so it's transient and per-mob.
  *
- * <p>Animated scalars are kept as {@code prev}/current pairs and advanced once per client tick in
- * {@link EyeBehavior#tick}, then interpolated with {@code partialTicks} in {@link EyeBehavior#contribute}
- * — the same smoothing idiom the eye physics uses. The fields are a small shared palette the seven
- * behaviors draw from (each uses only what it needs); randomness is seeded so every client watching the
- * same mob animates identically.
+ * <p>The only animated state is {@link #age}: each behavior derives its {@link EyeInfluence} directly
+ * from {@code age/duration} in {@link EyeBehavior#influence}, so there are no prev/current scalar pairs
+ * to keep — the smoothing lives one level down, in the pupil's own physics interpolation and in the
+ * per-eye overlay state the simulator tracks. The seeded params below are resolved once in
+ * {@link EyeBehavior#onStart}; randomness is seeded so every client watching the same mob animates
+ * identically.
  */
 public final class BehaviorInstance {
 
@@ -25,14 +26,6 @@ public final class BehaviorInstance {
     /** Completed ticks (1-based after the first tick); {@code age/duration} is the progress fraction. */
     public int age;
 
-    // --- shared interpolatable channels (prev = last tick, current = this tick) ---
-    public float prevWeight, weight;     // iris blend weight (0 = physics, 1 = target)
-    public float prevX, x;               // iris target x (uniform behaviors)
-    public float prevY, y;               // iris target y
-    public float prevScale, scale;       // eye scale multiplier
-    public float prevSquash, squash;     // vertical squash multiplier
-    public float prevTint, tint;         // color blend amount
-
     // --- params resolved once in onStart (from the seed) ---
     public float[] tintColor;            // color-change target
     public int dirSign;                  // side-eye direction (+1 / -1)
@@ -43,7 +36,5 @@ public final class BehaviorInstance {
         this.helper = helper;
         this.duration = Math.max(1, duration);
         this.rand = new Random(seed);
-        this.scale = prevScale = 1f;
-        this.squash = prevSquash = 1f;
     }
 }

@@ -82,8 +82,12 @@ public final class PickerState {
     /** Index into {@link #variants} of the variant currently being edited. */
     public static int variantIndex = 0;
 
-    /** The eye being shaped right now (the "current eye"). */
-    public static EyeDraft currentEye = defaultEye();
+    /**
+     * The eye being shaped right now, or {@code null} when no draft is being authored — the empty state.
+     * A never-configured mob (and a variant whose eyes are all deleted) sits here with no draft, so the
+     * preview/HUD show nothing until {@code /sg create} (or {@code select}) starts one. See {@link #clearDraft()}.
+     */
+    public static EyeDraft currentEye = null;
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
     public static String currentPart = null;
     /** Index into the current variant's eye list that {@code save} writes back to, or {@code -1} to append. */
@@ -116,6 +120,21 @@ public final class PickerState {
     /** The CLI {@code part none} op. */
     public static void clearPart() {
         currentPart = null;
+    }
+
+    /**
+     * Drop the live draft, returning to the empty authoring state (no current eye, nothing selected).
+     * The preview/HUD then show only the saved eyes, so a variant with zero saved eyes looks empty
+     * rather than sprouting a phantom unsaved eye. Authoring resumes on {@code create}/{@code select}.
+     */
+    public static void clearDraft() {
+        currentEye = null;
+        selectedIndex = -1;
+    }
+
+    /** Whether a live draft eye is currently being shaped (vs the empty state). */
+    public static boolean hasDraft() {
+        return currentEye != null;
     }
 
     private static EyeDraft copy(EyeDraft s) {
@@ -168,9 +187,12 @@ public final class PickerState {
         }
         eyes.remove(idx);
         if (selectedIndex == idx) {
-            selectedIndex = -1;
+            clearDraft(); // the edited eye is gone; return to no-draft rather than a phantom
         } else if (selectedIndex > idx) {
             selectedIndex--;
+        }
+        if (eyes.isEmpty()) {
+            clearDraft(); // zero eyes is a real state — no auto-vivified draft
         }
         return true;
     }
@@ -188,8 +210,7 @@ public final class PickerState {
         if (variantIndex >= idx) {
             variantIndex = Math.max(0, variantIndex - 1);
         }
-        currentEye = defaultEye();
-        selectedIndex = -1;
+        clearDraft();
         return true;
     }
 
@@ -269,8 +290,7 @@ public final class PickerState {
         EyeAttachmentResolver resolver = seedResolver;
         variants = authored.computeIfAbsent(newType, t -> seedDraft(t, baby, model, resolver));
         variantIndex = 0;
-        currentEye = defaultEye();
-        selectedIndex = -1;
+        clearDraft(); // start empty: saved eyes (if any) show, but no phantom draft until create/select
         freeze(living);
         int kept = totalEyeCount();
         return "Chose " + newType + (kept > 0 ? " (" + kept + " eyes)" : "")
@@ -300,8 +320,16 @@ public final class PickerState {
                         String raw = head.attachPoint;
                         String part = model != null && resolver != null
                                 ? resolver.canonicalToken(model, raw) : raw;
+                        int headStart = dv.eyes.size();
                         for (EyeDefinition def : head.eyes) {
                             dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
+                        }
+                        // Translate each eye's on-disk within-head cross-target back to a flat draft index.
+                        for (int e = 0; e < head.eyes.size(); e++) {
+                            int within = head.eyes.get(e).placement().crossTarget();
+                            if (within >= 0 && within < head.eyes.size()) {
+                                dv.eyes.get(headStart + e).eye.crossTarget = headStart + within;
+                            }
                         }
                     }
                 }
@@ -318,8 +346,7 @@ public final class PickerState {
     public static int newVariant() {
         variants.add(new DraftVariant());
         variantIndex = variants.size() - 1;
-        currentEye = defaultEye();
-        selectedIndex = -1;
+        clearDraft();
         return variantIndex + 1;
     }
 
@@ -329,7 +356,7 @@ public final class PickerState {
      * selected, so an immediate re-save updates it rather than duplicating it.
      */
     public static boolean save() {
-        if (currentPart == null) {
+        if (currentPart == null || currentEye == null) {
             return false;
         }
         List<ListedEye> eyes = currentEyes();
@@ -371,8 +398,7 @@ public final class PickerState {
             return false;
         }
         variantIndex = idx;
-        currentEye = defaultEye();
-        selectedIndex = -1;
+        clearDraft();
         return true;
     }
 
@@ -382,6 +408,32 @@ public final class PickerState {
 
     public static void setEyeScale(double v) {
         currentEye.eyeScale = Math.max(0, v);
+    }
+
+    /**
+     * The CLI {@code properties crosstarget <n>} op: point the current eye's cross-eye behavior at the eye
+     * at 1-based list index {@code oneBased} ({@code <= 0} clears it). The target must be a <i>different</i>
+     * eye that shares the current part — cross-eye is same-head only. Returns false if out of range, the
+     * edited eye itself, or on a different part.
+     */
+    public static boolean setCrossTarget(int oneBased) {
+        if (currentEye == null) {
+            return false;
+        }
+        if (oneBased <= 0) {
+            currentEye.crossTarget = -1;
+            return true;
+        }
+        int idx = oneBased - 1;
+        List<ListedEye> eyes = currentEyes();
+        if (idx < 0 || idx >= eyes.size() || idx == selectedIndex) {
+            return false;
+        }
+        if (currentPart == null || !currentPart.equals(eyes.get(idx).part)) {
+            return false;
+        }
+        currentEye.crossTarget = idx;
+        return true;
     }
 
     public static void setGlow(boolean v) {
@@ -502,8 +554,13 @@ public final class PickerState {
         config.enabled = true;
         config.variants = new ArrayList<>();
         for (DraftVariant dv : draftVariants) {
+            // Pre-pass: each eye's index within its own part group (= its on-disk within-head index),
+            // so a cross-target given as a flat list index can be translated to what the runtime uses.
+            int[] withinHead = withinHeadIndices(dv);
+
             LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
-            for (ListedEye le : dv.eyes) {
+            for (int f = 0; f < dv.eyes.size(); f++) {
+                ListedEye le = dv.eyes.get(f);
                 if (le.part == null) {
                     continue;
                 }
@@ -513,7 +570,7 @@ public final class PickerState {
                     h.eyes = new ArrayList<>();
                     return h;
                 });
-                head.eyes.add(le.eye.toDefinition());
+                head.eyes.add(le.eye.toDefinition(resolveCrossTarget(dv, f, withinHead)));
             }
             if (grouped.isEmpty()) {
                 continue; // skip empty arrangements rather than export a variant with no eyes
@@ -524,6 +581,40 @@ public final class PickerState {
             config.variants.add(variant);
         }
         return config;
+    }
+
+    /** For each eye in {@code dv}, its 0-based index within its own part group ({@code -1} for no part). */
+    private static int[] withinHeadIndices(DraftVariant dv) {
+        int[] within = new int[dv.eyes.size()];
+        Map<String, Integer> perPartCount = new LinkedHashMap<>();
+        for (int f = 0; f < dv.eyes.size(); f++) {
+            String part = dv.eyes.get(f).part;
+            if (part == null) {
+                within[f] = -1;
+                continue;
+            }
+            int c = perPartCount.getOrDefault(part, 0);
+            within[f] = c;
+            perPartCount.put(part, c + 1);
+        }
+        return within;
+    }
+
+    /**
+     * Resolve eye {@code f}'s flat cross-target to a within-head index, or {@code -1} when it has none, is
+     * out of range, points at itself, or points at an eye on a different part (cross-eye is same-head only).
+     */
+    private static int resolveCrossTarget(DraftVariant dv, int f, int[] withinHead) {
+        int flat = dv.eyes.get(f).eye.crossTarget;
+        if (flat < 0 || flat >= dv.eyes.size() || flat == f) {
+            return -1;
+        }
+        ListedEye self = dv.eyes.get(f);
+        ListedEye target = dv.eyes.get(flat);
+        if (self.part == null || !self.part.equals(target.part)) {
+            return -1;
+        }
+        return withinHead[flat];
     }
 
     /** Eyes saved across all variants (the export guard). */

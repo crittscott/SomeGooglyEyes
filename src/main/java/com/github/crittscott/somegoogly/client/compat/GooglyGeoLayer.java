@@ -118,7 +118,9 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             poseStack.pushPose();
             if (GeoBones.moveTo(poseStack, bakedModel, token)) {
                 Gizmo.draw(poseStack, bufferSource);
-                renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, PickerState.currentEye);
+                if (PickerState.currentEye != null) {
+                    renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, PickerState.currentEye);
+                }
             }
             poseStack.popPose();
         }
