@@ -46,14 +46,15 @@ public class EyeItemInteractions {
 
     /**
      * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
-     * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top — at a count
-     * equal to the mob's total eye count.
+     * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top. Always a
+     * single eye: the potion that gives eyes consumes one eye, so dropping the mob's whole eye count
+     * would let one seed eye multiply through a brew-apply-harvest loop.
      */
     private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
         // Effective appearance = the mob's config appearance (head 0 / eye 0) with its override on top,
         // captured as a fully-populated override so the item carries the exact look.
         AppearanceOverride harvested = helper.appearanceAt(0, 0).overlay(override).toOverride();
-        return GooglyEyeItem.create(harvested, totalEyes(helper));
+        return GooglyEyeItem.create(harvested, 1);
     }
 
     private static void consume(PlayerInteractEvent.EntityInteract event, InteractionResult result) {
@@ -147,13 +148,5 @@ public class EyeItemInteractions {
         event.getDrops().add(entity);
 
         weapon.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
-    }
-
-    private static int totalEyes(HeadInfo helper) {
-        int total = 0;
-        for (int head = 0; head < helper.getHeadCount(); head++) {
-            total += helper.getEyeCount(head);
-        }
-        return Math.max(1, total);
     }
 }

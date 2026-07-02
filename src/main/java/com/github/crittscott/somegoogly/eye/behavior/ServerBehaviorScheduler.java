@@ -188,9 +188,23 @@ public final class ServerBehaviorScheduler {
                 state.busyUntil = 0;
                 state.activeId = null;
             }
-            // Idle + ambient enabled + still eyed → count down and roll.
-            if (ambient && state.busyUntil == 0 && EyeState.hasEyes(mob) && --state.ambientCooldown <= 0) {
-                rollAmbient(mob, state);
+            // Evict idle entries no player is watching. Tracked entries are removed by onStopTracking;
+            // this catches states created by trigger() (the admin command) on untracked mobs, which
+            // would otherwise sit in the map for the mob's whole life.
+            if (state.trackers <= 0 && state.busyUntil == 0) {
+                it.remove();
+                continue;
+            }
+            // Idle + ambient enabled → count down, and only at expiry check whether the mob has eyes
+            // (an NBT read). Checking hasEyes every tick for every tracked mob — the overwhelmingly
+            // eyeless majority — was the old order's per-tick cost; now eyeless mobs just re-arm the
+            // cooldown once per expiry.
+            if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
+                if (EyeState.hasEyes(mob)) {
+                    rollAmbient(mob, state);
+                } else {
+                    state.ambientCooldown = nextCooldown();
+                }
             }
         }
     }

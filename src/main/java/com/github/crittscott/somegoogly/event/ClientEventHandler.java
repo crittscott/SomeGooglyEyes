@@ -25,15 +25,18 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 public class ClientEventHandler {
     private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
     public static int clientTicks = 0;
-    protected WeakHashMap<LivingEntity, GooglyTracker> trackers = new WeakHashMap<>();
+    // A plain map on purpose: entries are evicted by the 10-tick sweep in onWorldTick (plus the
+    // clearTrackers calls on sync/disconnect). This was a WeakHashMap, but each GooglyTracker holds a
+    // strong reference to its own key (the parent entity), so weakness never fired anyway.
+    protected final Map<LivingEntity, GooglyTracker> trackers = new HashMap<>();
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void addLayers() {
