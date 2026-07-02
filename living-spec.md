@@ -106,7 +106,7 @@ Each entry is selected by namespace version and age. `age` may be `adult`, `baby
 
 Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a slash-joined part/bone path (e.g. `root/body/head`), matched by normalized suffix so a bare leaf like `head` still attaches. A path segment is `#N` only for a nameless positional root (models with no obfuscation-stable name for that part).
 
-Each eye is a flat object containing placement, scale, direction, color, glow, and invisibility behavior. The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
+Each eye is a flat object containing placement, scale, direction, color, glow, invisibility behavior, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
 
 Legacy entry-level `heads` is not a supported placement shape. Current data uses `variants`.
 
@@ -137,7 +137,7 @@ A render pass requires all of the following:
 - the model has a usable attachment resolver;
 - the eye is not suppressed by invisibility or invalid scale.
 
-Rendering combines datapack placement, effective appearance, local wobble state, at most one active cosmetic behavior, and normal/glowing passes as needed.
+Rendering combines datapack placement, effective appearance, the eye's simulated wobble state (which already incorporates any active cosmetic behavior), and normal/glowing passes as needed.
 
 Attachment is resolved by model type:
 
@@ -152,7 +152,7 @@ The reflection fallback intentionally trades robustness for broad coverage. Exte
 
 ## 9. Wobble and cosmetic behaviors
 
-Wobble is client-only and transient. It is not persisted or synchronized. The same simulation concept drives mob eyes and held eye items, so they feel consistent.
+Wobble is client-only and transient. It is not persisted or synchronized. On a mob the pupil settles toward true world-down rather than the eye's local down, so tilted heads, aimed eyes, and inverted mobs fall correctly. The same simulation drives mob eyes and held eye items, so they feel consistent.
 
 The server owns behavior scheduling and triggers; the client owns visual playback. A behavior trigger identifies the entity, behavior id, duration, seed, and elapsed time. The seed makes playback deterministic across observers, and elapsed time lets newly tracking clients join an in-progress effect.
 
@@ -167,6 +167,8 @@ Built-in behavior ids are:
 - `color_change`
 
 Ambient behaviors are selected from the configured ambient pool. Event-driven behaviors currently include `grow` when a player damages an eyed mob and `swirl` for trade or heal events. `color_change` is registered for debug/admin triggering but is not part of normal ambient or event tracks.
+
+On the client a behavior is folded into the wobble simulation rather than composited at render time. Pupil-driving behaviors (`stare`, `side_eye`, `cross_eye`, `swirl`) steer the pupil and release smoothly back into the wobble when they end; `grow`, `blink`, and `color_change` apply visual overlays. `cross_eye` aims each pupil at its configured partner eye.
 
 Only one behavior runs on an entity at a time. Later triggers are dropped while one is active. Behaviors are cosmetic and do not persist.
 

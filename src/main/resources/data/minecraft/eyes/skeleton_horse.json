@@ -21,6 +21,7 @@
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 180.0,
+                  "crossTarget": 1,
                   "corneaColors": [
                     1.0,
                     1.0,
@@ -44,6 +45,7 @@
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 0.0,
+                  "crossTarget": 0,
                   "corneaColors": [
                     1.0,
                     1.0,
