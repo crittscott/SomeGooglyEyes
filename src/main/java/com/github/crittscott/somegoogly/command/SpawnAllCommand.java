@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.command;
 
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,7 +26,9 @@ import java.util.List;
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
  * googly eyes — every registered living entity, whether or not it has an eye config yet — so the
- * picker can be used on any of them without hunting each one down in survival.
+ * picker can be used on any of them without hunting each one down in survival. The ender dragon
+ * ({@link ServerEyeConfigs#ENDER_DRAGON}) is skipped: it's hard-excluded from eyes, and NoAi
+ * doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
  *
  * <p>This is the server-thread half: the command itself is a client command ({@link GooglyClientCommands})
  * that hops onto the integrated server before calling {@link #spawn(ServerPlayer)}, so it only works in
@@ -153,6 +156,12 @@ public final class SpawnAllCommand {
                 continue;
             }
             if (filtering && !id.getNamespace().equals(modFilter)) {
+                continue;
+            }
+            if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+                if (filtering) {
+                    dropped.add(id + " — hard-excluded from googly eyes");
+                }
                 continue;
             }
             Entity entity;

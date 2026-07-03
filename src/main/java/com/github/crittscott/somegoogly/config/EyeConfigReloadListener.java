@@ -37,6 +37,12 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
+            // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
+            if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
+                SomeGoogly.LOGGER.warn(
+                        "Ignoring eye config {} — the ender dragon is hard-excluded from googly eyes", entry.getKey());
+                continue;
+            }
             try {
                 ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).result().orElse(null);
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);

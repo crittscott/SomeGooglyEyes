@@ -13,11 +13,11 @@
               "eyes": [
                 {
                   "position": [
-                    -0.13,
-                    -0.25,
-                    -0.25
+                    -0.08,
+                    0.0,
+                    -0.5
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
@@ -28,20 +28,20 @@
                     1.0
                   ],
                   "irisColors": [
-                    0.0,
+                    1.0,
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
                   "position": [
-                    0.13,
-                    -0.25,
-                    -0.25
+                    0.08,
+                    0.0,
+                    -0.5
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
@@ -52,11 +52,105 @@
                     1.0
                   ],
                   "irisColors": [
-                    0.0,
+                    1.0,
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
+                  "affectedByInvisibility": true
+                },
+                {
+                  "position": [
+                    -0.1,
+                    -0.15,
+                    -0.5
+                  ],
+                  "eyeScale": 0.4,
+                  "irisScale": 0.6,
+                  "inclination": 90.0,
+                  "azimuth": 270.0,
+                  "crossTarget": 3,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true,
+                  "affectedByInvisibility": true
+                },
+                {
+                  "position": [
+                    0.1,
+                    -0.15,
+                    -0.5
+                  ],
+                  "eyeScale": 0.4,
+                  "irisScale": 0.6,
+                  "inclination": 90.0,
+                  "azimuth": 270.0,
+                  "crossTarget": 2,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true,
+                  "affectedByInvisibility": true
+                },
+                {
+                  "position": [
+                    -0.25,
+                    -0.05,
+                    -0.43
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "inclination": 90.0,
+                  "azimuth": 180.0,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true,
+                  "affectedByInvisibility": true
+                },
+                {
+                  "position": [
+                    0.25,
+                    -0.05,
+                    -0.43
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "inclination": 90.0,
+                  "azimuth": 0.0,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true,
                   "affectedByInvisibility": true
                 }
               ]
