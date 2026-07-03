@@ -9,15 +9,15 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "Tail_1/Body/Head",
+              "attachPoint": "body/upperBody/head",
               "eyes": [
                 {
                   "position": [
-                    -0.13,
-                    -0.25,
+                    -0.16,
+                    -0.28,
                     -0.25
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.5,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,
@@ -37,11 +37,11 @@
                 },
                 {
                   "position": [
-                    0.13,
-                    -0.25,
+                    0.16,
+                    -0.28,
                     -0.25
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.5,
                   "irisScale": 0.6,
                   "inclination": 90.0,
                   "azimuth": 270.0,

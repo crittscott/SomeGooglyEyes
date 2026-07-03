@@ -9,19 +9,18 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "Tail_1/Body/Head",
+              "attachPoint": "BodyUpper/Neck1/Neck2/Neck3/Head",
               "eyes": [
                 {
                   "position": [
                     -0.13,
-                    -0.25,
-                    -0.25
+                    -0.1,
+                    -0.2
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
-                  "crossTarget": 1,
+                  "azimuth": 180.0,
                   "corneaColors": [
                     1.0,
                     1.0,
@@ -38,14 +37,13 @@
                 {
                   "position": [
                     0.13,
-                    -0.25,
-                    -0.25
+                    -0.1,
+                    -0.2
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
-                  "crossTarget": 0,
+                  "azimuth": 0.0,
                   "corneaColors": [
                     1.0,
                     1.0,
