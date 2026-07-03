@@ -63,7 +63,7 @@ The eye flag is initially a spawn-time decision, but gameplay can later change i
 
 Eligibility for initial eyes depends on whether the server has a usable enabled definition for the entity's current or alternate age. This prevents an entity from being permanently excluded just because it is currently a baby or adult while only the other age has a definition.
 
-Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only through the splash potion. Because the state is ordinary persistent data, player eyes are lost on respawn.
+Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only through the googly potion (splash or drinkable). Because the state is ordinary persistent data, player eyes are lost on respawn.
 
 ## 6. Datapack definition model
 
@@ -101,6 +101,8 @@ The supported top-level shape is:
 ```
 
 Each entry is selected by namespace version and age. `age` may be `adult`, `baby`, or `any`; an age-specific entry takes precedence over `any`. `enabled:false` is a server-authoritative disable.
+
+The ender dragon is hard-excluded: eye configs for it are refused at load from any datapack, because its renderer bypasses the living-renderer family and can never host the eye layer.
 
 `variants` are complete arrangements. A single arrangement is still represented as a one-element `variants` list. Variant weights are relative, and the stored per-entity roll maps deterministically onto the selected age configuration.
 
@@ -143,10 +145,13 @@ Attachment is resolved by model type:
 
 | Resolver | Target | Token style | Status |
 | --- | --- | --- | --- |
-| Hierarchical | `HierarchicalModel` | part names | Implemented, but cube-less pivot parts are not selectable |
-| Citadel | Citadel/LLibrary-style models | box names or `#index` | Implemented, compatibility-sensitive |
-| Reflection fallback | other vanilla-style models | `#index` only | Implemented, brittle by design |
+| Hierarchical | `HierarchicalModel` | `root/...` part paths | Implemented; cube-less pivot joints are selectable |
+| AgeableList | `AgeableListModel` (most vanilla mobs) | `head`/`body` group roots + real descendant names | Implemented |
+| Citadel | Citadel/LLibrary-style models | box-name paths, falling back to field names then `#N` | Implemented, compatibility-sensitive |
+| Reflection fallback | any other vanilla-style model | positional `#N` roots + real descendant names | Implemented, brittle by design |
 | GeckoLib | `GeoEntityRenderer` models | bone names | Implemented, version-sensitive |
+
+Resolvers can also canonicalize a stored token into their own enumeration vocabulary; the picker, HUD, and exported configs rely on this to speak the same token for the same part.
 
 The reflection fallback intentionally trades robustness for broad coverage. External renderer integrations should be treated as compatibility surfaces, not core guarantees.
 
@@ -178,6 +183,8 @@ Only one behavior runs on an entity at a time. Later triggers are dropped while 
 
 `somegoogly:googly_eye` is a 3D item. Its NBT stores sparse appearance overrides: cornea color, iris color, and glow. It stores no placement, attachment, rotation, scale, or entity-specific geometry.
 
+The eye item is an ingredient only; it is never applied to an entity directly by use.
+
 In hand, the item uses the same wobble concept as mob eyes. In static item contexts, the iris is centered.
 
 ### Harvest
@@ -189,6 +196,8 @@ Eyed mobs can be harvested in two ways:
 
 Harvested eye items carry the mob's effective appearance. Current overrides are per-mob, not per-eye, so asymmetric colors are not preserved as separate item properties.
 
+A harvest always yields exactly one eye regardless of how many the mob shows, so a single eye cannot multiply through a brew-apply-harvest loop.
+
 Players with eyes are living entities for these systems and can be harvested like mobs.
 
 ### Crafting
@@ -197,17 +206,19 @@ The special `eye_modifier` recipe modifies a googly-eye item's appearance. Dyes 
 
 ### Potion
 
-A custom brewing recipe turns an awkward splash potion plus a googly-eye item into the `somegoogly:googly_eyes` splash potion and copies the eye item's appearance to the output.
+Custom brewing recipes turn an awkward potion plus a googly-eye item into the `somegoogly:googly_eyes` potion, in two forms matching the input bottle: a **splash** and a **drinkable**. Both copy the eye item's appearance to the output. The potion deliberately carries no mob effects; the eye-giving logic is layered on vanilla's inert splash/drink handling. There is no lingering form — an area cloud conflicts with the single-target design.
 
-On impact, the server chooses one nearby eligible eyeless living entity, including players, applies the potion appearance, and turns eyes on. This is the only normal gameplay path for giving an existing eyeless entity eyes.
+On splash impact, the server chooses one nearby eligible eyeless living entity, including players, applies the potion appearance, and turns eyes on. Drinking gives the drinker their own eyes, and re-applies appearance even to an already-eyed drinker (a recolor path). The potion is the only normal gameplay path for giving an entity eyes.
+
+The mod's items live in its own creative tab (the eye, an Optometrist book, and the purple-tinted potion forms). The effect-less water-blue potion entries vanilla auto-emits for a registered potion are stripped from the vanilla tabs.
 
 ### Enchantment
 
-`somegoogly:optometrist` is a treasure-only shears enchantment used for non-lethal harvesting.
+`somegoogly:optometrist` is a treasure-only shears enchantment used for non-lethal harvesting. It never appears in the enchanting table but remains discoverable and tradeable (loot-chest and fishing books, librarian trades), following the vanilla Mending pattern.
 
 ### JEI
 
-JEI integration registers a representative brewing display for the custom splash-potion recipe. The real recipe still copies item appearance NBT. The custom `eye_modifier` recipe is not currently exposed through JEI and remains Partial.
+JEI integration registers representative brewing displays for both forms of the custom potion recipe (drinkable and splash). The real recipes still copy item appearance NBT. The custom `eye_modifier` recipe is not currently exposed through JEI and remains Partial.
 
 ## 11. Picker and authoring workflow
 
@@ -218,7 +229,7 @@ The basic workflow is:
 1. Enable the picker.
 2. Lock a living entity target.
 3. Choose an attachment part.
-4. Add, move, aim, scale, color, and save draft eyes.
+4. Add, move, aim, scale, color, and save draft eyes, optionally across multiple weighted variants.
 5. Export the selected entity or export all known configs.
 
 `/sg export` writes the committed target into the single-player world's datapack and reloads it:
@@ -235,9 +246,9 @@ The basic workflow is:
 
 Picker drafts are retained per entity type for the session. Drafts seed from existing synced config when available, so editing an existing placement starts from current data instead of a blank state.
 
-The picker also includes a single-player spawn grid command for authoring and debugging many living entity types. It is a development convenience and does not affect shipped runtime behavior.
+The picker also includes a single-player spawn grid command for authoring and debugging many living entity types, optionally filtered to one mod namespace. It is a development convenience and does not affect shipped runtime behavior.
 
-Known picker limits: remote/multiplayer export is deferred, cube-less pivot authoring depends on resolver support, and a crash can theoretically persist temporary `NoAi` state used while freezing targets.
+Known picker limits: remote/multiplayer export is deferred, and a crash can theoretically persist temporary `NoAi` state used while freezing targets.
 
 ## 12. Commands
 
@@ -249,7 +260,7 @@ The client and server subtrees share the same root but occupy distinct paths. Si
 
 ## 13. Network protocol
 
-The mod uses one `SimpleChannel` with protocol version `3` and three server-to-client packet types:
+The mod uses one `SimpleChannel` with three server-to-client packet types. All three are registered direction-locked (server-to-client only), so copies sent by a hostile or misbehaving client are rejected instead of decoded and handled:
 
 | Packet | Purpose |
 | --- | --- |
