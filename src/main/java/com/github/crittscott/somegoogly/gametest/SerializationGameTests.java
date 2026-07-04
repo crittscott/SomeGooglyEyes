@@ -11,6 +11,11 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
+import com.github.crittscott.somegoogly.network.PickerExportPacket;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
+import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
+import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
 import com.google.gson.JsonArray;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
@@ -25,6 +30,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -129,6 +135,67 @@ public final class SerializationGameTests {
         EyeDefinition fromEmpty = EyeDefinition.CODEC
                 .parse(JsonOps.INSTANCE, new com.google.gson.JsonObject()).result().orElseThrow();
         helper.assertTrue(fromEmpty.equals(EyeDefinition.DEFAULT), "absent fields fall back to DEFAULT");
+        helper.succeed();
+    }
+
+    /** Byte idempotence for one packet form: encode → decode → encode must reproduce the bytes. */
+    private static <T> boolean roundTrips(T packet, java.util.function.BiConsumer<T, FriendlyByteBuf> encode,
+                                          java.util.function.Function<FriendlyByteBuf, T> decode) {
+        byte[] first = bytes(buffer -> encode.accept(packet, buffer));
+        T decoded = decode.apply(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
+        byte[] second = bytes(buffer -> encode.accept(decoded, buffer));
+        return Arrays.equals(first, second);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
+        CompoundTag config = new CompoundTag();
+        config.putBoolean("enabled", true);
+        helper.assertTrue(roundTrips(
+                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), config),
+                        PickerExportPacket::encode, PickerExportPacket::decode),
+                "PickerExportPacket with a config should survive a wire round-trip");
+        helper.assertTrue(roundTrips(
+                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), null),
+                        PickerExportPacket::encode, PickerExportPacket::decode),
+                "PickerExportPacket's null-config form should survive a wire round-trip");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
+        helper.assertTrue(roundTrips(PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
+                        PickerFreezePacket::encode, PickerFreezePacket::decode),
+                "PickerFreezePacket's freeze form should survive a wire round-trip");
+        helper.assertTrue(roundTrips(PickerFreezePacket.unfreeze(),
+                        PickerFreezePacket::encode, PickerFreezePacket::decode),
+                "PickerFreezePacket's unfreeze form should survive a wire round-trip");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerMobPosePacketRoundTrips(GameTestHelper helper) {
+        UUID mob = new UUID(0xABCDL, 0xEF01L);
+        helper.assertTrue(roundTrips(PickerMobPosePacket.move(mob, 1.5, null, -7.25),
+                        PickerMobPosePacket::encode, PickerMobPosePacket::decode),
+                "PickerMobPosePacket's move form (with a ~ axis) should survive a wire round-trip");
+        helper.assertTrue(roundTrips(PickerMobPosePacket.rot(mob, 270.0F),
+                        PickerMobPosePacket::encode, PickerMobPosePacket::decode),
+                "PickerMobPosePacket's rot form should survive a wire round-trip");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
+        helper.assertTrue(roundTrips(new PickerSpawnPacket(new ResourceLocation("minecraft", "cow")),
+                        PickerSpawnPacket::encode, PickerSpawnPacket::decode),
+                "PickerSpawnPacket should survive a wire round-trip");
+        helper.assertTrue(roundTrips(new PickerSpawnAllPacket("minecraft"),
+                        PickerSpawnAllPacket::encode, PickerSpawnAllPacket::decode),
+                "PickerSpawnAllPacket's filtered form should survive a wire round-trip");
+        helper.assertTrue(roundTrips(new PickerSpawnAllPacket(null),
+                        PickerSpawnAllPacket::encode, PickerSpawnAllPacket::decode),
+                "PickerSpawnAllPacket's unfiltered form should survive a wire round-trip");
         helper.succeed();
     }
 

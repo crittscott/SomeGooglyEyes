@@ -9,10 +9,13 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.picker.PickerExportService;
+import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -96,6 +99,12 @@ public class ServerEventHandler {
         if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);
         }
+
+        // A mob rejoining with a stale picker-freeze marker (server crash mid-edit, or its chunk
+        // unloaded while frozen) gets its pre-picker NoAi back; a still-live edit is re-asserted.
+        if (living instanceof Mob mob) {
+            PickerFreezeService.onMobJoin(mob);
+        }
     }
 
     @SubscribeEvent
@@ -104,9 +113,21 @@ public class ServerEventHandler {
     }
 
     @SubscribeEvent
+    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        // A disappearing picker client must never strand a frozen mob; the server releases it.
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PickerFreezeService.onPlayerLoggedOut(player);
+        }
+    }
+
+    @SubscribeEvent
     public void onServerStopping(ServerStoppingEvent event) {
         // Transient cosmetic state; drop it so a single-player JVM doesn't carry one world into the next.
         ServerBehaviorScheduler.clear();
+        // Restore any picker-frozen mobs synchronously before the final save, and drop per-run picker
+        // state (the export cooldown is keyed to this run's tick counter).
+        PickerFreezeService.onServerStopping(event.getServer());
+        PickerExportService.onServerStopping();
     }
 
     @SubscribeEvent

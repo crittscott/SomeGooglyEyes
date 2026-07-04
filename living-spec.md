@@ -222,7 +222,7 @@ JEI integration registers representative brewing displays for both forms of the 
 
 ## 11. Picker and authoring workflow
 
-The picker is a client-driven in-world authoring tool. It is intended for creative-mode placement work. Writing datapack output is restricted to a single-player integrated server.
+The picker is a client-driven in-world authoring tool for creative-mode placement work. The whole workflow — including export, mob freezing/posing, and the spawn helpers — works from a remote client on any server running the mod: the server-touching operations travel as client-to-server picker packets whose handlers re-check creative mode server-side (the only gate; a server that hands out creative is trusting the player with these tools).
 
 The basic workflow is:
 
@@ -232,7 +232,7 @@ The basic workflow is:
 4. Add, move, aim, scale, color, and save draft eyes, optionally across multiple weighted variants.
 5. Export the selected entity or export all known configs.
 
-`/sg export` writes the committed target into the single-player world's datapack and reloads it:
+`/sg export` sends the committed target to the server, which validates it, writes it into the world's datapack, and reloads it (rate-limited to one export per player per 10 seconds, since each is a full datapack reload):
 
 ```text
 <world>/datapacks/somegoogly-picker/data/<namespace>/eyes/<entity>.json
@@ -246,9 +246,9 @@ The basic workflow is:
 
 Picker drafts are retained per entity type for the session. Drafts seed from existing synced config when available, so editing an existing placement starts from current data instead of a blank state.
 
-The picker also includes single-player spawn commands for authoring and debugging: a spawn grid of many living entity types (optionally filtered to one mod namespace) and a single-mob spawn at the targeted block. A chosen mob can additionally be teleported and turned in place (`mob move`/`mob rot`) to pose it for editing. These are development conveniences and do not affect shipped runtime behavior.
+The picker also includes spawn commands for authoring and debugging: a spawn grid of many living entity types (optionally filtered to one mod namespace) and a single-mob spawn at the targeted block. A chosen mob can additionally be teleported and turned in place (`mob move`/`mob rot`) to pose it for editing. These are development conveniences and do not affect shipped runtime behavior.
 
-Known picker limits: remote/multiplayer export is deferred, and a crash can theoretically persist temporary `NoAi` state used while freezing targets.
+Mob freezing is server-owned (`PickerFreezeService`): one frozen mob per editing player, refused if another player is already editing it, released on unchoose/logout, and restored synchronously at server stop. The pre-freeze `NoAi` value is additionally persisted as a marker tag on the mob while frozen, so a hard crash mid-edit (or the mob's chunk unloading) is recovered on the mob's next load instead of stranding the forced flag.
 
 ## 12. Commands
 
@@ -260,15 +260,20 @@ The client and server subtrees share the same root but occupy distinct paths. Si
 
 ## 13. Network protocol
 
-The mod uses one `SimpleChannel` with three server-to-client packet types. All three are registered direction-locked (server-to-client only), so copies sent by a hostile or misbehaving client are rejected instead of decoded and handled:
+The mod uses one `SimpleChannel` with three server-to-client packet types and five client-to-server picker request types. Every packet is registered direction-locked, so copies sent the wrong way are rejected instead of decoded and handled:
 
-| Packet | Purpose |
-| --- | --- |
-| `EyeStatePacket` | Per-entity eye flag, variant roll, and optional appearance override. |
-| `EyeConfigSyncPacket` | Server-selected runtime geometry definitions. |
-| `EyeBehaviorTriggerPacket` | Transient cosmetic behavior trigger data. |
+| Packet | Direction | Purpose |
+| --- | --- | --- |
+| `EyeStatePacket` | S→C | Per-entity eye flag, variant roll, and optional appearance override. |
+| `EyeConfigSyncPacket` | S→C | Server-selected runtime geometry definitions. |
+| `EyeBehaviorTriggerPacket` | S→C | Transient cosmetic behavior trigger data. |
+| `PickerFreezePacket` | C→S | Freeze/release the mob being edited (`PickerFreezeService`). |
+| `PickerSpawnPacket` | C→S | Spawn one mob at the targeted block. |
+| `PickerSpawnAllPacket` | C→S | Spawn the authoring grid, optionally filtered to one namespace. |
+| `PickerMobPosePacket` | C→S | Teleport/turn the mob being edited. |
+| `PickerExportPacket` | C→S | Write an authored eye config into the world datapack and reload. |
 
-Clients clear synced definitions and render trackers on disconnect. Malformed config-sync entries are logged and skipped rather than aborting the whole payload.
+Every client-to-server handler re-authorizes the sender (creative mode) and validates its payload — entity ids against the registry, the export config through the shared codec under a size quota — before acting; client-side checks are UX only. Clients clear synced definitions and render trackers on disconnect. Malformed config-sync entries are logged and skipped rather than aborting the whole payload.
 
 ## 14. Non-goals, seams, and compatibility limits
 

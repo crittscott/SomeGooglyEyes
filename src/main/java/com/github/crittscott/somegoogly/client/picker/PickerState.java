@@ -9,20 +9,16 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -31,11 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-world eye-placement authoring state (single-player only), driven by the {@code /sg} CLI and the
- * keyboard picker, which share this state. Workflow: choose a mob, pick a part to use as the
- * coordinate frame, shape a <i>current eye</i> (position / rotation / properties), then save it to a
- * flat, numbered <i>eye list</i>. Re-select a saved eye to adjust it in place; export writes the list,
- * grouped by part, to the world datapack.
+ * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
+ * which share this state. Creative-mode only; works in single-player and from a remote client alike —
+ * the operations that touch the server (mob freezing, export) go through the C2S picker packets and
+ * are re-authorized server-side. Workflow: choose a mob, pick a part to use as the coordinate frame,
+ * shape a <i>current eye</i> (position / rotation / properties), then save it to a flat, numbered
+ * <i>eye list</i>. Re-select a saved eye to adjust it in place; export sends the list, grouped by
+ * part, to the server to be written into the world datapack.
  *
  * <p>Client-only singleton (static state). Each saved eye remembers its own attach part, so the list
  * can span multiple parts; export regroups by part into heads.
@@ -92,27 +90,6 @@ public final class PickerState {
     public static String currentPart = null;
     /** Index into the current variant's eye list that {@code save} writes back to, or {@code -1} to append. */
     public static int selectedIndex = -1;
-
-    // AI-freeze bookkeeping (single-player only). A picker-targeted mob is held NoAi=true while edited and
-    // restored on unchoose/exit so the forced flag never persists. The pre-picker NoAi value is captured
-    // AND read back only on the server thread (inside the freeze/unfreeze tasks below) — never on the client
-    // thread — so an unchoose queued right after a choose can't read and restore a stale default before the
-    // freeze task has captured the real value. One object per freeze, held by reference; published volatile.
-    private static volatile Frozen frozen;
-
-    /** A picker-frozen mob: its id + dimension, and the NoAi value it had before the picker forced it on. */
-    private static final class Frozen {
-        private final ResourceKey<Level> dim;
-        private final int id;
-        // Both set on the server thread in freeze(); read on the server thread in unfreeze()/unfreezeOnStop().
-        private boolean captured;
-        private boolean prevNoAi;
-
-        private Frozen(int id, ResourceKey<Level> dim) {
-            this.id = id;
-            this.dim = dim;
-        }
-    }
 
     private PickerState() {
     }
@@ -214,25 +191,14 @@ public final class PickerState {
         return true;
     }
 
+    /**
+     * Ask the server to hold the mob still while it's edited. The freeze itself — NoAi capture,
+     * restore, crash-proofing — is server-owned ({@code PickerFreezeService}, reached via
+     * {@link PickerFreezePacket}), so it works from a remote client and is undone even if this
+     * client disappears; the client only requests.
+     */
     private static void freeze(LivingEntity clientEntity) {
-        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
-        if (server == null) {
-            return; // can't freeze a mob on a remote server
-        }
-        Frozen f = new Frozen(clientEntity.getId(), clientEntity.level().dimension());
-        frozen = f;
-        // Capture the pre-picker NoAi into this same object on the server thread; the matching unfreeze
-        // task is queued after this one, so it reads the value this task wrote (never a stale default).
-        server.execute(() -> {
-            ServerLevel level = server.getLevel(f.dim);
-            Entity e = level == null ? null : level.getEntity(f.id);
-            if (e instanceof Mob mob) {
-                f.prevNoAi = mob.isNoAi();
-                f.captured = true;
-                mob.setNoAi(true);
-                mob.setDeltaMovement(Vec3.ZERO);
-            }
-        });
+        send(PickerFreezePacket.freeze(clientEntity.getUUID()));
     }
 
     public static boolean isActiveTarget(LivingEntity entity) {
@@ -626,53 +592,26 @@ public final class PickerState {
         return n;
     }
 
+    /** Ask the server to release this player's frozen mob (restores its pre-picker NoAi). */
     private static void unfreeze() {
-        Frozen f = frozen;
-        if (f == null) {
-            return;
+        send(PickerFreezePacket.unfreeze());
+    }
+
+    /** Send a picker request if a connection exists (guards races around disconnect). */
+    private static void send(Object packet) {
+        if (Minecraft.getInstance().getConnection() != null) {
+            NetworkHandler.INSTANCE.sendToServer(packet);
         }
-        frozen = null;
-        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
-        if (server == null) {
-            return;
-        }
-        // Restore on the server thread, reading prevNoAi from the same object the freeze task wrote. The
-        // freeze task was queued first, so by the time this runs the capture has happened.
-        server.execute(() -> {
-            ServerLevel level = server.getLevel(f.dim);
-            Entity e = level == null ? null : level.getEntity(f.id);
-            if (e instanceof Mob mob && f.captured) {
-                mob.setNoAi(f.prevNoAi);
-            }
-        });
     }
 
     /**
-     * Restore a frozen mob's previous NoAi value <b>synchronously on the server thread</b>. Called at
-     * server stop (which fires before the final world save), so the picker's forced NoAi is never
-     * written to disk. Unlike {@link #unfreeze()} this runs inline rather than via the server task
-     * queue, which may no longer drain during shutdown.
-     *
-     * <p>Does not cover an autosave mid-edit followed by a hard crash (the forced NoAi would persist
-     * until the next clean load); that window is intentionally left, since the picker is a
-     * single-player authoring tool.
+     * Clear picker state on disconnect <b>without sending anything</b> — the connection may already be
+     * gone, and the server's own logout handling ({@code PickerFreezeService#onPlayerLoggedOut})
+     * releases any frozen mob regardless.
      */
-    public static void unfreezeOnStop(MinecraftServer server) {
-        Frozen f = frozen;
-        if (f == null || server == null) {
-            return;
-        }
-        frozen = null;
-        // Only restore if the freeze task actually ran and forced NoAi; if it never captured, the mob was
-        // never frozen, so there is nothing to undo (and prevNoAi would be a meaningless default).
-        if (!f.captured) {
-            return;
-        }
-        ServerLevel level = server.getLevel(f.dim);
-        Entity e = level == null ? null : level.getEntity(f.id);
-        if (e instanceof Mob mob) {
-            mob.setNoAi(f.prevNoAi);
-        }
+    public static void resetOnDisconnect() {
+        active = false;
+        target = new WeakReference<>(null);
     }
 
     /** Stop targeting and release the frozen mob; the saved eye list is kept in memory. */
