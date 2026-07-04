@@ -2,7 +2,7 @@
 
 The picker is a creative-mode tool for placing eyes on a live, animated mob and exporting the result as [datapack JSON](datapack-format.md).
 
-Requirements: **creative mode**; exporting, spawning, and the `mob` verbs additionally require **single-player**.
+Requirements: **creative mode**, checked on the server. The whole picker — including exporting, spawning, and the `mob` verbs — works from a remote client on any server running the mod; server admins should know that handing out creative also hands out these tools.
 
 ## Keys
 
@@ -34,7 +34,7 @@ Everything beyond navigation is done through the `/sg` chat commands:
 5. **Save it**: `/sg save` commits the draft to the eye list. Re-edit later with `/sg select <n>`, remove with `/sg delete <n>`, review with `/sg list eyes`.
 6. **Variants** (optional alternative arrangements, weighted at spawn): `/sg variant new`, `/sg variant <n>` to switch, `/sg variant weight <w>`, `/sg variant del <n>`, `/sg list variants`.
 7. **Export**:
-   - `/sg export` writes the chosen mob's config into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world.
+   - `/sg export` sends the chosen mob's config to the server, which writes it into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world. Rate-limited to one export per 10 seconds (each one is a full datapack reload).
    - `/sg exportall` dumps *every* known config — the loaded ones plus your session's drafts — to `<game dir>/somegoogly-export/`, ready to copy into a mod or datapack.
 
 Drafts are kept per mob type for the whole session, so you can hop between several mobs and `exportall` at the end. Choosing a mob that already has a config seeds the draft from it, so you edit existing placements rather than starting blank.
@@ -48,15 +48,15 @@ While a mob is chosen you can move it into better light or a clearer pose:
 - `/sg mob move <x> <y> <z>` — teleport it to absolute world coordinates (`~` leaves an axis unchanged, as in the eye `move` verb)
 - `/sg mob rot <azimuth>` — turn it in the XZ plane; azimuth uses the same convention as `/sg rot` (270 = facing −Z), so the numbers carry over
 
-Both are single-player only and act on the live server mob. Not to be confused with the eye `move`/`rot` verbs above, which shape the draft eye.
+Both act on the live server mob (feedback comes back as a server message). Not to be confused with the eye `move`/`rot` verbs above, which shape the draft eye.
 
 ## Spawning test mobs
 
-`/sg spawn <type>` (creative, single-player) spawns a single mob — AI off, persistent, facing you — at the block you're targeting (within 20 blocks). It refuses if no block is targeted or the mob's bounding box doesn't fit there. Nothing is terraformed, so aim into water when spawning an aquatic mob.
+`/sg spawn <type>` (creative) spawns a single mob — AI off, persistent, facing you — at the block you're targeting (within 20 blocks). It refuses if no block is targeted or the mob's bounding box doesn't fit there. Nothing is terraformed, so aim into water when spawning an aquatic mob.
 
 ### The (dangerous) spawn grid
 
-`/sg spawnall [mod]` (creative, single-player) **spawns one of every living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks.
+`/sg spawnall [mod]` (creative) **spawns one of every living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks — think twice before running it on a shared server.
 
 ## Admin commands
 
