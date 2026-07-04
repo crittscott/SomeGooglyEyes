@@ -21,7 +21,7 @@ Compatible with GeckoLib- and Citadel-based mobs. Datapack-aware. In-game config
 
 **Find the Optometrist enchantment**: Put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.
 
-**Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it emit light with dynamic light mods, + redstone turns glow off, + cobweb strips it back to default.
+**Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.
 
 **Brew it**: awkward potion + googly eye → a drinkable **Googly Eyes** potion. The potion inherits the eye's colors.
 

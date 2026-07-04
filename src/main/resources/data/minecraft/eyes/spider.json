@@ -33,7 +33,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 },
                 {
                   "position": [
@@ -57,7 +57,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 },
                 {
                   "position": [
@@ -81,7 +81,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 },
                 {
                   "position": [
@@ -105,7 +105,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 },
                 {
                   "position": [
@@ -128,7 +128,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 },
                 {
                   "position": [
@@ -151,7 +151,7 @@
                     0.0
                   ],
                   "glows": true,
-                  "affectedByInvisibility": true
+                  "affectedByInvisibility": false
                 }
               ]
             }

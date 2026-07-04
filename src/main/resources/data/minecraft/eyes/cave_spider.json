@@ -31,7 +31,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
@@ -54,7 +54,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
@@ -77,7 +77,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
@@ -100,7 +100,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
@@ -123,7 +123,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 },
                 {
@@ -146,7 +146,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
+                  "glows": true,
                   "affectedByInvisibility": true
                 }
               ]
