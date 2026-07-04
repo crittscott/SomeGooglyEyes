@@ -1,18 +1,22 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
-import com.github.crittscott.somegoogly.head.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.head.HeadInfo.VersionedEntry;
+import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.eye.HeadInfo.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,8 +37,15 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
+            // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
+            if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
+                SomeGoogly.LOGGER.warn(
+                        "Ignoring eye config {} — the ender dragon is hard-excluded from googly eyes", entry.getKey());
+                continue;
+            }
             try {
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), GSON.fromJson(entry.getValue(), ConfigFile.class));
+                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).result().orElse(null);
+                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
                 if (config != null && config.hasAnyConfig()) {
                     selected.put(entry.getKey(), config);
                 }
@@ -44,6 +55,14 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         }
         ServerEyeConfigs.replaceAll(selected);
         SomeGoogly.LOGGER.info("Loaded {} selected eye configs from {} files", selected.size(), files.size());
+    }
+
+    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
+        if (existing != null) {
+            SomeGoogly.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
+            return existing;
+        }
+        return next;
     }
 
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file) {
@@ -74,18 +93,27 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         return set;
     }
 
-    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
-        if (existing != null) {
-            SomeGoogly.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
-            return existing;
-        }
-        return next;
-    }
-
     private static RuntimeConfig toRuntime(VersionedEntry entry) {
         RuntimeConfig runtime = new RuntimeConfig();
         runtime.enabled = entry.enabled;
-        runtime.heads = entry.heads;
+        runtime.variants = usableVariants(entry);
         return runtime;
+    }
+
+    /**
+     * Filter an entry's {@code variants} down to the usable ones (those with at least one head),
+     * or {@code null} when none remain. Variants are the only placement shape on disk.
+     */
+    private static List<Variant> usableVariants(VersionedEntry entry) {
+        if (entry.variants == null) {
+            return null;
+        }
+        List<Variant> result = new ArrayList<>();
+        for (Variant v : entry.variants) {
+            if (v != null && v.heads != null && !v.heads.isEmpty()) {
+                result.add(v);
+            }
+        }
+        return result.isEmpty() ? null : result;
     }
 }

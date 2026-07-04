@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
@@ -22,10 +22,9 @@ public final class ClientEyeConfigs {
     private ClientEyeConfigs() {
     }
 
-    /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
-        HeadInfo.clearCache();
+    /** The whole synced config set, by entity (used by the picker's {@code exportall} dump). */
+    public static Map<ResourceLocation, RuntimeConfigSet> all() {
+        return configs;
     }
 
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
@@ -37,5 +36,11 @@ public final class ClientEyeConfigs {
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
+    }
+
+    /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
+        configs = next;
+        HeadInfo.clearCache();
     }
 }

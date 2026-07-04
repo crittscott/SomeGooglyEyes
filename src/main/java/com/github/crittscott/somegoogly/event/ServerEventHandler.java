@@ -1,27 +1,65 @@
 package com.github.crittscott.somegoogly.event;
 
+import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.GooglyEyePacket;
+import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Random;
 
 public class ServerEventHandler {
-    private static final String HAS_EYES_KEY = "somegoogly:hasGooglyEyes";
+
+    private static void applyGooglyDecision(LivingEntity living) {
+        boolean hasGooglyEyes = false;
+        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+
+        // Players never roll eyes at spawn — they can only receive them mid-life (the googly potion).
+        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+            // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
+            // authoritative hard-off that beats the percent roll. Use the age-independent check: this
+            // decision is stored for life, so a baby with only an adult config must still roll (it'll
+            // show eyes once grown) rather than being locked out forever.
+            if (ServerEyeConfigs.canEverWearEyes(living)) {
+                int percent = ServerConfig.percentFor(entityType);
+
+                // Seeded by UUID so the same mob always rolls the same result (the decision is stored
+                // anyway; this just keeps it consistent if it ever has to be recomputed).
+                Random rand = new Random(Math.abs(living.getUUID().hashCode()) * 8134L);
+                hasGooglyEyes = rand.nextFloat() < (percent / 100F);
+            }
+        }
+
+        // Stored only; tracking clients learn the value when they start tracking the entity
+        // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
+        // mid-life via EyeState (shears / potion / dye / redstone), which re-syncs to trackers itself.
+        living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
+
+        // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
+        // later reattach/potion uses this mob's own arrangement). A separate UUID seed keeps it
+        // deterministic without perturbing the has-eyes roll above. HeadInfo.chooseVariantIndex maps
+        // this 0..1 roll onto whichever age config's weighted variants apply at render time.
+        Random variantRand = new Random(Math.abs(living.getUUID().hashCode()) * 6271L);
+        living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, variantRand.nextFloat());
+    }
 
     @SubscribeEvent
     public void onAddReloadListeners(AddReloadListenerEvent event) {
@@ -55,44 +93,52 @@ public class ServerEventHandler {
         // (Whether babies and adults should differ is a separate, deferred question; for now a mob's
         // having-eyes answer is fixed at spawn and the client just swaps in the age-appropriate
         // geometry as the mob grows.)
-        if (!living.getPersistentData().contains(HAS_EYES_KEY)) {
+        if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);
         }
     }
 
     @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        GooglyAdminCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        // Transient cosmetic state; drop it so a single-player JVM doesn't carry one world into the next.
+        ServerBehaviorScheduler.clear();
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            ServerBehaviorScheduler.serverTick();
+        }
+    }
+
+    @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
-        if (!(event.getTarget() instanceof LivingEntity living)) {
+        if (!(event.getTarget() instanceof LivingEntity living) || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
 
-        boolean hasGooglyEyes = living.getPersistentData().getBoolean(HAS_EYES_KEY);
+        // Send the full current state (has-eyes + any appearance overrides applied since spawn) so a
+        // newly tracking player matches everyone else, not just the at-spawn decision.
         NetworkHandler.INSTANCE.send(
-                PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
-                new GooglyEyePacket(living.getId(), hasGooglyEyes)
+                PacketDistributor.PLAYER.with(() -> player),
+                new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
+                        EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living))
         );
+
+        // Register with the behavior scheduler (server-polite: only eyed, watched mobs) and catch the
+        // player up if the mob is already mid-behavior.
+        ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
-    private static void applyGooglyDecision(LivingEntity living) {
-        boolean hasGooglyEyes = false;
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-
-        if (ServerConfig.GOOGLY_EYES_ENABLED.get()) {
-            // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
-            // authoritative hard-off that beats the percent roll.
-            RuntimeConfig config = ServerEyeConfigs.get(entityType, living);
-            if (config != null && config.isEnabled() && config.heads != null && !config.heads.isEmpty()) {
-                int percent = ServerConfig.percentFor(entityType);
-
-                // Seeded by UUID so the same mob always rolls the same result (the decision is stored
-                // anyway; this just keeps it consistent if it ever has to be recomputed).
-                Random rand = new Random(Math.abs(living.getUUID().hashCode()) * 8134L);
-                hasGooglyEyes = rand.nextFloat() < (percent / 100F);
-            }
+    @SubscribeEvent
+    public void onStopTracking(PlayerEvent.StopTracking event) {
+        if (event.getTarget() instanceof LivingEntity living) {
+            ServerBehaviorScheduler.onStopTracking(living);
         }
-
-        // Stored only; tracking clients learn the value when they start tracking the entity
-        // (onStartTracking). Since the decision never changes after spawn, no mid-life sync is needed.
-        living.getPersistentData().putBoolean(HAS_EYES_KEY, hasGooglyEyes);
     }
 }

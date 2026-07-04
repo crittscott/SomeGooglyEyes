@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.command;
 
-import com.github.crittscott.somegoogly.head.HeadInfo;
-import com.github.crittscott.somegoogly.head.HeadInfo.EyeConfig;
-import com.github.crittscott.somegoogly.picker.PickerExporter;
-import com.github.crittscott.somegoogly.picker.PickerState;
-import com.github.crittscott.somegoogly.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.client.picker.EyeDraft;
+import com.github.crittscott.somegoogly.client.picker.PickerExporter;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
+import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -39,164 +39,37 @@ import java.util.function.Consumer;
  * (via {@link RegisterClientCommandsEvent}) because the editing they drive lives entirely in the
  * client-side {@link PickerState}. Like the keyboard picker, they require <b>creative mode</b>.
  *
- * <p>Each verb has a short and a full literal sharing one builder (e.g. {@code mv}/{@code move}). The
- * picker keyboard and this CLI call the same {@link PickerState} methods, so they stay in lock-step.
+ * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
+ * call the same {@link PickerState} methods, so they stay in lock-step.
  */
 public class GooglyClientCommands {
 
-    private static final SimpleCommandExceptionType SINGLEPLAYER_ONLY =
-            new SimpleCommandExceptionType(Component.literal("Spawn-all only works in single-player."));
-    private static final SimpleCommandExceptionType NOT_CREATIVE =
-            new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
-    private static final SimpleCommandExceptionType NOT_CHOSEN =
-            new SimpleCommandExceptionType(Component.literal("Choose a mob first (/sg choose)."));
-    private static final SimpleCommandExceptionType NO_PART =
-            new SimpleCommandExceptionType(Component.literal("Pick a part first (/sg part <name>)."));
-    private static final DynamicCommandExceptionType BAD_PART =
-            new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
+    private static final DynamicCommandExceptionType BAD_CROSS_TARGET =
+            new DynamicCommandExceptionType(n -> Component.literal(
+                    "Can't cross toward eye #" + n + " (must be a different eye on the same part)."));
     private static final DynamicCommandExceptionType BAD_INDEX =
             new DynamicCommandExceptionType(n -> Component.literal("No eye #" + n + "."));
+    private static final DynamicCommandExceptionType BAD_PART =
+            new DynamicCommandExceptionType(t -> Component.literal("No such part: " + t));
+    private static final DynamicCommandExceptionType BAD_VARIANT =
+            new DynamicCommandExceptionType(n -> Component.literal("No variant #" + n + "."));
+    private static final SimpleCommandExceptionType CANT_DELETE_LAST_VARIANT =
+            new SimpleCommandExceptionType(Component.literal("Can't delete the last variant — there's always at least one."));
+    private static final SimpleCommandExceptionType NO_DRAFT =
+            new SimpleCommandExceptionType(Component.literal(
+                    "No eye being edited. Start one with /sg create <x> <y> <z> (or /sg select <n>)."));
+    private static final SimpleCommandExceptionType NO_PART =
+            new SimpleCommandExceptionType(Component.literal("Pick a part first (/sg part <name>)."));
+    private static final SimpleCommandExceptionType NOT_CHOSEN =
+            new SimpleCommandExceptionType(Component.literal("Choose a mob first (/sg choose)."));
+    private static final SimpleCommandExceptionType NOT_CREATIVE =
+            new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
+    private static final SimpleCommandExceptionType SINGLEPLAYER_ONLY =
+            new SimpleCommandExceptionType(Component.literal("Spawn-all only works in single-player."));
 
-    /** Captured at registration so chained fragments can be re-dispatched. */
-    private static CommandDispatcher<CommandSourceStack> commandDispatcher;
-
-    @SubscribeEvent
-    public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
-        commandDispatcher = event.getDispatcher();
-        register(commandDispatcher);
+    private static double azi(EyeDraft e) {
+        return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
     }
-
-    private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
-
-        alias(sg, "ch", "choose", b -> terminal(b, GooglyClientCommands::choose));
-        alias(sg, "un", "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
-
-        alias(sg, "pa", "part", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, String> target =
-                    Commands.argument("target", StringArgumentType.word());
-            terminal(target, GooglyClientCommands::part);
-            b.then(target);
-        });
-
-        alias(sg, "cr", "create", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Float> z =
-                    Commands.argument("z", FloatArgumentType.floatArg());
-            terminal(z, GooglyClientCommands::create);
-            b.then(Commands.argument("x", FloatArgumentType.floatArg())
-                    .then(Commands.argument("y", FloatArgumentType.floatArg()).then(z)));
-        });
-
-        // move: mv / mo / move (all the same), with ~ supported per axis.
-        Consumer<LiteralArgumentBuilder<CommandSourceStack>> moveCfg = b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
-                    Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
-            terminal(z, GooglyClientCommands::move);
-            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
-                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
-        };
-        addAlias(sg, "mv", moveCfg);
-        addAlias(sg, "mo", moveCfg);
-        addAlias(sg, "move", moveCfg);
-
-        alias(sg, "ro", "rot", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
-                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
-            terminal(azimuth, GooglyClientCommands::rot);
-            b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
-        });
-
-        alias(sg, "sa", "save", b -> terminal(b, GooglyClientCommands::save));
-
-        alias(sg, "se", "select", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::select);
-            b.then(n);
-        });
-        alias(sg, "de", "delete", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::delete);
-            b.then(n);
-        });
-
-        alias(sg, "li", "list", b -> {
-            addAlias(b, "pa", x -> terminal(x, GooglyClientCommands::listParts));
-            addAlias(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
-            addAlias(b, "ey", x -> terminal(x, GooglyClientCommands::listEyes));
-            addAlias(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
-        });
-
-        alias(sg, "pr", "properties", b -> {
-            b.then(prop("eyescale", FloatArgumentType.floatArg(0), GooglyClientCommands::propEyeScale));
-            b.then(prop("irisscale", FloatArgumentType.floatArg(0), GooglyClientCommands::propIrisScale));
-            b.then(Commands.literal("corneacolor").then(rgb(GooglyClientCommands::propCorneaColor)));
-            b.then(Commands.literal("iriscolor").then(rgb(GooglyClientCommands::propIrisColor)));
-            b.then(prop("glow", BoolArgumentType.bool(), GooglyClientCommands::propGlow));
-            b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
-        });
-
-        alias(sg, "ex", "export", b -> terminal(b, GooglyClientCommands::export));
-
-        // spawnall has no short form (and no chain tail) — the full word is required, one-off only.
-        sg.then(Commands.literal("spawnall").executes(GooglyClientCommands::spawnAll));
-
-        dispatcher.register(sg);
-    }
-
-    // ---- builder helpers -------------------------------------------------------------------
-
-    private static void alias(LiteralArgumentBuilder<CommandSourceStack> root, String shortName, String fullName,
-                              Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
-        addAlias(root, shortName, config);
-        addAlias(root, fullName, config);
-    }
-
-    private static void addAlias(LiteralArgumentBuilder<CommandSourceStack> root, String name,
-                                 Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
-        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(name);
-        config.accept(node);
-        root.then(node);
-    }
-
-    private static <T> LiteralArgumentBuilder<CommandSourceStack> prop(String name, ArgumentType<T> type,
-                                                                       Command<CommandSourceStack> exec) {
-        RequiredArgumentBuilder<CommandSourceStack, T> v = Commands.argument("v", type);
-        terminal(v, exec);
-        return Commands.literal(name).then(v);
-    }
-
-    private static RequiredArgumentBuilder<CommandSourceStack, Float> rgb(Command<CommandSourceStack> exec) {
-        RequiredArgumentBuilder<CommandSourceStack, Float> bArg = Commands.argument("b", FloatArgumentType.floatArg(0, 1));
-        terminal(bArg, exec);
-        return Commands.argument("r", FloatArgumentType.floatArg(0, 1))
-                .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
-    }
-
-    /**
-     * Make a command's terminal node both executable on its own and the head of an {@code &}-separated
-     * chain: {@code <args>} runs {@code leaf}; {@code <args> & <more>} runs {@code leaf} then dispatches
-     * {@code /sg <more>}, which re-enters the tree and peels off the next fragment. A space must precede
-     * the {@code &} (so Brigadier ends the preceding argument); a space must follow it (the {@code &}
-     * literal needs a separator).
-     */
-    private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
-        node.executes(leaf);
-        node.then(Commands.literal("&").then(
-                Commands.argument("rest", StringArgumentType.greedyString()).executes(chain(leaf))));
-    }
-
-    private static Command<CommandSourceStack> chain(Command<CommandSourceStack> leaf) {
-        return ctx -> {
-            leaf.run(ctx); // this fragment's own work first
-            String rest = StringArgumentType.getString(ctx, "rest").trim();
-            if (rest.isEmpty()) {
-                return 1;
-            }
-            return commandDispatcher.execute("sg " + rest, ctx.getSource());
-        };
-    }
-
-    // ---- executors -------------------------------------------------------------------------
 
     private static int choose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
@@ -205,11 +78,105 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int unchoose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int create(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
-        PickerState.unlock();
-        feedback(ctx, "Selection cleared.");
+        requireChosen();
+        double x = FloatArgumentType.getFloat(ctx, "x");
+        double y = FloatArgumentType.getFloat(ctx, "y");
+        double z = FloatArgumentType.getFloat(ctx, "z");
+        PickerState.createEye(x, y, z);
+        feedback(ctx, String.format("Created eye at [%.3f, %.3f, %.3f].", x, y, z));
         return 1;
+    }
+
+    private static int delete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (!PickerState.delete(n)) {
+            throw BAD_INDEX.create(n);
+        }
+        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.currentEyeCount() + " left).");
+        return 1;
+    }
+
+    private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        feedback(ctx, PickerExporter.export());
+        return 1;
+    }
+
+    private static int exportAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        feedback(ctx, PickerExporter.exportAll());
+        return 1;
+    }
+
+    private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
+        ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
+    }
+
+    private static double incl(EyeDraft e) {
+        return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
+    }
+
+    private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        List<ListedEye> list = PickerState.currentEyes();
+        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex + 1) + " (" + list.size() + "):");
+        for (int i = 0; i < list.size(); i++) {
+            ListedEye le = list.get(i);
+            EyeDraft e = le.eye;
+            String mark = i == PickerState.selectedIndex ? " *" : "";
+            String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
+            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s%s",
+                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), cross, mark));
+        }
+        return 1;
+    }
+
+    private static int listParts(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        feedback(ctx, "Parts (" + PickerState.parts.size() + "):");
+        for (int i = 0; i < PickerState.parts.size(); i++) {
+            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts.get(i));
+        }
+        return 1;
+    }
+
+    private static int listVariants(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        feedback(ctx, "Variants (" + PickerState.variantCount() + "):");
+        for (int i = 0; i < PickerState.variantCount(); i++) {
+            PickerState.DraftVariant v = PickerState.variants.get(i);
+            String mark = i == PickerState.variantIndex ? " *" : "";
+            feedback(ctx, String.format("  %d. weight %.2f, %d eyes%s", i + 1, v.weight, v.eyes.size(), mark));
+        }
+        return 1;
+    }
+
+    private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
+                opt(MaybeFloatArgumentType.get(ctx, "y")),
+                opt(MaybeFloatArgumentType.get(ctx, "z")));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
+        return 1;
+    }
+
+    @SubscribeEvent
+    public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
+        register(event.getDispatcher());
+    }
+
+    private static Double opt(Optional<Float> value) {
+        return value.map(Float::doubleValue).orElse(null);
     }
 
     private static int part(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -234,45 +201,262 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int create(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int posrot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
-        double x = FloatArgumentType.getFloat(ctx, "x");
-        double y = FloatArgumentType.getFloat(ctx, "y");
-        double z = FloatArgumentType.getFloat(ctx, "z");
-        PickerState.createEye(x, y, z);
-        feedback(ctx, String.format("Created eye at [%.3f, %.3f, %.3f].", x, y, z));
-        return 1;
-    }
-
-    private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
+        requireDraft();
         PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
                 opt(MaybeFloatArgumentType.get(ctx, "y")),
                 opt(MaybeFloatArgumentType.get(ctx, "z")));
-        EyeConfig e = PickerState.currentEye;
-        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
+        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
+                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.0f° azi %.0f°.",
+                e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
         return 1;
+    }
+
+    private static <T> LiteralArgumentBuilder<CommandSourceStack> prop(String name, ArgumentType<T> type,
+                                                                       Command<CommandSourceStack> exec) {
+        RequiredArgumentBuilder<CommandSourceStack, T> v = Commands.argument("v", type);
+        terminal(v, exec);
+        return Commands.literal(name).then(v);
+    }
+
+    private static int propCrossTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        int n = IntegerArgumentType.getInteger(ctx, "v");
+        if (!PickerState.setCrossTarget(n)) {
+            throw BAD_CROSS_TARGET.create(n);
+        }
+        int target = PickerState.currentEye.crossTarget;
+        feedback(ctx, target < 0 ? "crossTarget cleared." : "crossTarget = eye #" + (target + 1) + ".");
+        return 1;
+    }
+
+    private static int propCorneaColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        feedback(ctx, "corneaColors set.");
+        return 1;
+    }
+
+    private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        float v = FloatArgumentType.getFloat(ctx, "v");
+        PickerState.setEyeScale(v);
+        feedback(ctx, "eyeScale = " + v);
+        return 1;
+    }
+
+    private static int propGlow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        boolean v = BoolArgumentType.getBool(ctx, "v");
+        PickerState.setGlow(v);
+        feedback(ctx, "glow = " + v);
+        return 1;
+    }
+
+    private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        boolean v = BoolArgumentType.getBool(ctx, "v");
+        PickerState.setInvis(v);
+        feedback(ctx, "affectedByInvisibility = " + v);
+        return 1;
+    }
+
+    private static int propIrisColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        feedback(ctx, "irisColors set.");
+        return 1;
+    }
+
+    private static int propIrisScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        float v = FloatArgumentType.getFloat(ctx, "v");
+        PickerState.setIrisScale(v);
+        feedback(ctx, "irisScale = " + v);
+        return 1;
+    }
+
+    private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
+
+        verb(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
+        verb(sg, "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
+
+        verb(sg, "part", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, String> target =
+                    Commands.argument("target", StringArgumentType.word());
+            terminal(target, GooglyClientCommands::part);
+            b.then(target);
+        });
+
+        verb(sg, "create", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Float> z =
+                    Commands.argument("z", FloatArgumentType.floatArg());
+            terminal(z, GooglyClientCommands::create);
+            b.then(Commands.argument("x", FloatArgumentType.floatArg())
+                    .then(Commands.argument("y", FloatArgumentType.floatArg()).then(z)));
+        });
+
+        // move: ~ supported per axis to leave an axis unchanged.
+        verb(sg, "move", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
+                    Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
+            terminal(z, GooglyClientCommands::move);
+            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
+        });
+
+        verb(sg, "rot", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
+                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
+            terminal(azimuth, GooglyClientCommands::rot);
+            b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
+        });
+
+        // posrot: move + rot in one go (the common case). ~ supported per component to leave it unchanged.
+        verb(sg, "posrot", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
+                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
+            terminal(azimuth, GooglyClientCommands::posrot);
+            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat())
+                            .then(Commands.argument("z", MaybeFloatArgumentType.maybeFloat())
+                                    .then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat())
+                                            .then(azimuth)))));
+        });
+
+        verb(sg, "save", b -> terminal(b, GooglyClientCommands::save));
+
+        verb(sg, "select", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+            terminal(n, GooglyClientCommands::select);
+            b.then(n);
+        });
+        verb(sg, "delete", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+            terminal(n, GooglyClientCommands::delete);
+            b.then(n);
+        });
+
+        // variant: new / <n> (switch) / del <n> / weight <w>. Literals resolve before the bare integer arg.
+        verb(sg, "variant", b -> {
+            verb(b, "new", x -> terminal(x, GooglyClientCommands::variantNew));
+            verb(b, "weight", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Float> w = Commands.argument("w", FloatArgumentType.floatArg(0));
+                terminal(w, GooglyClientCommands::variantWeight);
+                x.then(w);
+            });
+            verb(b, "del", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+                terminal(n, GooglyClientCommands::variantDelete);
+                x.then(n);
+            });
+            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+            terminal(n, GooglyClientCommands::variantSelect);
+            b.then(n);
+        });
+
+        verb(sg, "list", b -> {
+            verb(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
+            verb(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
+            verb(b, "variants", x -> terminal(x, GooglyClientCommands::listVariants));
+        });
+
+        verb(sg, "properties", b -> {
+            b.then(prop("eyescale", FloatArgumentType.floatArg(0), GooglyClientCommands::propEyeScale));
+            b.then(prop("irisscale", FloatArgumentType.floatArg(0), GooglyClientCommands::propIrisScale));
+            b.then(Commands.literal("corneacolor").then(rgb(GooglyClientCommands::propCorneaColor)));
+            b.then(Commands.literal("iriscolor").then(rgb(GooglyClientCommands::propIrisColor)));
+            b.then(prop("glow", BoolArgumentType.bool(), GooglyClientCommands::propGlow));
+            b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
+            // crosstarget <n>: cross-eye partner as a 1-based eye list index; 0 clears it.
+            b.then(prop("crosstarget", IntegerArgumentType.integer(0), GooglyClientCommands::propCrossTarget));
+        });
+
+        verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
+        verb(sg, "exportall", b -> terminal(b, GooglyClientCommands::exportAll));
+
+        // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
+
+        // spawnall [mod] — bare spawns every mod; an optional namespace narrows it (a debugging aid).
+        verb(sg, "spawnall", b -> {
+            terminal(b, GooglyClientCommands::spawnAll);
+            RequiredArgumentBuilder<CommandSourceStack, String> mod =
+                    Commands.argument("mod", StringArgumentType.word());
+            terminal(mod, GooglyClientCommands::spawnAll);
+            b.then(mod);
+        });
+
+        dispatcher.register(sg);
+    }
+
+    private static void requireChosen() throws CommandSyntaxException {
+        if (!PickerState.active || PickerState.target() == null) {
+            throw NOT_CHOSEN.create();
+        }
+    }
+
+    /** Guard the shaping verbs (move/rot/properties/save): they need a live draft, never auto-vivify one. */
+    private static void requireDraft() throws CommandSyntaxException {
+        if (!PickerState.hasDraft()) {
+            throw NO_DRAFT.create();
+        }
+    }
+
+    private static void requireCreative() throws CommandSyntaxException {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || !player.isCreative()) {
+            throw NOT_CREATIVE.create();
+        }
+    }
+
+    private static RequiredArgumentBuilder<CommandSourceStack, Float> rgb(Command<CommandSourceStack> exec) {
+        RequiredArgumentBuilder<CommandSourceStack, Float> bArg = Commands.argument("b", FloatArgumentType.floatArg(0, 1));
+        terminal(bArg, exec);
+        return Commands.argument("r", FloatArgumentType.floatArg(0, 1))
+                .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
     }
 
     private static int rot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
                 opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
-        EyeConfig e = PickerState.currentEye;
-        feedback(ctx, String.format("Rotation incl %.1f° azi %.1f°.", incl(e), azi(e)));
+        EyeDraft e = PickerState.currentEye;
+        feedback(ctx, String.format("Rotation incl %.0f° azi %.0f°.", incl(e), azi(e)));
         return 1;
     }
 
     private static int save(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
+        requireDraft();
         if (!PickerState.save()) {
             throw NO_PART.create();
         }
-        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex + 1) + " (" + PickerState.committedCount() + " total).");
+        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex + 1) + " (variant "
+                + (PickerState.variantIndex + 1) + ", " + PickerState.currentEyeCount() + " eyes).");
         return 1;
     }
 
@@ -287,102 +471,6 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static int delete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        int n = IntegerArgumentType.getInteger(ctx, "n");
-        if (!PickerState.delete(n)) {
-            throw BAD_INDEX.create(n);
-        }
-        feedback(ctx, "Deleted eye #" + n + " (" + PickerState.committedCount() + " left).");
-        return 1;
-    }
-
-    private static int listParts(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        feedback(ctx, "Parts (" + PickerState.parts.size() + "):");
-        for (int i = 0; i < PickerState.parts.size(); i++) {
-            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts.get(i));
-        }
-        return 1;
-    }
-
-    private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        List<ListedEye> list = PickerState.eyes;
-        feedback(ctx, "Eyes (" + list.size() + "):");
-        for (int i = 0; i < list.size(); i++) {
-            ListedEye le = list.get(i);
-            EyeConfig e = le.eye;
-            String mark = i == PickerState.selectedIndex ? " *" : "";
-            feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.1f azi %.1f%s",
-                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), mark));
-        }
-        return 1;
-    }
-
-    private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        float v = FloatArgumentType.getFloat(ctx, "v");
-        PickerState.setEyeScale(v);
-        feedback(ctx, "eyeScale = " + v);
-        return 1;
-    }
-
-    private static int propIrisScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        float v = FloatArgumentType.getFloat(ctx, "v");
-        PickerState.setIrisScale(v);
-        feedback(ctx, "irisScale = " + v);
-        return 1;
-    }
-
-    private static int propCorneaColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "corneaColors set.");
-        return 1;
-    }
-
-    private static int propIrisColor(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "irisColors set.");
-        return 1;
-    }
-
-    private static int propGlow(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        boolean v = BoolArgumentType.getBool(ctx, "v");
-        PickerState.setGlow(v);
-        feedback(ctx, "glow = " + v);
-        return 1;
-    }
-
-    private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        boolean v = BoolArgumentType.getBool(ctx, "v");
-        PickerState.setInvis(v);
-        feedback(ctx, "affectedByInvisibility = " + v);
-        return 1;
-    }
-
-    private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        feedback(ctx, PickerExporter.export());
-        return 1;
-    }
-
     private static int spawnAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         Minecraft mc = Minecraft.getInstance();
@@ -390,46 +478,85 @@ public class GooglyClientCommands {
         if (server == null || mc.player == null) {
             throw SINGLEPLAYER_ONLY.create();
         }
+        // The mod-namespace filter is optional; absent when the bare `spawnall` node executes.
+        String mod;
+        try {
+            mod = StringArgumentType.getString(ctx, "mod");
+        } catch (IllegalArgumentException noArg) {
+            mod = null;
+        }
         // Spawning is server-side work; resolve the server-side player on the server thread and run there.
         UUID uuid = mc.player.getUUID();
+        String modFilter = mod;
         server.execute(() -> {
             ServerPlayer player = server.getPlayerList().getPlayer(uuid);
             if (player != null) {
-                SpawnAllCommand.spawn(player);
+                SpawnAllCommand.spawn(player, modFilter);
             }
         });
-        feedback(ctx, "Spawning mobs…");
+        feedback(ctx, mod == null ? "Spawning mobs…" : "Spawning " + mod + " mobs…");
         return 1;
     }
 
-    // ---- helpers ---------------------------------------------------------------------------
-
-    private static Double opt(Optional<Float> value) {
-        return value.map(Float::doubleValue).orElse(null);
+    /** Mark a node executable: running it does this verb's own work. */
+    private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
+        node.executes(leaf);
     }
 
-    private static double incl(EyeConfig e) {
-        return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
+    private static int unchoose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        PickerState.unlock();
+        feedback(ctx, "Selection cleared.");
+        return 1;
     }
 
-    private static double azi(EyeConfig e) {
-        return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-    }
-
-    private static void feedback(CommandContext<CommandSourceStack> ctx, String text) {
-        ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
-    }
-
-    private static void requireChosen() throws CommandSyntaxException {
-        if (!PickerState.active || PickerState.target() == null) {
-            throw NOT_CHOSEN.create();
+    private static int variantDelete(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (n > PickerState.variantCount()) {
+            throw BAD_VARIANT.create(n);
         }
+        if (!PickerState.deleteVariant(n)) {
+            throw CANT_DELETE_LAST_VARIANT.create();
+        }
+        feedback(ctx, "Deleted variant #" + n + " (" + PickerState.variantCount() + " left).");
+        return 1;
     }
 
-    private static void requireCreative() throws CommandSyntaxException {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !player.isCreative()) {
-            throw NOT_CREATIVE.create();
+    private static int variantNew(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = PickerState.newVariant();
+        feedback(ctx, "Added variant #" + n + " (" + PickerState.variantCount() + " total). Now editing it.");
+        return 1;
+    }
+
+    private static int variantSelect(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (!PickerState.selectVariant(n)) {
+            throw BAD_VARIANT.create(n);
         }
+        feedback(ctx, "Editing variant #" + n + " (" + PickerState.currentEyeCount() + " eyes).");
+        return 1;
+    }
+
+    private static int variantWeight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        float w = FloatArgumentType.getFloat(ctx, "w");
+        PickerState.setVariantWeight(w);
+        feedback(ctx, "Variant #" + (PickerState.variantIndex + 1) + " weight = " + w + ".");
+        return 1;
+    }
+
+    /** Add a child literal {@code name} to {@code root}, letting {@code config} build out its subtree. */
+    private static void verb(LiteralArgumentBuilder<CommandSourceStack> root, String name,
+                             Consumer<LiteralArgumentBuilder<CommandSourceStack>> config) {
+        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(name);
+        config.accept(node);
+        root.then(node);
     }
 }

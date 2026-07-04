@@ -4,57 +4,37 @@
       "version": "[1.20.1,1.21)",
       "age": "any",
       "enabled": true,
-      "heads": [
+      "variants": [
         {
-          "attachPoint": "head",
-          "eyes": [
+          "weight": 1.0,
+          "heads": [
             {
-              "position": [
-                -0.13,
-                -0.25,
-                -0.25
-              ],
-              "eyeScale": 0.75,
-              "irisScale": 0.6,
-              "sideOffset": 0.0,
-              "inclination": 90.0,
-              "azimuth": 270.0,
-              "corneaColors": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "irisColors": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "glows": false,
-              "affectedByInvisibility": true
-            },
-            {
-              "position": [
-                0.13,
-                -0.25,
-                -0.25
-              ],
-              "eyeScale": 0.75,
-              "irisScale": 0.6,
-              "sideOffset": 0.0,
-              "inclination": 90.0,
-              "azimuth": 270.0,
-              "corneaColors": [
-                1.0,
-                1.0,
-                1.0
-              ],
-              "irisColors": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "glows": false,
-              "affectedByInvisibility": true
+              "attachPoint": "root/head",
+              "eyes": [
+                {
+                  "position": [
+                    0.0,
+                    1.02,
+                    -0.5
+                  ],
+                  "eyeScale": 1.75,
+                  "irisScale": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 270.0,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    1.0,
+                    0.6,
+                    0.1
+                  ],
+                  "glows": true,
+                  "affectedByInvisibility": true
+                }
+              ]
             }
           ]
         }

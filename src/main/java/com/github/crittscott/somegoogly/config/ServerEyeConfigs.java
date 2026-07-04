@@ -1,7 +1,8 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.head.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -18,13 +19,33 @@ import java.util.Map;
  */
 public final class ServerEyeConfigs {
 
+    /**
+     * Hard-excluded from googly eyes: the ender dragon's renderer bypasses the
+     * {@code LivingEntityRenderer} family entirely (no eye layer can attach) and its model has no
+     * walkable part tree, so eyes can never render on it. {@link EyeConfigReloadListener} refuses
+     * datapack configs for it and {@code /sg spawnall} skips it.
+     */
+    public static final ResourceLocation ENDER_DRAGON = new ResourceLocation("minecraft", "ender_dragon");
+
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
 
     private ServerEyeConfigs() {
     }
 
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
+    public static Map<ResourceLocation, RuntimeConfigSet> all() {
+        return configs;
+    }
+
+    /**
+     * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
+     * roll ({@code ServerEventHandler}): that decision is stored for life, so a baby that only has an
+     * adult config must still be allowed to roll — otherwise it stores {@code hasGooglyEyes=false} and
+     * never re-rolls, locking it out of eyes forever even after it grows up. The client swaps in the
+     * age-appropriate geometry as the mob ages.
+     */
+    public static boolean canEverWearEyes(LivingEntity living) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        return isUsable(get(type, false)) || isUsable(get(type, true));
     }
 
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
@@ -36,7 +57,22 @@ public final class ServerEyeConfigs {
         return get(entity, living.isBaby());
     }
 
-    public static Map<ResourceLocation, RuntimeConfigSet> all() {
-        return configs;
+    /**
+     * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
+     * config that is enabled and has at least one head. Used by the splash potion
+     * ({@code EyePotionInteractions}), which should only target mobs the eyes would visibly appear on
+     * immediately. Players have a definition ({@code player.json}) and so are eligible; only an
+     * unconfigured entity is not.
+     */
+    public static boolean isEligible(LivingEntity living) {
+        return isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
+    }
+
+    private static boolean isUsable(RuntimeConfig config) {
+        return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
+    }
+
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
+        configs = next;
     }
 }
