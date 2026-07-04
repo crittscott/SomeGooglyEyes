@@ -73,9 +73,9 @@ Every field is optional; defaults shown. All of placement and default appearance
 | `azimuth` | `270.0` | Aim angle in degrees from the part's +X axis (270 = facing forward, local −Z). |
 | `corneaColors` | `[1.0, 1.0, 1.0]` | Eye-white color, RGB 0–1. |
 | `irisColors` | `[0.0, 0.0, 0.0]` | Pupil color, RGB 0–1. |
-| `glows` | `false` | Render the eye full-bright (spider-style). |
+| `glows` | `false` | Render the eye full-bright (spider-style) regardless of light level. |
 | `affectedByInvisibility` | `true` | Hide the eye while the mob is invisible. `false` gives an invisible mob visible floating eyes. |
-| `crossTarget` | `-1` | Index of another eye **in the same head** that this eye rolls toward during the `cross_eye` expression. `-1` = this eye doesn't cross. Typically the two eyes of a pair point at each other (`1` and `0`). |
+| `crossTarget` | `-1` | Index of another eye **in the same head** that this eye rolls toward during the `cross_eye` expression. `-1` = this eye doesn't cross.|
 
 Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the potion.
 
