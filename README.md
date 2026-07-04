@@ -2,7 +2,7 @@
 
 A complete rewrite and expansion of iChun's immortal Googly Eyes. Also look to **Regoogly eyes** by EmeryTheModder if you want a pure port of the original.
 
-Now with multiple behaviors. Mobs blink, stare, go cross-eyed, side-eye you, and more.
+Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
 Eyes are a collectible resource: harvest them, recolor them, brew them into a potion, and put them on other mobs, or yourself.
 
@@ -17,7 +17,7 @@ Compatible with GeckoLib- and Citadel-based mobs. Datapack-aware. In-game config
 
 ## Getting eyes
 
-**Dispatch the mob with a direct shears blow**: a chance to drop a googly eye.
+**Dispatch the mob with a direct shears blow**: there's a chance to drop a googly eye.
 
 **Find the Optometrist enchantment**: Put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.
 
