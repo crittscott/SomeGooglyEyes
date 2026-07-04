@@ -16,8 +16,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,13 +30,15 @@ import java.util.List;
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
  * googly eyes — every registered living entity, whether or not it has an eye config yet — so the
- * picker can be used on any of them without hunting each one down in survival. The ender dragon
+ * picker can be used on any of them without hunting each one down in survival. The single-mob
+ * sibling {@code /sg spawn <type>} lands in {@link #spawnOne}. The ender dragon
  * ({@link ServerEyeConfigs#ENDER_DRAGON}) is skipped: it's hard-excluded from eyes, and NoAi
  * doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
  *
- * <p>This is the server-thread half: the command itself is a client command ({@link GooglyClientCommands})
- * that hops onto the integrated server before calling {@link #spawn(ServerPlayer)}, so it only works in
- * single-player / LAN host — which is all the picker workflow supports anyway.
+ * <p>This is the server-thread half: the commands themselves are client commands
+ * ({@link GooglyClientCommands}) that hop onto the integrated server before calling
+ * {@link #spawn(ServerPlayer, String)} / {@link #spawnOne(ServerPlayer, EntityType)}, so they only
+ * work in single-player / LAN host — which is all the picker workflow supports anyway.
  *
  * <p>Layout: mobs are grouped by mod, sorted by id within each mod. Each mod gets its own row heading
  * in the cardinal direction nearest the player's facing (mobs spaced one cell apart), and each
@@ -57,6 +63,8 @@ public final class SpawnAllCommand {
 
     /** Edge of each mob's cell — wide enough to seat a 5x5 platform/basin without overlap. */
     private static final int SPACING = 5;
+    /** Reach of the {@code /sg spawn} placement raytrace (matches the admin command's target reach). */
+    private static final double SPAWN_REACH = 20.0;
     /** How far in front of the player the first mob in each row stands. */
     private static final int START_OFFSET = 3;
 
@@ -281,6 +289,79 @@ public final class SpawnAllCommand {
             for (String entry : dropped) {
                 player.sendSystemMessage(Component.literal("  - " + entry));
             }
+        }
+    }
+
+    /**
+     * Spawn a single {@code type} at the block the player is targeting (within {@value #SPAWN_REACH}
+     * blocks) — the {@code /sg spawn <type>} server-thread half. Shares spawnall's conventions (NoAi +
+     * persistent, facing the player, ender dragon excluded) but never terraforms: water mobs spawn
+     * wherever the player aims, so aim into water to keep one alive. Fails with feedback when no block
+     * is targeted or the mob's bounding box doesn't fit at the target.
+     */
+    public static void spawnOne(ServerPlayer player, EntityType<?> type) {
+        ServerLevel level = player.serverLevel();
+        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            player.sendSystemMessage(Component.literal(
+                    "[Googly] " + id + " is hard-excluded from googly eyes; not spawning it."));
+            return;
+        }
+
+        // Block raytrace along the player's view. Fluids are clipped through (Fluid.NONE), so aiming
+        // at open water places the mob on the bed beneath — submerged, which suits a water mob anyway.
+        Vec3 eye = player.getEyePosition();
+        Vec3 end = eye.add(player.getViewVector(1.0F).scale(SPAWN_REACH));
+        BlockHitResult hit = level.clip(new ClipContext(eye, end,
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (hit.getType() != HitResult.Type.BLOCK) {
+            player.sendSystemMessage(Component.literal(
+                    "[Googly] No block targeted within " + (int) SPAWN_REACH + " blocks."));
+            return;
+        }
+
+        Entity entity;
+        try {
+            entity = type.create(level);
+        } catch (Exception e) {
+            player.sendSystemMessage(Component.literal(
+                    "[Googly] " + id + " — create() threw " + e.getClass().getSimpleName() + "."));
+            return;
+        }
+        if (entity == null) {
+            player.sendSystemMessage(Component.literal("[Googly] " + id + " — create() returned null."));
+            return;
+        }
+        if (!(entity instanceof LivingEntity)) {
+            player.sendSystemMessage(Component.literal(
+                    "[Googly] " + id + " is not a living entity — the eye layer can't attach to it."));
+            return;
+        }
+
+        // Feet centered in the block adjacent to the hit face (on top, for an upward face). NoAi mobs
+        // don't fall, so a side-face placement simply floats there — acceptable for an authoring aid.
+        BlockPos pos = hit.getBlockPos().relative(hit.getDirection());
+        double x = pos.getX() + 0.5;
+        double z = pos.getZ() + 0.5;
+        float yaw = yawToward(x, z, player);
+        entity.moveTo(x, pos.getY(), z, yaw, 0.0F);
+
+        if (!level.noCollision(entity)) {
+            player.sendSystemMessage(Component.literal("[Googly] " + id + " doesn't fit at the target."));
+            return;
+        }
+
+        if (entity instanceof Mob mob) {
+            mob.setNoAi(true);
+            // NoAi mobs still run checkDespawn(); without this a far-spawned mob silently despawns.
+            mob.setPersistenceRequired();
+            mob.setYHeadRot(yaw);
+            mob.setYBodyRot(yaw);
+        }
+        if (level.addFreshEntity(entity)) {
+            player.sendSystemMessage(Component.literal("[Googly] Spawned " + id + "."));
+        } else {
+            player.sendSystemMessage(Component.literal("[Googly] " + id + " — addFreshEntity() refused."));
         }
     }
 

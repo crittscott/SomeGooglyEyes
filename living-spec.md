@@ -246,7 +246,7 @@ The basic workflow is:
 
 Picker drafts are retained per entity type for the session. Drafts seed from existing synced config when available, so editing an existing placement starts from current data instead of a blank state.
 
-The picker also includes a single-player spawn grid command for authoring and debugging many living entity types, optionally filtered to one mod namespace. It is a development convenience and does not affect shipped runtime behavior.
+The picker also includes single-player spawn commands for authoring and debugging: a spawn grid of many living entity types (optionally filtered to one mod namespace) and a single-mob spawn at the targeted block. A chosen mob can additionally be teleported and turned in place (`mob move`/`mob rot`) to pose it for editing. These are development conveniences and do not affect shipped runtime behavior.
 
 Known picker limits: remote/multiplayer export is deferred, and a crash can theoretically persist temporary `NoAi` state used while freezing targets.
 

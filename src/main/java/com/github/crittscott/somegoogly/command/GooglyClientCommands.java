@@ -21,11 +21,22 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -41,6 +52,12 @@ import java.util.function.Consumer;
  *
  * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
  * call the same {@link PickerState} methods, so they stay in lock-step.
+ *
+ * <p>The verbs that touch server entities directly ({@code spawn}, {@code spawnall}, {@code mob
+ * move}/{@code rot}) hop onto the integrated server thread, so they are single-player only. The
+ * {@code mob} verbs are deliberately <b>not</b> under {@code admin}: that literal belongs to the
+ * server-side tree ({@link GooglyAdminCommand}), and reusing it client-side would break the
+ * disjoint-path contract that lets command fall-through route each side's input correctly.
  */
 public class GooglyClientCommands {
 
@@ -65,7 +82,7 @@ public class GooglyClientCommands {
     private static final SimpleCommandExceptionType NOT_CREATIVE =
             new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
     private static final SimpleCommandExceptionType SINGLEPLAYER_ONLY =
-            new SimpleCommandExceptionType(Component.literal("Spawn-all only works in single-player."));
+            new SimpleCommandExceptionType(Component.literal("This command only works in single-player."));
 
     private static double azi(EyeDraft e) {
         return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
@@ -158,6 +175,75 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    /**
+     * The CLI {@code mob move <x|~> <y|~> <z|~>} op: teleport the chosen mob to absolute world
+     * coordinates ({@code ~} leaves that axis unchanged, as in the eye {@code move} verb). Applied to
+     * the server-side entity on the server thread — the same id+dimension hop {@code PickerState}'s
+     * freeze uses — and the change syncs back through vanilla entity tracking.
+     */
+    private static int mobMove(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        MinecraftServer server = requireIntegratedServer();
+        LivingEntity target = PickerState.target();
+
+        Double x = opt(MaybeFloatArgumentType.get(ctx, "x"));
+        Double y = opt(MaybeFloatArgumentType.get(ctx, "y"));
+        Double z = opt(MaybeFloatArgumentType.get(ctx, "z"));
+
+        int id = target.getId();
+        ResourceKey<Level> dim = target.level().dimension();
+        server.execute(() -> {
+            ServerLevel level = server.getLevel(dim);
+            Entity e = level == null ? null : level.getEntity(id);
+            if (e instanceof LivingEntity living) {
+                living.teleportTo(
+                        x != null ? x : living.getX(),
+                        y != null ? y : living.getY(),
+                        z != null ? z : living.getZ());
+            }
+        });
+
+        // Feedback resolves ~ against the client copy; the server resolves against its own
+        // (authoritative) copy, so the two can differ only by interpolation error.
+        feedback(ctx, String.format("Mob moved to [%.2f, %.2f, %.2f].",
+                x != null ? x : target.getX(),
+                y != null ? y : target.getY(),
+                z != null ? z : target.getZ()));
+        return 1;
+    }
+
+    /**
+     * The CLI {@code mob rot <azimuth>} op: turn the chosen mob in the XZ plane. {@code azimuth} uses
+     * the <b>eye</b> convention (degrees from +X; 270 = facing -Z) so its numbers mean the same
+     * direction as {@code /sg rot}; Minecraft yaw is that minus 90°. Body and head turn together
+     * (body rotation isn't synced on its own — the client re-derives it from yaw/head).
+     */
+    private static int mobRot(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        MinecraftServer server = requireIntegratedServer();
+        LivingEntity target = PickerState.target();
+
+        float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
+        float yaw = Mth.wrapDegrees(azimuth - 90.0F);
+
+        int id = target.getId();
+        ResourceKey<Level> dim = target.level().dimension();
+        server.execute(() -> {
+            ServerLevel level = server.getLevel(dim);
+            Entity e = level == null ? null : level.getEntity(id);
+            if (e instanceof LivingEntity living) {
+                living.setYRot(yaw);
+                living.setYHeadRot(yaw);
+                living.setYBodyRot(yaw);
+            }
+        });
+
+        feedback(ctx, String.format("Mob rotation azi %.0f°.", azimuth));
+        return 1;
+    }
+
     private static int move(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
@@ -172,7 +258,7 @@ public class GooglyClientCommands {
 
     @SubscribeEvent
     public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
-        register(event.getDispatcher());
+        register(event.getDispatcher(), event.getBuildContext());
     }
 
     private static Double opt(Optional<Float> value) {
@@ -296,7 +382,7 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    private static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
 
         verb(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
@@ -343,6 +429,25 @@ public class GooglyClientCommands {
                             .then(Commands.argument("z", MaybeFloatArgumentType.maybeFloat())
                                     .then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat())
                                             .then(azimuth)))));
+        });
+
+        // mob move/rot: reposition or turn the chosen mob itself — distinct from the eye move/rot
+        // verbs above. Lives under its own 'mob' literal (not the server-side 'admin' subtree) so the
+        // client and server /sg trees keep disjoint paths and command fall-through keeps working.
+        verb(sg, "mob", b -> {
+            verb(b, "move", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
+                        Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
+                terminal(z, GooglyClientCommands::mobMove);
+                x.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                        .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
+            });
+            verb(b, "rot", x -> {
+                RequiredArgumentBuilder<CommandSourceStack, Float> azimuth =
+                        Commands.argument("azimuth", FloatArgumentType.floatArg());
+                terminal(azimuth, GooglyClientCommands::mobRot);
+                x.then(azimuth);
+            });
         });
 
         verb(sg, "save", b -> terminal(b, GooglyClientCommands::save));
@@ -398,6 +503,16 @@ public class GooglyClientCommands {
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
+        // spawn <type> — one mob at the block the player is targeting; the single-mob sibling of
+        // spawnall. The registry argument gives validation + tab completion of summonable types.
+        verb(sg, "spawn", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, ?> type =
+                    Commands.argument("type", ResourceArgument.resource(context, Registries.ENTITY_TYPE))
+                            .suggests(SuggestionProviders.SUMMONABLE_ENTITIES);
+            terminal(type, GooglyClientCommands::spawn);
+            b.then(type);
+        });
+
         // spawnall [mod] — bare spawns every mod; an optional namespace narrows it (a debugging aid).
         verb(sg, "spawnall", b -> {
             terminal(b, GooglyClientCommands::spawnAll);
@@ -428,6 +543,16 @@ public class GooglyClientCommands {
         if (player == null || !player.isCreative()) {
             throw NOT_CREATIVE.create();
         }
+    }
+
+    /** The integrated server, or throws: verbs that touch server entities directly (spawn, spawnall,
+     *  mob move/rot) only work where this client owns the server. */
+    private static MinecraftServer requireIntegratedServer() throws CommandSyntaxException {
+        MinecraftServer server = Minecraft.getInstance().getSingleplayerServer();
+        if (server == null) {
+            throw SINGLEPLAYER_ONLY.create();
+        }
+        return server;
     }
 
     private static RequiredArgumentBuilder<CommandSourceStack, Float> rgb(Command<CommandSourceStack> exec) {
@@ -471,11 +596,36 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    /**
+     * The CLI {@code spawn <type>} op: spawn one mob at the block the player is targeting (NoAi +
+     * persistent, like {@code spawnall}). Validation/suggestions are vanilla's summonable set;
+     * placement, fit-checking, and feedback are the server-thread half
+     * ({@link SpawnAllCommand#spawnOne}).
+     */
+    private static int spawn(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        MinecraftServer server = requireIntegratedServer();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            throw SINGLEPLAYER_ONLY.create();
+        }
+        EntityType<?> type = ResourceArgument.getSummonableEntityType(ctx, "type").value();
+        // Spawning is server-side work; resolve the server-side player on the server thread and run there.
+        UUID uuid = mc.player.getUUID();
+        server.execute(() -> {
+            ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+            if (player != null) {
+                SpawnAllCommand.spawnOne(player, type);
+            }
+        });
+        return 1;
+    }
+
     private static int spawnAll(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
+        MinecraftServer server = requireIntegratedServer();
         Minecraft mc = Minecraft.getInstance();
-        MinecraftServer server = mc.getSingleplayerServer();
-        if (server == null || mc.player == null) {
+        if (mc.player == null) {
             throw SINGLEPLAYER_ONLY.create();
         }
         // The mod-namespace filter is optional; absent when the bare `spawnall` node executes.

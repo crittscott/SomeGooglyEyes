@@ -2,7 +2,7 @@
 
 The picker is a creative-mode tool for placing eyes on a live, animated mob and exporting the result as [datapack JSON](datapack-format.md).
 
-Requirements: **creative mode**; exporting (and the spawn grid) additionally require **single-player**.
+Requirements: **creative mode**; exporting, spawning, and the `mob` verbs additionally require **single-player**.
 
 ## Keys
 
@@ -41,7 +41,20 @@ Drafts are kept per mob type for the whole session, so you can hop between sever
 
 `/sg unchoose` (or `V` again) releases the mob; `K` exits the picker.
 
-## The (dangerous) spawn grid
+## Repositioning the chosen mob
+
+While a mob is chosen you can move it into better light or a clearer pose:
+
+- `/sg mob move <x> <y> <z>` — teleport it to absolute world coordinates (`~` leaves an axis unchanged, as in the eye `move` verb)
+- `/sg mob rot <azimuth>` — turn it in the XZ plane; azimuth uses the same convention as `/sg rot` (270 = facing −Z), so the numbers carry over
+
+Both are single-player only and act on the live server mob. Not to be confused with the eye `move`/`rot` verbs above, which shape the draft eye.
+
+## Spawning test mobs
+
+`/sg spawn <type>` (creative, single-player) spawns a single mob — AI off, persistent, facing you — at the block you're targeting (within 20 blocks). It refuses if no block is targeted or the mob's bounding box doesn't fit there. Nothing is terraformed, so aim into water when spawning an aquatic mob.
+
+### The (dangerous) spawn grid
 
 `/sg spawnall [mod]` (creative, single-player) **spawns one of every living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks.
 
