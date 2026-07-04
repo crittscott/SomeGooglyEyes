@@ -1,17 +1,17 @@
 # The picker: in-game eye authoring
 
-The picker is a creative-mode tool for placing eyes on a live, animated mob and exporting the result as [datapack JSON](datapack-format.md). You look at the real mob while you work — no guessing at coordinates.
+The picker is a creative-mode tool for placing eyes on a live, animated mob and exporting the result as [datapack JSON](datapack-format.md).
 
 Requirements: **creative mode**; exporting (and the spawn grid) additionally require **single-player**.
 
 ## Keys
 
-Rebindable in Options → Controls (category *Some Googly Eyes*):
+Rebindable in Options → Controls:
 
 | Key | Action |
 | --- | --- |
 | `K` | Toggle the picker on/off |
-| `V` | Choose the mob under your crosshair / release it |
+| `V` | Choose/release the mob under your crosshair |
 | `[` / `]` | Cycle through the mob's model parts |
 
 While the picker is on, every eye-configured mob shows its eyes (ignoring the spawn roll) so you can see existing placements, and the chosen mob is frozen in place (AI off) while you edit it. A HUD panel in the top-right shows the chosen mob, selected part, and saved eyes; a 3-axis gizmo marks the selected part's origin and orientation.
@@ -41,9 +41,9 @@ Drafts are kept per mob type for the whole session, so you can hop between sever
 
 `/sg unchoose` (or `V` again) releases the mob; `K` exits the picker.
 
-## The spawn grid
+## The (dangerous) spawn grid
 
-`/sg spawnall [mod]` (creative, single-player) spawns one of every living mob in a tidy grid — grouped by mod, AI off, facing you — so you can audit or author eyes for many mobs at once. The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks.
+`/sg spawnall [mod]` (creative, single-player) **spawns one of every living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks.
 
 ## Admin commands
 

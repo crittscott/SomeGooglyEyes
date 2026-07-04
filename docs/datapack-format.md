@@ -1,10 +1,6 @@
 # Datapack format: eye definitions
 
-Eye placements are ordinary datapack JSON. You can add eyes to modded mobs, reshape the shipped placements, or disable a mob entirely — no code required.
-
-> **Tip:** you rarely need to write these files by hand. The in-game [picker](picker.md) lets you place eyes visually on a live mob and exports files in exactly this format.
-
-> **Alpha note:** the format may still change between versions without migration support.
+Eye placements are ordinary datapack JSON. You can add eyes to modded mobs, reshape the shipped placements, or disable a mob entirely.
 
 ## File location
 
@@ -16,7 +12,7 @@ data/<entity namespace>/eyes/<entity path>.json
 
 `minecraft:axolotl` → `data/minecraft/eyes/axolotl.json`. Files are loaded on world start and `/reload`, then synced to clients automatically.
 
-The **ender dragon** is hard-excluded: a config for it is refused from any datapack (its renderer cannot host the eye layer).
+The **ender dragon** is hard-excluded: a config for it is refused from any datapack.
 
 ## Top-level shape
 
@@ -83,7 +79,7 @@ Every field is optional; defaults shown. All of placement and default appearance
 
 Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the potion.
 
-## A worked example
+## An example
 
 Two crossed white eyes on a cow's head, plus a rare one-eyed variant:
 

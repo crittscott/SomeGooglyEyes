@@ -4,7 +4,7 @@ Some Googly Eyes has two config files: a **server** config that controls gamepla
 
 ## Server config
 
-Location: `<world>/serverconfig/somegoogly-server.toml` (a Forge server config — per world, authoritative for all players).
+Location: `<world>/serverconfig/somegoogly-server.toml` .
 
 ### Spawn settings
 
