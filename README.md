@@ -52,4 +52,4 @@ This is an **alpha release** (0.8.0). Things that may change without migration s
 
 A port of iChun's *Googly Eyes* (which was itself a port), rebuilt for 1.20.1 with new physics, behaviors, and the gameplay loop.
 
-License: **All Rights Reserved**. You may not redistribute the mod or its source without permission.
+License: **GPL-3.0** — see [LICENSE](LICENSE).
