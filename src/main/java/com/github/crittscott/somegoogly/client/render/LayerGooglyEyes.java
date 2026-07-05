@@ -54,6 +54,11 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
+        // Invisibility hides the eyes, unconditionally.
+        if (living.isInvisible()) {
+            return;
+        }
+
         HeadInfo helper = HeadInfo.getHelper(entityType, living);
         if (helper == null || !helper.hasConfig()) {
             return;
@@ -88,10 +93,6 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
 
             int eyeCount = helper.getEyeCount(headIndex);
             for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
-                if (living.isInvisible() && helper.affectedByInvisibility(headIndex, eyeIndex)) {
-                    continue;
-                }
-
                 if (helper.getEyeScale(headIndex, eyeIndex) <= 0F) {
                     continue;
                 }

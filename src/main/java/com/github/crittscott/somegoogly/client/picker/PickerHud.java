@@ -40,8 +40,8 @@ public final class PickerHud {
 
     /**
      * Add an eye as two lines: identity/part/position, then orientation/scales/flags (indented).
-     * Glow/invis are shown as {@code +G}/{@code -G} and {@code +Inv}/{@code -Inv} (set/unset) to keep
-     * the line short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
+     * Glow is shown as {@code +G}/{@code -G} (set/unset) to keep the line short; cornea/iris colors
+     * follow as {@code c#RRGGBB i#RRGGBB}.
      */
     private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
         out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
@@ -49,9 +49,9 @@ public final class PickerHud {
         double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
         double azi = e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
         String cross = e.crossTarget >= 0 ? "  X→" + (e.crossTarget + 1) : "";
-        out.add(new Line(String.format("    incl %.0f°  azi %.0f°  eye %.2f  iris %.2f  %sG %sInv  c%s i%s%s",
-                incl, azi, e.eyeScale, e.irisScale,
-                e.glows ? "+" : "-", e.affectedByInvisibility ? "+" : "-",
+        out.add(new Line(String.format("    incl %.0f°  azi %.0f°  eye %.2f  iris %.2f  d %.2f  %sG  c%s i%s%s",
+                incl, azi, e.eyeScale, e.irisScale, e.depth,
+                e.glows ? "+" : "-",
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB));
     }
 

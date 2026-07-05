@@ -102,7 +102,8 @@ public final class GooglyEyeRenderer {
         float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
         float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
         float eyeScale = (float) placement.eyeScale() * eyeScaleMul;
-        pose.scale(eyeScale, eyeScale * squashY, eyeScale * 0.4F);
+        pose.scale(eyeScale, eyeScale * squashY,
+                eyeScale * ModelGooglyEye.BASE_DEPTH * (float) placement.depth());
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
 

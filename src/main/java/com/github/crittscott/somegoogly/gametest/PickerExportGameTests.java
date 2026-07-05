@@ -115,8 +115,8 @@ public final class PickerExportGameTests {
                 .getAsJsonArray("eyes").get(0).getAsJsonObject();
 
         // The canonical form pins every value explicitly so the files never rely on code defaults.
-        for (String field : List.of("position", "eyeScale", "irisScale", "inclination", "azimuth",
-                "corneaColors", "irisColors", "glows", "affectedByInvisibility")) {
+        for (String field : List.of("position", "eyeScale", "irisScale", "depth", "inclination", "azimuth",
+                "corneaColors", "irisColors", "glows")) {
             helper.assertTrue(eye.has(field), "canonical eye JSON must write '" + field + "'");
         }
         helper.assertTrue(!eye.has("crossTarget"),

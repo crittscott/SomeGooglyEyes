@@ -14,6 +14,14 @@ import org.joml.Matrix4f;
  */
 public final class ModelGooglyEye {
 
+    /**
+     * The Z pose-scale that gives the eye its standard thickness (relative to its width). Every render
+     * site multiplies this by the eye's own {@code depth} multiplier (1 = standard); the geometry below
+     * stays fixed. The model extends toward -Z from its origin (the back face sits at Z = 0), so a
+     * larger depth pushes the front face further out of the model without moving the attach point.
+     */
+    public static final float BASE_DEPTH = 0.4F;
+
     // Local dimensions preserve the former model's visible diameter and approximate depth.
     private static final float CORNEA_BACK_Z = 0.00F;
     private static final float CORNEA_FRONT_Z = -1.00F;

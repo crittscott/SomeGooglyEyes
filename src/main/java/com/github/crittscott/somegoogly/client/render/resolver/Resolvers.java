@@ -16,6 +16,7 @@ public final class Resolvers {
             new HierarchicalResolver(),
             new AgeableListResolver(),
             new CitadelResolver(),
+            new LLibraryResolver(),
             new ChildMapResolver()
     );
 

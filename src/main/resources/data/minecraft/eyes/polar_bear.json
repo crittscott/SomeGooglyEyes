@@ -19,6 +19,7 @@
                   ],
                   "eyeScale": 0.5,
                   "irisScale": 0.6,
+                  "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "crossTarget": 1,
@@ -32,8 +33,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
-                  "affectedByInvisibility": true
+                  "glows": false
                 },
                 {
                   "position": [
@@ -43,6 +43,7 @@
                   ],
                   "eyeScale": 0.5,
                   "irisScale": 0.6,
+                  "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "crossTarget": 0,
@@ -56,8 +57,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
-                  "affectedByInvisibility": true
+                  "glows": false
                 }
               ]
             }

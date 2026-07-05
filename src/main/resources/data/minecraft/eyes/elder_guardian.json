@@ -19,6 +19,7 @@
                   ],
                   "eyeScale": 1.75,
                   "irisScale": 1.0,
+                  "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -31,8 +32,7 @@
                     0.6,
                     0.1
                   ],
-                  "glows": true,
-                  "affectedByInvisibility": true
+                  "glows": true
                 }
               ]
             }

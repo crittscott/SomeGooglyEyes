@@ -28,8 +28,9 @@ Everything beyond navigation is done through the `/sg` chat commands:
    - `/sg rot <inclination> <azimuth>` — aim it (degrees; `~` supported)
    - `/sg posrot <x> <y> <z> <incl> <azi>` — both at once
    - `/sg properties eyescale <v>` / `irisscale <v>` — sizes
+   - `/sg properties depth <v>` — thickness multiplier along the look axis (1 = standard; bigger protrudes further, e.g. to cover a modeled eyeball that sticks out of the head)
    - `/sg properties corneacolor <r> <g> <b>` / `iriscolor <r> <g> <b>` — colors (0–1)
-   - `/sg properties glow <true|false>` / `invis <true|false>`
+   - `/sg properties glow <true|false>`
    - `/sg properties crosstarget <n>` — cross-eye partner (a saved eye number on the same part; `0` clears)
 5. **Save it**: `/sg save` commits the draft to the eye list. Re-edit later with `/sg select <n>`, remove with `/sg delete <n>`, review with `/sg list eyes`.
 6. **Variants** (optional alternative arrangements, weighted at spawn): `/sg variant new`, `/sg variant <n>` to switch, `/sg variant weight <w>`, `/sg variant del <n>`, `/sg list variants`.

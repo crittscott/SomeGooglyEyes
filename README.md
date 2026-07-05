@@ -6,7 +6,7 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, brew them into a potion, and put them on other mobs, or yourself.
 
-Compatible with GeckoLib- and Citadel-based mobs. Datapack-aware. In-game configuration tool for adding and configuring eyes.
+Compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware. In-game configuration tool for adding and configuring eyes.
 
 <!-- TODO: hero GIF or short mp4 clip here — a mob with wobbling eyes sells the whole mod in 5 seconds.
      GitHub plays small mp4/mov files (~10 MB) inline if you drag them into the README editor. -->
@@ -43,7 +43,7 @@ Eye placements are ordinary datapack JSON. There's also an in-game authoring too
 
 ## Compatibility
 
-Eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models.
+Eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibarary code.
 
 
 ## Alpha status

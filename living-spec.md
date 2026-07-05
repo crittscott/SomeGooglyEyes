@@ -108,7 +108,7 @@ The ender dragon is hard-excluded: eye configs for it are refused at load from a
 
 Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a slash-joined part/bone path (e.g. `root/body/head`), matched by normalized suffix so a bare leaf like `head` still attaches. A path segment is `#N` only for a nameless positional root (models with no obfuscation-stable name for that part).
 
-Each eye is a flat object containing placement, scale, direction, color, glow, invisibility behavior, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
+Each eye is a flat object containing placement, scale, depth (a thickness multiplier along the look axis; the back face stays at the attach position and the body extends forward, so deep eyes can envelop a modeled eyeball that protrudes from the head), direction, color, glow, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
 
 Legacy entry-level `heads` is not a supported placement shape. Current data uses `variants`.
 
@@ -130,14 +130,17 @@ Client configuration is local and only affects rendering. It can disable all goo
 
 The client adds googly-eye render layers to vanilla living-entity renderers, including player skin models. GeckoLib entity renderers receive a separate compatibility layer when GeckoLib is present.
 
+Layers are normally appended, with one ordering exception: a renderer carrying the slime's semi-transparent outer-cube layer gets the eye and picker layers inserted *before* it. The outer cube draws translucent but still writes depth, so appended layers would have their eye fragments discarded inside the shell; drawn first, the eyes show through the shell with the same embedded-in-jelly look as the slime's own face.
+
 A render pass requires all of the following:
 
 - the entity is not currently being previewed by the picker;
 - local client preferences allow rendering;
 - the entity has synced eye state;
+- the entity is not invisible (invisibility always hides eyes);
 - there is a synced enabled definition for the entity;
 - the model has a usable attachment resolver;
-- the eye is not suppressed by invisibility or invalid scale.
+- the eye's scale is positive.
 
 Rendering combines datapack placement, effective appearance, the eye's simulated wobble state (which already incorporates any active cosmetic behavior), and normal/glowing passes as needed.
 
@@ -147,9 +150,22 @@ Attachment is resolved by model type:
 | --- | --- | --- | --- |
 | Hierarchical | `HierarchicalModel` | `root/...` part paths | Implemented; cube-less pivot joints are selectable |
 | AgeableList | `AgeableListModel` (most vanilla mobs) | `head`/`body` group roots + real descendant names | Implemented |
-| Citadel | Citadel/LLibrary-style models | box-name paths, falling back to field names then `#N` | Implemented, compatibility-sensitive |
+| Citadel | Citadel models (Alex's Mobs, Ice and Fire) | box-name paths, falling back to field names then `#N` | Implemented, compatibility-sensitive |
+| LLibrary | Mowzie's Mobs' shaded LLibrary fork (its pre-GeckoLib mobs) | field-name paths, falling back to `#N` | Experimental |
 | Reflection fallback | any other vanilla-style model | positional `#N` roots + real descendant names | Implemented, brittle by design |
 | GeckoLib | `GeoEntityRenderer` models | bone names | Implemented, version-sensitive |
+
+The GeckoLib integration is constrained by GeckoLib's layer contract: the whole-model layer callback
+receives a pose from which GeckoLib has already popped the entity's body rotations and model
+transforms, so eyes drawn there would track the mob's position but not its orientation. The eye layer
+therefore resolves attach tokens to bones once per render pass and draws through GeckoLib's per-bone
+hook, which supplies the fully composed pose.
+
+One entity type may also wear multiple GeckoLib models: Ribbits swaps the whole `.geo.json` per
+profession, instrument, umbrella, and pride state at render time, though every spawn egg produces the
+same `ribbits:ribbit` type (so the picker's `spawnall` grid correctly yields one). Eye configs are
+keyed per entity type, so an attach token only lands when the currently-worn model has a matching
+bone; configs for such mobs should target bones every variant shares.
 
 Resolvers can also canonicalize a stored token into their own enumeration vocabulary; the picker, HUD, and exported configs rely on this to speak the same token for the same part.
 

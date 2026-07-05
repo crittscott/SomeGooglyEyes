@@ -183,10 +183,6 @@ public class HeadInfo {
         }
     }
 
-    public boolean affectedByInvisibility(int headIndex, int eyeIndex) {
-        return placementAt(headIndex, eyeIndex).affectedByInvisibility();
-    }
-
     /** The eye's config appearance (color/glow), or {@link EyeAppearance#DEFAULT} when out of range. */
     public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
         EyeDefinition eye = eyeAt(headIndex, eyeIndex);
