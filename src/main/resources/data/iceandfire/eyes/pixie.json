@@ -19,6 +19,7 @@
                   ],
                   "eyeScale": 0.3,
                   "irisScale": 0.6,
+                  "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -31,8 +32,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
-                  "affectedByInvisibility": true
+                  "glows": false
                 },
                 {
                   "position": [
@@ -42,6 +42,7 @@
                   ],
                   "eyeScale": 0.3,
                   "irisScale": 0.6,
+                  "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "corneaColors": [
@@ -54,8 +55,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false,
-                  "affectedByInvisibility": true
+                  "glows": false
                 }
               ]
             }

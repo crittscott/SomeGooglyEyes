@@ -12,6 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ClientEventHandler {
@@ -37,7 +40,7 @@ public class ClientEventHandler {
     // strong reference to its own key (the parent entity), so weakness never fired anyway.
     protected final Map<LivingEntity, GooglyTracker> trackers = new HashMap<>();
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     public void addLayers() {
         HashSet<LivingEntityRenderer> addedRenderers = new HashSet<>();
 
@@ -49,8 +52,7 @@ public class ClientEventHandler {
             for (Map.Entry<String, EntityRenderer<? extends Player>> e : skinMap.entrySet()) {
                 if (e.getValue() instanceof PlayerRenderer) {
                     PlayerRenderer playerRenderer = (PlayerRenderer) e.getValue();
-                    playerRenderer.addLayer(new LayerGooglyEyes<>(playerRenderer));
-                    playerRenderer.addLayer(new PickerLayer<>(playerRenderer));
+                    addEyeLayers(playerRenderer);
                     addedRenderers.add(playerRenderer);
                 }
             }
@@ -67,14 +69,37 @@ public class ClientEventHandler {
             }
 
             if (entityRenderer instanceof LivingEntityRenderer) {
-                LivingEntityRenderer renderer = (LivingEntityRenderer) entityRenderer;
-                renderer.addLayer(new LayerGooglyEyes<>(renderer));
-                renderer.addLayer(new PickerLayer<>(renderer));
+                addEyeLayers((LivingEntityRenderer) entityRenderer);
             } else {
                 // GeckoLib (GeoEntityRenderer) isn't a LivingEntityRenderer; attach via soft-dep compat.
                 GeckoCompat.tryAddLayer(entityRenderer);
             }
         });
+    }
+
+    /**
+     * Attach the eye + picker layers to a living renderer. Normally appended, but a renderer carrying a
+     * {@link SlimeOuterLayer} — the slime's semi-transparent outer cube, drawn translucent but still
+     * writing depth — gets both layers <b>inserted before</b> it: appended layers draw after the shell,
+     * whose depth writes discard every eye fragment inside it (eyes on inner parts turn invisible).
+     * Inserted before, the eyes draw first and the shell blends over them, the same embedded-in-jelly
+     * look as the slime's own face. The {@code layers} list is AT-widened for the insert; renderers
+     * without the slime layer (everything else) keep the plain append.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addEyeLayers(LivingEntityRenderer renderer) {
+        LayerGooglyEyes eyes = new LayerGooglyEyes<>(renderer);
+        PickerLayer picker = new PickerLayer<>(renderer);
+        List<RenderLayer> layers = renderer.layers;
+        for (int i = 0; i < layers.size(); i++) {
+            if (layers.get(i) instanceof SlimeOuterLayer) {
+                layers.add(i, eyes);
+                layers.add(i + 1, picker);
+                return;
+            }
+        }
+        renderer.addLayer(eyes);
+        renderer.addLayer(picker);
     }
 
     /** Drop all trackers; called when configs change (sync) or on disconnect. */

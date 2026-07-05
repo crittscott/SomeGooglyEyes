@@ -15,12 +15,13 @@ public class EyeDraft {
     public double[] position = {-0.13, -0.25, -0.25};
     public double eyeScale = 0.75;
     public double irisScale = 0.6;
+    /** Thickness multiplier along the look axis (1 = standard googly proportions). */
+    public double depth = EyePlacement.DEFAULT_DEPTH;
     public Double inclination = EyePlacement.DEFAULT_INCLINATION; // null = default forward
     public Double azimuth = EyePlacement.DEFAULT_AZIMUTH;
     public double[] corneaColors = {1.0, 1.0, 1.0};
     public double[] irisColors = {0.0, 0.0, 0.0};
     public boolean glows = false;
-    public boolean affectedByInvisibility = true;
     /**
      * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, {@code -1} =
      * none) — authoring space, matching what {@code /sg list eyes} shows. It's resolved to the on-disk
@@ -48,12 +49,12 @@ public class EyeDraft {
         d.position = new double[]{pos.x, pos.y, pos.z};
         d.eyeScale = p.eyeScale();
         d.irisScale = p.irisScale();
+        d.depth = p.depth();
         d.inclination = p.inclination();
         d.azimuth = p.azimuth();
         d.corneaColors = new double[]{cornea.r(), cornea.g(), cornea.b()};
         d.irisColors = new double[]{iris.r(), iris.g(), iris.b()};
         d.glows = a.glow();
-        d.affectedByInvisibility = p.affectedByInvisibility();
         return d;
     }
 
@@ -62,12 +63,12 @@ public class EyeDraft {
         d.position = new double[]{position[0], position[1], position[2]};
         d.eyeScale = eyeScale;
         d.irisScale = irisScale;
+        d.depth = depth;
         d.inclination = aimInclination();
         d.azimuth = aimAzimuth();
         d.corneaColors = new double[]{corneaColors[0], corneaColors[1], corneaColors[2]};
         d.irisColors = new double[]{irisColors[0], irisColors[1], irisColors[2]};
         d.glows = glows;
-        d.affectedByInvisibility = affectedByInvisibility;
         d.crossTarget = crossTarget;
         return d;
     }
@@ -80,7 +81,7 @@ public class EyeDraft {
     public EyeDefinition toDefinition(int resolvedCrossTarget) {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                eyeScale, irisScale, aimInclination(), aimAzimuth(), affectedByInvisibility,
+                eyeScale, irisScale, depth, aimInclination(), aimAzimuth(),
                 resolvedCrossTarget);
         EyeAppearance appearance = new EyeAppearance(
                 new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),

@@ -171,7 +171,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (ctx != ItemDisplayContext.FIXED) {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
-        pose.scale(scale, scale, scale * 0.4F);
+        // Items have no placement, so they keep the standard thickness (depth multiplier 1).
+        pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
 
         drawEye(m, pose, buffer.getBuffer(RenderType.entityCutout(TEX)), light, overlay, cornea, iris, irisX, irisY);
         if (glow) {

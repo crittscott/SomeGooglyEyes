@@ -376,6 +376,11 @@ public final class PickerState {
         currentEye.eyeScale = Math.max(0, v);
     }
 
+    /** Thickness multiplier along the look axis (1 = standard; clamped >= 0). */
+    public static void setDepth(double v) {
+        currentEye.depth = Math.max(0, v);
+    }
+
     /**
      * The CLI {@code properties crosstarget <n>} op: point the current eye's cross-eye behavior at the eye
      * at 1-based list index {@code oneBased} ({@code <= 0} clears it). The target must be a <i>different</i>
@@ -404,10 +409,6 @@ public final class PickerState {
 
     public static void setGlow(boolean v) {
         currentEye.glows = v;
-    }
-
-    public static void setInvis(boolean v) {
-        currentEye.affectedByInvisibility = v;
     }
 
     public static void setIrisColor(double r, double g, double b) {

@@ -16,7 +16,7 @@ public class NetworkHandler {
     // in SomeGoogly allows it); this protocol version is what gates network compatibility. Bump it on
     // any breaking wire-format change so older clients are refused with a clear mismatch instead of
     // misparsing packets.
-    private static final String PROTOCOL_VERSION = "5";
+    private static final String PROTOCOL_VERSION = "6";
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(SomeGoogly.MOD_ID, "main"),

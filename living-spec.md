@@ -108,7 +108,7 @@ The ender dragon is hard-excluded: eye configs for it are refused at load from a
 
 Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a slash-joined part/bone path (e.g. `root/body/head`), matched by normalized suffix so a bare leaf like `head` still attaches. A path segment is `#N` only for a nameless positional root (models with no obfuscation-stable name for that part).
 
-Each eye is a flat object containing placement, scale, direction, color, glow, invisibility behavior, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
+Each eye is a flat object containing placement, scale, depth (a thickness multiplier along the look axis; the back face stays at the attach position and the body extends forward, so deep eyes can envelop a modeled eyeball that protrudes from the head), direction, color, glow, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
 
 Legacy entry-level `heads` is not a supported placement shape. Current data uses `variants`.
 
@@ -130,14 +130,17 @@ Client configuration is local and only affects rendering. It can disable all goo
 
 The client adds googly-eye render layers to vanilla living-entity renderers, including player skin models. GeckoLib entity renderers receive a separate compatibility layer when GeckoLib is present.
 
+Layers are normally appended, with one ordering exception: a renderer carrying the slime's semi-transparent outer-cube layer gets the eye and picker layers inserted *before* it. The outer cube draws translucent but still writes depth, so appended layers would have their eye fragments discarded inside the shell; drawn first, the eyes show through the shell with the same embedded-in-jelly look as the slime's own face.
+
 A render pass requires all of the following:
 
 - the entity is not currently being previewed by the picker;
 - local client preferences allow rendering;
 - the entity has synced eye state;
+- the entity is not invisible (invisibility always hides eyes);
 - there is a synced enabled definition for the entity;
 - the model has a usable attachment resolver;
-- the eye is not suppressed by invisibility or invalid scale.
+- the eye's scale is positive.
 
 Rendering combines datapack placement, effective appearance, the eye's simulated wobble state (which already incorporates any active cosmetic behavior), and normal/glowing passes as needed.
 

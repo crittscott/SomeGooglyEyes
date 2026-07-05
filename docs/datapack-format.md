@@ -69,13 +69,15 @@ Every field is optional; defaults shown. All of placement and default appearance
 | `position` | `[-0.13, -0.25, -0.25]` | Offset from the attach part's origin, in the part's local block units. |
 | `eyeScale` | `0.75` | Overall size of the eye. `0` hides the eye. |
 | `irisScale` | `0.6` | Pupil size relative to the eye. |
+| `depth` | `1.0` | Thickness multiplier along the look axis (1 = standard googly proportions). The eye's back face stays at its position and the body extends forward, so a deeper eye protrudes further — enough to envelop a modeled eyeball that sticks out of the head. |
 | `inclination` | `90.0` | Aim angle in degrees from the part's +Y axis (90 = horizontal). |
 | `azimuth` | `270.0` | Aim angle in degrees from the part's +X axis (270 = facing forward, local −Z). |
 | `corneaColors` | `[1.0, 1.0, 1.0]` | Eye-white color, RGB 0–1. |
 | `irisColors` | `[0.0, 0.0, 0.0]` | Pupil color, RGB 0–1. |
 | `glows` | `false` | Render the eye full-bright (spider-style) regardless of light level. |
-| `affectedByInvisibility` | `true` | Hide the eye while the mob is invisible. `false` gives an invisible mob visible floating eyes. |
 | `crossTarget` | `-1` | Index of another eye **in the same head** that this eye rolls toward during the `cross_eye` expression. `-1` = this eye doesn't cross.|
+
+Eyes always hide while the mob is invisible.
 
 Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the potion.
 

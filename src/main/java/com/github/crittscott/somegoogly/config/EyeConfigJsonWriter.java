@@ -123,6 +123,7 @@ public final class EyeConfigJsonWriter {
         o.add("position", vec3(p.position()));
         o.addProperty("eyeScale", round(p.eyeScale()));
         o.addProperty("irisScale", round(p.irisScale()));
+        o.addProperty("depth", round(p.depth()));
         o.addProperty("inclination", round(p.inclination()));
         o.addProperty("azimuth", round(p.azimuth()));
         // crossTarget is a within-head index; only written when set (default -1 = no cross-eye partner).
@@ -132,7 +133,6 @@ public final class EyeConfigJsonWriter {
         o.add("corneaColors", colors(a.cornea()));
         o.add("irisColors", colors(a.iris()));
         o.addProperty("glows", a.glow());
-        o.addProperty("affectedByInvisibility", p.affectedByInvisibility());
         return o;
     }
 

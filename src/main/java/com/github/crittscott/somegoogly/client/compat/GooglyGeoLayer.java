@@ -62,6 +62,11 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         if (!PickerState.active && !EyeState.hasEyes(living)) {
             return;
         }
+
+        // Invisibility hides the eyes, unconditionally (mirrors LayerGooglyEyes).
+        if (living.isInvisible()) {
+            return;
+        }
         HeadInfo helper = HeadInfo.getHelper(entityType, living);
         if (helper == null || !helper.hasConfig()) {
             return;
@@ -81,9 +86,6 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             if (GeoBones.moveTo(poseStack, bakedModel, helper.getAttachToken(h))) {
                 int eyeCount = helper.getEyeCount(h);
                 for (int i = 0; i < eyeCount; i++) {
-                    if (living.isInvisible() && helper.affectedByInvisibility(h, i)) {
-                        continue;
-                    }
                     if (helper.getEyeScale(h, i) <= 0F) {
                         continue;
                     }
@@ -132,7 +134,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
         HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
         float scale = (float) eye.eyeScale;
-        poseStack.scale(scale, scale, scale * 0.4F);
+        poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * (float) eye.depth);
 
         VertexConsumer buf = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
         double[] cornea = eye.corneaColors;

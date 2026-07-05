@@ -294,6 +294,16 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    private static int propDepth(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        requireDraft();
+        float v = FloatArgumentType.getFloat(ctx, "v");
+        PickerState.setDepth(v);
+        feedback(ctx, "depth = " + v);
+        return 1;
+    }
+
     private static int propEyeScale(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
@@ -311,16 +321,6 @@ public class GooglyClientCommands {
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setGlow(v);
         feedback(ctx, "glow = " + v);
-        return 1;
-    }
-
-    private static int propInvis(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        requireDraft();
-        boolean v = BoolArgumentType.getBool(ctx, "v");
-        PickerState.setInvis(v);
-        feedback(ctx, "affectedByInvisibility = " + v);
         return 1;
     }
 
@@ -452,10 +452,11 @@ public class GooglyClientCommands {
         verb(sg, "properties", b -> {
             b.then(prop("eyescale", FloatArgumentType.floatArg(0), GooglyClientCommands::propEyeScale));
             b.then(prop("irisscale", FloatArgumentType.floatArg(0), GooglyClientCommands::propIrisScale));
+            // depth <v>: thickness multiplier along the look axis (1 = standard proportions).
+            b.then(prop("depth", FloatArgumentType.floatArg(0), GooglyClientCommands::propDepth));
             b.then(Commands.literal("corneacolor").then(rgb(GooglyClientCommands::propCorneaColor)));
             b.then(Commands.literal("iriscolor").then(rgb(GooglyClientCommands::propIrisColor)));
             b.then(prop("glow", BoolArgumentType.bool(), GooglyClientCommands::propGlow));
-            b.then(prop("invis", BoolArgumentType.bool(), GooglyClientCommands::propInvis));
             // crosstarget <n>: cross-eye partner as a 1-based eye list index; 0 clears it.
             b.then(prop("crosstarget", IntegerArgumentType.integer(0), GooglyClientCommands::propCrossTarget));
         });

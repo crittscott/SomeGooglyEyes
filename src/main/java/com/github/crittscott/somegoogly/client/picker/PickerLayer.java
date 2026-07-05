@@ -86,7 +86,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
 
         float scale = (float) eye.eyeScale;
-        poseStack.scale(scale, scale, scale * 0.4F);
+        poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * (float) eye.depth);
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
         double[] cornea = eye.corneaColors;
