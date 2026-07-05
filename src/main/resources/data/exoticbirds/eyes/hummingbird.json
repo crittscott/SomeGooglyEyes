@@ -9,20 +9,19 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "head1",
+              "attachPoint": "head2",
               "eyes": [
                 {
                   "position": [
-                    -0.1,
-                    -0.1,
-                    -0.1
+                    -0.04,
+                    1.12,
+                    0.23
                   ],
-                  "eyeScale": 0.6,
+                  "eyeScale": 0.2,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 180.0,
-                  "crossTarget": 1,
                   "corneaColors": [
                     1.0,
                     1.0,
@@ -34,19 +33,23 @@
                     0.0
                   ],
                   "glows": false
-                },
+                }
+              ]
+            },
+            {
+              "attachPoint": "head",
+              "eyes": [
                 {
                   "position": [
-                    0.1,
-                    -0.1,
-                    -0.1
+                    0.04,
+                    1.12,
+                    0.23
                   ],
-                  "eyeScale": 0.6,
+                  "eyeScale": 0.2,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 0.0,
-                  "crossTarget": 0,
                   "corneaColors": [
                     1.0,
                     1.0,
