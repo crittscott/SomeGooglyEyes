@@ -15,9 +15,11 @@ import java.util.function.Supplier;
 
 /**
  * Client → server: reposition ({@code /sg mob move}) or turn ({@code /sg mob rot}) the mob being
- * edited. Creative-gated ({@link PickerPermissions}). Absent components mean "leave unchanged"
- * (the CLI's {@code ~}), resolved here against the <b>authoritative</b> server entity rather than the
- * client's interpolated copy; the change syncs back through vanilla entity tracking.
+ * edited. Creative-gated ({@link PickerPermissions}). The move form carries world-axis <b>offsets</b>
+ * (0 = leave that axis unchanged), resolved here against the <b>authoritative</b> server entity rather
+ * than the client's interpolated copy; the change syncs back through vanilla entity tracking. The two
+ * forms are distinguished on the wire by which fields are present: move sets all of x/y/z, rot sets
+ * azimuth.
  *
  * <p>{@code azimuth} uses the <b>eye</b> convention (degrees from +X; 270 = facing -Z) so its numbers
  * mean the same direction as {@code /sg rot}; Minecraft yaw is that minus 90°. Body and head turn
@@ -44,8 +46,8 @@ public class PickerMobPosePacket {
         this.azimuth = azimuth;
     }
 
-    public static PickerMobPosePacket move(UUID mobId, @Nullable Double x, @Nullable Double y, @Nullable Double z) {
-        return new PickerMobPosePacket(mobId, x, y, z, null);
+    public static PickerMobPosePacket move(UUID mobId, double dx, double dy, double dz) {
+        return new PickerMobPosePacket(mobId, dx, dy, dz, null);
     }
 
     public static PickerMobPosePacket rot(UUID mobId, float azimuth) {
@@ -84,11 +86,8 @@ public class PickerMobPosePacket {
                 sender.sendSystemMessage(Component.literal("[Googly] Mob not found (unloaded or removed)."));
                 return;
             }
-            if (packet.x != null || packet.y != null || packet.z != null) {
-                living.teleportTo(
-                        packet.x != null ? packet.x : living.getX(),
-                        packet.y != null ? packet.y : living.getY(),
-                        packet.z != null ? packet.z : living.getZ());
+            if (packet.x != null && packet.y != null && packet.z != null) {
+                living.teleportTo(living.getX() + packet.x, living.getY() + packet.y, living.getZ() + packet.z);
                 sender.sendSystemMessage(Component.literal(String.format("[Googly] Mob moved to [%.2f, %.2f, %.2f].",
                         living.getX(), living.getY(), living.getZ())));
             }

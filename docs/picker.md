@@ -32,7 +32,7 @@ Everything beyond navigation is done through the `/sg` chat commands:
    - `/sg properties corneacolor <r> <g> <b>` / `iriscolor <r> <g> <b>` — colors (0–1)
    - `/sg properties glow <true|false>`
    - `/sg properties crosstarget <n>` — cross-eye partner (a saved eye number on the same part; `0` clears)
-5. **Save it**: `/sg save` commits the draft to the eye list. Re-edit later with `/sg select <n>`, remove with `/sg delete <n>`, review with `/sg list eyes`.
+5. **Save it**: `/sg save` commits the draft to the eye list. Re-edit later with `/sg select <n>`, duplicate with `/sg dupe <n>` (copies eye *n* into a new unsaved draft — move it, then save), remove with `/sg delete <n>`, review with `/sg list eyes`.
 6. **Variants** (optional alternative arrangements, weighted at spawn): `/sg variant new`, `/sg variant <n>` to switch, `/sg variant weight <w>`, `/sg variant del <n>`, `/sg list variants`.
 7. **Export**:
    - `/sg export` sends the chosen mob's config to the server, which writes it into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world. Rate-limited to one export per 10 seconds (each one is a full datapack reload).
@@ -46,7 +46,7 @@ Drafts are kept per mob type for the whole session, so you can hop between sever
 
 While a mob is chosen you can move it into better light or a clearer pose:
 
-- `/sg mob move <x> <y> <z>` — teleport it to absolute world coordinates (`~` leaves an axis unchanged, as in the eye `move` verb)
+- `/sg mob move <dx> <dy> <dz>` — nudge it by world-axis offsets (`0` leaves an axis unchanged; unlike the eye `move` verb, which sets absolutes)
 - `/sg mob rot <azimuth>` — turn it in the XZ plane; azimuth uses the same convention as `/sg rot` (270 = facing −Z), so the numbers carry over
 
 Both act on the live server mob (feedback comes back as a server message). Not to be confused with the eye `move`/`rot` verbs above, which shape the draft eye.

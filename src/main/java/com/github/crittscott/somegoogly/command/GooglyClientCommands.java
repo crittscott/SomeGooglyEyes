@@ -114,6 +114,17 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    private static int dupe(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        requireCreative();
+        requireChosen();
+        int n = IntegerArgumentType.getInteger(ctx, "n");
+        if (!PickerState.dupe(n)) {
+            throw BAD_INDEX.create(n);
+        }
+        feedback(ctx, "Duplicated eye #" + n + " as a new unsaved eye — move it, then /sg save.");
+        return 1;
+    }
+
     private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         feedback(ctx, PickerExporter.export());
@@ -173,22 +184,22 @@ public class GooglyClientCommands {
     }
 
     /**
-     * The CLI {@code mob move <x|~> <y|~> <z|~>} op: teleport the chosen mob to absolute world
-     * coordinates ({@code ~} leaves that axis unchanged, as in the eye {@code move} verb). Sent to the
-     * server as a {@link PickerMobPosePacket}, whose handler resolves {@code ~} against the
-     * authoritative entity, applies the move, and reports back; the change syncs to viewers through
-     * vanilla entity tracking.
+     * The CLI {@code mob move <dx> <dy> <dz>} op: nudge the chosen mob by world-axis offsets
+     * (0 leaves that axis unchanged) — unlike the eye {@code move} verb, which sets absolutes.
+     * Sent to the server as a {@link PickerMobPosePacket}, whose handler resolves the offsets
+     * against the authoritative entity, applies the move, and reports the resulting position;
+     * the change syncs to viewers through vanilla entity tracking.
      */
     private static int mobMove(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
         LivingEntity target = PickerState.target();
 
-        Double x = opt(MaybeFloatArgumentType.get(ctx, "x"));
-        Double y = opt(MaybeFloatArgumentType.get(ctx, "y"));
-        Double z = opt(MaybeFloatArgumentType.get(ctx, "z"));
+        double dx = FloatArgumentType.getFloat(ctx, "dx");
+        double dy = FloatArgumentType.getFloat(ctx, "dy");
+        double dz = FloatArgumentType.getFloat(ctx, "dz");
 
-        NetworkHandler.INSTANCE.sendToServer(PickerMobPosePacket.move(target.getUUID(), x, y, z));
+        NetworkHandler.INSTANCE.sendToServer(PickerMobPosePacket.move(target.getUUID(), dx, dy, dz));
         return 1;
     }
 
@@ -394,15 +405,16 @@ public class GooglyClientCommands {
         });
 
         // mob move/rot: reposition or turn the chosen mob itself — distinct from the eye move/rot
-        // verbs above. Lives under its own 'mob' literal (not the server-side 'admin' subtree) so the
-        // client and server /sg trees keep disjoint paths and command fall-through keeps working.
+        // verbs above (mob move takes offsets, not absolutes). Lives under its own 'mob' literal
+        // (not the server-side 'admin' subtree) so the client and server /sg trees keep disjoint
+        // paths and command fall-through keeps working.
         verb(sg, "mob", b -> {
             verb(b, "move", x -> {
-                RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
-                        Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
-                terminal(z, GooglyClientCommands::mobMove);
-                x.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
-                        .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
+                RequiredArgumentBuilder<CommandSourceStack, Float> dz =
+                        Commands.argument("dz", FloatArgumentType.floatArg());
+                terminal(dz, GooglyClientCommands::mobMove);
+                x.then(Commands.argument("dx", FloatArgumentType.floatArg())
+                        .then(Commands.argument("dy", FloatArgumentType.floatArg()).then(dz)));
             });
             verb(b, "rot", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Float> azimuth =
@@ -422,6 +434,12 @@ public class GooglyClientCommands {
         verb(sg, "delete", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
             terminal(n, GooglyClientCommands::delete);
+            b.then(n);
+        });
+        // dupe <n>: copy a saved eye into a new unsaved draft (select without the selection).
+        verb(sg, "dupe", b -> {
+            RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
+            terminal(n, GooglyClientCommands::dupe);
             b.then(n);
         });
 

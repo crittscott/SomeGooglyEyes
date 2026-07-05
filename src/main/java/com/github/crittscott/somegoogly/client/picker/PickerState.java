@@ -175,6 +175,25 @@ public final class PickerState {
     }
 
     /**
+     * The CLI {@code dupe <n>} op (1-based): copy a saved eye into a fresh unsaved draft — like
+     * {@code select}, but nothing is selected, so the next {@code save} appends instead of
+     * overwriting. Adopts the source eye's part; replaces any existing unsaved draft.
+     */
+    public static boolean dupe(int oneBased) {
+        List<ListedEye> eyes = currentEyes();
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= eyes.size()) {
+            return false;
+        }
+        ListedEye le = eyes.get(idx);
+        currentEye = copy(le.eye);
+        currentPart = le.part;
+        syncPartIndex();
+        selectedIndex = -1;
+        return true;
+    }
+
+    /**
      * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is always
      * at least one). Returns false if out of range or it would empty the list.
      */

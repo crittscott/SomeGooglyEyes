@@ -176,9 +176,9 @@ public final class SerializationGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void pickerMobPosePacketRoundTrips(GameTestHelper helper) {
         UUID mob = new UUID(0xABCDL, 0xEF01L);
-        helper.assertTrue(roundTrips(PickerMobPosePacket.move(mob, 1.5, null, -7.25),
+        helper.assertTrue(roundTrips(PickerMobPosePacket.move(mob, 1.5, 0.0, -7.25),
                         PickerMobPosePacket::encode, PickerMobPosePacket::decode),
-                "PickerMobPosePacket's move form (with a ~ axis) should survive a wire round-trip");
+                "PickerMobPosePacket's move form (offsets) should survive a wire round-trip");
         helper.assertTrue(roundTrips(PickerMobPosePacket.rot(mob, 270.0F),
                         PickerMobPosePacket::encode, PickerMobPosePacket::decode),
                 "PickerMobPosePacket's rot form should survive a wire round-trip");
