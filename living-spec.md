@@ -150,9 +150,22 @@ Attachment is resolved by model type:
 | --- | --- | --- | --- |
 | Hierarchical | `HierarchicalModel` | `root/...` part paths | Implemented; cube-less pivot joints are selectable |
 | AgeableList | `AgeableListModel` (most vanilla mobs) | `head`/`body` group roots + real descendant names | Implemented |
-| Citadel | Citadel/LLibrary-style models | box-name paths, falling back to field names then `#N` | Implemented, compatibility-sensitive |
+| Citadel | Citadel models (Alex's Mobs, Ice and Fire) | box-name paths, falling back to field names then `#N` | Implemented, compatibility-sensitive |
+| LLibrary | Mowzie's Mobs' shaded LLibrary fork (its pre-GeckoLib mobs) | field-name paths, falling back to `#N` | Experimental |
 | Reflection fallback | any other vanilla-style model | positional `#N` roots + real descendant names | Implemented, brittle by design |
 | GeckoLib | `GeoEntityRenderer` models | bone names | Implemented, version-sensitive |
+
+The GeckoLib integration is constrained by GeckoLib's layer contract: the whole-model layer callback
+receives a pose from which GeckoLib has already popped the entity's body rotations and model
+transforms, so eyes drawn there would track the mob's position but not its orientation. The eye layer
+therefore resolves attach tokens to bones once per render pass and draws through GeckoLib's per-bone
+hook, which supplies the fully composed pose.
+
+One entity type may also wear multiple GeckoLib models: Ribbits swaps the whole `.geo.json` per
+profession, instrument, umbrella, and pride state at render time, though every spawn egg produces the
+same `ribbits:ribbit` type (so the picker's `spawnall` grid correctly yields one). Eye configs are
+keyed per entity type, so an attach token only lands when the currently-worn model has a matching
+bone; configs for such mobs should target bones every variant shares.
 
 Resolvers can also canonicalize a stored token into their own enumeration vocabulary; the picker, HUD, and exported configs rely on this to speak the same token for the same part.
 
