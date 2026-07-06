@@ -10,34 +10,9 @@ One file per entity type, where the file path encodes the entity id:
 data/<entity namespace>/eyes/<entity path>.json
 ```
 
-`minecraft:axolotl` → `data/minecraft/eyes/axolotl.json`. Files are loaded on world start and `/reload`, then synced to clients automatically.
+`minecraft:zombie` → `data/minecraft/eyes/zombie.json`. Files are loaded on world start and `/reload`, then synced to clients automatically.
 
 The **ender dragon** is hard-excluded: a config for it is refused from any datapack.
-
-## Top-level shape
-
-```json
-{
-  "entries": [
-    {
-      "version": "[1.20.1,1.21)",
-      "age": "any",
-      "enabled": true,
-      "variants": [
-        {
-          "weight": 1.0,
-          "heads": [
-            {
-              "attachPoint": "head",
-              "eyes": [ { "...": "see eye fields below" } ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
 
 ### Entries: version and age selection
 
@@ -77,13 +52,11 @@ Every field is optional; defaults shown. All of placement and default appearance
 | `glows` | `false` | Render the eye full-bright (spider-style) regardless of light level. |
 | `crossTarget` | `-1` | Index of another eye **in the same head** that this eye rolls toward during the `cross_eye` expression. `-1` = this eye doesn't cross.|
 
-Eyes always hide while the mob is invisible.
-
 Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the potion.
 
 ## An example
 
-Two crossed white eyes on a cow's head, plus a rare one-eyed variant:
+Horse, with potential butt eyes:
 
 ```json
 {
@@ -94,24 +67,69 @@ Two crossed white eyes on a cow's head, plus a rare one-eyed variant:
       "enabled": true,
       "variants": [
         {
-          "weight": 9.0,
-          "heads": [
-            {
-              "attachPoint": "head",
-              "eyes": [
-                { "position": [-0.13, -0.25, -0.44], "crossTarget": 1 },
-                { "position": [ 0.13, -0.25, -0.44], "crossTarget": 0 }
-              ]
-            }
-          ]
-        },
-        {
           "weight": 1.0,
           "heads": [
             {
               "attachPoint": "head",
               "eyes": [
-                { "position": [0.0, -0.25, -0.44], "eyeScale": 1.1 }
+                {
+                  "position": [ -0.18, -0.6, 0.05 ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 180.0,
+                  "crossTarget": 1,
+                  "corneaColors": [ 1.0, 1.0, 1.0 ],
+                  "irisColors": [ 0.0, 0.0, 0.0 ],
+                  "glows": false
+                },
+                {
+                  "position": [ 0.18, -0.6, 0.05 ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 0.0,
+                  "crossTarget": 0,
+                  "corneaColors": [ 1.0, 1.0, 1.0 ],
+                  "irisColors": [ 0.0, 0.0, 0.0 ],
+                  "glows": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "weight": 0.05,
+          "heads": [
+            {
+              "attachPoint": "body",
+              "eyes": [
+                {
+                  "position": [ 0.18, -0.3, 0.32 ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 90.0,
+                  "crossTarget": 1,
+                  "corneaColors": [ 1.0, 1.0, 1.0 ],
+                  "irisColors": [ 0.0, 0.0, 0.0 ],
+                  "glows": false
+                },
+                {
+                  "position": [ -0.18, -0.3, 0.32 ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 90.0,
+                  "crossTarget": 0,
+                  "corneaColors": [ 1.0, 1.0, 1.0 ],
+                  "irisColors": [ 0.0, 0.0, 0.0 ],
+                  "glows": false
+                }
               ]
             }
           ]

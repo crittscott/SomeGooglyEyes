@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client.render;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.compat.ExoticBirdsCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -84,6 +85,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         int headCount = helper.getHeadCount();
         for (int headIndex = 0; headIndex < headCount; headIndex++) {
             poseStack.pushPose();
+            ExoticBirdsCompat.preTransform(model, poseStack);
 
             // Move into this head's animated space, by the configured string part name.
             if (!resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex))) {

@@ -29,6 +29,9 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 **Apply it**: drink it to grow your own googly eyes, or throw the splash to give eyes to one lucky mob nearby.
 
+## Eye potential
+Acquire and eye item, sneak while targetting a mod to see <an indicator that the mob has eyes defined, does not yet exist>.
+
 ## Configuration
 
 - **Server settings** (`<world>/serverconfig/somegoogly-server.toml`): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
@@ -47,10 +50,26 @@ Eye placements are ordinary datapack JSON. There's also an in-game authoring too
 
 Eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibarary code.
 
+Mods with predefined eye config:
 
-## Alpha status
+- Minecraft
+- Alex's Mobs
+- Ars Nouveau
+- Autumnity
+- Exotic Birds
+- Hamsters
+- Ice and Fire
+- Immersive Engineering
+- Simply Cats
+- Twilight Forest
 
-Currently in **alpha release**. Buyer beware. Found a bug or a mob whose eyes sit wrong? [Open an issue](../../issues).
+Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
+
+## Status
+
+Currently in **alpha release**. It works for me, single and multi-player. But that's all I can say for sure. Buyer beware. Found a bug? [Open an issue](../../issues).
+
+**Fabric, 1.21**: Only after 1.20.1/Forge is known to be stable.
 
 ## Credits and license
 

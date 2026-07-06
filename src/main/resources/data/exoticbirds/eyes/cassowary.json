@@ -9,13 +9,13 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "head",
+              "attachPoint": "head/neck/head",
               "eyes": [
                 {
                   "position": [
-                    -0.0925,
-                    -0.1875,
-                    0.0
+                    -0.092,
+                    -0.1,
+                    -0.09
                   ],
                   "eyeScale": 0.5,
                   "irisScale": 0.6,
@@ -36,9 +36,9 @@
                 },
                 {
                   "position": [
-                    0.0925,
-                    -0.1875,
-                    0.0
+                    0.09,
+                    -0.1,
+                    -0.09
                   ],
                   "eyeScale": 0.5,
                   "irisScale": 0.6,

@@ -169,6 +169,8 @@ bone; configs for such mobs should target bones every variant shares.
 
 Resolvers can also canonicalize a stored token into their own enumeration vocabulary; the picker, HUD, and exported configs rely on this to speak the same token for the same part.
 
+Exotic Birds needs a pre-transform shim in addition to normal resolution: every bird model hides a whole-model scale + translate inside an overridden `renderToBuffer` (babies always, adults on most models), which part-tree replay cannot see. The eye and picker layers apply the same transform to the pose stack before resolving attachment, from a table of constants baked out of the `exoticbirds-1.20.1-1.0.0.jar` bytecode (the mod is closed-source). Implemented, compatibility-sensitive: the table is specific to that jar version.
+
 The reflection fallback intentionally trades robustness for broad coverage. External renderer integrations should be treated as compatibility surfaces, not core guarantees.
 
 ## 9. Wobble and cosmetic behaviors
