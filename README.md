@@ -8,6 +8,8 @@ Eyes are a collectible resource: harvest them, recolor them, brew them into a po
 
 Compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware. In-game configuration tool for adding and configuring eyes.
 
+![Googly Eyes splash](docs/googlyeyes-splash.png)
+
 <!-- TODO: hero GIF or short mp4 clip here — a mob with wobbling eyes sells the whole mod in 5 seconds.
      GitHub plays small mp4/mov files (~10 MB) inline if you drag them into the README editor. -->
 
