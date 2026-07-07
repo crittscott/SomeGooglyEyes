@@ -19,11 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Loads eye geometry configs from datapacks: scans {@code data/<namespace>/eyes/*.json}, one file
  * per entity (the file path is the entity id). Each file contains versioned/age-selected entries;
- * reload selects the entries that match the currently loaded mod version for that namespace.
+ * reload selects the entries that match the currently loaded mod version for that namespace. When
+ * no entry matches, the nearest generation is used instead ({@link VersionRangeMatcher#nearestVersion})
+ * and the mismatch is logged — eyes are cosmetic, so degraded placement beats silently dropping the
+ * file (which would also permanently store a no-eyes roll for mobs spawned during the window).
  */
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
 
@@ -74,10 +78,48 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         if (loadedVersion.isEmpty()) {
             return null;
         }
+        String loaded = loadedVersion.get();
 
-        RuntimeConfigSet set = new RuntimeConfigSet();
+        RuntimeConfigSet set = select(entityId, file.entries,
+                entry -> VersionRangeMatcher.matches(entry.version, loaded));
+        if (set.hasAnyConfig()) {
+            return set;
+        }
+
+        // No entry declares itself valid for the installed version. A misplaced eye can't crash
+        // anything (unresolved attach tokens simply don't attach), so fall back to the nearest
+        // generation instead of dropping the file — and say so in the log.
+        List<String> declared = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
-            if (entry == null || !VersionRangeMatcher.matches(entry.version, loadedVersion.get())) {
+            if (entry != null && entry.version != null) {
+                declared.add(entry.version);
+            }
+        }
+        String nearest = VersionRangeMatcher.nearestVersion(declared, loaded);
+        if (nearest == null) {
+            return set; // nothing usable declared anywhere; same outcome as before the fallback existed
+        }
+        if (VersionRangeMatcher.isEntirelyBelow(nearest, loaded)) {
+            SomeGoogly.LOGGER.error(
+                    "Eye config {} has no entry for installed version {} of '{}'; using its newest entry"
+                            + " (version {}). The config is out of date — re-export it for the installed version.",
+                    entityId, loaded, entityId.getNamespace(), nearest);
+        } else {
+            SomeGoogly.LOGGER.warn(
+                    "Eye config {} has no entry for installed version {} of '{}'; using its oldest entry"
+                            + " (version {}) — expected after a mod downgrade.",
+                    entityId, loaded, entityId.getNamespace(), nearest);
+        }
+        // Same-version entries fall back as one generation, so adult/baby pairs stay together.
+        return select(entityId, file.entries, entry -> nearest.equals(entry.version));
+    }
+
+    /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */
+    private static RuntimeConfigSet select(ResourceLocation entityId, List<VersionedEntry> entries,
+                                           Predicate<VersionedEntry> versionFilter) {
+        RuntimeConfigSet set = new RuntimeConfigSet();
+        for (VersionedEntry entry : entries) {
+            if (entry == null || !versionFilter.test(entry)) {
                 continue;
             }
 

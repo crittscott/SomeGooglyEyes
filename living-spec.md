@@ -41,7 +41,7 @@ Package layout reflects this split. Client-only systems live under `com.github.c
 The normal flow is:
 
 1. Server reload reads `data/<namespace>/eyes/*.json` from active datapacks.
-2. Definitions are selected by namespace mod version and age selector.
+2. Definitions are selected by the installed version of the mod that owns the entity (the game version for `minecraft:` entities) and an age selector; when no entry matches, the nearest generation is used and the mismatch is logged.
 3. When an entity first joins a server level, the server may assign eyes and stores a stable placement-variant roll.
 4. Selected definitions are synced to clients during datapack sync.
 5. Entity eye state is synced when a client starts tracking that entity and whenever the state changes.
@@ -100,7 +100,7 @@ The supported top-level shape is:
 }
 ```
 
-Each entry is selected by namespace version and age. `age` may be `adult`, `baby`, or `any`; an age-specific entry takes precedence over `any`. `enabled:false` is a server-authoritative disable.
+Each entry is selected by version and age. `version` (exact string or bracket range) is matched against the installed version of the mod that owns the entity — the game version for `minecraft:` entities. When no entry matches the installed version, the file is not dropped: the nearest generation is selected instead (the newest entry older than the installed version, or the oldest entry when the installed version predates them all; same-version entries fall back together, keeping adult/baby pairs intact) and the mismatch is logged — an error for a stale datapack, a warning for a downgraded mod. Eyes are cosmetic, so a stale placement degrades gracefully rather than vanishing, and mobs spawned during the mismatch window still roll eyes normally. `age` may be `adult`, `baby`, or `any`; an age-specific entry takes precedence over `any`. `enabled:false` is a server-authoritative disable.
 
 The ender dragon is hard-excluded: eye configs for it are refused at load from any datapack, because its renderer bypasses the living-renderer family and can never host the eye layer.
 

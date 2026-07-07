@@ -1,12 +1,15 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -17,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Read-only checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
- * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), plus the pure
- * {@link ServerConfig#percentFor} resolution. {@code percentFor} mutates server config values via their
- * public {@code set}; every test restores the originals in a {@code finally} so later tests aren't affected.
+ * Checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
+ * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), the reload
+ * listener's version-fallback selection, and the pure {@link ServerConfig#percentFor} resolution.
+ * Tests that mutate shared state (config values via their public {@code set}, the loaded eye configs
+ * via {@code replaceAll}) restore the originals in a {@code finally} so later tests aren't affected.
  */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -113,6 +117,49 @@ public final class ConfigGameTests {
                         "config " + id + " has a head with a blank attach token");
             }
         }
+    }
+
+    /** Exposes the protected datapack {@code apply} so a test can feed synthetic files through real selection. */
+    private static final class TestReloadListener extends EyeConfigReloadListener {
+        void applyFiles(Map<ResourceLocation, JsonElement> files) {
+            apply(files, null, null);
+        }
+    }
+
+    /**
+     * Version fallback, end to end: a file whose entries are all older than the installed version must
+     * not be dropped — the newest generation is selected instead, adult and baby together (they share a
+     * declared version). The installed version for the {@code minecraft} namespace is the game version
+     * (1.20.x), so every range below 1.20 is stale here. The generations are told apart by weight.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void staleConfigFallsBackToNewestGeneration(GameTestHelper helper) {
+        ResourceLocation id = new ResourceLocation("minecraft", "zombie");
+        String json = """
+                { "entries": [
+                    { "version": "[1.18,1.19)", "age": "adult", "enabled": true, "variants": [
+                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
+                    { "version": "[1.19,1.20)", "age": "adult", "enabled": true, "variants": [
+                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
+                    { "version": "[1.19,1.20)", "age": "baby", "enabled": true, "variants": [
+                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] }
+                ] }
+                """;
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            new TestReloadListener().applyFiles(Map.of(id, JsonParser.parseString(json)));
+            RuntimeConfig adult = ServerEyeConfigs.get(id, false);
+            RuntimeConfig baby = ServerEyeConfigs.get(id, true);
+            helper.assertTrue(adult != null, "a stale config must fall back, not vanish");
+            helper.assertTrue(adult.variants.get(0).weight() == 2.0,
+                    "fallback must pick the newest older generation (weight 2), got "
+                            + adult.variants.get(0).weight());
+            helper.assertTrue(baby != null && baby.variants.get(0).weight() == 2.0,
+                    "the baby entry of the same generation must fall back with it");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
