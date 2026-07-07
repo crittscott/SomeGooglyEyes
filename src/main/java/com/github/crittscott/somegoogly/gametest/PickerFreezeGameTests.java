@@ -29,7 +29,11 @@ public final class PickerFreezeGameTests {
     private PickerFreezeGameTests() {
     }
 
-    /** A cow with normal AI as the freeze baseline ({@code spawnWithNoFreeWill} forces NoAi on). */
+    /**
+     * A calm cow with NoAi off as the freeze baseline. {@code spawnWithNoFreeWill} strips AI goals and
+     * brain behaviors but leaves the NoAi flag untouched (false); set it explicitly anyway, since the
+     * flag is the very thing these tests exercise.
+     */
     private static Cow spawnCow(GameTestHelper helper, BlockPos pos) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, pos);
         cow.setNoAi(false);
@@ -58,8 +62,10 @@ public final class PickerFreezeGameTests {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void freezePreservesAlreadyForcedNoAi(GameTestHelper helper) {
-        // spawnWithNoFreeWill leaves NoAi on — the "mob was already NoAi before the picker" case.
+        // The "mob was already NoAi before the picker" case; forced explicitly, since
+        // spawnWithNoFreeWill does not touch the flag.
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        cow.setNoAi(true);
         UUID editor = UUID.randomUUID();
 
         PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
