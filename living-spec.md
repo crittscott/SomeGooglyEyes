@@ -120,7 +120,8 @@ Server configuration controls the creation and behavior of eyed entities. The ma
 - global and per-entity spawn percentages;
 - harvest chance when killed with shears;
 - ambient behavior scheduling;
-- event-driven behavior toggles and cooldowns.
+- event-driven behavior toggles and cooldowns;
+- an opt-in gate (default off) for the picker's destructive `/sg spawnall` grid.
 
 Changing spawn percentages affects newly initialized eligible entities. It does not reroll stored entities.
 
@@ -240,7 +241,7 @@ JEI integration registers representative brewing displays for both forms of the 
 
 ## 11. Picker and authoring workflow
 
-The picker is a client-driven in-world authoring tool for creative-mode placement work. The whole workflow — including export, mob freezing/posing, and the spawn helpers — works from a remote client on any server running the mod: the server-touching operations travel as client-to-server picker packets whose handlers re-check creative mode server-side (the only gate; a server that hands out creative is trusting the player with these tools).
+The picker is a client-driven in-world authoring tool for creative-mode placement work. The whole workflow — including export, mob freezing/posing, and the spawn helpers — works from a remote client on any server running the mod: the server-touching operations travel as client-to-server picker packets whose handlers re-check creative mode server-side (a server that hands out creative is trusting the player with these tools). The one operation gated beyond creative is the spawn grid: `/sg spawnall` is refused unless the server config's `allowSpawnAll` is enabled (default off).
 
 The basic workflow is:
 
@@ -264,7 +265,7 @@ The basic workflow is:
 
 Picker drafts are retained per entity type for the session. Drafts seed from existing synced config when available, so editing an existing placement starts from current data instead of a blank state.
 
-The picker also includes spawn commands for authoring and debugging: a spawn grid of many living entity types (optionally filtered to one mod namespace) and a single-mob spawn at the targeted block. A chosen mob can additionally be teleported and turned in place (`mob move`/`mob rot`) to pose it for editing. These are development conveniences and do not affect shipped runtime behavior.
+The picker also includes spawn commands for authoring and debugging: a spawn grid of many living entity types (optionally filtered to one mod namespace; opt-in via the default-off `allowSpawnAll` server config, since it terraforms and mass-spawns with no undo) and a single-mob spawn at the targeted block. A chosen mob can additionally be teleported and turned in place (`mob move`/`mob rot`) to pose it for editing. These are development conveniences and do not affect shipped runtime behavior.
 
 Mob freezing is server-owned (`PickerFreezeService`): one frozen mob per editing player, refused if another player is already editing it, released on unchoose/logout, and restored synchronously at server stop. The pre-freeze `NoAi` value is additionally persisted as a marker tag on the mob while frozen, so a hard crash mid-edit (or the mob's chunk unloading) is recovered on the mob's next load instead of stranding the forced flag.
 
@@ -272,7 +273,7 @@ Mob freezing is server-owned (`PickerFreezeService`): one frozen mob per editing
 
 `/sg` is the user-facing root.
 
-Client-side picker commands handle authoring and export. Server-side `/sg admin` commands are operator-only development tools for toggling eyes, changing appearance, and triggering behaviors on the looked-at living entity.
+Client-side picker commands handle authoring and export. Server-side `/sg admin` commands are development tools — requiring operator level 2 *and* creative mode — for toggling eyes, changing appearance, and triggering behaviors on the looked-at living entity.
 
 The client and server subtrees share the same root but occupy distinct paths. Single-player command fall-through is confirmed; dedicated-server client-to-server command behavior is not verified here.
 

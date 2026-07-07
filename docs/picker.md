@@ -61,17 +61,17 @@ Both act on the live server mob (feedback comes back as a server message). Not t
 
 `/sg spawnall [mod]` (creative) **spawns one of every living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). Use a throwaway world: it freely overwrites blocks — think twice before running it on a shared server.
 
-By default, spawnall is disabled in serverconfig.
+Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAll = true` in the server config (`<world>/serverconfig/somegoogly-server.toml`, `Picker` section) to enable it. The check is server-side, so a modified client can't bypass it.
 
 ## Admin commands
 
-`/sg admin` (operator level 2) mutates the *live* eye state of the mob you're looking at (the same state the shears/potion/dye gameplay drives):
+`/sg admin` (operator level 2, creative mode) mutates the *live* eye state of the mob you're looking at (the same state the shears/potion/dye gameplay drives):
 
 | Command | Effect |
 | --- | --- |
 | `/sg admin eyes <true\|false>` | Give or remove eyes |
-| `/sg admin tint iris <r> <g> <b>` | Set iris color (0–255) |
-| `/sg admin tint cornea <r> <g> <b>` | Set cornea color (0–255) |
+| `/sg admin tint iris <r> <g> <b>` | Set iris color (0–1) |
+| `/sg admin tint cornea <r> <g> <b>` | Set cornea color (0–1) |
 | `/sg admin tint clear` | Clear both color overrides |
 | `/sg admin glow <on\|off\|config>` | Force glow, or revert to the mob's config |
 | `/sg admin behavior <id\|random>` | Play an expression now (e.g. `blink`, `swirl`, `color_change`) |

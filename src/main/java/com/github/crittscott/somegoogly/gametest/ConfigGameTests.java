@@ -59,6 +59,18 @@ public final class ConfigGameTests {
         helper.succeed();
     }
 
+    /**
+     * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must ship
+     * opt-in. Guards the default; the packet-handler refusal itself needs a live player and stays
+     * source-verified like the rest of picker behavior.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void spawnAllDefaultsOff(GameTestHelper helper) {
+        helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
+                "allowSpawnAll must default to false (spawnall is opt-in)");
+        helper.succeed();
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
         RuntimeConfig cow = ServerEyeConfigs.get(new ResourceLocation("minecraft", "cow"), false);

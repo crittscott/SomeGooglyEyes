@@ -19,9 +19,11 @@ import java.util.regex.Pattern;
  * 100+ shipped config files. The eye JSONs only decide <i>where</i> eyes go and whether an entity is
  * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied in
  * {@code ServerEventHandler}); this class decides <i>how often</i> an eligible entity actually rolls
- * eyes.
+ * eyes. Also hosts the picker's opt-in gate for the destructive {@code /sg spawnall} grid
+ * ({@link #ALLOW_SPAWN_ALL}, enforced server-side in {@code PickerSpawnAllPacket}).
  */
 public class ServerConfig {
+    public static final ForgeConfigSpec.BooleanValue ALLOW_SPAWN_ALL;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> AMBIENT_BEHAVIOR_POOL;
     public static final ForgeConfigSpec.BooleanValue AMBIENT_BEHAVIORS;
     public static final ForgeConfigSpec.IntValue AMBIENT_MAX_TICKS;
@@ -107,6 +109,15 @@ public class ServerConfig {
                         "Keep this comfortably above the swirl animation length so a regenerating mob doesn't",
                         "swirl back-to-back.")
                 .defineInRange("swirlHealCooldownTicks", 200, 1, 24000);
+
+        BUILDER.pop();
+        BUILDER.push("Picker");
+
+        ALLOW_SPAWN_ALL = BUILDER
+                .comment("Allow creative players to use /sg spawnall, which spawns one of every living",
+                        "entity type in a grid and freely overwrites blocks with sandstone platforms.",
+                        "No undo — enable only on throwaway authoring worlds.")
+                .define("allowSpawnAll", false);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

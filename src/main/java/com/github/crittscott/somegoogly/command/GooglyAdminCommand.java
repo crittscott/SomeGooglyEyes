@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -27,8 +27,9 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 /**
- * The {@code admin} subtree of {@code /sg} — operator-only (permission level 2) tools that mutate the
- * live {@link LivingEntity} the running player is looking at: its has-eyes flag, iris/cornea tint, glow
+ * The {@code admin} subtree of {@code /sg} — operator (permission level 2) tools, additionally
+ * requiring <b>creative mode</b> like the rest of the picker toolset, that mutate the live
+ * {@link LivingEntity} the running player is looking at: its has-eyes flag, iris/cornea tint, glow
  * mode, and active cosmetic behavior. Exercises the full per-mob override loop (server NBT write →
  * {@link EyeState} broadcast → client apply → renderer override) and the server-owned behavior schedule.
  *
@@ -40,7 +41,7 @@ import javax.annotation.Nullable;
  *
  * <ul>
  *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag</li>
- *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a color (0-255)</li>
+ *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a color (0–1)</li>
  *   <li>{@code /sg admin tint clear} — drop both color overrides</li>
  *   <li>{@code /sg admin glow <on|off|config>} — force glow on/off, or revert to per-eye config</li>
  *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behavior now</li>
@@ -128,16 +129,16 @@ public final class GooglyAdminCommand {
 
     private static LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {
         return Commands.literal(name)
-                .then(Commands.argument("r", IntegerArgumentType.integer(0, 255))
-                        .then(Commands.argument("g", IntegerArgumentType.integer(0, 255))
-                                .then(Commands.argument("b", IntegerArgumentType.integer(0, 255))
+                .then(Commands.argument("r", FloatArgumentType.floatArg(0, 1))
+                        .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1))
+                                .then(Commands.argument("b", FloatArgumentType.floatArg(0, 1))
                                         .executes(ctx -> {
                                             LivingEntity target = requireTarget(ctx);
                                             if (target == null) return 0;
-                                            int r = IntegerArgumentType.getInteger(ctx, "r");
-                                            int g = IntegerArgumentType.getInteger(ctx, "g");
-                                            int b = IntegerArgumentType.getInteger(ctx, "b");
-                                            EyeColor color = new EyeColor(r / 255F, g / 255F, b / 255F);
+                                            float r = FloatArgumentType.getFloat(ctx, "r");
+                                            float g = FloatArgumentType.getFloat(ctx, "g");
+                                            float b = FloatArgumentType.getFloat(ctx, "b");
+                                            EyeColor color = new EyeColor(r, g, b);
                                             if (iris) {
                                                 EyeState.setIrisTint(target, color);
                                             } else {
@@ -164,13 +165,21 @@ public final class GooglyAdminCommand {
         dispatcher.register(Commands.literal("sg").then(adminTree()));
     }
 
-    /** The living entity the source player is looking at, or {@code null} (with feedback) if none. */
+    /**
+     * The shared per-execution guard: the sender must be a player <b>in creative mode</b> (the op-level-2
+     * gate on the subtree is registration-time only), looking at a living entity. Returns that entity, or
+     * {@code null} (with feedback) when any of that fails. Every admin verb calls this first.
+     */
     @Nullable
     private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx) {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayer();
         if (player == null) {
             source.sendFailure(Component.literal("[sg admin] must be run by a player"));
+            return null;
+        }
+        if (!player.isCreative()) {
+            source.sendFailure(Component.literal("[sg admin] requires creative mode"));
             return null;
         }
 
