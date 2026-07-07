@@ -1,12 +1,12 @@
 # Some Googly Eyes
 
-A complete rewrite and expansion of iChun's immortal Googly Eyes. Also look to **Regoogly eyes** by EmeryTheModder if you want a pure port of the original.
+A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes). (Also look to [Regoogly eyes](https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes) by EmeryTheModder if you want a pure port of the original.)
 
 Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
 Eyes are a collectible resource: harvest them, recolor them, brew them into a potion, and put them on other mobs, or yourself.
 
-Also compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware. In-game configuration tool for adding and configuring eyes.
+Also compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: In-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![Googly Eyes splash](docs/googlyeyes-splash.png)
 
@@ -30,7 +30,7 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 **Apply it**: drink it to grow your own googly eyes, or throw the splash to give eyes to one lucky mob nearby.
 
 ## Eye potential
-Acquire and eye item, sneak while targetting a mod to see <an indicator that the mob has eyes defined, does not yet exist>.
+Don't waste your eye potion: Acquire an eye item, sneak while targetting a mod to see whether that mob has the option of having eyes.
 
 ## Configuration
 
@@ -48,9 +48,9 @@ Eye placements are ordinary datapack JSON. There's also an in-game authoring too
 
 ## Compatibility
 
-Eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibarary code.
+The eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code.
 
-Mods with predefined eye config:
+Ships with predefined eye configs for:
 
 - Minecraft
 - Alex's Mobs
@@ -75,4 +75,4 @@ Currently in **alpha release**. It works for me, single and multi-player. But th
 
 A port of iChun's **Googly Eyes**, rebuilt for 1.20.1 with new physics, behaviors, and more.
 
-License: **GPL-3.0** — see [LICENSE](LICENSE).
+License: [**GPL-3.0**](LICENSE).
