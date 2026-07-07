@@ -12,6 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,16 @@ public class HeadInfo {
         /** Defaults to enabled when the field is absent. */
         public boolean isEnabled() {
             return enabled == null || enabled;
+        }
+
+        /**
+         * Whether {@code config} can actually put eyes on a mob: present, enabled, and with at least
+         * one variant. The single eligibility predicate shared by the server's potion targeting and
+         * spawn gating ({@code ServerEyeConfigs}) and the client's held-eye inspect indicator
+         * ({@code EyeInspectIndicator}), so the indicator can never disagree with what a splash does.
+         */
+        public static boolean isUsable(@Nullable RuntimeConfig config) {
+            return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
         }
     }
 

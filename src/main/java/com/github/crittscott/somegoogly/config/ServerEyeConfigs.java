@@ -45,7 +45,7 @@ public final class ServerEyeConfigs {
      */
     public static boolean canEverWearEyes(LivingEntity living) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        return isUsable(get(type, false)) || isUsable(get(type, true));
+        return RuntimeConfig.isUsable(get(type, false)) || RuntimeConfig.isUsable(get(type, true));
     }
 
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
@@ -65,11 +65,7 @@ public final class ServerEyeConfigs {
      * unconfigured entity is not.
      */
     public static boolean isEligible(LivingEntity living) {
-        return isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
-    }
-
-    private static boolean isUsable(RuntimeConfig config) {
-        return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
+        return RuntimeConfig.isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
     }
 
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {

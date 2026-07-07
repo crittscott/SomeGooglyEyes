@@ -206,6 +206,8 @@ The eye item is an ingredient only; it is never applied to an entity directly by
 
 In hand, the item uses the same wobble concept as mob eyes. In static item contexts, the iris is centered.
 
+The held item is also an inspection tool: sneaking while holding it and looking at a living entity shows an action-bar verdict on whether that mob could wear eyes — *can*, *already has*, *can only at the other age*, or *cannot*. The check is entirely client-side over the synced config set and synced eye state, through the same shared eligibility predicate the splash potion's server targeting uses, so it reports what a thrown potion would actually do. It deliberately ignores local client render vetoes, which hide eyes on this client but do not affect the potion.
+
 ### Harvest
 
 Eyed mobs can be harvested in two ways:
@@ -314,7 +316,7 @@ A server-side Forge GameTest suite exists under `src/main/java/com/github/critts
 
 The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, recipe transforms, and shipped config loading.
 
-It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, harvest integration, potion target selection, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
+It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, the held-eye inspect indicator, harvest integration, potion target selection, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
 
 ## 16. Maintenance rules
 

@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly;
 
+import com.github.crittscott.somegoogly.client.EyeInspectIndicator;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
@@ -72,6 +73,9 @@ public class SomeGoogly {
             ClientConfig.register();
 
             MinecraftForge.EVENT_BUS.register(clientEventHandler = new ClientEventHandler());
+
+            // Sneak + held eye item → action-bar verdict on whether the aimed mob could wear eyes.
+            MinecraftForge.EVENT_BUS.register(new EyeInspectIndicator());
 
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
 
