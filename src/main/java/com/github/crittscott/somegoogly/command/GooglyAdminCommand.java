@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -17,12 +18,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
@@ -183,21 +179,10 @@ public final class GooglyAdminCommand {
             return null;
         }
 
-        Vec3 eye = player.getEyePosition(1.0F);
-        Vec3 look = player.getViewVector(1.0F);
-        Vec3 end = eye.add(look.x * REACH, look.y * REACH, look.z * REACH);
-        AABB search = player.getBoundingBox().expandTowards(look.scale(REACH)).inflate(1.0D);
-
-        EntityHitResult hit = ProjectileUtil.getEntityHitResult(
-                player, eye, end, search,
-                e -> e instanceof LivingEntity && e.isPickable() && !e.isSpectator(),
-                REACH * REACH);
-
-        Entity target = hit == null ? null : hit.getEntity();
-        if (target instanceof LivingEntity living) {
-            return living;
+        LivingEntity target = LookTarget.livingInCrosshair(player, REACH);
+        if (target == null) {
+            source.sendFailure(Component.literal("[sg admin] not looking at a living entity"));
         }
-        source.sendFailure(Component.literal("[sg admin] not looking at a living entity"));
-        return null;
+        return target;
     }
 }

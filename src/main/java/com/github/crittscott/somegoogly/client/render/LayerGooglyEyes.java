@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.client.compat.ExoticBirdsCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
@@ -17,8 +16,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
@@ -38,30 +35,9 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
-        // Client global disable check
-        if (ClientConfig.DISABLE_GOOGLY_EYES.get()) {
-            return;
-        }
-
-        // Client entity-specific disable check
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        if (ClientConfig.isEntityDisabled(entityType)) {
-            return;
-        }
-
-        // Check the server's spawn decision (NBT). While the picker is active we bypass this so every
-        // eye-configured mob shows eyes for authoring, without having to raise the spawn-chance config.
-        if (!PickerState.active && !EyeState.hasEyes(living)) {
-            return;
-        }
-
-        // Invisibility hides the eyes, unconditionally.
-        if (living.isInvisible()) {
-            return;
-        }
-
-        HeadInfo helper = HeadInfo.getHelper(entityType, living);
-        if (helper == null || !helper.hasConfig()) {
+        // Shared gate (client disables, has-eyes, invisibility, usable config) — see GooglyGeoLayer.
+        HeadInfo helper = EyeRenderGating.helperToRender(living);
+        if (helper == null) {
             return;
         }
 
@@ -77,8 +53,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         }
 
         GooglyTracker tracker = SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);
-        tracker.setLastUpdateRequest();
-        tracker.requireUpdate();
+        tracker.markRendered();
 
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 

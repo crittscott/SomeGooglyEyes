@@ -14,6 +14,7 @@ import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -27,13 +28,12 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Random;
-
 public class ServerEventHandler {
 
     private static void applyGooglyDecision(LivingEntity living) {
         boolean hasGooglyEyes = false;
         ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        RandomSource random = living.getRandom();
 
         // Players never roll eyes at spawn — they can only receive them mid-life (the googly potion).
         if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()) {
@@ -43,11 +43,7 @@ public class ServerEventHandler {
             // show eyes once grown) rather than being locked out forever.
             if (ServerEyeConfigs.canEverWearEyes(living)) {
                 int percent = ServerConfig.percentFor(entityType);
-
-                // Seeded by UUID so the same mob always rolls the same result (the decision is stored
-                // anyway; this just keeps it consistent if it ever has to be recomputed).
-                Random rand = new Random(Math.abs(living.getUUID().hashCode()) * 8134L);
-                hasGooglyEyes = rand.nextFloat() < (percent / 100F);
+                hasGooglyEyes = random.nextFloat() < (percent / 100F);
             }
         }
 
@@ -57,11 +53,9 @@ public class ServerEventHandler {
         living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
 
         // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
-        // later reattach/potion uses this mob's own arrangement). A separate UUID seed keeps it
-        // deterministic without perturbing the has-eyes roll above. HeadInfo.chooseVariantIndex maps
-        // this 0..1 roll onto whichever age config's weighted variants apply at render time.
-        Random variantRand = new Random(Math.abs(living.getUUID().hashCode()) * 6271L);
-        living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, variantRand.nextFloat());
+        // later reattach/potion uses this mob's own arrangement). HeadInfo.chooseVariantIndex maps this
+        // 0..1 roll onto whichever age config's weighted variants apply at render time.
+        living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, random.nextFloat());
     }
 
     @SubscribeEvent

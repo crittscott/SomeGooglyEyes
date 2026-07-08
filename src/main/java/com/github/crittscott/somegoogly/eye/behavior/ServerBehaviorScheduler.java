@@ -33,12 +33,8 @@ import java.util.Random;
  */
 public final class ServerBehaviorScheduler {
 
-    // Event-driven 'grow' (hit reaction), resolved once. Null only on a build where the id was renamed/removed.
-    private static final EyeBehavior GROW = EyeBehaviors.byId(new ResourceLocation("somegoogly", "grow"));
     private static final Random RANDOM = new Random();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
-    // Event-driven 'swirl' (trade/heal reaction), resolved once. Null only on a build where the id was renamed/removed.
-    private static final EyeBehavior SWIRL = EyeBehaviors.byId(new ResourceLocation("somegoogly", "swirl"));
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
 
@@ -88,7 +84,7 @@ public final class ServerBehaviorScheduler {
 
     /** {@code mob} was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it. */
     public static void onHealed(LivingEntity mob) {
-        if (SWIRL == null || !ServerConfig.SWIRL_ON_HEAL.get()) {
+        if (!ServerConfig.SWIRL_ON_HEAL.get()) {
             return;
         }
         MobState state = eventTarget(mob);
@@ -97,21 +93,18 @@ public final class ServerBehaviorScheduler {
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong())) {
+        if (start(mob, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
     }
 
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
     public static void onPlayerHurt(LivingEntity mob) {
-        if (GROW == null) {
-            return;
-        }
         MobState state = eventTarget(mob);
         if (state == null || RANDOM.nextInt(100) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
             return;
         }
-        start(mob, state, GROW, GROW.defaultDuration(), RANDOM.nextLong());
+        start(mob, state, EyeBehaviors.GROW, EyeBehaviors.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -150,14 +143,14 @@ public final class ServerBehaviorScheduler {
 
     /** {@code villager} completed a trade with a player: play 'swirl' (if enabled). */
     public static void onTrade(LivingEntity villager) {
-        if (SWIRL == null || !ServerConfig.SWIRL_ON_TRADE.get()) {
+        if (!ServerConfig.SWIRL_ON_TRADE.get()) {
             return;
         }
         MobState state = eventTarget(villager);
         if (state == null) {
             return;
         }
-        start(villager, state, SWIRL, SWIRL.defaultDuration(), RANDOM.nextLong());
+        start(villager, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong());
     }
 
     private static void rollAmbient(LivingEntity mob, MobState state) {

@@ -135,10 +135,11 @@ public class ClientEventHandler {
                 while (ite.hasNext()) {
                     Map.Entry<LivingEntity, GooglyTracker> e = ite.next();
                     GooglyTracker tracker = e.getValue();
-                    if (clientTicks - tracker.lastUpdateRequest > 10) {
-                        ite.remove();
-                    } else {
-                        tracker.update();
+                    int idle = clientTicks - tracker.lastRenderTick;
+                    if (idle > 10) {
+                        ite.remove(); // untracked long enough; drop it
+                    } else if (idle <= 1) {
+                        tracker.update(); // rendered this interval; simulate (off-screen eyes coast frozen)
                     }
                 }
             }

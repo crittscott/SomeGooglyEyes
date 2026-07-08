@@ -3,9 +3,8 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import net.minecraft.util.Mth;
 
 /**
- * Blends the cornea toward a color and back. The color is chosen from the seed (a random hue), so this
- * is the general form of what the old hardwired anger-tint did. Non-physical overlay: drives the
- * cornea-tint channel.
+ * Blends the cornea toward a color and back. The color is chosen from the seed (a random hue).
+ * Non-physical overlay: drives the cornea-tint channel.
  */
 final class ColorChangeBehavior extends AbstractEyeBehavior {
 

@@ -36,7 +36,7 @@ public final class ConfigGameTests {
     }
 
     private static boolean usable(RuntimeConfig config) {
-        return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
+        return config != null && config.enabled && config.variants != null && !config.variants.isEmpty();
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)

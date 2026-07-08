@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 /**
  * The complete datapack description of one eye on a mob: its {@link EyePlacement} (where/how big/aimed)
- * plus its {@link EyeAppearance} (color/glow). Replaces the old {@code HeadInfo.EyeConfig}.
+ * plus its {@link EyeAppearance} (color/glow).
  *
  * <p>The two halves are kept as separate value types because the rest of the mod treats them
  * differently — appearance is portable/overridable (an eye item carries it), placement is fixed to the

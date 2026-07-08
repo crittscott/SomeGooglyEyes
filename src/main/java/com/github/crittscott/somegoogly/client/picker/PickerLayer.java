@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.compat.ExoticBirdsCompat;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -9,11 +10,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -23,9 +22,6 @@ import net.minecraft.world.entity.LivingEntity;
  * this entity while the picker is active, so you see only the work-in-progress.
  */
 public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-
-    private static final ResourceLocation TEX = new ResourceLocation("somegoogly", "textures/model/modelgooglyeye.png");
-    private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
 
     private final ModelGooglyEye modelGooglyEye;
 
@@ -61,7 +57,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
             poseStack.pushPose();
             ExoticBirdsCompat.preTransform(model, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
-                renderEye(poseStack, bufferSource, packedLight, overlay, listed.eye);
+                renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
         }
@@ -75,33 +71,38 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
                 if (PickerState.currentEye != null) {
-                    renderEye(poseStack, bufferSource, packedLight, overlay, PickerState.currentEye);
+                    renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, PickerState.currentEye);
                 }
             }
             poseStack.popPose();
         }
     }
 
-    private void renderEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
-                           int overlay, EyeDraft eye) {
+    /**
+     * Draw a draft eye as a static preview (centered iris, no physics) at the current pose — placement is
+     * what matters when authoring. Shared with the GeckoLib preview path ({@code GooglyGeoLayer}) so the
+     * two can't drift; the caller has already moved the pose into the attachment space.
+     */
+    public static void renderPreviewEye(PoseStack poseStack, ModelGooglyEye model, MultiBufferSource bufferSource,
+                                        int packedLight, int overlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
-        HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
+        HeadInfo.applyRotation(poseStack, eye.inclination, eye.azimuth);
 
         float scale = (float) eye.eyeScale;
         poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * (float) eye.depth);
 
-        VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
+        VertexConsumer buffer = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
         double[] cornea = eye.corneaColors;
-        modelGooglyEye.renderCornea(poseStack, buffer, packedLight, overlay, (float) cornea[0], (float) cornea[1],
+        model.renderCornea(poseStack, buffer, packedLight, overlay, (float) cornea[0], (float) cornea[1],
                 (float) cornea[2], 1.0F);
 
         float irisScale = (float) eye.irisScale;
         double[] iris = eye.irisColors;
         poseStack.pushPose();
         poseStack.scale(irisScale, irisScale, 1.0F);
-        modelGooglyEye.moveIris(0.0F, 0.0F, irisScale); // centered preview, no physics
-        modelGooglyEye.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1],
+        model.moveIris(0.0F, 0.0F, irisScale); // centered preview, no physics
+        model.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1],
                 (float) iris[2], 1.0F);
         poseStack.popPose();
 

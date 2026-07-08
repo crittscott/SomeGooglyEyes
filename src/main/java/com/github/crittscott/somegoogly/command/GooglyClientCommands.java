@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
 import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
@@ -16,7 +15,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -81,10 +79,6 @@ public class GooglyClientCommands {
     private static final SimpleCommandExceptionType NOT_CREATIVE =
             new SimpleCommandExceptionType(Component.literal("The picker requires creative mode."));
 
-    private static double azi(EyeDraft e) {
-        return e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
-    }
-
     private static int choose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         PickerState.active = true; // turn the picker on so the preview/gizmo render
@@ -141,10 +135,6 @@ public class GooglyClientCommands {
         ctx.getSource().sendSuccess(() -> Component.literal("[Googly] " + text), false);
     }
 
-    private static double incl(EyeDraft e) {
-        return e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
-    }
-
     private static int listEyes(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
@@ -156,7 +146,7 @@ public class GooglyClientCommands {
             String mark = i == PickerState.selectedIndex ? " *" : "";
             String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
             feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s%s",
-                    i + 1, le.part, e.position[0], e.position[1], e.position[2], incl(e), azi(e), cross, mark));
+                    i + 1, le.part, e.position[0], e.position[1], e.position[2], e.inclination, e.azimuth, cross, mark));
         }
         return 1;
     }
@@ -221,9 +211,9 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
-                opt(MaybeFloatArgumentType.get(ctx, "y")),
-                opt(MaybeFloatArgumentType.get(ctx, "z")));
+        PickerState.setPosition(MaybeDoubleArgumentType.get(ctx, "x"),
+                MaybeDoubleArgumentType.get(ctx, "y"),
+                MaybeDoubleArgumentType.get(ctx, "z"));
         EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
         return 1;
@@ -232,10 +222,6 @@ public class GooglyClientCommands {
     @SubscribeEvent
     public void onRegisterClientCommands(RegisterClientCommandsEvent event) {
         register(event.getDispatcher(), event.getBuildContext());
-    }
-
-    private static Double opt(Optional<Float> value) {
-        return value.map(Float::doubleValue).orElse(null);
     }
 
     private static int part(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -264,21 +250,21 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(opt(MaybeFloatArgumentType.get(ctx, "x")),
-                opt(MaybeFloatArgumentType.get(ctx, "y")),
-                opt(MaybeFloatArgumentType.get(ctx, "z")));
-        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
-                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
+        PickerState.setPosition(MaybeDoubleArgumentType.get(ctx, "x"),
+                MaybeDoubleArgumentType.get(ctx, "y"),
+                MaybeDoubleArgumentType.get(ctx, "z"));
+        PickerState.setRotation(MaybeDoubleArgumentType.get(ctx, "inclination"),
+                MaybeDoubleArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye;
         feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.0f° azi %.0f°.",
-                e.position[0], e.position[1], e.position[2], incl(e), azi(e)));
+                e.position[0], e.position[1], e.position[2], e.inclination, e.azimuth));
         return 1;
     }
 
     private static <T> LiteralArgumentBuilder<CommandSourceStack> prop(String name, ArgumentType<T> type,
                                                                        Command<CommandSourceStack> exec) {
         RequiredArgumentBuilder<CommandSourceStack, T> v = Commands.argument("v", type);
-        terminal(v, exec);
+        v.executes(exec);
         return Commands.literal(name).then(v);
     }
 
@@ -358,49 +344,49 @@ public class GooglyClientCommands {
     private static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         LiteralArgumentBuilder<CommandSourceStack> sg = Commands.literal("sg");
 
-        verb(sg, "choose", b -> terminal(b, GooglyClientCommands::choose));
-        verb(sg, "unchoose", b -> terminal(b, GooglyClientCommands::unchoose));
+        verb(sg, "choose", b -> b.executes(GooglyClientCommands::choose));
+        verb(sg, "unchoose", b -> b.executes(GooglyClientCommands::unchoose));
 
         verb(sg, "part", b -> {
             RequiredArgumentBuilder<CommandSourceStack, String> target =
                     Commands.argument("target", StringArgumentType.word());
-            terminal(target, GooglyClientCommands::part);
+            target.executes(GooglyClientCommands::part);
             b.then(target);
         });
 
         verb(sg, "create", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Float> z =
                     Commands.argument("z", FloatArgumentType.floatArg());
-            terminal(z, GooglyClientCommands::create);
+            z.executes(GooglyClientCommands::create);
             b.then(Commands.argument("x", FloatArgumentType.floatArg())
                     .then(Commands.argument("y", FloatArgumentType.floatArg()).then(z)));
         });
 
         // move: ~ supported per axis to leave an axis unchanged.
         verb(sg, "move", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
-                    Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
-            terminal(z, GooglyClientCommands::move);
-            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
-                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> z =
+                    Commands.argument("z", MaybeDoubleArgumentType.maybeDouble());
+            z.executes(GooglyClientCommands::move);
+            b.then(Commands.argument("x", MaybeDoubleArgumentType.maybeDouble())
+                    .then(Commands.argument("y", MaybeDoubleArgumentType.maybeDouble()).then(z)));
         });
 
         verb(sg, "rot", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
-                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
-            terminal(azimuth, GooglyClientCommands::rot);
-            b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> azimuth =
+                    Commands.argument("azimuth", MaybeDoubleArgumentType.maybeDouble());
+            azimuth.executes(GooglyClientCommands::rot);
+            b.then(Commands.argument("inclination", MaybeDoubleArgumentType.maybeDouble()).then(azimuth));
         });
 
         // posrot: move + rot in one go (the common case). ~ supported per component to leave it unchanged.
         verb(sg, "posrot", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
-                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
-            terminal(azimuth, GooglyClientCommands::posrot);
-            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
-                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat())
-                            .then(Commands.argument("z", MaybeFloatArgumentType.maybeFloat())
-                                    .then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat())
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> azimuth =
+                    Commands.argument("azimuth", MaybeDoubleArgumentType.maybeDouble());
+            azimuth.executes(GooglyClientCommands::posrot);
+            b.then(Commands.argument("x", MaybeDoubleArgumentType.maybeDouble())
+                    .then(Commands.argument("y", MaybeDoubleArgumentType.maybeDouble())
+                            .then(Commands.argument("z", MaybeDoubleArgumentType.maybeDouble())
+                                    .then(Commands.argument("inclination", MaybeDoubleArgumentType.maybeDouble())
                                             .then(azimuth)))));
         });
 
@@ -412,59 +398,59 @@ public class GooglyClientCommands {
             verb(b, "move", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Float> dz =
                         Commands.argument("dz", FloatArgumentType.floatArg());
-                terminal(dz, GooglyClientCommands::mobMove);
+                dz.executes(GooglyClientCommands::mobMove);
                 x.then(Commands.argument("dx", FloatArgumentType.floatArg())
                         .then(Commands.argument("dy", FloatArgumentType.floatArg()).then(dz)));
             });
             verb(b, "rot", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Float> azimuth =
                         Commands.argument("azimuth", FloatArgumentType.floatArg());
-                terminal(azimuth, GooglyClientCommands::mobRot);
+                azimuth.executes(GooglyClientCommands::mobRot);
                 x.then(azimuth);
             });
         });
 
-        verb(sg, "save", b -> terminal(b, GooglyClientCommands::save));
+        verb(sg, "save", b -> b.executes(GooglyClientCommands::save));
 
         verb(sg, "select", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::select);
+            n.executes(GooglyClientCommands::select);
             b.then(n);
         });
         verb(sg, "delete", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::delete);
+            n.executes(GooglyClientCommands::delete);
             b.then(n);
         });
         // dupe <n>: copy a saved eye into a new unsaved draft (select without the selection).
         verb(sg, "dupe", b -> {
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::dupe);
+            n.executes(GooglyClientCommands::dupe);
             b.then(n);
         });
 
         // variant: new / <n> (switch) / del <n> / weight <w>. Literals resolve before the bare integer arg.
         verb(sg, "variant", b -> {
-            verb(b, "new", x -> terminal(x, GooglyClientCommands::variantNew));
+            verb(b, "new", x -> x.executes(GooglyClientCommands::variantNew));
             verb(b, "weight", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Float> w = Commands.argument("w", FloatArgumentType.floatArg(0));
-                terminal(w, GooglyClientCommands::variantWeight);
+                w.executes(GooglyClientCommands::variantWeight);
                 x.then(w);
             });
             verb(b, "del", x -> {
                 RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-                terminal(n, GooglyClientCommands::variantDelete);
+                n.executes(GooglyClientCommands::variantDelete);
                 x.then(n);
             });
             RequiredArgumentBuilder<CommandSourceStack, Integer> n = Commands.argument("n", IntegerArgumentType.integer(1));
-            terminal(n, GooglyClientCommands::variantSelect);
+            n.executes(GooglyClientCommands::variantSelect);
             b.then(n);
         });
 
         verb(sg, "list", b -> {
-            verb(b, "parts", x -> terminal(x, GooglyClientCommands::listParts));
-            verb(b, "eyes", x -> terminal(x, GooglyClientCommands::listEyes));
-            verb(b, "variants", x -> terminal(x, GooglyClientCommands::listVariants));
+            verb(b, "parts", x -> x.executes(GooglyClientCommands::listParts));
+            verb(b, "eyes", x -> x.executes(GooglyClientCommands::listEyes));
+            verb(b, "variants", x -> x.executes(GooglyClientCommands::listVariants));
         });
 
         verb(sg, "properties", b -> {
@@ -479,8 +465,8 @@ public class GooglyClientCommands {
             b.then(prop("crosstarget", IntegerArgumentType.integer(0), GooglyClientCommands::propCrossTarget));
         });
 
-        verb(sg, "export", b -> terminal(b, GooglyClientCommands::export));
-        verb(sg, "exportall", b -> terminal(b, GooglyClientCommands::exportAll));
+        verb(sg, "export", b -> b.executes(GooglyClientCommands::export));
+        verb(sg, "exportall", b -> b.executes(GooglyClientCommands::exportAll));
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
@@ -490,16 +476,16 @@ public class GooglyClientCommands {
             RequiredArgumentBuilder<CommandSourceStack, ?> type =
                     Commands.argument("type", ResourceArgument.resource(context, Registries.ENTITY_TYPE))
                             .suggests(SuggestionProviders.SUMMONABLE_ENTITIES);
-            terminal(type, GooglyClientCommands::spawn);
+            type.executes(GooglyClientCommands::spawn);
             b.then(type);
         });
 
         // spawnall [mod] — bare spawns every mod; an optional namespace narrows it (a debugging aid).
         verb(sg, "spawnall", b -> {
-            terminal(b, GooglyClientCommands::spawnAll);
+            b.executes(GooglyClientCommands::spawnAll);
             RequiredArgumentBuilder<CommandSourceStack, String> mod =
                     Commands.argument("mod", StringArgumentType.word());
-            terminal(mod, GooglyClientCommands::spawnAll);
+            mod.executes(GooglyClientCommands::spawnAll);
             b.then(mod);
         });
 
@@ -528,7 +514,7 @@ public class GooglyClientCommands {
 
     private static RequiredArgumentBuilder<CommandSourceStack, Float> rgb(Command<CommandSourceStack> exec) {
         RequiredArgumentBuilder<CommandSourceStack, Float> bArg = Commands.argument("b", FloatArgumentType.floatArg(0, 1));
-        terminal(bArg, exec);
+        bArg.executes(exec);
         return Commands.argument("r", FloatArgumentType.floatArg(0, 1))
                 .then(Commands.argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
     }
@@ -537,10 +523,10 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setRotation(opt(MaybeFloatArgumentType.get(ctx, "inclination")),
-                opt(MaybeFloatArgumentType.get(ctx, "azimuth")));
+        PickerState.setRotation(MaybeDoubleArgumentType.get(ctx, "inclination"),
+                MaybeDoubleArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye;
-        feedback(ctx, String.format("Rotation incl %.0f° azi %.0f°.", incl(e), azi(e)));
+        feedback(ctx, String.format("Rotation incl %.0f° azi %.0f°.", e.inclination, e.azimuth));
         return 1;
     }
 
@@ -593,11 +579,6 @@ public class GooglyClientCommands {
         NetworkHandler.INSTANCE.sendToServer(new PickerSpawnAllPacket(mod));
         feedback(ctx, mod == null ? "Spawning mobs…" : "Spawning " + mod + " mobs…");
         return 1;
-    }
-
-    /** Mark a node executable: running it does this verb's own work. */
-    private static void terminal(ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> leaf) {
-        node.executes(leaf);
     }
 
     private static int unchoose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

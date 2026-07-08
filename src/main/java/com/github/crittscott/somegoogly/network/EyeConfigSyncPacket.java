@@ -47,9 +47,10 @@ public class EyeConfigSyncPacket {
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
             CompoundTag tag = buffer.readNbt();
-            // Skip a single malformed entry (e.g. schema drift between mod versions) rather than
-            // letting it abort the whole sync — which would surface as a disconnect. The id and NBT
-            // are always read first so the buffer stays aligned for the next entry.
+            // Skip a single entry that fails to decode rather than letting it abort the whole sync —
+            // which would surface as a disconnect. (The protocol version gates cross-build wire
+            // compatibility, so this guards a bug, not version skew.) The id and NBT are always read
+            // first so the buffer stays aligned for the next entry.
             try {
                 configs.put(id, RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow());
             } catch (Exception e) {

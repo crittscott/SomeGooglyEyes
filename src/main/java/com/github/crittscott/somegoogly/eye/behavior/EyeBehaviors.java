@@ -12,18 +12,20 @@ import java.util.Map;
  * Forge registry: these are code-defined client animations, and both sides only need the ids to agree
  * (the server names a behavior in the trigger packet; the client looks it up to play). This class is
  * deliberately free of client-only references so the server can class-load it to pick and schedule.
- *
- * <p>This replaces the old {@code state.EyeBehaviors} design note: the "registry rather than more
- * {@code instanceof} branches" plan, now realised.
  */
 public final class EyeBehaviors {
+
+    // The event-driven behaviors are exposed as constants so their in-code drivers (the scheduler's
+    // hit/trade/heal reactions) reference them directly; id lookup is only for names from the wire.
+    public static final EyeBehavior GROW = new GrowBehavior();
+    public static final EyeBehavior SWIRL = new SwirlBehavior();
 
     private static final List<EyeBehavior> ALL = List.of(
             new StareBehavior(),
             new BlinkBehavior(),
-            new GrowBehavior(),
+            GROW,
             new ColorChangeBehavior(),
-            new SwirlBehavior(),
+            SWIRL,
             new SideEyeBehavior(),
             new CrossEyeBehavior()
     );

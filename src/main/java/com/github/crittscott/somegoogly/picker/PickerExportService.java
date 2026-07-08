@@ -96,7 +96,7 @@ public final class PickerExportService {
         }
 
         JsonObject json = EyeConfigJsonWriter.fileJson(EyeConfigJsonWriter.entryJson(
-                EyeConfigJsonWriter.versionRange(version.get()), "any", config.isEnabled(), variants));
+                EyeConfigJsonWriter.versionRange(version.get()), "any", config.enabled, variants));
 
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
         Path file = packDir.resolve("data").resolve(typeId.getNamespace())

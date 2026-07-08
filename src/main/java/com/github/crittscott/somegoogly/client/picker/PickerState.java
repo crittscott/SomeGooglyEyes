@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
@@ -114,10 +115,6 @@ public final class PickerState {
         return currentEye != null;
     }
 
-    private static EyeDraft copy(EyeDraft s) {
-        return s.copy();
-    }
-
     /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
     public static void createEye(double x, double y, double z) {
         currentEye = defaultEye();
@@ -186,7 +183,7 @@ public final class PickerState {
             return false;
         }
         ListedEye le = eyes.get(idx);
-        currentEye = copy(le.eye);
+        currentEye = le.eye.copy();
         currentPart = le.part;
         syncPartIndex();
         selectedIndex = -1;
@@ -265,7 +262,7 @@ public final class PickerState {
         targetType = newType;
         parts = new ArrayList<>(tokens);
         partIndex = 0;
-        currentPart = parts.isEmpty() ? null : parts.get(0);
+        currentPart = parts.get(0); // tokens is non-empty (checked above)
         // Switch to this entity's own draft, so each mob keeps its saved eyes across switches and exportall
         // can emit them all. On first sighting, seed from the mob's existing (synced) config so editing an
         // existing placement starts from it rather than a blank slate; a never-configured mob gets an empty
@@ -293,7 +290,7 @@ public final class PickerState {
                                                 EntityModel<?> model, EyeAttachmentResolver resolver) {
         RuntimeConfig config = ClientEyeConfigs.get(type, baby);
         List<DraftVariant> seeded = new ArrayList<>();
-        if (config != null && config.isEnabled() && config.variants != null) {
+        if (config != null && config.enabled && config.variants != null) {
             for (Variant v : config.variants) {
                 DraftVariant dv = new DraftVariant();
                 dv.weight = v.weight();
@@ -348,9 +345,9 @@ public final class PickerState {
         if (selectedIndex >= 0 && selectedIndex < eyes.size()) {
             ListedEye le = eyes.get(selectedIndex);
             le.part = currentPart;
-            le.eye = copy(currentEye);
+            le.eye = currentEye.copy();
         } else {
-            eyes.add(new ListedEye(currentPart, copy(currentEye)));
+            eyes.add(new ListedEye(currentPart, currentEye.copy()));
             selectedIndex = eyes.size() - 1;
         }
         return true;
@@ -364,7 +361,7 @@ public final class PickerState {
             return false;
         }
         ListedEye le = eyes.get(idx);
-        currentEye = copy(le.eye);
+        currentEye = le.eye.copy();
         currentPart = le.part;
         syncPartIndex();
         selectedIndex = idx;
@@ -465,27 +462,17 @@ public final class PickerState {
         return true;
     }
 
-    /** The CLI {@code move x y z} op: set absolute position; {@code null} leaves that axis unchanged. */
-    public static void setPosition(Double x, Double y, Double z) {
-        if (x != null) {
-            currentEye.position[0] = x;
-        }
-        if (y != null) {
-            currentEye.position[1] = y;
-        }
-        if (z != null) {
-            currentEye.position[2] = z;
-        }
+    /** The CLI {@code move x y z} op: set absolute position; an empty value leaves that axis unchanged. */
+    public static void setPosition(Optional<Double> x, Optional<Double> y, Optional<Double> z) {
+        x.ifPresent(v -> currentEye.position[0] = v);
+        y.ifPresent(v -> currentEye.position[1] = v);
+        z.ifPresent(v -> currentEye.position[2] = v);
     }
 
-    /** The CLI {@code rot inclination azimuth} op; {@code null} leaves that angle unchanged. */
-    public static void setRotation(Double inclination, Double azimuth) {
-        if (inclination != null) {
-            currentEye.inclination = inclination;
-        }
-        if (azimuth != null) {
-            currentEye.azimuth = azimuth;
-        }
+    /** The CLI {@code rot inclination azimuth} op; an empty value leaves that angle unchanged. */
+    public static void setRotation(Optional<Double> inclination, Optional<Double> azimuth) {
+        inclination.ifPresent(v -> currentEye.inclination = v);
+        azimuth.ifPresent(v -> currentEye.azimuth = v);
     }
 
     /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */

@@ -27,9 +27,8 @@ import java.util.WeakHashMap;
  *   <li>the name of the model's own Java field holding the box. Mod classes are never
  *       obfuscation-mangled (only Minecraft/Forge classes are), so field names are as stable as box
  *       names;</li>
- *   <li>the positional {@code #N} (the box's index in the family's all-boxes list). A stored pure
- *       {@code #N} token also always resolves by position, whatever the box's segment name is, so
- *       configs authored before names were recoverable keep working.</li>
+ *   <li>the positional {@code #N} (the box's index in the family's all-boxes list), for a box with no
+ *       name and no field. It appears as a normal path segment and suffix-matches like any other.</li>
  * </ol>
  */
 abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
@@ -104,19 +103,12 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     /**
-     * The index of the box {@code token} addresses, or {@code -1}: a pure {@code #N} resolves by
-     * position (kept so pre-path configs and nameless boxes stay addressable), anything else is the
-     * first box — in all-boxes order — whose path suffix-matches.
+     * The index of the box {@code token} addresses, or {@code -1}: the first box — in all-boxes order —
+     * whose path suffix-matches. A nameless box's {@code #N} segment matches here like any other segment.
      */
     private static int find(ModelIndex index, String token) {
         if (token == null) {
             return -1;
-        }
-        if (token.startsWith("#") && token.indexOf('/') < 0) {
-            int position = parseIndex(index, token);
-            if (position >= 0) {
-                return position;
-            }
         }
         for (int i = 0; i < index.paths().size(); i++) {
             if (EyeAttachmentResolver.pathMatches(token, index.paths().get(i))) {
@@ -128,15 +120,6 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
     private ModelIndex indexOf(EntityModel<?> model) {
         return cache.computeIfAbsent(model, this::buildIndex);
-    }
-
-    private static int parseIndex(ModelIndex index, String token) {
-        try {
-            int i = Integer.parseInt(token.substring(1));
-            return i >= 0 && i < index.parts().size() ? i : -1;
-        } catch (NumberFormatException ignored) {
-            return -1;
-        }
     }
 
     /**

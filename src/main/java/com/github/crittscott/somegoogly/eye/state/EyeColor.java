@@ -7,8 +7,7 @@ import java.util.List;
 
 /**
  * One RGB color, each channel 0..1. The single color representation across the mod — config,
- * item/entity override, and the renderer all use this, replacing the old triple of {@code double[3]}
- * (config JSON), packed {@code 0xRRGGBB} int (override NBT), and {@code float[3]} (renderer).
+ * item/entity override, and the renderer all use this.
  *
  * <p>Serialized as the {@code [r, g, b]} list the datapack JSON already uses, so the existing eye
  * config files are unchanged.

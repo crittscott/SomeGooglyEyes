@@ -21,8 +21,10 @@ public class GooglyTracker {
     public final LivingEntity parent;
     public final Random rand;
 
-    public int lastUpdateRequest;
-    public boolean shouldUpdate = true;
+    // The client tick during which this tracker was last rendered. Drives both the tick loop's decisions
+    // (see ClientEventHandler): evict once it's more than 10 ticks stale, and simulate only while it's
+    // being rendered — so off-screen eyes freeze instead of wobbling on unseen.
+    public int lastRenderTick;
 
     public double motionX, motionY, motionZ;
 
@@ -255,12 +257,9 @@ public class GooglyTracker {
         return this.helper.headsRef() == helper.headsRef();
     }
 
-    public void requireUpdate() {
-        shouldUpdate = true;
-    }
-
-    public void setLastUpdateRequest() {
-        lastUpdateRequest = ClientEventHandler.clientTicks;
+    /** Stamp this tracker as rendered this client tick (drives eviction + whether to simulate). */
+    public void markRendered() {
+        lastRenderTick = ClientEventHandler.clientTicks;
     }
 
     /**
@@ -290,11 +289,6 @@ public class GooglyTracker {
     }
 
     public void update() {
-        if (!shouldUpdate) {
-            return;
-        }
-        shouldUpdate = false;
-
         motionX = parent.getX() - prevX;
         motionY = parent.getY() - prevY;
         motionZ = parent.getZ() - prevZ;

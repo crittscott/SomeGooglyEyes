@@ -43,8 +43,8 @@ public record EyePlacement(Vec3 position, double eyeScale, double irisScale, dou
     /** {@link MapCodec} (flat fields) so {@link EyeDefinition} can sit placement beside appearance. */
     public static final MapCodec<EyePlacement> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
             Vec3.CODEC.optionalFieldOf("position", DEFAULT.position).forGetter(EyePlacement::position),
-            Codec.DOUBLE.optionalFieldOf("eyeScale", 0.75).forGetter(EyePlacement::eyeScale),
-            Codec.DOUBLE.optionalFieldOf("irisScale", 0.6).forGetter(EyePlacement::irisScale),
+            Codec.DOUBLE.optionalFieldOf("eyeScale", DEFAULT.eyeScale).forGetter(EyePlacement::eyeScale),
+            Codec.DOUBLE.optionalFieldOf("irisScale", DEFAULT.irisScale).forGetter(EyePlacement::irisScale),
             Codec.DOUBLE.optionalFieldOf("depth", DEFAULT_DEPTH).forGetter(EyePlacement::depth),
             Codec.DOUBLE.optionalFieldOf("inclination", DEFAULT_INCLINATION).forGetter(EyePlacement::inclination),
             Codec.DOUBLE.optionalFieldOf("azimuth", DEFAULT_AZIMUTH).forGetter(EyePlacement::azimuth),

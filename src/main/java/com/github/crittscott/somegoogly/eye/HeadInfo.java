@@ -34,9 +34,6 @@ import java.util.Optional;
  * nested classes here, shared by the datapack loader, the sync packet, and the picker exporter.
  */
 public class HeadInfo {
-    public static final double DEFAULT_AZIMUTH = EyePlacement.DEFAULT_AZIMUTH;
-    /** Re-exported from {@link EyePlacement} so existing callers (picker) keep their reference. */
-    public static final double DEFAULT_INCLINATION = EyePlacement.DEFAULT_INCLINATION;
     private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
 
     private final RuntimeConfig entityConfig;
@@ -86,25 +83,20 @@ public class HeadInfo {
     // Runtime structure selected by version and age, then synced to clients.
     public static class RuntimeConfig {
         public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.BOOL.optionalFieldOf("enabled").forGetter(c -> Optional.ofNullable(c.enabled)),
+                Codec.BOOL.optionalFieldOf("enabled", true).forGetter(c -> c.enabled),
                 Variant.CODEC.listOf().optionalFieldOf("variants", List.of())
                         .forGetter(c -> c.variants != null ? c.variants : List.of())
         ).apply(inst, (enabled, variants) -> {
             RuntimeConfig c = new RuntimeConfig();
-            c.enabled = enabled.orElse(null);
+            c.enabled = enabled;
             c.variants = variants;
             return c;
         }));
 
-        public Boolean enabled;
+        public boolean enabled = true;
         // One or more placement variants; a mob picks one (weighted) at spawn. The loader keeps only
         // entries with at least one usable variant (see EyeConfigReloadListener#usableVariants).
         public List<Variant> variants;
-
-        /** Defaults to enabled when the field is absent. */
-        public boolean isEnabled() {
-            return enabled == null || enabled;
-        }
 
         /**
          * Whether {@code config} can actually put eyes on a mob: present, enabled, and with at least
@@ -113,7 +105,7 @@ public class HeadInfo {
          * ({@code EyeInspectIndicator}), so the indicator can never disagree with what a splash does.
          */
         public static boolean isUsable(@Nullable RuntimeConfig config) {
-            return config != null && config.isEnabled() && config.variants != null && !config.variants.isEmpty();
+            return config != null && config.enabled && config.variants != null && !config.variants.isEmpty();
         }
     }
 
@@ -171,27 +163,22 @@ public class HeadInfo {
         public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.STRING.optionalFieldOf("version", "").forGetter(e -> e.version != null ? e.version : ""),
                 Codec.STRING.optionalFieldOf("age", "any").forGetter(e -> e.age != null ? e.age : "any"),
-                Codec.BOOL.optionalFieldOf("enabled").forGetter(e -> Optional.ofNullable(e.enabled)),
+                Codec.BOOL.optionalFieldOf("enabled", true).forGetter(e -> e.enabled),
                 Variant.CODEC.listOf().optionalFieldOf("variants").forGetter(e -> Optional.ofNullable(e.variants))
         ).apply(inst, (version, age, enabled, variants) -> {
             VersionedEntry e = new VersionedEntry();
             e.version = version;
             e.age = age;
-            e.enabled = enabled.orElse(null);
+            e.enabled = enabled;
             e.variants = variants.orElse(null);
             return e;
         }));
 
         public String age;
-        public Boolean enabled;
+        public boolean enabled = true;
         // Weighted placement variants; a mob picks one at spawn. The only placement shape on disk.
         public List<Variant> variants;
         public String version;
-
-        /** Defaults to enabled when the field is absent. */
-        public boolean isEnabled() {
-            return enabled == null || enabled;
-        }
     }
 
     /** The eye's config appearance (color/glow), or {@link EyeAppearance#DEFAULT} when out of range. */
@@ -315,7 +302,7 @@ public class HeadInfo {
 
     /** Whether this entity has a usable, enabled placement variant. */
     public boolean hasConfig() {
-        return entityConfig != null && entityConfig.isEnabled() && heads != null && !heads.isEmpty();
+        return entityConfig != null && entityConfig.enabled && heads != null && !heads.isEmpty();
     }
 
     private HeadConfig headAt(int headIndex) {

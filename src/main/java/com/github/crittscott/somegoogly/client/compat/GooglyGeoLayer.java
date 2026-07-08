@@ -3,11 +3,11 @@ package com.github.crittscott.somegoogly.client.compat;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
+import com.github.crittscott.somegoogly.client.picker.PickerLayer;
+import com.github.crittscott.somegoogly.client.render.EyeRenderGating;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
-import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
@@ -15,8 +15,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -99,25 +97,9 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             return;
         }
 
-        if (ClientConfig.DISABLE_GOOGLY_EYES.get()) {
-            return;
-        }
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        if (ClientConfig.isEntityDisabled(entityType)) {
-            return;
-        }
-        // While the picker is active, force eyes on every eye-configured mob for authoring (mirrors
-        // LayerGooglyEyes); otherwise honor the server's per-mob spawn decision.
-        if (!PickerState.active && !EyeState.hasEyes(living)) {
-            return;
-        }
-
-        // Invisibility hides the eyes, unconditionally (mirrors LayerGooglyEyes).
-        if (living.isInvisible()) {
-            return;
-        }
-        HeadInfo helper = HeadInfo.getHelper(entityType, living);
-        if (helper == null || !helper.hasConfig()) {
+        // Shared gate (client disables, has-eyes, invisibility, usable config) — see LayerGooglyEyes.
+        HeadInfo helper = EyeRenderGating.helperToRender(living);
+        if (helper == null) {
             return;
         }
 
@@ -127,8 +109,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
         frame.overrides = EyeState.readProperties(living);
         frame.tracker = SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);
-        frame.tracker.setLastUpdateRequest();
-        frame.tracker.requireUpdate();
+        frame.tracker.markRendered();
         frame.headBones = new GeoBone[helper.getHeadCount()];
         for (int h = 0; h < frame.headBones.length; h++) {
             frame.headBones[h] = GeoBones.findBone(bakedModel, helper.getAttachToken(h));
@@ -188,41 +169,18 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             if (frame.savedEyeBones[i] != bone) {
                 continue;
             }
-            renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, frame.savedEyes.get(i).eye);
+            PickerLayer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
+                    frame.savedEyes.get(i).eye);
             drew = true;
         }
         if (frame.gizmoBone == bone) {
             Gizmo.draw(poseStack, bufferSource);
             if (PickerState.currentEye != null) {
-                renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay, PickerState.currentEye);
+                PickerLayer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
+                        PickerState.currentEye);
             }
             drew = true;
         }
         return drew;
-    }
-
-    private void renderPreviewEye(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
-                                  int packedOverlay, EyeDraft eye) {
-        poseStack.pushPose();
-        poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
-        HeadInfo.applyRotation(poseStack, eye.aimInclination(), eye.aimAzimuth());
-        float scale = (float) eye.eyeScale;
-        poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * (float) eye.depth);
-
-        VertexConsumer buf = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
-        double[] cornea = eye.corneaColors;
-        modelGooglyEye.renderCornea(poseStack, buf, packedLight, packedOverlay, (float) cornea[0], (float) cornea[1],
-                (float) cornea[2], 1F);
-
-        float irisScale = (float) eye.irisScale;
-        double[] iris = eye.irisColors;
-        poseStack.pushPose();
-        poseStack.scale(irisScale, irisScale, 1F);
-        modelGooglyEye.moveIris(0F, 0F, irisScale);
-        modelGooglyEye.renderIris(poseStack, buf, packedLight, packedOverlay, (float) iris[0], (float) iris[1],
-                (float) iris[2], 1F);
-        poseStack.popPose();
-
-        poseStack.popPose();
     }
 }

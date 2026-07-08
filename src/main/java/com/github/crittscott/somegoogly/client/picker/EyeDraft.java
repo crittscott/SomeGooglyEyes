@@ -9,19 +9,20 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Mutable working copy of one eye while authoring in the picker. Mirrors the datapack eye fields
  * one-to-one (flat, like the JSON) so the CLI / HUD / preview can read and tweak them in place; it is
- * converted to an immutable {@link EyeDefinition} on save/export ({@link #toDefinition()}).
+ * converted to an immutable {@link EyeDefinition} on save/export ({@link #toDefinition}). A fresh
+ * draft starts as {@link EyeDefinition#DEFAULT}, so the defaults live in one place.
  */
 public class EyeDraft {
-    public double[] position = {-0.13, -0.25, -0.25};
-    public double eyeScale = 0.75;
-    public double irisScale = 0.6;
+    public double[] position;
+    public double eyeScale;
+    public double irisScale;
     /** Thickness multiplier along the look axis (1 = standard googly proportions). */
-    public double depth = EyePlacement.DEFAULT_DEPTH;
-    public Double inclination = EyePlacement.DEFAULT_INCLINATION; // null = default forward
-    public Double azimuth = EyePlacement.DEFAULT_AZIMUTH;
-    public double[] corneaColors = {1.0, 1.0, 1.0};
-    public double[] irisColors = {0.0, 0.0, 0.0};
-    public boolean glows = false;
+    public double depth;
+    public double inclination;
+    public double azimuth;
+    public double[] corneaColors;
+    public double[] irisColors;
+    public boolean glows;
     /**
      * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, {@code -1} =
      * none) — authoring space, matching what {@code /sg list eyes} shows. It's resolved to the on-disk
@@ -30,32 +31,30 @@ public class EyeDraft {
      */
     public int crossTarget = -1;
 
-    public double aimAzimuth() {
-        return azimuth != null ? azimuth : EyePlacement.DEFAULT_AZIMUTH;
+    public EyeDraft() {
+        loadDefinition(EyeDefinition.DEFAULT);
     }
 
-    public double aimInclination() {
-        return inclination != null ? inclination : EyePlacement.DEFAULT_INCLINATION;
-    }
-
-    /** Build a working draft from an immutable definition (the inverse of {@link #toDefinition()}). */
+    /** Build a working draft from an immutable definition (the inverse of {@link #toDefinition}). */
     public static EyeDraft fromDefinition(EyeDefinition def) {
+        EyeDraft d = new EyeDraft();
+        d.loadDefinition(def);
+        return d;
+    }
+
+    private void loadDefinition(EyeDefinition def) {
         EyePlacement p = def.placement();
         EyeAppearance a = def.appearance();
-        EyeColor cornea = a.cornea();
-        EyeColor iris = a.iris();
-        EyeDraft d = new EyeDraft();
         Vec3 pos = p.position();
-        d.position = new double[]{pos.x, pos.y, pos.z};
-        d.eyeScale = p.eyeScale();
-        d.irisScale = p.irisScale();
-        d.depth = p.depth();
-        d.inclination = p.inclination();
-        d.azimuth = p.azimuth();
-        d.corneaColors = new double[]{cornea.r(), cornea.g(), cornea.b()};
-        d.irisColors = new double[]{iris.r(), iris.g(), iris.b()};
-        d.glows = a.glow();
-        return d;
+        position = new double[]{pos.x, pos.y, pos.z};
+        eyeScale = p.eyeScale();
+        irisScale = p.irisScale();
+        depth = p.depth();
+        inclination = p.inclination();
+        azimuth = p.azimuth();
+        corneaColors = new double[]{a.cornea().r(), a.cornea().g(), a.cornea().b()};
+        irisColors = new double[]{a.iris().r(), a.iris().g(), a.iris().b()};
+        glows = a.glow();
     }
 
     public EyeDraft copy() {
@@ -64,8 +63,8 @@ public class EyeDraft {
         d.eyeScale = eyeScale;
         d.irisScale = irisScale;
         d.depth = depth;
-        d.inclination = aimInclination();
-        d.azimuth = aimAzimuth();
+        d.inclination = inclination;
+        d.azimuth = azimuth;
         d.corneaColors = new double[]{corneaColors[0], corneaColors[1], corneaColors[2]};
         d.irisColors = new double[]{irisColors[0], irisColors[1], irisColors[2]};
         d.glows = glows;
@@ -81,7 +80,7 @@ public class EyeDraft {
     public EyeDefinition toDefinition(int resolvedCrossTarget) {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                eyeScale, irisScale, depth, aimInclination(), aimAzimuth(),
+                eyeScale, irisScale, depth, inclination, azimuth,
                 resolvedCrossTarget);
         EyeAppearance appearance = new EyeAppearance(
                 new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),

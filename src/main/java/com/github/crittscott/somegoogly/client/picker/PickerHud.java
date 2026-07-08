@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client.picker;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -46,11 +45,9 @@ public final class PickerHud {
     private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
         out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
                 label, part, e.position[0], e.position[1], e.position[2]), colorA));
-        double incl = e.inclination != null ? e.inclination : HeadInfo.DEFAULT_INCLINATION;
-        double azi = e.azimuth != null ? e.azimuth : HeadInfo.DEFAULT_AZIMUTH;
         String cross = e.crossTarget >= 0 ? "  X→" + (e.crossTarget + 1) : "";
         out.add(new Line(String.format("    incl %.0f°  azi %.0f°  eye %.2f  iris %.2f  d %.2f  %sG  c%s i%s%s",
-                incl, azi, e.eyeScale, e.irisScale, e.depth,
+                e.inclination, e.azimuth, e.eyeScale, e.irisScale, e.depth,
                 e.glows ? "+" : "-",
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB));
     }
@@ -60,11 +57,8 @@ public final class PickerHud {
         return c < 0 ? 0 : Math.min(c, 255);
     }
 
-    /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded), or a placeholder if absent/malformed. */
+    /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded). */
     private static String hex(double[] rgb) {
-        if (rgb == null || rgb.length < 3) {
-            return "#------";
-        }
         return String.format("#%02X%02X%02X", channel(rgb[0]), channel(rgb[1]), channel(rgb[2]));
     }
 

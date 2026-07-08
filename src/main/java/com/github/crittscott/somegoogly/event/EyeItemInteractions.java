@@ -4,8 +4,6 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EntityEyeHolder;
-import com.github.crittscott.somegoogly.eye.state.EyeHolder;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,8 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The thin-slice eye-<i>harvest</i> verbs (server-side). Harvest goes through the {@link EyeHolder} seam
- * rather than {@link EyeState} directly, so future holders (item frames, item models) reuse it.
+ * The thin-slice eye-<i>harvest</i> verbs (server-side).
  *
  * <ul>
  *   <li><b>Harvest (non-lethal)</b> — right-click an eyed mob with shears enchanted with
@@ -63,17 +60,17 @@ public class EyeItemInteractions {
     }
 
     private static void harvest(PlayerInteractEvent.EntityInteract event, Player player, LivingEntity mob,
-                                ItemStack stack, EyeHolder holder) {
+                                ItemStack stack) {
         HeadInfo helper = helperFor(mob);
-        if (helper == null || !helper.hasConfig()) {
+        if (!helper.hasConfig()) {
             return; // shouldn't happen while hasEyes is true, but guard anyway
         }
 
-        ItemStack drop = buildEyeDrop(helper, holder.getEyeProperties());
+        ItemStack drop = buildEyeDrop(helper, EyeState.readProperties(mob));
         mob.spawnAtLocation(drop);
 
-        holder.setEyeProperties(AppearanceOverride.EMPTY); // appearance now lives in the item
-        holder.setHasEyes(false);
+        EyeState.setProperties(mob, AppearanceOverride.EMPTY); // appearance now lives in the item
+        EyeState.setHasEyes(mob, false);
 
         stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(event.getHand()));
         consume(event, InteractionResult.SUCCESS);
@@ -102,12 +99,11 @@ public class EyeItemInteractions {
 
         Player player = event.getEntity();
         ItemStack stack = event.getItemStack();
-        EntityEyeHolder holder = new EntityEyeHolder(mob);
 
         // Eyes are given only by the googly potion; the eye item is for brewing/crafting, not a direct
         // right-click apply. Shears (with Optometrist) remain the non-lethal harvest path.
-        if (stack.getItem() instanceof ShearsItem && holder.hasEyes() && hasOptometrist(stack)) {
-            harvest(event, player, mob, stack, holder);
+        if (stack.getItem() instanceof ShearsItem && EyeState.hasEyes(mob) && hasOptometrist(stack)) {
+            harvest(event, player, mob, stack);
         }
     }
 

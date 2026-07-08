@@ -159,7 +159,7 @@ public final class PickerExporter {
             return null;
         }
         return EyeConfigJsonWriter.fileJson(
-                EyeConfigJsonWriter.entryJson(versionRange, "any", draft.isEnabled(), variants));
+                EyeConfigJsonWriter.entryJson(versionRange, "any", draft.enabled, variants));
     }
 
     /**

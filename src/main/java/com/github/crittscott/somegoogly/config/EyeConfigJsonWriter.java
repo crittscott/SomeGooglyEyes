@@ -77,7 +77,7 @@ public final class EyeConfigJsonWriter {
         if (variants.isEmpty()) {
             return;
         }
-        entries.add(entryJson(versionRange, age, config.isEnabled(), variants));
+        entries.add(entryJson(versionRange, age, config.enabled, variants));
     }
 
     /** Serialize variants, mapping each head's attach token through {@code canon} (its canonical form). */
@@ -137,9 +137,10 @@ public final class EyeConfigJsonWriter {
     }
 
     /**
-     * Round to one part in a thousand. The {@code /sg} CLI parses inputs as {@code float}, so a typed
-     * {@code 0.22} widens to {@code 0.2199999988079071} as a double; this snaps such float-widening noise
-     * back to the authored value before it's written to the (human-edited) source data.
+     * Round to one part in a thousand. Several {@code /sg} property args parse as {@code float} (eyeScale,
+     * colors, depth, …), so a typed {@code 0.22} widens to {@code 0.2199999988079071} as a double; this
+     * snaps such float-widening noise back to the authored value before it's written to the (human-edited)
+     * source data.
      */
     private static double round(double v) {
         return Math.round(v * 1000.0) / 1000.0;

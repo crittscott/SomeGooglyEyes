@@ -26,8 +26,6 @@ import java.util.Random;
  * physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
  * ground it's static (pupil centered).
  *
- * <p>This is the "item-model" {@code EyeHolder} render path foreshadowed in {@code EyeHolder}.
- *
  * <p>Tuning knobs if the eye sits wrong in the slot/hand: {@link #MODEL_SCALE} (size) and the
  * {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang down).
  */

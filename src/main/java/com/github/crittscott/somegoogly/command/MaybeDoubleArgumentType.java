@@ -13,18 +13,19 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * A Brigadier argument that parses either a float or the literal {@code ~} — the "leave this axis/angle
+ * A Brigadier argument that parses either a number or the literal {@code ~} — the "leave this axis/angle
  * unchanged" no-op. {@code ~} yields an empty {@link Optional}; a number yields {@code Optional.of(v)}.
- * Used by {@code /sg move} and {@code /sg rot}.
+ * Used by {@code /sg move} and {@code /sg rot}. The picker stores placement as {@code double}, so this
+ * yields doubles all the way through.
  */
-public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
+public class MaybeDoubleArgumentType implements ArgumentType<Optional<Double>> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "0.5", "~", "-1.25");
 
     /** Read the parsed argument; empty means {@code ~} (unchanged). */
     @SuppressWarnings("unchecked")
-    public static Optional<Float> get(CommandContext<?> ctx, String name) {
-        return (Optional<Float>) ctx.getArgument(name, Optional.class);
+    public static Optional<Double> get(CommandContext<?> ctx, String name) {
+        return (Optional<Double>) ctx.getArgument(name, Optional.class);
     }
 
     @Override
@@ -40,16 +41,16 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
         return builder.buildFuture();
     }
 
-    public static MaybeFloatArgumentType maybeFloat() {
-        return new MaybeFloatArgumentType();
+    public static MaybeDoubleArgumentType maybeDouble() {
+        return new MaybeDoubleArgumentType();
     }
 
     @Override
-    public Optional<Float> parse(StringReader reader) throws CommandSyntaxException {
+    public Optional<Double> parse(StringReader reader) throws CommandSyntaxException {
         if (reader.canRead() && reader.peek() == '~') {
             reader.skip();
             return Optional.empty();
         }
-        return Optional.of(reader.readFloat());
+        return Optional.of(reader.readDouble());
     }
 }

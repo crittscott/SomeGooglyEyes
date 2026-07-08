@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.eye.state.EntityEyeHolder;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.potion.ModPotions;
@@ -74,9 +73,8 @@ public class EyePotionInteractions {
 
         // Apply the potion's carried appearance (brewed in from the eye item), then turn eyes on —
         // the potion is the only way to give a mob (or player) eyes. Empty properties fall back to config.
-        EntityEyeHolder holder = new EntityEyeHolder(chosen);
-        holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
-        holder.setHasEyes(true);
+        EyeState.setProperties(chosen, GooglyEyeItem.getProperties(stack));
+        EyeState.setHasEyes(chosen, true);
     }
 
     @SubscribeEvent
@@ -98,8 +96,7 @@ public class EyePotionInteractions {
             return;
         }
 
-        EntityEyeHolder holder = new EntityEyeHolder(drinker);
-        holder.setEyeProperties(GooglyEyeItem.getProperties(stack));
-        holder.setHasEyes(true);
+        EyeState.setProperties(drinker, GooglyEyeItem.getProperties(stack));
+        EyeState.setHasEyes(drinker, true);
     }
 }

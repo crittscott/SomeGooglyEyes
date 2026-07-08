@@ -17,8 +17,16 @@ public final class VersionRangeMatcher {
     private VersionRangeMatcher() {
     }
 
-    /** A declaration's endpoints; {@code null} = unbounded on that side. An exact version is a point. */
-    private record Bounds(@Nullable String lower, @Nullable String upper) {
+    /**
+     * A declaration's endpoints with their inclusivity; {@code null} = unbounded on that side. An exact
+     * version is a closed point ({@code lower == upper}, both inclusive).
+     */
+    private record Bounds(@Nullable String lower, @Nullable String upper,
+                          boolean includeLower, boolean includeUpper) {
+    }
+
+    private static boolean isBracketed(String trimmed) {
+        return trimmed.startsWith("[") || trimmed.startsWith("(");
     }
 
     private record Token(Integer number, String text) implements Comparable<Token> {
@@ -54,8 +62,8 @@ public final class VersionRangeMatcher {
             return null;
         }
         String trimmed = range.trim();
-        if (!(trimmed.startsWith("[") || trimmed.startsWith("("))) {
-            return new Bounds(trimmed, trimmed);
+        if (!isBracketed(trimmed)) {
+            return new Bounds(trimmed, trimmed, true, true); // exact version = closed point
         }
         if (!(trimmed.endsWith("]") || trimmed.endsWith(")"))) {
             return null;
@@ -67,7 +75,8 @@ public final class VersionRangeMatcher {
         }
         String lower = body.substring(0, comma).trim();
         String upper = body.substring(comma + 1).trim();
-        return new Bounds(lower.isEmpty() ? null : lower, upper.isEmpty() ? null : upper);
+        return new Bounds(lower.isEmpty() ? null : lower, upper.isEmpty() ? null : upper,
+                trimmed.startsWith("["), trimmed.endsWith("]"));
     }
 
     private static int compare(String left, String right) {
@@ -102,36 +111,24 @@ public final class VersionRangeMatcher {
         }
 
         String trimmed = range.trim();
-        if (!(trimmed.startsWith("[") || trimmed.startsWith("("))) {
-            return trimmed.equals(version);
+        if (!isBracketed(trimmed)) {
+            return trimmed.equals(version); // exact version: string equality, no zero-padding
         }
 
-        if (!(trimmed.endsWith("]") || trimmed.endsWith(")"))) {
-            warnInvalid(range);
+        Bounds b = bounds(trimmed);
+        if (b == null) {
+            warnInvalid(range); // bracketed but malformed (no closing bracket / no comma)
             return false;
         }
-
-        String body = trimmed.substring(1, trimmed.length() - 1);
-        int comma = body.indexOf(',');
-        if (comma < 0) {
-            warnInvalid(range);
-            return false;
-        }
-
-        String lower = body.substring(0, comma).trim();
-        String upper = body.substring(comma + 1).trim();
-        boolean includeLower = trimmed.startsWith("[");
-        boolean includeUpper = trimmed.endsWith("]");
-
-        if (!lower.isEmpty()) {
-            int cmp = compare(version, lower);
-            if (cmp < 0 || (cmp == 0 && !includeLower)) {
+        if (b.lower() != null) {
+            int cmp = compare(version, b.lower());
+            if (cmp < 0 || (cmp == 0 && !b.includeLower())) {
                 return false;
             }
         }
-        if (!upper.isEmpty()) {
-            int cmp = compare(version, upper);
-            if (cmp > 0 || (cmp == 0 && !includeUpper)) {
+        if (b.upper() != null) {
+            int cmp = compare(version, b.upper());
+            if (cmp > 0 || (cmp == 0 && !b.includeUpper())) {
                 return false;
             }
         }
