@@ -612,13 +612,25 @@ public final class PickerState {
     }
 
     /**
-     * Clear picker state on disconnect <b>without sending anything</b> — the connection may already be
-     * gone, and the server's own logout handling ({@code PickerFreezeService#onPlayerLoggedOut})
-     * releases any frozen mob regardless.
+     * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
+     * connection may already be gone, and the server's own logout handling
+     * ({@code PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
+     *
+     * <p>The authored drafts go too, along with {@link #targetType}. They were authored against — and
+     * seeded from — the server we're leaving, and {@code export} would happily send them to the next
+     * server we join, writing one world's eye configs into another's datapack.
      */
     public static void resetOnDisconnect() {
         active = false;
         target = new WeakReference<>(null);
+        targetType = null;
+        parts = new ArrayList<>();
+        partIndex = 0;
+        authored.clear();
+        variants = new ArrayList<>(List.of(new DraftVariant()));
+        variantIndex = 0;
+        currentPart = null;
+        clearDraft();
     }
 
     /** Stop targeting and release the frozen mob; the saved eye list is kept in memory. */

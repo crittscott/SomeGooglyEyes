@@ -119,8 +119,10 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    /** Exports the chosen mob's draft; {@code requireChosen} keeps it from firing at a stale target. */
     private static int export(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
+        requireChosen();
         feedback(ctx, PickerExporter.export());
         return 1;
     }

@@ -1,12 +1,17 @@
 {
-  "itemGroup.somegoogly": "Some Googly Eyes",
-  "item.somegoogly.googly_eye": "Googly Eye",
   "enchantment.somegoogly.optometrist": "Optometrist",
   "item.minecraft.potion.effect.googly_eyes": "Potion of Googly Eyes",
   "item.minecraft.splash_potion.effect.googly_eyes": "Splash Potion of Googly Eyes",
-  "somegoogly.inspect.can_have": "Can have googly eyes",
+  "item.somegoogly.googly_eye": "Googly Eye",
+  "itemGroup.somegoogly": "Some Googly Eyes",
+  "key.categories.somegoogly": "Some Googly Eyes",
+  "key.somegoogly.lock": "Choose/release mob",
+  "key.somegoogly.part_next": "Next model part",
+  "key.somegoogly.part_prev": "Previous model part",
+  "key.somegoogly.toggle": "Toggle picker",
   "somegoogly.inspect.already_has": "Already has googly eyes",
+  "somegoogly.inspect.can_have": "Can have googly eyes",
+  "somegoogly.inspect.cannot": "Cannot have googly eyes",
   "somegoogly.inspect.only_as_adult": "Can have googly eyes only as an adult",
-  "somegoogly.inspect.only_as_baby": "Can have googly eyes only as a baby",
-  "somegoogly.inspect.cannot": "Cannot have googly eyes"
+  "somegoogly.inspect.only_as_baby": "Can have googly eyes only as a baby"
 }
