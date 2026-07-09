@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "[4.3.2508,4.4)",
+      "version": "[1.22.9,1.23)",
       "age": "any",
       "enabled": true,
       "variants": [
@@ -9,15 +9,15 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "head",
+              "attachPoint": "root/body/head",
               "eyes": [
                 {
                   "position": [
-                    -0.345,
-                    -0.6,
-                    -0.41
+                    -0.1438,
+                    -0.0938,
+                    -0.375
                   ],
-                  "eyeScale": 0.7,
+                  "eyeScale": 0.9375,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
@@ -37,11 +37,11 @@
                 },
                 {
                   "position": [
-                    0.35,
-                    -0.6,
-                    -0.41
+                    0.1438,
+                    -0.0938,
+                    -0.375
                   ],
-                  "eyeScale": 0.7,
+                  "eyeScale": 0.9375,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
