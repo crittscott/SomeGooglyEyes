@@ -123,9 +123,9 @@ public final class PickerExportGameTests {
 
     /**
      * The written form pins values that equal their defaults rather than eliding them, so a file's
-     * meaning can't drift with the code. {@code crossTarget} is the one field the old hand-rolled
-     * writer suppressed at its default, so it's the one worth naming here; that no field is dropped at
-     * all is guarded by the value round-trip in {@code SerializationGameTests}.
+     * meaning can't drift with the code. {@code crossTarget} sits at its default in most real configs,
+     * so it's the field checked by name here; that no field is dropped at all is guarded by the value
+     * round-trip in {@code SerializationGameTests}.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {

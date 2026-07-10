@@ -189,9 +189,9 @@ public final class ServerBehaviorScheduler {
                 continue;
             }
             // Idle + ambient enabled → count down, and only at expiry check whether the mob has eyes
-            // (an NBT read). Checking hasEyes every tick for every tracked mob — the overwhelmingly
-            // eyeless majority — was the old order's per-tick cost; now eyeless mobs just re-arm the
-            // cooldown once per expiry.
+            // (an NBT read). Checking hasEyes before counting down would pay that NBT read every tick
+            // for every tracked mob — the overwhelmingly eyeless majority — whereas this way an eyeless
+            // mob just re-arms the cooldown once per expiry.
             if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
                 if (EyeState.hasEyes(mob)) {
                     rollAmbient(mob, state);

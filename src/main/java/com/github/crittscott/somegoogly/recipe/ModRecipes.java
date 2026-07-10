@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-/** Recipe serializer registry. Currently just the special {@link EyeModifierRecipe}. */
+/** Recipe serializer registry: the special {@link EyeModifierRecipe}. */
 public final class ModRecipes {
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =

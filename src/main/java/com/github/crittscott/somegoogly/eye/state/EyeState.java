@@ -16,8 +16,8 @@ import javax.annotation.Nullable;
  * <p>State lives in the entity's persistent data (saved by Forge under {@code ForgeData}, so it
  * survives reload / dimension change / growing up). Two pieces:
  * <ul>
- *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, originally a once-at-spawn decision,
- *       now mutable (shears remove, potion adds).</li>
+ *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
+ *       (shears remove, potion adds).</li>
  *   <li>{@code somegoogly:eyeOverrides} — an optional compound of per-mob appearance overrides
  *       (iris/cornea tint, glow), applied to all of the mob's eyes.</li>
  * </ul>
@@ -60,7 +60,7 @@ public final class EyeState {
     /**
      * The mob's stored placement-variant roll (0..1), assigned once at spawn and locked for life. Maps
      * onto the current age config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults
-     * to 0 (the first variant) when unset — e.g. mobs that predate the roll or aren't eye-eligible.
+     * to 0 (the first variant) when unset.
      */
     public static float getVariantRoll(LivingEntity entity) {
         return entity.getPersistentData().getFloat(VARIANT_ROLL);

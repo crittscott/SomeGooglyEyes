@@ -21,8 +21,8 @@ import java.util.function.Supplier;
  * Server → client sync of the version/age-selected eye geometry configs. Sent on player login and
  * on {@code /reload} (see {@code ServerEventHandler#onDatapackSync}). Custom datapack data isn't
  * auto-synced, so we carry it ourselves; each entity's selected config set travels as binary NBT
- * (the codec output via {@link NbtOps}), which is roughly half the size of the JSON-string form it
- * replaced — this packet goes to every player at login, so wire size matters.
+ * (the codec output via {@link NbtOps}), roughly half the size of a JSON-string encoding — this
+ * packet goes to every player at login, so wire size matters.
  *
  * <p>The whole packet must fit vanilla's 1 MiB clientbound custom-payload cap or every client is
  * disconnected at login; {@link #encode} logs the encoded size and warns when an authored config set

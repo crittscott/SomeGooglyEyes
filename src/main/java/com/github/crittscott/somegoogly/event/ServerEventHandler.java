@@ -87,8 +87,7 @@ public class ServerEventHandler {
         // entity), so on later world loads / dimension changes / growing up we keep the existing
         // decision instead of re-rolling. A mob keeps its eyes (or lack of them) for life, even if
         // the spawn-chance config is changed afterwards — only newly spawned mobs see the new chance.
-        // (Whether babies and adults should differ is a separate, deferred question; for now a mob's
-        // having-eyes answer is fixed at spawn and the client just swaps in the age-appropriate
+        // (Babies and adults share the one answer; the client just swaps in the age-appropriate
         // geometry as the mob grows.)
         if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);

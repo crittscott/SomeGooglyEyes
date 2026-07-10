@@ -14,8 +14,8 @@ import java.util.List;
  * One "what does this ingredient do to an eye" rule, used by {@link EyeModifierRecipe}.
  *
  * <p>The generalized seam for crafting-based appearance edits: a modifier recognizes an ingredient
- * stack and folds a delta onto the eye's {@link AppearanceOverride}. Adding a future appearance edit
- * (glow via glowstone, etc.) is a new entry in {@link #MODIFIERS} — not a new recipe class.
+ * stack and folds a delta onto the eye's {@link AppearanceOverride}. Each appearance edit is one
+ * entry in {@link #MODIFIERS} — not its own recipe class.
  */
 public interface EyeModifier {
 

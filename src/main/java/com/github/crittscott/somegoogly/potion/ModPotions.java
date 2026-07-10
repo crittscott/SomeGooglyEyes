@@ -30,7 +30,7 @@ import net.minecraftforge.registries.RegistryObject;
  * <p>Brewed from an <b>awkward potion</b> and a harvested {@link ModItems#GOOGLY_EYE}, in two forms: a
  * <b>splash</b> (awkward splash + eye) that gives one nearby mob eyes on impact, and a <b>drinkable</b>
  * (awkward potion + eye) that gives the drinker their own eyes — the form that lets a player eye
- * themselves now that players can have eyes. The eye's appearance is copied onto the potion so it tints
+ * themselves. The eye's appearance is copied onto the potion so it tints
  * the recipient's eyes to match. There is no lingering form: an area cloud conflicts with the
  * single-target design, so it is suppressed rather than offered.
  */

@@ -7,7 +7,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-/** Item registry for the mod. Currently just the single NBT-carrying {@link GooglyEyeItem}. */
+/** Item registry for the mod: the single NBT-carrying {@link GooglyEyeItem}. */
 public final class ModItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SomeGoogly.MOD_ID);

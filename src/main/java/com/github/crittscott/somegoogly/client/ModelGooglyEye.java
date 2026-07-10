@@ -22,7 +22,8 @@ public final class ModelGooglyEye {
      */
     public static final float BASE_DEPTH = 0.4F;
 
-    // Local dimensions preserve the former model's visible diameter and approximate depth.
+    // Local dimensions of the cornea/iris cylinders (pixels; see MODEL_UNIT), sized so the assembled
+    // eye has the standard googly proportions at BASE_DEPTH.
     private static final float CORNEA_BACK_Z = 0.00F;
     private static final float CORNEA_FRONT_Z = -1.00F;
     private static final float CORNEA_RADIUS = 1.865F;

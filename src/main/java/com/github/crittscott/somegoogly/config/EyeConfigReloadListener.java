@@ -100,7 +100,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         }
         String nearest = VersionRangeMatcher.nearestVersion(declared, loaded);
         if (nearest == null) {
-            return set; // nothing usable declared anywhere; same outcome as before the fallback existed
+            return set; // nothing usable declared anywhere; nothing to fall back to
         }
         if (VersionRangeMatcher.isEntirelyBelow(nearest, loaded)) {
             SomeGoogly.LOGGER.error(

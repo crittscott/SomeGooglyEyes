@@ -27,7 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *   <li><b>Harvest (non-lethal)</b> — right-click an eyed mob with shears enchanted with
  *       {@link ModEnchantments#OPTOMETRIST}: capture its effective appearance into a {@code googly_eye}
  *       item, drop it, and turn the mob's eyes off, leaving the mob unharmed. Plain (unenchanted) shears
- *       do nothing here, so they no longer hijack vanilla shearing (sheep wool, mooshroom).</li>
+ *       do nothing here, leaving vanilla shearing (sheep wool, mooshroom) untouched.</li>
  *   <li><b>Harvest (on kill)</b> — killing an eyed mob with a direct shears melee blow has a configurable
  *       chance ({@link ServerConfig#HARVEST_ON_KILL_PERCENT}) to drop the same {@code googly_eye}; see
  *       {@link #onLivingDrops}.</li>
@@ -37,7 +37,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  * brewing/crafting ingredient, not a direct right-click apply, so there is no reattach verb here.
  *
  * <p>Both harvest paths accept any {@link ShearsItem} (vanilla or modded) and capture the mob's appearance from head 0 /
- * eye 0 (per-eye appearance would need the override model to go per-eye, which it isn't yet).
+ * eye 0 (the override model is per-mob, not per-eye).
  */
 public class EyeItemInteractions {
 

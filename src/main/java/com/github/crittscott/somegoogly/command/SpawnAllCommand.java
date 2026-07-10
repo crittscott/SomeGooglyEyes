@@ -261,7 +261,7 @@ public final class SpawnAllCommand {
                 mob.setNoAi(true);
                 // NoAi mobs still run checkDespawn(); without this, any mob spawned past its category's
                 // despawn distance (64 for ambient fish, 128 for most others) is discarded a few ticks
-                // later — which is why far cells were silently emptying out regardless of chunk loading.
+                // later, silently emptying the far cells regardless of chunk loading.
                 mob.setPersistenceRequired();
                 mob.setYHeadRot(yaw);
                 mob.setYBodyRot(yaw);

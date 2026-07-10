@@ -20,7 +20,7 @@ import java.util.List;
  * path) and before {@link ChildMapResolver} (the positional catch-all).
  *
  * <p>Known limit: {@code AgeableListModel}'s baby scale/offset is applied outside the part tree, so it is
- * not reflected in the captured pose — baby mobs may be slightly mis-placed. Pre-existing and orthogonal.
+ * not reflected in the captured pose — baby mobs may be slightly mis-placed.
  */
 public class AgeableListResolver extends ModelPartTreeResolver {
 

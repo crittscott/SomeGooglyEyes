@@ -20,7 +20,7 @@ public interface EyeAttachmentResolver {
 
     /**
      * List selectable attachment tokens for this model, in a stable order (used by the part picker).
-     * Default: none (resolver doesn't support enumeration / picker authoring yet).
+     * Default: none (the resolver doesn't support enumeration / picker authoring).
      */
     default List<String> enumerateParts(EntityModel<?> model) {
         return List.of();

@@ -34,7 +34,7 @@ import java.util.Map;
  * <p>The walk mirrors {@link ModelPart#visit}: it applies each part's {@code translateAndRotate} onto the
  * live (this-frame, post-animation) {@link PoseStack} before descending, so the captured pose includes
  * every ancestor's animation. Unlike {@code visit} it does <b>not</b> skip cube-less pivot/group parts, so
- * eyes can attach to a named empty joint (the limitation the old visit-based resolver documented).
+ * eyes can attach to a named empty joint.
  */
 abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
 

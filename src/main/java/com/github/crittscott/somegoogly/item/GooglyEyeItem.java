@@ -18,8 +18,7 @@ import java.util.function.Consumer;
 
 /**
  * A single eye, as an item. Its appearance lives in stack NBT as {@link AppearanceOverride} (the same
- * codec-serialized schema a mob carries), so it round-trips through drops and — once recipe
- * serializers exist — through crafting.
+ * codec-serialized schema a mob carries), so it round-trips through drops and crafting.
  *
  * <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it to
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).

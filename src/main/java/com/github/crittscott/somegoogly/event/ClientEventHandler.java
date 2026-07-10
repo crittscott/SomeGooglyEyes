@@ -36,8 +36,8 @@ public class ClientEventHandler {
     private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
     public static int clientTicks = 0;
     // A plain map on purpose: entries are evicted by the 10-tick sweep in onWorldTick (plus the
-    // clearTrackers calls on sync/disconnect). This was a WeakHashMap, but each GooglyTracker holds a
-    // strong reference to its own key (the parent entity), so weakness never fired anyway.
+    // clearTrackers calls on sync/disconnect). A WeakHashMap couldn't reclaim anything here anyway —
+    // each GooglyTracker holds a strong reference to its own key (the parent entity).
     protected final Map<LivingEntity, GooglyTracker> trackers = new HashMap<>();
 
     @SuppressWarnings("rawtypes")

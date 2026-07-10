@@ -9,8 +9,7 @@ import java.util.List;
  * One RGB color, each channel 0..1. The single color representation across the mod — config,
  * item/entity override, and the renderer all use this.
  *
- * <p>Serialized as the {@code [r, g, b]} list the datapack JSON already uses, so the existing eye
- * config files are unchanged.
+ * <p>Serialized as a {@code [r, g, b]} list, the datapack JSON's color layout.
  */
 public record EyeColor(float r, float g, float b) {
 

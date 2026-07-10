@@ -12,9 +12,9 @@ import java.util.List;
  * stored {@code head} still suffix-matches.
  *
  * <p>Tried first (before {@link AgeableListResolver}/{@link ChildMapResolver}) because a hierarchical
- * model exposes its root cleanly and unambiguously. Walking the {@code children} map directly (rather than
- * the old {@code root().visit()}) also lets eyes attach to a cube-less pivot/group joint, which
- * {@code visit} skipped.
+ * model exposes its root cleanly and unambiguously. Walking the {@code children} map directly (not
+ * {@code root().visit()}, which skips cube-less parts) also lets eyes attach to a cube-less pivot/group
+ * joint.
  */
 public class HierarchicalResolver extends ModelPartTreeResolver {
 

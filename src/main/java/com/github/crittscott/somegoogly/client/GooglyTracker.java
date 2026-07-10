@@ -92,7 +92,7 @@ public class GooglyTracker {
         // World-down projected into this eye's pupil plane, in the (deltaX, deltaY) convention. Refreshed
         // each render (GooglyEyeRenderer) from the eye's actual animated world orientation, so the pupil
         // sags toward true down rather than eye-local down. (0, -1) — straight down — until the first
-        // render, so an off-screen or not-yet-drawn eye behaves like the old fixed local gravity.
+        // render, so an off-screen or not-yet-drawn eye falls toward eye-local down.
         public float gravX = 0F;
         public float gravY = -1F;
 
@@ -190,8 +190,8 @@ public class GooglyTracker {
             // world-down (gravX/gravY), captured each render from the eye's animated orientation, so the
             // pupil rests at true down instead of eye-local down. Its in-plane magnitude naturally shrinks
             // as the eye turns to face up/down (world-down leaves the pupil plane). The pseudo-forces stay
-            // eye-local — only the resting direction was the reported problem. Default (0, -1) = the old
-            // constant local-down.
+            // eye-local — only gravity's resting direction is a world-frame quantity. Default (0, -1) =
+            // eye-local down.
             float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel - R_K_LIN * horizRight
                     + (float) rand.nextGaussian() * R_NOISE;
             float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy

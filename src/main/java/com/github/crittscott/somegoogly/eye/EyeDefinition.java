@@ -11,7 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * <p>The two halves are kept as separate value types because the rest of the mod treats them
  * differently — appearance is portable/overridable (an eye item carries it), placement is fixed to the
  * mob. But they share one <b>flat</b> JSON object: {@link #CODEC} merges both {@link com.mojang.serialization.MapCodec}s
- * at the same level, so the datapack files keep their existing flat field layout
+ * at the same level, so each eye in a datapack file is a single flat object
  * ({@code position}, {@code eyeScale}, …, {@code corneaColors}, {@code glows}).
  */
 public record EyeDefinition(EyePlacement placement, EyeAppearance appearance) {

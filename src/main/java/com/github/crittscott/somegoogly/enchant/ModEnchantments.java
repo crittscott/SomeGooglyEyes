@@ -7,7 +7,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-/** Enchantment registry for the mod. Currently just the shears-only {@link OptometristEnchantment}. */
+/** Enchantment registry for the mod: the shears-only {@link OptometristEnchantment}. */
 public final class ModEnchantments {
 
     public static final DeferredRegister<Enchantment> ENCHANTMENTS =

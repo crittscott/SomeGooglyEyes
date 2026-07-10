@@ -56,7 +56,7 @@ public final class PickerFreezeService {
      * Freeze {@code mobId} in {@code level} for {@code playerId}, releasing any mob that player had
      * frozen before. Returns an error message when the mob is already being edited by someone else, or
      * {@code null} on success — including the silent no-op cases (not found in this level, or not a
-     * {@link Mob}; non-mob living entities have no AI to freeze, matching the old client-side behavior).
+     * {@link Mob}; non-mob living entities have no AI to freeze).
      */
     @Nullable
     public static String freeze(ServerLevel level, UUID playerId, UUID mobId) {
