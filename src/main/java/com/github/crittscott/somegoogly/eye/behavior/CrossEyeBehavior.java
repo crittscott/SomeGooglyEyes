@@ -37,7 +37,7 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
         float len = (float) Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
 
         float t = (float) i.age / i.duration;
-        float mag = AMOUNT * slide(t);
+        float mag = AMOUNT * Curves.slide(t, CENTER_FRAC, HOLD_FRAC);
         // Negate: ModelGooglyEye#moveIris renders the pupil at -(normX, normY) (render space is -Y up /
         // -X right), so the pupil coordinate that visually points toward the target is the negated
         // projection. Without this the pupil rolls away from its partner instead of toward it.
@@ -46,13 +46,5 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
             out.anchorY = -dir[1] / len * mag;
         }
         out.stiffness = STIFFNESS * Curves.trapezoid(t, CENTER_FRAC, HOLD_FRAC);
-    }
-
-    private static float slide(float t) {
-        if (t <= CENTER_FRAC) {
-            return 0f;
-        }
-        float moveSpan = 1f - CENTER_FRAC - HOLD_FRAC;
-        return Curves.ease((t - CENTER_FRAC) / moveSpan);
     }
 }

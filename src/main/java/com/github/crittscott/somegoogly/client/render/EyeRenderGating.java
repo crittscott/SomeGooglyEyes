@@ -38,7 +38,7 @@ public final class EyeRenderGating {
         if (ClientConfig.isEntityDisabled(entityType)) {
             return null;
         }
-        if (!PickerState.active && !EyeState.hasEyes(living)) {
+        if (!PickerState.isActive() && !EyeState.hasEyes(living)) {
             return null;
         }
         if (living.isInvisible()) {

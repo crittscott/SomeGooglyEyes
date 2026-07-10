@@ -81,7 +81,7 @@ public class GooglyClientCommands {
 
     private static int choose(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
-        PickerState.active = true; // turn the picker on so the preview/gizmo render
+        PickerState.activate(); // turn the picker on so the preview/gizmo render
         feedback(ctx, PickerState.lockOn());
         return 1;
     }
@@ -89,9 +89,9 @@ public class GooglyClientCommands {
     private static int create(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
-        double x = FloatArgumentType.getFloat(ctx, "x");
-        double y = FloatArgumentType.getFloat(ctx, "y");
-        double z = FloatArgumentType.getFloat(ctx, "z");
+        float x = FloatArgumentType.getFloat(ctx, "x");
+        float y = FloatArgumentType.getFloat(ctx, "y");
+        float z = FloatArgumentType.getFloat(ctx, "z");
         PickerState.createEye(x, y, z);
         feedback(ctx, String.format("Created eye at [%.3f, %.3f, %.3f].", x, y, z));
         return 1;
@@ -141,11 +141,11 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         List<ListedEye> list = PickerState.currentEyes();
-        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex + 1) + " (" + list.size() + "):");
+        feedback(ctx, "Eyes in variant #" + (PickerState.variantIndex() + 1) + " (" + list.size() + "):");
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
-            String mark = i == PickerState.selectedIndex ? " *" : "";
+            String mark = i == PickerState.selectedIndex() ? " *" : "";
             String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
             feedback(ctx, String.format("  %d. part=%s pos[%.3f, %.3f, %.3f] incl %.0f azi %.0f%s%s",
                     i + 1, le.part, e.position[0], e.position[1], e.position[2], e.inclination, e.azimuth, cross, mark));
@@ -156,9 +156,9 @@ public class GooglyClientCommands {
     private static int listParts(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         requireCreative();
         requireChosen();
-        feedback(ctx, "Parts (" + PickerState.parts.size() + "):");
-        for (int i = 0; i < PickerState.parts.size(); i++) {
-            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts.get(i));
+        feedback(ctx, "Parts (" + PickerState.parts().size() + "):");
+        for (int i = 0; i < PickerState.parts().size(); i++) {
+            feedback(ctx, "  " + (i + 1) + ". " + PickerState.parts().get(i));
         }
         return 1;
     }
@@ -168,8 +168,8 @@ public class GooglyClientCommands {
         requireChosen();
         feedback(ctx, "Variants (" + PickerState.variantCount() + "):");
         for (int i = 0; i < PickerState.variantCount(); i++) {
-            PickerState.DraftVariant v = PickerState.variants.get(i);
-            String mark = i == PickerState.variantIndex ? " *" : "";
+            PickerState.DraftVariant v = PickerState.variants().get(i);
+            String mark = i == PickerState.variantIndex() ? " *" : "";
             feedback(ctx, String.format("  %d. weight %.2f, %d eyes%s", i + 1, v.weight, v.eyes.size(), mark));
         }
         return 1;
@@ -213,10 +213,10 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(MaybeDoubleArgumentType.get(ctx, "x"),
-                MaybeDoubleArgumentType.get(ctx, "y"),
-                MaybeDoubleArgumentType.get(ctx, "z"));
-        EyeDraft e = PickerState.currentEye;
+        PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
+                MaybeFloatArgumentType.get(ctx, "y"),
+                MaybeFloatArgumentType.get(ctx, "z"));
+        EyeDraft e = PickerState.currentEye();
         feedback(ctx, String.format("Position [%.3f, %.3f, %.3f].", e.position[0], e.position[1], e.position[2]));
         return 1;
     }
@@ -244,7 +244,7 @@ public class GooglyClientCommands {
         if (!ok) {
             throw BAD_PART.create(target);
         }
-        feedback(ctx, "Part: " + PickerState.currentPart);
+        feedback(ctx, "Part: " + PickerState.currentPart());
         return 1;
     }
 
@@ -252,12 +252,12 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(MaybeDoubleArgumentType.get(ctx, "x"),
-                MaybeDoubleArgumentType.get(ctx, "y"),
-                MaybeDoubleArgumentType.get(ctx, "z"));
-        PickerState.setRotation(MaybeDoubleArgumentType.get(ctx, "inclination"),
-                MaybeDoubleArgumentType.get(ctx, "azimuth"));
-        EyeDraft e = PickerState.currentEye;
+        PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
+                MaybeFloatArgumentType.get(ctx, "y"),
+                MaybeFloatArgumentType.get(ctx, "z"));
+        PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
+                MaybeFloatArgumentType.get(ctx, "azimuth"));
+        EyeDraft e = PickerState.currentEye();
         feedback(ctx, String.format("Position [%.3f, %.3f, %.3f], rotation incl %.0f° azi %.0f°.",
                 e.position[0], e.position[1], e.position[2], e.inclination, e.azimuth));
         return 1;
@@ -278,7 +278,7 @@ public class GooglyClientCommands {
         if (!PickerState.setCrossTarget(n)) {
             throw BAD_CROSS_TARGET.create(n);
         }
-        int target = PickerState.currentEye.crossTarget;
+        int target = PickerState.currentEye().crossTarget;
         feedback(ctx, target < 0 ? "crossTarget cleared." : "crossTarget = eye #" + (target + 1) + ".");
         return 1;
     }
@@ -366,29 +366,29 @@ public class GooglyClientCommands {
 
         // move: ~ supported per axis to leave an axis unchanged.
         verb(sg, "move", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> z =
-                    Commands.argument("z", MaybeDoubleArgumentType.maybeDouble());
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> z =
+                    Commands.argument("z", MaybeFloatArgumentType.maybeFloat());
             z.executes(GooglyClientCommands::move);
-            b.then(Commands.argument("x", MaybeDoubleArgumentType.maybeDouble())
-                    .then(Commands.argument("y", MaybeDoubleArgumentType.maybeDouble()).then(z)));
+            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat()).then(z)));
         });
 
         verb(sg, "rot", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> azimuth =
-                    Commands.argument("azimuth", MaybeDoubleArgumentType.maybeDouble());
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
+                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
             azimuth.executes(GooglyClientCommands::rot);
-            b.then(Commands.argument("inclination", MaybeDoubleArgumentType.maybeDouble()).then(azimuth));
+            b.then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat()).then(azimuth));
         });
 
         // posrot: move + rot in one go (the common case). ~ supported per component to leave it unchanged.
         verb(sg, "posrot", b -> {
-            RequiredArgumentBuilder<CommandSourceStack, Optional<Double>> azimuth =
-                    Commands.argument("azimuth", MaybeDoubleArgumentType.maybeDouble());
+            RequiredArgumentBuilder<CommandSourceStack, Optional<Float>> azimuth =
+                    Commands.argument("azimuth", MaybeFloatArgumentType.maybeFloat());
             azimuth.executes(GooglyClientCommands::posrot);
-            b.then(Commands.argument("x", MaybeDoubleArgumentType.maybeDouble())
-                    .then(Commands.argument("y", MaybeDoubleArgumentType.maybeDouble())
-                            .then(Commands.argument("z", MaybeDoubleArgumentType.maybeDouble())
-                                    .then(Commands.argument("inclination", MaybeDoubleArgumentType.maybeDouble())
+            b.then(Commands.argument("x", MaybeFloatArgumentType.maybeFloat())
+                    .then(Commands.argument("y", MaybeFloatArgumentType.maybeFloat())
+                            .then(Commands.argument("z", MaybeFloatArgumentType.maybeFloat())
+                                    .then(Commands.argument("inclination", MaybeFloatArgumentType.maybeFloat())
                                             .then(azimuth)))));
         });
 
@@ -495,7 +495,7 @@ public class GooglyClientCommands {
     }
 
     private static void requireChosen() throws CommandSyntaxException {
-        if (!PickerState.active || PickerState.target() == null) {
+        if (!PickerState.isActive() || PickerState.target() == null) {
             throw NOT_CHOSEN.create();
         }
     }
@@ -525,9 +525,9 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         requireDraft();
-        PickerState.setRotation(MaybeDoubleArgumentType.get(ctx, "inclination"),
-                MaybeDoubleArgumentType.get(ctx, "azimuth"));
-        EyeDraft e = PickerState.currentEye;
+        PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
+                MaybeFloatArgumentType.get(ctx, "azimuth"));
+        EyeDraft e = PickerState.currentEye();
         feedback(ctx, String.format("Rotation incl %.0f° azi %.0f°.", e.inclination, e.azimuth));
         return 1;
     }
@@ -539,8 +539,8 @@ public class GooglyClientCommands {
         if (!PickerState.save()) {
             throw NO_PART.create();
         }
-        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex + 1) + " (variant "
-                + (PickerState.variantIndex + 1) + ", " + PickerState.currentEyeCount() + " eyes).");
+        feedback(ctx, "Saved eye #" + (PickerState.selectedIndex() + 1) + " (variant "
+                + (PickerState.variantIndex() + 1) + ", " + PickerState.currentEyeCount() + " eyes).");
         return 1;
     }
 
@@ -628,7 +628,7 @@ public class GooglyClientCommands {
         requireChosen();
         float w = FloatArgumentType.getFloat(ctx, "w");
         PickerState.setVariantWeight(w);
-        feedback(ctx, "Variant #" + (PickerState.variantIndex + 1) + " weight = " + w + ".");
+        feedback(ctx, "Variant #" + (PickerState.variantIndex() + 1) + " weight = " + w + ".");
         return 1;
     }
 

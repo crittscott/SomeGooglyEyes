@@ -11,17 +11,20 @@ import net.minecraft.world.phys.Vec3;
  * one-to-one (flat, like the JSON) so the CLI / HUD / preview can read and tweak them in place; it is
  * converted to an immutable {@link EyeDefinition} on save/export ({@link #toDefinition}). A fresh
  * draft starts as {@link EyeDefinition#DEFAULT}, so the defaults live in one place.
+ *
+ * <p>Everything is {@code float}, matching {@link EyePlacement}/{@link EyeAppearance} and the config
+ * codecs — the draft holds exactly what will be written, at the precision it will be written at.
  */
 public class EyeDraft {
-    public double[] position;
-    public double eyeScale;
-    public double irisScale;
+    public float[] position;
+    public float eyeScale;
+    public float irisScale;
     /** Thickness multiplier along the look axis (1 = standard googly proportions). */
-    public double depth;
-    public double inclination;
-    public double azimuth;
-    public double[] corneaColors;
-    public double[] irisColors;
+    public float depth;
+    public float inclination;
+    public float azimuth;
+    public float[] corneaColors;
+    public float[] irisColors;
     public boolean glows;
     /**
      * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, {@code -1} =
@@ -45,28 +48,27 @@ public class EyeDraft {
     private void loadDefinition(EyeDefinition def) {
         EyePlacement p = def.placement();
         EyeAppearance a = def.appearance();
-        Vec3 pos = p.position();
-        position = new double[]{pos.x, pos.y, pos.z};
+        position = p.positionArray();
         eyeScale = p.eyeScale();
         irisScale = p.irisScale();
         depth = p.depth();
         inclination = p.inclination();
         azimuth = p.azimuth();
-        corneaColors = new double[]{a.cornea().r(), a.cornea().g(), a.cornea().b()};
-        irisColors = new double[]{a.iris().r(), a.iris().g(), a.iris().b()};
+        corneaColors = a.cornea().toArray();
+        irisColors = a.iris().toArray();
         glows = a.glow();
     }
 
     public EyeDraft copy() {
         EyeDraft d = new EyeDraft();
-        d.position = new double[]{position[0], position[1], position[2]};
+        d.position = position.clone();
         d.eyeScale = eyeScale;
         d.irisScale = irisScale;
         d.depth = depth;
         d.inclination = inclination;
         d.azimuth = azimuth;
-        d.corneaColors = new double[]{corneaColors[0], corneaColors[1], corneaColors[2]};
-        d.irisColors = new double[]{irisColors[0], irisColors[1], irisColors[2]};
+        d.corneaColors = corneaColors.clone();
+        d.irisColors = irisColors.clone();
         d.glows = glows;
         d.crossTarget = crossTarget;
         return d;
@@ -80,13 +82,11 @@ public class EyeDraft {
     public EyeDefinition toDefinition(int resolvedCrossTarget) {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                (float) eyeScale, (float) irisScale, (float) depth,
-                (float) inclination, (float) azimuth,
+                eyeScale, irisScale, depth,
+                inclination, azimuth,
                 resolvedCrossTarget);
         EyeAppearance appearance = new EyeAppearance(
-                new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),
-                new EyeColor((float) irisColors[0], (float) irisColors[1], (float) irisColors[2]),
-                glows);
+                EyeColor.of(corneaColors), EyeColor.of(irisColors), glows);
         return new EyeDefinition(placement, appearance);
     }
 }

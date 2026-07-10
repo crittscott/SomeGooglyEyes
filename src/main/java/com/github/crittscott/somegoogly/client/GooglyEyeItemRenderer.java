@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
@@ -11,8 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -28,6 +26,9 @@ import java.util.Random;
  *
  * <p>Tuning knobs if the eye sits wrong in the slot/hand: {@link #MODEL_SCALE} (size) and the
  * {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang down).
+ *
+ * <p>Draws through {@link GooglyEyeRenderer}'s render types, so the item and the mob eyes share one
+ * texture and one pair of pre-built {@code RenderType}s rather than each naming its own.
  */
 public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
@@ -39,8 +40,6 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final float IRIS_SCALE = 0.6F;
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
-    private static final ResourceLocation TEX =
-            new ResourceLocation(SomeGoogly.MOD_ID, "textures/model/modelgooglyeye.png");
 
     private ModelGooglyEye model;
     private final HeldWobble wobble = new HeldWobble();
@@ -172,9 +171,9 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
         pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
 
-        drawEye(m, pose, buffer.getBuffer(RenderType.entityCutout(TEX)), light, overlay, cornea, iris, irisX, irisY);
+        drawEye(m, pose, buffer.getBuffer(GooglyEyeRenderer.RENDER_TYPE), light, overlay, cornea, iris, irisX, irisY);
         if (glow) {
-            drawEye(m, pose, buffer.getBuffer(RenderType.eyes(TEX)), light, overlay, cornea, iris, irisX, irisY);
+            drawEye(m, pose, buffer.getBuffer(GooglyEyeRenderer.RENDER_TYPE_EYES), light, overlay, cornea, iris, irisX, irisY);
         }
         pose.popPose();
     }

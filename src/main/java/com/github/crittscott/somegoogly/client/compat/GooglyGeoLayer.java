@@ -86,12 +86,12 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             frame.savedEyeBones = new GeoBone[frame.savedEyes.size()];
             for (int i = 0; i < frame.savedEyes.size(); i++) {
                 PickerState.ListedEye listed = frame.savedEyes.get(i);
-                if (i != PickerState.selectedIndex && listed.part != null) {
+                if (i != PickerState.selectedIndex() && listed.part != null) {
                     frame.savedEyeBones[i] = GeoBones.findBone(bakedModel, listed.part);
                 }
             }
-            if (PickerState.currentPart != null) {
-                frame.gizmoBone = GeoBones.findBone(bakedModel, PickerState.currentPart);
+            if (PickerState.currentPart() != null) {
+                frame.gizmoBone = GeoBones.findBone(bakedModel, PickerState.currentPart());
             }
             this.frame = frame;
             return;
@@ -175,9 +175,9 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
         if (frame.gizmoBone == bone) {
             Gizmo.draw(poseStack, bufferSource);
-            if (PickerState.currentEye != null) {
+            if (PickerState.currentEye() != null) {
                 PickerLayer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
-                        PickerState.currentEye);
+                        PickerState.currentEye());
             }
             drew = true;
         }

@@ -47,7 +47,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
         java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
         for (int i = 0; i < eyes.size(); i++) {
-            if (i == PickerState.selectedIndex) {
+            if (i == PickerState.selectedIndex()) {
                 continue;
             }
             PickerState.ListedEye listed = eyes.get(i);
@@ -64,14 +64,14 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
 
         // Gizmo on the active placement part, plus the live draft eye — but only when one is being
         // shaped. With no draft (the empty state) the mob shows just its saved eyes, or nothing at all.
-        String token = PickerState.currentPart;
+        String token = PickerState.currentPart();
         if (token != null) {
             poseStack.pushPose();
             ExoticBirdsCompat.preTransform(model, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
-                if (PickerState.currentEye != null) {
-                    renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, PickerState.currentEye);
+                if (PickerState.currentEye() != null) {
+                    renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, PickerState.currentEye());
                 }
             }
             poseStack.popPose();
@@ -89,21 +89,19 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
         HeadInfo.applyRotation(poseStack, eye.inclination, eye.azimuth);
 
-        float scale = (float) eye.eyeScale;
-        poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * (float) eye.depth);
+        float scale = eye.eyeScale;
+        poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
 
         VertexConsumer buffer = bufferSource.getBuffer(GooglyEyeRenderer.RENDER_TYPE);
-        double[] cornea = eye.corneaColors;
-        model.renderCornea(poseStack, buffer, packedLight, overlay, (float) cornea[0], (float) cornea[1],
-                (float) cornea[2], 1.0F);
+        float[] cornea = eye.corneaColors;
+        model.renderCornea(poseStack, buffer, packedLight, overlay, cornea[0], cornea[1], cornea[2], 1.0F);
 
-        float irisScale = (float) eye.irisScale;
-        double[] iris = eye.irisColors;
+        float irisScale = eye.irisScale;
+        float[] iris = eye.irisColors;
         poseStack.pushPose();
         poseStack.scale(irisScale, irisScale, 1.0F);
         model.moveIris(0.0F, 0.0F, irisScale); // centered preview, no physics
-        model.renderIris(poseStack, buffer, packedLight, overlay, (float) iris[0], (float) iris[1],
-                (float) iris[2], 1.0F);
+        model.renderIris(poseStack, buffer, packedLight, overlay, iris[0], iris[1], iris[2], 1.0F);
         poseStack.popPose();
 
         poseStack.popPose();

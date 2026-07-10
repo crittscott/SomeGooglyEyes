@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -52,14 +53,9 @@ public final class PickerHud {
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB));
     }
 
-    private static int channel(double v) {
-        int c = (int) Math.round(v * 255.0);
-        return c < 0 ? 0 : Math.min(c, 255);
-    }
-
     /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded). */
-    private static String hex(double[] rgb) {
-        return String.format("#%02X%02X%02X", channel(rgb[0]), channel(rgb[1]), channel(rgb[2]));
+    private static String hex(float[] rgb) {
+        return String.format("#%06X", EyeColor.of(rgb).toRgb24());
     }
 
     private static List<Line> lines() {
@@ -73,13 +69,13 @@ public final class PickerHud {
 
         out.add(new Line("Target: " + PickerState.targetType(), WHITE));
 
-        String token = PickerState.currentPart != null ? PickerState.currentPart : "none";
-        int n = PickerState.parts.size();
-        int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex, n) + 1);
+        String token = partOrNone(PickerState.currentPart());
+        int n = PickerState.parts().size();
+        int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex(), n) + 1);
         out.add(new Line("Part: " + token + "  (" + i + "/" + n + ")   [ ] cycle", WHITE));
 
         out.add(new Line(String.format("Variant %d/%d  (weight %.2f)",
-                PickerState.variantIndex + 1, PickerState.variantCount(), PickerState.currentVariant().weight), WHITE));
+                PickerState.variantIndex() + 1, PickerState.variantCount(), PickerState.currentVariant().weight), WHITE));
 
         out.add(new Line("Eyes (" + PickerState.currentEyeCount() + "):", WHITE));
 
@@ -89,15 +85,15 @@ public final class PickerHud {
         java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
         for (int idx = 0; idx < eyes.size(); idx++) {
             PickerState.ListedEye listed = eyes.get(idx);
-            if (idx == PickerState.selectedIndex) {
-                appendEye(out, "▶ #" + (idx + 1), partOrNone(PickerState.currentPart), PickerState.currentEye, YELLOW, YELLOW);
+            if (idx == PickerState.selectedIndex()) {
+                appendEye(out, "▶ #" + (idx + 1), token, PickerState.currentEye(), YELLOW, YELLOW);
             } else {
                 appendEye(out, "#" + (idx + 1), partOrNone(listed.part), listed.eye, WHITE, GRAY);
             }
         }
 
-        if (PickerState.selectedIndex < 0 && PickerState.currentEye != null) {
-            appendEye(out, "▶ new (unsaved)", partOrNone(PickerState.currentPart), PickerState.currentEye, YELLOW, YELLOW);
+        if (PickerState.selectedIndex() < 0 && PickerState.currentEye() != null) {
+            appendEye(out, "▶ new (unsaved)", token, PickerState.currentEye(), YELLOW, YELLOW);
         }
 
         return out;
@@ -112,7 +108,7 @@ public final class PickerHud {
     }
 
     private static void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
-        if (!PickerState.active) {
+        if (!PickerState.isActive()) {
             return;
         }
         Font font = Minecraft.getInstance().font;

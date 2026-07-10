@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
-import com.github.crittscott.somegoogly.command.MaybeDoubleArgumentType;
+import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
@@ -44,15 +44,15 @@ public class SomeGoogly {
     public static final Logger LOGGER = LogManager.getLogger();
 
     // Out of alphabetical order by necessity: this initializer reads MOD_ID by simple name (so it must
-    // follow MOD_ID) and MAYBE_DOUBLE reads this one (so it must precede MAYBE_DOUBLE). Either forward
+    // follow MOD_ID) and MAYBE_FLOAT reads this one (so it must precede MAYBE_FLOAT). Either forward
     // reference would be a compile error (JLS 8.3.3), even though MOD_ID is a constant.
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENTS =
             DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, MOD_ID);
 
-    public static final RegistryObject<SingletonArgumentInfo<MaybeDoubleArgumentType>> MAYBE_DOUBLE =
-            COMMAND_ARGUMENTS.register("maybe_double", () -> ArgumentTypeInfos.registerByClass(
-                    MaybeDoubleArgumentType.class,
-                    SingletonArgumentInfo.contextFree(MaybeDoubleArgumentType::maybeDouble)));
+    public static final RegistryObject<SingletonArgumentInfo<MaybeFloatArgumentType>> MAYBE_FLOAT =
+            COMMAND_ARGUMENTS.register("maybe_float", () -> ArgumentTypeInfos.registerByClass(
+                    MaybeFloatArgumentType.class,
+                    SingletonArgumentInfo.contextFree(MaybeFloatArgumentType::maybeFloat)));
 
     public static ClientEventHandler clientEventHandler;
 

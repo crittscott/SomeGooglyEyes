@@ -41,12 +41,12 @@ import java.util.Optional;
  */
 public final class PickerState {
 
-    public static boolean active = false;
+    private static boolean active = false;
     private static WeakReference<LivingEntity> target = new WeakReference<>(null);
     private static ResourceLocation targetType;
 
-    public static List<String> parts = new ArrayList<>();
-    public static int partIndex = 0;
+    private static List<String> parts = new ArrayList<>();
+    private static int partIndex = 0;
 
     /** One saved eye plus the part token it attaches to. */
     public static final class ListedEye {
@@ -77,22 +77,77 @@ public final class PickerState {
      * one. Reassigned by {@link #lockOn()} to point at the chosen entity's entry in {@link #authored},
      * so saves land directly in that entity's retained draft.
      */
-    public static List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
+    private static List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
     /** Index into {@link #variants} of the variant currently being edited. */
-    public static int variantIndex = 0;
+    private static int variantIndex = 0;
 
     /**
      * The eye being shaped right now, or {@code null} when no draft is being authored — the empty state.
      * A never-configured mob (and a variant whose eyes are all deleted) sits here with no draft, so the
      * preview/HUD show nothing until {@code /sg create} (or {@code select}) starts one. See {@link #clearDraft()}.
      */
-    public static EyeDraft currentEye = null;
+    private static EyeDraft currentEye = null;
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
-    public static String currentPart = null;
+    private static String currentPart = null;
     /** Index into the current variant's eye list that {@code save} writes back to, or {@code -1} to append. */
-    public static int selectedIndex = -1;
+    private static int selectedIndex = -1;
 
     private PickerState() {
+    }
+
+    // --- read-only views for the HUD, preview layers, and CLI feedback -----------------------------
+
+    /** Whether the picker is on (preview layers, HUD, and keybinds all key off this). */
+    public static boolean isActive() {
+        return active;
+    }
+
+    /** The chosen mob's selectable part tokens, in enumeration order. Read-only. */
+    public static List<String> parts() {
+        return parts;
+    }
+
+    /** Index into {@link #parts()} of the current placement-frame part. */
+    public static int partIndex() {
+        return partIndex;
+    }
+
+    /** The variants being authored for the chosen mob. Read-only; mutate via the variant ops. */
+    public static List<DraftVariant> variants() {
+        return variants;
+    }
+
+    /** Index into {@link #variants()} of the variant being edited. */
+    public static int variantIndex() {
+        return variantIndex;
+    }
+
+    /** The live draft eye, or {@code null} in the empty state. Mutate via the {@code set*} ops. */
+    public static EyeDraft currentEye() {
+        return currentEye;
+    }
+
+    /** The part token used as the placement frame, or {@code null} for {@code none}. */
+    public static String currentPart() {
+        return currentPart;
+    }
+
+    /** Index of the saved eye being edited ({@code -1} = the draft is new/unsaved). */
+    public static int selectedIndex() {
+        return selectedIndex;
+    }
+
+    // --- lifecycle ---------------------------------------------------------------------------------
+
+    /** Turn the picker on (so the preview/gizmo render); choosing a mob is a separate step. */
+    public static void activate() {
+        active = true;
+    }
+
+    /** Turn the picker off and release the frozen mob; the authored drafts stay in memory. */
+    public static void deactivate() {
+        active = false;
+        unlock();
     }
 
     /** The CLI {@code part none} op. */
@@ -116,7 +171,7 @@ public final class PickerState {
     }
 
     /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
-    public static void createEye(double x, double y, double z) {
+    public static void createEye(float x, float y, float z) {
         currentEye = defaultEye();
         currentEye.position[0] = x;
         currentEye.position[1] = y;
@@ -363,11 +418,6 @@ public final class PickerState {
         return true;
     }
 
-    /** The current placement-frame part token (drives the gizmo / draft preview), or {@code null}. */
-    public static String selectedToken() {
-        return currentPart;
-    }
-
     /** The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of range. */
     public static boolean selectVariant(int oneBased) {
         int idx = oneBased - 1;
@@ -379,16 +429,16 @@ public final class PickerState {
         return true;
     }
 
-    public static void setCorneaColor(double r, double g, double b) {
-        currentEye.corneaColors = new double[]{r, g, b};
+    public static void setCorneaColor(float r, float g, float b) {
+        currentEye.corneaColors = new float[]{r, g, b};
     }
 
-    public static void setEyeScale(double v) {
+    public static void setEyeScale(float v) {
         currentEye.eyeScale = Math.max(0, v);
     }
 
     /** Thickness multiplier along the look axis (1 = standard; clamped >= 0). */
-    public static void setDepth(double v) {
+    public static void setDepth(float v) {
         currentEye.depth = Math.max(0, v);
     }
 
@@ -422,11 +472,11 @@ public final class PickerState {
         currentEye.glows = v;
     }
 
-    public static void setIrisColor(double r, double g, double b) {
-        currentEye.irisColors = new double[]{r, g, b};
+    public static void setIrisColor(float r, float g, float b) {
+        currentEye.irisColors = new float[]{r, g, b};
     }
 
-    public static void setIrisScale(double v) {
+    public static void setIrisScale(float v) {
         currentEye.irisScale = Math.max(0, v);
     }
 
@@ -458,14 +508,14 @@ public final class PickerState {
     }
 
     /** The CLI {@code move x y z} op: set absolute position; an empty value leaves that axis unchanged. */
-    public static void setPosition(Optional<Double> x, Optional<Double> y, Optional<Double> z) {
+    public static void setPosition(Optional<Float> x, Optional<Float> y, Optional<Float> z) {
         x.ifPresent(v -> currentEye.position[0] = v);
         y.ifPresent(v -> currentEye.position[1] = v);
         z.ifPresent(v -> currentEye.position[2] = v);
     }
 
     /** The CLI {@code rot inclination azimuth} op; an empty value leaves that angle unchanged. */
-    public static void setRotation(Optional<Double> inclination, Optional<Double> azimuth) {
+    public static void setRotation(Optional<Float> inclination, Optional<Float> azimuth) {
         inclination.ifPresent(v -> currentEye.inclination = v);
         azimuth.ifPresent(v -> currentEye.azimuth = v);
     }

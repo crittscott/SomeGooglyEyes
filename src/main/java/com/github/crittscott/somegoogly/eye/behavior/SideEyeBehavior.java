@@ -19,7 +19,7 @@ final class SideEyeBehavior extends AbstractEyeBehavior {
     @Override
     public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
         float t = (float) i.age / i.duration;
-        out.anchorX = i.dirSign * AMOUNT * slide(t);
+        out.anchorX = i.dirSign * AMOUNT * Curves.slide(t, CENTER_FRAC, HOLD_FRAC);
         out.anchorY = 0f;
         out.stiffness = STIFFNESS * Curves.trapezoid(t, CENTER_FRAC, HOLD_FRAC);
     }
@@ -27,14 +27,5 @@ final class SideEyeBehavior extends AbstractEyeBehavior {
     @Override
     public void onStart(BehaviorInstance i) {
         i.dirSign = i.rand.nextBoolean() ? 1 : -1;
-    }
-
-    /** 0 while centring, eases 0 → 1 across the middle, holds 1 at the end. */
-    private static float slide(float t) {
-        if (t <= CENTER_FRAC) {
-            return 0f;
-        }
-        float moveSpan = 1f - CENTER_FRAC - HOLD_FRAC;
-        return Curves.ease((t - CENTER_FRAC) / moveSpan);
     }
 }

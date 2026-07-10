@@ -44,22 +44,21 @@ public class PickerInput {
         }
 
         if (PickerKeys.TOGGLE.matches(key, sc)) {
-            if (!PickerState.active) {
+            if (!PickerState.isActive()) {
                 // The picker is a creative-mode authoring tool; don't let it turn on otherwise.
                 if (!inCreative()) {
                     message("Picker requires creative mode.");
                     return;
                 }
-                PickerState.active = true;
+                PickerState.activate();
                 message("Picker ON — look at a mob and Lock (V).");
             } else {
-                PickerState.active = false;
-                PickerState.unlock(); // release the frozen mob on exit
+                PickerState.deactivate(); // also releases the frozen mob on exit
                 message("Picker OFF");
             }
             return;
         }
-        if (!PickerState.active) {
+        if (!PickerState.isActive()) {
             return;
         }
 

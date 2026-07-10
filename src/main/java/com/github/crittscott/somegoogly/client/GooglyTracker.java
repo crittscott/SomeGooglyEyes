@@ -259,7 +259,7 @@ public class GooglyTracker {
 
     /** Stamp this tracker as rendered this client tick (drives eviction + whether to simulate). */
     public void markRendered() {
-        lastRenderTick = ClientEventHandler.clientTicks;
+        lastRenderTick = ClientEventHandler.clientTicks();
     }
 
     /**

@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class ClientEventHandler {
     private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
-    public static int clientTicks = 0;
+    private static int clientTicks = 0;
     // A plain map on purpose: entries are evicted by the 10-tick sweep in onWorldTick (plus the
     // clearTrackers calls on sync/disconnect). A WeakHashMap couldn't reclaim anything here anyway —
     // each GooglyTracker holds a strong reference to its own key (the parent entity).
@@ -100,6 +100,11 @@ public class ClientEventHandler {
         }
         renderer.addLayer(eyes);
         renderer.addLayer(picker);
+    }
+
+    /** The client tick counter; a tracker stamps it on render to drive eviction and simulation gating. */
+    public static int clientTicks() {
+        return clientTicks;
     }
 
     /** Drop all trackers; called when configs change (sync) or on disconnect. */
