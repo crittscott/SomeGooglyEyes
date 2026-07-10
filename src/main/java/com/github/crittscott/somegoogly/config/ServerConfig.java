@@ -53,7 +53,7 @@ public class ServerConfig {
 
         GLOBAL_PERCENT = BUILDER
                 .comment("Default percentage chance for an eligible entity to get googly eyes (overridable per entity below)")
-                .defineInRange("globalPercent", 2, 0, 100);
+                .defineInRange("globalPercent", 5, 0, 100);
 
         HARVEST_ON_KILL_PERCENT = BUILDER
                 .comment("Percentage chance that an eyed mob killed by a player wielding plain shears drops its googly eyes.",
@@ -79,11 +79,11 @@ public class ServerConfig {
 
         AMBIENT_MIN_TICKS = BUILDER
                 .comment("Minimum idle ticks between ambient behaviors on a mob (20 ticks = 1 second).")
-                .defineInRange("ambientMinTicks", 60, 1, 24000);
+                .defineInRange("ambientMinTicks", 100, 1, 24000);
 
         AMBIENT_MAX_TICKS = BUILDER
                 .comment("Maximum idle ticks between ambient behaviors on a mob (20 ticks = 1 second).")
-                .defineInRange("ambientMaxTicks", 200, 1, 24000);
+                .defineInRange("ambientMaxTicks", 400, 1, 24000);
 
         AMBIENT_BEHAVIOR_POOL = BUILDER
                 .comment("Which behaviors the idle timer may play, by id. Remove a line to drop it from the",
