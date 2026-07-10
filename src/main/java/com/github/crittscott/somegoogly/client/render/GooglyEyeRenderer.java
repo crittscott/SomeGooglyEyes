@@ -101,9 +101,9 @@ public final class GooglyEyeRenderer {
         // by the tracker) and interpolates by partialTicks. Grow scales the whole eye; blink squashes it.
         float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
         float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
-        float eyeScale = (float) placement.eyeScale() * eyeScaleMul;
+        float eyeScale = placement.eyeScale() * eyeScaleMul;
         pose.scale(eyeScale, eyeScale * squashY,
-                eyeScale * ModelGooglyEye.BASE_DEPTH * (float) placement.depth());
+                eyeScale * ModelGooglyEye.BASE_DEPTH * placement.depth());
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
 
@@ -118,7 +118,7 @@ public final class GooglyEyeRenderer {
         model.renderCornea(pose, buffer, packedLight, overlay, corneaColors[0], corneaColors[1], corneaColors[2], 1F);
 
         float[] irisColors = look.iris().toArray();
-        float irisScale = (float) placement.irisScale();
+        float irisScale = placement.irisScale();
 
         pose.pushPose();
         pose.scale(irisScale, irisScale, 1F);

@@ -80,7 +80,8 @@ public class EyeDraft {
     public EyeDefinition toDefinition(int resolvedCrossTarget) {
         EyePlacement placement = new EyePlacement(
                 new Vec3(position[0], position[1], position[2]),
-                eyeScale, irisScale, depth, inclination, azimuth,
+                (float) eyeScale, (float) irisScale, (float) depth,
+                (float) inclination, (float) azimuth,
                 resolvedCrossTarget);
         EyeAppearance appearance = new EyeAppearance(
                 new EyeColor((float) corneaColors[0], (float) corneaColors[1], (float) corneaColors[2]),

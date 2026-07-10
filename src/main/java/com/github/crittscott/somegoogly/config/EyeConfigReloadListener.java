@@ -48,7 +48,12 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                 continue;
             }
             try {
-                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue()).result().orElse(null);
+                // Every field is required, so a typo'd datapack fails to parse rather than quietly
+                // decoding to defaults — say which file and which field rather than dropping it silently.
+                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
+                        .resultOrPartial(error -> SomeGoogly.LOGGER.error(
+                                "Invalid eye config {}: {}", entry.getKey(), error))
+                        .orElse(null);
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
                 if (config != null && config.hasAnyConfig()) {
                     selected.put(entry.getKey(), config);
@@ -70,7 +75,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     }
 
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file) {
-        if (file == null || file.entries == null || file.entries.isEmpty()) {
+        if (file == null || file.entries.isEmpty()) {
             return null;
         }
 
@@ -91,9 +96,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         // generation instead of dropping the file — and say so in the log.
         List<String> declared = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
-            if (entry != null && entry.version != null) {
-                declared.add(entry.version);
-            }
+            declared.add(entry.version);
         }
         String nearest = VersionRangeMatcher.nearestVersion(declared, loaded);
         if (nearest == null) {
@@ -119,11 +122,11 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                                            Predicate<VersionedEntry> versionFilter) {
         RuntimeConfigSet set = new RuntimeConfigSet();
         for (VersionedEntry entry : entries) {
-            if (entry == null || !versionFilter.test(entry)) {
+            if (!versionFilter.test(entry)) {
                 continue;
             }
 
-            String age = entry.age == null ? "" : entry.age.trim().toLowerCase(java.util.Locale.ROOT);
+            String age = entry.age.trim().toLowerCase(java.util.Locale.ROOT);
             RuntimeConfig runtime = toRuntime(entry);
             switch (age) {
                 case "adult" -> set.adult = choose(entityId, "adult", set.adult, runtime);
@@ -143,19 +146,17 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * Filter an entry's {@code variants} down to the usable ones (those with at least one head),
-     * or {@code null} when none remain. Variants are the only placement shape on disk.
+     * Filter an entry's {@code variants} down to the usable ones (those with at least one head).
+     * Variants are the only placement shape on disk; a config left with none is not
+     * {@link RuntimeConfig#isUsable}.
      */
     private static List<Variant> usableVariants(VersionedEntry entry) {
-        if (entry.variants == null) {
-            return null;
-        }
         List<Variant> result = new ArrayList<>();
         for (Variant v : entry.variants) {
-            if (v != null && v.heads != null && !v.heads.isEmpty()) {
+            if (!v.heads.isEmpty()) {
                 result.add(v);
             }
         }
-        return result.isEmpty() ? null : result;
+        return result;
     }
 }

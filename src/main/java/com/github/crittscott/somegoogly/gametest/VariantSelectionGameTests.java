@@ -87,9 +87,9 @@ public final class VariantSelectionGameTests {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void weightDefaultsAndClamping(GameTestHelper helper) {
-        Variant absent = new Variant();
-        absent.weight = null;
-        helper.assertTrue(absent.weight() == 1.0, "absent weight defaults to 1.0");
+        // weight is a required field on disk, so a fresh Variant carries the in-memory default rather
+        // than an "absent" marker; only the negative clamp is a runtime concern.
+        helper.assertTrue(new Variant().weight() == 1.0, "a fresh variant weighs 1.0");
 
         Variant negative = new Variant();
         negative.weight = -5.0;

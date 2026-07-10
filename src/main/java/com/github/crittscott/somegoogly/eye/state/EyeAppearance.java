@@ -17,11 +17,11 @@ public record EyeAppearance(EyeColor cornea, EyeColor iris, boolean glow) {
     public static final EyeAppearance DEFAULT = new EyeAppearance(EyeColor.WHITE, EyeColor.BLACK, false);
 
     /** A {@link MapCodec} so {@link com.github.crittscott.somegoogly.eye.EyeDefinition} can flatten these
-     *  fields next to placement at the same JSON level. */
+     *  fields next to placement at the same JSON level. Required, like every other config field. */
     public static final MapCodec<EyeAppearance> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            EyeColor.CODEC.optionalFieldOf("corneaColors", EyeColor.WHITE).forGetter(EyeAppearance::cornea),
-            EyeColor.CODEC.optionalFieldOf("irisColors", EyeColor.BLACK).forGetter(EyeAppearance::iris),
-            Codec.BOOL.optionalFieldOf("glows", false).forGetter(EyeAppearance::glow)
+            EyeColor.CODEC.fieldOf("corneaColors").forGetter(EyeAppearance::cornea),
+            EyeColor.CODEC.fieldOf("irisColors").forGetter(EyeAppearance::iris),
+            Codec.BOOL.fieldOf("glows").forGetter(EyeAppearance::glow)
     ).apply(inst, EyeAppearance::new));
 
     public static final Codec<EyeAppearance> CODEC = MAP_CODEC.codec();

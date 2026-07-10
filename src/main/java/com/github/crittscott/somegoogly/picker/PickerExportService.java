@@ -1,13 +1,14 @@
 package com.github.crittscott.somegoogly.picker;
 
-import com.github.crittscott.somegoogly.config.EyeConfigJsonWriter;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
+import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -35,9 +36,10 @@ import java.util.function.UnaryOperator;
  * (which is also the whole path-traversal defense — a valid {@link ResourceLocation} can't contain
  * {@code ..} or escape characters, so a file path built from its components stays inside the pack),
  * the ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
- * decode through {@code RuntimeConfig.CODEC} and contain at least one usable eye. The declared version
- * range is resolved from the <b>server's</b> loaded mod version — the one that matters for its
- * datapack; client and server versions may legally differ.
+ * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
+ * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
+ * least one usable eye. The declared version range is resolved from the <b>server's</b> loaded mod
+ * version — the one that matters for its datapack; client and server versions may legally differ.
  *
  * <p>Each export triggers a full datapack reload, so successful exports are rate-limited to one per
  * {@link #COOLDOWN_TICKS} per player. Picker use is very intermittent, so the brief reload lag and the
@@ -86,8 +88,8 @@ public final class PickerExportService {
             return "Export rejected: malformed eye config payload.";
         }
         // Draft tokens arrive already canonical (the picker authors in its enumeration vocabulary).
-        JsonArray variants = EyeConfigJsonWriter.variantsJson(config.variants, UnaryOperator.identity());
-        if (variants.isEmpty()) {
+        RuntimeConfig pruned = RuntimeConfig.pruned(config, UnaryOperator.identity());
+        if (pruned == null) {
             return "Export rejected: config has no usable eyes.";
         }
         Optional<String> version = ModVersionLookup.versionForNamespace(typeId.getNamespace());
@@ -95,19 +97,22 @@ public final class PickerExportService {
             return "Export rejected: no loaded mod provides namespace '" + typeId.getNamespace() + "'.";
         }
 
-        JsonObject json = EyeConfigJsonWriter.fileJson(EyeConfigJsonWriter.entryJson(
-                EyeConfigJsonWriter.versionRange(version.get()), "any", config.enabled, variants));
+        ConfigFile file = ConfigFile.single(VersionRangeMatcher.rangeFor(version.get()), "any", pruned);
+        JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
+        if (json == null) {
+            return "Export rejected: config could not be encoded.";
+        }
 
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
-        Path file = packDir.resolve("data").resolve(typeId.getNamespace())
+        Path target = packDir.resolve("data").resolve(typeId.getNamespace())
                 .resolve("eyes").resolve(typeId.getPath() + ".json");
         try {
-            Files.createDirectories(file.getParent());
+            Files.createDirectories(target.getParent());
             Path meta = packDir.resolve("pack.mcmeta");
             if (!Files.exists(meta)) {
                 Files.writeString(meta, PACK_MCMETA);
             }
-            Files.writeString(file, GSON.toJson(json) + "\n");
+            Files.writeString(target, GSON.toJson(json) + "\n");
         } catch (IOException e) {
             return "Export failed: " + e.getMessage();
         }

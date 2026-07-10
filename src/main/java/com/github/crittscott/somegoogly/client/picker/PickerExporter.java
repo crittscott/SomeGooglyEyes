@@ -3,16 +3,17 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigJsonWriter;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
+import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
+import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -36,8 +37,9 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 /**
- * Turns picker drafts into datapack JSON (the canonical, every-field-explicit form — see
- * {@link EyeConfigJsonWriter}). Two entry points:
+ * Turns picker drafts into datapack JSON. Every config field is a required codec field, so
+ * {@code ConfigFile.CODEC}'s own encode already produces the canonical, every-field-explicit form the
+ * shipped data uses. Two entry points:
  * <ul>
  *   <li>{@link #export()} — the single committed mob, sent to the server as a
  *       {@code PickerExportPacket}; the creative-gated server handler validates it, writes
@@ -91,7 +93,7 @@ public final class PickerExporter {
      * {@code resources/}.
      *
      * <p>The declared version range is re-synthesized from the currently-loaded version of each entity's
-     * namespace ({@link EyeConfigJsonWriter#versionRange}); the original entry's declared range isn't
+     * namespace ({@link VersionRangeMatcher#rangeFor}); the original entry's declared range isn't
      * preserved in the runtime config, so it can't be recovered.
      */
     public static String exportAll() {
@@ -117,12 +119,13 @@ public final class PickerExporter {
                 if (version.isEmpty()) {
                     continue; // namespace's mod isn't loaded; can't tag a version
                 }
-                String range = EyeConfigJsonWriter.versionRange(version.get());
+                String range = VersionRangeMatcher.rangeFor(version.get());
                 RuntimeConfig draft = drafts.get(id);
-                JsonObject json;
+                ConfigFile file;
                 if (draft != null) {
                     // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
-                    json = draftFileJson(draft, range);
+                    RuntimeConfig pruned = RuntimeConfig.pruned(draft, UnaryOperator.identity());
+                    file = pruned == null ? null : ConfigFile.single(range, "any", pruned);
                 } else {
                     // Canonicalize each token against the model so the dump speaks the resolver's own
                     // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model
@@ -133,10 +136,14 @@ public final class PickerExporter {
                         verbatim++;
                         canon = UnaryOperator.identity();
                     }
-                    json = EyeConfigJsonWriter.setToConfigJson(synced.get(id), range, canon);
+                    file = ConfigFile.ofSet(synced.get(id), range, canon);
                 }
-                if (json == null) {
+                if (file == null) {
                     continue; // nothing usable for this entity
+                }
+                JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
+                if (json == null) {
+                    continue;
                 }
                 Path dir = root.resolve("data").resolve(id.getNamespace()).resolve("eyes");
                 Files.createDirectories(dir);
@@ -150,16 +157,6 @@ public final class PickerExporter {
                 ? " (" + verbatim + " types' models couldn't be resolved — tokens left verbatim)"
                 : "";
         return "Dumped " + files + " eye configs to " + root + note + " — copy data/ into resources/.";
-    }
-
-    /** A single-entry file for one authored draft (age {@code "any"}, like {@link #export()}), or null if empty. */
-    private static JsonObject draftFileJson(RuntimeConfig draft, String versionRange) {
-        JsonArray variants = EyeConfigJsonWriter.variantsJson(draft.variants, UnaryOperator.identity());
-        if (variants.isEmpty()) {
-            return null;
-        }
-        return EyeConfigJsonWriter.fileJson(
-                EyeConfigJsonWriter.entryJson(versionRange, "any", draft.enabled, variants));
     }
 
     /**

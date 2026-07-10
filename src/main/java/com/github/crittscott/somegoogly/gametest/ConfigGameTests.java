@@ -36,7 +36,7 @@ public final class ConfigGameTests {
     }
 
     private static boolean usable(RuntimeConfig config) {
-        return config != null && config.enabled && config.variants != null && !config.variants.isEmpty();
+        return RuntimeConfig.isUsable(config);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -105,15 +105,12 @@ public final class ConfigGameTests {
     }
 
     private static void assertTokens(GameTestHelper helper, ResourceLocation id, RuntimeConfig config) {
-        if (config == null || config.variants == null) {
+        if (config == null) {
             return;
         }
         for (Variant variant : config.variants) {
-            if (variant == null || variant.heads == null) {
-                continue;
-            }
             for (HeadConfig head : variant.heads) {
-                helper.assertTrue(head != null && head.attachPoint != null && !head.attachPoint.isBlank(),
+                helper.assertTrue(head.attachPoint != null && !head.attachPoint.isBlank(),
                         "config " + id + " has a head with a blank attach token");
             }
         }

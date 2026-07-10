@@ -10,11 +10,31 @@ import java.util.Locale;
 
 /**
  * Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
- * nearest-generation fallback pick ({@link #nearestVersion}) used when no entry matches at all.
+ * nearest-generation fallback pick ({@link #nearestVersion}) used when no entry matches at all and
+ * the range synthesis ({@link #rangeFor}) the exporters declare new entries with.
  */
 public final class VersionRangeMatcher {
 
     private VersionRangeMatcher() {
+    }
+
+    /**
+     * Turn a loaded version like {@code 1.20.1} into the range {@code [1.20.1,1.21)} — inclusive of the
+     * loaded version, exclusive of the next minor — matching the shipped configs. Falls back to the exact
+     * version (an exact-match entry) if it can't be parsed into at least major.minor.
+     */
+    public static String rangeFor(String loaded) {
+        String[] parts = loaded.split("\\.");
+        if (parts.length >= 2) {
+            try {
+                int major = Integer.parseInt(parts[0]);
+                int minor = Integer.parseInt(parts[1]);
+                return "[" + loaded + "," + major + "." + (minor + 1) + ")";
+            } catch (NumberFormatException ignored) {
+                // not numeric major.minor; fall through to an exact-match entry
+            }
+        }
+        return loaded;
     }
 
     /**

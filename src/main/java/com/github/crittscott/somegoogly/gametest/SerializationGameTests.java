@@ -2,11 +2,13 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
@@ -24,6 +26,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -124,17 +127,41 @@ public final class SerializationGameTests {
         helper.succeed();
     }
 
+    /**
+     * The canonical form is whatever {@code encode} produces, so this is the guard that stops a field
+     * added to the record from being silently dropped on the way to disk: a value-equal round-trip can
+     * only pass if every field was written. {@code DEFAULT} would round-trip even with a field elided,
+     * so the sample deliberately sets each field away from its default.
+     */
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeDefinitionCodecRoundTripsAndDefaults(GameTestHelper helper) {
-        // A fully-specified definition survives encode→decode by value.
-        var encoded = EyeDefinition.CODEC.encodeStart(JsonOps.INSTANCE, EyeDefinition.DEFAULT).result().orElseThrow();
+    public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
+        EyeDefinition sample = new EyeDefinition(
+                new EyePlacement(new Vec3(0.5, -0.25, 0.125), 0.4F, 0.3F, 2F, 45F, 135F, 1),
+                new EyeAppearance(new EyeColor(0.1F, 0.2F, 0.3F), new EyeColor(0.4F, 0.5F, 0.6F), true));
+        var encoded = EyeDefinition.CODEC.encodeStart(JsonOps.INSTANCE, sample).result().orElseThrow();
         EyeDefinition decoded = EyeDefinition.CODEC.parse(JsonOps.INSTANCE, encoded).result().orElseThrow();
-        helper.assertTrue(decoded.equals(EyeDefinition.DEFAULT), "EyeDefinition round-trips by value");
+        helper.assertTrue(decoded.equals(sample), "every eye field must survive encode→decode by value");
 
-        // An empty object fills every (optional) field from defaults → equals DEFAULT.
-        EyeDefinition fromEmpty = EyeDefinition.CODEC
-                .parse(JsonOps.INSTANCE, new com.google.gson.JsonObject()).result().orElseThrow();
-        helper.assertTrue(fromEmpty.equals(EyeDefinition.DEFAULT), "absent fields fall back to DEFAULT");
+        // Every field is required: an empty object is a parse failure, not a tree of defaults.
+        boolean parsedEmpty = EyeDefinition.CODEC
+                .parse(JsonOps.INSTANCE, new com.google.gson.JsonObject()).result().isPresent();
+        helper.assertTrue(!parsedEmpty, "an eye with no fields must fail to parse");
+        helper.succeed();
+    }
+
+    /**
+     * Float-precision serialization: a value typed as {@code 0.22} must come back out as {@code 0.22},
+     * not as the {@code 0.2199999988079071} a double-widened float prints as. The datapack files are
+     * hand-edited, so this is what keeps them readable.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void eyeFieldsSerializeAtFloatPrecision(GameTestHelper helper) {
+        EyeDefinition sample = new EyeDefinition(
+                new EyePlacement(new Vec3(0.22, 0.22, 0.22), 0.22F, 0.22F, 0.22F, 0.22F, 0.22F, -1),
+                EyeAppearance.DEFAULT);
+        String json = EyeDefinition.CODEC.encodeStart(JsonOps.INSTANCE, sample).result().orElseThrow().toString();
+        helper.assertTrue(!json.contains("0.219999"),
+                "float-widening noise must not reach the datapack JSON, got: " + json);
         helper.succeed();
     }
 

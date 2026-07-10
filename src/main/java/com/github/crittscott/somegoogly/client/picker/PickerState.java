@@ -290,28 +290,23 @@ public final class PickerState {
                                                 EntityModel<?> model, EyeAttachmentResolver resolver) {
         RuntimeConfig config = ClientEyeConfigs.get(type, baby);
         List<DraftVariant> seeded = new ArrayList<>();
-        if (config != null && config.enabled && config.variants != null) {
+        if (config != null && config.enabled) {
             for (Variant v : config.variants) {
                 DraftVariant dv = new DraftVariant();
                 dv.weight = v.weight();
-                if (v.heads != null) {
-                    for (HeadConfig head : v.heads) {
-                        if (head == null || head.eyes == null) {
-                            continue;
-                        }
-                        String raw = head.attachPoint;
-                        String part = model != null && resolver != null
-                                ? resolver.canonicalToken(model, raw) : raw;
-                        int headStart = dv.eyes.size();
-                        for (EyeDefinition def : head.eyes) {
-                            dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
-                        }
-                        // Translate each eye's on-disk within-head cross-target back to a flat draft index.
-                        for (int e = 0; e < head.eyes.size(); e++) {
-                            int within = head.eyes.get(e).placement().crossTarget();
-                            if (within >= 0 && within < head.eyes.size()) {
-                                dv.eyes.get(headStart + e).eye.crossTarget = headStart + within;
-                            }
+                for (HeadConfig head : v.heads) {
+                    String raw = head.attachPoint;
+                    String part = model != null && resolver != null
+                            ? resolver.canonicalToken(model, raw) : raw;
+                    int headStart = dv.eyes.size();
+                    for (EyeDefinition def : head.eyes) {
+                        dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
+                    }
+                    // Translate each eye's on-disk within-head cross-target back to a flat draft index.
+                    for (int e = 0; e < head.eyes.size(); e++) {
+                        int within = head.eyes.get(e).placement().crossTarget();
+                        if (within >= 0 && within < head.eyes.size()) {
+                            dv.eyes.get(headStart + e).eye.crossTarget = headStart + within;
                         }
                     }
                 }
