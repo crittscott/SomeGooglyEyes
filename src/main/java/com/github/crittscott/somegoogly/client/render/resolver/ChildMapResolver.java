@@ -31,6 +31,11 @@ public class ChildMapResolver extends ModelPartTreeResolver {
     private static final Map<EntityModel<?>, List<NamedRoot>> CACHE = new WeakHashMap<>();
 
     @Override
+    public void clearModelCache() {
+        CACHE.clear();
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return true; // catch-all; the named-model resolvers are tried first
     }

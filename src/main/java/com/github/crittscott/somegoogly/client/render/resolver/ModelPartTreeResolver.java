@@ -3,9 +3,9 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
+import javax.annotation.Nullable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +31,11 @@ import java.util.Map;
  * {@code body/head} disambiguates two same-named parts under different parents. A bare {@code #N} is just
  * the path of a nameless positional root (from {@link ChildMapResolver}); it matches the same way.
  *
- * <p>The walk mirrors {@link ModelPart#visit}: it applies each part's {@code translateAndRotate} onto the
- * live (this-frame, post-animation) {@link PoseStack} before descending, so the captured pose includes
- * every ancestor's animation. Unlike {@code visit} it does <b>not</b> skip cube-less pivot/group parts, so
- * eyes can attach to a named empty joint.
+ * <p>Resolving a token records the chain of parts from a subtree root down to the attach part; applying
+ * that chain replays each part's {@code translateAndRotate} onto the live (this-frame, post-animation)
+ * {@link PoseStack}, so the resulting pose carries every ancestor's animation. The descent mirrors
+ * {@link ModelPart#visit}, except that it does <b>not</b> skip cube-less pivot/group parts, so eyes can
+ * attach to a named empty joint.
  */
 abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
 
@@ -70,7 +71,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         if (!handles(model)) {
             return storedToken;
         }
-        // First part (pre-order) whose path suffix-matches the stored token — the same order the pose walk
+        // First part (pre-order) whose path suffix-matches the stored token — the same order the search
         // below follows, so canonical naming and attachment agree.
         for (String path : enumerateParts(model)) {
             if (EyeAttachmentResolver.pathMatches(storedToken, path)) {
@@ -80,44 +81,52 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         return storedToken; // no part matches; leave the token as authored
     }
 
-    @Override
-    public boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
-        if (!handles(model)) {
-            return false;
-        }
-        Matrix4f[] capPose = new Matrix4f[1];
-        Matrix3f[] capNormal = new Matrix3f[1];
-        for (NamedRoot root : roots(model)) {
-            walk(poseStack, "", root.name(), root.part(), partToken, capPose, capNormal);
-            if (capPose[0] != null) {
-                break;
+    /** The parts from a subtree root down to the attach part, inclusive, in the order they transform. */
+    private record PartChain(ModelPart[] chain) implements Attachment {
+        @Override
+        public boolean apply(PoseStack poseStack) {
+            for (ModelPart part : chain) {
+                part.translateAndRotate(poseStack);
             }
+            return true;
         }
-        if (capPose[0] == null) {
-            return false;
-        }
-        poseStack.last().pose().set(capPose[0]);
-        poseStack.last().normal().set(capNormal[0]);
-        return true;
     }
 
-    private static void walk(PoseStack pose, String prefix, String name, ModelPart part, String token,
-                             Matrix4f[] capPose, Matrix3f[] capNormal) {
-        if (capPose[0] != null) {
-            return;
+    @Override
+    @Nullable
+    public Attachment resolve(EntityModel<?> model, String partToken) {
+        if (!handles(model)) {
+            return null;
         }
-        pose.pushPose();
-        part.translateAndRotate(pose);
-        String path = prefix.isEmpty() ? name : prefix + "/" + name;
-        if (EyeAttachmentResolver.pathMatches(token, path)) {
-            // Copy: the pose entry is reused/popped after this returns.
-            capPose[0] = new Matrix4f(pose.last().pose());
-            capNormal[0] = new Matrix3f(pose.last().normal());
-        } else {
-            for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
-                walk(pose, path, child.getKey(), child.getValue(), token, capPose, capNormal);
+        ArrayDeque<ModelPart> chain = new ArrayDeque<>();
+        for (NamedRoot root : roots(model)) {
+            if (search("", root.name(), root.part(), partToken, chain)) {
+                return new PartChain(chain.toArray(new ModelPart[0]));
             }
         }
-        pose.popPose();
+        return null;
+    }
+
+    /**
+     * Depth-first pre-order over the {@code children} map, in the same root order and the same path
+     * spelling {@link #enumerate} uses, so a token attaches to the part {@link #canonicalToken} names. A
+     * matching part is not descended into, so an ancestor {@code head} wins over a descendant {@code head}.
+     *
+     * <p>On success {@code chain} holds root→part inclusive; on failure it is left as it was found.
+     */
+    private static boolean search(String prefix, String name, ModelPart part, String token,
+                                  ArrayDeque<ModelPart> chain) {
+        String path = prefix.isEmpty() ? name : prefix + "/" + name;
+        chain.addLast(part);
+        if (EyeAttachmentResolver.pathMatches(token, path)) {
+            return true;
+        }
+        for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
+            if (search(path, child.getKey(), child.getValue(), token, chain)) {
+                return true;
+            }
+        }
+        chain.removeLast();
+        return false;
     }
 }

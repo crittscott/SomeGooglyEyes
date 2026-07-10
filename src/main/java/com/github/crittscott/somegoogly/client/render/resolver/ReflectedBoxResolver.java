@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -33,8 +34,15 @@ import java.util.WeakHashMap;
  */
 abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
-    // Indexed per model instance (models are singletons per renderer; render thread only).
+    // Indexed per model instance (models are singletons per renderer; render thread only). Both families'
+    // boxes hold a reference back to their model, so an entry keeps its own weak key alive and only
+    // clearModelCache() actually reclaims it.
     private final Map<EntityModel<?>, ModelIndex> cache = new WeakHashMap<>();
+
+    @Override
+    public void clearModelCache() {
+        cache.clear();
+    }
 
     /** Per-model index: the family's boxes, with an index-aligned path token each. */
     private record ModelIndex(List<Object> parts, List<String> paths) {
@@ -169,31 +177,48 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         return indexOf(model).paths();
     }
 
+    /**
+     * The boxes from a root down to the attach box, inclusive, in the order they transform. Bound to the
+     * resolver that produced it, since only the family knows how to apply a box's transform.
+     */
+    private final class BoxChain implements Attachment {
+        private final Object[] chain;
+
+        BoxChain(Object[] chain) {
+            this.chain = chain;
+        }
+
+        @Override
+        public boolean apply(PoseStack poseStack) {
+            for (Object part : chain) {
+                if (!applyTransform(part, poseStack)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     @Override
-    public boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
+    @Nullable
+    public Attachment resolve(EntityModel<?> model, String partToken) {
         if (!handles(model)) {
-            return false;
+            return null;
         }
         ModelIndex index = indexOf(model);
         int i = find(index, partToken);
         if (i < 0) {
-            return false;
+            return null;
         }
 
         ArrayDeque<Object> chain = new ArrayDeque<>();
         IdentityHashMap<Object, Boolean> seen = new IdentityHashMap<>();
         for (Object part = index.parts().get(i); part != null; part = parentOf(part)) {
             if (seen.put(part, Boolean.TRUE) != null) {
-                return false;
+                return null; // parent cycle: no usable chain
             }
             chain.addFirst(part);
         }
-
-        for (Object part : chain) {
-            if (!applyTransform(part, poseStack)) {
-                return false;
-            }
-        }
-        return true;
+        return new BoxChain(chain.toArray());
     }
 }

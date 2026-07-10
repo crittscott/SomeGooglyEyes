@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerLayer;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
+import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -42,6 +43,10 @@ public class ClientEventHandler {
 
     @SuppressWarnings("rawtypes")
     public void addLayers() {
+        // Fires on client setup and again on every resource reload, which rebuilds every renderer and its
+        // model. The resolvers' caches are keyed on those model instances, so drop them here.
+        Resolvers.clearCaches();
+
         HashSet<LivingEntityRenderer> addedRenderers = new HashSet<>();
 
         EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
