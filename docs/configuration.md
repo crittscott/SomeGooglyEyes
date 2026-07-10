@@ -11,7 +11,7 @@ Location: `<world>/serverconfig/somegoogly-server.toml` .
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `googlyEyesEnabled` | `true` | Master switch for new spawn decisions. Turning it off stops *new* mobs from rolling eyes; mobs that already have eyes keep them. |
-| `globalPercent` | `2` | Default percent chance (0–100) for an eligible mob to spawn with eyes. |
+| `globalPercent` | `5` | Default percent chance (0–100) for an eligible mob to spawn with eyes. |
 | `harvestOnKillPercent` | `25` | Percent chance that an eyed mob killed by a player's direct shears blow drops its eye. (The Optometrist enchantment bypasses this with a guaranteed, non-lethal right-click harvest.) |
 | `entityOverrides` | empty | Per-mob spawn chances, one entry per line as `"entity,percent"`. |
 
@@ -34,7 +34,7 @@ A mob's eyes-or-not decision is made **once, at first spawn**, and stored on the
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `ambientBehaviors` | `true` | Whether idle eyed mobs periodically play a random expression. |
-| `ambientMinTicks` / `ambientMaxTicks` | `60` / `200` | Idle time between ambient expressions on a mob (20 ticks = 1 second). |
+| `ambientMinTicks` / `ambientMaxTicks` | `100` / `400` | Idle time between ambient expressions on a mob (20 ticks = 1 second). |
 | `ambientBehaviorPool` | blink, cross_eye, side_eye, stare | Which expressions the idle timer may pick, by id. Remove a line to drop it from rotation. |
 | `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it. `0` disables. |
 | `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader spins its pupils (`swirl`). |
