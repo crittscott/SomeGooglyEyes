@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * survives reload / dimension change / growing up). Two pieces:
  * <ul>
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
- *       (shears remove, potion adds).</li>
+ *       (shears remove, slimey eye adds).</li>
  *   <li>{@code somegoogly:eyeOverrides} — an optional compound of per-mob appearance overrides
  *       (iris/cornea tint, glow), applied to all of the mob's eyes.</li>
  * </ul>
@@ -105,7 +105,7 @@ public final class EyeState {
     }
 
     /**
-     * Replace the mob's whole appearance override (used by the potion and harvest). Writes the
+     * Replace the mob's whole appearance override (used by the slimey eye and harvest). Writes the
      * {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {

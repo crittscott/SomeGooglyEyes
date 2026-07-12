@@ -1,8 +1,7 @@
 {
   "enchantment.somegoogly.optometrist": "Optometrist",
-  "item.minecraft.potion.effect.googly_eyes": "Potion of Googly Eyes",
-  "item.minecraft.splash_potion.effect.googly_eyes": "Splash Potion of Googly Eyes",
   "item.somegoogly.googly_eye": "Googly Eye",
+  "item.somegoogly.slimey_eye": "Slimey Eye",
   "itemGroup.somegoogly": "Some Googly Eyes",
   "key.categories.somegoogly": "Some Googly Eyes",
   "key.somegoogly.lock": "Choose/release mob",

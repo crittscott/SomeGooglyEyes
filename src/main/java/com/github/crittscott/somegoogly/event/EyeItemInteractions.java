@@ -33,8 +33,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *       {@link #onLivingDrops}.</li>
  * </ul>
  *
- * <p>Eyes are <i>given</i> only by the googly potion ({@link EyePotionInteractions}); the eye item is a
- * brewing/crafting ingredient, not a direct right-click apply, so there is no reattach verb here.
+ * <p>Eyes are <i>given</i> by the slimey eye ({@code SlimeyEyeItem}), which owns that verb itself; the
+ * plain eye item is a crafting ingredient, not a direct right-click apply, so there is no reattach verb
+ * here. Shears are a vanilla item we don't own, which is why the harvest verbs live in this event
+ * handler rather than on an item.
  *
  * <p>Both harvest paths accept any {@link ShearsItem} (vanilla or modded) and capture the mob's appearance from head 0 /
  * eye 0 (the override model is per-mob, not per-eye).
@@ -44,8 +46,8 @@ public class EyeItemInteractions {
     /**
      * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
      * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top. Always a
-     * single eye: the potion that gives eyes consumes one eye, so dropping the mob's whole eye count
-     * would let one seed eye multiply through a brew-apply-harvest loop.
+     * single eye: the slimey eye that gives eyes consumes one eye, so dropping the mob's whole eye count
+     * would let one seed eye multiply through a craft-apply-harvest loop.
      */
     private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
         // Effective appearance = the mob's config appearance (head 0 / eye 0) with its override on top,
@@ -100,8 +102,8 @@ public class EyeItemInteractions {
         Player player = event.getEntity();
         ItemStack stack = event.getItemStack();
 
-        // Eyes are given only by the googly potion; the eye item is for brewing/crafting, not a direct
-        // right-click apply. Shears (with Optometrist) remain the non-lethal harvest path.
+        // Eyes are given by the slimey eye, which handles that itself; the plain eye item is for
+        // crafting, not a direct right-click apply. Shears (with Optometrist) are the non-lethal harvest.
         if (stack.getItem() instanceof ShearsItem && EyeState.hasEyes(mob) && hasOptometrist(stack)) {
             harvest(event, player, mob, stack);
         }

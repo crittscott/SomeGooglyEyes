@@ -3,8 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
+import com.github.crittscott.somegoogly.recipe.SlimeyEyeRecipe;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -17,14 +21,20 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The special {@code eye_modifier} recipe: one googly eye plus one recognized modifier transforms the
- * eye's {@link AppearanceOverride}. Drives the recipe directly through a headless 2×1 crafting grid (no
- * player/menu UI), asserting the appearance delta and that unrelated stack NBT survives. Modifier→color
- * mappings are asserted by presence, not exact RGB, so they don't pin a particular dye palette.
+ * The mod's two crafting recipes, driven directly through a headless 2×1 grid (no player/menu UI):
+ *
+ * <ul>
+ *   <li>{@code eye_modifier} — one googly eye plus one recognized modifier transforms the eye's
+ *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact RGB, so
+ *       they don't pin a particular dye palette.</li>
+ *   <li>{@code slimey_eye} — eye plus slimeball, which must carry the eye's appearance onto the
+ *       applicator. That copy is the whole reason the recipe isn't a plain shapeless one.</li>
+ * </ul>
  */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -65,7 +75,7 @@ public final class RecipeGameTests {
 
         helper.assertTrue(recipe().matches(grid, helper.getLevel()), "eye + cobweb should match");
         ItemStack result = recipe().assemble(grid, registries);
-        helper.assertTrue(GooglyEyeItem.getProperties(result).isEmpty(), "cobweb should clear every override");
+        helper.assertTrue(EyeItemProperties.get(result).isEmpty(), "cobweb should clear every override");
         helper.succeed();
     }
 
@@ -78,7 +88,7 @@ public final class RecipeGameTests {
 
         helper.assertTrue(recipe().matches(grid, helper.getLevel()), "eye + dye should match");
         ItemStack result = recipe().assemble(grid, registries);
-        helper.assertTrue(GooglyEyeItem.getProperties(result).iris().isPresent(), "dye should set the iris color");
+        helper.assertTrue(EyeItemProperties.get(result).iris().isPresent(), "dye should set the iris color");
         helper.assertTrue(result.getTag() != null && "keep".equals(result.getTag().getString("custom")),
                 "unrelated stack NBT should survive the edit");
         helper.succeed();
@@ -90,11 +100,11 @@ public final class RecipeGameTests {
 
         ItemStack onResult = recipe().assemble(
                 grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.GLOWSTONE_DUST)), registries);
-        helper.assertTrue(GooglyEyeItem.getProperties(onResult).glow().orElse(false), "glowstone should force glow on");
+        helper.assertTrue(EyeItemProperties.get(onResult).glow().orElse(false), "glowstone should force glow on");
 
         ItemStack offResult = recipe().assemble(
                 grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.REDSTONE)), registries);
-        AppearanceOverride off = GooglyEyeItem.getProperties(offResult);
+        AppearanceOverride off = EyeItemProperties.get(offResult);
         helper.assertTrue(off.glow().isPresent() && !off.glow().get(), "redstone should force glow off");
         helper.succeed();
     }
@@ -105,5 +115,32 @@ public final class RecipeGameTests {
                 GooglyEyeItem.create(AppearanceOverride.EMPTY, 1));
         helper.assertTrue(!recipe().matches(grid, helper.getLevel()), "two eyes and no modifier should not match");
         helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void slimeyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
+        RegistryAccess registries = helper.getLevel().registryAccess();
+        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
+        AppearanceOverride appearance = AppearanceOverride.EMPTY.withIrisColor(iris).withGlow(true);
+
+        CraftingContainer grid = grid(GooglyEyeItem.create(appearance, 1), new ItemStack(Items.SLIME_BALL));
+        SlimeyEyeRecipe recipe = slimeyEyeRecipe();
+
+        helper.assertTrue(recipe.matches(grid, helper.getLevel()), "an eye and a slimeball should match");
+
+        ItemStack result = recipe.assemble(grid, registries);
+        helper.assertTrue(result.is(ModItems.SLIMEY_EYE.get()), "the result should be a slimey eye");
+
+        AppearanceOverride carried = EyeItemProperties.get(result);
+        helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimey eye should carry the eye's iris color");
+        helper.assertTrue(carried.glow().orElse(false), "the slimey eye should carry the eye's glow");
+        helper.succeed();
+    }
+
+    private static SlimeyEyeRecipe slimeyEyeRecipe() {
+        NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
+                Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
+        return new SlimeyEyeRecipe(new ResourceLocation(SomeGoogly.MOD_ID, "test_slimey_eye"), "",
+                CraftingBookCategory.MISC, new ItemStack(ModItems.SLIMEY_EYE.get()), ingredients);
     }
 }

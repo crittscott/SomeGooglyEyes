@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly;
 
 import com.github.crittscott.somegoogly.client.EyeInspectIndicator;
+import com.github.crittscott.somegoogly.client.SlimeyEyeColors;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
@@ -11,13 +12,11 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.EyeItemInteractions;
-import com.github.crittscott.somegoogly.event.EyePotionInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
 import com.github.crittscott.somegoogly.item.ModCreativeTabs;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.potion.ModPotions;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -30,7 +29,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -64,10 +62,7 @@ public class SomeGoogly {
         ModEnchantments.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModItems.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModCreativeTabs.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModPotions.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModRecipes.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientConfig.register();
@@ -76,6 +71,9 @@ public class SomeGoogly {
 
             // Sneak + held eye item → action-bar verdict on whether the aimed mob could wear eyes.
             MinecraftForge.EVENT_BUS.register(new EyeInspectIndicator());
+
+            // The slimey eye's iris layer is tinted from the appearance its stack carries.
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimeyEyeColors::register);
 
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
 
@@ -91,7 +89,6 @@ public class SomeGoogly {
         ServerConfig.register();
 
         MinecraftForge.EVENT_BUS.register(new EyeItemInteractions());
-        MinecraftForge.EVENT_BUS.register(new EyePotionInteractions());
         MinecraftForge.EVENT_BUS.register(new EyeReactionHandler());
         MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
 
@@ -103,10 +100,5 @@ public class SomeGoogly {
         if (clientEventHandler != null) {
             clientEventHandler.addLayers();
         }
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        // Brewing must be registered on the main thread (the registry isn't thread-safe).
-        event.enqueueWork(ModPotions::registerBrewing);
     }
 }

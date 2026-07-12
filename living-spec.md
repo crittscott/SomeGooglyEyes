@@ -63,7 +63,7 @@ The eye flag is initially a spawn-time decision, but gameplay can later change i
 
 Eligibility for initial eyes depends on whether the server has a usable enabled definition for the entity's current or alternate age. This prevents an entity from being permanently excluded just because it is currently a baby or adult while only the other age has a definition.
 
-Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only through the googly potion (splash or drinkable). Because the state is ordinary persistent data, player eyes are lost on respawn.
+Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only from a slimey eye — either applied to them by another player, or sneak-used on themselves. Because the state is ordinary persistent data, player eyes are lost on respawn.
 
 ## 6. Datapack definition model
 
@@ -202,11 +202,23 @@ Only one behavior runs on an entity at a time. Later triggers are dropped while 
 
 `somegoogly:googly_eye` is a 3D item. Its NBT stores sparse appearance overrides: cornea color, iris color, and glow. It stores no placement, attachment, rotation, scale, or entity-specific geometry.
 
-The eye item is an ingredient only; it is never applied to an entity directly by use.
+The eye item is an ingredient only; it is never applied to an entity directly by use. Crafting it with a slimeball yields the slimey eye, which is the applicator.
 
 In hand, the item uses the same wobble concept as mob eyes. In static item contexts, the iris is centered.
 
-The held item is also an inspection tool: sneaking while holding it and looking at a living entity shows an action-bar verdict on whether that mob could wear eyes — *can*, *already has*, *can only at the other age*, or *cannot*. The check is entirely client-side over the synced config set and synced eye state, through the same shared eligibility predicate the splash potion's server targeting uses, so it reports what a thrown potion would actually do. It deliberately ignores local client render vetoes, which hide eyes on this client but do not affect the potion.
+Either eye item is also an inspection tool: sneaking while holding one and looking at a living entity shows an action-bar verdict on whether that mob could wear eyes — *can*, *already has*, *can only at the other age*, or *cannot*. The check is entirely client-side over the synced config set and synced eye state, through the same shared eligibility predicate the server applies when a slimey eye is used, so it reports what an application would actually do. It deliberately ignores local client render vetoes, which hide eyes on this client but do not affect the application. Its reach deliberately exceeds interaction range, so a mob can be vetted before approaching it.
+
+### Slimey eye
+
+`somegoogly:slimey_eye` is the only normal gameplay path for giving an entity eyes. It is crafted shapelessly from a googly eye plus a slimeball, and the craft copies the eye's appearance onto it.
+
+Right-clicking a living entity with a slimey eye applies that appearance and turns eyes on, consuming one. Sneak-using it applies it to the player instead — the only way a player gets their own eyes. Applying to an already-eyed target recolors it rather than adding a second set. An ineligible target refuses the application and consumes nothing.
+
+Eligibility is the shared server-side predicate: the target must have a usable enabled definition at its *current* age.
+
+The item carries appearance only, never placement. Where the eyes land always comes from the target's own datapack config, exactly as for a mob that rolled eyes at spawn.
+
+Application is deliberately a melee-range, single-target, deterministic verb, carried by an item the mod owns outright. That ownership is the point: appearance is an NBT payload, and vanilla freely rebuilds the stacks of items it owns — a potion converted between bottles, an arrow tipped from one — keeping only the fields it knows about. A payload may only ride on a stack the mod controls end to end.
 
 ### Harvest
 
@@ -217,29 +229,22 @@ Eyed mobs can be harvested in two ways:
 
 Harvested eye items carry the mob's effective appearance. Current overrides are per-mob, not per-eye, so asymmetric colors are not preserved as separate item properties.
 
-A harvest always yields exactly one eye regardless of how many the mob shows, so a single eye cannot multiply through a brew-apply-harvest loop.
+A harvest always yields exactly one eye regardless of how many the mob shows, so a single eye cannot multiply through a craft-apply-harvest loop. Such a loop costs one slimeball per turn and returns exactly the eye it consumed.
 
 Players with eyes are living entities for these systems and can be harvested like mobs.
 
 ### Crafting
 
-The special `eye_modifier` recipe modifies a googly-eye item's appearance. Dyes set iris color, glowstone forces glow on, redstone forces glow off, and cobweb clears overrides back to datapack defaults. The recipe preserves unrelated NBT.
+Two recipes:
 
-### Potion
+- The special `eye_modifier` recipe modifies a googly-eye item's appearance. Dyes set iris color, glowstone forces glow on, redstone forces glow off, and cobweb clears overrides back to datapack defaults. The recipe preserves unrelated NBT. It is a dynamic special recipe with no fixed ingredients, so JEI cannot introspect it.
+- The `slimey_eye` recipe is an ordinary shapeless recipe (eye + slimeball) whose only custom behavior is copying the eye's appearance onto the result. Because its ingredients are declared, the recipe book and JEI display it with no plugin of ours — the mod ships no JEI integration and has no JEI dependency.
 
-Custom brewing recipes turn an awkward potion plus a googly-eye item into the `somegoogly:googly_eyes` potion, in two forms matching the input bottle: a **splash** and a **drinkable**. Both copy the eye item's appearance to the output. The potion deliberately carries no mob effects; the eye-giving logic is layered on vanilla's inert splash/drink handling. There is no lingering form — an area cloud conflicts with the single-target design.
-
-On splash impact, the server chooses one nearby eligible eyeless living entity, including players, applies the potion appearance, and turns eyes on. Drinking gives the drinker their own eyes, and re-applies appearance even to an already-eyed drinker (a recolor path). The potion is the only normal gameplay path for giving an entity eyes.
-
-The mod's items live in its own creative tab (the eye, an Optometrist book, and the purple-tinted potion forms). The effect-less water-blue potion entries vanilla auto-emits for a registered potion are stripped from the vanilla tabs.
+The mod's items live in its own creative tab: the eye, the slimey eye, and an Optometrist book.
 
 ### Enchantment
 
 `somegoogly:optometrist` is a treasure-only shears enchantment used for non-lethal harvesting. It never appears in the enchanting table but remains discoverable and tradeable (loot-chest and fishing books, librarian trades), following the vanilla Mending pattern.
-
-### JEI
-
-JEI integration registers representative brewing displays for both forms of the custom potion recipe (drinkable and splash). The real recipes still copy item appearance NBT. The custom `eye_modifier` recipe is not currently exposed through JEI and remains Partial.
 
 ## 11. Picker and authoring workflow
 
@@ -306,7 +311,8 @@ Current important seams and limits:
 | Additional `EyeHolder` implementations | Deferred | The abstraction anticipates non-entity holders, but entities are the only concrete gameplay holder. |
 | Dedicated-server compatibility certification | Experimental | Side guards exist, but runtime loadability is not recorded as verified. |
 | Generic model attachment | Partial | Reflection and external renderer support favor coverage over perfect robustness. |
-| JEI support for `eye_modifier` | Partial | Brewing is represented; modifier crafting is not. |
+| JEI support for `eye_modifier` | Deferred | A dynamic special recipe has no fixed ingredients for JEI to read. The `slimey_eye` recipe needs no such help. |
+| Ranged application | Deferred | Applying eyes is a melee-range interaction. There is no thrown form. |
 
 Do not treat source-derived compatibility as proven runtime behavior unless a test or manual check has recorded it.
 
@@ -314,9 +320,9 @@ Do not treat source-derived compatibility as proven runtime behavior unless a te
 
 A server-side Forge GameTest suite exists under `src/main/java/com/github/crittscott/somegoogly/gametest/` and runs headless through `runGameTestServer`.
 
-The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, recipe transforms, and shipped config loading.
+The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, both recipe transforms, the slimey eye's apply verb (eligibility gate, appearance transfer, consumption, recolor), and shipped config loading.
 
-It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, the held-eye inspect indicator, harvest integration, potion target selection, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
+It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, the held-eye inspect indicator, the sneak self-apply path, harvest integration, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
 
 ## 16. Maintenance rules
 
@@ -326,7 +332,7 @@ Update this overview when a change alters the system's public or architectural c
 - server/client ownership;
 - persisted NBT keys;
 - packet contents;
-- gameplay behavior for items, recipes, potions, enchantments, commands, picker, or harvesting;
+- gameplay behavior for items, recipes, enchantments, commands, picker, or harvesting;
 - resolver support or compatibility status;
 - status labels such as Implemented, Partial, Experimental, or Deferred;
 - GameTest coverage at the level needed to avoid misleading confidence claims.

@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -83,7 +84,7 @@ public final class SomeGooglyGameTests {
                 .withGlow(true);
 
         ItemStack stack = GooglyEyeItem.create(appearance, 3);
-        AppearanceOverride roundTrip = GooglyEyeItem.getProperties(stack);
+        AppearanceOverride roundTrip = EyeItemProperties.get(stack);
 
         helper.assertTrue(stack.getCount() == 3, "Expected created eye stack count to be preserved");
         helper.assertTrue(roundTrip.equals(appearance), "Expected eye item appearance NBT to round-trip");

@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * <p>Server-authoritative: registered on the server dispatcher and grafted under a server-side
  * {@code /sg} root. The client {@code /sg} picker verbs and these admin verbs live on disjoint paths
  * ({@code admin …} vs the picker verbs), so Minecraft/Forge command fall-through routes each side's input
- * to the side that owns it — one command name, two registration sources. Real shears / potion / dye /
+ * to the side that owns it — one command name, two registration sources. Real shears / slimey eye / dye /
  * redstone gameplay calls the same {@link EyeState} API; this is the manual driver for it.
  *
  * <ul>

@@ -80,7 +80,7 @@ public final class ConfigGameTests {
         RuntimeConfig cow = ServerEyeConfigs.get(new ResourceLocation("minecraft", "cow"), false);
         helper.assertTrue(usable(cow), "cow should have a usable shipped eye config");
 
-        // Players have a definition (player.json) and so are configured — the basis for being a potion target.
+        // Players have a definition (player.json) and so are configured — the basis for being an application target.
         RuntimeConfig player = ServerEyeConfigs.get(new ResourceLocation("minecraft", "player"), false);
         helper.assertTrue(usable(player), "player should have a usable shipped eye config");
         helper.succeed();

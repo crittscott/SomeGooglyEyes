@@ -116,9 +116,6 @@ repositories {
     // GeckoLib (soft dependency — compile against its API; present at runtime via the modpack).
     maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 
-    // JEI (soft dependency — compile against its API; the full jar is pulled in at runtime).
-    maven { url = 'https://maven.blamejared.com' }
-
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
@@ -140,13 +137,6 @@ dependencies {
     // GeckoLib — soft dependency. compileOnly so the mod still runs without it (gated at runtime by
     // ModList.isLoaded). Verify the exact version is available in the repo if this fails to resolve.
     compileOnly fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.7.4")
-
-    // JEI — soft dependency. The API is compileOnly (so the mod runs without JEI; the @JeiPlugin is
-    // only loaded by JEI itself when present), while the full forge artifact is used at runtime so the
-    // brewing recipe shows up in dev. Runtime presence is otherwise via the modpack.
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar

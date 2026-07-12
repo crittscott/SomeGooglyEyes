@@ -2,9 +2,7 @@ package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,15 +15,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * A single eye, as an item. Its appearance lives in stack NBT as {@link AppearanceOverride} (the same
- * codec-serialized schema a mob carries), so it round-trips through drops and crafting.
+ * A single eye, as an item. Its appearance lives in stack NBT as {@link AppearanceOverride} (see
+ * {@link EyeItemProperties}), so it round-trips through drops and crafting.
  *
  * <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it to
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
+ *
+ * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
+ * {@link SlimeyEyeItem}, which is what actually sticks eyes onto a mob.
  */
 public class GooglyEyeItem extends Item {
-
-    public static final String TAG_EYE_PROPERTIES = "EyeProperties";
 
     public GooglyEyeItem(Properties properties) {
         super(properties);
@@ -33,24 +32,14 @@ public class GooglyEyeItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        AppearanceOverride props = getProperties(stack);
-        props.iris().ifPresent(color ->
-                tooltip.add(Component.literal("Iris: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
-        props.cornea().ifPresent(color ->
-                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
-        props.glow().ifPresent(glow ->
-                tooltip.add(Component.literal("Glow: " + glow).withStyle(ChatFormatting.GRAY)));
+        EyeItemProperties.appendTooltip(stack, tooltip);
     }
 
     /** A new eye-item stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
         ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
-        setProperties(stack, properties);
+        EyeItemProperties.set(stack, properties);
         return stack;
-    }
-
-    public static AppearanceOverride getProperties(ItemStack stack) {
-        return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
     }
 
     @Override
@@ -67,16 +56,5 @@ public class GooglyEyeItem extends Item {
                 return renderer;
             }
         });
-    }
-
-    public static void setProperties(ItemStack stack, AppearanceOverride properties) {
-        if (properties.isEmpty()) {
-            CompoundTag tag = stack.getTag();
-            if (tag != null) {
-                tag.remove(TAG_EYE_PROPERTIES);
-            }
-        } else {
-            stack.getOrCreateTag().put(TAG_EYE_PROPERTIES, properties.toNbt());
-        }
     }
 }

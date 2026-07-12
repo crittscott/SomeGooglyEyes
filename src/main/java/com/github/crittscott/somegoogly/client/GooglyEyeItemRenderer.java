@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -143,7 +143,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        AppearanceOverride props = GooglyEyeItem.getProperties(stack);
+        AppearanceOverride props = EyeItemProperties.get(stack);
         float[] cornea = props.cornea().orElse(EyeColor.WHITE).toArray();
         float[] iris = props.iris().orElse(EyeColor.BLACK).toArray();
         boolean glow = props.glow().orElse(false);

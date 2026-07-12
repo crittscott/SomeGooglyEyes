@@ -35,7 +35,7 @@ public class ServerEventHandler {
         ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         RandomSource random = living.getRandom();
 
-        // Players never roll eyes at spawn — they can only receive them mid-life (the googly potion).
+        // Players never roll eyes at spawn — they can only receive them mid-life (a slimey eye).
         if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
             // authoritative hard-off that beats the percent roll. Use the age-independent check: this
@@ -49,11 +49,11 @@ public class ServerEventHandler {
 
         // Stored only; tracking clients learn the value when they start tracking the entity
         // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
-        // mid-life via EyeState (shears / potion / dye / redstone), which re-syncs to trackers itself.
+        // mid-life via EyeState (shears / slimey eye / dye / redstone), which re-syncs to trackers itself.
         living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
 
         // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
-        // later reattach/potion uses this mob's own arrangement). HeadInfo.chooseVariantIndex maps this
+        // later application uses this mob's own arrangement). HeadInfo.chooseVariantIndex maps this
         // 0..1 roll onto whichever age config's weighted variants apply at render time.
         living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, random.nextFloat());
     }

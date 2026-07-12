@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -38,10 +38,10 @@ public class EyeModifierRecipe extends CustomRecipe {
         if (match == null) {
             return ItemStack.EMPTY;
         }
-        // Copy (not GooglyEyeItem.create) so any unrelated NBT on the eye survives the edit.
+        // Copy (not a fresh stack) so any unrelated NBT on the eye survives the edit.
         ItemStack result = match.eye().copyWithCount(1);
-        AppearanceOverride updated = match.modifier().apply(GooglyEyeItem.getProperties(result), match.modifierStack());
-        GooglyEyeItem.setProperties(result, updated);
+        AppearanceOverride updated = match.modifier().apply(EyeItemProperties.get(result), match.modifierStack());
+        EyeItemProperties.set(result, updated);
         return result;
     }
 

@@ -45,7 +45,7 @@ public final class SpawnGatingGameTests {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
-        // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later potion
+        // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later application
         // uses this mob's own arrangement.
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         float roll = EyeState.getVariantRoll(cow);

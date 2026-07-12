@@ -6,13 +6,22 @@ import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.item.SlimeyEyeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -20,12 +29,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the splash potion's
- * targeting, the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
+ * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the slimey eye's targeting,
+ * the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
  * {@link ServerEyeConfigs#isEligible} delegating to it — are what keep those three in agreement.
  * The delegation test swaps the config store via {@code replaceAll} (restored afterwards, the same
  * force-and-restore pattern as {@link SpawnGatingGameTests}) rather than depending on which configs
  * happen to ship.
+ *
+ * <p>{@link #slimeyEyeAppliesOnlyToEligibleTargets} and {@link #slimeyEyeRecolorsAnAlreadyEyedTarget}
+ * then pin the apply verb itself to that predicate: eyes on, appearance carried over from the stack,
+ * one eye consumed, and nothing at all on an unconfigured mob.
  */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -77,6 +90,69 @@ public final class EligibilityGameTests {
 
             ServerEyeConfigs.replaceAll(Map.of());
             helper.assertTrue(!ServerEyeConfigs.isEligible(cow), "a cow with no config should not be eligible");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimeyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Player player = helper.makeMockSurvivalPlayer();
+        SlimeyEyeItem item = ModItems.SLIMEY_EYE.get();
+        EyeColor red = new EyeColor(1F, 0F, 0F);
+
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            // Unconfigured: refused outright, and the eye stays in hand.
+            ServerEyeConfigs.replaceAll(Map.of());
+            ItemStack stack = SlimeyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
+            InteractionResult refused = item.interactLivingEntity(stack, player, cow, InteractionHand.MAIN_HAND);
+            helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
+            helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
+            helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
+
+            // Configured: eyes on, the stack's appearance carried across, exactly one eye spent.
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            InteractionResult applied = item.interactLivingEntity(stack, player, cow, InteractionHand.MAIN_HAND);
+            helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
+            helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
+            helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
+                    "the applied eyes should carry the stack's iris color");
+            helper.assertTrue(stack.getCount() == 1, "applying should consume exactly one eye");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimeyEyeRecolorsAnAlreadyEyedTarget(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Player player = helper.makeMockSurvivalPlayer();
+        SlimeyEyeItem item = ModItems.SLIMEY_EYE.get();
+        EyeColor blue = new EyeColor(0F, 0F, 1F);
+
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+
+            EyeState.setIrisTint(cow, new EyeColor(1F, 0F, 0F));
+            EyeState.setHasEyes(cow, true);
+
+            ItemStack stack = SlimeyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(blue), 1);
+            InteractionResult applied = item.interactLivingEntity(stack, player, cow, InteractionHand.MAIN_HAND);
+
+            helper.assertTrue(applied.consumesAction(), "an already-eyed target should accept a recolor");
+            helper.assertTrue(EyeState.hasEyes(cow), "a recolor should leave the eyes on");
+            helper.assertTrue(blue.equals(EyeState.readProperties(cow).iris().orElse(null)),
+                    "a recolor should replace the iris color");
+            helper.assertTrue(stack.isEmpty(), "a recolor should consume the eye like any other apply");
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
