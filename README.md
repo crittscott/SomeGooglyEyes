@@ -27,7 +27,7 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Applying it to a mob that already has eyes recolors them.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it — pluck them off first to restyle.
 
 ## Eye potential
 Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.

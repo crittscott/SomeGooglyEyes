@@ -24,7 +24,7 @@ Each entry declares which **mod version** it applies to and which **age** of the
 
 ### Variants: weighted arrangements
 
-`variants` is a list of complete, alternative eye arrangements. Each mob picks **one** variant at spawn (weighted by `weight`, default 1.0, relative) and keeps it for life. A mob with a single arrangement still uses a one-element `variants` list.
+`variants` is a list of complete, alternative eye arrangements. Each mob picks **one** variant (weighted by `weight`, default 1.0, relative) — rolled at spawn, and rolled fresh each time a slimy eye gives it eyes. A mob with a single arrangement still uses a one-element `variants` list.
 
 ### Heads: where eyes attach
 

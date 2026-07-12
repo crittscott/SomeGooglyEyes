@@ -58,7 +58,7 @@ Living entities may carry these Forge persistent-data keys:
 | `somegoogly:eyeVariantRoll` | Stable random value used to select one weighted placement variant. |
 | `somegoogly:eyeOverrides` | Optional appearance override: cornea color, iris color, and glow. |
 
-The eye flag is initially a spawn-time decision, but gameplay can later change it. The variant roll is stable for the entity's life so the visual arrangement does not reroll on save/load, tracking changes, dimension changes, or aging.
+The eye flag is initially a spawn-time decision, but gameplay can later change it. The variant roll is assigned when the entity first joins a server level and is stable across save/load, tracking changes, dimension changes, and aging; a slimy-eye application draws a fresh roll as it turns eyes on, so an arrangement lasts exactly as long as the eyes it was drawn for.
 
 Eligibility for initial eyes depends on whether the server has a usable enabled definition for the entity's current or alternate age. This prevents an entity from being permanently excluded just because it is currently a baby or adult while only the other age has a definition.
 
@@ -209,11 +209,11 @@ Either eye item is also an inspection tool: sneaking while holding one and looki
 
 `somegoogly:slimy_eye` is the only normal gameplay path for giving an entity eyes. It is crafted shapelessly from a googly eye plus a slimeball, and the craft copies the eye's appearance onto it.
 
-Right-clicking a living entity with a slimy eye applies that appearance and turns eyes on, consuming one. Sneak-using it applies it to the player instead — the only way a player gets their own eyes. Applying to an already-eyed target recolors it rather than adding a second set. An ineligible target refuses the application and consumes nothing.
+Right-clicking an eyeless living entity with a slimy eye turns its eyes on with the item's appearance and a freshly rolled placement variant, consuming one. Sneak-using it applies it to the player instead — the only way a player gets their own eyes. An already-eyed or ineligible target refuses the application and consumes nothing; recoloring an eyed mob means harvesting its eye, modifying it, and re-applying.
 
 The apply verb claims the right-click before the target's own interaction runs (via the entity-interact event, on both sides), so mobs with their own right-click handling — horses, villagers, tamed pets — receive eyes instead of rearing, trading, or sitting. While a slimy eye is held, an entity right-click always belongs to the applicator.
 
-Eligibility is the shared server-side predicate: the target must have a usable enabled definition at its *current* age.
+Eligibility is the shared server-side predicate — the target must have a usable enabled definition at its *current* age — plus the target being eyeless.
 
 The item carries appearance only, never placement. Where the eyes land always comes from the target's own datapack config, exactly as for a mob that rolled eyes at spawn.
 
@@ -321,7 +321,7 @@ Do not treat source-derived compatibility as proven runtime behavior unless a te
 
 A server-side Forge GameTest suite exists under `src/main/java/com/github/crittscott/somegoogly/gametest/` and runs headless through `runGameTestServer`.
 
-The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, both recipe transforms, the slimy eye's apply verb (eligibility gate, appearance transfer, consumption, recolor), and shipped config loading.
+The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, both recipe transforms, the slimy eye's apply verb (eligibility and already-eyed gates, appearance transfer, variant reroll, consumption), and shipped config loading.
 
 It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, the held-eye inspect indicator, the sneak self-apply path, harvest integration, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
 

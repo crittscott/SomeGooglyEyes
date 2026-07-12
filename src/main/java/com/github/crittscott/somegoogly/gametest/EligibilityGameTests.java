@@ -34,9 +34,11 @@ import java.util.Map;
  * force-and-restore pattern as {@link SpawnGatingGameTests}) rather than depending on which configs
  * happen to ship.
  *
- * <p>{@link #slimyEyeAppliesOnlyToEligibleTargets} and {@link #slimyEyeRecolorsAnAlreadyEyedTarget}
- * then pin the apply verb ({@link SlimyEyeItem#applyToTarget}) to that predicate: eyes on, appearance
- * carried over from the stack, one eye consumed, and nothing at all on an unconfigured mob.
+ * <p>{@link #slimyEyeAppliesOnlyToEligibleTargets}, {@link #slimyEyeRefusesAnAlreadyEyedTarget}, and
+ * {@link #slimyEyeRerollsThePlacementVariant} then pin the apply verb
+ * ({@link SlimyEyeItem#applyToTarget}): an eyeless, configured mob gains eyes carrying the stack's
+ * appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or already-eyed
+ * mob is refused with nothing consumed and nothing touched.
  */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -127,10 +129,10 @@ public final class EligibilityGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void slimyEyeRecolorsAnAlreadyEyedTarget(GameTestHelper helper) {
+    public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         Player player = helper.makeMockSurvivalPlayer();
-        EyeColor blue = new EyeColor(0F, 0F, 1F);
+        EyeColor red = new EyeColor(1F, 0F, 0F);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -138,17 +140,46 @@ public final class EligibilityGameTests {
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
 
-            EyeState.setIrisTint(cow, new EyeColor(1F, 0F, 0F));
+            EyeState.setIrisTint(cow, red);
             EyeState.setHasEyes(cow, true);
+            float roll = EyeState.getVariantRoll(cow);
 
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(blue), 1);
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
+            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, player, cow);
+
+            helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
+            helper.assertTrue(stack.getCount() == 1, "a refused apply should not consume the eye");
+            helper.assertTrue(EyeState.hasEyes(cow), "a refusal should leave the eyes on");
+            helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
+                    "a refusal should not touch the appearance");
+            helper.assertTrue(EyeState.getVariantRoll(cow) == roll, "a refusal should not touch the variant roll");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Player player = helper.makeMockSurvivalPlayer();
+
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+
+            EyeState.setHasEyes(cow, false);
+            // A sentinel outside nextFloat()'s [0, 1) range: any freshly drawn roll must displace it.
+            cow.getPersistentData().putFloat(EyeState.VARIANT_ROLL, 2F);
+
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
             InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
 
-            helper.assertTrue(applied.consumesAction(), "an already-eyed target should accept a recolor");
-            helper.assertTrue(EyeState.hasEyes(cow), "a recolor should leave the eyes on");
-            helper.assertTrue(blue.equals(EyeState.readProperties(cow).iris().orElse(null)),
-                    "a recolor should replace the iris color");
-            helper.assertTrue(stack.isEmpty(), "a recolor should consume the eye like any other apply");
+            helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
+            float roll = EyeState.getVariantRoll(cow);
+            helper.assertTrue(roll >= 0F && roll < 1F, "an application should draw a fresh variant roll");
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }

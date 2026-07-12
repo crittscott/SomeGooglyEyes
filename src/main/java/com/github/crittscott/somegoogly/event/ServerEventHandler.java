@@ -52,9 +52,10 @@ public class ServerEventHandler {
         // mid-life via EyeState (shears / slimy eye / dye / redstone), which re-syncs to trackers itself.
         living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
 
-        // Pick a placement variant now and lock it for life (independent of the has-eyes roll, so a
-        // later application uses this mob's own arrangement). HeadInfo.chooseVariantIndex maps this
-        // 0..1 roll onto whichever age config's weighted variants apply at render time.
+        // Pick a placement variant, independent of the has-eyes roll: paths that turn eyes on
+        // without drawing their own roll (the admin toggle) use this arrangement, while a slimy-eye
+        // application draws a fresh one. HeadInfo.chooseVariantIndex maps the 0..1 roll onto
+        // whichever age config's weighted variants apply at render time.
         living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, random.nextFloat());
     }
 
@@ -85,8 +86,8 @@ public class ServerEventHandler {
 
         // Decide once, at first spawn. The result is stored in persistent data (saved with the
         // entity), so on later world loads / dimension changes / growing up we keep the existing
-        // decision instead of re-rolling. A mob keeps its eyes (or lack of them) for life, even if
-        // the spawn-chance config is changed afterwards — only newly spawned mobs see the new chance.
+        // decision instead of re-rolling — even if the spawn-chance config changed, only newly
+        // spawned mobs see the new chance. Mid-life changes go through EyeState (shears / slimy eye).
         // (Babies and adults share the one answer; the client just swaps in the age-appropriate
         // geometry as the mob grows.)
         if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {

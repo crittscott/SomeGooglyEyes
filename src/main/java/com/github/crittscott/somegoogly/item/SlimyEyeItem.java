@@ -24,8 +24,9 @@ import java.util.List;
  * a player gets their own eyes (they are excluded from the at-spawn roll).
  *
  * <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
- * target's datapack config, exactly as it does for a mob that rolled eyes at spawn. Applying to an
- * already-eyed target recolors it rather than stacking a second set.
+ * target's datapack config, on a placement variant freshly rolled by each application. An
+ * already-eyed target refuses the application and consumes nothing, so recoloring an eyed mob means
+ * harvesting its eye, modifying it, and re-applying.
  *
  * <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
  * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
@@ -46,18 +47,6 @@ public class SlimyEyeItem extends Item {
         EyeItemProperties.appendTooltip(stack, tooltip);
     }
 
-    /**
-     * Give {@code target} this stack's eyes, consuming one. Callers have already established that the
-     * target is eligible; this is the shared body of the mob and self paths.
-     */
-    private static void apply(ItemStack stack, Player player, LivingEntity target) {
-        EyeState.setProperties(target, EyeItemProperties.get(stack));
-        EyeState.setHasEyes(target, true);
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
-    }
-
     /** A new slimy-eye stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
         ItemStack stack = new ItemStack(ModItems.SLIMY_EYE.get(), count);
@@ -66,14 +55,21 @@ public class SlimyEyeItem extends Item {
     }
 
     /**
-     * The mob-apply verb, server side: gate on the shared eligibility predicate, then give
-     * {@code target} the stack's eyes, consuming one. {@code FAIL} refuses without consuming.
+     * The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
+     * eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Both the mob
+     * path ({@code EyeItemInteractions}) and the sneak self-apply ({@link #use}) route through here.
      */
     public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
-        if (!ServerEyeConfigs.isEligible(target)) {
+        if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
         }
-        apply(stack, player, target);
+        EyeState.rerollVariant(target);
+        EyeState.setProperties(target, EyeItemProperties.get(stack));
+        EyeState.setHasEyes(target, true);
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
         return InteractionResult.SUCCESS;
     }
 
@@ -87,10 +83,8 @@ public class SlimyEyeItem extends Item {
         if (level.isClientSide()) {
             return InteractionResultHolder.success(stack);
         }
-        if (!ServerEyeConfigs.isEligible(player)) {
-            return InteractionResultHolder.fail(stack);
-        }
-        apply(stack, player, player);
-        return InteractionResultHolder.consume(stack);
+        return applyToTarget(stack, player, player).consumesAction()
+                ? InteractionResultHolder.consume(stack)
+                : InteractionResultHolder.fail(stack);
     }
 }

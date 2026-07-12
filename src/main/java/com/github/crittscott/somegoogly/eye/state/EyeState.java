@@ -14,10 +14,12 @@ import javax.annotation.Nullable;
  * shared datapack config ({@link com.github.crittscott.somegoogly.eye.HeadInfo}).
  *
  * <p>State lives in the entity's persistent data (saved by Forge under {@code ForgeData}, so it
- * survives reload / dimension change / growing up). Two pieces:
+ * survives reload / dimension change / growing up). Three pieces:
  * <ul>
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
  *       (shears remove, slimy eye adds).</li>
+ *   <li>{@code somegoogly:eyeVariantRoll} — the 0..1 roll that selects the mob's placement variant,
+ *       assigned at first join and redrawn by a slimy-eye application ({@link #rerollVariant}).</li>
  *   <li>{@code somegoogly:eyeOverrides} — an optional compound of per-mob appearance overrides
  *       (iris/cornea tint, glow), applied to all of the mob's eyes.</li>
  * </ul>
@@ -58,9 +60,10 @@ public final class EyeState {
     }
 
     /**
-     * The mob's stored placement-variant roll (0..1), assigned once at spawn and locked for life. Maps
-     * onto the current age config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults
-     * to 0 (the first variant) when unset.
+     * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn by
+     * {@link #rerollVariant} when a slimy-eye application turns eyes on. Maps onto the current age
+     * config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults to 0 (the first
+     * variant) when unset.
      */
     public static float getVariantRoll(LivingEntity entity) {
         return entity.getPersistentData().getFloat(VARIANT_ROLL);
@@ -84,6 +87,15 @@ public final class EyeState {
      */
     public static AppearanceOverride readProperties(LivingEntity entity) {
         return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
+    }
+
+    /**
+     * Draw a fresh placement-variant roll for the mob and broadcast. Called as a slimy-eye
+     * application turns eyes on, so every application produces a newly rolled arrangement.
+     */
+    public static void rerollVariant(LivingEntity entity) {
+        entity.getPersistentData().putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
+        sync(entity);
     }
 
     public static void setCorneaTint(LivingEntity entity, EyeColor color) {

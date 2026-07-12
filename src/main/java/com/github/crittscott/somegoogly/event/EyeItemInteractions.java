@@ -26,8 +26,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  * <i>harvest</i>s.
  *
  * <ul>
- *   <li><b>Apply</b> — right-click a living entity with a slimy eye ({@link SlimyEyeItem}): give it
- *       eyes carrying the stack's appearance, consuming one; see {@link SlimyEyeItem#applyToTarget}.
+ *   <li><b>Apply</b> — right-click an eyeless living entity with a slimy eye ({@link SlimyEyeItem}):
+ *       give it eyes carrying the stack's appearance on a freshly rolled placement variant, consuming
+ *       one; an already-eyed or unconfigured target refuses and consumes nothing
+ *       ({@link SlimyEyeItem#applyToTarget}).
  *       The verb is dispatched here rather than through {@code Item#interactLivingEntity} because the
  *       item verb runs only after the target's own interaction declines the click, and mobs that
  *       consume generic right-clicks (an untamed horse rears, a villager opens trade, a tamed pet
