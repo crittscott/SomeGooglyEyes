@@ -10,7 +10,7 @@
   "key.somegoogly.toggle": "Toggle picker",
   "somegoogly.inspect.already_has": "Already has googly eyes",
   "somegoogly.inspect.can_have": "Can have googly eyes",
-  "somegoogly.inspect.cannot": "Cannot have googly eyes",
+  "somegoogly.inspect.cannot": "Not yet configured for googly eyes; see docs",
   "somegoogly.inspect.only_as_adult": "Can have googly eyes only as an adult",
   "somegoogly.inspect.only_as_baby": "Can have googly eyes only as a baby"
 }
