@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Some Googly Eyes — CurseForge description</title>
+<!--
+  The CurseForge project description, kept as HTML because CurseForge has no HTML upload: its editor
+  is either WYSIWYG or a (poor) Markdown mode, and mixing the two loses the layout.
+
+  To publish: open this file in a browser, select all, copy, and paste into the WYSIWYG editor.
+  The styles below are for that browser preview only — CurseForge strips them, and the pasted result
+  inherits their theme, which is what we want.
+
+  Unlike README.md, every link here is absolute and the screenshot is a raw.githubusercontent URL:
+  CurseForge cannot resolve repo-relative paths. Prefer re-uploading the screenshot to the project's
+  own gallery and swapping the src, so the page doesn't break if the repo moves.
+
+  Mirrors README.md. Update both together.
+-->
+<style>
+  body { max-width: 46rem; margin: 2rem auto; padding: 0 1rem;
+         font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  img { max-width: 100%; height: auto; }
+  h1, h2 { line-height: 1.25; }
+  code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+</style>
+</head>
+<body>
+
+<h1>Some Googly Eyes</h1>
+
+<p>A complete rewrite and expansion of <a href="https://www.curseforge.com/minecraft/mc-mods/googlyeyes">iChun's Googly Eyes</a>. (Also look to <a href="https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes">Regoogly Eyes</a> by EmeryTheModder if you want a pure port of the original.)</p>
+
+<p>Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.</p>
+
+<p>Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.</p>
+
+<p>Also compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.</p>
+
+<p><img src="https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/main/docs/googlyeyes-splash.png" alt="A field of mobs wearing googly eyes"></p>
+
+<h2>Getting eyes</h2>
+
+<p><strong>Dispatch the mob with a direct shears blow</strong>: there's a chance to drop a googly eye.</p>
+
+<p><strong>Find the Optometrist enchantment</strong>: put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.</p>
+
+<p><strong>Customize it in a crafting grid</strong>: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.</p>
+
+<p><strong>Set it in slime</strong>: googly eye + slimeball &rarr; a <strong>Slimey Eye</strong>, which inherits the eye's colors.</p>
+
+<p><strong>Apply it</strong>: right-click a mob with the slimey eye to give it eyes, or sneak and use it to grow your own. Applying it to a mob that already has eyes recolors them.</p>
+
+<h2>Eye potential</h2>
+
+<p>Don't waste your slimey eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all &mdash; before you walk up to it.</p>
+
+<h2>Configuration</h2>
+
+<ul>
+  <li><strong>Server settings</strong> (<code>&lt;world&gt;/serverconfig/somegoogly-server.toml</code>): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.</li>
+  <li><strong>Client settings</strong> (<code>config/somegoogly-client.toml</code>): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.</li>
+</ul>
+
+<p>See <a href="https://github.com/crittscott/SomeGooglyEyes/blob/main/docs/configuration.md">the configuration reference</a> for the full list.</p>
+
+<h2>Pack and mod authors</h2>
+
+<p>Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob in creative mode and export the result as datapack files.</p>
+
+<ul>
+  <li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/main/docs/datapack-format.md">The eye definition format</a></li>
+  <li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/main/docs/picker.md">The in-game authoring workflow and <code>/sg</code> commands</a></li>
+</ul>
+
+<h2>Compatibility</h2>
+
+<p>The eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code.</p>
+
+<p>Ships with predefined eye configs for:</p>
+
+<ul>
+  <li>Minecraft</li>
+  <li>Alex's Mobs</li>
+  <li>Ars Nouveau</li>
+  <li>Autumnity</li>
+  <li>Exotic Birds</li>
+  <li>Hamsters</li>
+  <li>Ice and Fire</li>
+  <li>Immersive Engineering</li>
+  <li>Simply Cats</li>
+  <li>Twilight Forest</li>
+</ul>
+
+<p>Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? <a href="https://github.com/crittscott/SomeGooglyEyes/issues">Open an issue</a>.</p>
+
+<h2>Status</h2>
+
+<p>Currently in <strong>alpha release</strong>. It works for me, single and multi-player. But that's all I can say for sure. Buyer beware. Found a bug? <a href="https://github.com/crittscott/SomeGooglyEyes/issues">Open an issue</a>.</p>
+
+<p><strong>Fabric, 1.21</strong>: only after 1.20.1/Forge is known to be stable.</p>
+
+<h2>Credits and license</h2>
+
+<p>A port of iChun's <strong>Googly Eyes</strong>, rebuilt for 1.20.1 with new physics, behaviors, and more.</p>
+
+<p>License: <a href="https://github.com/crittscott/SomeGooglyEyes/blob/main/LICENSE"><strong>GPL-3.0</strong></a>.</p>
+
+</body>
+</html>

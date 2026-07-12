@@ -4,7 +4,7 @@ A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge
 
 Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
-Eyes are a collectible resource: harvest them, recolor them, brew them into a potion, and put them on other mobs, or yourself.
+Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
 Also compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: In-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
@@ -25,12 +25,12 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 **Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.
 
-**Brew it**: awkward potion + googly eye → a drinkable **Googly Eyes** potion. The potion inherits the eye's colors.
+**Set it in slime**: googly eye + slimeball → a **Slimey Eye**, which inherits the eye's colors.
 
-**Apply it**: drink it to grow your own googly eyes, or throw the splash to give eyes to one lucky mob nearby.
+**Apply it**: right-click a mob with the slimey eye to give it eyes, or sneak and use it to grow your own. Applying it to a mob that already has eyes recolors them.
 
 ## Eye potential
-Don't waste your eye potion: Acquire an eye item, sneak while targetting a mod to see whether that mob has the option of having eyes.
+Don't waste your slimey eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.
 
 ## Configuration
 

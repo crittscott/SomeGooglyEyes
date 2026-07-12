@@ -52,7 +52,7 @@ Every field is optional; defaults shown. All of placement and default appearance
 | `glows` | `false` | Render the eye full-bright (spider-style) regardless of light level. |
 | `crossTarget` | `-1` | Index of another eye **in the same head** that this eye rolls toward during the `cross_eye` expression. `-1` = this eye doesn't cross.|
 
-Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the potion.
+Colors set here are the mob's defaults; players can override cornea/iris/glow per mob via harvested items, dye crafting, and the slimey eye that applies them.
 
 ## An example
 
