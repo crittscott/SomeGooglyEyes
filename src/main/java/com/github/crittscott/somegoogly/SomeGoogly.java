@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly;
 
 import com.github.crittscott.somegoogly.client.EyeInspectIndicator;
-import com.github.crittscott.somegoogly.client.SlimeyEyeColors;
+import com.github.crittscott.somegoogly.client.SlimyEyeColors;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
@@ -72,8 +72,8 @@ public class SomeGoogly {
             // Sneak + held eye item → action-bar verdict on whether the aimed mob could wear eyes.
             MinecraftForge.EVENT_BUS.register(new EyeInspectIndicator());
 
-            // The slimey eye's iris layer is tinted from the appearance its stack carries.
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimeyEyeColors::register);
+            // The slimy eye's iris layer is tinted from the appearance its stack carries.
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(SlimyEyeColors::register);
 
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
 

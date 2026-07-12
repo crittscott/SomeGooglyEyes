@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * The stack-NBT appearance carried by an eye-bearing item, as an {@link AppearanceOverride} under a
- * single tag key. Shared by {@link GooglyEyeItem} and {@link SlimeyEyeItem} so the eye's look survives
+ * single tag key. Shared by {@link GooglyEyeItem} and {@link SlimyEyeItem} so the eye's look survives
  * unchanged as it is crafted from one into the other and finally applied to a mob — it is the same
  * codec-serialized schema a mob carries, so item↔mob transfer is a straight property copy.
  */

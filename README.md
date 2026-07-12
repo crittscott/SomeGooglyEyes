@@ -25,12 +25,12 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 **Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.
 
-**Set it in slime**: googly eye + slimeball → a **Slimey Eye**, which inherits the eye's colors.
+**Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimey eye to give it eyes, or sneak and use it to grow your own. Applying it to a mob that already has eyes recolors them.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Applying it to a mob that already has eyes recolors them.
 
 ## Eye potential
-Don't waste your slimey eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.
+Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.
 
 ## Configuration
 

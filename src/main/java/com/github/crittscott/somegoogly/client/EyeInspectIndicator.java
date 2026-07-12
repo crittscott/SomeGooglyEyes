@@ -17,13 +17,13 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * Action-bar answer to "could this mob wear googly eyes?": sneak while holding an eye or a slimey eye
+ * Action-bar answer to "could this mob wear googly eyes?": sneak while holding an eye or a slimy eye
  * and look at a living entity. Without this a player can't tell a mob type that's deliberately
- * unconfigured from one they just haven't seen eyed, and spends a slimey eye finding out.
+ * unconfigured from one they just haven't seen eyed, and spends a slimy eye finding out.
  *
  * <p>Purely client-side: the verdict reads the synced config set ({@link ClientEyeConfigs}) through
  * the same {@link RuntimeConfig#isUsable} predicate {@code ServerEyeConfigs.isEligible} applies when a
- * slimey eye is used, and the synced per-entity eye flag ({@code EyeStatePacket} writes it onto the
+ * slimy eye is used, and the synced per-entity eye flag ({@code EyeStatePacket} writes it onto the
  * client entity), so it reports what an application would actually do without asking the server. It
  * deliberately ignores the local {@code ClientConfig} render vetoes — those hide eyes on this client,
  * but the application still works and other players still see the result.
@@ -32,7 +32,7 @@ public class EyeInspectIndicator {
 
     /**
      * Well past both melee pick range ({@code mc.crosshairPickEntity} stops at ~3 blocks) and the reach
-     * a slimey eye is applied at: the point is to vet a mob from a safe distance, before walking up to
+     * a slimy eye is applied at: the point is to vet a mob from a safe distance, before walking up to
      * something that bites.
      */
     private static final double REACH = 16.0D;
@@ -63,9 +63,9 @@ public class EyeInspectIndicator {
         return isEye(player.getMainHandItem()) || isEye(player.getOffhandItem());
     }
 
-    /** Either eye item: the slimey eye is the applicator, but the plain eye is what you carry to craft it. */
+    /** Either eye item: the slimy eye is the applicator, but the plain eye is what you carry to craft it. */
     private static boolean isEye(ItemStack stack) {
-        return stack.is(ModItems.GOOGLY_EYE.get()) || stack.is(ModItems.SLIMEY_EYE.get());
+        return stack.is(ModItems.GOOGLY_EYE.get()) || stack.is(ModItems.SLIMY_EYE.get());
     }
 
     private static Component verdict(LivingEntity target) {

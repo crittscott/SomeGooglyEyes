@@ -15,16 +15,16 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 /**
- * Googly eye + slimeball → slimey eye, carrying the eye's appearance onto the result so the applied
+ * Googly eye + slimeball → slimy eye, carrying the eye's appearance onto the result so the applied
  * mob ends up with the eye you actually dyed or harvested.
  *
  * <p>A {@link ShapelessRecipe} subclass rather than a {@code CustomRecipe} (as {@link EyeModifierRecipe}
  * is): the ingredients are fixed and declared, so the recipe book and JEI can show it without any
  * plugin of ours. Only the result's NBT is dynamic, which is exactly what {@link #assemble} adds.
  */
-public class SlimeyEyeRecipe extends ShapelessRecipe {
+public class SlimyEyeRecipe extends ShapelessRecipe {
 
-    public SlimeyEyeRecipe(ResourceLocation id, String group, CraftingBookCategory category,
+    public SlimyEyeRecipe(ResourceLocation id, String group, CraftingBookCategory category,
                            ItemStack result, NonNullList<Ingredient> ingredients) {
         super(id, group, category, result, ingredients);
     }
@@ -44,34 +44,34 @@ public class SlimeyEyeRecipe extends ShapelessRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.SLIMEY_EYE.get();
+        return ModRecipes.SLIMY_EYE.get();
     }
 
     /**
      * Parses the ordinary shapeless recipe shape. Vanilla's serializer does all the work and we rebuild
      * its output as our subclass, so the JSON and the network form stay exactly a shapeless recipe.
      */
-    public static class Serializer implements RecipeSerializer<SlimeyEyeRecipe> {
+    public static class Serializer implements RecipeSerializer<SlimyEyeRecipe> {
 
         private static final ShapelessRecipe.Serializer SHAPELESS = new ShapelessRecipe.Serializer();
 
-        private static SlimeyEyeRecipe rebuild(ShapelessRecipe base) {
-            return new SlimeyEyeRecipe(base.getId(), base.getGroup(), base.category(),
+        private static SlimyEyeRecipe rebuild(ShapelessRecipe base) {
+            return new SlimyEyeRecipe(base.getId(), base.getGroup(), base.category(),
                     base.getResultItem(RegistryAccess.EMPTY), base.getIngredients());
         }
 
         @Override
-        public SlimeyEyeRecipe fromJson(ResourceLocation id, JsonObject json) {
+        public SlimyEyeRecipe fromJson(ResourceLocation id, JsonObject json) {
             return rebuild(SHAPELESS.fromJson(id, json));
         }
 
         @Override
-        public SlimeyEyeRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
+        public SlimyEyeRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
             return rebuild(SHAPELESS.fromNetwork(id, buffer));
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buffer, SlimeyEyeRecipe recipe) {
+        public void toNetwork(FriendlyByteBuf buffer, SlimyEyeRecipe recipe) {
             SHAPELESS.toNetwork(buffer, recipe);
         }
     }

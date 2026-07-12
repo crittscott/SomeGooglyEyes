@@ -6,16 +6,16 @@ import com.github.crittscott.somegoogly.item.ModItems;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 /**
- * Tints the slimey eye's iris layer from the appearance its stack carries, so the item in hand shows
+ * Tints the slimy eye's iris layer from the appearance its stack carries, so the item in hand shows
  * the color the mob will end up with. The model stacks vanilla's slime ball (layer 0) and the white of
  * the eye (layer 1), both untinted; the iris disc is layer 2, drawn white so the tint reproduces the
  * color exactly.
  *
  * <p>The default matches {@code GooglyEyeItemRenderer}: an eye with no iris override is black.
  */
-public final class SlimeyEyeColors {
+public final class SlimyEyeColors {
 
-    private SlimeyEyeColors() {
+    private SlimyEyeColors() {
     }
 
     /** Wire on the mod event bus (from {@code SomeGoogly}, client side only). */
@@ -23,6 +23,6 @@ public final class SlimeyEyeColors {
         event.register((stack, tintIndex) -> tintIndex == 2
                         ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
                         : -1,
-                ModItems.SLIMEY_EYE.get());
+                ModItems.SLIMY_EYE.get());
     }
 }

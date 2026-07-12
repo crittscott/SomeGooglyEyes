@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
  *
  * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
- * {@link SlimeyEyeItem}, which is what actually sticks eyes onto a mob.
+ * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob.
  */
 public class GooglyEyeItem extends Item {
 

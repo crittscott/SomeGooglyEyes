@@ -105,7 +105,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
         Frame frame = new Frame();
         frame.helper = helper;
-        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimey eye), the same as the
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye), the same as the
         // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
         frame.overrides = EyeState.readProperties(living);
         frame.tracker = SomeGoogly.clientEventHandler.getGooglyTracker(living, helper);

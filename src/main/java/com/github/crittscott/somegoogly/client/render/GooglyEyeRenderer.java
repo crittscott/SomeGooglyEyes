@@ -18,7 +18,7 @@ import org.joml.Vector3f;
 /**
  * Shared eye drawing used by both render layers — the vanilla {@link LayerGooglyEyes} and the
  * GeckoLib {@code GooglyGeoLayer}. Keeping the appearance overrides (dye / harvested-eye item /
- * slimey eye / NBT) here means the two layers can't drift apart: a mob looks the same whether its model is
+ * slimy eye / NBT) here means the two layers can't drift apart: a mob looks the same whether its model is
  * vanilla or GeckoLib.
  *
  * <p>This class only <b>renders</b>: the active behavior was already folded into the eye's simulated

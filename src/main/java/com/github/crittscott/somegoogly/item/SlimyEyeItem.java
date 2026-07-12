@@ -23,16 +23,21 @@ import java.util.List;
  * ({@link EyeItemProperties}); sneak + use applies it to the player themselves, which is the only way
  * a player gets their own eyes (they are excluded from the at-spawn roll).
  *
- * <p>The slimey eye carries appearance only, never placement — where the eyes land comes from the
+ * <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
  * target's datapack config, exactly as it does for a mob that rolled eyes at spawn. Applying to an
  * already-eyed target recolors it rather than stacking a second set.
  *
- * <p>One eye in, one eye out: an application consumes a single slimey eye and a harvest yields a
+ * <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
  * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
+ *
+ * <p>The mob-apply verb ({@link #applyToTarget}) is dispatched from {@code EyeItemInteractions}'s
+ * entity-interact handler — which claims the right-click before the target's own interaction can
+ * consume it — not through {@code Item#interactLivingEntity}. Only the sneak self-apply
+ * ({@link #use}) is dispatched through this class.
  */
-public class SlimeyEyeItem extends Item {
+public class SlimyEyeItem extends Item {
 
-    public SlimeyEyeItem(Properties properties) {
+    public SlimyEyeItem(Properties properties) {
         super(properties);
     }
 
@@ -53,21 +58,18 @@ public class SlimeyEyeItem extends Item {
         }
     }
 
-    /** A new slimey-eye stack carrying {@code properties}. */
+    /** A new slimy-eye stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
-        ItemStack stack = new ItemStack(ModItems.SLIMEY_EYE.get(), count);
+        ItemStack stack = new ItemStack(ModItems.SLIMY_EYE.get(), count);
         EyeItemProperties.set(stack, properties);
         return stack;
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target,
-                                                  InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            // Eligibility is server-authoritative config; the client can't decide it here. It already
-            // previews the verdict through EyeInspectIndicator, so swing and let the server rule.
-            return InteractionResult.SUCCESS;
-        }
+    /**
+     * The mob-apply verb, server side: gate on the shared eligibility predicate, then give
+     * {@code target} the stack's eyes, consuming one. {@code FAIL} refuses without consuming.
+     */
+    public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
         if (!ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
         }

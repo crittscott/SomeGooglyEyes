@@ -24,7 +24,7 @@ import java.util.Random;
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
  * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities), and
  * each tick only walks that small map. A tracked mob is registered regardless of whether it has eyes yet,
- * so a mob that gains eyes mid-life (a slimey eye) while already watched still schedules; whether a behavior
+ * so a mob that gains eyes mid-life (a slimy eye) while already watched still schedules; whether a behavior
  * actually plays is gated on {@code hasEyes} at execution time (see {@link #eventTarget} and the ambient
  * roll in {@link #serverTick}). All state is transient — nothing is saved; a reload starts fresh.
  *
@@ -109,7 +109,7 @@ public final class ServerBehaviorScheduler {
 
     /**
      * A player started tracking {@code mob}. Registers it regardless of current eye state — so a mob that
-     * gains eyes mid-life (a slimey eye) while already watched still schedules, instead of staying silent
+     * gains eyes mid-life (a slimy eye) while already watched still schedules, instead of staying silent
      * until it is untracked and tracked again. Whether a behavior actually plays is gated on {@code hasEyes}
      * at execution time. Also catches the player up if the mob is already mid-effect.
      */

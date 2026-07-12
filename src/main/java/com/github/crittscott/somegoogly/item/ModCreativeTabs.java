@@ -15,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 /**
  * The mod's own creative tab, icon'd with the {@link ModItems#GOOGLY_EYE googly eye}. It gathers
- * everything the mod adds — the eye, the slimey eye that applies it, and an Optometrist book — so they
+ * everything the mod adds — the eye, the slimy eye that applies it, and an Optometrist book — so they
  * live in one place rather than scattered across vanilla tabs.
  */
 public final class ModCreativeTabs {
@@ -29,7 +29,7 @@ public final class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.GOOGLY_EYE.get()))
                     .displayItems((params, output) -> {
                         output.accept(ModItems.GOOGLY_EYE.get());
-                        output.accept(ModItems.SLIMEY_EYE.get());
+                        output.accept(ModItems.SLIMY_EYE.get());
                         output.accept(optometristBook());
                     })
                     .build());

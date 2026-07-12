@@ -59,7 +59,7 @@ public final class ServerEyeConfigs {
 
     /**
      * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
-     * config that is enabled and has at least one head. Used by the slimey eye ({@code SlimeyEyeItem}),
+     * config that is enabled and has at least one head. Used by the slimy eye ({@code SlimyEyeItem}),
      * which should only apply to targets the eyes would visibly appear on immediately. Players have a
      * definition ({@code player.json}) and so are eligible; only an unconfigured entity is not.
      */

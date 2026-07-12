@@ -1,5 +1,5 @@
 {
-  "type": "somegoogly:slimey_eye",
+  "type": "somegoogly:slimy_eye",
   "category": "misc",
   "ingredients": [
     {
@@ -10,6 +10,6 @@
     }
   ],
   "result": {
-    "item": "somegoogly:slimey_eye"
+    "item": "somegoogly:slimy_eye"
   }
 }

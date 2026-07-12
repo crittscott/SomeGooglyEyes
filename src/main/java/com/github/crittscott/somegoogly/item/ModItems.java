@@ -9,7 +9,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Item registry for the mod: the {@link GooglyEyeItem} (the eye itself, an ingredient) and the
- * {@link SlimeyEyeItem} it crafts into (the applicator). Both carry the same appearance NBT.
+ * {@link SlimyEyeItem} it crafts into (the applicator). Both carry the same appearance NBT.
  */
 public final class ModItems {
 
@@ -18,8 +18,8 @@ public final class ModItems {
     public static final RegistryObject<GooglyEyeItem> GOOGLY_EYE =
             ITEMS.register("googly_eye", () -> new GooglyEyeItem(new Item.Properties()));
 
-    public static final RegistryObject<SlimeyEyeItem> SLIMEY_EYE =
-            ITEMS.register("slimey_eye", () -> new SlimeyEyeItem(new Item.Properties()));
+    public static final RegistryObject<SlimyEyeItem> SLIMY_EYE =
+            ITEMS.register("slimy_eye", () -> new SlimyEyeItem(new Item.Properties()));
 
     private ModItems() {
     }

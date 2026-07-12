@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-/** Recipe serializer registry: the special {@link EyeModifierRecipe} and the {@link SlimeyEyeRecipe}. */
+/** Recipe serializer registry: the special {@link EyeModifierRecipe} and the {@link SlimyEyeRecipe}. */
 public final class ModRecipes {
 
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
@@ -18,8 +18,8 @@ public final class ModRecipes {
             RECIPE_SERIALIZERS.register("eye_modifier",
                     () -> new SimpleCraftingRecipeSerializer<>(EyeModifierRecipe::new));
 
-    public static final RegistryObject<SlimeyEyeRecipe.Serializer> SLIMEY_EYE =
-            RECIPE_SERIALIZERS.register("slimey_eye", SlimeyEyeRecipe.Serializer::new);
+    public static final RegistryObject<SlimyEyeRecipe.Serializer> SLIMY_EYE =
+            RECIPE_SERIALIZERS.register("slimy_eye", SlimyEyeRecipe.Serializer::new);
 
     private ModRecipes() {
     }

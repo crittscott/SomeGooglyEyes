@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
-import com.github.crittscott.somegoogly.recipe.SlimeyEyeRecipe;
+import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTest;
@@ -32,7 +32,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
  *   <li>{@code eye_modifier} — one googly eye plus one recognized modifier transforms the eye's
  *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact RGB, so
  *       they don't pin a particular dye palette.</li>
- *   <li>{@code slimey_eye} — eye plus slimeball, which must carry the eye's appearance onto the
+ *   <li>{@code slimy_eye} — eye plus slimeball, which must carry the eye's appearance onto the
  *       applicator. That copy is the whole reason the recipe isn't a plain shapeless one.</li>
  * </ul>
  */
@@ -118,29 +118,29 @@ public final class RecipeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void slimeyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
+    public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         AppearanceOverride appearance = AppearanceOverride.EMPTY.withIrisColor(iris).withGlow(true);
 
         CraftingContainer grid = grid(GooglyEyeItem.create(appearance, 1), new ItemStack(Items.SLIME_BALL));
-        SlimeyEyeRecipe recipe = slimeyEyeRecipe();
+        SlimyEyeRecipe recipe = slimyEyeRecipe();
 
         helper.assertTrue(recipe.matches(grid, helper.getLevel()), "an eye and a slimeball should match");
 
         ItemStack result = recipe.assemble(grid, registries);
-        helper.assertTrue(result.is(ModItems.SLIMEY_EYE.get()), "the result should be a slimey eye");
+        helper.assertTrue(result.is(ModItems.SLIMY_EYE.get()), "the result should be a slimy eye");
 
         AppearanceOverride carried = EyeItemProperties.get(result);
-        helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimey eye should carry the eye's iris color");
-        helper.assertTrue(carried.glow().orElse(false), "the slimey eye should carry the eye's glow");
+        helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
+        helper.assertTrue(carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
         helper.succeed();
     }
 
-    private static SlimeyEyeRecipe slimeyEyeRecipe() {
+    private static SlimyEyeRecipe slimyEyeRecipe() {
         NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
                 Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
-        return new SlimeyEyeRecipe(new ResourceLocation(SomeGoogly.MOD_ID, "test_slimey_eye"), "",
-                CraftingBookCategory.MISC, new ItemStack(ModItems.SLIMEY_EYE.get()), ingredients);
+        return new SlimyEyeRecipe(new ResourceLocation(SomeGoogly.MOD_ID, "test_slimy_eye"), "",
+                CraftingBookCategory.MISC, new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
     }
 }

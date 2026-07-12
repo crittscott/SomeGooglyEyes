@@ -1,7 +1,7 @@
 # Some Googly Eyes: Architecture Overview
 
 > **Status:** implementation-grounded overview.  
-> **Scope:** current Java implementation and shipped data format, reviewed from the existing living specification.  
+> **Scope:** current Java implementation and shipped data format.  
 > **Audience:** AI assistants and maintainers who need a compact mental model of the mod before working on a small part of the codebase. This is not intended to restate every implementation branch or test case.
 
 ## 1. Purpose
@@ -22,7 +22,6 @@ The mod id is `somegoogly`.
 - **Implemented:** present in normal runtime registration.
 - **Partial:** present but intentionally limited.
 - **Experimental:** implemented, but not verified by runtime compatibility testing.
-- **Deferred:** architectural seam or intended feature without complete gameplay implementation.
 
 Use these labels conservatively. In particular, dedicated-server support and external renderer compatibility should not be promoted without a recorded runtime check.
 
@@ -63,7 +62,7 @@ The eye flag is initially a spawn-time decision, but gameplay can later change i
 
 Eligibility for initial eyes depends on whether the server has a usable enabled definition for the entity's current or alternate age. This prevents an entity from being permanently excluded just because it is currently a baby or adult while only the other age has a definition.
 
-Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only from a slimey eye — either applied to them by another player, or sneak-used on themselves. Because the state is ordinary persistent data, player eyes are lost on respawn.
+Players are a special case. They have a datapack definition and can render eyes, but they are excluded from the at-spawn roll. They start without eyes and can gain them only from a slimy eye — either applied to them by another player, or sneak-used on themselves. Because the state is ordinary persistent data, player eyes are lost on respawn.
 
 ## 6. Datapack definition model
 
@@ -109,8 +108,6 @@ The ender dragon is hard-excluded: eye configs for it are refused at load from a
 Each variant contains one or more `heads`. A head is an attachment group and must name an `attachPoint`. The token is the resolver's canonical vocabulary: a slash-joined part/bone path (e.g. `root/body/head`), matched by normalized suffix so a bare leaf like `head` still attaches. A path segment is `#N` only for a nameless positional root (models with no obfuscation-stable name for that part).
 
 Each eye is a flat object containing placement, scale, depth (a thickness multiplier along the look axis; the back face stays at the attach position and the body extends forward, so deep eyes can envelop a modeled eyeball that protrudes from the head), direction, color, glow, and an optional cross-eye target (the index of another eye in the same head to look toward during the `cross_eye` behavior). The important architectural point is that placement lives in datapack geometry, while appearance can be overlaid by per-entity or item-derived overrides.
-
-Legacy entry-level `heads` is not a supported placement shape. Current data uses `variants`.
 
 ## 7. Configuration
 
@@ -190,7 +187,7 @@ Built-in behavior ids are:
 - `swirl`
 - `color_change`
 
-Ambient behaviors are selected from the configured ambient pool. Event-driven behaviors currently include `grow` when a player damages an eyed mob and `swirl` for trade or heal events. `color_change` is registered for debug/admin triggering but is not part of normal ambient or event tracks.
+Ambient behaviors are selected from the configured ambient pool. The event-driven behaviors are `grow` when a player damages an eyed mob and `swirl` for trade or heal events. `color_change` is registered for debug/admin triggering but is not part of normal ambient or event tracks.
 
 On the client a behavior is folded into the wobble simulation rather than composited at render time. Pupil-driving behaviors (`stare`, `side_eye`, `cross_eye`, `swirl`) steer the pupil and release smoothly back into the wobble when they end; `grow`, `blink`, and `color_change` apply visual overlays. `cross_eye` aims each pupil at its configured partner eye.
 
@@ -202,17 +199,19 @@ Only one behavior runs on an entity at a time. Later triggers are dropped while 
 
 `somegoogly:googly_eye` is a 3D item. Its NBT stores sparse appearance overrides: cornea color, iris color, and glow. It stores no placement, attachment, rotation, scale, or entity-specific geometry.
 
-The eye item is an ingredient only; it is never applied to an entity directly by use. Crafting it with a slimeball yields the slimey eye, which is the applicator.
+The eye item is an ingredient only; it is never applied to an entity directly by use. Crafting it with a slimeball yields the slimy eye, which is the applicator.
 
 In hand, the item uses the same wobble concept as mob eyes. In static item contexts, the iris is centered.
 
-Either eye item is also an inspection tool: sneaking while holding one and looking at a living entity shows an action-bar verdict on whether that mob could wear eyes — *can*, *already has*, *can only at the other age*, or *cannot*. The check is entirely client-side over the synced config set and synced eye state, through the same shared eligibility predicate the server applies when a slimey eye is used, so it reports what an application would actually do. It deliberately ignores local client render vetoes, which hide eyes on this client but do not affect the application. Its reach deliberately exceeds interaction range, so a mob can be vetted before approaching it.
+Either eye item is also an inspection tool: sneaking while holding one and looking at a living entity shows an action-bar verdict on whether that mob could wear eyes — *can*, *already has*, *can only at the other age*, or *cannot*. The check is entirely client-side over the synced config set and synced eye state, through the same shared eligibility predicate the server applies when a slimy eye is used, so it reports what an application would actually do. It deliberately ignores local client render vetoes, which hide eyes on this client but do not affect the application. Its reach deliberately exceeds interaction range, so a mob can be vetted before approaching it.
 
-### Slimey eye
+### Slimy eye
 
-`somegoogly:slimey_eye` is the only normal gameplay path for giving an entity eyes. It is crafted shapelessly from a googly eye plus a slimeball, and the craft copies the eye's appearance onto it.
+`somegoogly:slimy_eye` is the only normal gameplay path for giving an entity eyes. It is crafted shapelessly from a googly eye plus a slimeball, and the craft copies the eye's appearance onto it.
 
-Right-clicking a living entity with a slimey eye applies that appearance and turns eyes on, consuming one. Sneak-using it applies it to the player instead — the only way a player gets their own eyes. Applying to an already-eyed target recolors it rather than adding a second set. An ineligible target refuses the application and consumes nothing.
+Right-clicking a living entity with a slimy eye applies that appearance and turns eyes on, consuming one. Sneak-using it applies it to the player instead — the only way a player gets their own eyes. Applying to an already-eyed target recolors it rather than adding a second set. An ineligible target refuses the application and consumes nothing.
+
+The apply verb claims the right-click before the target's own interaction runs (via the entity-interact event, on both sides), so mobs with their own right-click handling — horses, villagers, tamed pets — receive eyes instead of rearing, trading, or sitting. While a slimy eye is held, an entity right-click always belongs to the applicator.
 
 Eligibility is the shared server-side predicate: the target must have a usable enabled definition at its *current* age.
 
@@ -238,9 +237,9 @@ Players with eyes are living entities for these systems and can be harvested lik
 Two recipes:
 
 - The special `eye_modifier` recipe modifies a googly-eye item's appearance. Dyes set iris color, glowstone forces glow on, redstone forces glow off, and cobweb clears overrides back to datapack defaults. The recipe preserves unrelated NBT. It is a dynamic special recipe with no fixed ingredients, so JEI cannot introspect it.
-- The `slimey_eye` recipe is an ordinary shapeless recipe (eye + slimeball) whose only custom behavior is copying the eye's appearance onto the result. Because its ingredients are declared, the recipe book and JEI display it with no plugin of ours — the mod ships no JEI integration and has no JEI dependency.
+- The `slimy_eye` recipe is an ordinary shapeless recipe (eye + slimeball) whose only custom behavior is copying the eye's appearance onto the result. Because its ingredients are declared, the recipe book and JEI display it with no plugin of ours — the mod ships no JEI integration and has no JEI dependency.
 
-The mod's items live in its own creative tab: the eye, the slimey eye, and an Optometrist book.
+The mod's items live in its own creative tab: the eye, the slimy eye, and an Optometrist book.
 
 ### Enchantment
 
@@ -301,18 +300,20 @@ The mod uses one `SimpleChannel` with three server-to-client packet types and fi
 
 Every client-to-server handler re-authorizes the sender (creative mode) and validates its payload — entity ids against the registry, the export config through the shared codec under a size quota — before acting; client-side checks are UX only. Clients clear synced definitions and render trackers on disconnect. Malformed config-sync entries are logged and skipped rather than aborting the whole payload.
 
-## 14. Non-goals, seams, and compatibility limits
+## 14. Limits and compatibility
 
-Current important seams and limits:
+Boundaries of the current implementation:
+
+- Appearance overrides apply uniformly to a mob; there is no per-eye override.
+- Applying eyes is a melee-range, single-target interaction; there is no ranged or thrown form.
+- JEI cannot display the `eye_modifier` recipe: a dynamic special recipe has no fixed ingredients for JEI to read. The `slimy_eye` recipe needs no such help.
+
+Compatibility status:
 
 | Item | Status | Architectural meaning |
 | --- | --- | --- |
-| Per-eye mutable appearance | Deferred | Overrides currently apply uniformly to a mob. |
-| Additional `EyeHolder` implementations | Deferred | The abstraction anticipates non-entity holders, but entities are the only concrete gameplay holder. |
 | Dedicated-server compatibility certification | Experimental | Side guards exist, but runtime loadability is not recorded as verified. |
 | Generic model attachment | Partial | Reflection and external renderer support favor coverage over perfect robustness. |
-| JEI support for `eye_modifier` | Deferred | A dynamic special recipe has no fixed ingredients for JEI to read. The `slimey_eye` recipe needs no such help. |
-| Ranged application | Deferred | Applying eyes is a melee-range interaction. There is no thrown form. |
 
 Do not treat source-derived compatibility as proven runtime behavior unless a test or manual check has recorded it.
 
@@ -320,7 +321,7 @@ Do not treat source-derived compatibility as proven runtime behavior unless a te
 
 A server-side Forge GameTest suite exists under `src/main/java/com/github/crittscott/somegoogly/gametest/` and runs headless through `runGameTestServer`.
 
-The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, both recipe transforms, the slimey eye's apply verb (eligibility gate, appearance transfer, consumption, recolor), and shipped config loading.
+The suite is intentionally server-only. It covers core data and server logic such as version selection, variant selection, serialization, packet round trips, entity state helpers, behavior determinism, server config matching, spawn roll endpoints, both recipe transforms, the slimy eye's apply verb (eligibility gate, appearance transfer, consumption, recolor), and shipped config loading.
 
 It does not cover client rendering, wobble, GeckoLib behavior, picker behavior, the held-eye inspect indicator, the sneak self-apply path, harvest integration, all datapack reload edge cases, behavior scheduler internals, or dedicated-server loadability. Those areas remain source-derived or manual unless separately verified.
 
@@ -334,7 +335,7 @@ Update this overview when a change alters the system's public or architectural c
 - packet contents;
 - gameplay behavior for items, recipes, enchantments, commands, picker, or harvesting;
 - resolver support or compatibility status;
-- status labels such as Implemented, Partial, Experimental, or Deferred;
+- status labels such as Implemented, Partial, or Experimental;
 - GameTest coverage at the level needed to avoid misleading confidence claims.
 
 Keep this file as an overview. If a detail is only needed to understand a single implementation branch, prefer code comments, tests, or a focused subsystem note instead of adding it here.

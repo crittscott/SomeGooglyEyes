@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
@@ -21,9 +22,18 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The thin-slice eye-<i>harvest</i> verbs (server-side).
+ * The eye-item verbs that ride entity right-clicks: the slimy eye's <i>apply</i> and the shears
+ * <i>harvest</i>s.
  *
  * <ul>
+ *   <li><b>Apply</b> — right-click a living entity with a slimy eye ({@link SlimyEyeItem}): give it
+ *       eyes carrying the stack's appearance, consuming one; see {@link SlimyEyeItem#applyToTarget}.
+ *       The verb is dispatched here rather than through {@code Item#interactLivingEntity} because the
+ *       item verb runs only after the target's own interaction declines the click, and mobs that
+ *       consume generic right-clicks (an untamed horse rears, a villager opens trade, a tamed pet
+ *       sits) would swallow it. This event fires before the target sees the click, so while a slimy
+ *       eye is held the entity right-click is always the applicator's — cancelled on both sides so
+ *       the client doesn't play the target's own reaction either.</li>
  *   <li><b>Harvest (non-lethal)</b> — right-click an eyed mob with shears enchanted with
  *       {@link ModEnchantments#OPTOMETRIST}: capture its effective appearance into a {@code googly_eye}
  *       item, drop it, and turn the mob's eyes off, leaving the mob unharmed. Plain (unenchanted) shears
@@ -33,20 +43,20 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *       {@link #onLivingDrops}.</li>
  * </ul>
  *
- * <p>Eyes are <i>given</i> by the slimey eye ({@code SlimeyEyeItem}), which owns that verb itself; the
- * plain eye item is a crafting ingredient, not a direct right-click apply, so there is no reattach verb
- * here. Shears are a vanilla item we don't own, which is why the harvest verbs live in this event
- * handler rather than on an item.
+ * <p>The plain eye item is a crafting ingredient, not a direct right-click apply, and has no verb
+ * here or anywhere.
  *
  * <p>Both harvest paths accept any {@link ShearsItem} (vanilla or modded) and capture the mob's appearance from head 0 /
- * eye 0 (the override model is per-mob, not per-eye).
+ * eye 0 (the override model is per-mob, not per-eye). Shears are a vanilla item we don't own, which is
+ * why the harvest verbs live in this event handler rather than on an item. The harvest verbs are
+ * server-side only; the apply dispatch runs on both sides.
  */
 public class EyeItemInteractions {
 
     /**
      * Build the {@code googly_eye} item a harvest yields: the mob's *effective* appearance — config
      * colors/glow (sampled from head 0 / eye 0) with any per-mob override layered on top. Always a
-     * single eye: the slimey eye that gives eyes consumes one eye, so dropping the mob's whole eye count
+     * single eye: the slimy eye that gives eyes consumes one eye, so dropping the mob's whole eye count
      * would let one seed eye multiply through a craft-apply-harvest loop.
      */
     private static ItemStack buildEyeDrop(HeadInfo helper, AppearanceOverride override) {
@@ -92,9 +102,6 @@ public class EyeItemInteractions {
 
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getLevel().isClientSide()) {
-            return;
-        }
         if (!(event.getTarget() instanceof LivingEntity mob)) {
             return;
         }
@@ -102,8 +109,25 @@ public class EyeItemInteractions {
         Player player = event.getEntity();
         ItemStack stack = event.getItemStack();
 
-        // Eyes are given by the slimey eye, which handles that itself; the plain eye item is for
-        // crafting, not a direct right-click apply. Shears (with Optometrist) are the non-lethal harvest.
+        // The slimy eye owns the click outright (see the class javadoc for why it's dispatched here).
+        if (stack.getItem() instanceof SlimyEyeItem) {
+            if (event.getLevel().isClientSide()) {
+                // Eligibility is server-authoritative config; the client can't decide it here. It
+                // already previews the verdict through EyeInspectIndicator, so swing and let the
+                // server rule — cancelling locally also keeps the client from playing the target's
+                // own reaction (a horse rearing) that the server never runs.
+                consume(event, InteractionResult.SUCCESS);
+            } else {
+                consume(event, SlimyEyeItem.applyToTarget(stack, player, mob));
+            }
+            return;
+        }
+
+        if (event.getLevel().isClientSide()) {
+            return;
+        }
+
+        // Shears (with Optometrist) are the non-lethal harvest.
         if (stack.getItem() instanceof ShearsItem && EyeState.hasEyes(mob) && hasOptometrist(stack)) {
             harvest(event, player, mob, stack);
         }

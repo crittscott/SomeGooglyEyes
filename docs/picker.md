@@ -65,7 +65,7 @@ Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAl
 
 ## Admin commands
 
-`/sg admin` (operator level 2, creative mode) mutates the *live* eye state of the mob you're looking at (the same state the shears/slimey-eye/dye gameplay drives):
+`/sg admin` (operator level 2, creative mode) mutates the *live* eye state of the mob you're looking at (the same state the shears/slimy-eye/dye gameplay drives):
 
 | Command | Effect |
 | --- | --- |

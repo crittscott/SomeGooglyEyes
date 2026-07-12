@@ -1,8 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "minecraft:item/slime_ball",
-    "layer1": "somegoogly:item/slimey_eye_sclera",
-    "layer2": "somegoogly:item/slimey_eye_iris"
-  }
-}

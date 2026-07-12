@@ -140,7 +140,7 @@ public class HeadInfo {
 
         /**
          * Whether {@code config} can actually put eyes on a mob: present, enabled, and with at least
-         * one variant. The single eligibility predicate shared by the server's slimey-eye targeting and
+         * one variant. The single eligibility predicate shared by the server's slimy-eye targeting and
          * spawn gating ({@code ServerEyeConfigs}) and the client's held-eye inspect indicator
          * ({@code EyeInspectIndicator}), so the indicator can never disagree with what an application does.
          */
