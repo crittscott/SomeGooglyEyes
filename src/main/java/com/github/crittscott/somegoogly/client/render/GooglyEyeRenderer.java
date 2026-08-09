@@ -41,18 +41,9 @@ public final class GooglyEyeRenderer {
     }
 
     /**
-     * Read which way world-down points in this eye's pupil plane and stash it for the next physics tick,
-     * so the pupil rests at true down regardless of how the eye is aimed/animated/oriented.
-     *
-     * <p>The pose here maps pupil-local → <i>view</i> space (entity rendering bakes the camera rotation
-     * into the pose stack). Rather than reconstruct the camera (whose yaw/180°/order conventions are easy
-     * to get wrong), we compose the engine's own {@code view → world} rotation
-     * ({@link RenderSystem#getInverseViewRotationMatrix()}, derived from the same pose) with the local →
-     * view pose to get local → world, then invert it to map world-down into the pupil plane. The camera
-     * cancels by construction, so gravity doesn't depend on where you look. The stored
-     * {@code (gravX, gravY)} is in the physics {@code (deltaX, deltaY)} convention, which is the negation
-     * of the model geometry ({@link com.github.crittscott.somegoogly.client.ModelGooglyEye#moveIris}
-     * renders at {@code -norm}), hence the trailing minus signs.
+     * Record world-down in this eye's pupil plane for the next physics tick, using the eye's fully
+     * composed animated pose. The result is independent of camera orientation and uses the tracker
+     * simulation's coordinate convention.
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         // localToWorld = (view → world) · (local → view)

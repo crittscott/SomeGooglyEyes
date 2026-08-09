@@ -20,6 +20,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
+/**
+ * Core integration checks for loaded cow geometry, spawn-time eye-state initialization, entity
+ * appearance overrides, and the Googly Eye item's portable appearance payload.
+ */
 @GameTestHolder(SomeGoogly.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class SomeGooglyGameTests {

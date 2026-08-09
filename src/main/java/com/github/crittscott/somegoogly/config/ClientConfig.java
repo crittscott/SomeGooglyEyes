@@ -14,6 +14,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Client-local rendering preferences. Players may hide all eyes, exact entity types, or every entity
+ * from selected mod namespaces without changing server-owned eligibility or eye state. Parsed list
+ * values are cached for the render path and invalidated whenever this config is loaded or changed.
+ */
 public class ClientConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec.BooleanValue DISABLE_GOOGLY_EYES;

@@ -8,6 +8,11 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.Optional;
 
+/**
+ * Owns the mod's versioned {@link SimpleChannel} and registers every gameplay packet with its allowed
+ * direction. Server-to-client packets synchronize definitions, entity state, and behaviors;
+ * client-to-server packets request creative picker operations whose handlers perform authorization.
+ */
 public class NetworkHandler {
     // PROTOCOL_VERSION precedes INSTANCE by necessity: INSTANCE's initializer reads it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3) even though it is a constant.

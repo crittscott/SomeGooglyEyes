@@ -35,6 +35,11 @@ import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Forge entry point for Some Googly Eyes. Registers shared content, configuration, networking, and
+ * event handlers, while keeping client-only rendering, input, and picker setup behind a physical-side
+ * guard. Datapack eye definitions are loaded later through the server reload lifecycle.
+ */
 @Mod(SomeGoogly.MOD_ID)
 public class SomeGoogly {
     public static final String MOD_ID = "somegoogly";

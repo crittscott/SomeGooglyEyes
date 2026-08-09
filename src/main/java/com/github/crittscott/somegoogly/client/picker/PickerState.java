@@ -195,6 +195,10 @@ public final class PickerState {
         return variants.get(variantIndex);
     }
 
+    /**
+     * Move through the chosen model's part list by a signed offset, wrapping at both ends. Positive
+     * values move toward the next part; negative values move toward the previous part.
+     */
     public static void cyclePart(int dir) {
         if (parts.isEmpty()) {
             return;
@@ -429,10 +433,12 @@ public final class PickerState {
         return true;
     }
 
+    /** Set the current draft eye's configured cornea RGB channels. */
     public static void setCorneaColor(float r, float g, float b) {
         currentEye.corneaColors = new float[]{r, g, b};
     }
 
+    /** Set the current draft eye's overall scale, clamped to {@code >= 0}. */
     public static void setEyeScale(float v) {
         currentEye.eyeScale = Math.max(0, v);
     }
@@ -468,14 +474,17 @@ public final class PickerState {
         return true;
     }
 
+    /** Set whether the current draft eye renders full-bright. */
     public static void setGlow(boolean v) {
         currentEye.glows = v;
     }
 
+    /** Set the current draft eye's configured iris RGB channels. */
     public static void setIrisColor(float r, float g, float b) {
         currentEye.irisColors = new float[]{r, g, b};
     }
 
+    /** Set the current draft eye's iris scale, clamped to {@code >= 0}. */
     public static void setIrisScale(float v) {
         currentEye.irisScale = Math.max(0, v);
     }

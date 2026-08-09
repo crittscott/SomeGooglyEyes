@@ -28,6 +28,12 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
+/**
+ * Connects server lifecycle and entity-tracking events to the mod's server-owned systems: datapack
+ * definition loading/sync, one-time entity eye initialization, command registration, behavior
+ * scheduling, and picker cleanup. Gameplay-specific item and reaction events live in their dedicated
+ * handlers.
+ */
 public class ServerEventHandler {
 
     private static void applyGooglyDecision(LivingEntity living) {

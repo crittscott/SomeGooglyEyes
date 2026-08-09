@@ -58,10 +58,12 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return new AppearanceOverride(Optional.ofNullable(color), iris, glow);
     }
 
+    /** {@code null} clears the field. */
     public AppearanceOverride withGlow(@Nullable Boolean value) {
         return new AppearanceOverride(cornea, iris, Optional.ofNullable(value));
     }
 
+    /** {@code null} clears the field. */
     public AppearanceOverride withIrisColor(@Nullable EyeColor color) {
         return new AppearanceOverride(cornea, Optional.ofNullable(color), glow);
     }

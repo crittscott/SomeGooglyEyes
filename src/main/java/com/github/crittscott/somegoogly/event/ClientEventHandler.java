@@ -33,6 +33,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Owns the client lifecycle around eye rendering and simulation. It installs eye/picker layers on
+ * entity renderers, caches per-entity {@link GooglyTracker}s, advances only recently rendered
+ * trackers, and clears server-specific config, tracker, and picker state on disconnect.
+ */
 public class ClientEventHandler {
     private static final Marker MARK = MarkerManager.getMarker(ClientEventHandler.class.getSimpleName());
     private static int clientTicks = 0;
@@ -41,6 +46,11 @@ public class ClientEventHandler {
     // each GooglyTracker holds a strong reference to its own key (the parent entity).
     protected final Map<LivingEntity, GooglyTracker> trackers = new HashMap<>();
 
+    /**
+     * Install eye and picker layers on every eligible player and entity renderer. Called when Forge
+     * builds renderer layers, including after a resource reload; model-keyed resolver caches are
+     * cleared first because the renderer models have been replaced.
+     */
     @SuppressWarnings("rawtypes")
     public void addLayers() {
         // Fires on client setup and again on every resource reload, which rebuilds every renderer and its
@@ -117,6 +127,10 @@ public class ClientEventHandler {
         trackers.clear();
     }
 
+    /**
+     * Return {@code living}'s tracker for the selected config variant. A missing tracker, or one whose
+     * eye-array shape belongs to a different helper/variant, is replaced immediately.
+     */
     public GooglyTracker getGooglyTracker(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = trackers.get(living);
         if (tracker == null || !tracker.matches(helper)) {

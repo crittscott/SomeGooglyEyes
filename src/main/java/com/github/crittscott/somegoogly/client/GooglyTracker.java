@@ -118,8 +118,6 @@ public class GooglyTracker {
         /**
          * One tick of googly physics: a point-mass pupil in the eye's local plane (+X right, +Y up),
          * constrained to the unit disk (the full cornea circle once mapped by {@code moveIris}).
-         * Semi-implicit Euler: accumulate forces -> integrate velocity -> integrate position -> resolve
-         * the circular wall.
          *
          * <p>Forcing: constant local-down gravity, plus pseudo-forces from the holder's linear
          * acceleration and head angular acceleration (so the pupil lags and overshoots when the mob
@@ -138,8 +136,11 @@ public class GooglyTracker {
          * @param rand      randomness source (per-tracker / per-held-eye)
          * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
          * @param headPitch the holder's pitch this tick ({@code getXRot})
-         * @param motionX/Y/Z the holder's position delta this tick
-         * @param anchorX/Y the behavior spring's target in the unit disk (ignored when stiffness is 0)
+         * @param motionX   the holder's X position delta this tick
+         * @param motionY   the holder's Y position delta this tick
+         * @param motionZ   the holder's Z position delta this tick
+         * @param anchorX   the behavior spring's X target in the unit disk (ignored when stiffness is 0)
+         * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is 0)
          * @param stiffness the behavior spring's stiffness (0 = no behavior force on the pupil)
          */
         public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,

@@ -18,6 +18,16 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.LivingEntity;
 
+/**
+ * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It shares visibility decisions with the
+ * GeckoLib layer through {@link EyeRenderGating}, resolves configured attachment tokens through
+ * {@link Resolvers}, and delegates each eye's drawing to {@link GooglyEyeRenderer}. Picker previews
+ * are drawn by the separate {@link com.github.crittscott.somegoogly.client.picker.PickerLayer}.
+ *
+ * <p>The GeckoLib counterpart is
+ * {@link com.github.crittscott.somegoogly.client.compat.GooglyGeoLayer}, which uses the same gate and
+ * eye renderer from GeckoLib's per-bone callback.
+ */
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     private final ModelGooglyEye modelGooglyEye;
 
