@@ -162,7 +162,7 @@ public class EyeItemInteractions {
         }
 
         HeadInfo helper = helperFor(mob);
-        if (helper == null || !helper.hasConfig()) {
+        if (!helper.hasConfig()) {
             return; // no geometry to sample an appearance from
         }
 
