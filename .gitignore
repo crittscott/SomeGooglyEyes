@@ -23,6 +23,8 @@ run/
 run-data/
 othersourcecode/
 .vscode/
+tmp/
+code-review-*.md
 
 # Files from Forge MDK
 forge*changelog.txt
