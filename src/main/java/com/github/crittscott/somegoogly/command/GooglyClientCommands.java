@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
 import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
 import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -565,7 +566,7 @@ public class GooglyClientCommands {
     /**
      * The CLI {@code spawn <type>} op: spawn one mob at the block the player is targeting (NoAi +
      * persistent, like {@code spawnall}). Validation/suggestions are vanilla's summonable set;
-     * placement, fit-checking, and feedback are the server-side half ({@link SpawnAllCommand#spawnOne},
+     * placement, fit-checking, and feedback are the server-side half ({@link PickerSpawnService#spawnOne},
      * reached via {@code PickerSpawnPacket}).
      */
     private static int spawn(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -584,7 +585,7 @@ public class GooglyClientCommands {
         } catch (IllegalArgumentException noArg) {
             mod = null;
         }
-        // Spawning is server-side work ({@link SpawnAllCommand#spawn}, reached via PickerSpawnAllPacket).
+        // Spawning is server-side work ({@link PickerSpawnService#spawn}, reached via PickerSpawnAllPacket).
         NetworkHandler.INSTANCE.sendToServer(new PickerSpawnAllPacket(mod));
         if (mod == null) {
             feedback(ctx, "somegoogly.command.picker.spawning_all");

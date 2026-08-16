@@ -102,8 +102,6 @@ public class SomeGoogly {
     }
 
     private void addLayers(EntityRenderersEvent.AddLayers event) {
-        if (clientEventHandler != null) {
-            clientEventHandler.addLayers();
-        }
+        clientEventHandler.addLayers();
     }
 }

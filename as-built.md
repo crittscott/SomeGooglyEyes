@@ -52,8 +52,8 @@ datapack formats directly and update the bundled data rather than adding compati
 | `client/render/resolver/` | Model-family attachment discovery, canonical tokens, caches |
 | `client/compat/` | GeckoLib layers, Citadel/LLibrary-facing helpers, Exotic Birds transforms |
 | `client/picker/` | Picker state, preview, HUD, keyboard input, export-all |
-| `command/` | Client `/sg` authoring tree, server `/sg admin`, spawn helpers |
-| `picker/` | Server-side picker authorization, freezing, and world-datapack export |
+| `command/` | Client `/sg` authoring tree, server `/sg admin` |
+| `picker/` | Server-side picker authorization, freezing, spawn helpers, and world-datapack export |
 | `gametest/` | 67 server-side Forge GameTests |
 | `resources/` | Eye definitions, recipes, translations, models, textures, access transformer |
 
@@ -255,8 +255,10 @@ behavior.
 | `PickerExportPacket` | Client -> server | Validate, write, and reload one authored config |
 
 Client-to-server picker handlers re-check creative mode and validate ids or payloads. `spawnall` also
-requires the default-off server option. Export payloads are limited to 64 KiB. The full config sync
-warns above 900 KiB because vanilla's clientbound custom-payload ceiling is 1 MiB.
+requires the default-off server option. `PickerMobPosePacket` additionally restricts its target to the
+sender's own `PickerFreezeService`-frozen mob and caps a move's offset magnitude at 20 blocks. Export
+payloads are limited to 64 KiB. The full config sync warns above 900 KiB because vanilla's clientbound
+custom-payload ceiling is 1 MiB.
 
 ## Picker and export boundary
 
@@ -325,8 +327,12 @@ Before changing a relevant path, check the corresponding invariants:
 - Keep behavior scheduling server-owned, playback deterministic, and overlaps dropped rather than queued.
 - Keep packets direction-locked and bump protocol version for any breaking wire change.
 - Re-authorize every new picker mutation on the server; creative checks on the client are only UX.
+- Scope mob-pose mutations to the sender's `PickerFreezeService`-frozen mob and keep an explicit
+  magnitude cap on offsets, rather than trusting an arbitrary client-supplied UUID or distance.
 - Keep `spawnall` behind its separate default-off server option.
 - Preserve picker freeze recovery on unchoose, logout, unload/crash, and server stop.
 - Keep the config-sync payload below vanilla's 1 MiB custom-payload cap.
 - Treat external renderer and model-family support as compatibility-sensitive and fail by skipping an
   attachment, not by crashing the client.
+- Route user-facing text (command feedback, tooltips, the picker HUD) through `en_us.json` via
+  `Component.translatable`/`I18n.get`, not `Component.literal` or raw strings.

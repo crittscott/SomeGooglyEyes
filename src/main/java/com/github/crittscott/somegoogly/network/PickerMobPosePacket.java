@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -19,13 +20,17 @@ import java.util.function.Supplier;
  * (0 = leave that axis unchanged), resolved here against the <b>authoritative</b> server entity rather
  * than the client's interpolated copy; the change syncs back through vanilla entity tracking. The two
  * forms are distinguished on the wire by which fields are present: move sets all of x/y/z, rot sets
- * azimuth.
+ * azimuth. The target must be the sender's own {@link PickerFreezeService}-frozen mob, and a move's
+ * offset magnitude is capped at {@value #MAX_MOVE} blocks.
  *
  * <p>{@code azimuth} uses the <b>eye</b> convention (degrees from +X; 270 = facing -Z) so its numbers
  * mean the same direction as {@code /sg rot}; Minecraft yaw is that minus 90°. Body and head turn
  * together (body rotation isn't synced on its own — the client re-derives it from yaw/head).
  */
 public class PickerMobPosePacket {
+
+    /** Cap on a single move packet's offset magnitude, matching other picker reach conventions. */
+    private static final double MAX_MOVE = 20.0;
 
     @Nullable
     private final Float azimuth;
@@ -81,12 +86,20 @@ public class PickerMobPosePacket {
             if (!PickerPermissions.creative(sender)) {
                 return;
             }
+            if (!packet.mobId.equals(PickerFreezeService.frozenMobId(sender.getUUID()))) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_chosen"));
+                return;
+            }
             Entity entity = sender.serverLevel().getEntity(packet.mobId);
             if (!(entity instanceof LivingEntity living)) {
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_found"));
                 return;
             }
             if (packet.x != null && packet.y != null && packet.z != null) {
+                if (Math.sqrt(packet.x * packet.x + packet.y * packet.y + packet.z * packet.z) > MAX_MOVE) {
+                    sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_out_of_range", MAX_MOVE));
+                    return;
+                }
                 living.teleportTo(living.getX() + packet.x, living.getY() + packet.y, living.getZ() + packet.z);
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_moved",
                         String.format("%.2f", living.getX()), String.format("%.2f", living.getY()), String.format("%.2f", living.getZ())));

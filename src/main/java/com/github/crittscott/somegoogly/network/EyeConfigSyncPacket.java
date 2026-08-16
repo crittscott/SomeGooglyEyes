@@ -86,9 +86,7 @@ public class EyeConfigSyncPacket {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                     ClientEyeConfigs.replaceAll(packet.configs);
                     // Drop trackers too: a config change can resize per-head eye arrays.
-                    if (SomeGoogly.clientEventHandler != null) {
-                        SomeGoogly.clientEventHandler.clearTrackers();
-                    }
+                    SomeGoogly.clientEventHandler.clearTrackers();
                 })
         );
         context.setPacketHandled(true);

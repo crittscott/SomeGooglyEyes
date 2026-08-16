@@ -1,5 +1,6 @@
-package com.github.crittscott.somegoogly.command;
+package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,7 +53,7 @@ import java.util.List;
  * water mobs getting a walled 3x3 basin instead. This is a throwaway-test-world convenience and freely
  * overwrites whatever blocks it lands on.
  */
-public final class SpawnAllCommand {
+public final class PickerSpawnService {
 
     /** Half-width of the 5x5 sandstone platform/basin built under each mob in platform mode. */
     private static final int PLATFORM_RADIUS = 2;
@@ -69,7 +70,7 @@ public final class SpawnAllCommand {
     /** How far in front of the player the first mob in each row stands. */
     private static final int START_OFFSET = 3;
 
-    private SpawnAllCommand() {
+    private PickerSpawnService() {
     }
 
     /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */

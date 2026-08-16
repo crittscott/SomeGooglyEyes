@@ -69,8 +69,8 @@ public class EyeBehaviorTriggerPacket {
 
     private static void play(EyeBehaviorTriggerPacket packet) {
         EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId);
-        if (behavior == null || SomeGoogly.clientEventHandler == null) {
-            return; // unknown id (build skew) or no client handler yet
+        if (behavior == null) {
+            return; // unknown id (build skew)
         }
         net.minecraft.client.multiplayer.ClientLevel level = Minecraft.getInstance().level;
         if (level == null) {

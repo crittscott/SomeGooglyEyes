@@ -84,6 +84,13 @@ public final class PickerFreezeService {
         return null;
     }
 
+    /** The mob {@code playerId} currently has frozen, or {@code null} if they have none. */
+    @Nullable
+    public static UUID frozenMobId(UUID playerId) {
+        FrozenRecord record = FROZEN_BY_PLAYER.get(playerId);
+        return record == null ? null : record.mobId();
+    }
+
     /** Release {@code playerId}'s frozen mob (restore NoAi + strip the marker), if there is one. */
     public static void unfreeze(MinecraftServer server, UUID playerId) {
         FrozenRecord record = FROZEN_BY_PLAYER.remove(playerId);
