@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -44,11 +45,12 @@ public final class PickerHud {
      * follow as {@code c#RRGGBB i#RRGGBB}.
      */
     private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
-        out.add(new Line(String.format("%s  part=%s  pos[%.2f, %.2f, %.2f]",
-                label, part, e.position[0], e.position[1], e.position[2]), colorA));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
+                String.format("%.2f", e.position[0]), String.format("%.2f", e.position[1]), String.format("%.2f", e.position[2])), colorA));
         String cross = e.crossTarget >= 0 ? "  X→" + (e.crossTarget + 1) : "";
-        out.add(new Line(String.format("    incl %.0f°  azi %.0f°  eye %.2f  iris %.2f  d %.2f  %sG  c%s i%s%s",
-                e.inclination, e.azimuth, e.eyeScale, e.irisScale, e.depth,
+        out.add(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
+                String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth),
+                String.format("%.2f", e.eyeScale), String.format("%.2f", e.irisScale), String.format("%.2f", e.depth),
                 e.glows ? "+" : "-",
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB));
     }
@@ -60,24 +62,24 @@ public final class PickerHud {
 
     private static List<Line> lines() {
         List<Line> out = new ArrayList<>();
-        out.add(new Line("Googly Eye Picker", YELLOW));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.title"), YELLOW));
 
         if (PickerState.target() == null) {
-            out.add(new Line("Look at a mob and choose it (V).", GRAY));
+            out.add(new Line(I18n.get("somegoogly.picker.hud.no_target"), GRAY));
             return out;
         }
 
-        out.add(new Line("Target: " + PickerState.targetType(), WHITE));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.target", PickerState.targetType()), WHITE));
 
         String token = partOrNone(PickerState.currentPart());
         int n = PickerState.parts().size();
         int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex(), n) + 1);
-        out.add(new Line("Part: " + token + "  (" + i + "/" + n + ")   [ ] cycle", WHITE));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.part", token, i, n), WHITE));
 
-        out.add(new Line(String.format("Variant %d/%d  (weight %.2f)",
-                PickerState.variantIndex() + 1, PickerState.variantCount(), PickerState.currentVariant().weight), WHITE));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.variant", PickerState.variantIndex() + 1,
+                PickerState.variantCount(), String.format("%.2f", PickerState.currentVariant().weight)), WHITE));
 
-        out.add(new Line("Eyes (" + PickerState.currentEyeCount() + "):", WHITE));
+        out.add(new Line(I18n.get("somegoogly.picker.hud.eyes_header", PickerState.currentEyeCount()), WHITE));
 
         // One block per saved eye in the current variant (two lines). The eye being edited via /sg
         // (selectedIndex) is drawn live from currentEye and highlighted; if nothing is selected, the
@@ -86,21 +88,21 @@ public final class PickerHud {
         for (int idx = 0; idx < eyes.size(); idx++) {
             PickerState.ListedEye listed = eyes.get(idx);
             if (idx == PickerState.selectedIndex()) {
-                appendEye(out, "▶ #" + (idx + 1), token, PickerState.currentEye(), YELLOW, YELLOW);
+                appendEye(out, I18n.get("somegoogly.picker.hud.selected_marker", idx + 1), token, PickerState.currentEye(), YELLOW, YELLOW);
             } else {
-                appendEye(out, "#" + (idx + 1), partOrNone(listed.part), listed.eye, WHITE, GRAY);
+                appendEye(out, I18n.get("somegoogly.picker.hud.eye_marker", idx + 1), partOrNone(listed.part), listed.eye, WHITE, GRAY);
             }
         }
 
         if (PickerState.selectedIndex() < 0 && PickerState.currentEye() != null) {
-            appendEye(out, "▶ new (unsaved)", token, PickerState.currentEye(), YELLOW, YELLOW);
+            appendEye(out, I18n.get("somegoogly.picker.hud.new_unsaved"), token, PickerState.currentEye(), YELLOW, YELLOW);
         }
 
         return out;
     }
 
     private static String partOrNone(String part) {
-        return part != null ? part : "none";
+        return part != null ? part : I18n.get("somegoogly.picker.hud.none");
     }
 
     public static void register(RegisterGuiOverlaysEvent event) {

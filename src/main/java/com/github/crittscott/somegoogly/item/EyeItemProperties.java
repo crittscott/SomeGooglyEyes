@@ -25,11 +25,11 @@ public final class EyeItemProperties {
     public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
         AppearanceOverride props = get(stack);
         props.iris().ifPresent(color ->
-                tooltip.add(Component.literal("Iris: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.iris", String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
         props.cornea().ifPresent(color ->
-                tooltip.add(Component.literal("Cornea: #" + String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.cornea", String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
         props.glow().ifPresent(glow ->
-                tooltip.add(Component.literal("Glow: " + glow).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.glow", glow).withStyle(ChatFormatting.GRAY)));
     }
 
     public static AppearanceOverride get(ItemStack stack) {

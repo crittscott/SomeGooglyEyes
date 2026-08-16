@@ -28,7 +28,7 @@ public final class PickerPermissions {
         if (sender.isCreative()) {
             return true;
         }
-        sender.sendSystemMessage(Component.literal("[Googly] Picker actions require creative mode."));
+        sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.requires_creative"));
         return false;
     }
 }

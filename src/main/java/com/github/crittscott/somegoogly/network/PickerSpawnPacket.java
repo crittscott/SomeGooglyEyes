@@ -43,7 +43,7 @@ public class PickerSpawnPacket {
                 return;
             }
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(packet.typeId)) {
-                sender.sendSystemMessage(Component.literal("[Googly] Unknown entity type " + packet.typeId + "."));
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.unknown_entity_type", packet.typeId));
                 return;
             }
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(packet.typeId);

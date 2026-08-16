@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.command;
 
+import com.github.crittscott.somegoogly.SomeGoogly;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
@@ -70,7 +71,7 @@ public final class GooglyAdminCommand {
                                     if (target == null) return 0;
                                     boolean value = BoolArgumentType.getBool(ctx, "value");
                                     EyeState.setHasEyes(target, value);
-                                    return feedback(ctx, "has-eyes = " + value);
+                                    return feedback(ctx, Component.translatable("somegoogly.command.admin.has_eyes_set", value));
                                 })))
                 .then(Commands.literal("tint")
                         .then(colorBranch("iris", true))
@@ -81,7 +82,7 @@ public final class GooglyAdminCommand {
                                     if (target == null) return 0;
                                     EyeState.clearIrisTint(target);
                                     EyeState.clearCorneaTint(target);
-                                    return feedback(ctx, "cleared iris + cornea tint");
+                                    return feedback(ctx, Component.translatable("somegoogly.command.admin.tint_cleared"));
                                 })))
                 .then(Commands.literal("glow")
                         .then(Commands.literal("on").executes(ctx -> glow(ctx, Boolean.TRUE)))
@@ -108,19 +109,19 @@ public final class GooglyAdminCommand {
             behavior = pool.get(target.getRandom().nextInt(pool.size()));
         } else {
             ResourceLocation key = id.indexOf(':') >= 0 ? ResourceLocation.tryParse(id)
-                    : new ResourceLocation("somegoogly", id);
+                    : new ResourceLocation(SomeGoogly.MOD_ID, id);
             behavior = key == null ? null : EyeBehaviors.byId(key);
         }
         if (behavior == null) {
-            ctx.getSource().sendFailure(Component.literal("[sg admin] unknown behavior '" + id + "'"));
+            ctx.getSource().sendFailure(Component.translatable("somegoogly.command.admin.unknown_behavior", id));
             return 0;
         }
 
         boolean started = ServerBehaviorScheduler.trigger(
                 target, behavior, behavior.defaultDuration(), target.getRandom().nextLong());
         return feedback(ctx, started
-                ? "playing " + behavior.id().getPath()
-                : "dropped " + behavior.id().getPath() + " (mob is busy)");
+                ? Component.translatable("somegoogly.command.admin.behavior_playing", behavior.id().getPath())
+                : Component.translatable("somegoogly.command.admin.behavior_dropped", behavior.id().getPath()));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {
@@ -140,12 +141,13 @@ public final class GooglyAdminCommand {
                                             } else {
                                                 EyeState.setCorneaTint(target, color);
                                             }
-                                            return feedback(ctx, name + " tint = #" + String.format("%06X", color.toRgb24()));
+                                            return feedback(ctx, Component.translatable(
+                                                    "somegoogly.command.admin.tint_set", name, String.format("%06X", color.toRgb24())));
                                         }))));
     }
 
-    private static int feedback(CommandContext<CommandSourceStack> ctx, String message) {
-        ctx.getSource().sendSuccess(() -> Component.literal("[sg admin] " + message), false);
+    private static int feedback(CommandContext<CommandSourceStack> ctx, Component message) {
+        ctx.getSource().sendSuccess(() -> Component.translatable("somegoogly.command.admin.feedback", message), false);
         return 1;
     }
 
@@ -153,7 +155,7 @@ public final class GooglyAdminCommand {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
         EyeState.setGlow(target, value);
-        return feedback(ctx, "glow = " + (value == null ? "config" : value));
+        return feedback(ctx, Component.translatable("somegoogly.command.admin.glow_set", value == null ? "config" : value));
     }
 
     /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */
@@ -171,17 +173,17 @@ public final class GooglyAdminCommand {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayer();
         if (player == null) {
-            source.sendFailure(Component.literal("[sg admin] must be run by a player"));
+            source.sendFailure(Component.translatable("somegoogly.command.admin.not_a_player"));
             return null;
         }
         if (!player.isCreative()) {
-            source.sendFailure(Component.literal("[sg admin] requires creative mode"));
+            source.sendFailure(Component.translatable("somegoogly.command.admin.requires_creative"));
             return null;
         }
 
         LivingEntity target = LookTarget.livingInCrosshair(player, REACH);
         if (target == null) {
-            source.sendFailure(Component.literal("[sg admin] not looking at a living entity"));
+            source.sendFailure(Component.translatable("somegoogly.command.admin.no_target"));
         }
         return target;
     }

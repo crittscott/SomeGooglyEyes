@@ -48,9 +48,7 @@ public class PickerSpawnAllPacket {
                 return;
             }
             if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
-                sender.sendSystemMessage(Component.literal(
-                        "[Googly] /sg spawnall is disabled on this server — set allowSpawnAll=true"
-                                + " in the somegoogly server config to enable it."));
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_disabled"));
                 return;
             }
             // Only the chars legal in a mod namespace; anything else is dropped (spawn(null) = all mods).

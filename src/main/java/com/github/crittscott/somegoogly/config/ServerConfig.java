@@ -127,8 +127,10 @@ public class ServerConfig {
     private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
     }
 
-    /** The behaviors the ambient idle timer plays by default: the ambient set only (not the event-driven
-     *  grow/swirl, nor the dormant color_change). */
+    /**
+     * The behaviors the ambient idle timer plays by default: the ambient set only (not the event-driven
+     * grow/swirl, nor the dormant color_change).
+     */
     private static List<String> defaultAmbientBehaviorIds() {
         return new ArrayList<>(List.of(
                 "somegoogly:blink",
@@ -171,8 +173,10 @@ public class ServerConfig {
         return regex.toString();
     }
 
-    /** Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
-     *  already ran, but reloads can still surface bad entries, so we stay defensive). */
+    /**
+     * Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
+     * already ran, but reloads can still surface bad entries, so we stay defensive).
+     */
     private static Override parse(String entry) {
         String[] split = entry.split(",");
         if (split.length != 2) {

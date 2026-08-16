@@ -12,6 +12,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
+/**
+ * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
+ * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
+ *
+ * <p>One tracker is kept per tracked {@link LivingEntity} (see {@code ClientEventHandler}), matched
+ * against the entity's current placement via {@link #matches}. {@link #update()} advances the active
+ * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
+ * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
+ */
 public class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
     // active behavior into the simulation allocates nothing per tick.
@@ -57,6 +66,11 @@ public class GooglyTracker {
         update();
     }
 
+    /**
+     * Physics state for one pupil: its position and velocity in the eye's unit disk, the head
+     * orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
+     * an active behavior writes each tick. {@link #update} steps all of it by one tick.
+     */
     public static class EyeInfo {
         // --- tuning (normalized units; boundary radius = 1) ---------------------------------------
         private static final float R_AIR = 1.0f;               // free-flight velocity damping per tick (1 = none)

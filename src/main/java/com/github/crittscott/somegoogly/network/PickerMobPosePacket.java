@@ -83,20 +83,21 @@ public class PickerMobPosePacket {
             }
             Entity entity = sender.serverLevel().getEntity(packet.mobId);
             if (!(entity instanceof LivingEntity living)) {
-                sender.sendSystemMessage(Component.literal("[Googly] Mob not found (unloaded or removed)."));
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_found"));
                 return;
             }
             if (packet.x != null && packet.y != null && packet.z != null) {
                 living.teleportTo(living.getX() + packet.x, living.getY() + packet.y, living.getZ() + packet.z);
-                sender.sendSystemMessage(Component.literal(String.format("[Googly] Mob moved to [%.2f, %.2f, %.2f].",
-                        living.getX(), living.getY(), living.getZ())));
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_moved",
+                        String.format("%.2f", living.getX()), String.format("%.2f", living.getY()), String.format("%.2f", living.getZ())));
             }
             if (packet.azimuth != null) {
                 float yaw = Mth.wrapDegrees(packet.azimuth - 90.0F);
                 living.setYRot(yaw);
                 living.setYHeadRot(yaw);
                 living.setYBodyRot(yaw);
-                sender.sendSystemMessage(Component.literal(String.format("[Googly] Mob rotation azi %.0f°.", packet.azimuth)));
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_rotated",
+                        String.format("%.0f", packet.azimuth)));
             }
         });
         context.setPacketHandled(true);

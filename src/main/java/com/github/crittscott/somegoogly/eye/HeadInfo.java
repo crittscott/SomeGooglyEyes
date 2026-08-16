@@ -59,7 +59,7 @@ public class HeadInfo {
     // later become. These files are authored by the picker and hand-edited afterwards, so they pin
     // every value explicitly.
 
-    // Raw datapack file structure (one file per entity).
+    /** Raw datapack file structure (one file per entity). */
     public static class ConfigFile {
         public static final Codec<ConfigFile> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 VersionedEntry.CODEC.listOf().fieldOf("entries").forGetter(f -> f.entries)
@@ -106,6 +106,7 @@ public class HeadInfo {
         }
     }
 
+    /** One head's attachment point and the eyes placed on it. */
     public static class HeadConfig {
         public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.STRING.fieldOf("attachPoint").forGetter(h -> h.attachPoint),
@@ -121,7 +122,7 @@ public class HeadInfo {
         public List<EyeDefinition> eyes = List.of();
     }
 
-    // Runtime structure selected by version and age, then synced to clients.
+    /** Runtime structure selected by version and age, then synced to clients. */
     public static class RuntimeConfig {
         public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.BOOL.fieldOf("enabled").forGetter(c -> c.enabled),
@@ -188,6 +189,7 @@ public class HeadInfo {
         }
     }
 
+    /** The up-to-three {@link RuntimeConfig}s selected for one entity type: adult, baby, and any. */
     public static class RuntimeConfigSet {
         public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 RuntimeConfig.CODEC.optionalFieldOf("adult").forGetter(s -> Optional.ofNullable(s.adult)),
@@ -236,7 +238,7 @@ public class HeadInfo {
         }
     }
 
-    // One selectable entry in a datapack file.
+    /** One selectable entry in a datapack file. */
     public static class VersionedEntry {
         public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                 Codec.STRING.fieldOf("version").forGetter(e -> e.version),

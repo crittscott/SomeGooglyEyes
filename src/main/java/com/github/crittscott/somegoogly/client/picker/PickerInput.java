@@ -21,10 +21,10 @@ public class PickerInput {
         return mc.player != null && mc.player.isCreative();
     }
 
-    private static void message(String text) {
+    private static void message(String key, Object... args) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            mc.player.displayClientMessage(Component.literal("[Googly] " + text), true);
+            mc.player.displayClientMessage(Component.translatable(key, args), true);
         }
     }
 
@@ -47,14 +47,14 @@ public class PickerInput {
             if (!PickerState.isActive()) {
                 // The picker is a creative-mode authoring tool; don't let it turn on otherwise.
                 if (!inCreative()) {
-                    message("Picker requires creative mode.");
+                    message("somegoogly.command.picker.toggle_requires_creative");
                     return;
                 }
                 PickerState.activate();
-                message("Picker ON — look at a mob and Lock (V).");
+                message("somegoogly.command.picker.toggle_on");
             } else {
                 PickerState.deactivate(); // also releases the frozen mob on exit
-                message("Picker OFF");
+                message("somegoogly.command.picker.toggle_off");
             }
             return;
         }
@@ -65,9 +65,9 @@ public class PickerInput {
         if (PickerKeys.LOCK.matches(key, sc)) {
             if (PickerState.target() != null) {
                 PickerState.unlock();
-                message("Unchose (mob released).");
+                message("somegoogly.command.picker.unchose");
             } else {
-                message(PickerState.lockOn());
+                message("somegoogly.command.picker.feedback", PickerState.lockOn());
             }
         } else if (PickerKeys.PART_PREV.matches(key, sc)) {
             PickerState.cyclePart(-1);

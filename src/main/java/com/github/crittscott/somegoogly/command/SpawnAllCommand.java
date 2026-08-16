@@ -189,7 +189,7 @@ public final class SpawnAllCommand {
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
-            player.sendSystemMessage(Component.literal("[Googly] No entity types registered under '" + modFilter + "'."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.no_types", modFilter));
             return;
         }
         // Sort by mod (namespace) first, then by mob id within the mod.
@@ -281,14 +281,18 @@ public final class SpawnAllCommand {
         int finalSkipped = skipped;
         int finalRows = rowIndex + 1;
         int finalSpawned = spawned;
-        String platformNote = buildPlatforms ? " on sandstone platforms" : "";
-        String scope = filtering ? " " + modFilter : "";
-        player.sendSystemMessage(Component.literal("[Googly] Spawned " + finalSpawned + scope + " mob(s)" + platformNote
-                + " across " + finalRows + " mod row(s)" + (finalSkipped > 0 ? ", skipped " + finalSkipped : "") + "."));
+        Component platformNote = buildPlatforms
+                ? Component.translatable("somegoogly.command.spawnall.on_platforms") : Component.empty();
+        Component scope = filtering
+                ? Component.translatable("somegoogly.command.spawnall.scope", modFilter) : Component.empty();
+        Component skippedNote = finalSkipped > 0
+                ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
+        player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.result",
+                finalSpawned, scope, platformNote, finalRows, skippedNote));
         if (filtering && !dropped.isEmpty()) {
-            player.sendSystemMessage(Component.literal("[Googly] " + dropped.size() + " type(s) not spawned:"));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_header", dropped.size()));
             for (String entry : dropped) {
-                player.sendSystemMessage(Component.literal("  - " + entry));
+                player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_entry", entry));
             }
         }
     }
@@ -304,8 +308,7 @@ public final class SpawnAllCommand {
         ServerLevel level = player.serverLevel();
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
-            player.sendSystemMessage(Component.literal(
-                    "[Googly] " + id + " is hard-excluded from googly eyes; not spawning it."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.ender_dragon_excluded", id));
             return;
         }
 
@@ -316,8 +319,7 @@ public final class SpawnAllCommand {
         BlockHitResult hit = level.clip(new ClipContext(eye, end,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         if (hit.getType() != HitResult.Type.BLOCK) {
-            player.sendSystemMessage(Component.literal(
-                    "[Googly] No block targeted within " + (int) SPAWN_REACH + " blocks."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH));
             return;
         }
 
@@ -325,17 +327,16 @@ public final class SpawnAllCommand {
         try {
             entity = type.create(level);
         } catch (Exception e) {
-            player.sendSystemMessage(Component.literal(
-                    "[Googly] " + id + " — create() threw " + e.getClass().getSimpleName() + "."));
+            player.sendSystemMessage(Component.translatable(
+                    "somegoogly.command.spawn.create_threw", id, e.getClass().getSimpleName()));
             return;
         }
         if (entity == null) {
-            player.sendSystemMessage(Component.literal("[Googly] " + id + " — create() returned null."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.create_null", id));
             return;
         }
         if (!(entity instanceof LivingEntity)) {
-            player.sendSystemMessage(Component.literal(
-                    "[Googly] " + id + " is not a living entity — the eye layer can't attach to it."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.not_living", id));
             return;
         }
 
@@ -348,7 +349,7 @@ public final class SpawnAllCommand {
         entity.moveTo(x, pos.getY(), z, yaw, 0.0F);
 
         if (!level.noCollision(entity)) {
-            player.sendSystemMessage(Component.literal("[Googly] " + id + " doesn't fit at the target."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.doesnt_fit", id));
             return;
         }
 
@@ -360,9 +361,9 @@ public final class SpawnAllCommand {
             mob.setYBodyRot(yaw);
         }
         if (level.addFreshEntity(entity)) {
-            player.sendSystemMessage(Component.literal("[Googly] Spawned " + id + "."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.spawned", id));
         } else {
-            player.sendSystemMessage(Component.literal("[Googly] " + id + " — addFreshEntity() refused."));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.refused", id));
         }
     }
 

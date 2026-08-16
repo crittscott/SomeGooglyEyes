@@ -65,7 +65,7 @@ public class PickerExportPacket {
             UUID playerId = sender.getUUID();
             String result = PickerExportService.export(
                     sender.serverLevel().getServer(), playerId, packet.typeId, packet.configNbt);
-            sender.sendSystemMessage(Component.literal("[Googly] " + result));
+            sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
         });
         context.setPacketHandled(true);
     }
