@@ -1,9 +1,10 @@
 # Some Googly Eyes As-Built Orientation
 
-This is an orientation and maintenance guide to the code as it exists. It identifies the major
-subsystems, persistent data, side boundaries, and compatibility surfaces a maintainer should
-understand before making a change. It is deliberately incomplete: `player-view-2.md` describes
-current player-facing behavior, and the code is authoritative when either document is wrong.
+This guide identifies the code boundaries and invariants a maintainer should understand before changing the mod. It is deliberately selective. `player-view.md` describes observable behavior; the code is authoritative when either document is wrong.
+
+It should not contain history and it is not part of a conversation with the user. It should describe the code as it is. It is not a prose version of the code, it is an orientation.
+
+This document describes what is, not necessarily what is desired. Do not take is to be a driving design document.
 
 ## Project at a glance
 
@@ -16,15 +17,11 @@ datapacks; the server owns eligibility and persistent entity state; the client o
 physics, and rendering. The mod ships 243 eye-definition files for Minecraft and ten other mod
 namespaces.
 
-| Registry name | Kind | Role |
-| --- | --- | --- |
-| `googly_eye` | Item | Harvested eye and portable appearance payload |
-| `slimy_eye` | Item | Applicator made from a Googly Eye and slimeball |
-| `optometrist` | Enchantment | Treasure-only shears enchantment for non-lethal harvesting |
-| `googly` | Creative tab | Eye, Slimy Eye, and an Optometrist enchanted book |
-| `eye_modifier` | Recipe serializer | Dynamic eye appearance edits |
-| `slimy_eye` | Recipe serializer | Shapeless applicator recipe with NBT transfer |
-| `maybe_float` | Command argument | Picker coordinate or angle value that also accepts `~` |
+It registers two items (`googly_eye`, the harvested eye and portable appearance payload; `slimy_eye`,
+an applicator made from a Googly Eye and slimeball), one treasure-only shears enchantment
+(`optometrist`), one creative tab (`googly`), two recipe serializers (`eye_modifier` for dynamic
+appearance edits, `slimy_eye` for the shapeless applicator with NBT transfer), and one command
+argument (`maybe_float`, a picker coordinate/angle that also accepts `~`).
 
 It registers no blocks, block entities, menus, entity types, particles, or custom sounds. It does
 register client and server commands and a bidirectional network channel. Mod-version mismatches are
@@ -82,13 +79,10 @@ resolved state. Items carry appearance between entities but never carry placemen
 
 ### Living entities
 
-Forge persistent entity data holds the long-lived eye state:
-
-| Key | Type | Meaning |
-| --- | --- | --- |
-| `somegoogly:hasGooglyEyes` | Boolean | Whether this entity currently has eyes |
-| `somegoogly:eyeVariantRoll` | Float | Stable 0..1 roll mapped onto the current age config's weighted variants |
-| `somegoogly:eyeOverrides` | Compound | Sparse cornea color, iris color, and glow override |
+Forge persistent entity data holds three keys: `somegoogly:hasGooglyEyes` (boolean),
+`somegoogly:eyeVariantRoll` (float; a stable 0..1 roll mapped onto the current age config's weighted
+variants), and `somegoogly:eyeOverrides` (a sparse compound of cornea color, iris color, and glow
+override).
 
 The initial flag and roll are written once. The flag survives save/load, dimension changes, and
 aging. A Slimy Eye application draws a fresh variant roll before turning eyes on. Appearance
@@ -99,15 +93,10 @@ no player-clone handler, their eye state is not copied to the replacement player
 
 ### Eye items
 
-Both items use `EyeProperties`, encoded through the same `AppearanceOverride` codec as entity state.
-It may contain:
-
-- `corneaColor`: three floating-point RGB channels
-- `irisColor`: three floating-point RGB channels
-- `glow`: explicit true or false
-
-The compound is sparse and removed when empty. `EyeItemProperties` is the only owner of this item
-schema. Geometry, entity id, attach point, variant, and behavior never travel on the item.
+Both items use `EyeProperties`, encoded through the same `AppearanceOverride` codec as entity state:
+sparse cornea color, iris color, and an explicit glow flag, removed when empty.
+`EyeItemProperties` is the only owner of this item schema. Geometry, entity id, attach point, variant,
+and behavior never travel on the item.
 
 ### Picker freeze marker
 
@@ -190,15 +179,10 @@ copies the input eye's appearance onto its output.
 being tracked or currently finishing an explicitly triggered behavior. At most one behavior may run
 per mob; overlapping triggers are dropped and never queued.
 
-| Behavior | Default duration | Effect | Normal trigger |
-| --- | ---: | --- | --- |
-| `blink` | 8 ticks | Squashes a seeded subset of eyes | Ambient |
-| `grow` | 14 ticks | Enlarges the eyes briefly | Player damage chance |
-| `color_change` | 50 ticks | Blends corneas through a seeded vivid color | Admin only by default |
-| `stare` | 50 ticks | Springs pupils to center | Ambient |
-| `cross_eye` | 70 ticks | Aims configured pupil pairs toward each other | Ambient |
-| `swirl` | 70 ticks | Spirals pupils inward | Trade or heal |
-| `side_eye` | 90 ticks | Holds a seeded side glance | Ambient |
+Seven behaviors are registered under the `somegoogly:` namespace: `blink`, `stare`, `cross_eye`, and
+`side_eye` draw from the ambient pool; `grow` fires on player-damage chance and `swirl` on trade or
+heal; `color_change` is reachable only through the admin command by default. Each carries its own
+duration and per-eye effect, defined at the behavior registration site.
 
 Triggers carry the entity id, behavior id, duration, seed, and elapsed ticks. The seed keeps observers
 deterministic; elapsed time lets a newly tracking client catch up mid-effect.
@@ -221,15 +205,10 @@ adds a full-bright pass when glow is active. The same model and render types are
 Googly Eye item renderer.
 
 Attachment resolvers are ordered from strongest naming contract to broadest fallback:
-
-| Resolver | Model family | Token source |
-| --- | --- | --- |
-| `HierarchicalResolver` | Vanilla `HierarchicalModel` | Named `root` and child-map paths |
-| `AgeableListResolver` | Most vanilla ageable/list models | `head`/`body` roots plus named descendants |
-| `CitadelResolver` | Citadel models | Box names, model field names, then `#N` |
-| `LLibraryResolver` | Mowzie's shaded legacy LLibrary models | Model field names, then `#N` |
-| `ChildMapResolver` | Catch-all `EntityModel` | Reflected positional roots plus named descendants |
-| `GeoBones` | GeckoLib baked models | Named bone paths |
+`HierarchicalResolver` (vanilla `HierarchicalModel`, named paths), `AgeableListResolver` (most
+vanilla ageable/list models), `CitadelResolver`, `LLibraryResolver` (Mowzie's shaded legacy
+toolkit), `ChildMapResolver` (reflection catch-all for `EntityModel`), and `GeoBones` (GeckoLib baked
+models, named bone paths).
 
 Part and bone resolutions, including misses, are memoized per model instance and token. Vanilla-side
 caches must be cleared when resource reload replaces renderer models. GeckoLib is compile-only and
@@ -241,18 +220,10 @@ behavior.
 
 ## Network boundary
 
-`NetworkHandler` uses protocol version `6`. All eight packets are direction-locked.
-
-| Packet | Direction | Payload purpose |
-| --- | --- | --- |
-| `EyeStatePacket` | Server -> client | Eye flag, variant roll, optional appearance override |
-| `EyeConfigSyncPacket` | Server -> client | All selected runtime eye definitions |
-| `EyeBehaviorTriggerPacket` | Server -> client | Seeded transient behavior trigger |
-| `PickerFreezePacket` | Client -> server | Freeze or release chosen mob |
-| `PickerSpawnPacket` | Client -> server | Spawn one test mob |
-| `PickerSpawnAllPacket` | Client -> server | Spawn the opt-in audit grid |
-| `PickerMobPosePacket` | Client -> server | Move or rotate the chosen mob |
-| `PickerExportPacket` | Client -> server | Validate, write, and reload one authored config |
+`NetworkHandler` uses protocol version `6` over one channel with eight direction-locked packets:
+server-to-client `EyeStatePacket`, `EyeConfigSyncPacket`, and `EyeBehaviorTriggerPacket`; and
+client-to-server picker requests `PickerFreezePacket`, `PickerSpawnPacket`, `PickerSpawnAllPacket`,
+`PickerMobPosePacket`, and `PickerExportPacket`.
 
 Client-to-server picker handlers re-check creative mode and validate ids or payloads. `spawnall` also
 requires the default-off server option. `PickerMobPosePacket` additionally restricts its target to the

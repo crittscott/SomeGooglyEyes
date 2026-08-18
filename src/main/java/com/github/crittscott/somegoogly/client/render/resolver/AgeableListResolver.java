@@ -1,11 +1,13 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Resolver for the {@link AgeableListModel} family — the base of most vanilla mob models (humanoids,
@@ -19,8 +21,11 @@ import java.util.List;
  * recovers it reliably. Tried after {@link HierarchicalResolver} (named-root models keep their cleaner
  * path) and before {@link ChildMapResolver} (the positional catch-all).
  *
- * <p>Known limit: {@code AgeableListModel}'s baby scale/offset is applied outside the part tree, so it is
- * not reflected in the captured pose — baby mobs may be slightly mis-placed.
+ * <p>For a young entity, {@link AgeableListModel#renderToBuffer} wraps {@code headParts()} and
+ * {@code bodyParts()} each in their own baby-only scale/offset, applied and popped entirely inside that
+ * method — invisible to a render layer's {@link PoseStack} otherwise. {@link #headWrap}/{@link #bodyWrap}
+ * replay that wrap (made accessible by the mod's access transformer) so a baby's attach points land where
+ * the model actually draws them, not where the same tokens sit on an adult.
  */
 public class AgeableListResolver extends ModelPartTreeResolver {
 
@@ -33,17 +38,55 @@ public class AgeableListResolver extends ModelPartTreeResolver {
     protected List<NamedRoot> roots(EntityModel<?> model) {
         AgeableListModel<?> ageable = (AgeableListModel<?>) model;
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, "head", ageable.headParts());
-        index(roots, "body", ageable.bodyParts());
+        index(roots, "head", ageable.headParts(), headWrap(ageable));
+        index(roots, "body", ageable.bodyParts(), bodyWrap(ageable));
         return roots;
     }
 
     /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
-    private static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts) {
+    private static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
+                              Consumer<PoseStack> preTransform) {
         int i = 0;
         for (ModelPart part : parts) {
-            roots.add(new NamedRoot(i == 0 ? base : base + i, part));
+            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
             i++;
         }
+    }
+
+    /**
+     * The scale/offset {@link AgeableListModel#renderToBuffer} applies around {@code headParts()} for a
+     * young entity. {@code young} is re-checked on every call rather than baked in when this closure is
+     * built, because {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the
+     * same model instance renders both baby and adult entities of its type.
+     */
+    private static Consumer<PoseStack> headWrap(AgeableListModel<?> ageable) {
+        boolean scaleHead = ageable.scaleHead;
+        float babyHeadScale = ageable.babyHeadScale;
+        float yOffset = ageable.babyYHeadOffset;
+        float zOffset = ageable.babyZHeadOffset;
+        return poseStack -> {
+            if (!ageable.young) {
+                return;
+            }
+            if (scaleHead) {
+                float f = 1.5F / babyHeadScale;
+                poseStack.scale(f, f, f);
+            }
+            poseStack.translate(0.0F, yOffset / 16.0F, zOffset / 16.0F);
+        };
+    }
+
+    /** Same as {@link #headWrap}, for the scale/offset {@code renderToBuffer} applies around {@code bodyParts()}. */
+    private static Consumer<PoseStack> bodyWrap(AgeableListModel<?> ageable) {
+        float babyBodyScale = ageable.babyBodyScale;
+        float yOffset = ageable.bodyYOffset;
+        return poseStack -> {
+            if (!ageable.young) {
+                return;
+            }
+            float f = 1.0F / babyBodyScale;
+            poseStack.scale(f, f, f);
+            poseStack.translate(0.0F, yOffset / 16.0F, 0.0F);
+        };
     }
 }

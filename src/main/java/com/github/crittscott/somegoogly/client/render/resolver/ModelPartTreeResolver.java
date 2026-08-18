@@ -9,6 +9,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Shared base for resolvers that walk a vanilla {@link ModelPart} tree by its name → child map. The three
@@ -39,8 +40,15 @@ import java.util.Map;
  */
 abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
 
-    /** A subtree root paired with the name it should appear under (roots have no intrinsic stable name). */
-    protected record NamedRoot(String name, ModelPart part) {
+    /**
+     * A subtree root paired with the name it should appear under (roots have no intrinsic stable name)
+     * and an optional transform to replay on the {@link PoseStack} before descending into it (used by
+     * {@link AgeableListResolver} to reproduce a baby-only wrap the model applies outside its part tree).
+     */
+    protected record NamedRoot(String name, ModelPart part, @Nullable Consumer<PoseStack> preTransform) {
+        NamedRoot(String name, ModelPart part) {
+            this(name, part, null);
+        }
     }
 
     /** The subtrees to walk for this model, in a stable order. Only called when {@link #handles} is true. */
@@ -82,9 +90,12 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
     }
 
     /** The parts from a subtree root down to the attach part, inclusive, in the order they transform. */
-    private record PartChain(ModelPart[] chain) implements Attachment {
+    private record PartChain(@Nullable Consumer<PoseStack> preTransform, ModelPart[] chain) implements Attachment {
         @Override
         public boolean apply(PoseStack poseStack) {
+            if (preTransform != null) {
+                preTransform.accept(poseStack);
+            }
             for (ModelPart part : chain) {
                 part.translateAndRotate(poseStack);
             }
@@ -101,7 +112,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         ArrayDeque<ModelPart> chain = new ArrayDeque<>();
         for (NamedRoot root : roots(model)) {
             if (search("", root.name(), root.part(), partToken, chain)) {
-                return new PartChain(chain.toArray(new ModelPart[0]));
+                return new PartChain(root.preTransform(), chain.toArray(new ModelPart[0]));
             }
         }
         return null;
