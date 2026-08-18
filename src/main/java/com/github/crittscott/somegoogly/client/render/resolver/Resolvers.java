@@ -25,6 +25,7 @@ public final class Resolvers {
             new AgeableListResolver(),
             new CitadelResolver(),
             new LLibraryResolver(),
+            new RabbitLlamaResolver(),
             new ChildMapResolver()
     );
 

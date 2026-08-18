@@ -18,7 +18,7 @@ whole audit is hunting). See the four NOT COVERED files for the ones that do.
 - [x] bat — bat.md
 - [x] bee — bee.md
 - [x] blaze — blaze.md
-- [x] camel — camel.md — **NOT COVERED**
+- [x] camel — camel.md — **FIXED**
 - [x] cat — cat.md
 - [x] cave_spider — cave_spider.md
 - [x] chicken — chicken.md
@@ -43,7 +43,7 @@ whole audit is hunting). See the four NOT COVERED files for the ones that do.
 - [x] husk — husk.md
 - [x] illusioner — illusioner.md
 - [x] iron_golem — iron_golem.md
-- [x] llama — llama.md — **NOT COVERED**
+- [x] llama — llama.md — **FIXED**
 - [x] magma_cube — magma_cube.md
 - [x] mooshroom — mooshroom.md
 - [x] mule — mule.md
@@ -57,7 +57,7 @@ whole audit is hunting). See the four NOT COVERED files for the ones that do.
 - [x] pillager — pillager.md
 - [x] player — player.md
 - [x] polar_bear — polar_bear.md
-- [x] rabbit — rabbit.md — **NOT COVERED**
+- [x] rabbit — rabbit.md — **FIXED (code)**, data pending
 - [x] ravager — ravager.md
 - [x] salmon — salmon.md
 - [x] sheep — sheep.md
@@ -65,13 +65,13 @@ whole audit is hunting). See the four NOT COVERED files for the ones that do.
 - [x] skeleton — skeleton.md
 - [x] skeleton_horse — skeleton_horse.md
 - [x] slime — slime.md
-- [x] sniffer — sniffer.md — **NOT COVERED**
+- [x] sniffer — sniffer.md — **FIXED**
 - [x] snow_golem — snow_golem.md
 - [x] spider — spider.md
 - [x] squid — squid.md
 - [x] stray — stray.md
 - [x] strider — strider.md
-- [x] trader_llama — trader_llama.md — **NOT COVERED** (same model as llama)
+- [x] trader_llama — trader_llama.md — **FIXED** (same model as llama)
 - [x] turtle — turtle.md (covered, minor unrelated caveat noted)
 - [x] vex — vex.md
 - [x] villager — villager.md
@@ -90,9 +90,12 @@ whole audit is hunting). See the four NOT COVERED files for the ones that do.
 
 ## Summary
 
-Not covered (need new resolver work): **camel, llama, trader_llama, rabbit, sniffer** — 5 of 74.
+All 74 mobs are now covered by resolver code: **camel, llama, trader_llama, sniffer** are fixed and their
+existing eye positions are expected to still be correct (worth a quick in-game check, not expected to need
+re-authoring). **rabbit** is fixed in code but its shipped position was never correct under the old
+resolver for either age, so it needs a fresh pass through the picker — see `rabbit.md`.
 
-Everything else is fine as-is: either `HierarchicalModel` with no baby-only wrap override (most of the
+Everything else was fine as-is: either `HierarchicalModel` with no baby-only wrap override (most of the
 list), or `AgeableListModel`/`QuadrupedModel`/`HumanoidModel` family, covered by the `AgeableListResolver`
 head/body wrap fix already landed. `shulker` is a special case: its model (`ShulkerModel` via `ListModel`)
 isn't claimed by either named resolver and falls to `ChildMapResolver`, but since it has no baby and

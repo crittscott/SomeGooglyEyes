@@ -1,4 +1,4 @@
-# Rabbit — reference case for the "custom EntityModel wrap" bug family
+# Rabbit — reference case for the "custom EntityModel wrap" bug family — FIXED (code), data pending
 
 `RabbitModel` (`net.minecraft.client.model.RabbitModel`) extends `EntityModel<T>` directly. It is not a
 `HierarchicalModel` and not an `AgeableListModel`/`QuadrupedModel`, so neither `HierarchicalResolver` nor
@@ -70,3 +70,18 @@ one *does* extend `HierarchicalModel`, so it's a `HierarchicalResolver` gap, not
 and `SnifferModel` via `AgeableHierarchicalModel` (`sniffer` — same `HierarchicalResolver` gap as Camel,
 but through a proper shared base class instead of Camel's hand-rolled copy). Each needs its own targeted
 fix; see their respective files.
+
+## Fix landed
+
+`RabbitLlamaResolver` (`client/render/resolver/RabbitLlamaResolver.java`) now replays all three wraps —
+`rabbitHeadWrap`/`rabbitBodyWrap` cover the head-group vs body-group split above, gated on `young` at
+apply time, both branches (young and adult) covered since neither is wrap-free for Rabbit. It's inserted
+into `Resolvers.ALL` before `ChildMapResolver`. `RabbitModel`'s 12 fields needed new
+`accesstransformer.cfg` entries (private, no getters); `young` itself needed none (already public).
+
+`rabbit.json`'s `attachPoint` was renamed from the old positional `#11` (`ChildMapResolver`'s naming) to
+`nose` (`RabbitLlamaResolver`'s canonical name for the same field) — required for the eye to attach at all
+under the new resolver, not optional. The eye **position** itself was not touched: both ages were
+confirmed mispositioned before this fix (there was no correctly-tuned reference to preserve), and adding
+the wrap changes the scale the position is interpreted under for both ages. It needs a fresh pass through
+the picker, not a computed guess.

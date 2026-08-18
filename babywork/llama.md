@@ -1,4 +1,4 @@
-# Llama — NOT COVERED (baby only)
+# Llama — FIXED (baby only)
 
 `LlamaModel` extends `EntityModel<T>` directly, same as `RabbitModel` (see `rabbit.md` for the general
 shape of this bug family). Used by both `llama` and `trader_llama` (`TraderLlama extends Llama`, no model
@@ -36,3 +36,16 @@ Three independent (non-uniform — X/Y/Z scale differ) wraps, one per group (hea
 four legs + two chest boxes together), each only active when `young`. A fix needs a Llama-specific
 resolver (or grouping logic) analogous to `AgeableListResolver.headWrap`/`bodyWrap`, but with three groups
 instead of two, non-uniform scale, and gated on `young` at apply time the same way.
+
+## Fix landed
+
+`RabbitLlamaResolver` (`client/render/resolver/RabbitLlamaResolver.java`) replays all three wraps as
+no-ops when `!young`, matching the adult's wrap-free render exactly. `LlamaModel`'s 8 fields needed new
+`accesstransformer.cfg` entries.
+
+`llama.json`'s `attachPoint`s were renamed from the old positional `#0`/`#1` (`ChildMapResolver`'s naming)
+to `head`/`body` (`RabbitLlamaResolver`'s canonical names) — required for the eyes to attach at all under
+the new resolver. Unlike Rabbit, the eye **position** values were left as-is on purpose: adult llamas were
+already correctly positioned before this fix (adult has no wrap), so the same numbers still apply to
+adults post-fix, and now also correctly scale for babies for the first time — worth an in-game check on a
+baby llama to confirm, but not expected to need re-authoring.

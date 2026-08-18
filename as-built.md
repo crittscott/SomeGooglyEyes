@@ -207,8 +207,18 @@ Googly Eye item renderer.
 Attachment resolvers are ordered from strongest naming contract to broadest fallback:
 `HierarchicalResolver` (vanilla `HierarchicalModel`, named paths), `AgeableListResolver` (most
 vanilla ageable/list models), `CitadelResolver`, `LLibraryResolver` (Mowzie's shaded legacy
-toolkit), `ChildMapResolver` (reflection catch-all for `EntityModel`), and `GeoBones` (GeckoLib baked
-models, named bone paths).
+toolkit), `RabbitLlamaResolver` (`RabbitModel` and `LlamaModel`, each with its own hand-rolled
+per-part-group wrap), `ChildMapResolver` (reflection catch-all for `EntityModel`), and `GeoBones`
+(GeckoLib baked models, named bone paths).
+
+Some models apply a scale/translate wrap around some or all of their parts inside their own render
+method, entirely outside the captured part tree: `AgeableListModel`'s baby head/body wrap,
+`AgeableHierarchicalModel`'s and `CamelModel`'s baby root wrap, and `RabbitModel`'s/`LlamaModel`'s
+per-part-group wraps (baby-only except `RabbitModel`, whose adult render carries its own wrap too).
+`AgeableListResolver`, `HierarchicalResolver`, and `RabbitLlamaResolver` each replay the relevant wrap
+as a `NamedRoot` `preTransform`, re-reading the model's age flag inside the replayed closure rather
+than at resolve time, since `Resolvers.ATTACHMENTS` caches the resolved chain per (model instance,
+token) and one model instance renders every baby and adult of its type.
 
 Part and bone resolutions, including misses, are memoized per model instance and token. Vanilla-side
 caches must be cleared when resource reload replaces renderer models. GeckoLib is compile-only and
@@ -294,6 +304,8 @@ Before changing a relevant path, check the corresponding invariants:
 - Encode all datapack fields explicitly and update all bundled files when the schema changes.
 - Preserve normalized suffix matching and canonical attach tokens across resolvers and picker export.
 - Clear model-keyed caches only when models are replaced, not merely when datapack definitions change.
+- Read a model's age flag fresh inside a replayed `preTransform` closure, never bake it in when the
+  closure is built — the same cached model instance renders every baby and adult of its type.
 - Keep normal and GeckoLib rendering on the same gate and `GooglyEyeRenderer` drawing path.
 - Keep behavior scheduling server-owned, playback deterministic, and overlaps dropped rather than queued.
 - Keep packets direction-locked and bump protocol version for any breaking wire change.

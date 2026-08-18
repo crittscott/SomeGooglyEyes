@@ -1,101 +1,67 @@
 # Handoff: baby/adult eye-attachment fixes
 
-Self-contained summary of an in-progress bug hunt. You shouldn't need the conversation that produced this
-— everything relevant is either here or in the files it points to.
+Self-contained summary of a completed bug-fix pass. You shouldn't need the conversation that produced
+this — everything relevant is either here or in the files it points to.
 
 ## The bug, in one paragraph
 
 Some vanilla mob models reposition their parts with a `PoseStack` scale/translate that lives *outside*
 their normal part tree — applied and popped inside their own `renderToBuffer`, invisible to any
 `RenderLayer` (including this mod's eye layer). Our attachment resolvers (`client/render/resolver/`) only
-replay each part's own `translateAndRotate`, so wherever this outside-the-tree wrap exists, we
-silently reconstruct the wrong (usually adult) transform. `AgeableListResolver` had exactly this gap for
-`AgeableListModel` (cow, pig, zombie, etc.) and has been fixed. The same *shape* of bug exists in four more
-places that are NOT yet fixed.
+replay each part's own `translateAndRotate`, so wherever this outside-the-tree wrap exists, we silently
+reconstruct the wrong (usually adult) transform.
 
-## Already fixed (don't redo)
+## Fixed
 
-- `AgeableListResolver` now replays `AgeableListModel`'s baby-only head/body scale+offset
-  (`headWrap`/`bodyWrap` in `AgeableListResolver.java`), reading the model's private
+A full audit of all 74 vanilla mobs this mod ships eye definitions for found this bug in five places (see
+`vanilla-mobs.md` for the checklist and every individual `<mob>.md`). All five are now fixed in code:
+
+- **`AgeableListModel`** family (cow, pig, zombie, etc.) — `AgeableListResolver` replays the baby-only
+  head/body scale+offset (`headWrap`/`bodyWrap`), reading the model's private
   `scaleHead`/`babyHeadScale`/`babyYHeadOffset`/`babyZHeadOffset`/`babyBodyScale`/`bodyYOffset` fields via
-  new access-transformer entries in `accesstransformer.cfg`.
-- `ModelPartTreeResolver` (`NamedRoot`, `PartChain`) was extended with an optional `preTransform` to carry
-  this kind of wrap — the general mechanism, reusable for the fixes below.
-- `cow.json` was re-authored: baby and adult are now one `"any"` entry, since cow's `scaleHead=false` means
-  the same local position is correct for both ages once the wrap is replayed correctly.
-- Full audit of all 74 vanilla mobs this mod ships eye definitions for: see `vanilla-mobs.md` (checklist)
-  and the individual `<mob>.md` files. Five mobs came back NOT COVERED — that's the rest of this document.
+  access-transformer entries. `cow.json` was re-authored to a single `"any"`-age entry (see `cow.md`).
+- **`AgeableHierarchicalModel`** (sniffer) and **`CamelModel`** (camel) — `HierarchicalResolver.youngWrap`
+  recognizes each by `instanceof` and replays its baby-only scale+translate (Sniffer's via its
+  `youngScaleFactor`/`bodyYOffset` fields, new AT entries needed; Camel's via inline literal constants, no
+  AT needed). See `sniffer.md`/`camel.md`.
+- **`RabbitModel`** (rabbit) and **`LlamaModel`** (llama, trader_llama) — neither is `HierarchicalModel` or
+  `AgeableListModel`, so both fell to `ChildMapResolver`'s positional fallback, which has no concept of
+  either model's wrap. A new `RabbitLlamaResolver` (inserted into `Resolvers.ALL` before
+  `ChildMapResolver`) handles both: Rabbit's head-group/body-group/adult three-way split (Rabbit is unusual
+  — its *adult* render also lives inside a wrap, not just baby), and Llama's independent
+  head/body/legs+chest young-only wraps. Both models' `ModelPart` fields needed new AT entries (private,
+  no getters). See `rabbit.md`/`llama.md`/`trader_llama.md`.
 
-## The critical gotcha (read before touching any resolver)
+The shared gotcha across all of these: `Resolvers.ATTACHMENTS` memoizes `resolve()` per (model instance,
+token) and replays it every frame, and the model instance is a singleton per renderer shared by every baby
+and adult of that entity type. So the young/not-young branch is decided **inside the replayed closure,
+checked fresh every call** — never baked in when the closure is built (which only happens once, on the
+first resolve). Every fix above follows this pattern; copy it exactly for any future one.
 
-`Resolvers.ATTACHMENTS` memoizes `resolve()` per `(model instance, token)` and replays it every frame. The
-model instance is a **singleton per renderer**, shared by every baby and adult of that entity type. So the
-young/not-young branch must be decided **inside the replayed closure, checked fresh every call** — never
-baked in when the closure is built (which only happens once, on the first resolve). `AgeableListResolver`'s
-`headWrap`/`bodyWrap` do this correctly (they close over the model reference and re-read `.young` each
-call); copy that pattern exactly for any new fix.
+## Data follow-up (separate from code, not yet done)
 
-## What's still broken
+Renaming an `attachPoint` token is a mechanical necessity whenever a mob moves from `ChildMapResolver`'s
+positional naming (`#0`, `#11`, …) to a named resolver — done for `rabbit.json`, `llama.json`, and
+`trader_llama.json` as part of this fix (`#N` → the real field name), since otherwise the stored token
+simply stops matching anything and the eye disappears. Re-tuning the eye **position** itself is a separate
+question, not done here except where mechanically required:
 
-Full technical detail (exact code, constants, symptoms) is in each mob's own file. Summary:
+- **`rabbit.json`** needs a real re-authoring pass through the picker. Rabbit was confirmed broken for
+  *both* ages before this fix (there was no correctly-tuned reference position to preserve), and the wrap
+  now changes the scale its position is interpreted under for both ages.
+- **`llama.json`**, **`camel.json`**, **`sniffer.json`** were left untouched: each mob's *adult* render had
+  no wrap even before the fix, so their existing positions should still be correct for adults, and should
+  now also be correctly scaled for babies for the first time (previously babies just used the wrong adult
+  transform). Worth a quick in-game check on a baby of each, but not expected to need re-authoring.
+- **`mooshroom.json`** reuses `CowModel` and almost certainly has the same hand-compensated baby position
+  `cow.json` had before its fix (a baby entry hand-tuned against the old broken resolver at one rest pose).
+  Needs the same treatment as cow: re-author via the picker (or verify math), not a blind data patch. Other
+  `AgeableListModel`-family babies (sheep, goat, wolf, etc.) weren't individually checked for this same
+  artifact — see `vanilla-mobs.md`'s summary section.
 
-| Mob(s) | Model | Base class | Baby only? | AT needed? |
-|---|---|---|---|---|
-| `rabbit.md` | `RabbitModel` | `EntityModel` directly | No — adult **and** baby wrong | No (constants are inline literals) |
-| `llama.md`, `trader_llama.md` | `LlamaModel` | `EntityModel` directly | Yes — adult is fine | No (inline literals) |
-| `camel.md` | `CamelModel` | `HierarchicalModel` directly | Yes — adult is fine | No (inline literals) |
-| `sniffer.md` | `SnifferModel` | `AgeableHierarchicalModel` → `HierarchicalModel` | Yes — adult is fine | **Yes** — `youngScaleFactor`/`bodyYOffset` are private fields, not literals |
+None of this has been verified in-game — the project's build/test policy means that's for the user to run.
 
-Rabbit was in-game confirmed broken (both ages). Llama/Camel/Sniffer are read from source, not yet
-in-game confirmed — worth a quick check before or after fixing.
-
-## Recommended approach per mob
-
-**Camel and Sniffer** (both `HierarchicalModel`-family): extend `HierarchicalResolver` the same way
-`AgeableListResolver` was extended — its `roots()` currently returns one `NamedRoot("root", root())`.
-Give that root a `preTransform` when the model needs one:
-- `instanceof AgeableHierarchicalModel` → replay `scale(youngScaleFactor) + translate(0, bodyYOffset/16, 0)`
-  gated on `.young`. This is the "proper" fix since `AgeableHierarchicalModel` is a real shared vanilla
-  base class — covers Sniffer now and any future mod/vanilla mob built on it for free.
-- `instanceof CamelModel` → replay the hardcoded `scale(0.45) + translate(0, 1.834375, 0)` gated on
-  `.young`. Camel doesn't use `AgeableHierarchicalModel` (it hand-rolled the same pattern), so this needs
-  its own `instanceof` branch with the literal constants baked into resolver code, not read from a field.
-
-Sniffer needs two new AT entries (`youngScaleFactor`, `bodyYOffset` on `AgeableHierarchicalModel` — look
-up SRG ids the same way as before, see "Finding SRG field ids" below). Camel needs none — the wrap
-constants in `CamelModel.renderToBuffer` are literal floats, not fields, so just hardcode them in the
-resolver same as vanilla does.
-
-**Rabbit and Llama** (neither model family — currently fall to `ChildMapResolver`'s positional fallback):
-these need new small dedicated resolver classes (matching the existing one-class-per-family pattern:
-`HierarchicalResolver`, `AgeableListResolver`, `CitadelResolver`, `LLibraryResolver`), inserted into
-`Resolvers.ALL` before `ChildMapResolver`. Each would:
-1. `handles()` → `instanceof RabbitModel` / `instanceof LlamaModel`.
-2. Name each mob's fields as roots (the field lists and exact wrap constants are already written out in
-   `rabbit.md`/`llama.md` — no need to re-derive from source).
-3. Group each root by which wrap it falls under (Rabbit: head-group vs body-group vs adult-no-wrap;
-   Llama: head vs body vs legs+chest, adult has no wrap at all) and attach the matching `preTransform`,
-   gated on `.young` at apply time per the gotcha above.
-4. Needs new AT entries to read `RabbitModel`'s and `LlamaModel`'s private `ModelPart` fields (they're
-   `private final`, no getters) — same lookup method as before.
-
-This is an open design question, not a decision already made: whether Rabbit/Llama deserve their own
-resolver classes (cleaner, matches existing architecture) vs. a couple of `instanceof` special cases
-folded into `ChildMapResolver` (less code, but muddies what's supposed to be a generic reflection
-catch-all). Given the project's stated preference for "deeper classes of coherent content" over one-off
-fragmentation, and that this is only two mobs sharing a very similar shape, a single new small resolver
-class handling both (or two very small ones) seems like the better fit — but worth a deliberate call
-before writing it, not just defaulting.
-
-## Data follow-up (separate from code)
-
-`mooshroom.json` reuses `CowModel` and almost certainly has the same hand-compensated baby position
-`cow.json` had before its fix (a baby entry whose position was hand-tuned against the old broken resolver
-at one rest pose). Needs the same treatment: re-author via the picker (or verify math) once the resolver
-fix is confirmed live, not a blind data patch. Other `AgeableListModel`-family babies (sheep, goat, wolf,
-etc.) weren't individually checked for this same artifact — see `vanilla-mobs.md`'s summary section.
-
-## Finding SRG field ids (for any new AT entries)
+## Finding SRG field ids (for any future AT entries)
 
 1. Find the *official* field name and descriptor in
    `C:\Users\Dad\.gradle\caches\fabric-loom\1.20.1\forge\mojmap.tsrg2` (search the class's obf name block —
@@ -109,12 +75,17 @@ etc.) weren't individually checked for this same artifact — see `vanilla-mobs.
 4. In Java source, reference the field by its **official** name (e.g. `ageable.scaleHead`), not the SRG id
    — the dev compile classpath is official-mapped; SRG ids are only for the AT config file itself.
 
-## Reading decompiled vanilla source (if you need to verify anything not already written up)
+This lookup (reading mapping files, not decompiled source) needed no special authorization and was used
+for all the AT entries added in this fix.
 
-The user explicitly authorized this for this investigation, overriding this project's normal
-"never decompile" rule — that authorization is scoped to this bug-hunt, not a standing grant. If a fresh
-session needs to go further than what's already documented here and in the `<mob>.md` files, it's
-reasonable to ask again rather than assume.
+## Reading decompiled vanilla source (if a future session needs to go further)
+
+The user explicitly authorized decompiled-source reading for the original bug hunt, overriding this
+project's normal "never decompile" rule — that authorization was scoped to that investigation, not a
+standing grant. Everything that investigation found is already written up in this directory; a fresh
+session extending this work (e.g. verifying the data follow-up above) should not need to decompile
+anything, since the field lookup above covers new AT entries and the write-ups above cover the wraps
+themselves. If something genuinely undocumented comes up, ask again rather than assume.
 
 The decompiled+remapped source lives in a persistent sources jar (survives Gradle cache cleanup, unlike
 the ephemeral `build/tmp/.cache/expanded` staging directories):
@@ -132,8 +103,8 @@ Or list/extract everything under a package at once with a glob pattern instead o
 ## Files in this directory
 
 - `vanilla-mobs.md` — the checklist/index, all 74 mobs, links to every other file.
-- `rabbit.md`, `llama.md`, `trader_llama.md`, `camel.md`, `sniffer.md` — the five NOT COVERED writeups,
-  each with the exact vanilla source and constants involved.
+- `rabbit.md`, `llama.md`, `trader_llama.md`, `camel.md`, `sniffer.md` — the five fixed-in-this-pass
+  writeups, each with the exact vanilla source, constants, and what the landed fix does.
 - `<mob>.md` for the other 69 — one-line "covered by X" verdicts, mostly not needed for this fix work but
   kept for completeness / in case the coverage classification is ever in doubt.
 - `cow.md` — the reference "covered, and here's what data follow-up looks like" example.
