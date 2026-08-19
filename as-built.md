@@ -47,7 +47,7 @@ datapack formats directly and update the bundled data rather than adding compati
 | `client/` | Eye model, item renderer, per-entity wobble trackers, inspection indicator |
 | `client/render/` | Render gating and common eye drawing |
 | `client/render/resolver/` | Model-family attachment discovery, canonical tokens, caches |
-| `client/compat/` | GeckoLib layers, Citadel/LLibrary-facing helpers, Exotic Birds transforms |
+| `client/compat/` | GeckoLib layers, Citadel/LLibrary-facing helpers, Exotic Birds and Alex's Mobs whole-model transforms |
 | `client/picker/` | Picker state, preview, HUD, keyboard input, export-all |
 | `command/` | Client `/sg` authoring tree, server `/sg admin` |
 | `picker/` | Server-side picker authorization, freezing, spawn helpers, and world-datapack export |
@@ -205,28 +205,38 @@ adds a full-bright pass when glow is active. The same model and render types are
 Googly Eye item renderer.
 
 Attachment resolvers are ordered from strongest naming contract to broadest fallback:
-`HierarchicalResolver` (vanilla `HierarchicalModel`, named paths), `AgeableListResolver` (most
-vanilla ageable/list models), `CitadelResolver`, `LLibraryResolver` (Mowzie's shaded legacy
-toolkit), `RabbitLlamaResolver` (`RabbitModel` and `LlamaModel`, each with its own hand-rolled
-per-part-group wrap), `ChildMapResolver` (reflection catch-all for `EntityModel`), and `GeoBones`
-(GeckoLib baked models, named bone paths).
+`HierarchicalResolver` (vanilla `HierarchicalModel`, named paths), `TwilightForestResolver` (four
+Twilight Forest models that are `AgeableListModel`-family but override its inherited wrap with their
+own literals), `AgeableListResolver` (most vanilla ageable/list models), `CitadelResolver`,
+`LLibraryResolver` (Mowzie's shaded legacy toolkit), `RabbitLlamaResolver` (`RabbitModel` and
+`LlamaModel`, each with its own hand-rolled per-part-group wrap), `ChildMapResolver` (reflection
+catch-all for `EntityModel`), and `GeoBones` (GeckoLib baked models, named bone paths).
 
 Some models apply a scale/translate wrap around some or all of their parts inside their own render
 method, entirely outside the captured part tree: `AgeableListModel`'s baby head/body wrap,
-`AgeableHierarchicalModel`'s and `CamelModel`'s baby root wrap, and `RabbitModel`'s/`LlamaModel`'s
-per-part-group wraps (baby-only except `RabbitModel`, whose adult render carries its own wrap too).
-`AgeableListResolver`, `HierarchicalResolver`, and `RabbitLlamaResolver` each replay the relevant wrap
-as a `NamedRoot` `preTransform`, re-reading the model's age flag inside the replayed closure rather
-than at resolve time, since `Resolvers.ATTACHMENTS` caches the resolved chain per (model instance,
-token) and one model instance renders every baby and adult of its type.
+`AgeableHierarchicalModel`'s and `CamelModel`'s baby root wrap, `RabbitModel`'s/`LlamaModel`'s
+per-part-group wraps (baby-only except `RabbitModel`, whose adult render carries its own wrap too),
+and Twilight Forest's `DeerModel`/`NewDeerModel`/`PenguinModel`/`BunnyModel`, which extend
+`QuadrupedModel`/`HumanoidModel` but replace the inherited wrap with their own hardcoded literals.
+`AgeableListResolver`, `HierarchicalResolver`, `RabbitLlamaResolver`, and `TwilightForestResolver`
+each replay the relevant wrap as a `NamedRoot` `preTransform`, re-reading the model's age flag inside
+the replayed closure rather than at resolve time, since `Resolvers.ATTACHMENTS` caches the resolved
+chain per (model instance, token) and one model instance renders every baby and adult of its type.
 
 Part and bone resolutions, including misses, are memoized per model instance and token. Vanilla-side
 caches must be cleared when resource reload replaces renderer models. GeckoLib is compile-only and
 runtime-gated. Citadel and LLibrary integrations use reflection and create no hard dependency.
 
 The slime renderer receives the eye and picker layers before its translucent outer shell. Exotic
-Birds receives a version-specific whole-model transform shim derived from its 1.20.1-1.0.0 model
-behavior.
+Birds and Alex's Mobs each receive a class-name-keyed whole-model transform shim (`ExoticBirdsCompat`,
+`AlexsMobsCompat`) applied to the pose stack before the resolver walk starts, at the `LayerGooglyEyes`/
+`PickerLayer` call sites rather than inside a resolver. This is a separate mechanism from a resolver's
+own `NamedRoot` `preTransform`: `ReflectedBoxResolver` (Citadel/LLibrary's shared base, see
+`CitadelResolver`) has no per-part-group preTransform hook at all, so a Citadel model whose
+`renderToBuffer` wraps its *entire* part list — most `Animal`/`TamableAnimal` Alex's Mobs models do,
+gated on `young` — needs the wrap reproduced before any box's own `translateAndRotate` is replayed, not
+folded into one. A box's own `setScale()` calls (e.g. Grizzly Bear's baby head) need no such shim; a
+box's live scale is already part of what `translateAndRotate` replays.
 
 ## Network boundary
 
@@ -279,8 +289,19 @@ unless the user explicitly requests it.
 - An appearance override affects every eye on a mob uniformly.
 - An `AgeableListModel`'s external baby scaling is not part of its captured part tree, so some baby
   placements may be slightly offset.
-- Catch-all reflection, Citadel, LLibrary, GeckoLib, and the Exotic Birds shim are compatibility
-  surfaces; an upstream model or API change can break attachment without changing an entity id.
+- Catch-all reflection, Citadel, LLibrary, GeckoLib, and the Exotic Birds/Alex's Mobs shims are
+  compatibility surfaces; an upstream model or API change can break attachment without changing an
+  entity id.
+- `CitadelResolver`'s chain replay always compounds a box's own scale into its descendants, matching
+  Citadel's `AdvancedModelBox.render()` only when that box called `setShouldScaleChildren(true)`. Where
+  it didn't (e.g. Alex's Mobs' `ModelGeladaMonkey`, whose baby `neck` and child `head` are each scaled
+  independently without opting `neck` in), an eye attached below that box is over-scaled relative to
+  the real render. Not yet fixed; needs `ReflectedBoxResolver` to know about `scaleChildren`, not a
+  model-specific wrap.
+- A few mobs (vanilla Rabbit before its data was re-authored; Alex's Mobs' Bison and Tarantula Hawk)
+  render babies through an entirely separate model class rather than a scaled adult one. Attach tokens
+  still resolve if the baby model mirrors the adult's box names, but an eye position authored against
+  the adult model does not carry over and needs its own age-specific datapack entry.
 - One entity type that swaps among unrelated models can use only attach tokens shared by the active
   variants; a missing token simply draws no eye on that model.
 - The dynamic eye-modifier recipe has no declared ingredient list for recipe viewers to inspect. The
@@ -305,7 +326,9 @@ Before changing a relevant path, check the corresponding invariants:
 - Preserve normalized suffix matching and canonical attach tokens across resolvers and picker export.
 - Clear model-keyed caches only when models are replaced, not merely when datapack definitions change.
 - Read a model's age flag fresh inside a replayed `preTransform` closure, never bake it in when the
-  closure is built — the same cached model instance renders every baby and adult of its type.
+  closure is built — the same cached model instance renders every baby and adult of its type. The same
+  rule applies to a whole-model compat shim (`ExoticBirdsCompat`, `AlexsMobsCompat`): check `young` at
+  call time, not when the table entry is built.
 - Keep normal and GeckoLib rendering on the same gate and `GooglyEyeRenderer` drawing path.
 - Keep behavior scheduling server-owned, playback deterministic, and overlaps dropped rather than queued.
 - Keep packets direction-locked and bump protocol version for any breaking wire change.

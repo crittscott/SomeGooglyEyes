@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.compat.AlexsMobsCompat;
 import com.github.crittscott.somegoogly.client.compat.ExoticBirdsCompat;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
@@ -56,6 +57,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
             }
             poseStack.pushPose();
             ExoticBirdsCompat.preTransform(model, poseStack);
+            AlexsMobsCompat.preTransform(model, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
                 renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, listed.eye);
             }
@@ -68,6 +70,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         if (token != null) {
             poseStack.pushPose();
             ExoticBirdsCompat.preTransform(model, poseStack);
+            AlexsMobsCompat.preTransform(model, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
                 if (PickerState.currentEye() != null) {
