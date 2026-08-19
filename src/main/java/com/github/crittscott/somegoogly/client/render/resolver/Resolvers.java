@@ -22,6 +22,7 @@ public final class Resolvers {
 
     private static final List<EyeAttachmentResolver> ALL = List.of(
             new HierarchicalResolver(),
+            new TwilightForestResolver(),
             new AgeableListResolver(),
             new CitadelResolver(),
             new LLibraryResolver(),
