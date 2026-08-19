@@ -1,0 +1,90 @@
+package com.github.crittscott.somegoogly.item;
+
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+import javax.annotation.Nullable;
+import java.util.List;
+
+/**
+ * A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
+ * eyes on that entity, using the appearance the eye carried into the craft
+ * ({@link EyeItemProperties}); sneak + use applies it to the player themselves, which is the only way
+ * a player gets their own eyes (they are excluded from the at-spawn roll).
+ *
+ * <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
+ * target's datapack config, on a placement variant freshly rolled by each application. An
+ * already-eyed target refuses the application and consumes nothing, so recoloring an eyed mob means
+ * harvesting its eye, modifying it, and re-applying.
+ *
+ * <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
+ * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
+ *
+ * <p>The mob-apply verb ({@link #applyToTarget}) is dispatched from {@code EyeItemInteractions}'s
+ * entity-interact handler — which claims the right-click before the target's own interaction can
+ * consume it — not through {@code Item#interactLivingEntity}. Only the sneak self-apply
+ * ({@link #use}) is dispatched through this class.
+ */
+public class SlimyEyeItem extends Item {
+
+    public SlimyEyeItem(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        EyeItemProperties.appendTooltip(stack, tooltip);
+    }
+
+    /** A new slimy-eye stack carrying {@code properties}. */
+    public static ItemStack create(AppearanceOverride properties, int count) {
+        ItemStack stack = new ItemStack(ModItems.SLIMY_EYE.get(), count);
+        EyeItemProperties.set(stack, properties);
+        return stack;
+    }
+
+    /**
+     * The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
+     * eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Both the mob
+     * path ({@code EyeItemInteractions}) and the sneak self-apply ({@link #use}) route through here.
+     */
+    public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
+        if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
+            return InteractionResult.FAIL;
+        }
+        EyeState.rerollVariant(target);
+        EyeState.setProperties(target, EyeItemProperties.get(stack));
+        EyeState.setHasEyes(target, true);
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Sneak + use: eye yourself. Without the sneak this would fire on every stray right-click. */
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!player.isShiftKeyDown()) {
+            return InteractionResultHolder.pass(stack);
+        }
+        if (level.isClientSide()) {
+            return InteractionResultHolder.success(stack);
+        }
+        return applyToTarget(stack, player, player).consumesAction()
+                ? InteractionResultHolder.consume(stack)
+                : InteractionResultHolder.fail(stack);
+    }
+}

@@ -1,0 +1,74 @@
+{
+  "entries": [
+    {
+      "version": "[4.3.2508,4.4)",
+      "age": "any",
+      "enabled": true,
+      "variants": [
+        {
+          "weight": 1.0,
+          "heads": [
+            {
+              "attachPoint": "root/body/right_eye",
+              "eyes": [
+                {
+                  "position": [
+                    0.0,
+                    -0.19,
+                    0.0
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 180.0,
+                  "azimuth": 0.0,
+                  "crossTarget": -1,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                }
+              ]
+            },
+            {
+              "attachPoint": "root/body/left_eye",
+              "eyes": [
+                {
+                  "position": [
+                    0.0,
+                    -0.19,
+                    0.0
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 180.0,
+                  "azimuth": 0.0,
+                  "crossTarget": -1,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

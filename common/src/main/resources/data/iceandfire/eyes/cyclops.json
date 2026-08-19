@@ -1,0 +1,45 @@
+{
+  "entries": [
+    {
+      "version": "[2.1.13-1.20.1,2.2)",
+      "age": "any",
+      "enabled": true,
+      "variants": [
+        {
+          "weight": 1.0,
+          "heads": [
+            {
+              "attachPoint": "body/UpperBody/Head",
+              "eyes": [
+                {
+                  "position": [
+                    0.0,
+                    -0.29,
+                    -0.37
+                  ],
+                  "eyeScale": 1.78,
+                  "irisScale": 0.6,
+                  "depth": 1.75,
+                  "inclination": 90.0,
+                  "azimuth": 270.0,
+                  "crossTarget": -1,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

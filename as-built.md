@@ -6,11 +6,18 @@ It should not contain history and it is not part of a conversation with the user
 
 This document describes what is, not necessarily what is desired. Do not take is to be a driving design document.
 
+See [build-env.md](build-env.md) for the Gradle toolchain and module setup; this document covers what
+code lives where and why.
+
 ## Project at a glance
 
-Some Googly Eyes is an unreleased Minecraft 1.20.1 mod for Forge 47.4.0 and Java 17. Its mod id is
-`somegoogly`; its root package is `com.github.crittscott.somegoogly`. The declared mod version is
-`0.8.0`.
+Some Googly Eyes is an unreleased Minecraft 1.20.1 mod for Forge 47.4.10 and Java 17, mid-conversion
+to a dual-loader Architectury Loom build. Its mod id is `somegoogly`; its root package is
+`com.github.crittscott.somegoogly`. The declared mod version is `0.8.1`.
+
+The Gradle project has three subprojects: `common`, `forge`, and `fabric`. Forge is fully implemented
+and behaviorally unchanged from the pre-conversion single-module build (verified in-game, including
+the `AgeableHierarchicalModel` baby-scale case). `fabric` is an empty stub with no code yet.
 
 The mod adds configurable, animated googly eyes to living entities. Eye placement comes from
 datapacks; the server owns eligibility and persistent entity state; the client owns model attachment,
@@ -32,27 +39,53 @@ datapack formats directly and update the bundled data rather than adding compati
 
 ## Code map
 
-| Area | Owns |
-| --- | --- |
-| `SomeGoogly` | Mod construction, registration, side-gated client setup, event subscribers |
-| `config/` | Server/client TOML, datapack reload and version selection, separate server/client config stores |
-| `eye/` | Datapack schema, selected head/eye geometry, placement math |
-| `eye/state/` | Persistent entity state and portable appearance codecs |
-| `eye/behavior/` | Behavior registry, deterministic behavior influences, server scheduler |
-| `item/` | Eye items, item NBT, creative tab, tooltips, application verb |
-| `recipe/` | Eye modifiers and appearance-preserving Slimy Eye recipe |
-| `enchant/` | Optometrist registration and shears-only rules |
-| `event/` | Spawn decisions, tracking sync, item interactions, reactions, client lifecycle |
-| `network/` | One protocol channel, three server-to-client packets, five picker requests |
-| `client/` | Eye model, item renderer, per-entity wobble trackers, inspection indicator |
-| `client/render/` | Render gating and common eye drawing |
-| `client/render/resolver/` | Model-family attachment discovery, canonical tokens, caches |
-| `client/compat/` | GeckoLib layers, Citadel/LLibrary-facing helpers, Exotic Birds and Alex's Mobs whole-model transforms |
-| `client/picker/` | Picker state, preview, HUD, keyboard input, export-all |
-| `command/` | Client `/sg` authoring tree, server `/sg admin` |
-| `picker/` | Server-side picker authorization, freezing, spawn helpers, and world-datapack export |
-| `gametest/` | 67 server-side Forge GameTests |
-| `resources/` | Eye definitions, recipes, translations, models, textures, access transformer |
+| Area | Module | Owns |
+| --- | --- | --- |
+| `SomeGoogly` / `SomeGooglyCommon` | forge / common | Mod construction, registration, side-gated client setup, event subscribers; `SomeGooglyCommon` holds just the shared `MOD_ID`/`MOD_NAME`/`LOGGER` constants so `common` code never needs to depend on the entry point class |
+| `config/` | split | Server/client TOML, datapack reload and version selection, separate server/client config stores |
+| `eye/` | common | Datapack schema, selected head/eye geometry, placement math |
+| `eye/state/` | split | Persistent entity state and portable appearance codecs |
+| `eye/behavior/` | split | Behavior registry, deterministic behavior influences, server scheduler |
+| `item/` | split | Eye items, item NBT, creative tab, tooltips, application verb |
+| `recipe/` | split | Eye modifiers and appearance-preserving Slimy Eye recipe |
+| `enchant/` | forge | Optometrist registration and shears-only rules |
+| `event/` | forge | Spawn decisions, tracking sync, item interactions, reactions, client lifecycle |
+| `network/` | forge | One protocol channel, three server-to-client packets, five picker requests |
+| `client/` | split | Eye model, item renderer, per-entity wobble trackers, inspection indicator |
+| `client/render/` | split | Render gating and common eye drawing |
+| `client/render/resolver/` | split | Model-family attachment discovery, canonical tokens, caches |
+| `client/compat/` | split | GeckoLib layers, Citadel/LLibrary-facing helpers, Exotic Birds and Alex's Mobs whole-model transforms |
+| `client/picker/` | split | Picker state, preview, HUD, keyboard input, export-all |
+| `command/` | split | Client `/sg` authoring tree, server `/sg admin` |
+| `picker/` | split | Server-side picker authorization, freezing, spawn helpers, and world-datapack export |
+| `gametest/` | forge | 67 server-side Forge GameTests |
+| `resources/` | split | Eye definitions, recipes, translations, models, textures, access transformer |
+
+### The common/forge boundary
+
+Code stays in `common` unless it touches something only Forge's compile classpath provides: a Forge
+API import; `Entity#getPersistentData()` (a member Forge adds to vanilla `Entity` with no import,
+invisible to a grep for `net.minecraftforge`); a Forge-only addition to a vanilla class (e.g.
+`EnchantmentCategory.create`); a member this mod's own access transformer widens (the AT is applied
+only within `forge/`, never `common/`); or GeckoLib, wired as a `forge/`-only dependency. Citadel and
+LLibrary stay `common` despite being third-party integrations, because they're reached through runtime
+reflection rather than a compile dependency.
+
+Concretely forge-only within each `split` row above: `config/`'s `ServerConfig`, `ClientConfig`,
+`ModVersionLookup`, and `EyeConfigReloadListener` (via `ModVersionLookup`); `eye/state/EyeState`;
+`eye/behavior/ServerBehaviorScheduler`; `item/`'s `GooglyEyeItem`, `ModCreativeTabs`, `ModItems`,
+`SlimyEyeItem`; `recipe/`'s `ModRecipes`, `SlimyEyeRecipe`, `EyeModifierRecipe`; `client/`'s
+`EyeInspectIndicator` and `SlimyEyeColors`; `client/render/`'s `EyeRenderGating` and `LayerGooglyEyes`;
+every access-transformer-dependent resolver in `client/render/resolver/` (`ModelPartTreeResolver`,
+`AgeableListResolver`, `ChildMapResolver`, `HierarchicalResolver`, `RabbitLlamaResolver`,
+`TwilightForestResolver`) plus the `Resolvers` dispatcher that instantiates them — `CitadelResolver`,
+`LLibraryResolver`, and the `EyeAttachmentResolver` interface itself stay `common`, backed by a small
+`common`-side `AttachmentCache` that the interface's default method reads directly; the GeckoLib-facing
+classes in `client/compat/` (`GeckoCompat`, `GeckoIntegration`, `GeoBones`, `GooglyGeoLayer` — but not
+`AlexsMobsCompat`/`ExoticBirdsCompat`, which stay `common`); every `client/picker/` class except
+`EyeDraft`; `command/`'s `GooglyAdminCommand` and `GooglyClientCommands`; `picker/`'s
+`PickerExportService` and `PickerFreezeService`; and `resources/META-INF` (`mods.toml`,
+`accesstransformer.cfg` — every other resource is `common`).
 
 The intended layering is: datapacks describe placement and defaults; the server selects and owns
 runtime truth; packets copy selected definitions and entity state to clients; resolvers enter the
@@ -283,8 +316,18 @@ the complete event integration for harvest/application, or dedicated-server load
 source-derived or manual checks. The project instructions prohibit running the build or GameTests
 unless the user explicitly requests it.
 
+The GameTest classes currently live under ordinary `forge/src/main/java/.../gametest/` — moved there
+wholesale during the Loom conversion, not yet split into a dedicated `gametest` source set. They still
+compile and are still discovered by Forge's `@GameTestHolder` scan, but the proper Loom dev-mod
+machinery (a shared `common/src/gametest` source set, a `somegoogly_gametest` dev mod per loader, an
+empty-structure fixture) described in `build-env.md` has not been built yet.
+
 ## Known boundaries and limitations
 
+- The `fabric` subproject is an empty stub; the mod does not run on Fabric yet. Every Forge-only
+  touchpoint called out in "The common/forge boundary" above (registration, networking, config,
+  persistent entity data, the access transformer, GeckoLib) still needs a cross-platform replacement
+  before it can.
 - The ender dragon can never be configured.
 - An appearance override affects every eye on a mob uniformly.
 - An `AgeableListModel`'s external baby scaling is not part of its captured part tree, so some baby
@@ -315,6 +358,9 @@ unless the user explicitly requests it.
 
 Before changing a relevant path, check the corresponding invariants:
 
+- Before adding new code, check whether it touches a Forge API import, `Entity#getPersistentData()`, a
+  Forge-only addition to a vanilla class, an access-transformer-widened member, or GeckoLib — any of
+  those force it into `forge/`; everything else belongs in `common/` (see "The common/forge boundary").
 - Keep placement in datapacks and appearance in `AppearanceOverride`; do not put geometry on items or
   mutable entities.
 - Use `EyeState` for entity mutations so tracking clients are synchronized.

@@ -1,0 +1,15 @@
+{
+  "type": "somegoogly:slimy_eye",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "somegoogly:googly_eye"
+    },
+    {
+      "item": "minecraft:slime_ball"
+    }
+  ],
+  "result": {
+    "item": "somegoogly:slimy_eye"
+  }
+}
