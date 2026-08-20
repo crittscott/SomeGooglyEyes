@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "license": "${mod_license}",
+  "environment": "*",
+  "accessWidener": "somegoogly.accesswidener",
+  "mixins": [
+    "somegoogly.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "com.github.crittscott.somegoogly.SomeGooglyFabric"
+    ],
+    "client": [
+      "com.github.crittscott.somegoogly.client.SomeGooglyFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "=${minecraft_version}",
+    "java": ">=17",
+    "fabric-api": ">=${fabric_api_version}",
+    "architectury": ">=${architectury_api_version}"
+  },
+  "suggests": {
+    "geckolib": "*"
+  }
+}

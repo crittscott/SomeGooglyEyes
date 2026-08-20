@@ -2,22 +2,9 @@ package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.picker.PickerExportService;
-import com.github.crittscott.somegoogly.picker.PickerFreezeService;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -26,7 +13,6 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Connects server lifecycle and entity-tracking events to the mod's server-owned systems: datapack
@@ -36,35 +22,6 @@ import net.minecraftforge.network.PacketDistributor;
  */
 public class ServerEventHandler {
 
-    private static void applyGooglyDecision(LivingEntity living) {
-        boolean hasGooglyEyes = false;
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        RandomSource random = living.getRandom();
-
-        // Players never roll eyes at spawn — they can only receive them mid-life (a slimy eye).
-        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()) {
-            // Only configured + enabled entities are eligible. A datapack `enabled:false` is an
-            // authoritative hard-off that beats the percent roll. Use the age-independent check: this
-            // decision is stored for life, so a baby with only an adult config must still roll (it'll
-            // show eyes once grown) rather than being locked out forever.
-            if (ServerEyeConfigs.canEverWearEyes(living)) {
-                int percent = ServerConfig.percentFor(entityType);
-                hasGooglyEyes = random.nextFloat() < (percent / 100F);
-            }
-        }
-
-        // Stored only; tracking clients learn the value when they start tracking the entity
-        // (onStartTracking). This is the at-spawn default; the flag and appearance can later change
-        // mid-life via EyeState (shears / slimy eye / dye / redstone), which re-syncs to trackers itself.
-        living.getPersistentData().putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
-
-        // Pick a placement variant, independent of the has-eyes roll: paths that turn eyes on
-        // without drawing their own roll (the admin toggle) use this arrangement, while a slimy-eye
-        // application draws a fresh one. HeadInfo.chooseVariantIndex maps the 0..1 roll onto
-        // whichever age config's weighted variants apply at render time.
-        living.getPersistentData().putFloat(EyeState.VARIANT_ROLL, random.nextFloat());
-    }
-
     @SubscribeEvent
     public void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new EyeConfigReloadListener());
@@ -72,11 +29,12 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void onDatapackSync(OnDatapackSyncEvent event) {
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(ServerEyeConfigs.all());
         if (event.getPlayer() != null) {
-            NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(event::getPlayer), packet);
+            ServerServices.syncEyeConfigs(event.getPlayer());
         } else {
-            NetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), packet);
+            for (ServerPlayer player : event.getPlayerList().getPlayers()) {
+                ServerServices.syncEyeConfigs(player);
+            }
         }
     }
 
@@ -90,21 +48,7 @@ public class ServerEventHandler {
             return;
         }
 
-        // Decide once, at first spawn. The result is stored in persistent data (saved with the
-        // entity), so on later world loads / dimension changes / growing up we keep the existing
-        // decision instead of re-rolling — even if the spawn-chance config changed, only newly
-        // spawned mobs see the new chance. Mid-life changes go through EyeState (shears / slimy eye).
-        // (Babies and adults share the one answer; the client just swaps in the age-appropriate
-        // geometry as the mob grows.)
-        if (!living.getPersistentData().contains(EyeState.HAS_EYES)) {
-            applyGooglyDecision(living);
-        }
-
-        // A mob rejoining with a stale picker-freeze marker (server crash mid-edit, or its chunk
-        // unloaded while frozen) gets its pre-picker NoAi back; a still-live edit is re-asserted.
-        if (living instanceof Mob mob) {
-            PickerFreezeService.onMobJoin(mob);
-        }
+        ServerServices.onLivingEntityLoaded(living);
     }
 
     @SubscribeEvent
@@ -116,24 +60,26 @@ public class ServerEventHandler {
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         // A disappearing picker client must never strand a frozen mob; the server releases it.
         if (event.getEntity() instanceof ServerPlayer player) {
-            PickerFreezeService.onPlayerLoggedOut(player);
+            ServerServices.onPlayerLeft(player);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            ServerServices.onPlayerJoined(player);
         }
     }
 
     @SubscribeEvent
     public void onServerStopping(ServerStoppingEvent event) {
-        // Transient cosmetic state; drop it so a single-player JVM doesn't carry one world into the next.
-        ServerBehaviorScheduler.clear();
-        // Restore any picker-frozen mobs synchronously before the final save, and drop per-run picker
-        // state (the export cooldown is keyed to this run's tick counter).
-        PickerFreezeService.onServerStopping(event.getServer());
-        PickerExportService.onServerStopping();
+        ServerServices.onServerStopping(event.getServer());
     }
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            ServerBehaviorScheduler.serverTick();
+            ServerServices.onServerTick(event.getServer());
         }
     }
 
@@ -143,23 +89,13 @@ public class ServerEventHandler {
             return;
         }
 
-        // Send the full current state (has-eyes + any appearance overrides applied since spawn) so a
-        // newly tracking player matches everyone else, not just the at-spawn decision.
-        NetworkHandler.INSTANCE.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
-                        EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living))
-        );
-
-        // Register with the behavior scheduler (server-polite: only eyed, watched mobs) and catch the
-        // player up if the mob is already mid-behavior.
-        ServerBehaviorScheduler.onStartTracking(living, player);
+        ServerServices.onStartTracking(living, player);
     }
 
     @SubscribeEvent
     public void onStopTracking(PlayerEvent.StopTracking event) {
         if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
+            ServerServices.onStopTracking(living);
         }
     }
 }

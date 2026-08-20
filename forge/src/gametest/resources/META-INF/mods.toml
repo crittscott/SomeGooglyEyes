@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="somegoogly_gametest"
+version="${mod_version}"
+displayName="Some Googly Eyes GameTests"
+description='''Hosts the somegoogly GameTest classes as their own dev-only mod, as required by Loom's gametest source-set convention.'''
+
+[[dependencies.somegoogly_gametest]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.somegoogly_gametest]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"

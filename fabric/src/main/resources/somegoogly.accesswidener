@@ -1,0 +1,70 @@
+accessWidener	v2	named
+
+# SomeGooglyEyes access widener: the Fabric-side equivalent of forge/src/main/resources/META-INF/
+# accesstransformer.cfg. Read-only widening so the eye layer can recover model-part names and attach to
+# a named part on ANY model family (not just HierarchicalModel). None of this changes vanilla behavior;
+# it only widens visibility. Read by the resolvers in client.render.resolver. Keep both files' member
+# lists in sync.
+
+# ModelPart.children (private Map<String, ModelPart>, the name -> child map)
+accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
+
+# EntityRenderDispatcher's renderer maps. Forge patches equivalent public accessors/members; Fabric's
+# loader adapter reads these maps after a renderer rebuild so it can install the same layers.
+accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	renderers	Ljava/util/Map;
+accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	playerRenderers	Ljava/util/Map;
+
+# AgeableListModel.headParts()/bodyParts() (protected Iterable<ModelPart>)
+accessible	method	net/minecraft/client/model/AgeableListModel	headParts	()Ljava/lang/Iterable;
+accessible	method	net/minecraft/client/model/AgeableListModel	bodyParts	()Ljava/lang/Iterable;
+
+# AgeableListModel's baby-only scale/offset constants, applied inside renderToBuffer around headParts()/
+# bodyParts() and otherwise invisible to a render layer's PoseStack. Read by AgeableListResolver so a
+# young entity's attach points land where the model actually draws them.
+accessible	field	net/minecraft/client/model/AgeableListModel	scaleHead	Z
+accessible	field	net/minecraft/client/model/AgeableListModel	babyYHeadOffset	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyZHeadOffset	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyHeadScale	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyBodyScale	F
+accessible	field	net/minecraft/client/model/AgeableListModel	bodyYOffset	F
+
+# LivingEntityRenderer.layers (protected List<RenderLayer>). Widened so the eye/picker layers can be
+# INSERTED before the slime's translucent outer-cube layer instead of appended after it.
+accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layers	Ljava/util/List;
+
+# Forge patches addLayer public. Fabric widens the vanilla protected method for the same adapter API.
+accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
+
+# AgeableHierarchicalModel's baby-only scale/offset constants (the HierarchicalModel-family counterpart
+# of AgeableListModel's, above). Read by HierarchicalResolver so a young Sniffer's attach points land
+# where the model actually draws them.
+accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	youngScaleFactor	F
+accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	bodyYOffset	F
+
+# RabbitModel's top-level ModelPart fields (private, no getters). RabbitModel hand-rolls its own
+# baby-and-adult scale/translate wraps around groups of these fields inside renderToBuffer, entirely
+# outside the part tree; RabbitLlamaResolver replays them, which needs direct named access to each field.
+accessible	field	net/minecraft/client/model/RabbitModel	leftRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftHaunch	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightHaunch	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightEar	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftEar	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	tail	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	nose	Lnet/minecraft/client/model/geom/ModelPart;
+
+# LlamaModel's top-level ModelPart fields (private, no getters). LlamaModel hand-rolls its own baby-only
+# scale/translate wraps around groups of these fields inside renderToBuffer, entirely outside the part
+# tree; RabbitLlamaResolver replays them, which needs direct named access to each field.
+accessible	field	net/minecraft/client/model/LlamaModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightChest	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftChest	Lnet/minecraft/client/model/geom/ModelPart;

@@ -1,0 +1,59 @@
+package com.github.crittscott.somegoogly.gametest;
+
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+
+/**
+ * Fabric GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the actual
+ * assertions.
+ */
+public final class VersionRangeGameTests implements FabricGameTest {
+
+    private static final String TEMPLATE = "somegoogly:empty";
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.exactVersionMatchesOnlyItself(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void malformedRangeDoesNotMatch(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.malformedRangeDoesNotMatch(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void rangeBoundsRespectInclusivity(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.rangeBoundsRespectInclusivity(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void nearestPicksNewestOlderGeneration(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.nearestPicksNewestOlderGeneration(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void nearestPicksOldestNewerGenerationOnDowngrade(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.nearestPicksOldestNewerGenerationOnDowngrade(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void nearestGapResolvesToOlderNeighbor(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.nearestGapResolvesToOlderNeighbor(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void nearestHandlesExactAndMalformedDeclarations(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void shorterVersionPadsWithZero(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
+    }
+}

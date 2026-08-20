@@ -1,23 +1,17 @@
 package com.github.crittscott.somegoogly;
 
 import com.github.crittscott.somegoogly.client.EyeInspectIndicator;
+import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.SlimyEyeColors;
-import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerInput;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
+import com.github.crittscott.somegoogly.client.picker.ForgePickerClient;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
-import com.github.crittscott.somegoogly.config.ClientConfig;
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
+import com.github.crittscott.somegoogly.config.ForgeClientConfig;
+import com.github.crittscott.somegoogly.config.ForgeServerConfig;
 import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.EyeItemInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
-import com.github.crittscott.somegoogly.item.ModCreativeTabs;
-import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -32,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,15 +57,13 @@ public class SomeGoogly {
     public SomeGoogly() {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
-        NetworkHandler.register();
         COMMAND_ARGUMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModEnchantments.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModItems.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModCreativeTabs.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModRecipes.register(FMLJavaModLoadingContext.get().getModEventBus());
+        SomeGooglyCommon.init();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            ClientConfig.register();
+            ClientNetworkHandler.register();
+            ClientCommandRegistrationEvent.EVENT.register(GooglyClientCommands::register);
+            ForgeClientConfig.register();
 
             MinecraftForge.EVENT_BUS.register(clientEventHandler = new ClientEventHandler());
 
@@ -83,15 +76,13 @@ public class SomeGoogly {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addLayers);
 
             // Part picker (authoring tool).
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(PickerHud::register);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(PickerKeys::register);
-            MinecraftForge.EVENT_BUS.register(new PickerInput());
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgePickerClient::registerHud);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgePickerClient::registerKeys);
+            MinecraftForge.EVENT_BUS.register(new ForgePickerClient());
 
-            // Client commands (/sg spawnall, /sg set …) for the authoring workflow.
-            MinecraftForge.EVENT_BUS.register(new GooglyClientCommands());
         });
 
-        ServerConfig.register();
+        ForgeServerConfig.register();
 
         MinecraftForge.EVENT_BUS.register(new EyeItemInteractions());
         MinecraftForge.EVENT_BUS.register(new EyeReactionHandler());

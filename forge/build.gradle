@@ -7,11 +7,40 @@ architectury {
     forge()
 }
 
+sourceSets {
+    main {
+        // Shared source that must compile inside each loader's AT/AW-transformed Minecraft view.
+        java.srcDir project(':common').file('src/loader/java')
+    }
+    gametest {
+        java {
+            srcDir project(':common').file('src/gametest/java')
+            srcDir file('src/gametest/java')
+        }
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
 loom {
     mods {
         main {
             sourceSet sourceSets.main
             sourceSet project(':common').sourceSets.main
+        }
+        somegoogly_gametest {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    runs {
+        gameTestServer {
+            server()
+            environment 'gametestserver'
+            forgeTemplate 'gameTestServer'
+            name 'Game Test Server'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            source sourceSets.gametest
         }
     }
 }
@@ -54,8 +83,22 @@ tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
             forge_version_range: forge_version_range, loader_version_range: loader_version_range,
+            architectury_api_version: architectury_api_version,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('META-INF/mods.toml') {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// Expands ${...} placeholders in the gametest dev-mod's own mods.toml.
+tasks.named('processGametestResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range, mod_license: mod_license, mod_version: mod_version,
     ]
     inputs.properties replaceProperties
 

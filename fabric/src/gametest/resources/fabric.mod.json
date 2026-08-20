@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "somegoogly_gametest",
+  "version": "${mod_version}",
+  "name": "Some Googly Eyes GameTests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.github.crittscott.somegoogly.gametest.SomeGooglyGameTests",
+      "com.github.crittscott.somegoogly.gametest.ConfigGameTests",
+      "com.github.crittscott.somegoogly.gametest.PickerExportGameTests",
+      "com.github.crittscott.somegoogly.gametest.VariantSelectionGameTests",
+      "com.github.crittscott.somegoogly.gametest.VersionRangeGameTests",
+      "com.github.crittscott.somegoogly.gametest.SerializationGameTests",
+      "com.github.crittscott.somegoogly.gametest.RecipeGameTests",
+      "com.github.crittscott.somegoogly.gametest.PickerFreezeGameTests",
+      "com.github.crittscott.somegoogly.gametest.EyeStateOverrideGameTests",
+      "com.github.crittscott.somegoogly.gametest.SpawnGatingGameTests",
+      "com.github.crittscott.somegoogly.gametest.EligibilityGameTests",
+      "com.github.crittscott.somegoogly.gametest.BehaviorDeterminismGameTests"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}"
+  }
+}
