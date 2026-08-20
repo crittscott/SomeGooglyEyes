@@ -98,9 +98,9 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
-    public static void versionRangeSynthesis(GameTestHelper helper) {
-        helper.assertTrue("[1.20.1,1.21)".equals(VersionRangeMatcher.rangeFor("1.20.1")),
-                "a numeric version becomes an inclusive-to-next-minor range");
+    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
+        helper.assertTrue("[4.12.4,4.13)".equals(VersionRangeMatcher.rangeFor("4.12.4")),
+                "an optional-mod version becomes an inclusive-to-next-minor range");
         helper.assertTrue("banana".equals(VersionRangeMatcher.rangeFor("banana")),
                 "an unparseable version falls back to an exact-match entry");
         helper.succeed();
@@ -121,7 +121,7 @@ public final class PickerExportGameTestsLogic {
         RuntimeConfig config = new RuntimeConfig();
         config.variants = List.of(variant);
 
-        ConfigFile file = ConfigFile.single("[1.20.1,1.21)", "any", config);
+        ConfigFile file = ConfigFile.single("1.20.1", "any", config);
         JsonObject json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file)
                 .result().orElseThrow().getAsJsonObject();
         JsonObject eye = json.getAsJsonArray("entries").get(0).getAsJsonObject()

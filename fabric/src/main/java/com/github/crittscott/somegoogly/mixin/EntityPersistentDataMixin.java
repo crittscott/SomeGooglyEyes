@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.mixin;
 
+import com.github.crittscott.somegoogly.platform.fabric.FabricEntityPersistentDataHolder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;

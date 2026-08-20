@@ -85,7 +85,18 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         }
         String loaded = loadedVersion.get();
 
-        RuntimeConfigSet set = select(entityId, file.entries,
+        List<VersionedEntry> validEntries = new ArrayList<>();
+        for (VersionedEntry entry : file.entries) {
+            if (VersionRangeMatcher.isValid(entry.version)) {
+                validEntries.add(entry);
+            } else {
+                SomeGooglyCommon.LOGGER.warn(
+                        "Invalid eye config {} version range '{}'; entry will not match",
+                        entityId, entry.version);
+            }
+        }
+
+        RuntimeConfigSet set = select(entityId, validEntries,
                 entry -> VersionRangeMatcher.matches(entry.version, loaded));
         if (set.hasAnyConfig()) {
             return set;
@@ -95,7 +106,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         // anything (unresolved attach tokens simply don't attach), so fall back to the nearest
         // generation instead of dropping the file — and say so in the log.
         List<String> declared = new ArrayList<>();
-        for (VersionedEntry entry : file.entries) {
+        for (VersionedEntry entry : validEntries) {
             declared.add(entry.version);
         }
         String nearest = VersionRangeMatcher.nearestVersion(declared, loaded);
@@ -114,7 +125,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     entityId, loaded, entityId.getNamespace(), nearest);
         }
         // Same-version entries fall back as one generation, so adult/baby pairs stay together.
-        return select(entityId, file.entries, entry -> nearest.equals(entry.version));
+        return select(entityId, validEntries, entry -> nearest.equals(entry.version));
     }
 
     /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */

@@ -33,8 +33,8 @@ public final class ConfigGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void staleConfigFallsBackToNewestGeneration(GameTestHelper helper) {
-        ConfigGameTestsLogic.staleConfigFallsBackToNewestGeneration(helper);
+    public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
+        ConfigGameTestsLogic.exactMinecraftGenerationIsSelected(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)

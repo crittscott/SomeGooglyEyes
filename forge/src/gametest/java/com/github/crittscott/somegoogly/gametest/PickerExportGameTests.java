@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.forge.SomeGoogly;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -50,8 +50,8 @@ public final class PickerExportGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void versionRangeSynthesis(GameTestHelper helper) {
-        PickerExportGameTestsLogic.versionRangeSynthesis(helper);
+    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
+        PickerExportGameTestsLogic.optionalModVersionRangeSynthesis(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)

@@ -1,8 +1,9 @@
 # Some Googly Eyes As-Built Orientation
 
 This document describes the active source architecture. `player-view.md` is the player-visible
-behavior contract; `build-env.md` describes Gradle and packaging; `fabric-port-handoff.md` records the
-current verification state. Code is authoritative when documentation disagrees.
+behavior contract; `build-env.md` describes Gradle and packaging;
+`fabric-port-verification-handoff.md` records the current verification state and continuation plan.
+Code is authoritative when documentation disagrees.
 
 ## Project at a glance
 
@@ -23,18 +24,18 @@ network payloads. It does not register blocks, entities, menus, particles, or so
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Loader-neutral gameplay, state, codecs, registration, server services, packet logic, and client code that needs only vanilla/Architectury |
-| `common/src/loader/java` | Single-source client code compiled inside each loader's transformed Minecraft view; resolvers, render layers, picker rendering/input/commands, Gecko bridge |
+| `common/src/main/java` | Loader-neutral gameplay, state, codecs, registration, server services, packet logic, rendering, resolvers, picker UI/input/commands, and other shared client code |
 | `common/src/main/resources` | Shared assets, recipes, eye datapacks, language, structure fixture |
 | `common/src/gametest/java` | Loader-neutral GameTest assertion logic |
 | `forge/src/main` | Forge entry point, events, config storage, platform implementations, metadata, AT |
-| `fabric/src/main` | Fabric entry points, callbacks, config storage, platform implementations, metadata, AW, Mixins |
+| `fabric/src/main` | Fabric entry points, callbacks, config storage, platform implementations, metadata, and Mixins |
 | `forge/src/gametest` / `fabric/src/gametest` | Thin loader-specific GameTest wrappers and dev-mod metadata |
 
-Common main must not import Forge, Fabric API, or GeckoLib and must not call Forge-patched or
-AT/AW-only vanilla members. Genuine loader differences use thin adapters or Architectury
-`@ExpectPlatform` stubs. Code shared in meaning but dependent on widened/optional types goes under
-`common/src/loader/java`, which each loader compiles directly.
+Common main must not import Forge, Fabric API, or GeckoLib. It may use vanilla members declared in the
+canonical common access widener; Forge supplies equivalent access through patches or its Access Transformer. Genuine
+loader differences and optional-library boundaries use thin adapters or Architectury `@ExpectPlatform`
+stubs. Loader source packages remain disjoint from common packages so Forge's module layer never sees
+split packages.
 
 ## Initialization and registration
 
@@ -74,7 +75,8 @@ Eye placement files are server datapack resources under `data/<namespace>/eyes/*
 `EyeConfigReloadListener` parses all candidate versions, uses `ModVersionLookup` to select the matching
 entry for each namespace, validates them, and atomically replaces `ServerEyeConfigs`. Forge and Fabric
 provide their loader-specific mod-version lookup. The server serializes the resolved runtime config set
-to clients; clients do not independently select datapack versions.
+to clients; clients do not independently select datapack versions. All bundled Minecraft entries match
+exactly `1.20.1`; optional-mod entries may span compatible releases of those mods for Minecraft 1.20.1.
 
 ## Persistent and portable state
 
@@ -172,14 +174,14 @@ Resolvers map datapack part tokens onto runtime model parts:
 - reflected Citadel/LLibrary-family boxes;
 - GeckoLib bones.
 
-The Forge AT and Fabric AW expose the private/protected vanilla members needed by each loader.
-`ClientRendererAccess` normalizes Forge's patched renderer access against Fabric's widened renderer
-maps and `addLayer` method. Resolver outputs are memoized by model identity and invalidated with
-renderer/runtime resets.
+The common AW exposes the private/protected vanilla members needed to compile shared render code;
+Fabric applies it directly and Forge supplies equivalent access through patches or its AT. `ClientRendererAccess` normalizes Forge's
+patched renderer access against Fabric's widened renderer maps and `addLayer` method. Resolver outputs
+are memoized by model identity and invalidated with renderer/runtime resets.
 
-GeckoLib is a soft dependency. Loader gates first check whether `geckolib` is loaded, then invoke the
-shared Gecko bridge defensively. Absence or an integration failure falls back to no Gecko layer instead
-of preventing base-mod startup.
+GeckoLib is a soft dependency. Common calls a two-method `GeckoCompat` platform bridge; each loader
+owns its small GeckoLib-typed implementation and first checks whether `geckolib` is loaded. Absence or
+an integration failure falls back to no Gecko layer instead of preventing base-mod startup.
 
 The 3D `googly_eye` item uses `GooglyEyeItemRenderer`. `slimy_eye` uses its ordinary item model with
 iris tint index 2 derived from the stack appearance.
@@ -258,8 +260,9 @@ behavior determinism, and network protocol id invariants.
 Fabric wrappers implement `FabricGameTest` and are explicitly listed in the GameTest dev-mod metadata.
 Forge wrappers retain the holder annotations and are discovered through its GameTest dev mod.
 
-The present source tree has been structurally audited but not compiled or executed after the port.
-See `fabric-port-handoff.md` for the verification matrix and highest-risk unverified hooks.
+Checkpoint commit `4039ada` has passed both Forge and Fabric builds. Its 69-test GameTest suites and
+systematic runtime matrix have not yet been executed. See `fabric-port-verification-handoff.md` for
+the phased verification plan and highest-risk unverified hooks.
 
 ## Known boundaries
 
@@ -278,8 +281,10 @@ See `fabric-port-handoff.md` for the verification matrix and highest-risk unveri
 ## Maintenance checklist
 
 - Put loader-neutral logic in common main; keep loader callbacks thin.
-- Put AT/AW- or Gecko-dependent shared source in `common/src/loader/java`.
-- Keep Forge AT and Fabric AW member lists aligned.
+- Keep shared vanilla rendering in common, declare required access in the common AW, and add a Forge
+  AT entry when Forge does not already expose the member.
+- Keep GeckoLib-typed code behind the loader-specific `GeckoCompat` implementations.
+- Keep loader source packages disjoint from common source packages.
 - Route every entity persistent-data access through `EntityPersistentData`.
 - Bump `NetworkHandler.PROTOCOL_VERSION` for any incompatible packet field/meaning change; keep hello
   and ack ids stable and gameplay ids versioned.

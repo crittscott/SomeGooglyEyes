@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -57,7 +57,7 @@ public final class RecipeGameTestsLogic {
     }
 
     private static EyeModifierRecipe recipe() {
-        return new EyeModifierRecipe(new ResourceLocation(SomeGoogly.MOD_ID, "test_eye_modifier"), CraftingBookCategory.MISC);
+        return new EyeModifierRecipe(new ResourceLocation(SomeGooglyCommon.MOD_ID, "test_eye_modifier"), CraftingBookCategory.MISC);
     }
 
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
@@ -128,7 +128,7 @@ public final class RecipeGameTestsLogic {
     private static SlimyEyeRecipe slimyEyeRecipe() {
         NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
                 Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
-        return new SlimyEyeRecipe(new ResourceLocation(SomeGoogly.MOD_ID, "test_slimy_eye"), "",
+        return new SlimyEyeRecipe(new ResourceLocation(SomeGooglyCommon.MOD_ID, "test_slimy_eye"), "",
                 CraftingBookCategory.MISC, new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
     }
 }

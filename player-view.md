@@ -233,11 +233,14 @@ position, size, depth, aim, cross-eye partners, default colors, and glow. The se
 world start and `/reload`, selects a definition compatible with the installed version of the owning
 mod, and syncs the selected data to clients.
 
-If no exact version entry matches, the nearest authored generation is used and the mismatch is
+Minecraft definitions match exactly `1.20.1`, the only supported game version. Definitions for
+optional mods may use ranges because multiple releases of those mods target Minecraft 1.20.1.
+
+If no compatible version entry matches, the nearest authored generation is used and the mismatch is
 logged. A stale definition may therefore remain visible but sit incorrectly after an upstream model
 change. Setting `enabled` to false prevents the entity type from receiving or accepting eyes.
 
-The mod ships 243 definitions for:
+The mod ships 244 definitions for:
 
 - Minecraft
 - Alex's Mobs

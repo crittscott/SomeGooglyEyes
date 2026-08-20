@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.SomeGoogly;
+import com.github.crittscott.somegoogly.forge.SomeGoogly;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -40,8 +40,8 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void staleConfigFallsBackToNewestGeneration(GameTestHelper helper) {
-        ConfigGameTestsLogic.staleConfigFallsBackToNewestGeneration(helper);
+    public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
+        ConfigGameTestsLogic.exactMinecraftGenerationIsSelected(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)

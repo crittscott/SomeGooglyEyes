@@ -91,7 +91,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * {@code "body/head"} matches it too while distinguishing two parts both named {@code head} under
      * different parents. An empty stored token never matches (callers must supply a part).
      */
-    static boolean pathMatches(String storedToken, String candidatePath) {
+    public static boolean pathMatches(String storedToken, String candidatePath) {
         List<String> want = segments(storedToken);
         if (want.isEmpty()) {
             return false;

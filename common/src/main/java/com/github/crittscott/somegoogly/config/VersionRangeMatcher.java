@@ -1,7 +1,5 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +9,7 @@ import java.util.Locale;
 /**
  * Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
  * nearest-generation fallback pick ({@link #nearestVersion}) used when no entry matches at all and
- * the range synthesis ({@link #rangeFor}) the exporters declare new entries with.
+ * the range synthesis ({@link #rangeFor}) used when exporting definitions for optional mods.
  */
 public final class VersionRangeMatcher {
 
@@ -20,8 +18,8 @@ public final class VersionRangeMatcher {
 
     /**
      * Turn a loaded version like {@code 1.20.1} into the range {@code [1.20.1,1.21)} — inclusive of the
-     * loaded version, exclusive of the next minor — matching the shipped configs. Falls back to the exact
-     * version (an exact-match entry) if it can't be parsed into at least major.minor.
+     * loaded version, exclusive of the next minor. This is for optional-mod versions; Minecraft
+     * exports use the exact supported game version. Falls back to an exact match if parsing fails.
      */
     public static String rangeFor(String loaded) {
         String[] parts = loaded.split("\\.");
@@ -99,6 +97,11 @@ public final class VersionRangeMatcher {
                 trimmed.startsWith("["), trimmed.endsWith("]"));
     }
 
+    /** Whether a declaration is a well-formed exact version or bracket range. */
+    public static boolean isValid(String range) {
+        return bounds(range) != null;
+    }
+
     private static int compare(String left, String right) {
         List<Token> a = tokenize(left);
         List<Token> b = tokenize(right);
@@ -137,7 +140,6 @@ public final class VersionRangeMatcher {
 
         Bounds b = bounds(trimmed);
         if (b == null) {
-            warnInvalid(range); // bracketed but malformed (no closing bracket / no comma)
             return false;
         }
         if (b.lower() != null) {
@@ -205,7 +207,4 @@ public final class VersionRangeMatcher {
         return tokens;
     }
 
-    private static void warnInvalid(String range) {
-        SomeGooglyCommon.LOGGER.warn("Invalid SomeGoogly version range '{}'; entry will not match", range);
-    }
 }

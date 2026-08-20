@@ -15,10 +15,10 @@
   ],
   "entrypoints": {
     "main": [
-      "com.github.crittscott.somegoogly.SomeGooglyFabric"
+      "com.github.crittscott.somegoogly.fabric.SomeGooglyFabric"
     ],
     "client": [
-      "com.github.crittscott.somegoogly.client.SomeGooglyFabricClient"
+      "com.github.crittscott.somegoogly.client.fabric.SomeGooglyFabricClient"
     ]
   },
   "depends": {

@@ -1,7 +1,8 @@
 # Some Googly Eyes Build Environment
 
 This document describes the active Architectury Loom build. For runtime ownership and invariants, see
-`as-built.md`; for the current verification state, see `fabric-port-handoff.md`.
+`as-built.md`; for the current verification state and phased continuation plan, see
+`fabric-port-verification-handoff.md`.
 
 ## Status
 
@@ -10,15 +11,15 @@ The active Gradle project is a three-module Forge/Fabric build:
 ```text
 common/   loader-neutral source, resources, and shared GameTest logic
 forge/    Forge entry point, adapters, metadata, AT, and GameTest wrappers
-fabric/   Fabric entry points, adapters, metadata, AW/Mixins, and GameTest wrappers
+fabric/   Fabric entry points, adapters, metadata/Mixins, and GameTest wrappers
 ```
 
 The legacy root `src/` tree remains in the repository but is not a source set of any included Gradle
 project. It is an inactive reference and must not receive live changes.
 
-The current port is complete at source level but has not been built or run after the latest changes.
-Build and GameTest commands are listed below for a separately authorized verification pass; do not
-infer success from this document.
+The current port is complete at source level. The user confirmed successful Forge and Fabric builds
+for checkpoint commit `4039ada` on 2026-08-20. GameTests and systematic runtime parity checks remain;
+see `fabric-port-verification-handoff.md`.
 
 ## Toolchain and pinned versions
 
@@ -61,18 +62,19 @@ toolchain to every subproject. `org.gradle.jvmargs=-Xmx3G`; the daemon is disabl
 
 ## Common module
 
-`common/src/main/java` must compile without Forge, Fabric API, GeckoLib, Forge-patched vanilla members,
-or members made visible only by a loader transform. It depends on Fabric Loader only for the portable
+`common/src/main/java` compiles without Forge, Fabric API, GeckoLib, or Forge-only patched members. It
+owns shared client rendering and picker code as well as gameplay code. Its canonical access widener
+exposes the vanilla members that shared render code needs; Fabric applies that file directly and Forge
+supplies equivalent access through patches or its Access Transformer. Common otherwise depends on Fabric Loader only for portable
 environment annotations, Architectury API, and JSR-305.
-
-`common/src/loader/java` is deliberately not part of the common module's own source set. It contains
-single-source shared classes which require the loader's transformed Minecraft view or optional
-GeckoLib API. Both `forge` and `fabric` add this directory to their `main` Java source set. This solves
-the earlier failure mode where AT/AW-dependent code under `common/src/main` could not compile because
-neither loader transform applies to `common:compileJava`.
 
 `common/src/gametest/java` contains plain assertion logic. It is compiled as part of each loader's
 custom `gametest` source set, not as common production code.
+
+Common remains a transformed development dependency rather than a second source set of each loader
+mod. Fabric resource processing copies the canonical common access widener beside `fabric.mod.json`,
+because Fabric Loader resolves that declaration within the metadata-owning mod container. The common
+JAR omits its redundant copy; Forge supplies runtime access through patches and its AT.
 
 ## Loader packaging
 
@@ -82,11 +84,9 @@ Each loader declares two relationships to common:
 - `shadowBundle project(... transformProduction<Loader>)` bundles the transformed common production
   output into the release artifact.
 
-`compileClasspath.extendsFrom common` is required. Development runs expose loader main plus common main
-as one logical mod through `loom.mods.main`; common must not be loaded as a second mod.
-
-The loader-shared `common/src/loader/java` directory is compiled directly by each loader and is already
-part of its main output, so it is not separately shadowed.
+The compile and runtime classpaths plus `developmentForge`/`developmentFabric` extend from `common`.
+This lets Architectury transform common's `@ExpectPlatform` calls in development. Loader source
+packages are disjoint from common packages, avoiding split packages in Forge's Java module layer.
 
 ## Forge module
 
@@ -134,8 +134,8 @@ GameTest server passes `-Dfabric-api.gametest`. The dev mod lists every wrapper 
 
 ## Access Transformer and Access Widener
 
-Forge's `META-INF/accesstransformer.cfg` and Fabric's `somegoogly.accesswidener` must stay semantically
-aligned. They expose:
+Common's `somegoogly.accesswidener` declares every non-public vanilla member used by common code.
+Forge's patches or `META-INF/accesstransformer.cfg` must supply equivalent access. These expose:
 
 - `ModelPart.children`;
 - `EntityRenderDispatcher.renderers` and `playerRenderers` on Fabric;
@@ -144,10 +144,11 @@ aligned. They expose:
 - `AgeableHierarchicalModel` baby fields;
 - `LivingEntityRenderer.layers`;
 - `LivingEntityRenderer.addLayer` on Fabric;
+- the full `RenderType.create` factory on common and Fabric;
 - Rabbit and Llama top-level model-part fields.
 
-The shared users belong under `common/src/loader/java`, not `common/src/main/java`. Adding a widened
-member requires updating both loader files and keeping its caller in the loader-compiled source tree.
+Shared users belong under `common/src/main/java`. Adding a widened member requires updating the common
+AW and adding a Forge AT entry only when Forge does not already expose it.
 
 ## Resource processing
 
@@ -188,9 +189,11 @@ GameTest logic methods, each exposed by a thin wrapper on both loaders.
 ## Environment traps
 
 - Do not edit the inactive root `src/` tree expecting a loader build to see the change.
-- Do not move AT/AW- or Gecko-dependent code into common main.
+- Keep GeckoLib types out of common; loader implementations own those optional API references.
+- Keep loader source packages disjoint from common packages.
 - Do not assume common compile-only dependencies propagate to loader compilation.
-- Do not load common as an independent development mod; group it with the loader source set.
+- Keep the standard Architectury common runtime and development configurations intact so platform
+  substitutions run in development.
 - Do not omit a Fabric GameTest wrapper from `fabric/src/gametest/resources/fabric.mod.json`.
 - Do not add an empty version range to the Forge GameTest dev-mod dependency table; Forge interprets it
   as unsatisfiable.

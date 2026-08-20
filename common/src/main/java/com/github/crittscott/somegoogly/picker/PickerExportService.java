@@ -38,8 +38,9 @@ import java.util.function.UnaryOperator;
  * the ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
  * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
- * least one usable eye. The declared version range is resolved from the <b>server's</b> loaded mod
- * version — the one that matters for its datapack; client and server versions may legally differ.
+ * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
+ * — the one that matters for its datapack; client and server versions may legally differ. Minecraft
+ * is pinned to exact 1.20.1; optional-mod exports span the current minor release.
  *
  * <p>Each export triggers a full datapack reload, so successful exports are rate-limited to one per
  * {@link #COOLDOWN_TICKS} per player. Picker use is very intermittent, so the brief reload lag and the
@@ -97,7 +98,10 @@ public final class PickerExportService {
             return "Export rejected: no loaded mod provides namespace '" + typeId.getNamespace() + "'.";
         }
 
-        ConfigFile file = ConfigFile.single(VersionRangeMatcher.rangeFor(version.get()), "any", pruned);
+        String versionDeclaration = typeId.getNamespace().equals("minecraft")
+                ? version.get()
+                : VersionRangeMatcher.rangeFor(version.get());
+        ConfigFile file = ConfigFile.single(versionDeclaration, "any", pruned);
         JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
         if (json == null) {
             return "Export rejected: config could not be encoded.";

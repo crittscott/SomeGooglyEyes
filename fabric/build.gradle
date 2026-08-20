@@ -12,28 +12,22 @@ architectury {
 }
 
 sourceSets {
-    main {
-        // Shared source that must compile inside each loader's AT/AW-transformed Minecraft view.
-        java.srcDir project(':common').file('src/loader/java')
-    }
     gametest {
         java {
             srcDir project(':common').file('src/gametest/java')
             srcDir file('src/gametest/java')
         }
         compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
-        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output +
-                project(':common').sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
     }
 }
 
 loom {
-    accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+    accessWidenerPath = project(':common').file('src/main/resources/somegoogly.accesswidener')
 
     mods {
         main {
             sourceSet sourceSets.main
-            sourceSet project(':common').sourceSets.main
         }
         somegoogly_gametest {
             sourceSet sourceSets.gametest
@@ -56,6 +50,8 @@ configurations {
         canBeConsumed = false
     }
     compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
 
     // Files in this configuration will be bundled into your mod using the Shadow plugin.
     // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
@@ -74,7 +70,7 @@ dependencies {
 
     modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
 
-    // Optional at runtime; needed at compile time by the loader-shared GeckoLib render bridge.
+    // Optional at runtime; needed at compile time by Fabric's GeckoLib render adapter.
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.20.1:4.7.4"
 
     // common's source uses javax.annotation.Nullable. Forge gets this transitively through its own
@@ -96,6 +92,8 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching('fabric.mod.json') {
         expand replaceProperties + [project: project]
     }
+
+    from(project(':common').file('src/main/resources/somegoogly.accesswidener'))
 }
 
 // Expands ${...} placeholders in the gametest dev-mod's own fabric.mod.json.

@@ -2,6 +2,10 @@ architectury {
     common rootProject.enabled_platforms.split(',')
 }
 
+loom {
+    accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+}
+
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
@@ -28,4 +32,10 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching('pack.mcmeta') {
         expand mod_id: mod_id
     }
+}
+
+// The canonical source remains in common so Loom can widen common compilation. The Fabric module
+// packages it beside fabric.mod.json; Forge supplies equivalent runtime access through patches/AT.
+tasks.named('jar', Jar).configure {
+    exclude 'somegoogly.accesswidener'
 }

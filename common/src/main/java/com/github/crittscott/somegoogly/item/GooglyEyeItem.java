@@ -22,7 +22,7 @@ import java.util.List;
  *
  * <p>The custom 3D item renderer is attached per loader (see {@code GooglyEyeItemFactory}), not here:
  * Forge's item-renderer hook is a method Forge's runtime patches onto vanilla {@code Item}, so it can't
- * be overridden by loader-shared code.
+ * be supplied by the loader-specific item factory.
  */
 public class GooglyEyeItem extends Item {
 

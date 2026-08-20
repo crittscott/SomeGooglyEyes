@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
  * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), the reload
- * listener's version-fallback selection, and the pure {@link ServerConfig#percentFor} resolution.
+ * listener's exact Minecraft-version selection, and the pure {@link ServerConfig#percentFor} resolution.
  * Tests that mutate shared state (config values via their public {@code set}, the loaded eye configs
  * via {@code replaceAll}) restore the originals in a {@code finally} so later tests aren't affected.
  */
@@ -111,21 +111,16 @@ public final class ConfigGameTestsLogic {
         }
     }
 
-    /**
-     * Version fallback, end to end: a file whose entries are all older than the installed version must
-     * not be dropped — the newest generation is selected instead, adult and baby together (they share a
-     * declared version). The installed version for the {@code minecraft} namespace is the game version
-     * (1.20.x), so every range below 1.20 is stale here. The generations are told apart by weight.
-     */
-    public static void staleConfigFallsBackToNewestGeneration(GameTestHelper helper) {
+    /** Exact Minecraft-version selection, end to end, including paired adult/baby entries. */
+    public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
         ResourceLocation id = new ResourceLocation("minecraft", "zombie");
         String json = """
                 { "entries": [
-                    { "version": "[1.18,1.19)", "age": "adult", "enabled": true, "variants": [
-                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
                     { "version": "[1.19,1.20)", "age": "adult", "enabled": true, "variants": [
+                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
+                    { "version": "1.20.1", "age": "adult", "enabled": true, "variants": [
                         { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
-                    { "version": "[1.19,1.20)", "age": "baby", "enabled": true, "variants": [
+                    { "version": "1.20.1", "age": "baby", "enabled": true, "variants": [
                         { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] }
                 ] }
                 """;
@@ -134,12 +129,12 @@ public final class ConfigGameTestsLogic {
             new TestReloadListener().applyFiles(Map.of(id, JsonParser.parseString(json)));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
-            helper.assertTrue(adult != null, "a stale config must fall back, not vanish");
+            helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
             helper.assertTrue(adult.variants.get(0).weight() == 2.0,
-                    "fallback must pick the newest older generation (weight 2), got "
+                    "exact selection must pick the 1.20.1 generation (weight 2), got "
                             + adult.variants.get(0).weight());
             helper.assertTrue(baby != null && baby.variants.get(0).weight() == 2.0,
-                    "the baby entry of the same generation must fall back with it");
+                    "the baby entry of the exact generation must be selected with it");
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
