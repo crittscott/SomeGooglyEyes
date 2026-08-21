@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeStateSync;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
@@ -27,6 +28,8 @@ public final class ServerServices {
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EntityPersistentData.get(living).contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);
+            EyeStateSync.sync(living, EyeState.hasEyes(living), EyeState.getVariantRoll(living),
+                    EyeState.overridesTagOrNull(living));
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);

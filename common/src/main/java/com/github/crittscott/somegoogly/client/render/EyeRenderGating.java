@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -9,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The single "should this mob show eyes, and with what geometry" gate, shared by the vanilla
@@ -21,6 +24,9 @@ import javax.annotation.Nullable;
  */
 public final class EyeRenderGating {
 
+    private static final int DEBUG_DECISION_LIMIT = 80;
+    private static final Set<String> LOGGED_DEBUG_DECISIONS = new HashSet<>();
+
     private EyeRenderGating() {
     }
 
@@ -31,20 +37,41 @@ public final class EyeRenderGating {
      */
     @Nullable
     public static HeadInfo helperToRender(LivingEntity living) {
+        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         if (ClientConfig.DISABLE_GOOGLY_EYES.get()) {
+            logDecision(entityType, living, "global client disable");
             return null;
         }
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         if (ClientConfig.isEntityDisabled(entityType)) {
+            logDecision(entityType, living, "entity/mod client disable");
             return null;
         }
         if (!PickerState.isActive() && !EyeState.hasEyes(living)) {
+            logDecision(entityType, living, "client entity state hasEyes=false");
             return null;
         }
         if (living.isInvisible()) {
+            logDecision(entityType, living, "entity invisible");
             return null;
         }
         HeadInfo helper = HeadInfo.getHelper(entityType, living, EyeState.getVariantRoll(living));
-        return helper.hasConfig() ? helper : null;
+        if (!helper.hasConfig()) {
+            logDecision(entityType, living, "no usable client eye config");
+            return null;
+        }
+        logDecision(entityType, living, "render gate passed");
+        return helper;
+    }
+
+    private static void logDecision(ResourceLocation entityType, LivingEntity living, String decision) {
+        String key = entityType + "|" + decision;
+        if (LOGGED_DEBUG_DECISIONS.size() >= DEBUG_DECISION_LIMIT
+                || !LOGGED_DEBUG_DECISIONS.add(key)) {
+            return;
+        }
+        SomeGooglyCommon.LOGGER.info(
+                "Eye render debug: type={}, entityId={}, baby={}, pickerActive={}, hasEyes={}, decision={}",
+                entityType, living.getId(), living.isBaby(), PickerState.isActive(),
+                EyeState.hasEyes(living), decision);
     }
 }

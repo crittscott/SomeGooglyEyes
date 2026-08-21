@@ -73,6 +73,9 @@ public final class NetworkHandler {
         FriendlyByteBuf buffer = newBuffer();
         buffer.writeUtf(PROTOCOL_VERSION);
         NetworkManager.sendToPlayer(player, PROTOCOL_HELLO, buffer);
+        SomeGooglyCommon.LOGGER.info(
+                "Server network debug: sent protocol hello version={} to {}",
+                PROTOCOL_VERSION, player.getGameProfile().getName());
     }
 
     /** Disconnect clients that never acknowledge the protocol hello. Called once per server tick. */
@@ -106,6 +109,9 @@ public final class NetworkHandler {
     }
 
     public static void sendConfig(ServerPlayer player) {
+        SomeGooglyCommon.LOGGER.info(
+                "Server network debug: sending {} selected eye configs to {}",
+                ServerEyeConfigs.all().size(), player.getGameProfile().getName());
         sendToPlayer(player, EYE_CONFIG, new EyeConfigSyncPacket(ServerEyeConfigs.all()),
                 EyeConfigSyncPacket::encode);
     }
@@ -157,6 +163,9 @@ public final class NetworkHandler {
         UUID playerId = player.getUUID();
         PENDING.remove(playerId);
         READY.add(playerId);
+        SomeGooglyCommon.LOGGER.info(
+                "Server network debug: accepted protocol acknowledgement from {}",
+                player.getGameProfile().getName());
         sendConfig(player);
     }
 

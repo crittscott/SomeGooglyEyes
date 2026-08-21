@@ -92,7 +92,8 @@ picker world mutation, and C2S authorization. Client checks are UX only.
 
 `ServerServices` and `EyeItemService` contain the common behavior. Forge subscribers and Fabric API
 callbacks are thin adapters. Fabric Mixins cover persistent data, hurt/heal reactions, completed
-merchant trades, and client renderer reload.
+merchant trades, and the non-vanilla renderer reload path; vanilla living layers use Fabric's native
+renderer-registration callback.
 
 ### Rendering and picker
 

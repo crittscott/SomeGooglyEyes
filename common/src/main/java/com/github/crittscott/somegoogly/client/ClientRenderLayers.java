@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Collections;
@@ -62,10 +64,37 @@ public final class ClientRenderLayers {
         });
     }
 
+    /** Add the shared vanilla-model layers through a loader's native renderer-registration event. */
+    @SuppressWarnings("rawtypes")
+    public static boolean installLiving(EntityType<? extends LivingEntity> entityType,
+                                        LivingEntityRenderer<?, ?> renderer) {
+        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+        if (ClientConfig.isEntityDisabled(id)) {
+            return false;
+        }
+        return addLiving(renderer);
+    }
+
+    /** Refresh attachment caches and install optional layers on non-vanilla renderer families. */
+    public static int refreshNonLiving(EntityRenderDispatcher dispatcher) {
+        Resolvers.clearCaches();
+        int[] installed = {0};
+        ClientRendererAccess.renderers(dispatcher).forEach((entityType, renderer) -> {
+            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            if (!(renderer instanceof LivingEntityRenderer)
+                    && !ClientConfig.isEntityDisabled(id)
+                    && INSTALLED.add(renderer)) {
+                GeckoCompat.tryAddLayer(renderer);
+                installed[0]++;
+            }
+        });
+        return installed[0];
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void addLiving(LivingEntityRenderer renderer) {
+    private static boolean addLiving(LivingEntityRenderer renderer) {
         if (!INSTALLED.add(renderer)) {
-            return;
+            return false;
         }
         LayerGooglyEyes eyes = new LayerGooglyEyes<>(renderer);
         PickerLayer picker = new PickerLayer<>(renderer);
@@ -74,10 +103,11 @@ public final class ClientRenderLayers {
             if (layers.get(i) instanceof SlimeOuterLayer) {
                 layers.add(i, eyes);
                 layers.add(i + 1, picker);
-                return;
+                return true;
             }
         }
         ClientRendererAccess.addLayer(renderer, eyes);
         ClientRendererAccess.addLayer(renderer, picker);
+        return true;
     }
 }

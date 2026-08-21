@@ -2,7 +2,7 @@
 
 This document describes the active source architecture. `player-view.md` is the player-visible
 behavior contract; `build-env.md` describes Gradle and packaging;
-`fabric-port-verification-handoff.md` records the current verification state and continuation plan.
+`fabric-port-verification-handoff.md` records the verification plan and earlier checkpoint history.
 Code is authoritative when documentation disagrees.
 
 ## Project at a glance
@@ -94,8 +94,10 @@ The eye keys are:
 - `somegoogly:eyeOverrides` — optional appearance override compound.
 
 `EyeState` setters immediately synchronize the full current state to tracking clients. First entity
-load initializes the on/off decision and variant roll only if the state lacks the eye key, preserving
-the result across saves, chunk reloads, and dimension changes.
+load initializes the on/off decision and variant roll only if the state lacks the eye key, then
+broadcasts the resulting state to any clients already tracking the entity. This accommodates Fabric's
+tracking-before-load event order while preserving the decision across saves, chunk reloads, and
+dimension changes.
 
 Eye items carry portable `AppearanceOverride` data on the stack. Harvest captures the effective
 appearance from head 0/eye 0 after layering config appearance and entity override. Crafting and slimy
@@ -157,13 +159,13 @@ client state.
 
 ## Rendering and model attachment
 
-`ClientRenderLayers.install` walks the entity renderer map after renderers are created or rebuilt. It
-adds `LayerGooglyEyes` and the picker layer to compatible living renderers, guards against duplicate
-installation with weak identity state, and inserts before `SlimeOuterLayer` so eyes are not hidden by
-the translucent outer cube.
+`ClientRenderLayers` adds `LayerGooglyEyes` and the picker layer to compatible living renderers,
+guards against duplicate installation with weak identity state, and inserts before `SlimeOuterLayer`
+so eyes are not hidden by the translucent outer cube.
 
-Forge invokes installation from `EntityRenderersEvent.AddLayers`. Fabric injects after
-`EntityRenderDispatcher#onResourceManagerReload`, when the rebuilt renderer map is available.
+Forge walks the completed renderer map from `EntityRenderersEvent.AddLayers`. Fabric installs vanilla
+living-renderer layers through `LivingEntityFeatureRendererRegistrationCallback`; its dispatcher-reload
+Mixin clears attachment caches and handles non-vanilla renderer families such as GeckoLib.
 
 Resolvers map datapack part tokens onto runtime model parts:
 
@@ -218,6 +220,11 @@ are UX only.
 `NetworkTracking` hides distribution differences: Forge uses its tracking distributors, Fabric uses
 `PlayerLookup.tracking`. Direct player state/config sends use Architectury directly.
 
+An eye-state payload may arrive before Minecraft has created the corresponding client entity.
+`ClientNetworkHandler` retains the latest pending payload by entity id; Fabric applies it from
+`ClientEntityEvents.ENTITY_LOAD`, and disconnect clears the pending map. Combined with the server's
+post-initialization broadcast, this handles both client-creation and server-load ordering races.
+
 ## Picker and commands
 
 The client `/sg` tree and picker keyboard UI are authoring tools. Picker client state owns the selected
@@ -229,9 +236,12 @@ server stop. Spawn-all requires both creative mode and the server `allowSpawnAll
 rate-limited, path-constrained to the world datapack area, and writes loader-neutral JSON through the
 shared service.
 
-Client commands register through Architectury's client-command event on both loaders. The Forge-only
-`maybe_float` argument registry remains for existing server-visible command serialization needs; shared
-client command code uses the Architectury client source stack and resource-location suggestions.
+The shared client command code builds one source-neutral Brigadier tree. Forge registers it through
+Architectury's client-command event, while Fabric uses `ClientCommandRegistrationCallback`. The
+Fabric adapter explicitly yields its local `/sg admin` branch to the server and merges the picker
+children into Minecraft's server-supplied dispatcher so completion and help retain the full tree. The
+Forge-only `maybe_float` argument registry remains for existing server-visible command serialization
+needs.
 
 ## Loader event map
 
@@ -247,7 +257,7 @@ client command code uses the Architectury client source stack and resource-locat
 | Config sync | `OnDatapackSyncEvent` | `SYNC_DATA_PACK_CONTENTS` |
 | Join/leave | Forge player events | Fabric play-connection events |
 | Server tick/stop | Forge server events | Fabric lifecycle events |
-| Render layer install | Forge AddLayers event | renderer-dispatcher Mixin |
+| Render layer install | Forge AddLayers event | Fabric renderer callback; reload Mixin for non-vanilla families |
 | Client tick/HUD/input/color | Forge client events | Fabric client APIs |
 
 ## Automated verification
@@ -260,19 +270,26 @@ behavior determinism, and network protocol id invariants.
 Fabric wrappers implement `FabricGameTest` and are explicitly listed in the GameTest dev-mod metadata.
 Forge wrappers retain the holder annotations and are discovered through its GameTest dev mod.
 
-Checkpoint commit `4039ada` has passed both Forge and Fabric builds. Its 69-test GameTest suites and
-systematic runtime matrix have not yet been executed. See `fabric-port-verification-handoff.md` for
-the phased verification plan and highest-risk unverified hooks.
+The current working tree has user-confirmed successful Forge and Fabric builds and successful
+69-test GameTest server runs on both loaders. Runtime checks have also confirmed Forge operation and,
+on Fabric, client initialization, living-renderer layer registration, protocol/config synchronization,
+state delivery across entity-creation races, eyes on newly spawned mobs, and the complete `/sg`
+command tree. The broader systematic runtime matrix remains incomplete.
 
 ## Known boundaries
 
 - Fabric TOML values reload at client initialization or server start, not through a live file watcher.
+- The Alex's Mobs Fabric port reports version `1.20.1-1.4.0`, which does not intersect the bundled
+  upstream Alex's Mobs ranges beginning at `1.22.9`. Selection currently warns and falls back to the
+  oldest placement entry; exact Fabric-port placement compatibility remains unverified.
 - GeckoLib compatibility is optional and defensive; unsupported custom renderers simply receive no
   Gecko eye layer.
 - Fabric entity persistence intentionally mirrors Forge's private persistent compound instead of
   adding a third-party component dependency.
 - Several Fabric parity hooks are Mixins against Minecraft 1.20.1 internals, which is why the Minecraft
   version is exact.
+- Bounded INFO diagnostics are currently enabled around Fabric initialization, command merging,
+  renderer attachment, networking, entity load/tracking, and render gating.
 - The legacy root `src/`, `working-build-env/`, old root `run/`, and old IDE launch files are references,
   not active build inputs.
 - No compatibility layer preserves pre-release data/schema versions; edit the format and bundled data
