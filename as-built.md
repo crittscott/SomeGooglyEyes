@@ -67,6 +67,11 @@ Loader storage is separate:
 - Fabric reads a narrow TOML subset. Client values come from `somegoogly-client.toml`; server values
   come from each world's `serverconfig/somegoogly-server.toml` at server start.
 
+The shared config classes are also the schema source of truth for serialized keys, defaults, lists,
+and numeric bounds. Both loader adapters consume those definitions; Fabric also renders its initial
+TOML from them. The default ambient behavior pool is derived from the registered `EyeBehaviors`
+identifiers rather than maintaining loader-local resource-location strings.
+
 Server config owns global enablement, global and per-entity eye percentages, death-harvest chance,
 behavior timing/pools, reaction switches/chances, and the destructive picker spawn-all gate. Client
 config owns global display disablement and disabled entity/mod lists.
@@ -77,6 +82,18 @@ entry for each namespace, validates them, and atomically replaces `ServerEyeConf
 provide their loader-specific mod-version lookup. The server serializes the resolved runtime config set
 to clients; clients do not independently select datapack versions. All bundled Minecraft entries match
 exactly `1.20.1`; optional-mod entries may span compatible releases of those mods for Minecraft 1.20.1.
+The closed age-selector vocabulary (`adult`, `baby`, and `any`) is defined once in `HeadInfo` and used
+by codecs, reload selection, and both picker export paths.
+
+## Player-visible text
+
+Player-visible prose is represented by translatable `Component` values, with the English catalog in
+`assets/somegoogly/lang/en_us.json`. Picker selection, export, freeze, and spawn diagnostics preserve
+structured components through command and packet boundaries; network disconnect reasons and displayed
+state labels follow the same rule. Identifiers, paths, counts, exception details, and player names are
+translation arguments rather than preformatted English. Bundled and generated pack descriptions are
+also translatable JSON components. Logs, config-file comments, command tokens, and persistent schema
+identifiers remain ordinary strings because they are not localized UI prose.
 
 ## Persistent and portable state
 
@@ -196,8 +213,9 @@ payload id (`somegoogly:v7/...`). Two stable ids negotiate compatibility:
 
 At join, the server sends its version and starts a 100-tick timeout. A matching client acknowledges,
 the server marks it ready, and then sends resolved eye configs. A mismatch on either side, or no
-acknowledgement, disconnects with a clear protocol message. This network protocol—not the display mod
-version—is the compatibility contract.
+acknowledgement, disconnects with a localized protocol message. Both endpoints use the shared
+`MAX_PROTOCOL_VERSION_LENGTH` bound when decoding the version. This network protocol—not the display
+mod version—is the compatibility contract.
 
 S2C packets:
 
@@ -234,7 +252,8 @@ mutation and file export.
 Freeze preserves the mob's previous `NoAI` value and releases on unlock, disconnect, load recovery, or
 server stop. Spawn-all requires both creative mode and the server `allowSpawnAll` opt-in. Export is
 rate-limited, path-constrained to the world datapack area, and writes loader-neutral JSON through the
-shared service.
+shared service. The generated pack metadata uses the named `GENERATED_PACK_FORMAT` value pinned to
+Minecraft 1.20.1 and a translatable pack description.
 
 The shared client command code builds one source-neutral Brigadier tree. Forge registers it through
 Architectury's client-command event, while Fabric uses `ClientCommandRegistrationCallback`. The

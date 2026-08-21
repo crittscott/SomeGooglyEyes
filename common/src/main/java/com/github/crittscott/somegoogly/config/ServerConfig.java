@@ -20,21 +20,62 @@ import java.util.regex.Pattern;
  * ({@link #ALLOW_SPAWN_ALL}, enforced server-side in {@code PickerSpawnAllPacket}).
  */
 public class ServerConfig {
-    public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(false);
+    public static final String ALLOW_SPAWN_ALL_KEY = "allowSpawnAll";
+    public static final boolean ALLOW_SPAWN_ALL_DEFAULT = false;
+    public static final String AMBIENT_BEHAVIOR_POOL_KEY = "ambientBehaviorPool";
+    public static final List<String> AMBIENT_BEHAVIOR_POOL_DEFAULT = List.of(
+            EyeBehaviors.BLINK.id().toString(),
+            EyeBehaviors.CROSS_EYE.id().toString(),
+            EyeBehaviors.SIDE_EYE.id().toString(),
+            EyeBehaviors.STARE.id().toString());
+    public static final String AMBIENT_BEHAVIORS_KEY = "ambientBehaviors";
+    public static final boolean AMBIENT_BEHAVIORS_DEFAULT = true;
+    public static final String AMBIENT_MAX_TICKS_KEY = "ambientMaxTicks";
+    public static final int AMBIENT_MAX_TICKS_DEFAULT = 400;
+    public static final String AMBIENT_MIN_TICKS_KEY = "ambientMinTicks";
+    public static final int AMBIENT_MIN_TICKS_DEFAULT = 100;
+    public static final String ENTITY_OVERRIDES_KEY = "entityOverrides";
+    public static final List<String> ENTITY_OVERRIDES_DEFAULT = List.of();
+    public static final String GLOBAL_PERCENT_KEY = "globalPercent";
+    public static final int GLOBAL_PERCENT_DEFAULT = 5;
+    public static final String GOOGLY_EYES_ENABLED_KEY = "googlyEyesEnabled";
+    public static final boolean GOOGLY_EYES_ENABLED_DEFAULT = true;
+    public static final String GROW_ON_HIT_PERCENT_KEY = "growOnHitPercent";
+    public static final int GROW_ON_HIT_PERCENT_DEFAULT = 20;
+    public static final String HARVEST_ON_KILL_PERCENT_KEY = "harvestOnKillPercent";
+    public static final int HARVEST_ON_KILL_PERCENT_DEFAULT = 25;
+    public static final int PERCENT_MAX = 100;
+    public static final int PERCENT_MIN = 0;
+    public static final String SWIRL_HEAL_COOLDOWN_TICKS_KEY = "swirlHealCooldownTicks";
+    public static final int SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT = 200;
+    public static final String SWIRL_ON_HEAL_KEY = "swirlOnHeal";
+    public static final boolean SWIRL_ON_HEAL_DEFAULT = true;
+    public static final String SWIRL_ON_TRADE_KEY = "swirlOnTrade";
+    public static final boolean SWIRL_ON_TRADE_DEFAULT = true;
+    public static final int TICKS_MAX = 24000;
+    public static final int TICKS_MIN = 1;
+
+    public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
     public static final ConfigValue<List<String>> AMBIENT_BEHAVIOR_POOL =
-            ConfigValue.strings(defaultAmbientBehaviorIds(), ServerConfig::validateBehaviorId);
-    public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(true);
-    public static final ConfigValue<Integer> AMBIENT_MAX_TICKS = ConfigValue.integer(400, 1, 24000);
-    public static final ConfigValue<Integer> AMBIENT_MIN_TICKS = ConfigValue.integer(100, 1, 24000);
+            ConfigValue.strings(AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId);
+    public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
+    public static final ConfigValue<Integer> AMBIENT_MAX_TICKS =
+            ConfigValue.integer(AMBIENT_MAX_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    public static final ConfigValue<Integer> AMBIENT_MIN_TICKS =
+            ConfigValue.integer(AMBIENT_MIN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
     public static final ConfigValue<List<String>> ENTITY_OVERRIDES =
-            ConfigValue.strings(List.of(), ServerConfig::validateOverride);
-    public static final ConfigValue<Integer> GLOBAL_PERCENT = ConfigValue.integer(5, 0, 100);
-    public static final ConfigValue<Boolean> GOOGLY_EYES_ENABLED = ConfigValue.bool(true);
-    public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT = ConfigValue.integer(20, 0, 100);
-    public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT = ConfigValue.integer(25, 0, 100);
-    public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS = ConfigValue.integer(200, 1, 24000);
-    public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(true);
-    public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(true);
+            ConfigValue.strings(ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride);
+    public static final ConfigValue<Integer> GLOBAL_PERCENT =
+            ConfigValue.integer(GLOBAL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    public static final ConfigValue<Boolean> GOOGLY_EYES_ENABLED = ConfigValue.bool(GOOGLY_EYES_ENABLED_DEFAULT);
+    public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT =
+            ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
+            ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
+            ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
+    public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(SWIRL_ON_TRADE_DEFAULT);
 
     // Compiled view of ENTITY_OVERRIDES, rebuilt whenever a loader or test replaces the immutable list.
     private static List<String> lastParsedSource;
@@ -42,18 +83,6 @@ public class ServerConfig {
 
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
     private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
-    }
-
-    /**
-     * The behaviors the ambient idle timer plays by default: the ambient set only (not the event-driven
-     * grow/swirl, nor the dormant color_change).
-     */
-    private static List<String> defaultAmbientBehaviorIds() {
-        return new ArrayList<>(List.of(
-                "somegoogly:blink",
-                "somegoogly:cross_eye",
-                "somegoogly:side_eye",
-                "somegoogly:stare"));
     }
 
     /**
@@ -106,7 +135,7 @@ public class ServerConfig {
         } catch (NumberFormatException e) {
             return null;
         }
-        if (pattern.isEmpty() || percent < 0 || percent > 100) {
+        if (pattern.isEmpty() || percent < PERCENT_MIN || percent > PERCENT_MAX) {
             return null;
         }
         return pattern.indexOf('*') < 0
@@ -185,7 +214,7 @@ public class ServerConfig {
         }
         try {
             int percent = Integer.parseInt(split[1].trim());
-            return percent >= 0 && percent <= 100;
+            return percent >= PERCENT_MIN && percent <= PERCENT_MAX;
         } catch (NumberFormatException e) {
             return false;
         }

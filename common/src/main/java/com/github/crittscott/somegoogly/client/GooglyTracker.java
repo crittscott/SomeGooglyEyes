@@ -129,22 +129,8 @@ public class GooglyTracker {
         }
 
         /**
-         * One tick of googly physics: a point-mass pupil in the eye's local plane (+X right, +Y up),
-         * constrained to the unit disk (the full cornea circle once mapped by {@code moveIris}).
-         *
-         * <p>Forcing: constant local-down gravity, plus pseudo-forces from the holder's linear
-         * acceleration and head angular acceleration (so the pupil lags and overshoots when the mob
-         * jerks or whips its head). Walls reflect radially with restitution {@code < 1}; tangential
-         * friction plus rest/slide cutoffs bleed the last energy so it parks at the bottom instead of
-         * ringing forever.
-         *
-         * <p>Decoupled from the tracker so it can be reused for a held eye item (see
-         * {@code GooglyEyeItemRenderer}) — the behavior must be identical to mob eyes.
-         *
-         * <p>An active behavior participates as a <b>spring</b>: it supplies an {@code anchor} and a
-         * {@code stiffness}, and the pupil is pulled toward the anchor (with velocity damping) on top of
-         * the ordinary forces. {@code stiffness == 0} means no behavior drives the pupil, so it wobbles
-         * freely; when a fading behavior lets stiffness fall to 0, gravity takes the pupil back naturally.
+         * Advance the pupil simulation by one tick and update its previous/current render positions.
+         * Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.
          *
          * @param rand      randomness source (per-tracker / per-held-eye)
          * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
@@ -152,9 +138,9 @@ public class GooglyTracker {
          * @param motionX   the holder's X position delta this tick
          * @param motionY   the holder's Y position delta this tick
          * @param motionZ   the holder's Z position delta this tick
-         * @param anchorX   the behavior spring's X target in the unit disk (ignored when stiffness is 0)
-         * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is 0)
-         * @param stiffness the behavior spring's stiffness (0 = no behavior force on the pupil)
+         * @param anchorX   the behavior spring's X target in the unit disk (ignored when stiffness is nonpositive)
+         * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
+         * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          */
         public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness) {

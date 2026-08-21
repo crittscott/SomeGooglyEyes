@@ -6,35 +6,16 @@ import net.minecraft.client.model.EntityModel;
 import java.util.Map;
 
 /**
- * Compensates for Alex's Mobs' whole-model baby render transforms. Most of that mod's Citadel
- * ({@code AdvancedEntityModel}) models wrap their entire part list in a young-only
- * {@code pushPose -> scale -> translate} inside {@code renderToBuffer}, applied and popped outside any
- * individual box's own transform — invisible to {@code CitadelResolver}'s chain replay, which only
- * replays each box's own {@code translateAndRotate}. {@link #preTransform} reproduces that wrap on the
- * pose stack before the resolver walk, the same mechanism {@link ExoticBirdsCompat} uses for that mod's
- * birds.
+ * Compensates for the young-only whole-model scale and translation used by supported Alex's Mobs
+ * Citadel models. These transforms surround the model's part rendering and are therefore absent from
+ * {@code CitadelResolver}'s per-box transform replay; {@link #preTransform} applies the missing wrapper
+ * before resolver traversal.
  *
- * <p>A model's own per-box {@code setScale()} calls (e.g. Grizzly Bear's baby head) are <b>not</b>
- * represented here — those are already visible to the resolver, since a box's live scale is part of what
- * {@code translateAndRotate} replays. Only the surrounding whole-model wrap is invisible.
- *
- * <p>Covers every {@code Animal}/{@code TamableAnimal} Alex's Mobs model confirmed to use this exact
- * shape, whether or not this mod currently ships an eye definition for that entity. Checked and
- * deliberately excluded:
- * <ul>
- *   <li>{@code ModelGorilla} — scales its baby head but has no surrounding {@code pushPose}/{@code scale}/
- *       {@code translate} wrap at all; nothing to compensate for.</li>
- *   <li>{@code ModelGeladaMonkey} — a different bug: {@code neck} and its child {@code head} are each
- *       independently scaled without {@code setShouldScaleChildren(true)} on {@code neck}, so the chain
- *       replay double-compounds a scale Citadel's own render would have undone. Not a whole-model wrap.</li>
- *   <li>{@code ModelBisonBaby}/{@code ModelTarantulaHawkBaby} — Bison and Tarantula Hawk render babies
- *       with an entirely separate model class instead of a wrap; needs an age-specific datapack entry, not
- *       a resolver-side transform.</li>
- * </ul>
- * {@code ModelKangaroo}'s young branch additionally has a {@code renderOnlyHead} conditional (likely the
- * joey-in-pouch render) not investigated here; this entry covers its normal render path only.
- *
- * <p>Keyed by model class name, so there is no compile-time or classloading dependency on Alex's Mobs.
+ * <p>The table is keyed by fully qualified model class name to avoid a compile-time or classloading
+ * dependency on Alex's Mobs. Models absent from the table receive no compatibility transform. Per-box
+ * scaling and age-specific model classes remain the responsibility of the resolver and datapack
+ * definitions, respectively. {@code ModelKangaroo}'s {@code renderOnlyHead} path is not supported by
+ * this whole-model compensation.
  */
 public final class AlexsMobsCompat {
 
@@ -48,7 +29,7 @@ public final class AlexsMobsCompat {
 
     private static final String PKG = "com.github.alexthe666.alexsmobs.client.model.";
 
-    /** {@code tx} is 0 for every model checked so far; {@code wrap} bakes that in. */
+    /** Create a supported transform whose horizontal translation is zero. */
     private static Transform wrap(float scale, float ty, float tz) {
         return new Transform(scale, 0.0F, ty, tz);
     }

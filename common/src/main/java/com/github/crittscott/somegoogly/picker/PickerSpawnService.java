@@ -154,7 +154,7 @@ public final class PickerSpawnService {
         // When narrowed to one mod, note every living-ish type we couldn't place and why, since the point of
         // filtering is usually to chase down mobs that don't appear. (Plain non-living types are expected
         // drops and stay quiet.)
-        List<String> dropped = new ArrayList<>();
+        List<Component> dropped = new ArrayList<>();
 
         // Build one instance of every living entity type (the eye layer can attach to any of them).
         // We create up front so we can sort, then place; non-living and uncreatable types are dropped.
@@ -169,7 +169,8 @@ public final class PickerSpawnService {
             }
             if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
                 if (filtering) {
-                    dropped.add(id + " — hard-excluded from googly eyes");
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_ender_dragon", id));
                 }
                 continue;
             }
@@ -178,14 +179,16 @@ public final class PickerSpawnService {
                 entity = type.create(level);
             } catch (Exception e) {
                 if (filtering) {
-                    dropped.add(id + " — create() threw " + e.getClass().getSimpleName());
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_create_threw",
+                            id, e.getClass().getSimpleName()));
                 }
                 continue; // a modded type that won't build with the plain factory — skip it
             }
             if (entity instanceof LivingEntity) {
                 candidates.add(new Candidate(id, entity));
             } else if (filtering && entity == null) {
-                dropped.add(id + " — create() returned null");
+                dropped.add(Component.translatable("somegoogly.command.spawnall.dropped_create_null", id));
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
@@ -273,7 +276,8 @@ public final class PickerSpawnService {
             } else {
                 skipped++;
                 if (filtering) {
-                    dropped.add(candidate.id + " — addFreshEntity() refused");
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_add_refused", candidate.id));
                 }
             }
         }
@@ -291,7 +295,7 @@ public final class PickerSpawnService {
                 finalSpawned, scope, platformNote, finalRows, skippedNote));
         if (filtering && !dropped.isEmpty()) {
             player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_header", dropped.size()));
-            for (String entry : dropped) {
+            for (Component entry : dropped) {
                 player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_entry", entry));
             }
         }

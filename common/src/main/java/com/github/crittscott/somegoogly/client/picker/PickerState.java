@@ -16,6 +16,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -280,12 +281,12 @@ public final class PickerState {
         return active && entity == target.get();
     }
 
-    /** Choose the entity under the crosshair. Returns a status message. */
-    public static String lockOn() {
+    /** Choose the entity under the crosshair and return localized status feedback. */
+    public static Component lockOn() {
         Minecraft mc = Minecraft.getInstance();
         Entity looked = mc.crosshairPickEntity;
         if (!(looked instanceof LivingEntity living)) {
-            return "Look at a mob, then choose.";
+            return Component.translatable("somegoogly.command.picker.choose_look_at_mob");
         }
         EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
 
@@ -311,7 +312,7 @@ public final class PickerState {
             }
         }
         if (tokens.isEmpty()) {
-            return "Unsupported model — no reachable vanilla parts or GeckoLib bones.";
+            return Component.translatable("somegoogly.command.picker.choose_unsupported_model");
         }
 
         ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
@@ -334,8 +335,13 @@ public final class PickerState {
         clearDraft(); // start empty: saved eyes (if any) show, but no phantom draft until create/select
         freeze(living);
         int kept = totalEyeCount();
-        return "Chose " + newType + (kept > 0 ? " (" + kept + " eyes)" : "")
-                + " — " + parts.size() + " parts.";
+        if (kept == 0) {
+            return Component.translatable("somegoogly.command.picker.choose_success", newType, parts.size());
+        }
+        return Component.translatable(kept == 1
+                        ? "somegoogly.command.picker.choose_success_one_eye"
+                        : "somegoogly.command.picker.choose_success_many_eyes",
+                newType, kept, parts.size());
     }
 
     /**

@@ -22,10 +22,18 @@ public final class ConfigValue<T> {
         return new ConfigValue<>(defaultValue, value -> value);
     }
 
+    /**
+     * Create an integer value whose default and every subsequently assigned value are clamped to
+     * {@code [min, max]}.
+     */
     public static ConfigValue<Integer> integer(int defaultValue, int min, int max) {
         return new ConfigValue<>(defaultValue, value -> Math.max(min, Math.min(max, value)));
     }
 
+    /**
+     * Create a string-list value whose default and every subsequently assigned list are filtered by
+     * {@code valid} and stored as an immutable copy. Rejected entries are silently omitted.
+     */
     public static ConfigValue<List<String>> strings(List<String> defaultValue, Predicate<String> valid) {
         return new ConfigValue<>(defaultValue, values -> {
             List<String> accepted = new ArrayList<>();
@@ -46,6 +54,7 @@ public final class ConfigValue<T> {
         value = defaultValue;
     }
 
+    /** Assign a value after applying the normalization established by the factory method. */
     public void set(T value) {
         this.value = normalize.apply(value);
     }

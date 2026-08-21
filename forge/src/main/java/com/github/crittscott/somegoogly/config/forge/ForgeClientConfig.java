@@ -22,11 +22,13 @@ public final class ForgeClientConfig {
     static {
         BUILDER.push("Client Settings");
         DISABLE_GOOGLY_EYES = BUILDER.comment("Disable display of all googly eyes on this client.")
-                .define("disableGooglyEyes", false);
+                .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
         DISABLED_ENTITIES = BUILDER.comment("Entity ids that should not display googly eyes")
-                .defineList("disabledEntities", ArrayList::new, value -> value instanceof String);
+                .defineList(ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT,
+                        value -> value instanceof String);
         DISABLED_MODS = BUILDER.comment("Mod namespaces whose entities should not display googly eyes")
-                .defineList("disabledMods", ArrayList::new, value -> value instanceof String);
+                .defineList(ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT,
+                        value -> value instanceof String);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

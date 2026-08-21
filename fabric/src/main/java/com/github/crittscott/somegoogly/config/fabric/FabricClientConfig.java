@@ -13,10 +13,13 @@ public final class FabricClientConfig {
 
     private static final String DEFAULTS = """
             [Client Settings]
-            disableGooglyEyes = false
-            disabledEntities = []
-            disabledMods = []
-            """;
+            %s = %s
+            %s = %s
+            %s = %s
+            """.formatted(
+            ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT,
+            ClientConfig.DISABLED_ENTITIES_KEY, FabricToml.stringList(ClientConfig.DISABLED_ENTITIES_DEFAULT),
+            ClientConfig.DISABLED_MODS_KEY, FabricToml.stringList(ClientConfig.DISABLED_MODS_DEFAULT));
 
     private FabricClientConfig() {
     }
@@ -26,9 +29,12 @@ public final class FabricClientConfig {
         Path path = FabricLoader.getInstance().getConfigDir().resolve("somegoogly-client.toml");
         try {
             Map<String, Object> values = FabricToml.readOrCreate(path, DEFAULTS);
-            ClientConfig.DISABLE_GOOGLY_EYES.set(FabricToml.bool(values, "disableGooglyEyes", false));
-            ClientConfig.DISABLED_ENTITIES.set(FabricToml.strings(values, "disabledEntities"));
-            ClientConfig.DISABLED_MODS.set(FabricToml.strings(values, "disabledMods"));
+            ClientConfig.DISABLE_GOOGLY_EYES.set(FabricToml.bool(values,
+                    ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT));
+            ClientConfig.DISABLED_ENTITIES.set(FabricToml.strings(values,
+                    ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT));
+            ClientConfig.DISABLED_MODS.set(FabricToml.strings(values,
+                    ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT));
             ClientConfig.invalidateCaches();
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}", path, e);

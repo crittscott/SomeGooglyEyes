@@ -32,31 +32,39 @@ public final class ForgeServerConfig {
     static {
         BUILDER.push("Server Settings");
         GOOGLY_EYES_ENABLED = BUILDER.comment("Enable googly eyes globally")
-                .define("googlyEyesEnabled", true);
+                .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
         GLOBAL_PERCENT = BUILDER.comment("Default percentage chance for an eligible entity to get googly eyes")
-                .defineInRange("globalPercent", 5, 0, 100);
+                .defineInRange(ServerConfig.GLOBAL_PERCENT_KEY, ServerConfig.GLOBAL_PERCENT_DEFAULT,
+                        ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         HARVEST_ON_KILL_PERCENT = BUILDER.comment("Percentage chance for an eyed mob killed with shears to drop an eye")
-                .defineInRange("harvestOnKillPercent", 25, 0, 100);
+                .defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
+                        ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT,
+                        ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         ENTITY_OVERRIDES = BUILDER.comment("Per-entity chances as 'entity-pattern,percent'")
-                .defineList("entityOverrides", ArrayList::new,
+                .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String text && ServerConfig.validateOverride(text));
         BUILDER.pop();
 
         BUILDER.push("Behaviors");
-        AMBIENT_BEHAVIORS = BUILDER.define("ambientBehaviors", true);
-        AMBIENT_MIN_TICKS = BUILDER.defineInRange("ambientMinTicks", 100, 1, 24000);
-        AMBIENT_MAX_TICKS = BUILDER.defineInRange("ambientMaxTicks", 400, 1, 24000);
-        AMBIENT_BEHAVIOR_POOL = BUILDER.defineList("ambientBehaviorPool", List.of(
-                        "somegoogly:blink", "somegoogly:cross_eye", "somegoogly:side_eye", "somegoogly:stare"),
+        AMBIENT_BEHAVIORS = BUILDER.define(
+                ServerConfig.AMBIENT_BEHAVIORS_KEY, ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
+        AMBIENT_MIN_TICKS = BUILDER.defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
+                ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_MAX_TICKS = BUILDER.defineInRange(ServerConfig.AMBIENT_MAX_TICKS_KEY,
+                ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_BEHAVIOR_POOL = BUILDER.defineList(
+                ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
                 value -> value instanceof String text && ServerConfig.validateBehaviorId(text));
-        GROW_ON_HIT_PERCENT = BUILDER.defineInRange("growOnHitPercent", 20, 0, 100);
-        SWIRL_ON_TRADE = BUILDER.define("swirlOnTrade", true);
-        SWIRL_ON_HEAL = BUILDER.define("swirlOnHeal", true);
-        SWIRL_HEAL_COOLDOWN_TICKS = BUILDER.defineInRange("swirlHealCooldownTicks", 200, 1, 24000);
+        GROW_ON_HIT_PERCENT = BUILDER.defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
+                ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        SWIRL_ON_TRADE = BUILDER.define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
+        SWIRL_ON_HEAL = BUILDER.define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
+        SWIRL_HEAL_COOLDOWN_TICKS = BUILDER.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
+                ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         BUILDER.pop();
 
         BUILDER.push("Picker");
-        ALLOW_SPAWN_ALL = BUILDER.define("allowSpawnAll", false);
+        ALLOW_SPAWN_ALL = BUILDER.define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

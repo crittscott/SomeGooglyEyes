@@ -61,7 +61,7 @@ public class PickerExportPacket {
                 return;
             }
             UUID playerId = sender.getUUID();
-            String result = PickerExportService.export(
+            Component result = PickerExportService.export(
                     sender.serverLevel().getServer(), playerId, packet.typeId, packet.configNbt);
             sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
         });

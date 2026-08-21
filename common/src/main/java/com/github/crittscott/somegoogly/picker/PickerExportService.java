@@ -12,6 +12,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+
+import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
@@ -54,57 +57,68 @@ public final class PickerExportService {
     /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
     public static final long MAX_CONFIG_BYTES = 64 * 1024;
 
+    /** Datapack format for the exact Minecraft version targeted by this source tree (1.20.1). */
+    private static final int GENERATED_PACK_FORMAT = 15;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
-    private static final String PACK_MCMETA =
-            "{\n  \"pack\": {\n    \"pack_format\": 15,\n    \"description\": \"SomeGoogly picker output\"\n  }\n}\n";
+    private static final String PACK_MCMETA = """
+            {
+              "pack": {
+                "pack_format": %d,
+                "description": {"translate": "somegoogly.pack.picker_description"}
+              }
+            }
+            """.formatted(GENERATED_PACK_FORMAT);
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
     }
 
     /**
-     * Validate and perform one export. Returns the feedback message for the requesting player; the
+     * Validate and perform one export. Returns localized feedback for the requesting player; the
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
-    public static String export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
-                                @Nullable CompoundTag configNbt) {
+    public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
+                                   @Nullable CompoundTag configNbt) {
         int now = server.getTickCount();
         Integer last = LAST_EXPORT_TICK.get(playerId);
         if (last != null && now - last < COOLDOWN_TICKS) {
             int seconds = (COOLDOWN_TICKS - (now - last) + 19) / 20;
-            return "Export cooling down (~" + seconds + "s left).";
+            return Component.translatable(seconds == 1
+                    ? "somegoogly.command.picker.export_cooldown_one_second"
+                    : "somegoogly.command.picker.export_cooldown_many_seconds", seconds);
         }
         if (configNbt == null) {
-            return "Export rejected: missing or oversized config payload.";
+            return Component.translatable("somegoogly.command.picker.export_rejected_missing_payload");
         }
         if (!BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
-            return "Export rejected: unknown entity type " + typeId + ".";
+            return Component.translatable("somegoogly.command.picker.export_rejected_unknown_type", typeId);
         }
         if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
-            return "Export rejected: the ender dragon is hard-excluded from googly eyes.";
+            return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
         }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {
-            return "Export rejected: malformed eye config payload.";
+            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
         }
         // Draft tokens arrive already canonical (the picker authors in its enumeration vocabulary).
         RuntimeConfig pruned = RuntimeConfig.pruned(config, UnaryOperator.identity());
         if (pruned == null) {
-            return "Export rejected: config has no usable eyes.";
+            return Component.translatable("somegoogly.command.picker.export_rejected_no_usable_eyes");
         }
         Optional<String> version = ModVersionLookup.versionForNamespace(typeId.getNamespace());
         if (version.isEmpty()) {
-            return "Export rejected: no loaded mod provides namespace '" + typeId.getNamespace() + "'.";
+            return Component.translatable(
+                    "somegoogly.command.picker.export_rejected_unknown_namespace", typeId.getNamespace());
         }
 
         String versionDeclaration = typeId.getNamespace().equals("minecraft")
                 ? version.get()
                 : VersionRangeMatcher.rangeFor(version.get());
-        ConfigFile file = ConfigFile.single(versionDeclaration, "any", pruned);
+        ConfigFile file = ConfigFile.single(versionDeclaration, AGE_ANY, pruned);
         JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
         if (json == null) {
-            return "Export rejected: config could not be encoded.";
+            return Component.translatable("somegoogly.command.picker.export_rejected_encode_failed");
         }
 
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
@@ -118,13 +132,13 @@ public final class PickerExportService {
             }
             Files.writeString(target, GSON.toJson(json) + "\n");
         } catch (IOException e) {
-            return "Export failed: " + e.getMessage();
+            return Component.translatable("somegoogly.command.picker.export_failed", e.getMessage());
         }
 
         LAST_EXPORT_TICK.put(playerId, now);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload");
-        return "Exported " + typeId + " → " + PACK_NAME + ", reloading.";
+        return Component.translatable("somegoogly.command.picker.export_success", typeId, PACK_NAME);
     }
 
     /**

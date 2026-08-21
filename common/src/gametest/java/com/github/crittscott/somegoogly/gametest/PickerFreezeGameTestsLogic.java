@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
@@ -37,7 +38,7 @@ public final class PickerFreezeGameTestsLogic {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();
 
-        String error = PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
+        Component error = PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
         helper.assertTrue(error == null, "freezing an unclaimed mob should succeed");
         helper.assertTrue(cow.isNoAi(), "a frozen mob should have NoAi forced on");
         helper.assertTrue(EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
@@ -74,7 +75,7 @@ public final class PickerFreezeGameTestsLogic {
 
         helper.assertTrue(PickerFreezeService.freeze(helper.getLevel(), first, cow.getUUID()) == null,
                 "the first editor should freeze the mob");
-        String refusal = PickerFreezeService.freeze(helper.getLevel(), second, cow.getUUID());
+        Component refusal = PickerFreezeService.freeze(helper.getLevel(), second, cow.getUUID());
         helper.assertTrue(refusal != null, "a second editor must be refused (a second capture would read"
                 + " the forced NoAi as the original)");
         helper.assertTrue(cow.isNoAi(), "the refused attempt must not disturb the freeze");

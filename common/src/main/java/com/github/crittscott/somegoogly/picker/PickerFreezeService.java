@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -55,17 +56,18 @@ public final class PickerFreezeService {
 
     /**
      * Freeze {@code mobId} in {@code level} for {@code playerId}, releasing any mob that player had
-     * frozen before. Returns an error message when the mob is already being edited by someone else, or
-     * {@code null} on success — including the silent no-op cases (not found in this level, or not a
-     * {@link Mob}; non-mob living entities have no AI to freeze).
+     * frozen before. Returns localized error feedback when the mob is already being edited by someone
+     * else, or {@code null} on success — including the silent no-op cases (not found in this level, or
+     * not a {@link Mob}; non-mob living entities have no AI to freeze).
      */
     @Nullable
-    public static String freeze(ServerLevel level, UUID playerId, UUID mobId) {
+    public static Component freeze(ServerLevel level, UUID playerId, UUID mobId) {
         unfreeze(level.getServer(), playerId); // release the player's previous mob, if any
 
         for (Map.Entry<UUID, FrozenRecord> entry : FROZEN_BY_PLAYER.entrySet()) {
             if (entry.getValue().mobId().equals(mobId)) {
-                return "That mob is already being edited by " + nameOf(level.getServer(), entry.getKey()) + ".";
+                return Component.translatable(
+                        "somegoogly.command.picker.freeze_conflict", nameOf(level.getServer(), entry.getKey()));
             }
         }
 

@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ADULT;
+import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
+import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_BABY;
+
 /**
  * Loads eye geometry configs from datapacks: scans {@code data/<namespace>/eyes/*.json}, one file
  * per entity (the file path is the entity id). Each file contains versioned/age-selected entries;
@@ -140,9 +144,9 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             String age = entry.age.trim().toLowerCase(java.util.Locale.ROOT);
             RuntimeConfig runtime = toRuntime(entry);
             switch (age) {
-                case "adult" -> set.adult = choose(entityId, "adult", set.adult, runtime);
-                case "baby" -> set.baby = choose(entityId, "baby", set.baby, runtime);
-                case "any" -> set.any = choose(entityId, "any", set.any, runtime);
+                case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);
+                case AGE_BABY -> set.baby = choose(entityId, AGE_BABY, set.baby, runtime);
+                case AGE_ANY -> set.any = choose(entityId, AGE_ANY, set.any, runtime);
                 default -> SomeGooglyCommon.LOGGER.warn(
                         "Ignoring eye config {} with invalid age '{}'", entityId, entry.age);
             }

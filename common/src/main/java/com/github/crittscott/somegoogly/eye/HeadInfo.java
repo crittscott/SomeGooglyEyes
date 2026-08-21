@@ -35,6 +35,11 @@ import java.util.function.UnaryOperator;
  * nested classes here, shared by the datapack loader, the sync packet, and the picker exporter.
  */
 public class HeadInfo {
+    /** Closed vocabulary used by the datapack age selector. */
+    public static final String AGE_ADULT = "adult";
+    public static final String AGE_BABY = "baby";
+    public static final String AGE_ANY = "any";
+
     private static final Map<CacheKey, HeadInfo> headInfoCache = new HashMap<>();
 
     private final RuntimeConfig entityConfig;
@@ -85,9 +90,9 @@ public class HeadInfo {
         @Nullable
         public static ConfigFile ofSet(RuntimeConfigSet set, String versionRange, UnaryOperator<String> canon) {
             List<VersionedEntry> entries = new ArrayList<>();
-            addAge(entries, "adult", set.adult, versionRange, canon);
-            addAge(entries, "baby", set.baby, versionRange, canon);
-            addAge(entries, "any", set.any, versionRange, canon);
+            addAge(entries, AGE_ADULT, set.adult, versionRange, canon);
+            addAge(entries, AGE_BABY, set.baby, versionRange, canon);
+            addAge(entries, AGE_ANY, set.any, versionRange, canon);
             if (entries.isEmpty()) {
                 return null;
             }
@@ -191,9 +196,9 @@ public class HeadInfo {
     /** The up-to-three {@link RuntimeConfig}s selected for one entity type: adult, baby, and any. */
     public static class RuntimeConfigSet {
         public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                RuntimeConfig.CODEC.optionalFieldOf("adult").forGetter(s -> Optional.ofNullable(s.adult)),
-                RuntimeConfig.CODEC.optionalFieldOf("baby").forGetter(s -> Optional.ofNullable(s.baby)),
-                RuntimeConfig.CODEC.optionalFieldOf("any").forGetter(s -> Optional.ofNullable(s.any))
+                RuntimeConfig.CODEC.optionalFieldOf(AGE_ADULT).forGetter(s -> Optional.ofNullable(s.adult)),
+                RuntimeConfig.CODEC.optionalFieldOf(AGE_BABY).forGetter(s -> Optional.ofNullable(s.baby)),
+                RuntimeConfig.CODEC.optionalFieldOf(AGE_ANY).forGetter(s -> Optional.ofNullable(s.any))
         ).apply(inst, (adult, baby, any) -> {
             RuntimeConfigSet s = new RuntimeConfigSet();
             s.adult = adult.orElse(null);
@@ -253,7 +258,7 @@ public class HeadInfo {
             return e;
         }));
 
-        public String age = "any";
+        public String age = AGE_ANY;
         public boolean enabled = true;
         // Weighted placement variants; a mob picks one at spawn. The only placement shape on disk.
         public List<Variant> variants = List.of();
@@ -298,19 +303,17 @@ public class HeadInfo {
      * {@code inclination}/{@code azimuth}. Returns {@code {x, y}} (the look-axis component is dropped,
      * since the pupil moves in that plane). Cross-eye uses this to aim one pupil at another eye: it feeds
      * in the head-frame vector from this eye to its target and gets back the direction in pupil space.
-     *
-     * <p>Mirrors {@code applyRotation}'s rotation R = Ry(-(azimuth+90°)) · Rx(90°-inclination): the eye's
-     * local right axis maps to {@code (cos a, 0, -sin a)} and up to {@code (sin a sin b, cos b, cos a sin b)}
-     * with {@code a = -(azimuth+90°)}, {@code b = 90°-inclination}; the projection is the dot with each.
      */
     public static float[] projectToPupilPlane(double inclination, double azimuth, double dx, double dy, double dz) {
+        // applyRotation is R = Ry(-(azimuth+90 degrees)) * Rx(90 degrees-inclination). Its local right
+        // axis maps to (cos a, 0, -sin a) and up to (sin a sin b, cos b, cos a sin b), so projecting
+        // onto the pupil plane is the dot product of the direction with those two axes.
         double a = Math.toRadians(-(azimuth + 90.0));
         double b = Math.toRadians(90.0 - inclination);
         double ca = Math.cos(a);
         double sa = Math.sin(a);
         double cb = Math.cos(b);
         double sb = Math.sin(b);
-        // right = R·(1,0,0), up = R·(0,1,0); pupil-plane coords are the dot of the direction with each.
         float x = (float) (dx * ca + dz * -sa);
         float y = (float) (dx * (sa * sb) + dy * cb + dz * (ca * sb));
         return new float[]{x, y};

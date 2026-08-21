@@ -8,7 +8,6 @@ import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 /** Loads Fabric's per-world server TOML into the shared runtime configuration. */
@@ -16,24 +15,38 @@ public final class FabricServerConfig {
 
     private static final String DEFAULTS = """
             [Server Settings]
-            googlyEyesEnabled = true
-            globalPercent = 5
-            harvestOnKillPercent = 25
-            entityOverrides = []
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
 
             [Behaviors]
-            ambientBehaviors = true
-            ambientMinTicks = 100
-            ambientMaxTicks = 400
-            ambientBehaviorPool = ["somegoogly:blink", "somegoogly:cross_eye", "somegoogly:side_eye", "somegoogly:stare"]
-            growOnHitPercent = 20
-            swirlOnTrade = true
-            swirlOnHeal = true
-            swirlHealCooldownTicks = 200
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
+            %s = %s
 
             [Picker]
-            allowSpawnAll = false
-            """;
+            %s = %s
+            """.formatted(
+            ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT,
+            ServerConfig.GLOBAL_PERCENT_KEY, ServerConfig.GLOBAL_PERCENT_DEFAULT,
+            ServerConfig.HARVEST_ON_KILL_PERCENT_KEY, ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT,
+            ServerConfig.ENTITY_OVERRIDES_KEY, FabricToml.stringList(ServerConfig.ENTITY_OVERRIDES_DEFAULT),
+            ServerConfig.AMBIENT_BEHAVIORS_KEY, ServerConfig.AMBIENT_BEHAVIORS_DEFAULT,
+            ServerConfig.AMBIENT_MIN_TICKS_KEY, ServerConfig.AMBIENT_MIN_TICKS_DEFAULT,
+            ServerConfig.AMBIENT_MAX_TICKS_KEY, ServerConfig.AMBIENT_MAX_TICKS_DEFAULT,
+            ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY,
+            FabricToml.stringList(ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT),
+            ServerConfig.GROW_ON_HIT_PERCENT_KEY, ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT,
+            ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT,
+            ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT,
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT,
+            ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
 
     private FabricServerConfig() {
     }
@@ -48,21 +61,33 @@ public final class FabricServerConfig {
                 .resolve("serverconfig").resolve("somegoogly-server.toml");
         try {
             Map<String, Object> values = FabricToml.readOrCreate(path, DEFAULTS);
-            ServerConfig.GOOGLY_EYES_ENABLED.set(FabricToml.bool(values, "googlyEyesEnabled", true));
-            ServerConfig.GLOBAL_PERCENT.set(FabricToml.integer(values, "globalPercent", 5));
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(FabricToml.integer(values, "harvestOnKillPercent", 25));
-            ServerConfig.ENTITY_OVERRIDES.set(FabricToml.strings(values, "entityOverrides"));
-            ServerConfig.AMBIENT_BEHAVIORS.set(FabricToml.bool(values, "ambientBehaviors", true));
-            ServerConfig.AMBIENT_MIN_TICKS.set(FabricToml.integer(values, "ambientMinTicks", 100));
-            ServerConfig.AMBIENT_MAX_TICKS.set(FabricToml.integer(values, "ambientMaxTicks", 400));
-            ServerConfig.AMBIENT_BEHAVIOR_POOL.set(FabricToml.strings(values, "ambientBehaviorPool", List.of(
-                    "somegoogly:blink", "somegoogly:cross_eye", "somegoogly:side_eye", "somegoogly:stare")));
-            ServerConfig.GROW_ON_HIT_PERCENT.set(FabricToml.integer(values, "growOnHitPercent", 20));
-            ServerConfig.SWIRL_ON_TRADE.set(FabricToml.bool(values, "swirlOnTrade", true));
-            ServerConfig.SWIRL_ON_HEAL.set(FabricToml.bool(values, "swirlOnHeal", true));
+            ServerConfig.GOOGLY_EYES_ENABLED.set(FabricToml.bool(values,
+                    ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT));
+            ServerConfig.GLOBAL_PERCENT.set(FabricToml.integer(values,
+                    ServerConfig.GLOBAL_PERCENT_KEY, ServerConfig.GLOBAL_PERCENT_DEFAULT));
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(FabricToml.integer(values,
+                    ServerConfig.HARVEST_ON_KILL_PERCENT_KEY, ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT));
+            ServerConfig.ENTITY_OVERRIDES.set(FabricToml.strings(values,
+                    ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT));
+            ServerConfig.AMBIENT_BEHAVIORS.set(FabricToml.bool(values,
+                    ServerConfig.AMBIENT_BEHAVIORS_KEY, ServerConfig.AMBIENT_BEHAVIORS_DEFAULT));
+            ServerConfig.AMBIENT_MIN_TICKS.set(FabricToml.integer(values,
+                    ServerConfig.AMBIENT_MIN_TICKS_KEY, ServerConfig.AMBIENT_MIN_TICKS_DEFAULT));
+            ServerConfig.AMBIENT_MAX_TICKS.set(FabricToml.integer(values,
+                    ServerConfig.AMBIENT_MAX_TICKS_KEY, ServerConfig.AMBIENT_MAX_TICKS_DEFAULT));
+            ServerConfig.AMBIENT_BEHAVIOR_POOL.set(FabricToml.strings(values,
+                    ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT));
+            ServerConfig.GROW_ON_HIT_PERCENT.set(FabricToml.integer(values,
+                    ServerConfig.GROW_ON_HIT_PERCENT_KEY, ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT));
+            ServerConfig.SWIRL_ON_TRADE.set(FabricToml.bool(values,
+                    ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT));
+            ServerConfig.SWIRL_ON_HEAL.set(FabricToml.bool(values,
+                    ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT));
             ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(
-                    FabricToml.integer(values, "swirlHealCooldownTicks", 200));
-            ServerConfig.ALLOW_SPAWN_ALL.set(FabricToml.bool(values, "allowSpawnAll", false));
+                    FabricToml.integer(values, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
+                            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT));
+            ServerConfig.ALLOW_SPAWN_ALL.set(FabricToml.bool(values,
+                    ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT));
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Could not load Fabric server config {}", path, e);
         }

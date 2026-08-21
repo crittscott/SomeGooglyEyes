@@ -11,6 +11,10 @@ public final class NetworkTracking {
     private NetworkTracking() {
     }
 
+    /**
+     * Send a clientbound payload to every player tracking {@code entity}. When {@code includeSelf} is
+     * true and the entity is a server player, that player is also a recipient.
+     */
     @ExpectPlatform
     public static void send(Entity entity, boolean includeSelf, ResourceLocation id, FriendlyByteBuf buffer) {
         throw new AssertionError();

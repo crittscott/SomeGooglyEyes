@@ -11,8 +11,9 @@ import javax.annotation.Nullable;
  * Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
  * shared datapack config ({@link com.github.crittscott.somegoogly.eye.HeadInfo}).
  *
- * <p>State lives in the entity's persistent data (saved by Forge under {@code ForgeData}, so it
- * survives reload / dimension change / growing up). Three pieces:
+ * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
+ * dimension changes, and aging. The loader-specific persistence bridge maps that compound onto each
+ * platform's entity storage. Three pieces:
  * <ul>
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
  *       (shears remove, slimy eye adds).</li>

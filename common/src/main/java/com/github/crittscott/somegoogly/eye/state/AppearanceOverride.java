@@ -40,6 +40,10 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
     public static final AppearanceOverride EMPTY =
             new AppearanceOverride(Optional.empty(), Optional.empty(), Optional.empty());
 
+    /**
+     * Decode an override, returning {@link #EMPTY} when {@code tag} is {@code null} or cannot be
+     * decoded by {@link #CODEC}.
+     */
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
         return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
     }
@@ -48,6 +52,10 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
     }
 
+    /**
+     * Encode this override as a compound, returning an empty compound if encoding fails or produces a
+     * different NBT tag type.
+     */
     public CompoundTag toNbt() {
         Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
         return tag instanceof CompoundTag compound ? compound : new CompoundTag();

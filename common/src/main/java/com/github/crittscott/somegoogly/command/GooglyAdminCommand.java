@@ -71,7 +71,8 @@ public final class GooglyAdminCommand {
                                     if (target == null) return 0;
                                     boolean value = BoolArgumentType.getBool(ctx, "value");
                                     EyeState.setHasEyes(target, value);
-                                    return feedback(ctx, Component.translatable("somegoogly.command.admin.has_eyes_set", value));
+                                    return feedback(ctx, Component.translatable(
+                                            "somegoogly.command.admin.has_eyes_set", booleanValue(value)));
                                 })))
                 .then(Commands.literal("tint")
                         .then(colorBranch("iris", true))
@@ -141,8 +142,11 @@ public final class GooglyAdminCommand {
                                             } else {
                                                 EyeState.setCorneaTint(target, color);
                                             }
+                                            Component targetName = Component.translatable(iris
+                                                    ? "somegoogly.value.iris" : "somegoogly.value.cornea");
                                             return feedback(ctx, Component.translatable(
-                                                    "somegoogly.command.admin.tint_set", name, String.format("%06X", color.toRgb24())));
+                                                    "somegoogly.command.admin.tint_set", targetName,
+                                                    String.format("%06X", color.toRgb24())));
                                         }))));
     }
 
@@ -155,7 +159,13 @@ public final class GooglyAdminCommand {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
         EyeState.setGlow(target, value);
-        return feedback(ctx, Component.translatable("somegoogly.command.admin.glow_set", value == null ? "config" : value));
+        Component display = Component.translatable(value == null
+                ? "somegoogly.value.config" : value ? "somegoogly.value.on" : "somegoogly.value.off");
+        return feedback(ctx, Component.translatable("somegoogly.command.admin.glow_set", display));
+    }
+
+    private static Component booleanValue(boolean value) {
+        return Component.translatable(value ? "somegoogly.value.true" : "somegoogly.value.false");
     }
 
     /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */

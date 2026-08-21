@@ -11,9 +11,18 @@ import java.util.Set;
 /** Client-local rendering preferences shared by both loaders. */
 public final class ClientConfig {
 
-    public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = ConfigValue.bool(false);
-    public static final ConfigValue<List<String>> DISABLED_ENTITIES = ConfigValue.strings(List.of(), value -> true);
-    public static final ConfigValue<List<String>> DISABLED_MODS = ConfigValue.strings(List.of(), value -> true);
+    public static final String DISABLE_GOOGLY_EYES_KEY = "disableGooglyEyes";
+    public static final boolean DISABLE_GOOGLY_EYES_DEFAULT = false;
+    public static final String DISABLED_ENTITIES_KEY = "disabledEntities";
+    public static final List<String> DISABLED_ENTITIES_DEFAULT = List.of();
+    public static final String DISABLED_MODS_KEY = "disabledMods";
+    public static final List<String> DISABLED_MODS_DEFAULT = List.of();
+
+    public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = ConfigValue.bool(DISABLE_GOOGLY_EYES_DEFAULT);
+    public static final ConfigValue<List<String>> DISABLED_ENTITIES =
+            ConfigValue.strings(DISABLED_ENTITIES_DEFAULT, value -> true);
+    public static final ConfigValue<List<String>> DISABLED_MODS =
+            ConfigValue.strings(DISABLED_MODS_DEFAULT, value -> true);
 
     private static final Set<String> loggedBadDisabledEntityEntries = new HashSet<>();
     private static Set<ResourceLocation> cachedDisabledEntityIds;

@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 public final class NetworkHandler {
 
     public static final String PROTOCOL_VERSION = "7";
+    public static final int MAX_PROTOCOL_VERSION_LENGTH = 32;
     public static final ResourceLocation PROTOCOL_HELLO = id("protocol_hello");
     public static final ResourceLocation PROTOCOL_ACK = id("protocol_ack");
     public static final ResourceLocation EYE_STATE = versioned("eye_state");
@@ -50,7 +51,7 @@ public final class NetworkHandler {
         }
         registered = true;
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, PROTOCOL_ACK, (buffer, context) -> {
-            String version = buffer.readUtf(32);
+            String version = buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH);
             context.queue(() -> acknowledge(context, version));
         });
         NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_FREEZE,
@@ -94,8 +95,7 @@ public final class NetworkHandler {
                 continue;
             }
             iterator.remove();
-            player.connection.disconnect(Component.literal(
-                    "Some Googly Eyes network protocol handshake failed. Both sides must use compatible builds."));
+            player.connection.disconnect(Component.translatable("somegoogly.network.handshake_timeout"));
         }
     }
 
@@ -157,7 +157,8 @@ public final class NetworkHandler {
             return;
         }
         if (!PROTOCOL_VERSION.equals(version)) {
-            player.connection.disconnect(protocolMismatch("server", PROTOCOL_VERSION, version));
+            player.connection.disconnect(protocolMismatch(
+                    Component.translatable("somegoogly.network.side.server"), PROTOCOL_VERSION, version));
             return;
         }
         UUID playerId = player.getUUID();
@@ -182,9 +183,8 @@ public final class NetworkHandler {
         NetworkManager.sendToServer(id, encode(packet, encoder));
     }
 
-    public static Component protocolMismatch(String receiver, String expected, String received) {
-        return Component.literal("Some Googly Eyes network protocol mismatch on " + receiver
-                + " (expected " + expected + ", received " + received + ").");
+    public static Component protocolMismatch(Component receiver, String expected, String received) {
+        return Component.translatable("somegoogly.network.protocol_mismatch", receiver, expected, received);
     }
 
     public static FriendlyByteBuf newBuffer() {

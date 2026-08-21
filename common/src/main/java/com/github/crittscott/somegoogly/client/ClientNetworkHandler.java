@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -50,13 +51,15 @@ public final class ClientNetworkHandler {
     }
 
     private static void handleHello(FriendlyByteBuf buffer, NetworkManager.PacketContext context) {
-        String version = buffer.readUtf(32);
+        String version = buffer.readUtf(NetworkHandler.MAX_PROTOCOL_VERSION_LENGTH);
         context.queue(() -> {
             SomeGooglyCommon.LOGGER.info(
                     "Client network debug: received protocol hello version={} expected={}",
                     version, NetworkHandler.PROTOCOL_VERSION);
             if (!NetworkHandler.PROTOCOL_VERSION.equals(version)) {
-                disconnect(NetworkHandler.protocolMismatch("client", NetworkHandler.PROTOCOL_VERSION, version));
+                disconnect(NetworkHandler.protocolMismatch(
+                        Component.translatable("somegoogly.network.side.client"),
+                        NetworkHandler.PROTOCOL_VERSION, version));
                 return;
             }
             FriendlyByteBuf reply = NetworkHandler.newBuffer();

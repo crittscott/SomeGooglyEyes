@@ -58,7 +58,7 @@ public class PickerFreezePacket {
                 if (!PickerPermissions.creative(sender)) {
                     return;
                 }
-                String error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
+                Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
                 if (error != null) {
                     sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
                 }

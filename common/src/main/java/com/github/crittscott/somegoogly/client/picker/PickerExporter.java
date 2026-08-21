@@ -23,6 +23,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +36,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+
+import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
 
 /**
  * Turns picker drafts into datapack JSON. Every config field is a required codec field, so
@@ -66,22 +69,22 @@ public final class PickerExporter {
      * we only guard the obvious (something committed) and codec-encode the draft; all real validation —
      * and the authoritative feedback — is the server's ({@code PickerExportService}).
      */
-    public static String export() {
+    public static Component export() {
         ResourceLocation type = PickerState.targetType();
         if (type == null || PickerState.totalEyeCount() == 0) {
-            return "Nothing committed to export.";
+            return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
         RuntimeConfig config = PickerState.toConfig();
         if (config.variants.isEmpty()) {
-            return "Nothing committed to export.";
+            return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
         Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElse(null);
         if (!(encoded instanceof CompoundTag tag)) {
-            return "Export failed: couldn't encode the draft config.";
+            return Component.translatable("somegoogly.command.picker.export_encode_failed");
         }
         NetworkHandler.sendToServer(new PickerExportPacket(type, tag));
-        return "Export of " + type + " sent to the server…";
+        return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
 
     /**
@@ -96,11 +99,11 @@ public final class PickerExporter {
      * namespace ({@link VersionRangeMatcher#rangeFor}); the original entry's declared range isn't
      * preserved in the runtime config, so it can't be recovered.
      */
-    public static String exportAll() {
+    public static Component exportAll() {
         Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
         Map<ResourceLocation, RuntimeConfig> drafts = PickerState.authoredConfigs();
         if (synced.isEmpty() && drafts.isEmpty()) {
-            return "No eye configs loaded to export.";
+            return Component.translatable("somegoogly.command.picker.export_all_none_loaded");
         }
 
         // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker drafts.
@@ -125,7 +128,7 @@ public final class PickerExporter {
                 if (draft != null) {
                     // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
                     RuntimeConfig pruned = RuntimeConfig.pruned(draft, UnaryOperator.identity());
-                    file = pruned == null ? null : ConfigFile.single(range, "any", pruned);
+                    file = pruned == null ? null : ConfigFile.single(range, AGE_ANY, pruned);
                 } else {
                     // Canonicalize each token against the model so the dump speaks the resolver's own
                     // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model
@@ -151,12 +154,17 @@ public final class PickerExporter {
                 files++;
             }
         } catch (IOException e) {
-            return "Export-all failed: " + e.getMessage();
+            return Component.translatable("somegoogly.command.picker.export_all_failed", e.getMessage());
         }
-        String note = verbatim > 0
-                ? " (" + verbatim + " types' models couldn't be resolved — tokens left verbatim)"
-                : "";
-        return "Dumped " + files + " eye configs to " + root + note + " — copy data/ into resources/.";
+        Component note = verbatim > 0
+                ? Component.translatable(verbatim == 1
+                        ? "somegoogly.command.picker.export_all_one_verbatim"
+                        : "somegoogly.command.picker.export_all_many_verbatim", verbatim)
+                : Component.empty();
+        return Component.translatable(files == 1
+                        ? "somegoogly.command.picker.export_all_one_result"
+                        : "somegoogly.command.picker.export_all_many_result",
+                files, root, note);
     }
 
     /**

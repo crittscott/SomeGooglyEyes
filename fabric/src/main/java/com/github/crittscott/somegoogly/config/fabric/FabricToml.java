@@ -51,6 +51,19 @@ final class FabricToml {
         return strings;
     }
 
+    static String stringList(List<String> values) {
+        StringBuilder result = new StringBuilder("[");
+        for (int i = 0; i < values.size(); i++) {
+            if (i > 0) {
+                result.append(", ");
+            }
+            result.append('"')
+                    .append(values.get(i).replace("\\", "\\\\").replace("\"", "\\\""))
+                    .append('"');
+        }
+        return result.append(']').toString();
+    }
+
     private static Map<String, Object> parse(String source) {
         Map<String, Object> values = new LinkedHashMap<>();
         StringBuilder statement = new StringBuilder();

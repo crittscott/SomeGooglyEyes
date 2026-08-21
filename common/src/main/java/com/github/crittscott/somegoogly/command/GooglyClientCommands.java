@@ -319,7 +319,8 @@ public class GooglyClientCommands {
         requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setGlow(v);
-        feedback(ctx, "somegoogly.command.picker.glow_set", v);
+        feedback(ctx, "somegoogly.command.picker.glow_set",
+                Component.translatable(v ? "somegoogly.value.on" : "somegoogly.value.off"));
         return 1;
     }
 

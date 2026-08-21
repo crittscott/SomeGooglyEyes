@@ -15,19 +15,23 @@ import java.util.Map;
  */
 public final class EyeBehaviors {
 
-    // The event-driven behaviors are exposed as constants so their in-code drivers (the scheduler's
-    // hit/trade/heal reactions) reference them directly; id lookup is only for names from the wire.
+    // Built-ins referenced by configuration defaults or event drivers are constants; id lookup is
+    // reserved for configured or network-provided names.
+    public static final EyeBehavior BLINK = new BlinkBehavior();
+    public static final EyeBehavior CROSS_EYE = new CrossEyeBehavior();
     public static final EyeBehavior GROW = new GrowBehavior();
+    public static final EyeBehavior SIDE_EYE = new SideEyeBehavior();
+    public static final EyeBehavior STARE = new StareBehavior();
     public static final EyeBehavior SWIRL = new SwirlBehavior();
 
     private static final List<EyeBehavior> ALL = List.of(
-            new StareBehavior(),
-            new BlinkBehavior(),
+            STARE,
+            BLINK,
             GROW,
             new ColorChangeBehavior(),
             SWIRL,
-            new SideEyeBehavior(),
-            new CrossEyeBehavior()
+            SIDE_EYE,
+            CROSS_EYE
     );
     private static final Map<ResourceLocation, EyeBehavior> BY_ID = new LinkedHashMap<>();
 
@@ -45,7 +49,7 @@ public final class EyeBehaviors {
         return ALL;
     }
 
-    /** Look up a behavior by id, or {@code null} if unknown (e.g. an id from a newer/older build). */
+    /** Look up a behavior by id, or {@code null} for an unregistered identifier. */
     @Nullable
     public static EyeBehavior byId(ResourceLocation id) {
         return BY_ID.get(id);

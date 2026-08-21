@@ -29,7 +29,9 @@ public final class EyeItemProperties {
         props.cornea().ifPresent(color ->
                 tooltip.add(Component.translatable("somegoogly.tooltip.cornea", String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
         props.glow().ifPresent(glow ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.glow", glow).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.glow",
+                        Component.translatable(glow ? "somegoogly.value.on" : "somegoogly.value.off"))
+                        .withStyle(ChatFormatting.GRAY)));
     }
 
     public static AppearanceOverride get(ItemStack stack) {
