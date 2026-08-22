@@ -117,11 +117,23 @@ public final class ConfigGameTestsLogic {
         String json = """
                 { "entries": [
                     { "version": "[1.19,1.20)", "age": "adult", "enabled": true, "variants": [
-                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
+                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [ {
+                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
+                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
+                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
+                        } ] } ] } ] },
                     { "version": "1.20.1", "age": "adult", "enabled": true, "variants": [
-                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] },
+                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
+                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
+                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
+                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
+                        } ] } ] } ] },
                     { "version": "1.20.1", "age": "baby", "enabled": true, "variants": [
-                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [] } ] } ] }
+                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
+                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
+                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
+                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
+                        } ] } ] } ] }
                 ] }
                 """;
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
