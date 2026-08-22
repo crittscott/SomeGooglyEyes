@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.event;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,6 +26,11 @@ public final class EyeItemInteractions {
 
     @SubscribeEvent
     public void onLivingDrops(LivingDropsEvent event) {
-        EyeItemService.onDeath(event.getEntity(), event.getSource());
+        LivingEntity mob = event.getEntity();
+        EyeItemService.onDeath(mob, event.getSource(), stack -> {
+            ItemEntity drop = new ItemEntity(mob.level(), mob.getX(), mob.getY(), mob.getZ(), stack);
+            drop.setDefaultPickUpDelay();
+            event.getDrops().add(drop);
+        });
     }
 }

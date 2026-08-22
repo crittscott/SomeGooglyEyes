@@ -5,12 +5,10 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.EyeStateSync;
-import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
-import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -27,10 +25,8 @@ public final class ServerServices {
     }
 
     public static void onLivingEntityLoaded(LivingEntity living) {
-        if (!EntityPersistentData.get(living).contains(EyeState.HAS_EYES)) {
+        if (!EyeState.isInitialized(living)) {
             applyGooglyDecision(living);
-            EyeStateSync.sync(living, EyeState.hasEyes(living), EyeState.getVariantRoll(living),
-                    EyeState.readProperties(living));
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);
@@ -62,9 +58,7 @@ public final class ServerServices {
     }
 
     public static void onStartTracking(LivingEntity living, ServerPlayer player) {
-        NetworkHandler.sendEyeState(player,
-                new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
-                        EyeState.getVariantRoll(living), EyeState.readProperties(living)));
+        EyeStateSync.sendTo(living, player);
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
@@ -89,7 +83,6 @@ public final class ServerServices {
             hasGooglyEyes = random.nextFloat() < (percent / 100F);
         }
 
-        EntityPersistentData.get(living).putBoolean(EyeState.HAS_EYES, hasGooglyEyes);
-        EntityPersistentData.get(living).putFloat(EyeState.VARIANT_ROLL, random.nextFloat());
+        EyeState.initialize(living, hasGooglyEyes, random.nextFloat());
     }
 }

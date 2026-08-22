@@ -6,7 +6,7 @@ import com.github.crittscott.somegoogly.client.compat.ExoticBirdsCompat;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.client.render.EyeRenderTransforms;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -90,7 +90,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
                                         int packedLight, int overlay, EyeDraft eye) {
         poseStack.pushPose();
         poseStack.translate(eye.position[0], eye.position[1], eye.position[2]);
-        HeadInfo.applyRotation(poseStack, eye.inclination, eye.azimuth);
+        EyeRenderTransforms.applyRotation(poseStack, eye.inclination, eye.azimuth);
 
         float scale = eye.eyeScale;
         poseStack.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);

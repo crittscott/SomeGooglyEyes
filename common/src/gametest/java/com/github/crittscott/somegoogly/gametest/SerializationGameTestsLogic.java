@@ -3,13 +3,14 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
-import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -283,9 +284,11 @@ public final class SerializationGameTestsLogic {
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         AppearanceOverride overrides =
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
-        EyeStatePacket withOverrides = new EyeStatePacket(42, true, 0.5F, overrides);
+        EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
+        EyeStatePacket withOverrides = new EyeStatePacket(42, snapshot);
         byte[] a1 = bytes(buffer -> EyeStatePacket.encode(withOverrides, buffer));
         EyeStatePacket d1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(a1)));
+        helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
         byte[] a2 = bytes(buffer -> EyeStatePacket.encode(d1, buffer));
         helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 

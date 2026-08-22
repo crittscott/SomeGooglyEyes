@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 /**
  * Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
- * shared datapack config ({@link com.github.crittscott.somegoogly.eye.HeadInfo}).
+ * shared datapack config ({@link com.github.crittscott.somegoogly.config.EyeConfigModel}).
  *
  * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
  * dimension changes, and aging. The loader-specific persistence bridge maps that compound onto each
@@ -18,14 +18,14 @@ import javax.annotation.Nullable;
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
  *       (shears remove, slimy eye adds).</li>
  *   <li>{@code somegoogly:eyeVariantRoll} — the 0..1 roll that selects the mob's placement variant,
- *       assigned at first join and redrawn by a slimy-eye application ({@link #rerollVariant}).</li>
+ *       assigned at first join and redrawn by a slimy-eye application.</li>
  *   <li>{@code somegoogly:eyeOverrides} — an optional compound of per-mob appearance overrides
  *       (iris/cornea tint, glow), applied to all of the mob's eyes.</li>
  * </ul>
  *
- * <p>The read helpers are side-safe (renderer + packet use them). The {@code set*} mutation API is
- * server-only: each call writes NBT and then broadcasts the full state to every tracking client via
- * {@code EyeStatePacket}, so changes appear immediately without waiting for re-tracking.
+ * <p>The read helpers and {@link Snapshot} are side-safe. Server mutation methods write a complete
+ * coherent transition and then broadcast one snapshot, while packet handling installs a snapshot
+ * without sending it back to the server.
  */
 public final class EyeState {
 
@@ -36,23 +36,21 @@ public final class EyeState {
     private EyeState() {
     }
 
-    /** Replace (or clear, when {@code null}) the overrides compound on the client from a synced packet. */
-    public static void applyOverridesTag(LivingEntity entity, @Nullable CompoundTag overrides) {
-        if (overrides == null || overrides.isEmpty()) {
-            EntityPersistentData.get(entity).remove(EYE_OVERRIDES);
-        } else {
-            EntityPersistentData.get(entity).put(EYE_OVERRIDES, overrides);
-        }
+    /** The full portable state synchronized for one living entity. */
+    public record Snapshot(boolean hasEyes, float variantRoll, AppearanceOverride properties) {
     }
 
-    /** Replace client-side overrides from the fixed-shape network representation. */
-    public static void applyProperties(LivingEntity entity, AppearanceOverride properties) {
-        writeProperties(entity, properties);
+    /** Install a synchronized snapshot on the client without broadcasting it. */
+    public static void applySnapshot(LivingEntity entity, Snapshot snapshot) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, snapshot.hasEyes());
+        data.putFloat(VARIANT_ROLL, snapshot.variantRoll());
+        writeProperties(data, snapshot.properties());
     }
 
-    /** Write the synced placement-variant roll onto the client's copy of the entity. */
-    public static void applyVariantRoll(LivingEntity entity, float roll) {
-        EntityPersistentData.get(entity).putFloat(VARIANT_ROLL, roll);
+    public static void clearTints(LivingEntity entity) {
+        AppearanceOverride properties = readProperties(entity);
+        setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
     }
 
     public static void clearCorneaTint(LivingEntity entity) {
@@ -64,10 +62,9 @@ public final class EyeState {
     }
 
     /**
-     * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn by
-     * {@link #rerollVariant} when a slimy-eye application turns eyes on. Maps onto the current age
-     * config's weighted variants via {@code HeadInfo.chooseVariantIndex}. Defaults to 0 (the first
-     * variant) when unset.
+     * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
+     * slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
+     * Defaults to 0 (the first variant) when unset.
      */
     public static float getVariantRoll(LivingEntity entity) {
         return EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
@@ -75,6 +72,19 @@ public final class EyeState {
 
     public static boolean hasEyes(LivingEntity entity) {
         return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
+    }
+
+    /** Whether the server has made this entity's one-time natural-eye decision. */
+    public static boolean isInitialized(LivingEntity entity) {
+        return EntityPersistentData.get(entity).contains(HAS_EYES);
+    }
+
+    /** Store the one-time natural-eye decision and placement roll, then synchronize once. */
+    public static void initialize(LivingEntity entity, boolean hasEyes, float variantRoll) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, hasEyes);
+        data.putFloat(VARIANT_ROLL, variantRoll);
+        sync(entity);
     }
 
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */
@@ -93,28 +103,25 @@ public final class EyeState {
         return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
     }
 
-    /**
-     * Draw a fresh placement-variant roll for the mob and broadcast. Called as a slimy-eye
-     * application turns eyes on, so every application produces a newly rolled arrangement.
-     */
-    public static void rerollVariant(LivingEntity entity) {
-        EntityPersistentData.get(entity).putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
-        sync(entity);
+    /** Read all synchronized fields as one coherent value. */
+    public static Snapshot snapshot(LivingEntity entity) {
+        return new Snapshot(hasEyes(entity), getVariantRoll(entity), readProperties(entity));
     }
 
     /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
     public static void enableWithProperties(LivingEntity entity, AppearanceOverride properties) {
         CompoundTag data = EntityPersistentData.get(entity);
         data.putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
-        writeProperties(entity, properties);
+        writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
         sync(entity);
     }
 
     /** Disable eyes and clear their entity-wide appearance with one synchronization. */
     public static void disableAndClearProperties(LivingEntity entity) {
-        EntityPersistentData.get(entity).putBoolean(HAS_EYES, false);
-        writeProperties(entity, AppearanceOverride.EMPTY);
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, false);
+        writeProperties(data, AppearanceOverride.EMPTY);
         sync(entity);
     }
 
@@ -141,12 +148,11 @@ public final class EyeState {
      * {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
-        writeProperties(entity, properties);
+        writeProperties(EntityPersistentData.get(entity), properties);
         sync(entity);
     }
 
-    private static void writeProperties(LivingEntity entity, AppearanceOverride properties) {
-        CompoundTag data = EntityPersistentData.get(entity);
+    private static void writeProperties(CompoundTag data, AppearanceOverride properties) {
         if (properties.isEmpty()) {
             data.remove(EYE_OVERRIDES);
         } else {
@@ -155,6 +161,6 @@ public final class EyeState {
     }
 
     private static void sync(LivingEntity entity) {
-        EyeStateSync.sync(entity, hasEyes(entity), getVariantRoll(entity), readProperties(entity));
+        EyeStateSync.sync(entity, snapshot(entity));
     }
 }

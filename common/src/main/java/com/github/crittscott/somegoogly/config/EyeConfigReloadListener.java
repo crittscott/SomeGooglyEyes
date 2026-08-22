@@ -1,11 +1,11 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
-import com.github.crittscott.somegoogly.eye.HeadInfo.VersionedEntry;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ADULT;
-import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
-import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_BABY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Loads eye geometry configs from datapacks: scans {@code data/<namespace>/eyes/*.json}, one file

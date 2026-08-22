@@ -1,20 +1,14 @@
 package com.github.crittscott.somegoogly.client.picker;
 
-import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
-import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -288,30 +282,8 @@ public final class PickerState {
         if (!(looked instanceof LivingEntity living)) {
             return Component.translatable("somegoogly.command.picker.choose_look_at_mob");
         }
-        EntityRenderer<?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
-
-        // Vanilla EntityModel path (hierarchical names or reflection #N). Hold onto the model + resolver
-        // so a first-sighting draft can be seeded from the mob's existing config in this same vocabulary.
-        List<String> tokens = List.of();
-        EntityModel<?> seedModel = null;
-        EyeAttachmentResolver seedResolver = null;
-        if (renderer instanceof LivingEntityRenderer<?, ?> ler) {
-            EntityModel<?> vanillaModel = ler.getModel();
-            EyeAttachmentResolver resolver = Resolvers.forModel(vanillaModel);
-            if (resolver != null) {
-                tokens = resolver.enumerateParts(vanillaModel);
-                seedModel = vanillaModel;
-                seedResolver = resolver;
-            }
-        }
-        // GeckoLib path (named bones), if vanilla found nothing.
-        if (tokens.isEmpty()) {
-            List<String> bones = GeckoCompat.enumerate(renderer, living);
-            if (!bones.isEmpty()) {
-                tokens = bones;
-            }
-        }
-        if (tokens.isEmpty()) {
+        ModelPartVocabulary vocabulary = ModelPartVocabulary.forEntity(living);
+        if (vocabulary == null) {
             return Component.translatable("somegoogly.command.picker.choose_unsupported_model");
         }
 
@@ -320,7 +292,7 @@ public final class PickerState {
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
         targetType = newType;
-        parts = new ArrayList<>(tokens);
+        parts = new ArrayList<>(vocabulary.tokens());
         partIndex = 0;
         currentPart = parts.get(0); // tokens is non-empty (checked above)
         // Switch to this entity's own draft, so each mob keeps its saved eyes across switches and exportall
@@ -328,9 +300,7 @@ public final class PickerState {
         // existing placement starts from it rather than a blank slate; a never-configured mob gets an empty
         // draft. The retained draft (computeIfAbsent) wins on re-choose, so in-session edits aren't lost.
         boolean baby = living.isBaby();
-        EntityModel<?> model = seedModel;
-        EyeAttachmentResolver resolver = seedResolver;
-        variants = authored.computeIfAbsent(newType, t -> seedDraft(t, baby, model, resolver));
+        variants = authored.computeIfAbsent(newType, t -> seedDraft(t, baby, vocabulary));
         variantIndex = 0;
         clearDraft(); // start empty: saved eyes (if any) show, but no phantom draft until create/select
         freeze(living);
@@ -352,7 +322,7 @@ public final class PickerState {
      * so the seeded draft, HUD, and export all speak the same token the part picker shows.
      */
     private static List<DraftVariant> seedDraft(ResourceLocation type, boolean baby,
-                                                EntityModel<?> model, EyeAttachmentResolver resolver) {
+                                                ModelPartVocabulary vocabulary) {
         RuntimeConfig config = ClientEyeConfigs.get(type, baby);
         List<DraftVariant> seeded = new ArrayList<>();
         if (config != null && config.enabled) {
@@ -360,9 +330,7 @@ public final class PickerState {
                 DraftVariant dv = new DraftVariant();
                 dv.weight = v.weight();
                 for (HeadConfig head : v.heads) {
-                    String raw = head.attachPoint;
-                    String part = model != null && resolver != null
-                            ? resolver.canonicalToken(model, raw) : raw;
+                    String part = vocabulary.canonicalize(head.attachPoint);
                     int headStart = dv.eyes.size();
                     for (EyeDefinition def : head.eyes) {
                         dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
@@ -608,7 +576,7 @@ public final class PickerState {
             if (grouped.isEmpty()) {
                 continue; // skip empty arrangements rather than export a variant with no eyes
             }
-            HeadInfo.Variant variant = new HeadInfo.Variant();
+            Variant variant = new Variant();
             variant.weight = dv.weight;
             variant.heads = new ArrayList<>(grouped.values());
             config.variants.add(variant);

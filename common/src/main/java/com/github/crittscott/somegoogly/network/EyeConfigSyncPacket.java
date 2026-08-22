@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.mojang.serialization.DataResult;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;

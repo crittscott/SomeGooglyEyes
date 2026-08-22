@@ -81,8 +81,7 @@ public final class GooglyAdminCommand {
                                 .executes(ctx -> {
                                     LivingEntity target = requireTarget(ctx);
                                     if (target == null) return 0;
-                                    EyeState.clearIrisTint(target);
-                                    EyeState.clearCorneaTint(target);
+                                    EyeState.clearTints(target);
                                     return feedback(ctx, Component.translatable("somegoogly.command.admin.tint_cleared"));
                                 })))
                 .then(Commands.literal("glow")

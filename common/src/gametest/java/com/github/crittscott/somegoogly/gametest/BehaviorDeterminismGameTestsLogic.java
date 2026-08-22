@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
@@ -110,6 +111,6 @@ public final class BehaviorDeterminismGameTestsLogic {
     private static HeadInfo helperFor(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
-        return HeadInfo.serverHelper(type, cow, EyeState.getVariantRoll(cow));
+        return ServerEyeConfigs.resolve(type, cow, EyeState.getVariantRoll(cow));
     }
 }

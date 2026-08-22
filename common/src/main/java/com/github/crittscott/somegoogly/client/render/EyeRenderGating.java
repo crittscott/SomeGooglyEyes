@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client.render;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -54,7 +55,7 @@ public final class EyeRenderGating {
             logDecision(entityType, living, "entity invisible");
             return null;
         }
-        HeadInfo helper = HeadInfo.getHelper(entityType, living, EyeState.getVariantRoll(living));
+        HeadInfo helper = ClientEyeConfigs.resolve(entityType, living, EyeState.getVariantRoll(living));
         if (!helper.hasConfig()) {
             logDecision(entityType, living, "no usable client eye config");
             return null;

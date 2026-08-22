@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -41,7 +40,8 @@ public final class FabricServerEvents {
                 entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
                         : net.minecraft.world.InteractionResult.PASS);
-        ServerLivingEntityEvents.AFTER_DEATH.register(EyeItemService::onDeath);
+        ServerLivingEntityEvents.AFTER_DEATH.register((mob, source) ->
+                EyeItemService.onDeath(mob, source, mob::spawnAtLocation));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 onLivingEntityLoaded(living);
@@ -69,7 +69,7 @@ public final class FabricServerEvents {
     }
 
     private static void onLivingEntityLoaded(LivingEntity living) {
-        boolean previouslyInitialized = EntityPersistentData.get(living).contains(EyeState.HAS_EYES);
+        boolean previouslyInitialized = EyeState.isInitialized(living);
         boolean eligible = ServerEyeConfigs.canEverWearEyes(living);
         ServerServices.onLivingEntityLoaded(living);
 

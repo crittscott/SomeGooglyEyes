@@ -79,4 +79,17 @@ public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float
     public float[] positionArray() {
         return new float[]{(float) position.x, (float) position.y, (float) position.z};
     }
+
+    /** Project a head-frame direction into this eye's local pupil-plane right/up basis. */
+    public float[] projectToPupilPlane(double dx, double dy, double dz) {
+        double a = Math.toRadians(-(azimuth + 90.0));
+        double b = Math.toRadians(90.0 - inclination);
+        double ca = Math.cos(a);
+        double sa = Math.sin(a);
+        double cb = Math.cos(b);
+        double sb = Math.sin(b);
+        float x = (float) (dx * ca + dz * -sa);
+        float y = (float) (dx * (sa * sb) + dy * cb + dz * (ca * sb));
+        return new float[]{x, y};
+    }
 }

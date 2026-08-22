@@ -9,7 +9,6 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -214,9 +213,7 @@ public final class ClientNetworkHandler {
     }
 
     private static void applyEyeState(LivingEntity living, EyeStatePacket packet) {
-        EntityPersistentData.get(living).putBoolean(EyeState.HAS_EYES, packet.hasGooglyEyes());
-        EyeState.applyVariantRoll(living, packet.variantRoll());
-        EyeState.applyProperties(living, packet.overrides());
+        EyeState.applySnapshot(living, packet.snapshot());
     }
 
     private static void queueEyeState(EyeStatePacket packet) {

@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.util.LookTarget;

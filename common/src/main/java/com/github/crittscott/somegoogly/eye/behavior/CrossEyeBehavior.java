@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.eye.EyePlacement;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -33,7 +32,7 @@ final class CrossEyeBehavior extends AbstractEyeBehavior {
 
         // Direction from this eye to its target, in the head frame, projected into this eye's pupil plane.
         Vec3 d = i.helper.placementAt(head, targetIdx).position().subtract(self.position());
-        float[] dir = HeadInfo.projectToPupilPlane(self.inclination(), self.azimuth(), d.x, d.y, d.z);
+        float[] dir = self.projectToPupilPlane(d.x, d.y, d.z);
         float len = (float) Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
 
         float t = (float) i.age / i.duration;

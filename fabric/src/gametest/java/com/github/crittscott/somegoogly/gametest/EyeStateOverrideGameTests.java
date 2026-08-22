@@ -31,4 +31,14 @@ public final class EyeStateOverrideGameTests implements FabricGameTest {
     public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
         EyeStateOverrideGameTestsLogic.clearingEveryFieldRemovesTheCompound(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void clearingTintsPreservesGlow(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.clearingTintsPreservesGlow(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.snapshotAppliesAllFieldsTogether(helper);
+    }
 }

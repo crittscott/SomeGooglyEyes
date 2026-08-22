@@ -4,8 +4,8 @@ import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
-import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
-import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a

@@ -2,10 +2,10 @@ package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
-import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.nbt.CompoundTag;

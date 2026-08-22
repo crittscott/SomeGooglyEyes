@@ -76,16 +76,16 @@ Server config owns global enablement, global and per-entity eye percentages, dea
 behavior timing/pools, reaction switches/chances, and the destructive picker spawn-all gate. Client
 config owns global display disablement and disabled entity/mod lists.
 
-Eye placement files are server datapack resources under `data/<namespace>/eyes/*.json`. The shared
+Eye placement files are server datapack resources under `data/<namespace>/eyes/*.json`.
+`EyeConfigModel` owns the complete serialized/runtime data model, codecs, pruning, weighted variant
+selection, and the closed age-selector vocabulary (`adult`, `baby`, and `any`). The shared
 `EyeConfigReloadListener` parses all candidate versions, uses `ModVersionLookup` to select the matching
 entry for each namespace, validates them, and atomically replaces `ServerEyeConfigs`. Forge and Fabric
 provide their loader-specific mod-version lookup. The server serializes the resolved runtime config set
 to clients; clients do not independently select datapack versions. Shared semantic work limits bound
 entity configs, variants, heads, eyes, attachment tokens, and numeric geometry on reload, picker export,
-and client sync. All bundled Minecraft entries match
-exactly `1.20.1`; optional-mod entries may span compatible releases of those mods for Minecraft 1.20.1.
-The closed age-selector vocabulary (`adult`, `baby`, and `any`) is defined once in `HeadInfo` and used
-by codecs, reload selection, and both picker export paths.
+and client sync. All bundled Minecraft entries match exactly `1.20.1`; optional-mod entries may span
+compatible releases of those mods for Minecraft 1.20.1.
 
 ## Player-visible text
 
@@ -99,7 +99,9 @@ identifiers remain ordinary strings because they are not localized UI prose.
 
 ## Persistent and portable state
 
-`EyeState` is the sole gameplay API for entity eye state. All entity NBT goes through
+`EyeState` is the sole gameplay API for entity eye state. Its full-state `Snapshot` is shared by
+atomic server transitions, targeted start-tracking sends, broadcasts, and client packet application.
+All entity NBT goes through
 `EntityPersistentData`:
 
 - Forge returns its patched persistent compound.
@@ -112,8 +114,8 @@ The eye keys are:
 - `somegoogly:eyeVariantRoll` — stable weighted placement-variant roll;
 - `somegoogly:eyeOverrides` — optional appearance override compound.
 
-`EyeState` setters immediately synchronize the full current state to tracking clients. Compound item
-verbs batch their related state changes into one synchronization. First entity
+`EyeState` setters immediately synchronize the full current snapshot to tracking clients. Compound item
+and admin verbs batch their related state changes into one synchronization. First entity
 load initializes the on/off decision and variant roll only if the state lacks the eye key, then
 broadcasts the resulting state to any clients already tracking the entity. This accommodates Fabric's
 tracking-before-load event order while preserving the decision across saves, chunk reloads, and
@@ -188,6 +190,11 @@ Forge walks the completed renderer map from `EntityRenderersEvent.AddLayers`. Fa
 living-renderer layers through `LivingEntityFeatureRendererRegistrationCallback`; its dispatcher-reload
 Mixin clears attachment caches and handles non-vanilla renderer families such as GeckoLib.
 
+`HeadInfo` is only the resolved view of one age and weighted placement variant. `ClientEyeConfigs`
+owns cached client resolution, while `ServerEyeConfigs` resolves uncached views for infrequent server
+uses such as harvesting. `EyeRenderTransforms` owns render-only rotation, and `EyePlacement` owns the
+pure pupil-plane projection math.
+
 Resolvers map datapack part tokens onto runtime model parts:
 
 - hierarchical and ageable model families;
@@ -250,7 +257,9 @@ post-initialization broadcast, this handles both client-creation and server-load
 
 ## Picker and commands
 
-The client `/sg` tree and picker keyboard UI are authoring tools. Picker client state owns the selected
+The client `/sg` tree and picker keyboard UI are authoring tools. `ModelPartVocabulary` centralizes
+ordinary resolver and GeckoLib bone enumeration, token canonicalization, and sample-entity lookup so
+live selection and `exportall` use the same model-family policy. Picker client state owns the selected
 entity, model part, eye draft, preview layers, lock state, and export view. The server owns all world
 mutation and file export.
 
@@ -289,9 +298,9 @@ needs.
 ## Automated verification
 
 Shared assertion bodies live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader has
-thin wrappers exposing 73 `@GameTest` methods. Coverage includes config parsing/selection, eligibility,
+thin wrappers exposing 77 `@GameTest` methods. Coverage includes config parsing/selection, eligibility,
 variant selection, state and appearance serialization, recipes, picker freeze/export, spawn gating,
-behavior determinism, and network protocol id invariants.
+death harvesting, behavior determinism, and network protocol id invariants.
 
 Fabric wrappers implement `FabricGameTest` and are explicitly listed in the GameTest dev-mod metadata.
 Forge wrappers retain the holder annotations and are discovered through its GameTest dev mod.

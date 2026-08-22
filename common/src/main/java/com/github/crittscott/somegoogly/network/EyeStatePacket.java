@@ -27,6 +27,10 @@ public class EyeStatePacket {
         this.overrides = overrides;
     }
 
+    public EyeStatePacket(int entityId, EyeState.Snapshot snapshot) {
+        this(entityId, snapshot.hasEyes(), snapshot.variantRoll(), snapshot.properties());
+    }
+
     public static EyeStatePacket decode(FriendlyByteBuf buffer) {
         int entityId = buffer.readInt();
         boolean hasGooglyEyes = buffer.readBoolean();
@@ -87,6 +91,10 @@ public class EyeStatePacket {
 
     public AppearanceOverride overrides() {
         return overrides;
+    }
+
+    public EyeState.Snapshot snapshot() {
+        return new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides);
     }
 
     private boolean valid() {

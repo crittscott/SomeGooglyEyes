@@ -80,7 +80,7 @@ public final class GooglyEyeRenderer {
         // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its center.
         float[] eyes = placement.positionArray();
         pose.translate(eyes[0], eyes[1], eyes[2]);
-        HeadInfo.applyRotation(pose, placement);
+        EyeRenderTransforms.applyRotation(pose, placement);
 
         GooglyTracker.EyeInfo eyeInfo = tracker.eyes[headIndex][eyeIndex];
 

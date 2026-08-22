@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;

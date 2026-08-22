@@ -1,13 +1,11 @@
 package com.github.crittscott.somegoogly.client.picker;
 
-import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
-import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
-import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.google.gson.Gson;
@@ -15,18 +13,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
 
 /**
  * Turns picker drafts into datapack JSON. Every config field is a required codec field, so
@@ -130,14 +121,17 @@ public final class PickerExporter {
                     RuntimeConfig pruned = RuntimeConfig.pruned(draft, UnaryOperator.identity());
                     file = pruned == null ? null : ConfigFile.single(range, AGE_ANY, pruned);
                 } else {
-                    // Canonicalize each token against the model so the dump speaks the resolver's own
+                    // Canonicalize each token against the model so the dump speaks its discovered
                     // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model
                     // comes from a throwaway entity instance, so every config converts regardless of what's
                     // loaded near the player.
-                    UnaryOperator<String> canon = canonicalizer(id);
-                    if (canon == null) {
+                    ModelPartVocabulary vocabulary = ModelPartVocabulary.forType(id);
+                    UnaryOperator<String> canon;
+                    if (vocabulary == null) {
                         verbatim++;
                         canon = UnaryOperator.identity();
+                    } else {
+                        canon = vocabulary::canonicalize;
                     }
                     file = ConfigFile.ofSet(synced.get(id), range, canon);
                 }
@@ -167,47 +161,4 @@ public final class PickerExporter {
                 files, root, note);
     }
 
-    /**
-     * A throwaway instance of an entity type, solely to reach its renderer/model — never added to the
-     * world. Created on demand so token canonicalization doesn't depend on what's loaded near the player.
-     * Players can't be constructed this way, so the local player stands in for {@code minecraft:player}.
-     */
-    private static LivingEntity sampleFor(ResourceLocation id) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
-            return mc.player;
-        }
-        ClientLevel level = mc.level;
-        EntityType<?> type = level == null ? null : BuiltInRegistries.ENTITY_TYPE.get(id);
-        if (type == null) {
-            return null;
-        }
-        try {
-            return type.create(level) instanceof LivingEntity living ? living : null;
-        } catch (Throwable constructionFailed) {
-            return null; // some types refuse a bare create(); their tokens stay verbatim
-        }
-    }
-
-    /**
-     * A token canonicalizer for one entity: resolves attach tokens to the model's enumeration vocabulary
-     * via the same resolver the renderer uses. Returns {@code null} when the type's model can't be reached
-     * (the caller then writes its tokens verbatim and counts it).
-     */
-    private static UnaryOperator<String> canonicalizer(ResourceLocation id) {
-        LivingEntity sample = sampleFor(id);
-        if (sample == null) {
-            return null;
-        }
-        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(sample);
-        if (!(renderer instanceof LivingEntityRenderer<?, ?> living)) {
-            return null;
-        }
-        EntityModel<?> model = living.getModel();
-        EyeAttachmentResolver resolver = Resolvers.forModel(model);
-        if (resolver == null) {
-            return null;
-        }
-        return token -> resolver.canonicalToken(model, token);
-    }
 }

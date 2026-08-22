@@ -37,4 +37,14 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.optometristAcceptsOnlyShears(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(helper);
+    }
 }

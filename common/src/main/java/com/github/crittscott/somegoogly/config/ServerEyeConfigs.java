@@ -1,7 +1,8 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,6 +57,12 @@ public final class ServerEyeConfigs {
 
     public static RuntimeConfig get(ResourceLocation entity, LivingEntity living) {
         return get(entity, living.isBaby());
+    }
+
+    /** Resolve the selected variant without sharing the client's renderer cache. */
+    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
+        RuntimeConfig config = get(entity, living);
+        return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
     /** Monotonic identity of the currently installed config map, used by network payload caching. */
