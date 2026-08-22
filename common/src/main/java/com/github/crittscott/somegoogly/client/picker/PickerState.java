@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
  * which share this state. Creative-mode only; works in single-player and from a remote client alike —
@@ -66,6 +69,17 @@ public final class PickerState {
      * is the live {@link #variants} list.
      */
     private static final Map<ResourceLocation, List<DraftVariant>> authored = new LinkedHashMap<>();
+
+    /**
+     * The age ("adult"/"baby") each authored entity type was last targeted at, refreshed on every
+     * {@link #lockOn()} for that type. Export tags the draft with this rather than always writing the
+     * age-independent slot, so a mob authored while looking at a baby is written as {@code baby}.
+     */
+    private static final Map<ResourceLocation, String> authoredAge = new LinkedHashMap<>();
+
+    /** One authored entity's export payload: its config plus the age it was authored under. */
+    public record AuthoredExport(String age, RuntimeConfig config) {
+    }
 
     /**
      * The placement variants of the mob currently being edited (1-based to the user); always at least
@@ -301,6 +315,7 @@ public final class PickerState {
         // draft. The retained draft (computeIfAbsent) wins on re-choose, so in-session edits aren't lost.
         boolean baby = living.isBaby();
         variants = authored.computeIfAbsent(newType, t -> seedDraft(t, baby, vocabulary));
+        authoredAge.put(newType, baby ? AGE_BABY : AGE_ADULT);
         variantIndex = 0;
         clearDraft(); // start empty: saved eyes (if any) show, but no phantom draft until create/select
         freeze(living);
@@ -534,19 +549,24 @@ public final class PickerState {
     }
 
     /**
-     * Every authored entity's draft as a runtime config, keyed by type, skipping mobs that were chosen
-     * but have no saved eyes. Lets {@code exportall} emit mobs that were saved but never individually
-     * exported.
+     * Every authored entity's draft as a runtime config plus its authored age, keyed by type, skipping
+     * mobs that were chosen but have no saved eyes. Lets {@code exportall} emit mobs that were saved
+     * but never individually exported, tagged with the age they were authored under.
      */
-    public static Map<ResourceLocation, RuntimeConfig> authoredConfigs() {
-        Map<ResourceLocation, RuntimeConfig> out = new LinkedHashMap<>();
+    public static Map<ResourceLocation, AuthoredExport> authoredConfigs() {
+        Map<ResourceLocation, AuthoredExport> out = new LinkedHashMap<>();
         for (Map.Entry<ResourceLocation, List<DraftVariant>> entry : authored.entrySet()) {
             RuntimeConfig config = toConfig(entry.getValue());
             if (!config.variants.isEmpty()) {
-                out.put(entry.getKey(), config);
+                out.put(entry.getKey(), new AuthoredExport(authoredAge.get(entry.getKey()), config));
             }
         }
         return out;
+    }
+
+    /** The age ("adult"/"baby") the mob currently being authored was last targeted at, for export. */
+    public static String currentDraftAge() {
+        return authoredAge.get(targetType);
     }
 
     /** Group a draft's variants by part into heads, dropping any variant that ended up with no eyes. */
@@ -655,6 +675,7 @@ public final class PickerState {
         parts = new ArrayList<>();
         partIndex = 0;
         authored.clear();
+        authoredAge.clear();
         variants = new ArrayList<>(List.of(new DraftVariant()));
         variantIndex = 0;
         currentPart = null;

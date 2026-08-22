@@ -6,6 +6,8 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -22,13 +24,17 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
@@ -85,7 +91,7 @@ public final class PickerExportService {
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
     public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
-                                   @Nullable CompoundTag configNbt) {
+                                   String age, @Nullable CompoundTag configNbt) {
         int now = server.getTickCount();
         Integer lastAttempt = LAST_ATTEMPT_TICK.get(playerId);
         if (lastAttempt != null && now - lastAttempt < ATTEMPT_COOLDOWN_TICKS) {
@@ -107,6 +113,9 @@ public final class PickerExportService {
         }
         if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
+        }
+        if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
+            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
         }
         EyeConfigLimits.WireValidation wireValidation = EyeConfigLimits.validateWireRuntimeConfig(configNbt);
         if (wireValidation.error() != null) {
@@ -137,15 +146,34 @@ public final class PickerExportService {
         String versionDeclaration = typeId.getNamespace().equals("minecraft")
                 ? version.get()
                 : VersionRangeMatcher.rangeFor(version.get());
-        ConfigFile file = ConfigFile.single(versionDeclaration, AGE_ANY, pruned);
+
+        Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
+        Path target = packDir.resolve("data").resolve(typeId.getNamespace())
+                .resolve("eyes").resolve(typeId.getPath() + ".json");
+
+        // Seed from the currently resolved config (whichever pack currently wins data/<ns>/eyes/<path>.json
+        // — shipped or a prior picker export alike), not from this file on disk: Minecraft resolves that
+        // JSON path to a single winning pack, so writing this file at all fully shadows whatever the
+        // previously-winning pack declared for it. Carrying the other ages forward under the current
+        // version declaration is what stops a baby export from silently erasing an already-loaded adult
+        // or age-independent entry. The original per-entry version ranges aren't recoverable this way
+        // (same tradeoff PickerExporter#exportAll's dump already accepts for the same reason).
+        List<VersionedEntry> entries = new ArrayList<>();
+        RuntimeConfigSet current = ServerEyeConfigs.all().get(typeId);
+        if (current != null) {
+            preserveOtherAge(entries, AGE_ADULT, current.adult, versionDeclaration, age);
+            preserveOtherAge(entries, AGE_BABY, current.baby, versionDeclaration, age);
+            preserveOtherAge(entries, AGE_ANY, current.any, versionDeclaration, age);
+        }
+        entries.add(VersionedEntry.of(versionDeclaration, age, pruned));
+        ConfigFile file = new ConfigFile();
+        file.entries = entries;
+
         JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
         if (json == null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_encode_failed");
         }
 
-        Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
-        Path target = packDir.resolve("data").resolve(typeId.getNamespace())
-                .resolve("eyes").resolve(typeId.getPath() + ".json");
         try {
             Files.createDirectories(target.getParent());
             Path meta = packDir.resolve("pack.mcmeta");
@@ -161,6 +189,15 @@ public final class PickerExportService {
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload");
         return Component.translatable("somegoogly.command.picker.export_success", typeId, PACK_NAME);
+    }
+
+    /** Carry a currently-resolved age bucket forward as a {@link VersionedEntry}, unless it's the age being written now or has nothing usable. */
+    private static void preserveOtherAge(List<VersionedEntry> entries, String bucketAge,
+                                         @Nullable RuntimeConfig bucketConfig, String versionDeclaration, String writtenAge) {
+        if (bucketAge.equals(writtenAge) || !RuntimeConfig.isUsable(bucketConfig)) {
+            return;
+        }
+        entries.add(VersionedEntry.of(versionDeclaration, bucketAge, bucketConfig));
     }
 
     /**

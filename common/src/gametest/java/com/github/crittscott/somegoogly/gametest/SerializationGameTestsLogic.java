@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+
 /**
  * Serialization contracts: the flat-JSON eye codecs round-trip by value (the records implement
  * {@code equals}), and the three server→client packets survive a wire round-trip. Packets carry no
@@ -226,11 +228,11 @@ public final class SerializationGameTestsLogic {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
         helper.assertTrue(roundTrips(
-                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), config),
+                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), AGE_ADULT, config),
                         PickerExportPacket::encode, PickerExportPacket::decode),
                 "PickerExportPacket with a config should survive a wire round-trip");
         helper.assertTrue(roundTrips(
-                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), null),
+                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), AGE_ADULT, null),
                         PickerExportPacket::encode, PickerExportPacket::decode),
                 "PickerExportPacket's null-config form should survive a wire round-trip");
         helper.succeed();

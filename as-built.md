@@ -129,7 +129,7 @@ model, with tint index 2 derived from its appearance payload.
 ## Networking
 
 `NetworkHandler` uses Architectury `NetworkManager`. Gameplay payload ids contain protocol version
-`8`; stable hello and acknowledgment ids negotiate compatibility during login. A mismatch or timeout
+`9`; stable hello and acknowledgment ids negotiate compatibility during login. A mismatch or timeout
 disconnects the client before resolved eye definitions are sent.
 
 Server-to-client payloads carry eye state, resolved definitions, and behavior triggers. Client-to-

@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
-
 /**
  * Turns picker drafts into datapack JSON. Every config field is a required codec field, so
  * {@code ConfigFile.CODEC}'s own encode already produces the canonical, every-field-explicit form the
@@ -74,7 +72,7 @@ public final class PickerExporter {
         if (!(encoded instanceof CompoundTag tag)) {
             return Component.translatable("somegoogly.command.picker.export_encode_failed");
         }
-        NetworkHandler.sendToServer(new PickerExportPacket(type, tag));
+        NetworkHandler.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
         return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
 
@@ -92,7 +90,7 @@ public final class PickerExporter {
      */
     public static Component exportAll() {
         Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
-        Map<ResourceLocation, RuntimeConfig> drafts = PickerState.authoredConfigs();
+        Map<ResourceLocation, PickerState.AuthoredExport> drafts = PickerState.authoredConfigs();
         if (synced.isEmpty() && drafts.isEmpty()) {
             return Component.translatable("somegoogly.command.picker.export_all_none_loaded");
         }
@@ -114,12 +112,12 @@ public final class PickerExporter {
                     continue; // namespace's mod isn't loaded; can't tag a version
                 }
                 String range = VersionRangeMatcher.rangeFor(version.get());
-                RuntimeConfig draft = drafts.get(id);
+                PickerState.AuthoredExport draft = drafts.get(id);
                 ConfigFile file;
                 if (draft != null) {
                     // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
-                    RuntimeConfig pruned = RuntimeConfig.pruned(draft, UnaryOperator.identity());
-                    file = pruned == null ? null : ConfigFile.single(range, AGE_ANY, pruned);
+                    RuntimeConfig pruned = RuntimeConfig.pruned(draft.config(), UnaryOperator.identity());
+                    file = pruned == null ? null : ConfigFile.single(range, draft.age(), pruned);
                 } else {
                     // Canonicalize each token against the model so the dump speaks its discovered
                     // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model

@@ -29,14 +29,17 @@ public class PickerExportPacket {
     @Nullable
     private final CompoundTag configNbt;
     private final ResourceLocation typeId;
+    private final String age;
 
-    public PickerExportPacket(ResourceLocation typeId, @Nullable CompoundTag configNbt) {
+    public PickerExportPacket(ResourceLocation typeId, String age, @Nullable CompoundTag configNbt) {
         this.typeId = typeId;
+        this.age = age;
         this.configNbt = configNbt;
     }
 
     public static PickerExportPacket decode(FriendlyByteBuf buffer) {
         ResourceLocation typeId = buffer.readResourceLocation();
+        String age = buffer.readUtf(16);
         CompoundTag configNbt;
         try {
             configNbt = buffer.readNbt(new NbtAccounter(PickerExportService.MAX_CONFIG_BYTES));
@@ -46,11 +49,12 @@ public class PickerExportPacket {
             buffer.readerIndex(buffer.writerIndex());
             configNbt = null;
         }
-        return new PickerExportPacket(typeId, configNbt);
+        return new PickerExportPacket(typeId, age, configNbt);
     }
 
     public static void encode(PickerExportPacket packet, FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(packet.typeId);
+        buffer.writeUtf(packet.age, 16);
         buffer.writeNbt(packet.configNbt);
     }
 
@@ -62,7 +66,7 @@ public class PickerExportPacket {
             }
             UUID playerId = sender.getUUID();
             Component result = PickerExportService.export(
-                    sender.serverLevel().getServer(), playerId, packet.typeId, packet.configNbt);
+                    sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
             sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
         });
     }
