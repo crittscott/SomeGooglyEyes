@@ -7,30 +7,28 @@
   "authors": [
     "${mod_authors}"
   ],
-  "contact": {
-    "issues": "https://github.com/crittscott/SomeBuckets/issues/"
-  },
   "license": "${mod_license}",
-  "icon": "somebuckets-logo-1.png",
   "environment": "*",
+  "accessWidener": "somegoogly.accesswidener",
+  "mixins": [
+    "somegoogly.mixins.json"
+  ],
   "entrypoints": {
     "main": [
-      "com.github.crittscott.somebuckets.SomeBucketsFabric"
+      "com.github.crittscott.somegoogly.fabric.SomeGooglyFabric"
     ],
     "client": [
-      "com.github.crittscott.somebuckets.client.SomeBucketsFabricClient"
+      "com.github.crittscott.somegoogly.client.fabric.SomeGooglyFabricClient"
     ]
   },
-  "mixins": [
-    "somebuckets.fabric.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
-    "minecraft": "~${minecraft_version}",
+    "minecraft": "=${minecraft_version}",
     "java": ">=17",
-    "fabric-api": "*"
+    "fabric-api": ">=${fabric_api_version}",
+    "architectury": ">=${architectury_api_version}"
   },
   "suggests": {
-    "ftbchunks": "*"
+    "geckolib": "*"
   }
 }

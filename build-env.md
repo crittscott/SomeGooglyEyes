@@ -1,202 +1,188 @@
 # Some Googly Eyes Build Environment
 
-This document describes the active Architectury Loom build. For runtime ownership and invariants, see
-`as-built.md`; for the current verification state and phased continuation plan, see
-`fabric-port-verification-handoff.md`.
+This document records the working Architectury Loom build environment. It describes the final build
+layout and the compatible tool versions in use. Runtime architecture is covered by `as-built.md`.
 
-## Status
+## Version set
 
-The active Gradle project is a three-module Forge/Fabric build:
+These versions come from the active wrapper, Gradle scripts, properties, and loader metadata.
 
-```text
-common/   loader-neutral source, resources, and shared GameTest logic
-forge/    Forge entry point, adapters, metadata, AT, and GameTest wrappers
-fabric/   Fabric entry points, adapters, metadata/Mixins, and GameTest wrappers
-```
-
-The legacy root `src/` tree remains in the repository but is not a source set of any included Gradle
-project. It is an inactive reference and must not receive live changes.
-
-The current port is complete at source level. The user confirmed successful Forge and Fabric builds
-for checkpoint commit `4039ada` on 2026-08-20. GameTests and systematic runtime parity checks remain;
-see `fabric-port-verification-handoff.md`.
-
-## Toolchain and pinned versions
-
-| Component | Version / constraint |
+| Component | Active version or constraint |
 | --- | --- |
-| Java | 17 |
+| Gradle wrapper | 9.5.1 |
+| Java compilation and development runs | Java 17 |
+| Current command-line JDK | Eclipse Temurin 17.0.15+6 |
+| IntelliJ Gradle JVM | JDK 21 |
+| IntelliJ project language level | Java 17 |
 | Minecraft | exactly 1.20.1 |
 | Architectury Loom | 1.17.491 |
-| Architectury plugin | 3.5.169 |
+| Architectury Gradle plugin | 3.5.169 |
 | Architectury API | 9.2.14; runtime minimum 9.2.14 |
-| Forge | 1.20.1-47.4.10; runtime range `[47.4.10,48)` |
-| FML | `[47,48)` |
-| Fabric Loader | 0.19.3 minimum |
-| Fabric API | 0.92.11+1.20.1 minimum |
-| Mappings | Mojang official plus Parchment 2023.09.03 for 1.20.1 |
+| Forge compile dependency | 1.20.1-47.4.10 |
+| Forge runtime range | `[47.4.10,48)` |
+| FML runtime range | `[47,48)` |
+| Fabric Loader | 0.19.3; runtime minimum 0.19.3 |
+| Fabric API | 0.92.11+1.20.1; runtime minimum the same version |
+| Mappings | Mojang official plus Parchment 2023.09.03 for Minecraft 1.20.1 |
 | Shadow plugin | 9.4.3 |
-| GeckoLib | 4.7.4, optional runtime / compile-only |
+| GeckoLib | 4.7.4, compile-only and optional at runtime |
 | JSR-305 | 3.0.2, compile-only |
-| JUnit | 5.10.2 dependencies present; no JUnit suite |
+| JUnit BOM | 5.10.2 |
+| Mod version | 0.8.1 |
 
-Minecraft is deliberately exact on both loaders. The client renderer, Access Transformer/Access
-Widener, and Mixins name Minecraft internals that are not stable across 1.20.x.
+The Gradle runtime JVM and compilation toolchain are separate. IntelliJ runs Gradle with JDK 21, but
+every subproject requests a Java 17 toolchain, sets source and target compatibility to 17, and compiles
+with `--release 17`. Command-line Gradle can run under the current Java 17 installation.
 
-## Root build
+Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
+Mixins refer to 1.20.1 internals. Forge compilation is pinned to the minimum Forge version accepted at
+runtime. Fabric compilation likewise uses the declared minimum Loader and API versions.
 
-`settings.gradle` includes only `common`, `forge`, and `fabric`. Its plugin repository order is a known
-environment constraint and should remain:
+## Project layout
+
+The Gradle project includes exactly three modules:
+
+```text
+common/   shared production code, resources, and GameTest assertion logic
+forge/    Forge adapters, metadata, access transformation, and GameTest wrappers
+fabric/   Fabric adapters, metadata, Mixins, and GameTest wrappers
+```
+
+The root `src/` tree is not part of any active source set.
+
+`settings.gradle` names the root project `somegoogly` and includes `common`, `forge`, and `fabric`.
+Plugin resolution uses this repository order:
 
 1. Fabric Maven
 2. Architectury Maven
 3. Forge Maven
 4. Gradle Plugin Portal
 
-A previous attempt to add Foojay toolchain resolution and reorder these repositories caused Loom's
-configuration to fail inside its bundled Gson path. Do not reintroduce either change without a clean
-three-module sync test.
-
-The root build applies Loom, Architectury, Maven Publish, Mojang mappings, Parchment, and the Java 17
-toolchain to every subproject. `org.gradle.jvmargs=-Xmx3G`; the daemon is disabled.
+The root build applies Loom, the Architectury plugin, Maven Publish, layered Mojang/Parchment mappings,
+and the Java 17 toolchain to every module. Gradle receives a 3 GiB maximum heap and does not use the
+daemon.
 
 ## Common module
 
-`common/src/main/java` compiles without Forge, Fabric API, GeckoLib, or Forge-only patched members. It
-owns shared client rendering and picker code as well as gameplay code. Its canonical access widener
-exposes the vanilla members that shared render code needs; Fabric applies that file directly and Forge
-supplies equivalent access through patches or its Access Transformer. Common otherwise depends on Fabric Loader only for portable
-environment annotations, Architectury API, and JSR-305.
+The common module declares both target platforms through Architectury and uses
+`common/src/main/resources/somegoogly.accesswidener` while compiling shared Minecraft code. Its
+dependencies are:
 
-`common/src/gametest/java` contains plain assertion logic. It is compiled as part of each loader's
-custom `gametest` source set, not as common production code.
+- Fabric Loader 0.19.3 for portable environment annotations;
+- Architectury API 9.2.14 as a mod compile-only dependency;
+- JSR-305 3.0.2 as a compile-only dependency;
+- JUnit Jupiter through BOM 5.10.2 for its conventional test source set.
 
-Common remains a transformed development dependency rather than a second source set of each loader
-mod. Fabric resource processing copies the canonical common access widener beside `fabric.mod.json`,
-because Fabric Loader resolves that declaration within the metadata-owning mod container. The common
-JAR omits its redundant copy; Forge supplies runtime access through patches and its AT.
+The production common JAR excludes the Access Widener. Fabric copies the canonical file into its mod
+JAR beside `fabric.mod.json`; Forge supplies equivalent access through Forge patches and
+`META-INF/accesstransformer.cfg`.
 
-## Loader packaging
+Common resource processing expands `mod_id` in `pack.mcmeta`. Shared assets, recipes, language,
+datapack eye definitions, and the GameTest structure fixture are production resources.
 
-Each loader declares two relationships to common:
+## Loader modules and packaging
 
-- `common(project(... namedElements))` places common output on the compile classpath;
-- `shadowBundle project(... transformProduction<Loader>)` bundles the transformed common production
-  output into the release artifact.
+Both loader modules apply Shadow and use Architectury's platform-specific Loom setup. Each has:
 
-The compile and runtime classpaths plus `developmentForge`/`developmentFabric` extend from `common`.
-This lets Architectury transform common's `@ExpectPlatform` calls in development. Loader source
-packages are disjoint from common packages, avoiding split packages in Forge's Java module layer.
+- a resolvable, non-consumable `common` configuration for common development output;
+- compile and runtime classpaths extended from `common`;
+- its Architectury development configuration extended from `common`;
+- a `shadowBundle` containing the transformed common production artifact;
+- a remapped release JAR built from the shadowed loader and common output.
 
-## Forge module
+This arrangement allows Architectury to transform common `@ExpectPlatform` calls in development and
+in packaged artifacts. Common and loader packages remain disjoint for Forge's module layer.
 
-Forge retains loader-specific pieces only:
+### Forge
 
-- `@Mod` entry point and FML/MinecraftForge event adapters;
-- `ForgeConfigSpec` storage adapters;
-- `@ExpectPlatform` implementations;
-- Forge entity-tracking packet distribution;
-- Forge optional-mod checks and item renderer attachment;
-- `META-INF/accesstransformer.cfg`;
-- Forge metadata and GameTest dev-mod wrappers.
+Forge depends on `net.minecraftforge:forge:1.20.1-47.4.10` and
+`architectury-forge:9.2.14`. GeckoLib's Forge 1.20.1 artifact at 4.7.4 is compile-only. Runtime
+metadata requires the configured Minecraft, Forge, FML, and Architectury ranges.
 
-Architectury API is a mandatory Forge runtime dependency in `mods.toml`. GeckoLib is `compileOnly` and
-remains a soft runtime dependency.
+`forge/gradle.properties` sets `loom.platform=forge`. Main resource processing expands
+`META-INF/mods.toml`; GameTest resource processing independently expands the development mod's
+metadata.
 
-The Forge `gametest` source set includes common test logic, Forge wrappers, main output, and main
-runtime dependencies. Loom exposes it as `somegoogly_gametest`, whose stub `@Mod` and `mods.toml` make
-Forge scan the wrapper classes.
+### Fabric
 
-## Fabric module
+Fabric depends on Fabric Loader 0.19.3, Fabric API 0.92.11+1.20.1, and
+`architectury-fabric:9.2.14`. GeckoLib's Fabric 1.20.1 artifact at 4.7.4 is mod compile-only. JSR-305
+is redeclared because common compile-only dependencies do not propagate to loader compilation.
 
-Fabric contains the main and client entry points, API callback adapters, config storage, platform
-implementations, and four Mixins. Its metadata declares:
+Main resource processing expands `fabric.mod.json` and copies the common Access Widener into the
+Fabric resources. Metadata declares exact Minecraft 1.20.1, the minimum Loader/API versions, the
+Access Widener, `somegoogly.mixins.json`, and GeckoLib as a suggestion.
 
-- exact Minecraft 1.20.1;
-- minimum Loader, Fabric API, and Architectury API versions;
-- `somegoogly.accesswidener`;
-- `somegoogly.mixins.json`;
-- GeckoLib as a suggestion, not a dependency.
+## GameTest source sets
 
-Fabric redeclares JSR-305 because compile-only dependencies from common do not propagate to a loader's
-compilation. It uses:
+Each loader defines a `gametest` source set containing common assertion logic and loader-specific
+wrappers. Its classpaths include the corresponding main source-set output and dependencies. There are
+77 shared public assertion methods and 78 wrapper test methods per loader; the additional wrapper test
+exercises loader-integrated behavior.
 
-```groovy
-modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.20.1:4.7.4"
+Forge exposes the source set as the `somegoogly_gametest` development mod and defines a
+`gameTestServer` Forge run. Fabric supplies its own development-mod metadata, lists all wrapper entry
+points, enables `fabric-api.gametest`, and defines its Fabric `gameTestServer` run.
+
+## Access configuration
+
+`common/src/main/resources/somegoogly.accesswidener` is the canonical access declaration for shared
+code. `forge/src/main/resources/META-INF/accesstransformer.cfg` supplies the Forge access not already
+provided by Forge patches. Together they cover the vanilla model parts, renderer collections and
+layers, age-dependent model transforms, and render factory used by shared rendering.
+
+The Access Widener uses named Mojang/Parchment members. The Forge Access Transformer uses the SRG
+member names expected by the Forge toolchain. The two files represent equivalent effective access,
+not identical textual declarations.
+
+## Wrapper files
+
+The project uses the checked-in Gradle wrapper:
+
+```text
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
 ```
 
-from GeckoLib's Cloudsmith Maven repository. The corresponding Forge artifact is
-`geckolib-forge-1.20.1:4.7.4`.
+`gradle-wrapper.properties` downloads `gradle-9.5.1-bin.zip`, validates its URL, uses a 10-second
+network timeout, and stores distributions beneath `GRADLE_USER_HOME/wrapper/dists`.
 
-The Fabric `gametest` source set includes common test logic, Fabric wrappers, and main output. Loom's
-GameTest server passes `-Dfabric-api.gametest`. The dev mod lists every wrapper explicitly under the
-`fabric-gametest` entrypoint; adding a wrapper class without adding it to that list silently omits it.
+The checked-in wrapper file fingerprints are:
 
-## Access Transformer and Access Widener
+| File | SHA-256 |
+| --- | --- |
+| `gradlew` | `D8231D345AB33433AB7B2C0720D5BEB416C8D5C6789DBC01AD122B63BC2CAE0D` |
+| `gradlew.bat` | `BDECF875B6868CBCBD36A1F85EEDF0832F358FF28092C5797ED645F7EDCE77D9` |
+| `gradle-wrapper.jar` | `CB0DA6751C2B753A16AC168BB354870EBB1E162E9083F116729CEC9C781156B8` |
 
-Common's `somegoogly.accesswidener` declares every non-public vanilla member used by common code.
-Forge's patches or `META-INF/accesstransformer.cfg` must supply equivalent access. These expose:
+## `working-build-env` snapshot
 
-- `ModelPart.children`;
-- `EntityRenderDispatcher.renderers` and `playerRenderers` on Fabric;
-- `AgeableListModel.headParts()` and `bodyParts()`;
-- `AgeableListModel` baby scale/offset fields;
-- `AgeableHierarchicalModel` baby fields;
-- `LivingEntityRenderer.layers`;
-- `LivingEntityRenderer.addLayer` on Fabric;
-- the full `RenderType.create` factory on common and Fabric;
-- Rabbit and Llama top-level model-part fields.
+`working-build-env/` is an exact-path snapshot of every checked-in file that configures, launches, or
+supplies metadata and access rules to the active build:
 
-Shared users belong under `common/src/main/java`. Adding a widened member requires updating the common
-AW and adding a Forge AT entry only when Forge does not already expose it.
-
-## Resource processing
-
-Common expands the mod id in `pack.mcmeta`. Each loader expands its own metadata placeholders. Each
-GameTest source set separately expands its dev-mod metadata.
-
-The production resources used by both loaders live under `common/src/main/resources`, including the
-eye definitions, assets, recipes, language, and `data/somegoogly/structures/empty.nbt`. There is no
-generated Base64 fixture in the active setup.
-
-## Run configurations
-
-Loom owns separate Forge and Fabric run directories and launch configurations. The old root `run/`
-directory and pre-Loom IntelliJ configurations are legacy state, not inputs to the current runs.
-
-Both loader build files define a `gameTestServer` run. A GameTest process which discovers zero tests is
-not a pass; confirm 69 executions and success on each loader.
-
-## Verification commands
-
-From PowerShell at the repository root, when separately authorized:
-
-```powershell
-.\gradlew :common:compileJava
-.\gradlew :forge:compileJava :fabric:compileJava
-.\gradlew :forge:build :fabric:build
-.\gradlew :forge:runGameTestServer
-.\gradlew :fabric:runGameTestServer
+```text
+build.gradle
+settings.gradle
+gradle.properties
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+common/build.gradle
+common/src/main/resources/pack.mcmeta
+common/src/main/resources/somegoogly.accesswidener
+forge/build.gradle
+forge/gradle.properties
+forge/src/main/resources/META-INF/mods.toml
+forge/src/main/resources/META-INF/accesstransformer.cfg
+forge/src/gametest/resources/META-INF/mods.toml
+fabric/build.gradle
+fabric/src/main/resources/fabric.mod.json
+fabric/src/main/resources/somegoogly.mixins.json
+fabric/src/gametest/resources/fabric.mod.json
 ```
 
-The repository's `CLAUDE.md` currently forbids the agent from running these commands unless the user
-explicitly requests a build/test pass. It also forbids decompiling, unarchiving dependencies, and
-inspecting Gradle caches as a substitute.
-
-There is no meaningful `:common:test` suite at present. Shared behavior is covered through 69 common
-GameTest logic methods, each exposed by a thin wrapper on both loaders.
-
-## Environment traps
-
-- Do not edit the inactive root `src/` tree expecting a loader build to see the change.
-- Keep GeckoLib types out of common; loader implementations own those optional API references.
-- Keep loader source packages disjoint from common packages.
-- Do not assume common compile-only dependencies propagate to loader compilation.
-- Keep the standard Architectury common runtime and development configurations intact so platform
-  substitutions run in development.
-- Do not omit a Fabric GameTest wrapper from `fabric/src/gametest/resources/fabric.mod.json`.
-- Do not add an empty version range to the Forge GameTest dev-mod dependency table; Forge interprets it
-  as unsatisfiable.
-- Do not copy metadata from `working-build-env/`; it is an inactive template with unrelated branding.
-- Do not treat a successful Gradle configuration or artifact remap as runtime parity. Verify both
-  dedicated servers, both GameTest runs, client rendering, persistence, networking, and picker flows.
+Files in this snapshot are copies, not build inputs. The active files at the repository root and
+under the three modules remain authoritative.

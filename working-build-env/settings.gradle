@@ -7,7 +7,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'somestacks'
+rootProject.name = 'somegoogly'
 include 'common'
 include 'forge'
 include 'fabric'
