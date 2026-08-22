@@ -23,6 +23,7 @@ public final class PickerHud {
     // through. ARGB: raise the leading alpha byte (0xA0) toward 0xFF for a more opaque panel.
     private static final int BACKDROP = 0xA0101010;
     private static final int GRAY = 0xFFB0B0B0;
+    private static final int GREEN = 0xFF55FF55;
     private static final int LINE_HEIGHT = 10;
     private static final int PADDING = 4;
     private static final int RIGHT_MARGIN = 6;
@@ -36,20 +37,25 @@ public final class PickerHud {
     private record Line(String text, int color) {
     }
 
+    /** One rendered line as a sequence of differently-colored segments (e.g. a green label, a white value). */
+    private static List<Line> row(Line... segments) {
+        return List.of(segments);
+    }
+
     /**
-     * Add an eye as two lines: identity/part/position, then orientation/scales/flags (indented).
-     * Glow is shown as {@code +G}/{@code -G} (set/unset) to keep the line short; cornea/iris colors
-     * follow as {@code c#RRGGBB i#RRGGBB}.
+     * Add an eye as two rows: identity/part/position, then orientation/scales/flags (indented). Each
+     * row is a single-segment row. Glow is shown as {@code +G}/{@code -G} (set/unset) to keep the row
+     * short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
      */
-    private static void appendEye(List<Line> out, String label, String part, EyeDraft e, int colorA, int colorB) {
-        out.add(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
-                String.format("%.2f", e.position[0]), String.format("%.2f", e.position[1]), String.format("%.2f", e.position[2])), colorA));
+    private static void appendEye(List<List<Line>> out, String label, String part, EyeDraft e, int colorA, int colorB) {
+        out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
+                String.format("%.2f", e.position[0]), String.format("%.2f", e.position[1]), String.format("%.2f", e.position[2])), colorA)));
         String cross = e.crossTarget >= 0 ? "  X→" + (e.crossTarget + 1) : "";
-        out.add(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
+        out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
                 String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth),
                 String.format("%.2f", e.eyeScale), String.format("%.2f", e.irisScale), String.format("%.2f", e.depth),
                 e.glows ? "+" : "-",
-                hex(e.corneaColors), hex(e.irisColors), cross), colorB));
+                hex(e.corneaColors), hex(e.irisColors), cross), colorB)));
     }
 
     /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded). */
@@ -57,28 +63,37 @@ public final class PickerHud {
         return String.format("#%06X", EyeColor.of(rgb).toRgb24());
     }
 
-    private static List<Line> lines() {
-        List<Line> out = new ArrayList<>();
-        out.add(new Line(I18n.get("somegoogly.picker.hud.title"), YELLOW));
+    private static List<List<Line>> lines() {
+        List<List<Line>> out = new ArrayList<>();
 
         if (PickerState.target() == null) {
-            out.add(new Line(I18n.get("somegoogly.picker.hud.no_target"), GRAY));
+            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target"), GRAY)));
             return out;
         }
 
-        out.add(new Line(I18n.get("somegoogly.picker.hud.target", PickerState.targetType()), WHITE));
+        String ageKey = PickerState.target().isBaby()
+                ? "somegoogly.picker.hud.age_baby" : "somegoogly.picker.hud.age_adult";
+        out.add(row(
+                new Line(I18n.get("somegoogly.picker.hud.target_label"), GREEN),
+                new Line(" " + PickerState.targetType() + "  ", WHITE),
+                new Line(I18n.get("somegoogly.picker.hud.variant_label"), GREEN),
+                new Line(" " + I18n.get("somegoogly.picker.hud.variant_value", PickerState.variantIndex() + 1,
+                        PickerState.variantCount(), String.format("%.2f", PickerState.currentVariant().weight)) + "  ", WHITE),
+                new Line(I18n.get("somegoogly.picker.hud.age_label"), GREEN),
+                new Line(" " + I18n.get(ageKey), WHITE)));
 
         String token = partOrNone(PickerState.currentPart());
         int n = PickerState.parts().size();
         int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex(), n) + 1);
-        out.add(new Line(I18n.get("somegoogly.picker.hud.part", token, i, n), WHITE));
+        out.add(row(
+                new Line(I18n.get("somegoogly.picker.hud.part_label"), GREEN),
+                new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n), WHITE)));
 
-        out.add(new Line(I18n.get("somegoogly.picker.hud.variant", PickerState.variantIndex() + 1,
-                PickerState.variantCount(), String.format("%.2f", PickerState.currentVariant().weight)), WHITE));
+        out.add(row(
+                new Line(I18n.get("somegoogly.picker.hud.eyes_header_label"), GREEN),
+                new Line(" " + I18n.get("somegoogly.picker.hud.eyes_header_value", PickerState.currentEyeCount()), WHITE)));
 
-        out.add(new Line(I18n.get("somegoogly.picker.hud.eyes_header", PickerState.currentEyeCount()), WHITE));
-
-        // One block per saved eye in the current variant (two lines). The eye being edited via /sg
+        // One block per saved eye in the current variant (two rows). The eye being edited via /sg
         // (selectedIndex) is drawn live from currentEye and highlighted; if nothing is selected, the
         // in-progress currentEye is appended as a trailing "new (unsaved)" block — what /sg save commits.
         java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
@@ -107,11 +122,15 @@ public final class PickerHud {
             return;
         }
         Font font = Minecraft.getInstance().font;
-        List<Line> lines = lines();
+        List<List<Line>> rows = lines();
 
         int widest = 0;
-        for (Line line : lines) {
-            widest = Math.max(widest, font.width(line.text));
+        for (List<Line> row : rows) {
+            int w = 0;
+            for (Line segment : row) {
+                w += font.width(segment.text);
+            }
+            widest = Math.max(widest, w);
         }
 
         // Anchor the panel against the right edge and grow downward from the top.
@@ -121,12 +140,16 @@ public final class PickerHud {
                 left - PADDING,
                 TOP_MARGIN - PADDING,
                 right + PADDING,
-                TOP_MARGIN + lines.size() * LINE_HEIGHT + PADDING,
+                TOP_MARGIN + rows.size() * LINE_HEIGHT + PADDING,
                 BACKDROP);
 
         int y = TOP_MARGIN;
-        for (Line line : lines) {
-            graphics.drawString(font, line.text, left, y, line.color);
+        for (List<Line> row : rows) {
+            int x = left;
+            for (Line segment : row) {
+                graphics.drawString(font, segment.text, x, y, segment.color);
+                x += font.width(segment.text);
+            }
             y += LINE_HEIGHT;
         }
     }
