@@ -40,7 +40,13 @@ public final class ForgeServerConfig {
                 .defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
                         ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT,
                         ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        ENTITY_OVERRIDES = BUILDER.comment("Per-entity chances as 'entity-pattern,percent'")
+        ENTITY_OVERRIDES = BUILDER.comment(
+                        "Per-entity eye chances, one entry per line as \"entity-pattern,percent\" (percent 0-100).",
+                        "'*' wildcards the entity id, e.g. \"minecraft:zombie,100\", \"*:*_horse,50\", \"alexsmobs:*,0\".",
+                        "An exact id always wins over a wildcard; among wildcards, the first matching line wins.",
+                        "Entities matching nothing here use globalPercent. A percent of 0 stops NEW spawns of that",
+                        "entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can",
+                        "still give the entity eyes by hand with a Slimy Eye.")
                 .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String text && ServerConfig.validateOverride(text));
         BUILDER.pop();

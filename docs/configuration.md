@@ -29,6 +29,11 @@ Resolution order: an exact (wildcard-free) id always wins; otherwise the **first
 
 A mob's eyes-or-not decision is made **once, at first spawn**, and stored on the mob for life. Changing these settings affects newly spawned mobs only — existing mobs never reroll.
 
+A percent of `0` is how you turn eyes off for a specific entity or, with a wildcard, an entire mod's
+namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling eyes — it doesn't strip
+eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with
+a Slimy Eye.
+
 ### Behavior settings
 
 | Key | Default | Meaning |
