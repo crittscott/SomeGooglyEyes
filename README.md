@@ -57,10 +57,13 @@ Ships with predefined eye configs for:
 - Ars Nouveau
 - Autumnity
 - Exotic Birds
+- Farming for Blockheads
 - Hamsters
 - Ice and Fire
 - Immersive Engineering
+- Mowzie's Mobs
 - Simply Cats
+- Sushi Go Crafting
 - Twilight Forest
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).

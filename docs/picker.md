@@ -14,7 +14,7 @@ Rebindable in Options → Controls:
 | `V` | Choose/release the mob under your crosshair |
 | `[` / `]` | Cycle through the mob's model parts |
 
-While the picker is on, every eye-configured mob shows its eyes (ignoring the spawn roll) so you can see existing placements, and the chosen mob is frozen in place (AI off) while you edit it. A HUD panel in the top-right shows the chosen mob, selected variant, selected part, and saved eyes; a 3-axis gizmo marks the selected part's origin and orientation.
+While the picker is on, every eye-configured mob shows its eyes (ignoring the spawn roll) so you can see existing placements, and the chosen mob is frozen in place (AI off) while you edit it. A HUD panel in the top-right shows the chosen mob, selected variant, its age (adult/baby), selected part, and saved eyes; a 3-axis gizmo marks the selected part's origin and orientation.
 
 ## Workflow
 
@@ -35,7 +35,7 @@ Everything beyond part navigation is done through the `/sg` chat commands:
 5. **Save it**: `/sg save` commits the draft to the eye list. Re-edit later with `/sg select <n>`, duplicate with `/sg dupe <n>` (copies eye *n* into a new unsaved draft — move it, then save), remove with `/sg delete <n>`, review with `/sg list eyes`.
 6. **Variants** (optional alternative arrangements, weighted at spawn): `/sg variant new`, `/sg variant <n>` to switch, `/sg variant weight <w>`, `/sg variant del <n>`, `/sg list variants`.
 7. **Export**:
-   - `/sg export` sends the chosen mob's config to the server, which writes it into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world. Rate-limited to one export per 10 seconds (each one is a full datapack reload).
+   - `/sg export` sends the chosen mob's config to the server, which writes it into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world. The written entry is tagged with whichever age the mob shows in the HUD (adult or baby) — it replaces only that age's entry for the mob, so an already-configured other age (or an `any` entry) is carried forward unchanged rather than overwritten. Rate-limited to one export per 10 seconds (each one is a full datapack reload).
    - `/sg exportall` dumps *every* known config — the loaded ones plus your session's drafts — to `<game dir>/somegoogly-export/`, ready to copy into a mod or datapack.
 
 **If you switch away from an edited eye before saving, your changes will be lost.**
