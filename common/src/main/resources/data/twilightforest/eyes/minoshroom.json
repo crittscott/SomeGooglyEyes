@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "1.20.1",
+      "version": "[4.3.2508,4.4)",
       "age": "any",
       "enabled": true,
       "variants": [
@@ -15,11 +15,11 @@
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": 1,
+                  "crossTarget": -1,
                   "position": [
-                    -0.13,
-                    -0.25,
-                    -0.275
+                    0.17,
+                    -0.3,
+                    -0.25
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -39,11 +39,11 @@
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": 0,
+                  "crossTarget": -1,
                   "position": [
-                    0.13,
-                    -0.25,
-                    -0.275
+                    -0.17,
+                    -0.3,
+                    -0.25
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

@@ -64,7 +64,7 @@
           ]
         },
         {
-          "weight": 0.02,
+          "weight": 0.1,
           "heads": [
             {
               "attachPoint": "root/body",
