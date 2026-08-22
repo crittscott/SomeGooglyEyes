@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,6 +21,8 @@ import javax.annotation.Nullable;
  */
 public class PickerSpawnAllPacket {
 
+    private static final int MAX_NAMESPACE_LENGTH = 64;
+
     @Nullable
     private final String modFilter;
 
@@ -28,7 +31,7 @@ public class PickerSpawnAllPacket {
     }
 
     public static PickerSpawnAllPacket decode(FriendlyByteBuf buffer) {
-        String modFilter = buffer.readBoolean() ? buffer.readUtf() : null;
+        String modFilter = buffer.readBoolean() ? buffer.readUtf(MAX_NAMESPACE_LENGTH) : null;
         return new PickerSpawnAllPacket(modFilter);
     }
 
@@ -51,6 +54,10 @@ public class PickerSpawnAllPacket {
             }
             // Only the chars legal in a mod namespace; anything else is dropped (spawn(null) = all mods).
             if (packet.modFilter != null && !packet.modFilter.matches("[a-z0-9_.-]+")) {
+                return;
+            }
+            if (!PickerRequestLimiter.allowSpawnAll(sender.serverLevel().getServer())) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_cooldown"));
                 return;
             }
             PickerSpawnService.spawn(sender, packet.modFilter);

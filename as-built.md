@@ -80,7 +80,9 @@ Eye placement files are server datapack resources under `data/<namespace>/eyes/*
 `EyeConfigReloadListener` parses all candidate versions, uses `ModVersionLookup` to select the matching
 entry for each namespace, validates them, and atomically replaces `ServerEyeConfigs`. Forge and Fabric
 provide their loader-specific mod-version lookup. The server serializes the resolved runtime config set
-to clients; clients do not independently select datapack versions. All bundled Minecraft entries match
+to clients; clients do not independently select datapack versions. Shared semantic work limits bound
+entity configs, variants, heads, eyes, attachment tokens, and numeric geometry on reload, picker export,
+and client sync. All bundled Minecraft entries match
 exactly `1.20.1`; optional-mod entries may span compatible releases of those mods for Minecraft 1.20.1.
 The closed age-selector vocabulary (`adult`, `baby`, and `any`) is defined once in `HeadInfo` and used
 by codecs, reload selection, and both picker export paths.
@@ -107,16 +109,18 @@ identifiers remain ordinary strings because they are not localized UI prose.
 The eye keys are:
 
 - `somegoogly:hasGooglyEyes` — authoritative on/off state;
-- `somegoogly:variantRoll` — stable weighted placement-variant roll;
+- `somegoogly:eyeVariantRoll` — stable weighted placement-variant roll;
 - `somegoogly:eyeOverrides` — optional appearance override compound.
 
-`EyeState` setters immediately synchronize the full current state to tracking clients. First entity
+`EyeState` setters immediately synchronize the full current state to tracking clients. Compound item
+verbs batch their related state changes into one synchronization. First entity
 load initializes the on/off decision and variant roll only if the state lacks the eye key, then
 broadcasts the resulting state to any clients already tracking the entity. This accommodates Fabric's
 tracking-before-load event order while preserving the decision across saves, chunk reloads, and
 dimension changes.
 
-Eye items carry portable `AppearanceOverride` data on the stack. Harvest captures the effective
+Eye items carry portable `AppearanceOverride` data on the stack. The eye-state wire format carries this
+fixed schema directly rather than accepting arbitrary NBT. Harvest captures the effective
 appearance from head 0/eye 0 after layering config appearance and entity override. Crafting and slimy
 application preserve that payload.
 
@@ -207,12 +211,13 @@ iris tint index 2 derived from the stack appearance.
 
 ## Networking
 
-`NetworkHandler` uses Architectury `NetworkManager`. Protocol version `7` appears in every gameplay
-payload id (`somegoogly:v7/...`). Two stable ids negotiate compatibility:
+`NetworkHandler` uses Architectury `NetworkManager`. Protocol version `8` appears in every gameplay
+payload id (`somegoogly:v8/...`). Two stable ids negotiate compatibility:
 `somegoogly:protocol_hello` and `somegoogly:protocol_ack`.
 
-At join, the server sends its version and starts a 100-tick timeout. A matching client acknowledges,
-the server marks it ready, and then sends resolved eye configs. A mismatch on either side, or no
+At join, the server sends its version and starts a 100-tick timeout. A matching client acknowledges
+the one outstanding handshake, the server marks it ready, and then sends resolved eye configs. Duplicate
+or unsolicited acknowledgements are ignored. A mismatch on either side, or no
 acknowledgement, disconnects with a localized protocol message. Both endpoints use the shared
 `MAX_PROTOCOL_VERSION_LENGTH` bound when decoding the version. This network protocol—not the display
 mod version—is the compatibility contract.
@@ -239,8 +244,8 @@ are UX only.
 `PlayerLookup.tracking`. Direct player state/config sends use Architectury directly.
 
 An eye-state payload may arrive before Minecraft has created the corresponding client entity.
-`ClientNetworkHandler` retains the latest pending payload by entity id; Fabric applies it from
-`ClientEntityEvents.ENTITY_LOAD`, and disconnect clears the pending map. Combined with the server's
+`ClientNetworkHandler` retains a bounded, expiring set of the latest pending payloads by entity id;
+both loaders apply them from client entity-load events and clear them on disconnect. Combined with the server's
 post-initialization broadcast, this handles both client-creation and server-load ordering races.
 
 ## Picker and commands
@@ -250,8 +255,10 @@ entity, model part, eye draft, preview layers, lock state, and export view. The 
 mutation and file export.
 
 Freeze preserves the mob's previous `NoAI` value and releases on unlock, disconnect, load recovery, or
-server stop. Spawn-all requires both creative mode and the server `allowSpawnAll` opt-in. Export is
-rate-limited, path-constrained to the world datapack area, and writes loader-neutral JSON through the
+server stop. Client-driven picker requests are server-rate-limited and unauthorized requests are
+silently rejected. Spawn-all requires creative mode, the server `allowSpawnAll` opt-in, and a server-wide
+cooldown. Export attempts and successful reloads have separate rate limits; export remains
+path-constrained to the world datapack area and writes loader-neutral JSON through the
 shared service. The generated pack metadata uses the named `GENERATED_PACK_FORMAT` value pinned to
 Minecraft 1.20.1 and a translatable pack description.
 
@@ -282,7 +289,7 @@ needs.
 ## Automated verification
 
 Shared assertion bodies live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader has
-thin wrappers exposing 69 `@GameTest` methods. Coverage includes config parsing/selection, eligibility,
+thin wrappers exposing 73 `@GameTest` methods. Coverage includes config parsing/selection, eligibility,
 variant selection, state and appearance serialization, recipes, picker freeze/export, spawn gating,
 behavior determinism, and network protocol id invariants.
 
@@ -307,8 +314,8 @@ command tree. The broader systematic runtime matrix remains incomplete.
   adding a third-party component dependency.
 - Several Fabric parity hooks are Mixins against Minecraft 1.20.1 internals, which is why the Minecraft
   version is exact.
-- Bounded INFO diagnostics are currently enabled around Fabric initialization, command merging,
-  renderer attachment, networking, entity load/tracking, and render gating.
+- Bounded diagnostics around Fabric initialization, command merging, renderer attachment, networking,
+  entity load/tracking, and render gating are logged at DEBUG.
 - The legacy root `src/`, `working-build-env/`, old root `run/`, and old IDE launch files are references,
   not active build inputs.
 - No compatibility layer preserves pre-release data/schema versions; edit the format and bundled data

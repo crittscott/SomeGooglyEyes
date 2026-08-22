@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 /** Cross-loader packet registration, protocol negotiation, and send helpers. */
 public final class NetworkHandler {
 
-    public static final String PROTOCOL_VERSION = "7";
+    public static final String PROTOCOL_VERSION = "8";
     public static final int MAX_PROTOCOL_VERSION_LENGTH = 32;
     public static final ResourceLocation PROTOCOL_HELLO = id("protocol_hello");
     public static final ResourceLocation PROTOCOL_ACK = id("protocol_ack");
@@ -39,6 +39,10 @@ public final class NetworkHandler {
     private static final int HANDSHAKE_TIMEOUT_TICKS = 100;
     private static final Map<UUID, Integer> PENDING = new HashMap<>();
     private static final Set<UUID> READY = new HashSet<>();
+    private static final Map<UUID, Long> LAST_CONFIG_GENERATION = new HashMap<>();
+    private static long cachedConfigGeneration = -1L;
+    private static long failedConfigGeneration = -1L;
+    private static byte[] cachedConfigPayload;
     private static boolean registered;
 
     private NetworkHandler() {
@@ -70,11 +74,12 @@ public final class NetworkHandler {
     public static void beginHandshake(ServerPlayer player) {
         UUID playerId = player.getUUID();
         READY.remove(playerId);
+        LAST_CONFIG_GENERATION.remove(playerId);
         PENDING.put(playerId, HANDSHAKE_TIMEOUT_TICKS);
         FriendlyByteBuf buffer = newBuffer();
         buffer.writeUtf(PROTOCOL_VERSION);
         NetworkManager.sendToPlayer(player, PROTOCOL_HELLO, buffer);
-        SomeGooglyCommon.LOGGER.info(
+        SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sent protocol hello version={} to {}",
                 PROTOCOL_VERSION, player.getGameProfile().getName());
     }
@@ -102,6 +107,17 @@ public final class NetworkHandler {
     public static void playerLeft(ServerPlayer player) {
         PENDING.remove(player.getUUID());
         READY.remove(player.getUUID());
+        LAST_CONFIG_GENERATION.remove(player.getUUID());
+    }
+
+    /** Clear per-server state so integrated-server sessions cannot bleed into the next world. */
+    public static void serverStopped() {
+        PENDING.clear();
+        READY.clear();
+        LAST_CONFIG_GENERATION.clear();
+        cachedConfigGeneration = -1L;
+        failedConfigGeneration = -1L;
+        cachedConfigPayload = null;
     }
 
     public static boolean ready(ServerPlayer player) {
@@ -109,11 +125,28 @@ public final class NetworkHandler {
     }
 
     public static void sendConfig(ServerPlayer player) {
-        SomeGooglyCommon.LOGGER.info(
+        long generation = ServerEyeConfigs.generation();
+        if (Long.valueOf(generation).equals(LAST_CONFIG_GENERATION.get(player.getUUID()))) {
+            return;
+        }
+        byte[] payload;
+        try {
+            payload = encodedConfigPayload(generation);
+        } catch (RuntimeException error) {
+            if (failedConfigGeneration != generation) {
+                failedConfigGeneration = generation;
+                SomeGooglyCommon.LOGGER.error(
+                        "Cannot synchronize eye configs for generation {}: {}", generation, error.getMessage());
+            }
+            player.connection.disconnect(Component.translatable("somegoogly.network.config_encode_failed"));
+            return;
+        }
+        SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sending {} selected eye configs to {}",
                 ServerEyeConfigs.all().size(), player.getGameProfile().getName());
-        sendToPlayer(player, EYE_CONFIG, new EyeConfigSyncPacket(ServerEyeConfigs.all()),
-                EyeConfigSyncPacket::encode);
+        NetworkManager.sendToPlayer(player, EYE_CONFIG,
+                new FriendlyByteBuf(Unpooled.wrappedBuffer(payload)));
+        LAST_CONFIG_GENERATION.put(player.getUUID(), generation);
     }
 
     public static void sendEyeState(ServerPlayer player, EyeStatePacket packet) {
@@ -156,18 +189,42 @@ public final class NetworkHandler {
         if (!(context.getPlayer() instanceof ServerPlayer player)) {
             return;
         }
+        UUID playerId = player.getUUID();
+        if (PENDING.remove(playerId) == null) {
+            return;
+        }
         if (!PROTOCOL_VERSION.equals(version)) {
             player.connection.disconnect(protocolMismatch(
                     Component.translatable("somegoogly.network.side.server"), PROTOCOL_VERSION, version));
             return;
         }
-        UUID playerId = player.getUUID();
-        PENDING.remove(playerId);
         READY.add(playerId);
-        SomeGooglyCommon.LOGGER.info(
+        SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: accepted protocol acknowledgement from {}",
                 player.getGameProfile().getName());
         sendConfig(player);
+    }
+
+    private static synchronized byte[] encodedConfigPayload(long generation) {
+        if (cachedConfigPayload != null && cachedConfigGeneration == generation) {
+            return cachedConfigPayload;
+        }
+        if (failedConfigGeneration == generation) {
+            throw new IllegalStateException("Eye config generation previously failed to encode");
+        }
+        FriendlyByteBuf buffer = newBuffer();
+        try {
+            EyeConfigSyncPacket.encode(
+                    new EyeConfigSyncPacket(generation, ServerEyeConfigs.all()), buffer);
+            byte[] encoded = new byte[buffer.readableBytes()];
+            buffer.getBytes(buffer.readerIndex(), encoded);
+            cachedConfigGeneration = generation;
+            failedConfigGeneration = -1L;
+            cachedConfigPayload = encoded;
+            return encoded;
+        } finally {
+            buffer.release();
+        }
     }
 
     private static <T> void sendToPlayer(ServerPlayer player, ResourceLocation id, T packet,

@@ -41,8 +41,7 @@ public final class EyeItemService {
             return InteractionResult.PASS;
         }
         mob.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(mob)));
-        EyeState.setProperties(mob, AppearanceOverride.EMPTY);
-        EyeState.setHasEyes(mob, false);
+        EyeState.disableAndClearProperties(mob);
         stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
         return InteractionResult.SUCCESS;
     }

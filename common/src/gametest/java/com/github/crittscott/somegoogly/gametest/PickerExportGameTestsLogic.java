@@ -1,11 +1,14 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.HeadInfo.Variant;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -16,6 +19,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +29,7 @@ import java.util.UUID;
  * Only the <b>rejection</b> paths of the service are exercised — they return before any file is
  * written, so nothing touches the test world's datapacks and no {@code /reload} fires mid-run (the
  * success path, and with it the 10-second cooldown, is covered by manual verification against a real
- * server). Failed requests deliberately don't arm the cooldown, which is also what keeps these tests
- * independent.
+ * server). Each test uses a fresh player id so the all-attempt throttle remains independent.
  */
 public final class PickerExportGameTestsLogic {
 
@@ -103,6 +106,27 @@ public final class PickerExportGameTestsLogic {
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_no_usable_eyes")),
                 "a config with nothing to draw must be rejected, got: " + result.getString());
+        helper.succeed();
+    }
+
+    public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
+        HeadConfig head = new HeadConfig();
+        head.attachPoint = "head";
+        head.eyes = List.of(new EyeDefinition(
+                new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
+                        0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
+        Variant variant = new Variant();
+        variant.heads = List.of(head);
+        RuntimeConfig config = new RuntimeConfig();
+        config.variants = List.of(variant);
+        String error = EyeConfigLimits.validateRuntimeConfig(config);
+        Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
+
+        Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
+                new ResourceLocation("minecraft", "cow"), (CompoundTag) encoded);
+        helper.assertTrue(result.equals(Component.translatable(
+                        "somegoogly.command.picker.export_rejected_unsafe_payload", error)),
+                "non-finite exported geometry must be rejected, got: " + result.getString());
         helper.succeed();
     }
 

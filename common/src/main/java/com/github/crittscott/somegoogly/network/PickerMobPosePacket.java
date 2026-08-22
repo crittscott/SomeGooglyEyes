@@ -30,6 +30,7 @@ public class PickerMobPosePacket {
 
     /** Cap on a single move packet's offset magnitude, matching other picker reach conventions. */
     private static final double MAX_MOVE = 20.0;
+    private static final double MAX_MOVE_SQUARED = MAX_MOVE * MAX_MOVE;
 
     @Nullable
     private final Float azimuth;
@@ -84,6 +85,9 @@ public class PickerMobPosePacket {
             if (!PickerPermissions.creative(sender)) {
                 return;
             }
+            if (!packet.isValid()) {
+                return;
+            }
             if (!packet.mobId.equals(PickerFreezeService.frozenMobId(sender.getUUID()))) {
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_chosen"));
                 return;
@@ -94,7 +98,8 @@ public class PickerMobPosePacket {
                 return;
             }
             if (packet.x != null && packet.y != null && packet.z != null) {
-                if (Math.sqrt(packet.x * packet.x + packet.y * packet.y + packet.z * packet.z) > MAX_MOVE) {
+                double distanceSquared = packet.x * packet.x + packet.y * packet.y + packet.z * packet.z;
+                if (distanceSquared > MAX_MOVE_SQUARED) {
                     sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_out_of_range", MAX_MOVE));
                     return;
                 }
@@ -111,6 +116,20 @@ public class PickerMobPosePacket {
                         String.format("%.0f", packet.azimuth)));
             }
         });
+    }
+
+    /** Whether the client supplied exactly one complete, finite operation form. */
+    public boolean isValid() {
+        boolean anyMove = x != null || y != null || z != null;
+        boolean completeMove = x != null && y != null && z != null;
+        boolean rotation = azimuth != null;
+        if (anyMove != completeMove || completeMove == rotation) {
+            return false;
+        }
+        if (completeMove) {
+            return Double.isFinite(x) && Double.isFinite(y) && Double.isFinite(z);
+        }
+        return Float.isFinite(azimuth);
     }
 
     private static void writeOptionalDouble(FriendlyByteBuf buffer, @Nullable Double value) {

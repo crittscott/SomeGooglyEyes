@@ -28,6 +28,7 @@ public final class ServerEyeConfigs {
     public static final ResourceLocation ENDER_DRAGON = new ResourceLocation("minecraft", "ender_dragon");
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
+    private static volatile long generation;
 
     private ServerEyeConfigs() {
     }
@@ -57,6 +58,11 @@ public final class ServerEyeConfigs {
         return get(entity, living.isBaby());
     }
 
+    /** Monotonic identity of the currently installed config map, used by network payload caching. */
+    public static long generation() {
+        return generation;
+    }
+
     /**
      * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
      * config that is enabled and has at least one head. Used by the slimy eye ({@code SlimyEyeItem}),
@@ -69,5 +75,6 @@ public final class ServerEyeConfigs {
 
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = next;
+        generation++;
     }
 }

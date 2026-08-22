@@ -45,6 +45,11 @@ public final class EyeState {
         }
     }
 
+    /** Replace client-side overrides from the fixed-shape network representation. */
+    public static void applyProperties(LivingEntity entity, AppearanceOverride properties) {
+        writeProperties(entity, properties);
+    }
+
     /** Write the synced placement-variant roll onto the client's copy of the entity. */
     public static void applyVariantRoll(LivingEntity entity, float roll) {
         EntityPersistentData.get(entity).putFloat(VARIANT_ROLL, roll);
@@ -97,6 +102,22 @@ public final class EyeState {
         sync(entity);
     }
 
+    /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
+    public static void enableWithProperties(LivingEntity entity, AppearanceOverride properties) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
+        writeProperties(entity, properties);
+        data.putBoolean(HAS_EYES, true);
+        sync(entity);
+    }
+
+    /** Disable eyes and clear their entity-wide appearance with one synchronization. */
+    public static void disableAndClearProperties(LivingEntity entity) {
+        EntityPersistentData.get(entity).putBoolean(HAS_EYES, false);
+        writeProperties(entity, AppearanceOverride.EMPTY);
+        sync(entity);
+    }
+
     public static void setCorneaTint(LivingEntity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withCorneaColor(color));
     }
@@ -120,16 +141,20 @@ public final class EyeState {
      * {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
+        writeProperties(entity, properties);
+        sync(entity);
+    }
+
+    private static void writeProperties(LivingEntity entity, AppearanceOverride properties) {
         CompoundTag data = EntityPersistentData.get(entity);
         if (properties.isEmpty()) {
             data.remove(EYE_OVERRIDES);
         } else {
             data.put(EYE_OVERRIDES, properties.toNbt());
         }
-        sync(entity);
     }
 
     private static void sync(LivingEntity entity) {
-        EyeStateSync.sync(entity, hasEyes(entity), getVariantRoll(entity), overridesTagOrNull(entity));
+        EyeStateSync.sync(entity, hasEyes(entity), getVariantRoll(entity), readProperties(entity));
     }
 }

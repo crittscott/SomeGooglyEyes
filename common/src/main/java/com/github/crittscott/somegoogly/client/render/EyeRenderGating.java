@@ -69,7 +69,7 @@ public final class EyeRenderGating {
                 || !LOGGED_DEBUG_DECISIONS.add(key)) {
             return;
         }
-        SomeGooglyCommon.LOGGER.info(
+        SomeGooglyCommon.LOGGER.debug(
                 "Eye render debug: type={}, entityId={}, baby={}, pickerActive={}, hasEyes={}, decision={}",
                 entityType, living.getId(), living.isBaby(), PickerState.isActive(),
                 EyeState.hasEyes(living), decision);

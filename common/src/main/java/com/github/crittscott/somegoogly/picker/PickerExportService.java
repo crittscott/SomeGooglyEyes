@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
+import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.eye.HeadInfo.ConfigFile;
@@ -45,14 +46,18 @@ import static com.github.crittscott.somegoogly.eye.HeadInfo.AGE_ANY;
  * — the one that matters for its datapack; client and server versions may legally differ. Minecraft
  * is pinned to exact 1.20.1; optional-mod exports span the current minor release.
  *
- * <p>Each export triggers a full datapack reload, so successful exports are rate-limited to one per
- * {@link #COOLDOWN_TICKS} per player. Picker use is very intermittent, so the brief reload lag and the
- * 10-second wait are acceptable. All entry points run on the server thread.
+ * <p>Every attempt has a short throttle applied before codec work. Each successful export triggers a
+ * full datapack reload, so successes have the longer {@link #COOLDOWN_TICKS} per-player limit. Picker
+ * use is very intermittent, so the brief reload lag and waits are acceptable. All entry points run on
+ * the server thread.
  */
 public final class PickerExportService {
 
     /** Ticks between successful exports per player (10 seconds; failed validation doesn't arm it). */
     public static final int COOLDOWN_TICKS = 200;
+
+    /** Cheap attempt throttle applied before codec work, including malformed requests. */
+    public static final int ATTEMPT_COOLDOWN_TICKS = 20;
 
     /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
     public static final long MAX_CONFIG_BYTES = 64 * 1024;
@@ -61,6 +66,7 @@ public final class PickerExportService {
     private static final int GENERATED_PACK_FORMAT = 15;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
+    private static final Map<UUID, Integer> LAST_ATTEMPT_TICK = new HashMap<>();
     private static final String PACK_MCMETA = """
             {
               "pack": {
@@ -81,6 +87,11 @@ public final class PickerExportService {
     public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
                                    @Nullable CompoundTag configNbt) {
         int now = server.getTickCount();
+        Integer lastAttempt = LAST_ATTEMPT_TICK.get(playerId);
+        if (lastAttempt != null && now - lastAttempt < ATTEMPT_COOLDOWN_TICKS) {
+            return Component.translatable("somegoogly.command.picker.export_attempt_cooldown");
+        }
+        LAST_ATTEMPT_TICK.put(playerId, now);
         Integer last = LAST_EXPORT_TICK.get(playerId);
         if (last != null && now - last < COOLDOWN_TICKS) {
             int seconds = (COOLDOWN_TICKS - (now - last) + 19) / 20;
@@ -97,6 +108,13 @@ public final class PickerExportService {
         if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
         }
+        EyeConfigLimits.WireValidation wireValidation = EyeConfigLimits.validateWireRuntimeConfig(configNbt);
+        if (wireValidation.error() != null) {
+            return wireValidation.limitExceeded()
+                    ? Component.translatable(
+                            "somegoogly.command.picker.export_rejected_unsafe_payload", wireValidation.error())
+                    : Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
+        }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
@@ -105,6 +123,10 @@ public final class PickerExportService {
         RuntimeConfig pruned = RuntimeConfig.pruned(config, UnaryOperator.identity());
         if (pruned == null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_no_usable_eyes");
+        }
+        String limitsError = EyeConfigLimits.validateRuntimeConfig(pruned);
+        if (limitsError != null) {
+            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError);
         }
         Optional<String> version = ModVersionLookup.versionForNamespace(typeId.getNamespace());
         if (version.isEmpty()) {
@@ -147,5 +169,11 @@ public final class PickerExportService {
      */
     public static void onServerStopping() {
         LAST_EXPORT_TICK.clear();
+        LAST_ATTEMPT_TICK.clear();
+    }
+
+    public static void onPlayerLeft(UUID playerId) {
+        LAST_EXPORT_TICK.remove(playerId);
+        LAST_ATTEMPT_TICK.remove(playerId);
     }
 }

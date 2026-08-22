@@ -32,6 +32,14 @@ public record EyeColor(float r, float g, float b) {
         return new EyeColor(rgb[0], rgb[1], rgb[2]);
     }
 
+    public boolean isValid() {
+        return validChannel(r) && validChannel(g) && validChannel(b);
+    }
+
+    private static boolean validChannel(float value) {
+        return Float.isFinite(value) && value >= 0.0F && value <= 1.0F;
+    }
+
     /** The renderer/model APIs take a {@code float[3]}. */
     public float[] toArray() {
         return new float[]{r, g, b};

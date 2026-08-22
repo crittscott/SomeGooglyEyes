@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 public final class SomeGooglyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        SomeGooglyCommon.LOGGER.info("Fabric client debug: client entrypoint invoked");
+        SomeGooglyCommon.LOGGER.debug("Fabric client debug: client entrypoint invoked");
         ClientNetworkHandler.register();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
             FabricClientCommands.register(dispatcher, context);
             CommandNode<?> sg = dispatcher.getRoot().getChild("sg");
-            SomeGooglyCommon.LOGGER.info(
+            SomeGooglyCommon.LOGGER.debug(
                     "Fabric client debug: local /sg tree registered with children [{}]",
                     children(sg));
         });

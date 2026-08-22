@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo.HeadConfig;
@@ -20,9 +21,11 @@ import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.google.gson.JsonArray;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.nbt.NbtOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -105,6 +108,10 @@ public final class SerializationGameTestsLogic {
                 .withIrisColor(new EyeColor(0.7F, 0.8F, 0.9F))
                 .withGlow(false);
         helper.assertTrue(AppearanceOverride.fromNbt(full.toNbt()).equals(full), "fully-populated override round-trips");
+        AppearanceOverride invalid = AppearanceOverride.EMPTY
+                .withIrisColor(new EyeColor(Float.NaN, 0.5F, 0.5F));
+        helper.assertTrue(AppearanceOverride.fromNbt(invalid.toNbt()).equals(AppearanceOverride.EMPTY),
+                "non-finite portable appearance data is discarded");
         helper.succeed();
     }
 
@@ -119,12 +126,44 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
+        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(17L,
                 Map.of(new ResourceLocation("minecraft", "cow"), sampleConfigSet()));
         byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
         EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
         byte[] second = bytes(buffer -> EyeConfigSyncPacket.encode(decoded, buffer));
         helper.assertTrue(Arrays.equals(first, second), "EyeConfigSyncPacket should survive a wire round-trip");
+        helper.succeed();
+    }
+
+    public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
+        FriendlyByteBuf oversized = new FriendlyByteBuf(Unpooled.buffer());
+        oversized.writeLong(1L);
+        oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(oversized)),
+                "config sync must reject an oversized outer count before allocating entries");
+
+        CompoundTag tooManyVariants = new CompoundTag();
+        ListTag variants = new ListTag();
+        for (int i = 0; i <= EyeConfigLimits.MAX_VARIANTS_PER_CONFIG; i++) {
+            variants.add(new CompoundTag());
+        }
+        tooManyVariants.put("variants", variants);
+        helper.assertTrue(EyeConfigLimits.validateWireRuntimeConfig(tooManyVariants).limitExceeded(),
+                "raw nested lists must be budgeted before codec parsing");
+
+        RuntimeConfigSet unsafe = sampleConfigSet();
+        HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
+        head.eyes = List.of(new EyeDefinition(
+                new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
+                        0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
+        FriendlyByteBuf numeric = new FriendlyByteBuf(Unpooled.buffer());
+        numeric.writeLong(2L);
+        numeric.writeVarInt(1);
+        numeric.writeResourceLocation(new ResourceLocation("minecraft", "cow"));
+        numeric.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, unsafe)
+                .result().orElseThrow());
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(numeric)),
+                "config sync must reject non-finite placement values");
         helper.succeed();
     }
 
@@ -217,6 +256,17 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    public static void pickerMobPoseRejectsNonFiniteForms(GameTestHelper helper) {
+        UUID mob = UUID.randomUUID();
+        helper.assertTrue(!PickerMobPosePacket.move(mob, Double.NaN, 0.0, 0.0).isValid(),
+                "NaN movement must be rejected");
+        helper.assertTrue(!PickerMobPosePacket.rot(mob, Float.NaN).isValid(),
+                "NaN rotation must be rejected");
+        helper.assertTrue(PickerMobPosePacket.move(mob, 1.0, 2.0, 3.0).isValid(),
+                "finite movement must remain valid");
+        helper.succeed();
+    }
+
     public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
         helper.assertTrue(roundTrips(new PickerSpawnPacket(new ResourceLocation("minecraft", "cow")),
                         PickerSpawnPacket::encode, PickerSpawnPacket::decode),
@@ -231,19 +281,39 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
-        CompoundTag overrides = AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F)).toNbt();
+        AppearanceOverride overrides =
+                AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
         EyeStatePacket withOverrides = new EyeStatePacket(42, true, 0.5F, overrides);
         byte[] a1 = bytes(buffer -> EyeStatePacket.encode(withOverrides, buffer));
         EyeStatePacket d1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(a1)));
         byte[] a2 = bytes(buffer -> EyeStatePacket.encode(d1, buffer));
         helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 
-        // The nullable-overrides branch (no tag written) must also round-trip.
-        EyeStatePacket noOverrides = new EyeStatePacket(43, false, 0.0F, null);
+        EyeStatePacket noOverrides = new EyeStatePacket(43, false, 0.0F, AppearanceOverride.EMPTY);
         byte[] b1 = bytes(buffer -> EyeStatePacket.encode(noOverrides, buffer));
         EyeStatePacket e1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(b1)));
         byte[] b2 = bytes(buffer -> EyeStatePacket.encode(e1, buffer));
         helper.assertTrue(Arrays.equals(b1, b2), "EyeStatePacket without overrides should round-trip");
         helper.succeed();
+    }
+
+    public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
+        FriendlyByteBuf invalid = new FriendlyByteBuf(Unpooled.buffer());
+        invalid.writeInt(42);
+        invalid.writeBoolean(true);
+        invalid.writeFloat(Float.NaN);
+        invalid.writeByte(0);
+        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.decode(invalid)),
+                "eye-state sync must reject a non-finite variant roll");
+        helper.succeed();
+    }
+
+    private static boolean throwsRuntime(Runnable action) {
+        try {
+            action.run();
+            return false;
+        } catch (RuntimeException expected) {
+            return true;
+        }
     }
 }

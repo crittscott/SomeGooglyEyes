@@ -316,7 +316,8 @@ type for the current server connection and begin from the loaded definition when
 ```
 
 It then reloads datapacks so the change becomes active and persistent. Successful exports are limited
-to one per player every 10 seconds because each performs a full reload.
+to one per player every 10 seconds because each performs a full reload. All attempts also have a short
+request throttle so malformed or repeated requests cannot monopolize server work.
 
 `/sg exportall` is client-only. It dumps every loaded definition plus current session drafts to:
 
@@ -334,7 +335,7 @@ it fits.
 `/sg spawnall [namespace]` creates an audit grid containing one living entity of every available type,
 or every type in the optional namespace. It builds sandstone platforms and water basins as needed,
 overwrites blocks freely, and has no undo. It is disabled by default; use it only in a disposable
-authoring world.
+authoring world. Successful bulk spawns have a server-wide cooldown.
 
 `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>` reposition the chosen live entity. Mob move
 uses world-coordinate offsets; eye move sets local eye coordinates.

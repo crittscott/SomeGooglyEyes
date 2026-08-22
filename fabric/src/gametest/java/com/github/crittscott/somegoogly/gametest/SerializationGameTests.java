@@ -33,6 +33,11 @@ public final class SerializationGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
+        SerializationGameTestsLogic.configSyncRejectsOversizedAndUnsafePayloads(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeColorRejectsWrongChannelCount(helper);
     }
@@ -63,6 +68,11 @@ public final class SerializationGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerMobPoseRejectsNonFiniteForms(GameTestHelper helper) {
+        SerializationGameTestsLogic.pickerMobPoseRejectsNonFiniteForms(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
         SerializationGameTestsLogic.pickerSpawnPacketsRoundTrip(helper);
     }
@@ -70,5 +80,10 @@ public final class SerializationGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRoundTrips(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
+        SerializationGameTestsLogic.eyeStatePacketRejectsNonFiniteValues(helper);
     }
 }

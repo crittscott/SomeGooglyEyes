@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
  * a behavior is already playing — the same "one at a time, non-interruptable" rule the server enforces.
  */
 public class EyeBehaviorTriggerPacket {
+
+    private static final int MAX_DURATION_TICKS = 1_200;
 
     private final ResourceLocation behaviorId;
     private final int duration;
@@ -35,10 +39,16 @@ public class EyeBehaviorTriggerPacket {
         int duration = buffer.readVarInt();
         long seed = buffer.readLong();
         int elapsed = buffer.readVarInt();
+        if (!validTiming(duration, elapsed)) {
+            throw new DecoderException("Invalid eye behavior timing");
+        }
         return new EyeBehaviorTriggerPacket(entityId, behaviorId, duration, seed, elapsed);
     }
 
     public static void encode(EyeBehaviorTriggerPacket packet, FriendlyByteBuf buffer) {
+        if (!validTiming(packet.duration, packet.elapsed)) {
+            throw new EncoderException("Invalid eye behavior timing");
+        }
         buffer.writeInt(packet.entityId);
         buffer.writeResourceLocation(packet.behaviorId);
         buffer.writeVarInt(packet.duration);
@@ -64,5 +74,9 @@ public class EyeBehaviorTriggerPacket {
 
     public long seed() {
         return seed;
+    }
+
+    private static boolean validTiming(int duration, int elapsed) {
+        return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
     }
 }

@@ -14,8 +14,8 @@ import java.util.Optional;
  * A <b>sparse</b> override of an eye's {@link EyeAppearance}: each field is optional and, when absent,
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
- * <p>This is the one portable appearance payload, driven off a single {@link #CODEC} so its three
- * storage locations cannot drift:
+ * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
+ * network packet writes the same three optional fields directly:
  * <ul>
  *   <li>an eye <b>item</b>'s stack NBT (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -45,11 +45,16 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
      * decoded by {@link #CODEC}.
      */
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
-        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
+        AppearanceOverride decoded = tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
+        return decoded.isValid() ? decoded : EMPTY;
     }
 
     public boolean isEmpty() {
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
+    }
+
+    public boolean isValid() {
+        return cornea.map(EyeColor::isValid).orElse(true) && iris.map(EyeColor::isValid).orElse(true);
     }
 
     /**

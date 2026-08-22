@@ -64,9 +64,7 @@ public class SlimyEyeItem extends Item {
         if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
         }
-        EyeState.rerollVariant(target);
-        EyeState.setProperties(target, EyeItemProperties.get(stack));
-        EyeState.setHasEyes(target, true);
+        EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }

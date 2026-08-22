@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
+import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +30,7 @@ public final class ServerServices {
         if (!EntityPersistentData.get(living).contains(EyeState.HAS_EYES)) {
             applyGooglyDecision(living);
             EyeStateSync.sync(living, EyeState.hasEyes(living), EyeState.getVariantRoll(living),
-                    EyeState.overridesTagOrNull(living));
+                    EyeState.readProperties(living));
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);
@@ -43,12 +44,16 @@ public final class ServerServices {
     public static void onPlayerLeft(ServerPlayer player) {
         NetworkHandler.playerLeft(player);
         PickerFreezeService.onPlayerLoggedOut(player);
+        PickerExportService.onPlayerLeft(player.getUUID());
+        PickerRequestLimiter.onPlayerLeft(player.getUUID());
     }
 
     public static void onServerStopping(MinecraftServer server) {
         ServerBehaviorScheduler.clear();
         PickerFreezeService.onServerStopping(server);
         PickerExportService.onServerStopping();
+        PickerRequestLimiter.onServerStopping();
+        NetworkHandler.serverStopped();
     }
 
     public static void onServerTick(MinecraftServer server) {
@@ -59,7 +64,7 @@ public final class ServerServices {
     public static void onStartTracking(LivingEntity living, ServerPlayer player) {
         NetworkHandler.sendEyeState(player,
                 new EyeStatePacket(living.getId(), EyeState.hasEyes(living),
-                        EyeState.getVariantRoll(living), EyeState.overridesTagOrNull(living)));
+                        EyeState.getVariantRoll(living), EyeState.readProperties(living)));
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 

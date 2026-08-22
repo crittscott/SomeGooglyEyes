@@ -49,7 +49,7 @@ public final class FabricClientEvents {
                     }
                     if (!loggedFirstRendererCallback) {
                         loggedFirstRendererCallback = true;
-                        SomeGooglyCommon.LOGGER.info(
+                        SomeGooglyCommon.LOGGER.debug(
                                 "Fabric render debug: first living-renderer callback type={}, renderer={}, installed={}",
                                 BuiltInRegistries.ENTITY_TYPE.getKey(entityType),
                                 renderer.getClass().getName(), installed);
@@ -63,6 +63,7 @@ public final class FabricClientEvents {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             logMergedCommandTree(client);
+            ClientNetworkHandler.tick();
             ClientEyeRuntime.tick();
             EyeInspector.tick();
             consumePickerKeys();
@@ -93,7 +94,7 @@ public final class FabricClientEvents {
     }
 
     public static void logRendererReload(int nonLivingInstalls) {
-        SomeGooglyCommon.LOGGER.info(
+        SomeGooglyCommon.LOGGER.debug(
                 "Fabric render debug: renderer reload completed; living callbacks={}, new living layers={}, new non-living layers={}",
                 rendererCallbacks, rendererInstalls, nonLivingInstalls);
         rendererCallbacks = 0;
@@ -116,7 +117,7 @@ public final class FabricClientEvents {
         FabricClientCommands.mergeSuggestions(client.getConnection().getCommands());
         sg = client.getConnection().getCommands().getRoot().getChild("sg");
         String after = children(sg);
-        SomeGooglyCommon.LOGGER.info(
+        SomeGooglyCommon.LOGGER.debug(
                 "Fabric client debug: merged /sg tree before repair [{}], after repair [{}]",
                 before, after);
         commandTreeDebugTicks = -1;

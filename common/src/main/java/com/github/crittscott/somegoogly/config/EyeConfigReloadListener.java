@@ -60,11 +60,23 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                         .orElse(null);
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
                 if (config != null && config.hasAnyConfig()) {
-                    selected.put(entry.getKey(), config);
+                    String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+                    if (error == null) {
+                        selected.put(entry.getKey(), config);
+                    } else {
+                        SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error);
+                    }
                 }
             } catch (Exception e) {
                 SomeGooglyCommon.LOGGER.error("Failed to parse eye config {}", entry.getKey(), e);
             }
+        }
+        String aggregateError = EyeConfigLimits.validateSync(selected);
+        if (aggregateError != null) {
+            SomeGooglyCommon.LOGGER.error(
+                    "Eye config reload exceeds synchronized work limits; keeping the previous configs: {}",
+                    aggregateError);
+            return;
         }
         ServerEyeConfigs.replaceAll(selected);
         SomeGooglyCommon.LOGGER.info("Loaded {} selected eye configs from {} files", selected.size(), files.size());

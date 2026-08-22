@@ -75,7 +75,7 @@ public final class FabricServerEvents {
 
         String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
         if (LOGGED_LOAD_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_LOAD_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.info(
+            SomeGooglyCommon.LOGGER.debug(
                     "Fabric entity-load debug: type={}, entityId={}, previouslyInitialized={}, configuredEligibility={}, percent={}, hasEyes={}",
                     type, living.getId(), previouslyInitialized, eligible,
                     ServerConfig.percentFor(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType())),
@@ -86,7 +86,7 @@ public final class FabricServerEvents {
     private static void logStartTracking(LivingEntity living, ServerPlayer player) {
         String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
         if (LOGGED_TRACKING_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_TRACKING_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.info(
+            SomeGooglyCommon.LOGGER.debug(
                     "Fabric tracking debug: player={}, type={}, entityId={}, hasEyes={}, protocolReady={}",
                     player.getGameProfile().getName(), type, living.getId(), EyeState.hasEyes(living),
                     NetworkHandler.ready(player));

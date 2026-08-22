@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.picker;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
@@ -10,25 +9,17 @@ import javax.annotation.Nullable;
  * Deliberately no extra op/permission/config gate — a server that hands out creative is already
  * trusting the player with world edits, and admins should know creative also enables the picker.
  *
- * <p>The creative checks in the client CLI ({@code GooglyClientCommands}) and keyboard picker are
- * UX only and never trusted; this is the authoritative check, applied by every client→server picker
- * packet handler ({@code PickerFreezePacket}, {@code PickerSpawnPacket}, {@code PickerSpawnAllPacket},
- * {@code PickerMobPosePacket}, {@code PickerExportPacket}).
+ * <p>The creative checks in the client CLI and keyboard picker are UX only and never trusted. Packet
+ * handlers use this authoritative, silently rejecting, rate-limited check so unauthorized custom
+ * payload spam cannot amplify into server feedback packets.
  */
 public final class PickerPermissions {
 
     private PickerPermissions() {
     }
 
-    /** Whether {@code sender} may drive the picker; messages the player and returns false otherwise. */
+    /** Whether {@code sender} may drive one picker request now. */
     public static boolean creative(@Nullable ServerPlayer sender) {
-        if (sender == null) {
-            return false;
-        }
-        if (sender.isCreative()) {
-            return true;
-        }
-        sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.requires_creative"));
-        return false;
+        return sender != null && sender.isCreative() && PickerRequestLimiter.allowCreativeRequest(sender);
     }
 }
