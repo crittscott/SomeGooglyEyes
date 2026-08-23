@@ -36,7 +36,7 @@ public final class NetworkHandler {
     public static final ResourceLocation PICKER_MOB_POSE = versioned("picker_mob_pose");
     public static final ResourceLocation PICKER_EXPORT = versioned("picker_export");
 
-    private static final int HANDSHAKE_TIMEOUT_TICKS = 1200;
+    private static final int HANDSHAKE_TIMEOUT_TICKS = 6000;
     private static final Map<UUID, Integer> PENDING = new HashMap<>();
     private static final Set<UUID> READY = new HashSet<>();
     private static final Map<UUID, Long> LAST_CONFIG_GENERATION = new HashMap<>();
