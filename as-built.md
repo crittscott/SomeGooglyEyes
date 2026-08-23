@@ -11,7 +11,7 @@ It describes what exists, not necessarily what should exist, and is not a design
 
 ## Project shape
 
-Some Googly Eyes is a Java 17 Minecraft 1.20.1 mod for Forge 47.4.10 and Fabric Loader 0.19.3/Fabric
+Some Googly Eyes is a Java 17 Minecraft 1.20.1 mod for Forge 47.4.0 and Fabric Loader 0.19.3/Fabric
 API 0.92.11, using Architectury API 9.2.14. Its mod id is `somegoogly`, its root package is
 `com.github.crittscott.somegoogly`, and its version is `0.8.1`.
 

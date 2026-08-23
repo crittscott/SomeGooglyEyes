@@ -18,8 +18,8 @@ These versions come from the active wrapper, Gradle scripts, properties, and loa
 | Architectury Loom | 1.17.491 |
 | Architectury Gradle plugin | 3.5.169 |
 | Architectury API | 9.2.14; runtime minimum 9.2.14 |
-| Forge compile dependency | 1.20.1-47.4.10 |
-| Forge runtime range | `[47.4.10,48)` |
+| Forge compile dependency | 1.20.1-47.4.0 (experimental floor) |
+| Forge runtime range | `[47.4.0,48)` (experimental floor) |
 | FML runtime range | `[47,48)` |
 | Fabric Loader | 0.19.3; runtime minimum 0.19.3 |
 | Fabric API | 0.92.11+1.20.1; runtime minimum the same version |
@@ -37,6 +37,11 @@ with `--release 17`. Command-line Gradle can run under the current Java 17 insta
 Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
 Mixins refer to 1.20.1 internals. Forge compilation is pinned to the minimum Forge version accepted at
 runtime. Fabric compilation likewise uses the declared minimum Loader and API versions.
+
+The Forge floor is experimental at 47.4.0, lowered from a prior 47.4.10 baseline to reach modpacks
+(e.g. All the Mods 9) pinned to earlier 47.4.x builds. The mod uses no Forge API added within the
+47.4.x line, so the lower floor is expected to work, but it has not been verified against every patch
+between 47.4.0 and 47.4.10.
 
 ## Project layout
 
@@ -95,7 +100,7 @@ in packaged artifacts. Common and loader packages remain disjoint for Forge's mo
 
 ### Forge
 
-Forge depends on `net.minecraftforge:forge:1.20.1-47.4.10` and
+Forge depends on `net.minecraftforge:forge:1.20.1-47.4.0` and
 `architectury-forge:9.2.14`. GeckoLib's Forge 1.20.1 artifact at 4.7.4 is compile-only. Runtime
 metadata requires the configured Minecraft, Forge, FML, and Architectury ranges.
 
