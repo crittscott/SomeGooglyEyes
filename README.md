@@ -10,12 +10,7 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 ![Googly Eyes splash](docs/googlyeyes-splash.png)
 
-<!-- TODO: hero GIF or short mp4 clip here — a mob with wobbling eyes sells the whole mod in 5 seconds.
-     GitHub plays small mp4/mov files (~10 MB) inline if you drag them into the README editor. -->
-
-<!-- TODO: optional YouTube how-to link, as a clickable thumbnail:
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://youtu.be/VIDEO_ID)
--->
+![Loaders: Fabric + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Requires: Architectury API](https://img.shields.io/badge/Requires-Architectury%20API-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
@@ -68,11 +63,7 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
-## Status
-
-Currently in **alpha release**. It works for me, single and multi-player. But that's all I can say for sure. Buyer beware. Found a bug? [Open an issue](../../issues).
-
-**Fabric, 1.21**: Only after 1.20.1/Forge is known to be stable.
+Available for Forge and Fabric, 1.20.1. Requires [Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api).
 
 ## Credits and license
 

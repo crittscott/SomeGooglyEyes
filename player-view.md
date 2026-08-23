@@ -157,8 +157,9 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to
 clients.
 
-Definitions are included for Minecraft, Alex's Mobs, Ars Nouveau, Autumnity, Exotic Birds, Hamsters,
-Ice and Fire, Immersive Engineering, Mowzie's Mobs, Simply Cats, and Twilight Forest. Optional mods
+Definitions are included for Minecraft, Alex's Mobs, Ars Nouveau, Autumnity, Exotic Birds, Farming for
+Blockheads, Hamsters, Ice and Fire, Immersive Engineering, Mowzie's Mobs, Simply Cats, Sushi Go
+Crafting, and Twilight Forest. Optional mods
 are not required. Updates to another mod's models may require its eye definitions to be adjusted.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye

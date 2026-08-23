@@ -50,6 +50,12 @@ Behavior ids all live under the `somegoogly:` namespace: `stare`, `blink`, `side
 
 A mob plays at most one expression at a time; overlapping triggers are dropped, never queued.
 
+### Picker settings
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `allowSpawnAll` | `false` | Must be set `true` before `/sg spawnall` will run. See [docs/picker.md](picker.md) for what that command does. |
+
 ## Client config
 
 Location: `config/somegoogly-client.toml` (per player, affects rendering only — never gameplay).
