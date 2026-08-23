@@ -153,11 +153,16 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    public static void shippedPigHasOneVariant(GameTestHelper helper) {
+    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
         RuntimeConfig pig = ServerEyeConfigs.get(new ResourceLocation("minecraft", "pig"), false);
         helper.assertTrue(usable(pig), "pig should have a usable shipped eye config");
-        helper.assertTrue(pig.variants.size() == 1,
-                "pig ships one placement variant (got " + pig.variants.size() + ")");
+        helper.assertTrue(pig.variants.size() == 2,
+                "pig ships two placement variants (got " + pig.variants.size() + ")");
+        Variant butt = pig.variants.get(1);
+        helper.assertTrue(butt.heads.get(0).attachPoint.equals("body"),
+                "the second variant is the low-weight butt-eyes placement");
+        helper.assertTrue(butt.weight() < pig.variants.get(0).weight(),
+                "the butt-eyes variant should be rarer than the head variant");
         helper.succeed();
     }
 }

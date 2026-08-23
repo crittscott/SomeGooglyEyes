@@ -38,7 +38,7 @@ public final class ConfigGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedPigHasOneVariant(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedPigHasOneVariant(helper);
+    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
+        ConfigGameTestsLogic.shippedPigHasTwoVariants(helper);
     }
 }

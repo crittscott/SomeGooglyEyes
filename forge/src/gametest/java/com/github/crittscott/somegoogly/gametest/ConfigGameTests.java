@@ -45,7 +45,7 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedPigHasOneVariant(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedPigHasOneVariant(helper);
+    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
+        ConfigGameTestsLogic.shippedPigHasTwoVariants(helper);
     }
 }

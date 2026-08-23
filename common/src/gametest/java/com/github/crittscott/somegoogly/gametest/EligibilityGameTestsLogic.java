@@ -91,6 +91,9 @@ public final class EligibilityGameTestsLogic {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         Player player = helper.makeMockSurvivalPlayer();
         EyeColor red = new EyeColor(1F, 0F, 0F);
+        // The spawn itself may have naturally rolled eyes under whatever configs were live at the time;
+        // force the deterministic eyeless starting point this test assumes.
+        EyeState.setHasEyes(cow, false);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
