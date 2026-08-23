@@ -125,7 +125,7 @@
   "somegoogly.inspect.cannot": "Not yet configured for googly eyes; see docs",
   "somegoogly.inspect.only_as_adult": "Can have googly eyes only as an adult",
   "somegoogly.inspect.only_as_baby": "Can have googly eyes only as a baby",
-  "somegoogly.network.handshake_timeout": "Some Googly Eyes network protocol handshake failed. Both sides must use compatible builds.",
+  "somegoogly.network.handshake_timeout": "Some Googly Eyes network protocol handshake timed out before the client acknowledged. This is usually client-side lag during join, not a build mismatch.",
   "somegoogly.network.config_before_handshake": "Some Googly Eyes received configuration before protocol negotiation completed.",
   "somegoogly.network.config_encode_failed": "The server's Some Googly Eyes configuration is too large or invalid to synchronize.",
   "somegoogly.network.config_sync_too_frequent": "Some Googly Eyes received configuration updates too quickly.",
