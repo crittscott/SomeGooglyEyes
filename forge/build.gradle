@@ -68,19 +68,20 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 
-    modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
+    // Architectury API has no Forge artifact for Minecraft 1.21.1. Forge-facing replacements for
+    // the shared runtime API calls belong to the source port; the Gradle plugin remains usable.
 
     // GeckoLib — soft dependency. compileOnly so the mod still runs without it (gated at runtime by
     // a loaded-mod check). Not remapped: GeckoLib's own Forge artifacts are already usable as-is.
-    compileOnly "software.bernie.geckolib:geckolib-forge-1.20.1:4.7.4"
+    compileOnly "software.bernie.geckolib:geckolib-forge-1.21.1:$rootProject.geckolib_version"
 }
 
 // Expands ${...} placeholders in mods.toml (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
-            forge_version_range: forge_version_range, loader_version_range: loader_version_range,
-            architectury_api_version: architectury_api_version,
+            forge_version_range: forge_version_range,
+            forge_loader_version_range: forge_loader_version_range,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
     ]
@@ -95,7 +96,8 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
-            loader_version_range: loader_version_range, mod_license: mod_license, mod_version: mod_version,
+            forge_loader_version_range: forge_loader_version_range,
+            mod_license: mod_license, mod_version: mod_version,
     ]
     inputs.properties replaceProperties
 
