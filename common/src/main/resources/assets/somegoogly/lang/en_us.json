@@ -161,5 +161,6 @@
   "somegoogly.value.iris": "iris",
   "somegoogly.value.off": "off",
   "somegoogly.value.on": "on",
-  "somegoogly.value.true": "true"
+  "somegoogly.value.true": "true",
+  "tag.item.somegoogly.enchantable.shears": "Enchantable Shears"
 }

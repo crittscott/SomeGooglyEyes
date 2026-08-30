@@ -7,6 +7,10 @@ apply it to a mob or themselves.
 The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks,
 allowing different eye arrangements for vanilla and modded mobs.
 
+The completed artifact targets Minecraft 1.21.1 on Fabric and requires Fabric Loader 0.19.3 or
+newer, Fabric API 0.116.15+1.21.1 or newer, Architectury API 13.0.8 or newer, and Java 21. GeckoLib
+is optional. Forge and NeoForge builds are not currently available.
+
 ## Mobs with eyes
 
 By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn.
@@ -160,7 +164,12 @@ clients.
 Definitions are included for Minecraft, Alex's Mobs, Ars Nouveau, Autumnity, Exotic Birds, Farming for
 Blockheads, Hamsters, Ice and Fire, Immersive Engineering, Mowzie's Mobs, Simply Cats, Sushi Go
 Crafting, and Twilight Forest. Optional mods
-are not required. Updates to another mod's models may require its eye definitions to be adjusted.
+are not required. The optional-mod definitions retain their earlier compatibility selectors and have
+not been verified against Minecraft 1.21.1 releases. Updates to another mod's models may require its
+eye definitions to be adjusted.
+
+The 74 bundled Minecraft definitions select 1.21.1. Armadillo, bogged, and breeze do not yet have
+bundled eye geometry.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye
 recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
@@ -239,6 +248,9 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - The ender dragon cannot receive eyes.
+- Armadillo, bogged, and breeze do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing
   eyes until their definitions are adjusted.
+- Optional-mod definitions and client-side model attachment on 1.21.1 require manual compatibility
+  verification.
 - The dynamic modifier recipe may not display in recipe viewers.

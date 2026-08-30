@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.picker.PickerPermissions;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +43,8 @@ public class PickerExportPacket {
         String age = buffer.readUtf(16);
         CompoundTag configNbt;
         try {
-            configNbt = buffer.readNbt(new NbtAccounter(PickerExportService.MAX_CONFIG_BYTES));
+            Tag tag = buffer.readNbt(NbtAccounter.create(PickerExportService.MAX_CONFIG_BYTES));
+            configNbt = tag instanceof CompoundTag compound ? compound : null;
         } catch (RuntimeException oversized) {
             // Quota exceeded mid-read: consume the rest (nothing follows the tag) and let the
             // service reject the null payload with feedback instead of the decode killing the connection.

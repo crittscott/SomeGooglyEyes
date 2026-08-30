@@ -5,14 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * A single eye, as an item. Its appearance lives in stack NBT as {@link AppearanceOverride} (see
- * {@link EyeItemProperties}), so it round-trips through drops and crafting.
+ * A single eye, as an item. Its appearance lives in a stack data component as
+ * {@link AppearanceOverride} (see {@link EyeItemProperties}), so it round-trips through drops and
+ * crafting.
  *
  * <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it to
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
@@ -31,7 +30,7 @@ public class GooglyEyeItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         EyeItemProperties.appendTooltip(stack, tooltip);
     }
 

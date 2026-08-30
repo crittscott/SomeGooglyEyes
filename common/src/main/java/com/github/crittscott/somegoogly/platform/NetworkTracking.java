@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 
 /** Loader bridge for Minecraft's exact entity-tracking recipient set. */
@@ -16,7 +15,7 @@ public final class NetworkTracking {
      * true and the entity is a server player, that player is also a recipient.
      */
     @ExpectPlatform
-    public static void send(Entity entity, boolean includeSelf, ResourceLocation id, FriendlyByteBuf buffer) {
+    public static void send(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
         throw new AssertionError();
     }
 }

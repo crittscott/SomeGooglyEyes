@@ -27,7 +27,7 @@ import java.util.Map;
 public class EyeConfigSyncPacket {
 
     // Refuse the payload while there is still headroom under the 1 MiB clientbound payload cap.
-    private static final int MAX_PAYLOAD_BYTES = 900 * 1024;
+    static final int MAX_PAYLOAD_BYTES = 900 * 1024;
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final long generation;

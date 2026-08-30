@@ -35,7 +35,7 @@ public interface EyeModifier {
         @Override
         public AppearanceOverride apply(AppearanceOverride current, ItemStack stack) {
             DyeColor color = ((DyeItem) stack.getItem()).getDyeColor();
-            return current.withIrisColor(EyeColor.of(color.getTextureDiffuseColors()));
+            return current.withIrisColor(EyeColor.fromRgb24(color.getTextureDiffuseColor()));
         }
 
         @Override

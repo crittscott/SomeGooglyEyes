@@ -40,9 +40,9 @@ public final class ConfigGameTestsLogic {
             // an unmatched id must fall through to globalPercent.
             ServerConfig.ENTITY_OVERRIDES.set(List.of("minecraft:zombie,100", "minecraft:*,50"));
 
-            int zombie = ServerConfig.percentFor(new ResourceLocation("minecraft", "zombie"));
-            int cow = ServerConfig.percentFor(new ResourceLocation("minecraft", "cow"));
-            int other = ServerConfig.percentFor(new ResourceLocation("examplemod", "thing"));
+            int zombie = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
+            int cow = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+            int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
 
             helper.assertTrue(zombie == 100, "exact override should win (expected 100, got " + zombie + ")");
             helper.assertTrue(cow == 50, "wildcard override should apply to cow (expected 50, got " + cow + ")");
@@ -66,11 +66,12 @@ public final class ConfigGameTestsLogic {
     }
 
     public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
-        RuntimeConfig cow = ServerEyeConfigs.get(new ResourceLocation("minecraft", "cow"), false);
+        RuntimeConfig cow = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), false);
         helper.assertTrue(usable(cow), "cow should have a usable shipped eye config");
 
         // Players have a definition (player.json) and so are configured — the basis for being an application target.
-        RuntimeConfig player = ServerEyeConfigs.get(new ResourceLocation("minecraft", "player"), false);
+        RuntimeConfig player = ServerEyeConfigs.get(
+                ResourceLocation.fromNamespaceAndPath("minecraft", "player"), false);
         helper.assertTrue(usable(player), "player should have a usable shipped eye config");
         helper.succeed();
     }
@@ -113,22 +114,22 @@ public final class ConfigGameTestsLogic {
 
     /** Exact Minecraft-version selection, end to end, including paired adult/baby entries. */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
-        ResourceLocation id = new ResourceLocation("minecraft", "zombie");
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         String json = """
                 { "entries": [
-                    { "version": "[1.19,1.20)", "age": "adult", "enabled": true, "variants": [
+                    { "version": "[1.20,1.21)", "age": "adult", "enabled": true, "variants": [
                         { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [ {
                             "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
                             "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
                             "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
                         } ] } ] } ] },
-                    { "version": "1.20.1", "age": "adult", "enabled": true, "variants": [
+                    { "version": "1.21.1", "age": "adult", "enabled": true, "variants": [
                         { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
                             "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
                             "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
                             "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
                         } ] } ] } ] },
-                    { "version": "1.20.1", "age": "baby", "enabled": true, "variants": [
+                    { "version": "1.21.1", "age": "baby", "enabled": true, "variants": [
                         { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
                             "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
                             "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
@@ -143,7 +144,7 @@ public final class ConfigGameTestsLogic {
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
             helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
             helper.assertTrue(adult.variants.get(0).weight() == 2.0,
-                    "exact selection must pick the 1.20.1 generation (weight 2), got "
+                    "exact selection must pick the 1.21.1 generation (weight 2), got "
                             + adult.variants.get(0).weight());
             helper.assertTrue(baby != null && baby.variants.get(0).weight() == 2.0,
                     "the baby entry of the exact generation must be selected with it");
@@ -154,7 +155,7 @@ public final class ConfigGameTestsLogic {
     }
 
     public static void shippedPigHasTwoVariants(GameTestHelper helper) {
-        RuntimeConfig pig = ServerEyeConfigs.get(new ResourceLocation("minecraft", "pig"), false);
+        RuntimeConfig pig = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "pig"), false);
         helper.assertTrue(usable(pig), "pig should have a usable shipped eye config");
         helper.assertTrue(pig.variants.size() == 2,
                 "pig ships two placement variants (got " + pig.variants.size() + ")");

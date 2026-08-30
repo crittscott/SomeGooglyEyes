@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
@@ -24,16 +25,19 @@ public final class EligibilityGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(helper);
+        EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeRefusesAnAlreadyEyedTarget(helper);
+        EligibilityGameTestsLogic.slimyEyeRefusesAnAlreadyEyedTarget(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(helper);
+        EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 }

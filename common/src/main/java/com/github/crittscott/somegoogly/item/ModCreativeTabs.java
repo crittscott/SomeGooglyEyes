@@ -5,6 +5,8 @@ import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -30,17 +32,18 @@ public final class ModCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(ModItems.GOOGLY_EYE.get());
                         output.accept(ModItems.SLIMY_EYE.get());
-                        output.accept(optometristBook());
+                        output.accept(optometristBook(params.holders()));
                     })));
 
     private ModCreativeTabs() {
     }
 
     /** An enchanted book holding {@link ModEnchantments#OPTOMETRIST} at its max level. */
-    private static ItemStack optometristBook() {
-        Enchantment optometrist = ModEnchantments.OPTOMETRIST.get();
+    private static ItemStack optometristBook(HolderLookup.Provider registries) {
+        Holder<Enchantment> optometrist = registries.lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(ModEnchantments.OPTOMETRIST);
         return EnchantedBookItem.createForEnchantment(
-                new EnchantmentInstance(optometrist, optometrist.getMaxLevel()));
+                new EnchantmentInstance(optometrist, 1));
     }
 
     public static void register() {

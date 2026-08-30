@@ -7,9 +7,9 @@ import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +34,8 @@ public final class GooglyEyeRenderer {
 
     // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3).
-    private static final ResourceLocation TEX = new ResourceLocation(SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
+    private static final ResourceLocation TEX = ResourceLocation.fromNamespaceAndPath(
+            SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 
@@ -48,7 +49,8 @@ public final class GooglyEyeRenderer {
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         // localToWorld = (view → world) · (local → view)
-        Matrix3f localToWorld = new Matrix3f(RenderSystem.getInverseViewRotationMatrix())
+        Matrix3f localToWorld = new Matrix3f().rotation(
+                        Minecraft.getInstance().gameRenderer.getMainCamera().rotation())
                 .mul(new Matrix3f(pose.last().pose()));
         Vector3f down = localToWorld.invert().transform(new Vector3f(0F, -1F, 0F));
         eyeInfo.gravX = -down.x;

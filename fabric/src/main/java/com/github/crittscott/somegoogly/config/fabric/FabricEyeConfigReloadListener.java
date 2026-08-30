@@ -10,7 +10,7 @@ public final class FabricEyeConfigReloadListener extends EyeConfigReloadListener
         implements IdentifiableResourceReloadListener {
 
     private static final ResourceLocation ID =
-            new ResourceLocation(SomeGooglyCommon.MOD_ID, "eye_configs");
+            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
 
     @Override
     public ResourceLocation getFabricId() {

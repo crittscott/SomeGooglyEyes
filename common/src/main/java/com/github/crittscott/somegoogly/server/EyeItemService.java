@@ -8,11 +8,14 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +39,7 @@ public final class EyeItemService {
                     : SlimyEyeItem.applyToTarget(stack, player, mob);
         }
         if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
-                || !EyeState.hasEyes(mob) || !hasOptometrist(stack)) {
+                || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())) {
             return InteractionResult.PASS;
         }
         HeadInfo helper = helperFor(mob);
@@ -45,7 +48,8 @@ public final class EyeItemService {
         }
         mob.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(mob)));
         EyeState.disableAndClearProperties(mob);
-        stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
+                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         return InteractionResult.SUCCESS;
     }
 
@@ -69,11 +73,14 @@ public final class EyeItemService {
             return;
         }
         dropSink.accept(buildEyeDrop(helper, EyeState.readProperties(mob)));
-        weapon.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+        weapon.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
 
-    private static boolean hasOptometrist(ItemStack stack) {
-        return EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.OPTOMETRIST.get(), stack) > 0;
+    private static boolean hasOptometrist(ItemStack stack, HolderLookup.Provider registries) {
+        return EnchantmentHelper.getItemEnchantmentLevel(
+                registries.lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(ModEnchantments.OPTOMETRIST),
+                stack) > 0;
     }
 
     private static HeadInfo helperFor(LivingEntity mob) {

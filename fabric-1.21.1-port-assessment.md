@@ -2,291 +2,325 @@
 
 ## Purpose and scope
 
-This document records the known technical shape of the Some Buckets Fabric port from Minecraft
-1.20.1 / Fabric Loader 0.15-era to Minecraft 1.21.1 / Fabric Loader 0.19.3 with Fabric API
-0.116.15+1.21.1. It is an assessment, not an execution log or a substitute for the staged plan in
-`fabric-1.21.1-port-plan.md`.
+This document records the known technical shape of the Some Googly Eyes Fabric port from Minecraft
+1.20.1 to Minecraft 1.21.1. It is an assessment, not an execution log or a substitute for the staged
+plan in `fabric-1.21.1-port-plan.md`.
 
-The target build environment already syncs with Java 21, Minecraft 1.21.1, Fabric Loader 0.19.3, and
-Fabric API 0.116.15+1.21.1. `fabric/build.gradle` and `gradle.properties` are already on the 1.21.1
-baseline; the build environment is not part of this port.
+The target build environment now syncs with Java 21, Minecraft 1.21.1, Fabric Loader 0.19.3, Fabric
+API 0.116.15+1.21.1, Architectury API 13.0.8, and GeckoLib 4.7.4. The Gradle project contains
+`common`, `fabric`, `forge`, and a scaffold-only `neoforge` module. Build-environment migration is
+complete for this phase; source compilation has not been attempted.
 
-The port is Fabric-first. Common code may change where Fabric requires it, but the completed Forge
-1.21.1 port must not regress: any change under `common/src/main` or `common/src/gametest` is
-followed by a Forge production compile before the stage closes. NeoForge runtime work remains out of
-scope. Quilt is covered by the Fabric artifact and needs no separate work.
+The port is Fabric-first. Common production and GameTest code are in scope because most of the mod
+lives in `common`. Forge and NeoForge runtime implementation are later ports and are not regression
+gates for Fabric. Changes made for Fabric should remain loader-neutral where the existing project
+seams permit, but the Fabric port does not repair either Forge-family loader.
 
-This is an unreleased mod. Preserving 1.20.1 worlds, item data, or binary compatibility is not a
-port requirement.
+This is an unreleased mod. Preserving 1.20.1 save data, item data, wire data, or binary compatibility
+is not required. Player-visible behavior in `player-view.md` remains the target unless the user
+explicitly accepts a change.
 
-## Overall assessment
+## Current project surface
 
-The Forge 1.21.1 port already carried the loader-neutral layers to 1.21.1:
+The current source inventory is:
 
-- `common/src/main` compiles for Minecraft 1.21.1. The item data component migration, registry-aware
-  nested item-stack serialization, `ResourceLocation` factories, `Item.TooltipContext`, use-duration
-  signatures, component-aware stack equality, relocated dispenser `BlockSource`, `ItemInteractionResult`
-  where common touches cauldrons, and the Mob Bucket entity save/load path are done.
-- `NBTUtil` is the sole state-schema owner and now stores the aggregate bucket schema inside the
-  built-in `minecraft:custom_data` component, maintains the vanilla `MAX_STACK_SIZE` data component
-  at its write boundary, and encodes nested Junk/Trash stacks with explicit `HolderLookup.Provider`
-  context.
-- `common/src/gametest` shared scenario bodies and assertions are ported to the 1.21.1 GameTest,
-  advancement, game-event, and registry APIs.
+| Source set | Java files | Role |
+| --- | ---: | --- |
+| `common/src/main/java` | 106 | Shared gameplay, state, codecs, networking, commands, picker, rendering, and attachment logic |
+| `fabric/src/main/java` | 23 | Fabric entry points, events, configuration, platform implementations, Mixins, and GeckoLib integration |
+| `common/src/gametest/java` | 12 | Shared GameTest logic classes |
+| `fabric/src/gametest/java` | 12 | Fabric discovery wrappers |
 
-The Forge port explicitly left Fabric breakage unrepaired. So the Fabric port is:
+The existing test layout contains 77 shared public assertion methods and 78 Fabric wrapper methods.
+Those counts are a coverage baseline, not permission to preserve obsolete signatures mechanically.
 
-1. Reconcile `common` under the Fabric transform and consumers, without regressing Forge.
-2. Port `fabric/src/main`: entrypoint and registration, Transfer API integration, custom
-   ingredients, loot injection, cauldron and dispenser interactions, held-transfer events, mixins,
-   configuration, and client rendering.
-3. Port `fabric/src/gametest`: the Fabric discovery wrappers and Fabric-specific tests. The shared
-   scenarios compiled into this source set are already ported.
-4. Stabilize the Fabric GameTest server run.
-5. Package and reconcile the orientation documents.
+The Gradle sync deliberately left the common Access Widener and both Forge-family Access Transformers
+empty. They are valid placeholders only. Fabric rendering cannot be considered ported until the
+1.21.1 Access Widener has been rebuilt from the members the renderer actually requires.
 
-The behavior described by `player-view.md` remains the target unless Minecraft or Fabric makes it
-impossible. A compile error is not permission to change player behavior.
+## Overall port shape
 
-## What the completed Forge port already provides
+The expected sequence is:
 
-| Concern | State |
-| --- | --- |
-| Component-backed bucket state in `NBTUtil` | Done in common |
-| Registry-aware nested Junk/Trash stack codecs | Done in common |
-| `ResourceLocation` factories in common | Done |
-| Tooltip, use-duration, equality, game-event signatures in common | Done |
-| Mob Bucket capture/restore against 1.21.1 entity APIs | Done in common |
-| Vanilla `MAX_STACK_SIZE` component as the variable-stack mechanism | Done in common |
-| Shared GameTest scenario bodies | Done in `common/src/gametest` |
-| `data/somebuckets/recipe` and `tags/entity_type` singular directories | Done in shared resources |
-| Structure-loot manifest `somebuckets/bucket_loot.json` and `BucketLootTables` | Unchanged, shared |
+1. Establish a compiler baseline and classify errors by subsystem.
+2. Port common item data, content registration, recipes, enchantment data, identifiers, and changed
+   vanilla signatures.
+3. Port common server services, datapack configuration, commands, picker operations, and networking.
+4. Port Fabric bootstrap, server events, configuration, platform implementations, and Mixins.
+5. Port shared and Fabric client rendering, attachment resolution, picker UI, item rendering, and
+   optional GeckoLib integration; rebuild the Fabric Access Widener.
+6. Migrate resources and obtain passing common and Fabric production gates.
+7. Port the shared and Fabric GameTest source sets.
+8. Stabilize the Fabric GameTest server.
+9. Package the Fabric artifact and reconcile documentation.
 
-The Fabric port consumes these rather than repeating them.
+A compile error is evidence that an API use is stale. It is not permission to change behavior,
+delete compatibility, weaken validation, or bypass a test.
 
-## Minecraft changes that reach Fabric code
+## Minecraft changes that directly affect the project
 
-### Item data components — remaining raw NBT sites in the Fabric module
+### Item appearance data components
 
-`common` no longer touches raw stack tags, but the Fabric module still does:
+`EyeItemProperties` stores `AppearanceOverride` under `EyeProperties` in raw `ItemStack` NBT through
+`getTagElement`, `getTag`, and `getOrCreateTag`. Raw stack tags are no longer the 1.21.1 item-state
+boundary.
 
-- `fabric/.../fluid/FabricBucketStorage` `StackBackend` uses `stack.setTag`, `updated.hasTag`, and
-  `updated.getTag` to copy state between a working stack and the real stack inside a transaction, and
-  in `createSnapshot`/`readSnapshot`.
-- `fabric/.../platform/FabricBucketOperations#tryHeldTransfer` copies the context-updated bucket back
-  onto the caller's stack with `bucket.setTag(updatedBucket.hasTag() ? updatedBucket.getTag().copy()
-  : null)`.
+The port needs one coherent component-backed representation shared by Googly Eyes and Slimy Eyes.
+`AppearanceOverride` already has a codec and immutable value semantics, so the expected default is a
+registered `somegoogly:eye_properties` data component backed by that codec. The built-in
+`minecraft:custom_data` component remains an acceptable fallback only if the registered component
+cannot satisfy crafting, tooltip, tint, harvest, and application paths without expanding
+loader-specific code.
 
-These must move to component-based copying. The state that matters lives entirely in
-`minecraft:custom_data` and `MAX_STACK_SIZE`; the smallest coherent change is a shared helper that
-copies the whole component set (or those two components) from one stack to another, used by both the
-snapshot participant and the held-transfer settle-back. The transaction snapshot semantics must be
-preserved: `SnapshotParticipant` still snapshots and restores the real stack's count and components.
+The following invariants must survive:
 
-### `StoredFluid` to `FluidVariant` conversion
+- harvested appearance remains attached to the item;
+- successive crafting modifiers compose without losing unrelated components;
+- crafting a Slimy Eye copies the appearance exactly;
+- applying and re-harvesting an eye preserves effective iris, cornea, and glow state;
+- creative eye items carry no override;
+- geometry remains entity-definition data and is never stored on the item.
 
-This is the port's central Fabric-specific design question. `StoredFluid` in common carries an
-optional variant `CompoundTag` (`variantTag()`), consistent with the Forge `FluidStack`-style
-schema. The Fabric module converts it with `FluidVariant.of(fluid, storedCompoundTag)` and reads it
-back with `resource.copyNbt()` in `FabricBucketStorage`, `FabricBucketOperations`, and
-`FabricFluidContainerModel`.
+No compatibility reader for the 1.20.1 raw tag is required.
 
-In 1.21.1, `FluidVariant`'s payload is component-based (a `DataComponentPatch` / component-change
-set), not a `CompoundTag`. The two coherent options:
+### Enchantments are data-driven
 
-- keep `StoredFluid` carrying a `CompoundTag` and convert `CompoundTag <-> DataComponentPatch` at the
-  Fabric boundary only (a single Fabric conversion helper, mirroring `ForgeFluidStacks`); or
-- change `StoredFluid` to carry a loader-neutral component-patch representation and convert on both
-  loader sides.
+`OptometristEnchantment` is a constructed `Enchantment` subclass registered through an Architectury
+`DeferredRegister`. Minecraft 1.21.1 represents enchantment definitions through registry data rather
+than the 1.20.1 rarity/category constructor model.
 
-The first option is the expected default: it keeps the change inside the Fabric module, does not
-disturb the Forge conversion that already works, and matches the existing "convert loader-native
-fluid values only at loader boundaries" invariant. The round trip must preserve modded variant data
-in both directions and must survive a Transfer API transaction.
+The port must replace the subclass and registration path with a `somegoogly:optometrist` enchantment
+definition and current holder-based access. `EyeItemService` and the creative-tab book must use the
+current enchantment lookup and stack APIs.
 
-### Identifiers
+The behavior to preserve is unusually specific:
 
-`fabric/.../crafting/FabricEmptyBucketIngredient` and `FabricSpawnEggIngredient`,
-`FabricDispenserFakePlayer`, `FabricFluidContainerModel`, and any other `new ResourceLocation(...)`
-sites in the Fabric module must use `ResourceLocation.fromNamespaceAndPath`, `parse`, or
-`withDefaultNamespace`.
+- one level;
+- shears only;
+- treasure-only rather than enchanting-table generated;
+- available through the intended treasure/trade mechanisms;
+- right-click harvesting remains non-lethal and costs one durability.
 
-### Cauldron and interaction result types
+The exact 1.21.1 data definition and acquisition semantics must be proven from permitted
+documentation and runtime tests rather than inferred from the removed subclass methods.
 
-`fabric/.../interaction/FabricCauldronInteractions` registers into `CauldronInteraction.EMPTY` and
-`CauldronInteraction.POWDER_SNOW` and returns `InteractionResult.sidedSuccess(...)`. In 1.21.1 the
-cauldron maps are wrapped (`CauldronInteraction.InteractionMap`, reached through an accessor) and the
-interaction functions return `ItemInteractionResult`. This is the same change the Forge port made in
-its Stage 5C3; the Forge status file records `InteractionMap#map` and the `ItemInteractionResult`
-constants as the working shape.
+### Recipes and crafting inputs
 
-### Loot functions
+`EyeModifierRecipe` and `SlimyEyeRecipe` use 1.20.1 crafting containers, serializer callbacks,
+resource identifiers, and network methods. The 1.21.1 recipe API uses current crafting-input and
+codec/stream-codec contracts.
 
-`fabric/.../loot/FabricBucketLoot` builds a pool entry with `SetNbtFunction.setTag(CompoundTag)` from
-`NBTUtil.createPowderSnowTag(...)`. `SetNbtFunction` is replaced in 1.20.5+ by component-oriented
-loot functions; the Huge Powder Snow Bucket reward should use the custom-data loot function
-(`SetCustomDataFunction.setCustomData`, or the current equivalent) wrapping the same compound. If a
-`CustomData` value is needed, wrap the `CompoundTag` at the call site; do not push `CustomData` into
-`NBTUtil`'s public shape unless a later stage proves it necessary.
+The port must preserve:
 
-### Data and resource layout
+- dynamic appearance modification;
+- preservation of unrelated item components;
+- a recipe-book-visible Slimy Eye recipe;
+- the two serializer ids;
+- exact one-eye/one-modifier matching;
+- deterministic clearing and glow/color override behavior.
 
-The shared `data/` directories were already singularized by the Forge port. The Fabric module ships
-only `assets/somebuckets/models/item/*.json` (client models) and its two `fabric.mod.json` files,
-none of which are affected by the vanilla registry-directory renames. `pack.mcmeta` for shared
-resources is owned by the Forge/common resource tree; verify the Fabric production and GameTest
-`fabric.mod.json` dependency ranges and the mixin `compatibilityLevel` instead.
+The recipe JSON result shape and the resource directory also need the 1.21.1 forms.
 
-### Rendering
+### Identifiers and changed signatures
 
-Minecraft 1.21 changed portions of the model, vertex, and item-rendering APIs. The Fabric client
-wraps a baked model, transforms and emits quads through the Fabric Renderer API, builds `BakedQuad`s
-from a raw int vertex array, uses `FluidVariantRendering`, registers through the Fabric model-loading
-plugin, and provides a builtin dynamic item renderer for the Junk Bucket. Compile-level signature
-changes are expected across all of `fabric/.../client`.
+`ResourceLocation` constructors are private in 1.21.1. Construction sites in common, Fabric, and
+GameTest code must use the appropriate factories. Known sites span configuration, commands,
+behaviors, render textures, entity constants, picker packets, and tests.
 
-## Fabric API changes that directly affect the project
+Other expected common migrations include item tooltip context, crafting input, registry-holder
+access, NBT accounter construction, entity save/load signatures, creative-tab output, and selected
+command or rendering signatures. Mechanical changes should be grouped by subsystem rather than
+performed opportunistically across the entire tree.
 
-### Loader bootstrap and metadata
+### Resource layout and datapack selection
 
-`SomeBucketsFabric` (`ModInitializer`) and `SomeBucketsFabricClient` (`ClientModInitializer`) entry
-points are stable in shape. Expected work is limited to:
+The shared resources currently use:
 
-- `somebuckets.fabric.mixins.json` `compatibilityLevel` from `JAVA_17` to `JAVA_21`, and its `mixins`
-  list if `ItemStackMixin` is removed;
-- confirming `fabric.mod.json` dependency expressions still resolve (`minecraft`, `fabricloader`,
-  `java`, `fabric-api`); the values flow from `gradle.properties`, which is already on 1.21.1;
-- the GameTest `fabric.mod.json` entrypoint and `somebuckets-gametest` Loom mod entry.
+- `data/somegoogly/recipes`;
+- `data/somegoogly/structures`;
+- recipe results with the old `item` field;
+- `pack_format` 15.
 
-### Transfer API
+The vanilla registry directories must be singularized and resource metadata updated for 1.21.1.
 
-The `fabric-transfer-api-v1` core is close to unchanged: `Storage<FluidVariant>`,
-`SingleSlotStorage`, `ContainerItemContext`, `Transaction`, `SnapshotParticipant`, `StorageUtil.move`,
-`StorageUtil.findExtractableResource`, `FluidStorage.ITEM` / `FluidStorage.SIDED`,
-`InventoryStorage.of`, and `FluidConstants.BUCKET` are expected to survive with at most minor
-signature adjustments. The bulk of `FabricBucketOperations`' transaction logic should port cleanly.
-The exceptions are the `FluidVariant` payload change above and the raw-NBT stack copies.
+Seventy-four bundled Minecraft eye definitions select exactly version `1.20.1`. They will not resolve
+for 1.21.1 until updated. Definitions for optional mods use their own release ranges and must be
+reviewed separately; blindly changing those ranges would claim compatibility that has not been
+tested.
 
-`FluidVariantAttributes` (`getName`, `getFillSound`, `getEmptySound`) and
-`net.fabricmc.fabric.api.entity.FakePlayer` are retained; the Fabric fake player used for dispenser
-claim checks stays. Unlike the Forge port, Fabric keeps both its fake player and its FTB Chunks
-integration (`ftb-chunks-fabric:2101.1.21` is a real 1.21.1 artifact and is already a
-`modCompileOnly` dependency; `common/src/compat/java` remains on the Fabric source set).
+Minecraft 1.21.1 also contains living entity types absent from the 1.20.1 definition set. Adding
+their eye geometry is a compatibility/content task requiring visual authoring and is not required to
+make the existing Fabric port compile, but final documentation must not overstate vanilla coverage.
 
-### Custom recipe ingredients
+## Shared networking
 
-`FabricEmptyBucketIngredient` and `FabricSpawnEggIngredient` implement
-`net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient` with a `CustomIngredientSerializer`
-that today uses `read/write(JsonObject)` and `read/write(FriendlyByteBuf)`. In the 1.21 Fabric API,
-the serializer is codec-oriented: a `MapCodec<T>` for data plus a registry-aware packet/stream codec
-(`RegistryFriendlyByteBuf`). Both ingredients need a real port, mirroring the Forge Stage 5A change:
+`NetworkHandler` and `ClientNetworkHandler` use Architectury 9-era `NetworkManager` registration and
+manual `FriendlyByteBuf` payloads. The network surface includes:
 
-- preserve the ids `somebuckets:empty_bucket` and `somebuckets:spawn_egg`;
-- `FabricEmptyBucketIngredient` still encodes its configured item and stays component-sensitive
-  (`NBTUtil.isEmptyBucket`);
-- `FabricSpawnEggIngredient` still matches all standard loaded spawn eggs;
-- recipe JSON loads through Fabric API without retaining obsolete serializer fields.
+- login hello and acknowledgment;
+- eye-state snapshots;
+- resolved eye-definition synchronization;
+- behavior triggers;
+- picker freeze, spawn, spawn-all, pose, and export requests;
+- tracking-player fanout;
+- bounded pending client state.
 
-### Loot table events
+Architectury API 13 may require a different payload registration or buffer contract. The exact
+change must be established from the current API and compiler diagnostics. The port must preserve:
 
-`fabric/.../loot/FabricBucketLoot` registers `LootTableEvents.MODIFY` with a
-`(resourceManager, lootManager, id, tableBuilder, source)` lambda and calls `source.isBuiltin()` and
-`BucketLootTables.rewardsFor(id)`. In the 1.21 Fabric API the callback signature changed: the loot
-table identity is a `ResourceKey<LootTable>`, and the parameter set is reduced/reordered (a
-`HolderLookup.Provider` is available, the `ResourceManager`/`LootDataManager` parameters are gone).
-`rewardsFor` takes a `ResourceLocation`, so pass the key's location. Confirm the current
-`LootTableSource` predicate name for "built-in".
+- server authority and direction-specific receivers;
+- player identity from packet context;
+- authorization repeated on the server;
+- bounded definition and picker payload decoding;
+- disconnect on protocol mismatch or timeout;
+- pending state for packets arriving before their entity;
+- one full eye-state snapshot per mutation.
 
-`BuiltInRegistries.ITEM.get(ResourceLocation)` in `FabricBucketLoot` and `FabricEmptyBucketIngredient`
-still returns the item directly in 1.21.1; the `Optional`/`Holder` return change is later. Low risk,
-but verify.
+If the wire representation changes, the protocol identifier must change with it. No compatibility
+bridge to protocol 9 is required.
 
-### Content registries and fuel
+Architectury API 13 supports the Fabric and NeoForge sides of this build but has no matching Forge
+platform artifact for Minecraft 1.21.1. Removing or replacing Architectury runtime API usage for the
+later Forge port is a separate architectural task. The Fabric port must not increase Architectury
+coupling or introduce Fabric API types into common production code.
 
-`fabric/.../mixin/AbstractFurnaceBlockEntityMixin` injects into `AbstractFurnaceBlockEntity#isFuel`
-and `#getBurnDuration` to give a lava-filled Big/Huge Bucket the same finite-fuel behavior Forge gets
-from its fuel event. The injected method targets and descriptors must be re-verified against the
-1.21.1 Parchment mappings; the larger data-driven `FuelValues` furnace refactor lands after 1.21.1,
-so the current mixin shape is expected to still be viable, but the `getBurnDuration` signature is the
-most likely to have moved. `BucketFuel.isLavaFuel` and `FluidBucketItem.LAVA_BUCKET_BURN_TIME_TICKS`
-are common and already ported.
+## Fabric-specific server integration
 
-### Variable stack size
+### Bootstrap and events
 
-`fabric/.../mixin/ItemStackMixin` injects `ItemStack#getMaxStackSize` to return
-`VariableStackItem#variableMaxStackSize`. The Forge port replaced its equivalent per-stack override
-with the vanilla `MAX_STACK_SIZE` data component, maintained by `NBTUtil` at every write. If that
-component is authoritative on Fabric too — it should be, since it is written in common — this mixin is
-redundant and should be removed along with its `somebuckets.fabric.mixins.json` entry. Removing it is
-preferred over porting it, provided a GameTest confirms empty-versus-filled stack sizes on Fabric.
+`SomeGooglyFabric` and `SomeGooglyFabricClient` retain recognizable Fabric entry-point shapes.
+Registration APIs and callback signatures must nevertheless be confirmed for:
 
-### Model loading and renderer API
+- resource reload listeners;
+- server entity load and tracking;
+- join, disconnect, datapack sync, stopping, and tick callbacks;
+- living-entity death and entity-use interactions;
+- server and client commands;
+- client lifecycle, HUD, render, input, and item-renderer events.
 
-`SomeBucketsFabricClient`, `FabricFluidContainerModel`, `FabricJunkBucketRenderer`, and
-`FabricClientFluidColors` use `ModelLoadingPlugin` / `context.modifyModelAfterBake()`, the Fabric
-Renderer API (`Renderer`, `RenderMaterial`, `QuadEmitter`, `RenderContext`, `FabricBakedModel`),
-`BuiltinItemRendererRegistry` / dynamic item rendering, `ColorProviderRegistry`, `ItemProperties`,
-`FluidVariantRendering`, and a two-argument `ModelResourceLocation`. Expect signature changes in the
-model-modifier callback, the `FabricBakedModel` quad-emission method, the `BakedModel` interface
-members, the `BakedQuad` vertex-array construction, and the dynamic renderer interface. Also verify
-`SpawnEggItem.byId` and `SpawnEggItem#getColor` (spawn-egg colors moved toward components). The
-custom mask-clipping fluid layer is doing real geometry work and cannot be replaced by a stock model;
-it must be ported, not dropped.
+The current debug logging is diagnostic behavior, not a port invariant. It may remain while useful
+but must not obscure lifecycle correctness.
+
+### Persistent entity data
+
+`EntityPersistentDataMixin` stores one compound on every entity and injects into `saveWithoutId` and
+`load`. The injected target names, arguments, and return callback types must be re-established for
+1.21.1.
+
+The persistent keys and snapshot semantics remain authoritative. Item data components do not imply
+that entity state should move away from entity NBT.
+
+### Reaction and trade Mixins
+
+`LivingEntityReactionMixin` targets `actuallyHurt` and `heal`; `MerchantResultSlotMixin` targets
+`onTake`. These are behaviorally small but mapping-sensitive. Each target must be verified at compile
+and runtime. A Mixin that compiles but does not apply is a failed port.
+
+### Fabric configuration
+
+Fabric reads client and per-world server TOML through `FabricToml` and registers a reload listener
+for eye definitions. File locations and behavior should remain unchanged. Identifier parsing,
+resource-listener identity, lifecycle timing, and any registry-context parameters require porting.
+
+## Client rendering and attachment
+
+Rendering is the largest and highest-risk subsystem. Shared client code contains model and layer
+installation, pupil physics, item rendering, picker rendering, HUD/input, model-part vocabulary, and
+multiple attachment resolvers. Fabric adds renderer-map access, reload handling, client event
+registration, and GeckoLib integration.
+
+Likely change areas include:
+
+- `EntityModel` and render-layer generic signatures;
+- model render and vertex-consumer arguments;
+- `LivingEntityRenderer` layer access and installation;
+- renderer map access after resource reload;
+- ageable model families and their baby transforms;
+- `RenderType` construction for the picker gizmo;
+- item-renderer registration and render method signatures;
+- HUD and key-mapping callbacks;
+- renderer reload Mixins;
+- GeckoLib renderer, bone, baked-model, and layer APIs.
+
+The old Access Widener named `AgeableListModel`, `AgeableHierarchicalModel`, rabbit and llama fields,
+renderer maps and layers, and a private `RenderType` factory. It was intentionally cleared during
+build setup. The 1.21.1 version must contain only access still required by the ported implementation.
+Do not restore declarations merely because they existed in 1.20.1.
+
+Attachment compatibility is behavior, not just compilation. A passing headless suite cannot prove
+that eyes remain correctly positioned on every vanilla or optional model. The final handoff must
+name manual checks for ordinary hierarchical models, age-dependent models, slime layer ordering,
+players, special vanilla shapes, and optional GeckoLib models.
+
+GeckoLib remains optional. Failure to resolve or attach an optional GeckoLib layer must not prevent
+the base mod from loading.
 
 ## Existing verification assets
 
-- `fabric/src/gametest/java/.../GameTestSupport.java` — Fabric equivalent of the shared support
-  helper.
-- `fabric/src/gametest/java/.../*GameTests.java` — Fabric discovery wrappers plus Fabric-specific
-  coverage: `TransferGameTests`, `BlockCapabilityGameTests`, `CauldronGameTests`,
-  `RecipeAndFuelGameTests`, `LootGameTests`, `ProtectionGameTests`, `AutomationGameTests`,
-  `PresentationGameTests`, `StateGameTests`, `StorageBucketGameTests`, `BBGameTests`, `SBGameTests`,
-  `MBGameTests`.
-- `fabric/src/gametest/resources/fabric.mod.json` — GameTest entrypoint and `somebuckets-gametest`
-  Loom mod.
-- The `gameTestServer` run in `fabric/build.gradle`, which clears `fabric/run/world` before launch.
-- The shared structure fixture, decoded into Fabric GameTest resources by the root build.
+The GameTest suite covers:
 
-The shared scenario bodies compiled into this source set are already ported. The Fabric-specific test
-classes are expected to need API porting. Tests must not be deleted, weakened, or made less specific
-to obtain a green run.
+- configuration selection and version ranges;
+- eligibility and spawn gating;
+- variant selection;
+- eye-state overrides;
+- persistence and packet serialization;
+- recipes;
+- picker export and freeze behavior;
+- deterministic behaviors;
+- loader-integrated initialization behavior.
+
+The shared logic and Fabric wrappers both use 1.20.1 identifiers, crafting, buffers, entity APIs, and
+GameTest discovery conventions. They should be ported after production code so assertions can be
+adapted against established 1.21.1 boundaries.
+
+Tests must not be deleted, disabled, undiscovered, or weakened to obtain a passing run. Packet,
+item-component, enchantment, persistence, and resource-selection migrations should gain focused
+coverage where the existing suite does not establish the new boundary.
 
 ## Risk ranking
 
 | Risk | Area | Reason |
 | --- | --- | --- |
-| Highest | `StoredFluid` to `FluidVariant` component-payload conversion | Central to every Fabric fluid path and to variant tint; must round-trip modded data |
-| High | Fabric client model, renderer, and dynamic item renderer port | Broad signature change with limited headless coverage |
-| High | Raw-NBT stack copies in the Transfer API layer | Transaction correctness depends on exact snapshot/restore semantics |
-| Medium-high | Custom ingredients codec migration | Fabric API serializer contract changed to codecs |
-| Medium-high | Loot table event signature and loot-function change | Callback params and reward NBT function both moved |
-| Medium | Cauldron `ItemInteractionResult` and `InteractionMap` | Mechanical, already proven on Forge |
-| Medium | Furnace fuel mixin target verification | 1.21.1 mapping check; possible descriptor move |
-| Medium | Common reconciliation under the Fabric transform | Unknown size until first Fabric compile |
-| Low | Identifiers, mixin compat level, `fabric.mod.json`, removing `ItemStackMixin` | Local and mechanical |
+| Highest | Shared rendering, attachment resolvers, and Access Widener | Broad reliance on Minecraft client internals plus visual correctness outside headless coverage |
+| High | Networking and protocol handshake | Many bounded bidirectional payloads, tracking fanout, login compatibility, and pending state |
+| High | Item appearance component and recipes | Central harvest-craft-apply round trip and component-preservation requirements |
+| High | Data-driven Optometrist enchantment | Registration and acquisition semantics changed, not just method signatures |
+| Medium-high | Fabric persistent-data and reaction/trade Mixins | Mapping-sensitive hooks whose runtime application matters |
+| Medium | Fabric server/client callback wiring and configuration | Numerous loader callbacks but good existing service boundaries |
+| Medium | GeckoLib 1.21.1 integration | Optional but model/API-sensitive |
+| Medium | Resource layout and eye-definition version selection | Mechanical paths plus compatibility claims and visual geometry |
+| Medium-low | GameTest API and discovery | Existing coverage is strong, but all wrappers and several shared helpers need API migration |
+| Low | Simple identifier factories and metadata | Local and mechanical once grouped correctly |
 
 ## Non-goals
 
-- Repairing or reworking Forge, except the mandatory no-regression compile after common changes.
-- Implementing NeoForge runtime code.
-- Any build-environment change: Gradle, Loom, Architectury, plugins, mappings, the JDK, dependency
-  versions, or `fabric/build.gradle` structure.
-- Migrating unreleased 1.20.1 saves or item data.
-- Introducing a new component architecture, networking layer, test framework, or abstraction layer
-  unless a planned stage proves the existing approach cannot support Fabric 1.21.1.
-- Redesigning player-visible bucket behavior to accommodate a compile error.
+- Implementing Forge or NeoForge runtime code.
+- Making Forge or NeoForge compile as a Fabric-stage regression gate.
+- Supporting legacy 1.20.1 item, entity, datapack, or wire formats.
+- Changing the established Gradle, loader, mappings, plugin, JDK, or dependency baseline.
+- Adding new vanilla or optional-mod eye geometry merely to obtain a passing build.
+- Replacing the GameTest framework.
+- Redesigning player-visible eye behavior, picker commands, configuration semantics, or network
+  authority to accommodate a compiler error.
+- Publishing, committing, or performing any Git or GitHub operation.
 
 ## Questions deliberately deferred to evidence
 
-Decide these during their named stage from compiler output, Fabric API sources, and focused tests:
+Resolve these in their named stage from compiler diagnostics, permitted official documentation, and
+focused tests:
 
-- whether `CompoundTag <-> DataComponentPatch` conversion for `FluidVariant` stays entirely in the
-  Fabric module or requires a `StoredFluid` shape change;
-- the exact 1.21 `CustomIngredientSerializer` codec and stream-codec contract;
-- the exact 1.21 `LootTableEvents.MODIFY` parameter list and the current "built-in" source predicate;
-- the current `AbstractFurnaceBlockEntity#getBurnDuration` descriptor under 1.21.1 mappings;
-- whether removing `ItemStackMixin` fully preserves variable stack size on Fabric;
-- the current Fabric model-modifier callback and `FabricBakedModel` quad-emission signatures.
+- whether a registered `somegoogly:eye_properties` component cleanly replaces the old stack tag or
+  whether `minecraft:custom_data` is the smaller correct boundary;
+- the exact 1.21.1 Optometrist enchantment definition needed to preserve treasure/trade availability
+  while excluding ordinary enchanting-table generation;
+- the Architectury 13 payload registration and buffer contract;
+- whether the current packet body formats can remain unchanged;
+- the current entity save/load and reaction/trade Mixin descriptors;
+- which old Access Widener entries remain necessary after the renderer is ported;
+- which attachment resolvers survive intact and which model families require replacement logic;
+- whether GeckoLib 4.7.4 preserves the required renderer-layer extension points;
+- which optional-mod eye-definition ranges can honestly be advanced for 1.21.1.
 
-If any of these requires choosing new player behavior, a new persistence design, or a new build
-dependency, unattended work stops for user direction.
+If resolving one of these requires a new dependency, a build-environment change, a new
+player-visible behavior, or a cross-loader architecture decision outside Fabric scope, stop for
+user direction.

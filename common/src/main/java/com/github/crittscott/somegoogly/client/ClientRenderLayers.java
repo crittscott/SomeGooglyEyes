@@ -38,8 +38,8 @@ public final class ClientRenderLayers {
         Resolvers.clearCaches();
         HashSet<LivingEntityRenderer> playerRenderers = new HashSet<>();
 
-        if (!ClientConfig.isEntityDisabled(new ResourceLocation("minecraft", "player"))) {
-            Map<String, EntityRenderer<? extends Player>> skinMap = ClientRendererAccess.skinMap(dispatcher);
+        if (!ClientConfig.isEntityDisabled(ResourceLocation.fromNamespaceAndPath("minecraft", "player"))) {
+            Map<?, EntityRenderer<? extends Player>> skinMap = ClientRendererAccess.skinMap(dispatcher);
             for (EntityRenderer<? extends Player> renderer : skinMap.values()) {
                 if (renderer instanceof PlayerRenderer playerRenderer) {
                     addLiving(playerRenderer);

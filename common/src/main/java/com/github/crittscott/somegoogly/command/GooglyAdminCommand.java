@@ -109,7 +109,7 @@ public final class GooglyAdminCommand {
             behavior = pool.get(target.getRandom().nextInt(pool.size()));
         } else {
             ResourceLocation key = id.indexOf(':') >= 0 ? ResourceLocation.tryParse(id)
-                    : new ResourceLocation(SomeGooglyCommon.MOD_ID, id);
+                    : ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, id);
             behavior = key == null ? null : EyeBehaviors.byId(key);
         }
         if (behavior == null) {

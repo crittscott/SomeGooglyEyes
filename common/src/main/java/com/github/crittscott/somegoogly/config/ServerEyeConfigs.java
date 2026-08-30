@@ -26,7 +26,8 @@ public final class ServerEyeConfigs {
      * walkable part tree, so eyes can never render on it. {@link EyeConfigReloadListener} refuses
      * datapack configs for it and {@code /sg spawnall} skips it.
      */
-    public static final ResourceLocation ENDER_DRAGON = new ResourceLocation("minecraft", "ender_dragon");
+    public static final ResourceLocation ENDER_DRAGON =
+            ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon");
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     private static volatile long generation;

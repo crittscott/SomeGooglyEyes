@@ -4,9 +4,15 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.platform.NetworkTracking;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /** Cross-loader packet registration, protocol negotiation, and send helpers. */
 public final class NetworkHandler {
@@ -36,6 +43,31 @@ public final class NetworkHandler {
     public static final ResourceLocation PICKER_MOB_POSE = versioned("picker_mob_pose");
     public static final ResourceLocation PICKER_EXPORT = versioned("picker_export");
 
+    public static final PayloadType<String> PROTOCOL_HELLO_PAYLOAD = payloadType(
+            PROTOCOL_HELLO,
+            buffer -> buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH),
+            (version, buffer) -> buffer.writeUtf(version));
+    public static final PayloadType<String> PROTOCOL_ACK_PAYLOAD = payloadType(
+            PROTOCOL_ACK,
+            buffer -> buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH),
+            (version, buffer) -> buffer.writeUtf(version));
+    public static final PayloadType<EyeStatePacket> EYE_STATE_PAYLOAD = payloadType(
+            EYE_STATE, EyeStatePacket::decode, EyeStatePacket::encode);
+    public static final PayloadType<byte[]> EYE_CONFIG_PAYLOAD = payloadType(
+            EYE_CONFIG, NetworkHandler::decodeConfigPayload, NetworkHandler::encodeConfigPayload);
+    public static final PayloadType<EyeBehaviorTriggerPacket> EYE_BEHAVIOR_PAYLOAD = payloadType(
+            EYE_BEHAVIOR, EyeBehaviorTriggerPacket::decode, EyeBehaviorTriggerPacket::encode);
+    public static final PayloadType<PickerFreezePacket> PICKER_FREEZE_PAYLOAD = payloadType(
+            PICKER_FREEZE, PickerFreezePacket::decode, PickerFreezePacket::encode);
+    public static final PayloadType<PickerSpawnPacket> PICKER_SPAWN_PAYLOAD = payloadType(
+            PICKER_SPAWN, PickerSpawnPacket::decode, PickerSpawnPacket::encode);
+    public static final PayloadType<PickerSpawnAllPacket> PICKER_SPAWN_ALL_PAYLOAD = payloadType(
+            PICKER_SPAWN_ALL, PickerSpawnAllPacket::decode, PickerSpawnAllPacket::encode);
+    public static final PayloadType<PickerMobPosePacket> PICKER_MOB_POSE_PAYLOAD = payloadType(
+            PICKER_MOB_POSE, PickerMobPosePacket::decode, PickerMobPosePacket::encode);
+    public static final PayloadType<PickerExportPacket> PICKER_EXPORT_PAYLOAD = payloadType(
+            PICKER_EXPORT, PickerExportPacket::decode, PickerExportPacket::encode);
+
     private static final int HANDSHAKE_TIMEOUT_TICKS = 6000;
     private static final Map<UUID, Integer> PENDING = new HashMap<>();
     private static final Set<UUID> READY = new HashSet<>();
@@ -48,26 +80,25 @@ public final class NetworkHandler {
     private NetworkHandler() {
     }
 
-    /** Register only server-received payloads; safe on physical clients and dedicated servers. */
+    /** Register server receivers and the clientbound codecs needed on a dedicated server. */
     public static synchronized void registerCommon() {
         if (registered) {
             return;
         }
         registered = true;
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PROTOCOL_ACK, (buffer, context) -> {
-            String version = buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH);
-            context.queue(() -> acknowledge(context, version));
-        });
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_FREEZE,
-                (buffer, context) -> PickerFreezePacket.handle(PickerFreezePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_SPAWN,
-                (buffer, context) -> PickerSpawnPacket.handle(PickerSpawnPacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_SPAWN_ALL,
-                (buffer, context) -> PickerSpawnAllPacket.handle(PickerSpawnAllPacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_MOB_POSE,
-                (buffer, context) -> PickerMobPosePacket.handle(PickerMobPosePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_EXPORT,
-                (buffer, context) -> PickerExportPacket.handle(PickerExportPacket.decode(buffer), context));
+        PROTOCOL_ACK_PAYLOAD.registerReceiver(NetworkManager.Side.C2S,
+                (version, context) -> context.queue(() -> acknowledge(context, version)));
+        PICKER_FREEZE_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerFreezePacket::handle);
+        PICKER_SPAWN_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerSpawnPacket::handle);
+        PICKER_SPAWN_ALL_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerSpawnAllPacket::handle);
+        PICKER_MOB_POSE_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerMobPosePacket::handle);
+        PICKER_EXPORT_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerExportPacket::handle);
+        if (Platform.getEnvironment() == Env.SERVER) {
+            PROTOCOL_HELLO_PAYLOAD.registerS2C();
+            EYE_STATE_PAYLOAD.registerS2C();
+            EYE_CONFIG_PAYLOAD.registerS2C();
+            EYE_BEHAVIOR_PAYLOAD.registerS2C();
+        }
     }
 
     /** Start the stable-channel negotiation. Gameplay payloads use versioned IDs and cannot collide. */
@@ -76,9 +107,7 @@ public final class NetworkHandler {
         READY.remove(playerId);
         LAST_CONFIG_GENERATION.remove(playerId);
         PENDING.put(playerId, HANDSHAKE_TIMEOUT_TICKS);
-        FriendlyByteBuf buffer = newBuffer();
-        buffer.writeUtf(PROTOCOL_VERSION);
-        NetworkManager.sendToPlayer(player, PROTOCOL_HELLO, buffer);
+        PROTOCOL_HELLO_PAYLOAD.sendToPlayer(player, PROTOCOL_VERSION);
         SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sent protocol hello version={} to {}",
                 PROTOCOL_VERSION, player.getGameProfile().getName());
@@ -144,45 +173,44 @@ public final class NetworkHandler {
         SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sending {} selected eye configs to {}",
                 ServerEyeConfigs.all().size(), player.getGameProfile().getName());
-        NetworkManager.sendToPlayer(player, EYE_CONFIG,
-                new FriendlyByteBuf(Unpooled.wrappedBuffer(payload)));
+        EYE_CONFIG_PAYLOAD.sendToPlayer(player, payload);
         LAST_CONFIG_GENERATION.put(player.getUUID(), generation);
     }
 
     public static void sendEyeState(ServerPlayer player, EyeStatePacket packet) {
-        sendToPlayer(player, EYE_STATE, packet, EyeStatePacket::encode);
+        EYE_STATE_PAYLOAD.sendToPlayer(player, packet);
     }
 
     public static void sendEyeStateTrackingAndSelf(Entity entity, EyeStatePacket packet) {
-        NetworkTracking.send(entity, true, EYE_STATE, encode(packet, EyeStatePacket::encode));
+        NetworkTracking.send(entity, true, EYE_STATE_PAYLOAD.payload(packet));
     }
 
     public static void sendBehavior(ServerPlayer player, EyeBehaviorTriggerPacket packet) {
-        sendToPlayer(player, EYE_BEHAVIOR, packet, EyeBehaviorTriggerPacket::encode);
+        EYE_BEHAVIOR_PAYLOAD.sendToPlayer(player, packet);
     }
 
     public static void sendBehaviorTracking(Entity entity, EyeBehaviorTriggerPacket packet) {
-        NetworkTracking.send(entity, false, EYE_BEHAVIOR, encode(packet, EyeBehaviorTriggerPacket::encode));
+        NetworkTracking.send(entity, false, EYE_BEHAVIOR_PAYLOAD.payload(packet));
     }
 
     public static void sendToServer(PickerFreezePacket packet) {
-        sendToServer(PICKER_FREEZE, packet, PickerFreezePacket::encode);
+        PICKER_FREEZE_PAYLOAD.sendToServer(packet);
     }
 
     public static void sendToServer(PickerSpawnPacket packet) {
-        sendToServer(PICKER_SPAWN, packet, PickerSpawnPacket::encode);
+        PICKER_SPAWN_PAYLOAD.sendToServer(packet);
     }
 
     public static void sendToServer(PickerSpawnAllPacket packet) {
-        sendToServer(PICKER_SPAWN_ALL, packet, PickerSpawnAllPacket::encode);
+        PICKER_SPAWN_ALL_PAYLOAD.sendToServer(packet);
     }
 
     public static void sendToServer(PickerMobPosePacket packet) {
-        sendToServer(PICKER_MOB_POSE, packet, PickerMobPosePacket::encode);
+        PICKER_MOB_POSE_PAYLOAD.sendToServer(packet);
     }
 
     public static void sendToServer(PickerExportPacket packet) {
-        sendToServer(PICKER_EXPORT, packet, PickerExportPacket::encode);
+        PICKER_EXPORT_PAYLOAD.sendToServer(packet);
     }
 
     private static void acknowledge(NetworkManager.PacketContext context, String version) {
@@ -227,19 +255,6 @@ public final class NetworkHandler {
         }
     }
 
-    private static <T> void sendToPlayer(ServerPlayer player, ResourceLocation id, T packet,
-                                         BiConsumer<T, FriendlyByteBuf> encoder) {
-        NetworkManager.sendToPlayer(player, id, encode(packet, encoder));
-    }
-
-    private static <T> void sendToServer(ResourceLocation id, T packet,
-                                         BiConsumer<T, FriendlyByteBuf> encoder) {
-        if (!NetworkManager.canServerReceive(id)) {
-            return;
-        }
-        NetworkManager.sendToServer(id, encode(packet, encoder));
-    }
-
     public static Component protocolMismatch(Component receiver, String expected, String received) {
         return Component.translatable("somegoogly.network.protocol_mismatch", receiver, expected, received);
     }
@@ -248,14 +263,95 @@ public final class NetworkHandler {
         return new FriendlyByteBuf(Unpooled.buffer());
     }
 
-    private static <T> FriendlyByteBuf encode(T packet, BiConsumer<T, FriendlyByteBuf> encoder) {
-        FriendlyByteBuf buffer = newBuffer();
-        encoder.accept(packet, buffer);
-        return buffer;
+    private static byte[] decodeConfigPayload(FriendlyByteBuf buffer) {
+        int length = buffer.readableBytes();
+        if (length > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+            throw new DecoderException("Eye config sync payload exceeds protocol limit");
+        }
+        byte[] payload = new byte[length];
+        buffer.readBytes(payload);
+        return payload;
+    }
+
+    private static void encodeConfigPayload(byte[] payload, FriendlyByteBuf buffer) {
+        if (payload.length > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+            throw new IllegalArgumentException("Eye config sync payload exceeds protocol limit");
+        }
+        buffer.writeBytes(payload);
+    }
+
+    private static <T> PayloadType<T> payloadType(ResourceLocation id,
+                                                   Function<FriendlyByteBuf, T> decoder,
+                                                   BiConsumer<T, FriendlyByteBuf> encoder) {
+        return new PayloadType<>(id, decoder, encoder);
+    }
+
+    /** One typed custom-payload channel whose body codec remains owned by its packet class. */
+    public static final class PayloadType<T> {
+        private final CustomPacketPayload.Type<Payload<T>> type;
+        private final StreamCodec<RegistryFriendlyByteBuf, Payload<T>> codec;
+
+        private PayloadType(ResourceLocation id, Function<FriendlyByteBuf, T> decoder,
+                            BiConsumer<T, FriendlyByteBuf> encoder) {
+            type = new CustomPacketPayload.Type<>(id);
+            codec = new StreamCodec<>() {
+                @Override
+                public Payload<T> decode(RegistryFriendlyByteBuf buffer) {
+                    return new Payload<>(PayloadType.this, decoder.apply(buffer));
+                }
+
+                @Override
+                public void encode(RegistryFriendlyByteBuf buffer, Payload<T> payload) {
+                    encoder.accept(payload.value, buffer);
+                }
+            };
+        }
+
+        public void registerReceiver(NetworkManager.Side side, NetworkManager.NetworkReceiver<T> receiver) {
+            NetworkManager.registerReceiver(side, type, codec,
+                    (payload, context) -> receiver.receive(payload.value, context));
+        }
+
+        public void registerS2C() {
+            NetworkManager.registerS2CPayloadType(type, codec);
+        }
+
+        public void sendToPlayer(ServerPlayer player, T value) {
+            NetworkManager.sendToPlayer(player, payload(value));
+        }
+
+        public void sendToServer(T value) {
+            if (NetworkManager.canServerReceive(type)) {
+                sendToServerUnchecked(value);
+            }
+        }
+
+        public void sendToServerUnchecked(T value) {
+            NetworkManager.sendToServer(payload(value));
+        }
+
+        public CustomPacketPayload payload(T value) {
+            return new Payload<>(this, value);
+        }
+    }
+
+    private static final class Payload<T> implements CustomPacketPayload {
+        private final PayloadType<T> payloadType;
+        private final T value;
+
+        private Payload(PayloadType<T> payloadType, T value) {
+            this.payloadType = payloadType;
+            this.value = value;
+        }
+
+        @Override
+        public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+            return payloadType.type;
+        }
     }
 
     private static ResourceLocation id(String path) {
-        return new ResourceLocation(SomeGooglyCommon.MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, path);
     }
 
     private static ResourceLocation versioned(String path) {

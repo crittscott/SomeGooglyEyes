@@ -1,3 +1,45 @@
 accessWidener	v2	named
 
-# Access declarations will be restored as the 1.21.1 rendering port identifies the required members.
+accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layers	Ljava/util/List;
+accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
+
+accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	renderers	Ljava/util/Map;
+accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	playerRenderers	Ljava/util/Map;
+
+accessible	method	net/minecraft/client/renderer/RenderType	create	(Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+
+accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
+
+accessible	method	net/minecraft/client/model/AgeableListModel	headParts	()Ljava/lang/Iterable;
+accessible	method	net/minecraft/client/model/AgeableListModel	bodyParts	()Ljava/lang/Iterable;
+accessible	field	net/minecraft/client/model/AgeableListModel	scaleHead	Z
+accessible	field	net/minecraft/client/model/AgeableListModel	babyYHeadOffset	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyZHeadOffset	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyHeadScale	F
+accessible	field	net/minecraft/client/model/AgeableListModel	babyBodyScale	F
+accessible	field	net/minecraft/client/model/AgeableListModel	bodyYOffset	F
+
+accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	youngScaleFactor	F
+accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	bodyYOffset	F
+
+accessible	field	net/minecraft/client/model/RabbitModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightEar	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftEar	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	nose	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftHaunch	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightHaunch	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/RabbitModel	tail	Lnet/minecraft/client/model/geom/ModelPart;
+
+accessible	field	net/minecraft/client/model/LlamaModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	rightChest	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/LlamaModel	leftChest	Lnet/minecraft/client/model/geom/ModelPart;

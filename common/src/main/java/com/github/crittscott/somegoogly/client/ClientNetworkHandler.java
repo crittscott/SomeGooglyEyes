@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import dev.architectury.networking.NetworkManager;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -53,18 +54,17 @@ public final class ClientNetworkHandler {
         }
         registered = true;
         SomeGooglyCommon.LOGGER.debug("Client network debug: registering Some Googly Eyes S2C receivers");
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.PROTOCOL_HELLO,
+        NetworkHandler.PROTOCOL_HELLO_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
                 ClientNetworkHandler::handleHello);
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_STATE,
-                (buffer, context) -> handle(EyeStatePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_CONFIG,
+        NetworkHandler.EYE_STATE_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
+                ClientNetworkHandler::handle);
+        NetworkHandler.EYE_CONFIG_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
                 ClientNetworkHandler::handleConfigPayload);
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_BEHAVIOR,
-                (buffer, context) -> handle(EyeBehaviorTriggerPacket.decode(buffer), context));
+        NetworkHandler.EYE_BEHAVIOR_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
+                ClientNetworkHandler::handle);
     }
 
-    private static void handleHello(FriendlyByteBuf buffer, NetworkManager.PacketContext context) {
-        String version = buffer.readUtf(NetworkHandler.MAX_PROTOCOL_VERSION_LENGTH);
+    private static void handleHello(String version, NetworkManager.PacketContext context) {
         context.queue(() -> {
             SomeGooglyCommon.LOGGER.debug(
                     "Client network debug: received protocol hello version={} expected={}",
@@ -79,9 +79,7 @@ public final class ClientNetworkHandler {
                 return;
             }
             protocolAccepted = true;
-            FriendlyByteBuf reply = NetworkHandler.newBuffer();
-            reply.writeUtf(NetworkHandler.PROTOCOL_VERSION);
-            NetworkManager.sendToServer(NetworkHandler.PROTOCOL_ACK, reply);
+            NetworkHandler.PROTOCOL_ACK_PAYLOAD.sendToServerUnchecked(NetworkHandler.PROTOCOL_VERSION);
             SomeGooglyCommon.LOGGER.debug("Client network debug: sent protocol acknowledgement");
         });
     }
@@ -144,8 +142,8 @@ public final class ClientNetworkHandler {
         }
     }
 
-    private static synchronized void handleConfigPayload(
-            FriendlyByteBuf buffer, NetworkManager.PacketContext context) {
+    private static synchronized void handleConfigPayload(byte[] payload, NetworkManager.PacketContext context) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(payload));
         try {
             long generation = buffer.getLong(buffer.readerIndex());
             if (generation == lastWireConfigGeneration) {
@@ -162,6 +160,8 @@ public final class ClientNetworkHandler {
             handle(EyeConfigSyncPacket.decode(buffer), context);
         } catch (RuntimeException invalid) {
             context.queue(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
+        } finally {
+            buffer.release();
         }
     }
 

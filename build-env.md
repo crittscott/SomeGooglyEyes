@@ -10,84 +10,85 @@ These versions come from the active wrapper, Gradle scripts, properties, and loa
 | Component | Active version or constraint |
 | --- | --- |
 | Gradle wrapper | 9.5.1 |
-| Java compilation and development runs | Java 17 |
+| Java compilation and development runs | Java 21 |
 | Current command-line JDK | Eclipse Temurin 17.0.15+6 |
 | IntelliJ Gradle JVM | JDK 21 |
-| IntelliJ project language level | Java 17 |
-| Minecraft | exactly 1.20.1 |
+| IntelliJ project language level | Java 21 |
+| Minecraft | exactly 1.21.1 |
 | Architectury Loom | 1.17.491 |
 | Architectury Gradle plugin | 3.5.169 |
-| Architectury API | 9.2.14; runtime minimum 9.2.14 |
-| Forge compile dependency | 1.20.1-47.4.0 (experimental floor) |
-| Forge runtime range | `[47.4.0,48)` (experimental floor) |
-| FML runtime range | `[47,48)` |
+| Architectury API | 13.0.8; Fabric runtime minimum 13.0.8 |
+| Forge build target | 1.21.1-52.1.16; runtime source not ported |
+| Forge runtime range in metadata | `[52.1.16,53)` |
+| FML runtime range in metadata | `[52,53)` |
+| NeoForge build target | 21.1.248; scaffold only |
+| NeoForge runtime range in metadata | `[21.1.248,22)` |
 | Fabric Loader | 0.19.3; runtime minimum 0.19.3 |
-| Fabric API | 0.92.11+1.20.1; runtime minimum the same version |
-| Mappings | Mojang official plus Parchment 2023.09.03 for Minecraft 1.20.1 |
+| Fabric API | 0.116.15+1.21.1; runtime minimum the same version |
+| Mappings | Mojang official plus Parchment 2024.11.17 for Minecraft 1.21.1 |
 | Shadow plugin | 9.4.3 |
 | GeckoLib | 4.7.4, compile-only and optional at runtime |
 | JSR-305 | 3.0.2, compile-only |
 | JUnit BOM | 5.10.2 |
 | Mod version | 0.8.1 |
 
-The Gradle runtime JVM and compilation toolchain are separate. IntelliJ runs Gradle with JDK 21, but
-every subproject requests a Java 17 toolchain, sets source and target compatibility to 17, and compiles
-with `--release 17`. Command-line Gradle can run under the current Java 17 installation.
+The Gradle runtime JVM and compilation toolchain are separate. The current shell launches Gradle
+under Java 17, while every subproject requests a Java 21 toolchain, sets source and target
+compatibility to 21, compiles with `--release 21`, and uses Java 21 for development runs.
 
 Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
-Mixins refer to 1.20.1 internals. Forge compilation is pinned to the minimum Forge version accepted at
-runtime. Fabric compilation likewise uses the declared minimum Loader and API versions.
-
-The Forge floor is experimental at 47.4.0, lowered from a prior 47.4.10 baseline to reach modpacks
-(e.g. All the Mods 9) pinned to earlier 47.4.x builds. The mod uses no Forge API added within the
-47.4.x line, so the lower floor is expected to work, but it has not been verified against every patch
-between 47.4.0 and 47.4.10.
+Mixins refer to 1.21.1 internals. Fabric compilation uses the minimum Loader, Fabric API, and
+Architectury API versions declared in metadata. Forge and NeoForge dependency values configure later
+port targets; they do not imply that either runtime implementation currently compiles or runs.
 
 ## Project layout
 
-The Gradle project includes exactly three modules:
+The Gradle project includes exactly four modules:
 
 ```text
 common/   shared production code, resources, and GameTest assertion logic
-forge/    Forge adapters, metadata, access transformation, and GameTest wrappers
-fabric/   Fabric adapters, metadata, Mixins, and GameTest wrappers
+fabric/   completed Fabric adapters, metadata, Mixins, GameTests, and packaging
+forge/    1.21.1 build metadata around unported Forge runtime source
+neoforge/ NeoForge metadata/access scaffold with no runtime Java
 ```
 
 The root `src/` tree is not part of any active source set.
 
-`settings.gradle` names the root project `somegoogly` and includes `common`, `forge`, and `fabric`.
+`settings.gradle` names the root project `somegoogly` and includes `common`, `forge`, `fabric`, and
+`neoforge`.
 Plugin resolution uses this repository order:
 
 1. Fabric Maven
 2. Architectury Maven
 3. Forge Maven
-4. Gradle Plugin Portal
+4. NeoForge Maven
+5. Gradle Plugin Portal
 
 The root build applies Loom, the Architectury plugin, Maven Publish, layered Mojang/Parchment mappings,
-and the Java 17 toolchain to every module. Gradle receives a 3 GiB maximum heap and does not use the
+and the Java 21 toolchain to every module. Gradle receives a 3 GiB maximum heap and does not use the
 daemon.
 
 ## Common module
 
-The common module declares both target platforms through Architectury and uses
+The common module declares Fabric, Forge, and NeoForge as transform targets and uses
 `common/src/main/resources/somegoogly.accesswidener` while compiling shared Minecraft code. Its
 dependencies are:
 
 - Fabric Loader 0.19.3 for portable environment annotations;
-- Architectury API 9.2.14 as a mod compile-only dependency;
+- Architectury API 13.0.8 as a mod compile-only dependency;
 - JSR-305 3.0.2 as a compile-only dependency;
 - JUnit Jupiter through BOM 5.10.2 for its conventional test source set.
 
-The production common JAR excludes the Access Widener. Fabric copies the canonical file into its mod
-JAR beside `fabric.mod.json`; Forge supplies equivalent access through Forge patches and
-`META-INF/accesstransformer.cfg`.
+The production common JAR excludes the Access Widener. Fabric copies the canonical 1.21.1 file into
+its mod JAR beside `fabric.mod.json`. Forge and NeoForge currently have placeholder Access
+Transformers.
 
 Common resource processing expands `mod_id` in `pack.mcmeta`. Shared assets, recipes, language,
 datapack eye definitions, and the GameTest structure fixture are production resources.
 
 ## Loader modules and packaging
 
-Both loader modules apply Shadow and use Architectury's platform-specific Loom setup. Each has:
+All three loader modules apply Shadow and use Architectury's platform-specific Loom setup. Each has:
 
 - a resolvable, non-consumable `common` configuration for common development output;
 - compile and runtime classpaths extended from `common`;
@@ -96,49 +97,53 @@ Both loader modules apply Shadow and use Architectury's platform-specific Loom s
 - a remapped release JAR built from the shadowed loader and common output.
 
 This arrangement allows Architectury to transform common `@ExpectPlatform` calls in development and
-in packaged artifacts. Common and loader packages remain disjoint for Forge's module layer.
+in packaged artifacts. Only the Fabric production and packaging path is currently verified.
 
 ### Forge
 
-Forge depends on `net.minecraftforge:forge:1.20.1-47.4.0` and
-`architectury-forge:9.2.14`. GeckoLib's Forge 1.20.1 artifact at 4.7.4 is compile-only. Runtime
-metadata requires the configured Minecraft, Forge, FML, and Architectury ranges.
+Forge's build target is `net.minecraftforge:forge:1.21.1-52.1.16`; GeckoLib's Forge 1.21.1 artifact
+at 4.7.4 is compile-only. Architectury API 13 has no Forge platform artifact for Minecraft 1.21.1,
+so the shared runtime Architectury calls need a later Forge-specific architectural resolution.
+Existing Forge Java and GameTest source remains unported and is not a Fabric regression gate.
 
-`forge/gradle.properties` sets `loom.platform=forge`. Main resource processing expands
-`META-INF/mods.toml`; GameTest resource processing independently expands the development mod's
-metadata.
+Main resource processing expands `META-INF/mods.toml`; GameTest resource processing independently
+expands the development mod's metadata. These configured tasks do not establish a working Forge
+artifact.
 
 ### Fabric
 
-Fabric depends on Fabric Loader 0.19.3, Fabric API 0.92.11+1.20.1, and
-`architectury-fabric:9.2.14`. GeckoLib's Fabric 1.20.1 artifact at 4.7.4 is mod compile-only. JSR-305
+Fabric depends on Fabric Loader 0.19.3, Fabric API 0.116.15+1.21.1, and
+`architectury-fabric:13.0.8`. GeckoLib's Fabric 1.21.1 artifact at 4.7.4 is mod compile-only. JSR-305
 is redeclared because common compile-only dependencies do not propagate to loader compilation.
 
 Main resource processing expands `fabric.mod.json` and copies the common Access Widener into the
-Fabric resources. Metadata declares exact Minecraft 1.20.1, the minimum Loader/API versions, the
+Fabric resources. Metadata declares exact Minecraft 1.21.1, Java 21, the minimum Loader/API versions, the
 Access Widener, `somegoogly.mixins.json`, and GeckoLib as a suggestion.
+
+### NeoForge
+
+NeoForge targets `net.neoforged:neoforge:21.1.248`, Architectury NeoForge 13.0.8, and the GeckoLib
+NeoForge 1.21.1 artifact at 4.7.4. Its module contains metadata and an empty Access Transformer but
+no runtime Java or GameTest source. It is a build scaffold for a later port, not a completed loader.
 
 ## GameTest source sets
 
-Each loader defines a `gametest` source set containing common assertion logic and loader-specific
-wrappers. Its classpaths include the corresponding main source-set output and dependencies. There are
-77 shared public assertion methods and 78 wrapper test methods per loader; the additional wrapper test
-exercises loader-integrated behavior.
+Fabric defines the current `gametest` source set, combining 77 shared public assertions with 78
+Fabric wrapper tests; the additional wrapper test exercises Fabric entity persistence through a
+save/load round trip. Its development-mod metadata lists all 12 wrapper classes, enables
+`fabric-api.gametest`, and defines the Fabric `gameTestServer` run. The server discovered and passed
+all 78 required tests.
 
-Forge exposes the source set as the `somegoogly_gametest` development mod and defines a
-`gameTestServer` Forge run. Fabric supplies its own development-mod metadata, lists all wrapper entry
-points, enables `fabric-api.gametest`, and defines its Fabric `gameTestServer` run.
+Forge still has its earlier GameTest source-set configuration and unported wrappers. NeoForge has no
+GameTest source set. Neither is a verification gate for the completed Fabric artifact.
 
 ## Access configuration
 
-`common/src/main/resources/somegoogly.accesswidener` is the canonical access declaration for shared
-code. `forge/src/main/resources/META-INF/accesstransformer.cfg` supplies the Forge access not already
-provided by Forge patches. Together they cover the vanilla model parts, renderer collections and
-layers, age-dependent model transforms, and render factory used by shared rendering.
-
-The Access Widener uses named Mojang/Parchment members. The Forge Access Transformer uses the SRG
-member names expected by the Forge toolchain. The two files represent equivalent effective access,
-not identical textual declarations.
+`common/src/main/resources/somegoogly.accesswidener` is the canonical 1.21.1 access declaration used
+by shared compilation and Fabric runtime. It covers the renderer collections and layers, render-type
+factory, model-part children, age-dependent model transforms, and rabbit and llama parts referenced
+by current source. Forge and NeoForge Access Transformers are empty placeholders and are not yet
+equivalent to the Fabric access surface.
 
 ## Wrapper files
 
@@ -164,8 +169,8 @@ The checked-in wrapper file fingerprints are:
 
 ## `working-build-env` snapshot
 
-`working-build-env/` is an exact-path snapshot of every checked-in file that configures, launches, or
-supplies metadata and access rules to the active build:
+`working-build-env/` is a retained reference snapshot from the earlier three-module environment. It
+is not synchronized with the active 1.21.1 four-module build and is not a build input. It contains:
 
 ```text
 build.gradle
@@ -189,5 +194,6 @@ fabric/src/main/resources/somegoogly.mixins.json
 fabric/src/gametest/resources/fabric.mod.json
 ```
 
-Files in this snapshot are copies, not build inputs. The active files at the repository root and
-under the three modules remain authoritative.
+The active files at the repository root and under `common`, `fabric`, `forge`, and `neoforge` are
+authoritative. The snapshot does not contain NeoForge and must not be used to infer current versions
+or loader completeness.

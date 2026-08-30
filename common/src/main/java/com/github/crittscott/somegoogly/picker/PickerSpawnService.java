@@ -57,7 +57,8 @@ public final class PickerSpawnService {
     /** Half-width of the 5x5 sandstone platform/basin built under each mob in platform mode. */
     private static final int PLATFORM_RADIUS = 2;
 
-    private static final ResourceLocation PLAYER = new ResourceLocation("minecraft", "player");
+    private static final ResourceLocation PLAYER =
+            ResourceLocation.fromNamespaceAndPath("minecraft", "player");
 
     /** Blocks between the platform floor and the sky-blocking roof above it (clearance for tall mobs). */
     private static final int ROOF_HEIGHT = 8;

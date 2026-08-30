@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 /**
@@ -54,7 +53,7 @@ public final class Gizmo {
                              float x1, float y1, float z1, float x2, float y2, float z2,
                              float r, float g, float b) {
         Matrix4f m = ps.last().pose();
-        Matrix3f n = ps.last().normal();
+        PoseStack.Pose pose = ps.last();
         float nx = x2 - x1, ny = y2 - y1, nz = z2 - z1;
         float len = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
         if (len > 1.0e-5f) {
@@ -62,7 +61,7 @@ public final class Gizmo {
             ny /= len;
             nz /= len;
         }
-        vc.vertex(m, x1, y1, z1).color(r, g, b, 1.0f).normal(n, nx, ny, nz).endVertex();
-        vc.vertex(m, x2, y2, z2).color(r, g, b, 1.0f).normal(n, nx, ny, nz).endVertex();
+        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        vc.addVertex(m, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
     }
 }

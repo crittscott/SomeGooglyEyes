@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item;
 
 /**
  * Item registry for the mod: the {@link GooglyEyeItem} (the eye itself, an ingredient) and the
- * {@link SlimyEyeItem} it crafts into (the applicator). Both carry the same appearance NBT.
+ * {@link SlimyEyeItem} it crafts into (the applicator). Both carry the same appearance component.
  */
 public final class ModItems {
 

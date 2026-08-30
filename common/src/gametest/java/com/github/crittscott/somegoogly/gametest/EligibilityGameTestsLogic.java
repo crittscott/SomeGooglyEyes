@@ -87,9 +87,8 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
-    public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
+    public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         EyeColor red = new EyeColor(1F, 0F, 0F);
         // The spawn itself may have naturally rolled eyes under whatever configs were live at the time;
         // force the deterministic eyeless starting point this test assumes.
@@ -121,9 +120,8 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
-    public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper) {
+    public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         EyeColor red = new EyeColor(1F, 0F, 0F);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -151,9 +149,8 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
-    public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper) {
+    public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {

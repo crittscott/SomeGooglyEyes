@@ -71,7 +71,8 @@ public final class BehaviorDeterminismGameTestsLogic {
 
     public static void blinkMaskIsSeedDeterministic(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
-        EyeBehavior blink = EyeBehaviors.byId(new ResourceLocation(SomeGooglyCommon.MOD_ID, "blink"));
+        EyeBehavior blink = EyeBehaviors.byId(
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "blink"));
         helper.assertTrue(blink != null, "blink behavior should be registered");
 
         BehaviorInstance first = new BehaviorInstance(blink, headInfo, 8, 777L);
@@ -98,7 +99,8 @@ public final class BehaviorDeterminismGameTestsLogic {
         // A mid-effect joiner replays elapsed ticks to catch up; that must equal natural playback to the
         // same age (the equivalence GooglyTracker#startBehavior relies on, verified on the instance itself).
         HeadInfo headInfo = helperFor(helper);
-        EyeBehavior swirl = EyeBehaviors.byId(new ResourceLocation(SomeGooglyCommon.MOD_ID, "swirl"));
+        EyeBehavior swirl = EyeBehaviors.byId(
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "swirl"));
         helper.assertTrue(swirl != null, "swirl behavior should be registered");
 
         BehaviorInstance natural = playTo(swirl, headInfo, 5, 31337L);

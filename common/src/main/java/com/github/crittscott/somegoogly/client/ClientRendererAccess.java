@@ -22,7 +22,7 @@ public final class ClientRendererAccess {
     }
 
     @ExpectPlatform
-    public static Map<String, EntityRenderer<? extends Player>> skinMap(EntityRenderDispatcher dispatcher) {
+    public static Map<?, EntityRenderer<? extends Player>> skinMap(EntityRenderDispatcher dispatcher) {
         throw new AssertionError();
     }
 

@@ -10,7 +10,7 @@ abstract class AbstractEyeBehavior implements EyeBehavior {
     private final ResourceLocation id;
 
     AbstractEyeBehavior(String name, int defaultDuration) {
-        this.id = new ResourceLocation(SomeGooglyCommon.MOD_ID, name);
+        this.id = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
         this.defaultDuration = defaultDuration;
     }
 

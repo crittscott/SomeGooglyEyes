@@ -3,10 +3,9 @@ package com.github.crittscott.somegoogly.recipe;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -19,13 +18,13 @@ import javax.annotation.Nullable;
  * {@code googly_eye} plus exactly one ingredient recognized by an {@link EyeModifier}. There is no
  * recipe that <i>creates</i> an eye — this only transforms one you already have.
  *
- * <p>The output is a copy of the input eye (preserving any unrelated stack NBT) with the modifier's
- * delta folded onto its {@link AppearanceOverride}.
+ * <p>The output is a copy of the input eye (preserving unrelated data components) with the
+ * modifier's delta folded onto its {@link AppearanceOverride}.
  */
 public class EyeModifierRecipe extends CustomRecipe {
 
-    public EyeModifierRecipe(ResourceLocation id, CraftingBookCategory category) {
-        super(id, category);
+    public EyeModifierRecipe(CraftingBookCategory category) {
+        super(category);
     }
 
     /** The eye + the matched modifier ingredient found in a grid, or {@code null} if it doesn't match. */
@@ -33,12 +32,12 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
-        Match match = find(container);
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        Match match = find(input);
         if (match == null) {
             return ItemStack.EMPTY;
         }
-        // Copy (not a fresh stack) so any unrelated NBT on the eye survives the edit.
+        // Copy (not a fresh stack) so unrelated components on the eye survive the edit.
         ItemStack result = match.eye().copyWithCount(1);
         AppearanceOverride updated = match.modifier().apply(EyeItemProperties.get(result), match.modifierStack());
         EyeItemProperties.set(result, updated);
@@ -51,13 +50,13 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Nullable
-    private static Match find(CraftingContainer container) {
+    private static Match find(CraftingInput input) {
         ItemStack eye = ItemStack.EMPTY;
         ItemStack modifierStack = ItemStack.EMPTY;
         EyeModifier modifier = null;
 
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            ItemStack stack = container.getItem(i);
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
             if (stack.isEmpty()) {
                 continue;
             }
@@ -86,7 +85,7 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
         // Representative stack for recipe-book display; the real output is computed in assemble().
         return new ItemStack(ModItems.GOOGLY_EYE.get());
     }
@@ -97,7 +96,7 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
-        return find(container) != null;
+    public boolean matches(CraftingInput input, Level level) {
+        return find(input) != null;
     }
 }

@@ -14,10 +14,13 @@ import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
@@ -95,23 +98,25 @@ public final class SomeGooglyGameTestsLogic {
         AppearanceOverride roundTrip = EyeItemProperties.get(stack);
 
         helper.assertTrue(stack.getCount() == 3, "Expected created eye stack count to be preserved");
-        helper.assertTrue(roundTrip.equals(appearance), "Expected eye item appearance NBT to round-trip");
+        helper.assertTrue(roundTrip.equals(appearance), "Expected eye item appearance component to round-trip");
         helper.succeed();
     }
 
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
-        Enchantment optometrist = ModEnchantments.OPTOMETRIST.get();
-        helper.assertTrue(optometrist.canEnchant(new ItemStack(Items.SHEARS)),
+        Holder.Reference<Enchantment> optometrist = helper.getLevel().registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(ModEnchantments.OPTOMETRIST);
+        helper.assertTrue(optometrist.value().isSupportedItem(new ItemStack(Items.SHEARS)),
                 "Optometrist should accept shears");
-        helper.assertTrue(!optometrist.canEnchant(new ItemStack(Items.IRON_PICKAXE)),
+        helper.assertTrue(!optometrist.value().isSupportedItem(new ItemStack(Items.IRON_PICKAXE)),
                 "Optometrist should reject another durable item");
-        helper.assertTrue(optometrist.isTreasureOnly(), "Optometrist should remain treasure-only");
+        helper.assertTrue(optometrist.is(EnchantmentTags.TREASURE),
+                "Optometrist should remain treasure-only");
         helper.succeed();
     }
 
-    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
+    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         ItemStack shears = new ItemStack(Items.SHEARS);
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         List<ItemStack> drops = new ArrayList<>();
@@ -139,9 +144,8 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
-    public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
+    public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         ItemStack shears = new ItemStack(Items.SHEARS);
         List<ItemStack> drops = new ArrayList<>();
         int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();

@@ -120,7 +120,8 @@ public final class SerializationGameTestsLogic {
 
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         EyeBehaviorTriggerPacket packet =
-                new EyeBehaviorTriggerPacket(7, new ResourceLocation("somegoogly", "blink"), 8, 12345L, 3);
+                new EyeBehaviorTriggerPacket(7,
+                        ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
         byte[] first = bytes(buffer -> EyeBehaviorTriggerPacket.encode(packet, buffer));
         EyeBehaviorTriggerPacket decoded = EyeBehaviorTriggerPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
         byte[] second = bytes(buffer -> EyeBehaviorTriggerPacket.encode(decoded, buffer));
@@ -130,7 +131,7 @@ public final class SerializationGameTestsLogic {
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(17L,
-                Map.of(new ResourceLocation("minecraft", "cow"), sampleConfigSet()));
+                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()));
         byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
         EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
         byte[] second = bytes(buffer -> EyeConfigSyncPacket.encode(decoded, buffer));
@@ -162,7 +163,7 @@ public final class SerializationGameTestsLogic {
         FriendlyByteBuf numeric = new FriendlyByteBuf(Unpooled.buffer());
         numeric.writeLong(2L);
         numeric.writeVarInt(1);
-        numeric.writeResourceLocation(new ResourceLocation("minecraft", "cow"));
+        numeric.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
         numeric.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, unsafe)
                 .result().orElseThrow());
         helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(numeric)),
@@ -228,11 +229,13 @@ public final class SerializationGameTestsLogic {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
         helper.assertTrue(roundTrips(
-                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), AGE_ADULT, config),
+                        new PickerExportPacket(
+                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
                         PickerExportPacket::encode, PickerExportPacket::decode),
                 "PickerExportPacket with a config should survive a wire round-trip");
         helper.assertTrue(roundTrips(
-                        new PickerExportPacket(new ResourceLocation("minecraft", "cow"), AGE_ADULT, null),
+                        new PickerExportPacket(
+                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null),
                         PickerExportPacket::encode, PickerExportPacket::decode),
                 "PickerExportPacket's null-config form should survive a wire round-trip");
         helper.succeed();
@@ -271,7 +274,8 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
-        helper.assertTrue(roundTrips(new PickerSpawnPacket(new ResourceLocation("minecraft", "cow")),
+        helper.assertTrue(roundTrips(new PickerSpawnPacket(
+                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow")),
                         PickerSpawnPacket::encode, PickerSpawnPacket::decode),
                 "PickerSpawnPacket should survive a wire round-trip");
         helper.assertTrue(roundTrips(new PickerSpawnAllPacket("minecraft"),

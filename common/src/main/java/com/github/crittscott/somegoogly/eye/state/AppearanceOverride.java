@@ -17,7 +17,7 @@ import java.util.Optional;
  * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
  * network packet writes the same three optional fields directly:
  * <ul>
- *   <li>an eye <b>item</b>'s stack NBT (what survives crafting / harvest),</li>
+ *   <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
  *   <li>the network sync payload ({@code EyeStatePacket}).</li>
  * </ul>

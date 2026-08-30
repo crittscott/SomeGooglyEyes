@@ -19,7 +19,7 @@ public final class ClientRendererAccessImpl {
         return dispatcher.renderers;
     }
 
-    public static Map<String, EntityRenderer<? extends Player>> skinMap(EntityRenderDispatcher dispatcher) {
+    public static Map<?, EntityRenderer<? extends Player>> skinMap(EntityRenderDispatcher dispatcher) {
         return dispatcher.playerRenderers;
     }
 

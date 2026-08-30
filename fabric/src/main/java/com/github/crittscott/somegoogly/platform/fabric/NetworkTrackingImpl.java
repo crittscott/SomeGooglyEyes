@@ -2,8 +2,7 @@ package com.github.crittscott.somegoogly.platform.fabric;
 
 import dev.architectury.networking.NetworkManager;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -16,11 +15,11 @@ public final class NetworkTrackingImpl {
     private NetworkTrackingImpl() {
     }
 
-    public static void send(Entity entity, boolean includeSelf, ResourceLocation id, FriendlyByteBuf buffer) {
+    public static void send(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
         Collection<ServerPlayer> recipients = new ArrayList<>(PlayerLookup.tracking(entity));
         if (includeSelf && entity instanceof ServerPlayer player && !recipients.contains(player)) {
             recipients.add(player);
         }
-        NetworkManager.sendToPlayers(recipients, id, buffer);
+        NetworkManager.sendToPlayers(recipients, payload);
     }
 }

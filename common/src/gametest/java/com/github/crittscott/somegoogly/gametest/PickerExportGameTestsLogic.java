@@ -43,7 +43,7 @@ public final class PickerExportGameTestsLogic {
     }
 
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
-        ResourceLocation type = new ResourceLocation("somegoogly", "not_a_real_mob");
+        ResourceLocation type = ResourceLocation.fromNamespaceAndPath("somegoogly", "not_a_real_mob");
         Component result = PickerExportService.export(
                 server(helper), UUID.randomUUID(), type, AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
@@ -54,7 +54,7 @@ public final class PickerExportGameTestsLogic {
 
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
+                ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_ender_dragon")),
                 "the ender dragon must be refused at export, got: " + result.getString());
@@ -64,7 +64,7 @@ public final class PickerExportGameTestsLogic {
     public static void exportRejectsMissingPayload(GameTestHelper helper) {
         // A null tag is what an over-quota payload decodes to (PickerExportPacket).
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "cow"), AGE_ADULT, null);
+                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_missing_payload")),
                 "a null/oversized payload must be rejected, got: " + result.getString());
@@ -82,7 +82,7 @@ public final class PickerExportGameTestsLogic {
         garbage.putBoolean("enabled", true);
         garbage.putString("variants", "not a list");
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "cow"), AGE_ADULT, garbage);
+                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, garbage);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
                 "a garbage-typed variants field must be refused as malformed, got: " + result.getString());
@@ -92,7 +92,7 @@ public final class PickerExportGameTestsLogic {
     /** An empty compound is missing required fields, so it never reaches the usable-eyes check. */
     public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "cow"), AGE_ADULT, new CompoundTag());
+                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
                 "a payload with no fields must be refused as malformed, got: " + result.getString());
@@ -104,7 +104,7 @@ public final class PickerExportGameTestsLogic {
         Tag empty = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, new RuntimeConfig())
                 .result().orElseThrow();
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "cow"), AGE_ADULT, (CompoundTag) empty);
+                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) empty);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_no_usable_eyes")),
                 "a config with nothing to draw must be rejected, got: " + result.getString());
@@ -125,7 +125,7 @@ public final class PickerExportGameTestsLogic {
         Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                new ResourceLocation("minecraft", "cow"), AGE_ADULT, (CompoundTag) encoded);
+                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) encoded);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unsafe_payload", error)),
                 "non-finite exported geometry must be rejected, got: " + result.getString());
@@ -155,7 +155,7 @@ public final class PickerExportGameTestsLogic {
         RuntimeConfig config = new RuntimeConfig();
         config.variants = List.of(variant);
 
-        ConfigFile file = ConfigFile.single("1.20.1", "any", config);
+        ConfigFile file = ConfigFile.single("1.21.1", "any", config);
         JsonObject json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file)
                 .result().orElseThrow().getAsJsonObject();
         JsonObject eye = json.getAsJsonArray("entries").get(0).getAsJsonObject()

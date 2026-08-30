@@ -86,7 +86,7 @@ public final class ClientConfig {
             return null;
         }
         try {
-            return new ResourceLocation(entry.trim());
+            return ResourceLocation.parse(entry.trim());
         } catch (Exception e) {
             logBadDisabledEntityEntry(entry);
             return null;

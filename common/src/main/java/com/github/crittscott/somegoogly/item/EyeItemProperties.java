@@ -2,21 +2,17 @@ package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 /**
- * The stack-NBT appearance carried by an eye-bearing item, as an {@link AppearanceOverride} under a
- * single tag key. Shared by {@link GooglyEyeItem} and {@link SlimyEyeItem} so the eye's look survives
- * unchanged as it is crafted from one into the other and finally applied to a mob — it is the same
- * codec-serialized schema a mob carries, so item↔mob transfer is a straight property copy.
+ * The component-backed appearance carried by an eye-bearing item. Shared by {@link GooglyEyeItem}
+ * and {@link SlimyEyeItem} so the eye's look survives unchanged as it is crafted from one into the
+ * other and finally applied to a mob. Item-to-mob transfer is a straight immutable value copy.
  */
 public final class EyeItemProperties {
-
-    public static final String TAG_EYE_PROPERTIES = "EyeProperties";
 
     private EyeItemProperties() {
     }
@@ -35,17 +31,16 @@ public final class EyeItemProperties {
     }
 
     public static AppearanceOverride get(ItemStack stack) {
-        return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
+        AppearanceOverride properties =
+                stack.getOrDefault(ModDataComponents.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
+        return properties.isValid() ? properties : AppearanceOverride.EMPTY;
     }
 
     public static void set(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {
-            CompoundTag tag = stack.getTag();
-            if (tag != null) {
-                tag.remove(TAG_EYE_PROPERTIES);
-            }
+            stack.remove(ModDataComponents.EYE_PROPERTIES.get());
         } else {
-            stack.getOrCreateTag().put(TAG_EYE_PROPERTIES, properties.toNbt());
+            stack.set(ModDataComponents.EYE_PROPERTIES.get(), properties);
         }
     }
 }

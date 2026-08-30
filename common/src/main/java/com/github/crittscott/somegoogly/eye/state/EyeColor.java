@@ -32,6 +32,13 @@ public record EyeColor(float r, float g, float b) {
         return new EyeColor(rgb[0], rgb[1], rgb[2]);
     }
 
+    public static EyeColor fromRgb24(int rgb) {
+        return new EyeColor(
+                ((rgb >> 16) & 0xFF) / 255.0F,
+                ((rgb >> 8) & 0xFF) / 255.0F,
+                (rgb & 0xFF) / 255.0F);
+    }
+
     public boolean isValid() {
         return validChannel(r) && validChannel(g) && validChannel(b);
     }

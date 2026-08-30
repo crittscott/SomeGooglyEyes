@@ -2,8 +2,6 @@ package com.github.crittscott.somegoogly.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 /**
  * Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
@@ -49,17 +47,16 @@ public final class ModelGooglyEye {
         }
     }
 
-    private static void emit(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix,
+    private static void emit(VertexConsumer buffer, PoseStack.Pose pose,
                              float x, float y, float z, float normalX, float normalY, float normalZ,
                              int packedLight, int packedOverlay, float red, float green, float blue,
                              float alpha) {
-        buffer.vertex(matrix, x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
-                .color(red, green, blue, alpha)
-                .uv(0.5F, 0.5F)
-                .overlayCoords(packedOverlay)
-                .uv2(packedLight)
-                .normal(normalMatrix, normalX, normalY, normalZ)
-                .endVertex();
+        buffer.addVertex(pose.pose(), x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
+                .setColor(red, green, blue, alpha)
+                .setUv(0.5F, 0.5F)
+                .setOverlay(packedOverlay)
+                .setLight(packedLight)
+                .setNormal(pose, normalX, normalY, normalZ);
     }
 
     /**
@@ -94,8 +91,6 @@ public final class ModelGooglyEye {
                                        int packedOverlay, float red, float green, float blue, float alpha,
                                        float centerX, float centerY, float radius, float frontZ, float backZ) {
         PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix = pose.pose();
-        Matrix3f normalMatrix = pose.normal();
 
         for (int i = 0; i < SIDES; i++) {
             int next = (i + 1) % SIDES;
@@ -106,32 +101,32 @@ public final class ModelGooglyEye {
             float y1 = centerY + RING_Y[next] * radius;
 
             // Entity-cutout buffers draw quads, so each cap triangle is a degenerate quad.
-            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
+            emit(buffer, pose, centerX, centerY, frontZ, 0F, 0F, -1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, 0F, 0F, -1F,
+            emit(buffer, pose, x1, y1, frontZ, 0F, 0F, -1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, 0F, 0F, -1F,
+            emit(buffer, pose, x0, y0, frontZ, 0F, 0F, -1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
+            emit(buffer, pose, centerX, centerY, frontZ, 0F, 0F, -1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
 
-            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
+            emit(buffer, pose, centerX, centerY, backZ, 0F, 0F, 1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, backZ, 0F, 0F, 1F,
+            emit(buffer, pose, x0, y0, backZ, 0F, 0F, 1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, backZ, 0F, 0F, 1F,
+            emit(buffer, pose, x1, y1, backZ, 0F, 0F, 1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
+            emit(buffer, pose, centerX, centerY, backZ, 0F, 0F, 1F,
                     packedLight, packedOverlay, red, green, blue, alpha);
 
             // Per-vertex radial normals make the rim shade smoothly.
-            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, RING_X[i], RING_Y[i], 0F,
+            emit(buffer, pose, x0, y0, frontZ, RING_X[i], RING_Y[i], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, RING_X[next], RING_Y[next], 0F,
+            emit(buffer, pose, x1, y1, frontZ, RING_X[next], RING_Y[next], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, backZ, RING_X[next], RING_Y[next], 0F,
+            emit(buffer, pose, x1, y1, backZ, RING_X[next], RING_Y[next], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, backZ, RING_X[i], RING_Y[i], 0F,
+            emit(buffer, pose, x0, y0, backZ, RING_X[i], RING_Y[i], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
         }
     }

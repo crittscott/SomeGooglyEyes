@@ -18,8 +18,8 @@ public final class RecipeGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void dyeSetsIrisAndKeepsUnrelatedNbt(GameTestHelper helper) {
-        RecipeGameTestsLogic.dyeSetsIrisAndKeepsUnrelatedNbt(helper);
+    public static void dyeSetsIrisAndKeepsUnrelatedComponent(GameTestHelper helper) {
+        RecipeGameTestsLogic.dyeSetsIrisAndKeepsUnrelatedComponent(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
