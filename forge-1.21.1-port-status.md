@@ -7,23 +7,22 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **WAITING** — NeoForge must complete first |
+| Overall state | **READY** — NeoForge prerequisite complete; Forge Stage 0 is next |
 | Current stage | Stage 0 — Handoff audit and Forge baseline |
 | Current work unit | NeoForge completion audit and Architectury replacement freeze |
-| Work-unit state | Blocked by prerequisite; not started |
+| Work-unit state | Ready; not started |
 | Failed verification attempts used | 0 of 3 |
 | Stable documents read this session | No — required when Forge execution becomes ready |
 | Common compile state | Passing at Fabric completion |
 | Fabric state | Complete and passing |
-| NeoForge state | Planned; not yet complete |
+| NeoForge state | Complete; final handoff recorded below |
 | Forge compile state | Unknown; runtime source remains 1.20.1-era |
 | Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
 | Last command | None for this port |
 
 ## Prerequisite
 
-Forge may become `READY` only when `neoforge-1.21.1-port-status.md` is `COMPLETE` and its Stage 7
-handoff records:
+Prerequisite met: `neoforge-1.21.1-port-status.md` is `COMPLETE`, and its Stage 7 handoff records:
 
 - every passing NeoForge completion gate;
 - invalidated Fabric regression results;
@@ -31,6 +30,54 @@ handoff records:
 - common/platform interfaces changed during NeoForge;
 - retained manual client and optional-mod checks;
 - the exact Forge Stage 0 starting action.
+
+## NeoForge completion handoff
+
+### Passing completion and regression gates
+
+- Common production compilation passed.
+- NeoForge production compilation, resource processing, GameTest compilation, and build passed.
+- The NeoForge dedicated server discovered and passed all 78 required tests and exited cleanly.
+- `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` was verified by path and file metadata only:
+  468,547 bytes, last written 2026-08-30 23:44:00 UTC.
+- Invalidated Fabric production and GameTest compilation passed; the Fabric dedicated server
+  discovered and passed all 78 required tests and exited cleanly.
+
+### Shared Architectury ownership and interface changes
+
+Common production contains 24 Architectury imports in 17 files. Six existing build-time seams remain
+loader-neutral: `ModVersionLookup`, `EntityPersistentData`, `NetworkTracking`,
+`GooglyEyeItemFactory`, `ClientRendererAccess`, and `GeckoCompat`. NeoForge implements those seams
+without changing their common signatures. Common runtime registration remains in `ModItems`,
+`ModDataComponents`, `ModCreativeTabs`, and `ModRecipes`; runtime networking remains in
+`NetworkHandler`, `ClientNetworkHandler`, and five picker packet handlers; one environment lookup
+remains in `NetworkHandler.registerCommon`.
+
+No NeoForge type entered common production, no new common Architectury use was added, and no
+`@ExpectPlatform` signature changed. The only shared production/test correction made during NeoForge
+stabilization converts an unknown picker-export identifier to a string at the translation-argument
+boundary. Protocol 9, packet ids and bodies, persistence keys, item components, and serialized
+formats remain unchanged.
+
+NeoForge retains Architectury 13 temporarily for runtime registration, networking, and the
+environment lookup. Forge must replace those unsupported runtime facilities and separately prove
+whether build-time `@ExpectPlatform` injection can remain.
+
+### Retained manual checks
+
+- Physical NeoForge client rendering for ordinary adult/baby models, players, slime/magma-cube
+  ordering, rabbit, llama, sniffer, villager, and special resolver families.
+- Pupil motion and every expression; both item render paths; harvest/craft/apply; Optometrist;
+  visibility; picker editing/export; and renderer reload.
+- Optional GeckoLib and optional-mod entities available for Minecraft 1.21.1.
+
+### Exact Forge Stage 0 start
+
+In a new session, read `CLAUDE.md`, the Forge plan, process, and this status, then consult only the
+relevant Forge assessment section. Verify this handoff, re-inventory the 24 common Architectury
+imports, freeze retain/replace decisions for build-time injection and all three runtime categories,
+inspect old Forge source only as project behavior reference, and run one diagnostic
+`.\gradlew.bat :forge:compileJava --console=plain`. Do not edit production source in Stage 0.
 
 ## Current work-unit definition
 
@@ -82,7 +129,7 @@ in Stage 0.
 
 | Gate | Status |
 | --- | --- |
-| NeoForge completion handoff | Pending |
+| NeoForge completion handoff | Complete; Forge is `READY` |
 | Forge architecture decision | Pending |
 | `:common:compileJava` | Previously passing; post-decoupling run pending |
 | `:fabric:compileJava` | Previously passing; post-decoupling run pending |
@@ -96,10 +143,10 @@ in Stage 0.
 
 ## Blockers
 
-NeoForge port completion and its explicit Forge handoff.
+None. Forge Stage 0 has not started.
 
 ## Exact next action
 
-Do nothing in Forge. Execute the NeoForge plan through Stage 7. When that final handoff changes this
-status to `READY`, begin a new session by reading the Forge controlling documents and auditing the
-recorded NeoForge evidence. Do not carry Forge implementation into the NeoForge completion session.
+In a new session, read the Forge controlling documents, audit the handoff and common Architectury
+inventory, freeze the Stage 0 architecture decisions, and obtain one diagnostic
+`:forge:compileJava`. Do not edit production source in Stage 0.

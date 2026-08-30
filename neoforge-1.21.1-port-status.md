@@ -7,42 +7,41 @@ in `neoforge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Stage 6 complete; Stage 7 is next |
-| Current stage | Stage 6 — Runtime stabilization — complete |
-| Current work unit | None — hard stop after passing Stage 6 gates |
+| Overall state | **COMPLETE** — all NeoForge stages and automated gates passed |
+| Current stage | Stage 7 — Artifact, documentation, and Forge handoff — complete |
+| Current work unit | None — hard stop after completed NeoForge handoff |
 | Work-unit state | Complete |
-| Failed verification attempts used | 0 of 3 for the final config-lifecycle unit |
-| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status reread for Stage 6 |
-| Common compile state | Passing — explicit Stage 4 cumulative gate |
-| Fabric regression state | Passing at Fabric completion |
-| NeoForge compile state | Passing — explicit Stage 4 cumulative gate |
-| NeoForge GameTest state | Passing — all 78 required tests and a clean exit, user verified |
-| Forge state | Waiting on the completed NeoForge handoff |
-| Last command | User-reported NeoForge build and GameTest run — both succeeded without error |
+| Failed verification attempts used | 0 of 3 |
+| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status read before Stage 7 |
+| Common compile state | Passing — Stage 7 rerun |
+| Fabric regression state | Passing — compile, GameTest compile, and all 78 runtime tests |
+| NeoForge compile state | Passing — Stage 7 rerun |
+| NeoForge GameTest state | Passing — all 78 required tests and a clean exit, Stage 7 rerun |
+| Forge state | **READY** — begin Stage 0 in a new session |
+| Last command | `.\gradlew.bat :fabric:runGameTestServer --console=plain` — successful |
 
 ## Current work-unit definition
 
 ### Scope and invariant
 
-Stage 6 is complete. Picker export now passes the unknown entity identifier to the translation
-component as supported text while preserving the rejection result. NeoForge client and server config
-adapters continue synchronizing values on load/reload and ignore `ModConfigEvent.Unloading`, so they
-do not read cleared values during shutdown. All 78 required tests pass and the server exits cleanly.
+Stage 7 is complete. Fabric and NeoForge retain the same common behavior and protocol. All automated
+completion and regression gates pass, the NeoForge release artifact is verified by path and file
+metadata, orientation documents describe both completed loaders, and Forge is ready without its
+Stage 0 having begun.
 
 ### Intended files
 
-- None until Stage 7 is explicitly delegated.
+- None. The NeoForge port is complete.
 
 ### Verification command
 
-User-verified Stage 6 gate:
-`.\gradlew.bat :neoforge:runGameTestServer --console=plain`.
+All Stage 7 commands listed in the final handoff completed successfully.
 
 ### Completion condition
 
-- Met. The suite discovers all 78 tests, every required test passes, no config-unload exception
-  occurs, and the server exits cleanly. The user also reports the NeoForge build succeeds without
-  error.
+- Met. All listed gates pass, the expected NeoForge artifact exists and was verified by path and
+  file metadata only, orientation documents describe the completed NeoForge port, outstanding
+  manual checks are explicit, and both port statuses contain the Forge handoff with Forge `READY`.
 
 ## Frozen architecture matrix
 
@@ -80,15 +79,17 @@ demonstrated evidence and user approval.
 
 ## Last reduced result
 
-Stage 6 first normalized the unknown picker-export identifier to a supported translation argument.
-The next run discovered all 78 tests and all passed, proving that cause closed, but the known config
-unload exception left shutdown unclean. Both NeoForge config adapters were then made unload-safe. The
-user reports the subsequent NeoForge build and complete GameTest run both succeed without error.
+Stage 7 reran common and NeoForge production compilation, NeoForge GameTest compilation, the full
+NeoForge dedicated server, and the NeoForge build successfully. The server discovered all 78 tests,
+all passed, and it exited cleanly. The release artifact exists at
+`neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` with size 468,547 bytes and last-write timestamp
+2026-08-30 23:44:00 UTC; no artifact was opened or unpacked. Fabric production and GameTest
+compilation also pass, and its dedicated server discovered and passed all 78 tests before exiting
+cleanly. `player-view.md`, `as-built.md`, and `build-env.md` now describe the completed NeoForge port.
 
 ## Known later-stage failures
 
-Stage 7 artifact verification, invalidated Fabric regressions, documentation reconciliation, manual
-check recording, and Forge handoff remain.
+No automated NeoForge work remains. The physical-client and optional-mod checks below remain manual.
 
 ## Decisions
 
@@ -162,26 +163,86 @@ check recording, and Forge handoff remain.
 - The old Forge source is behavioral reference only and must not be copied mechanically.
 - The user verified that the NeoForge build succeeds and all 78 NeoForge GameTests pass without an
   unload exception or shutdown error after the Stage 6 fixes.
+- Stage 7 independently reran the common, NeoForge, and invalidated Fabric gates successfully and
+  verified the NeoForge release artifact by path, size, and timestamp only.
+
+## Stage 7 Forge handoff
+
+### Final automated gates
+
+- `:common:compileJava` passed.
+- `:neoforge:compileJava`, `:neoforge:processResources`, and
+  `:neoforge:compileGametestJava` passed.
+- `:neoforge:runGameTestServer` discovered and passed all 78 required tests and exited cleanly.
+- `:neoforge:build` passed; the release artifact is
+  `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` (468,547 bytes, last written
+  2026-08-30 23:44:00 UTC).
+- Invalidated Fabric regressions passed: `:fabric:compileJava`,
+  `:fabric:compileGametestJava`, and `:fabric:runGameTestServer`; the server discovered and passed all
+  78 required tests and exited cleanly.
+
+### Final shared Architectury ownership
+
+The authoritative matrix above remains current: 24 Architectury imports in 17 common production
+files. Six build-time seams remain loader-neutral: `ModVersionLookup`, `EntityPersistentData`,
+`NetworkTracking`, `GooglyEyeItemFactory`, `ClientRendererAccess`, and `GeckoCompat`. Common runtime
+registration remains in `ModItems`, `ModDataComponents`, `ModCreativeTabs`, and `ModRecipes`;
+runtime networking remains in `NetworkHandler`, `ClientNetworkHandler`, and the five picker packet
+handlers; the single environment lookup remains in `NetworkHandler.registerCommon`.
+
+NeoForge temporarily uses Architectury 13 for runtime registration, networking, and the environment
+lookup. Forge has no Architectury 13 platform artifact for Minecraft 1.21.1, so Forge Stage 0 must
+freeze replacements for those three runtime categories and separately prove whether build-time
+`@ExpectPlatform` injection can remain.
+
+### Common and platform interface changes
+
+- No common `@ExpectPlatform` signature changed, no NeoForge type entered common production code,
+  and no new common Architectury dependency or runtime use was added.
+- NeoForge supplied implementations for the six existing build-time seams; it added native config,
+  event, persistence, and tracking adapters without changing their common contracts.
+- The only shared production/test correction made during NeoForge stabilization converts an unknown
+  picker-export `ResourceLocation` to its string at the translation-argument boundary and preserves
+  the existing rejection text and result. Protocol 9, payload ids and bodies, persistence keys, item
+  components, and serialized formats are unchanged.
+
+### Retained manual checks
+
+- Physical NeoForge client: ordinary adult/baby models, players, slime/magma-cube ordering, rabbit,
+  llama, sniffer, villager, and special resolver families.
+- Pupil motion and every expression; Googly Eye 3D rendering; Slimy Eye tint; harvest, craft, and
+  apply round trips; Optometrist books and harvesting; visibility settings; picker editing/export;
+  and renderer reload.
+- Optional GeckoLib and optional-mod entities available for Minecraft 1.21.1. Optional-mod selectors
+  and the 74 vanilla definitions were not changed during the port.
+
+### Exact Forge Stage 0 starting action
+
+In a new session, read `CLAUDE.md`, `forge-1.21.1-port-plan.md`,
+`forge-1.21.1-port-process.md`, and `forge-1.21.1-port-status.md`; consult only the relevant Forge
+assessment section. Verify this handoff, re-inventory the 24 common Architectury imports, freeze the
+Forge retain/replace decisions, inspect the old Forge source only as project behavior reference, and
+run one diagnostic `.\gradlew.bat :forge:compileJava --console=plain`. Do not edit production source
+in Forge Stage 0.
 
 ## Cumulative gates
 
 | Gate | Status |
 | --- | --- |
 | Architecture matrix frozen | Yes — 24 imports in 17 files classified |
-| `:common:compileJava` | Stage 4 cumulative gate passed |
-| `:neoforge:compileJava` | Stage 4 cumulative gate passed with 14 production files |
-| `:neoforge:processResources` | Stage 4 passed; output paths and metadata inspected |
-| `:neoforge:compileGametestJava` | Stage 5 passed; 78 intended tests in 12 holders |
-| `:neoforge:runGameTestServer` | Stage 6 passed; all 78 required tests and clean exit, user verified |
-| Invalidated Fabric regressions | Common picker source/test edit requires Stage 7 Fabric gates |
-| `:neoforge:build` | User reports success; Stage 7 artifact-path verification remains |
+| `:common:compileJava` | Stage 7 rerun passed |
+| `:neoforge:compileJava` | Stage 7 rerun passed with 14 production files |
+| `:neoforge:processResources` | Stage 7 build passed; Stage 4 paths and metadata inspection remains valid |
+| `:neoforge:compileGametestJava` | Stage 7 rerun passed; 78 intended tests in 12 holders |
+| `:neoforge:runGameTestServer` | Stage 7 rerun passed; all 78 required tests and clean exit |
+| Invalidated Fabric regressions | Stage 7 passed compile, GameTest compile, and 78-test runtime gates |
+| `:neoforge:build` | Stage 7 passed; release artifact path and metadata verified without opening it |
 
 ## Blockers
 
-None.
+None. Retained client and optional-mod checks are manual completion qualifications, not automated
+gate blockers.
 
 ## Exact next action
 
-When explicitly delegated, execute Stage 7: reconcile invalidated gates, verify the NeoForge artifact
-by path and metadata, run required Fabric regressions, update orientation documents, record manual
-checks, and write the Forge handoff. Do not begin Forge Stage 0 in that session.
+Hard stop. Begin Forge Stage 0 only in a new session using the exact handoff action above.

@@ -7,9 +7,11 @@ apply it to a mob or themselves.
 The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks,
 allowing different eye arrangements for vanilla and modded mobs.
 
-The completed artifact targets Minecraft 1.21.1 on Fabric and requires Fabric Loader 0.19.3 or
-newer, Fabric API 0.116.15+1.21.1 or newer, Architectury API 13.0.8 or newer, and Java 21. GeckoLib
-is optional. Forge and NeoForge builds are not currently available.
+Completed artifacts target Minecraft 1.21.1 on Fabric and NeoForge. Fabric requires Fabric Loader
+0.19.3 or newer, Fabric API 0.116.15+1.21.1 or newer, and Architectury API 13.0.8 or newer. NeoForge
+requires NeoForge 21.1.248 or newer within the 21.1 release line and Architectury API 13.0.8 or
+newer. Both loaders require Java 21; GeckoLib 4.7.4 or newer is an optional client dependency. A
+Forge build is not currently available.
 
 ## Mobs with eyes
 
@@ -253,4 +255,8 @@ Color channels range from 0 to 1.
   eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.1 require manual compatibility
   verification.
+- The NeoForge artifact passes production compilation, packaging, and all 78 dedicated-server
+  GameTests, but still requires a physical-client smoke test of ordinary and baby models, players,
+  special resolver families, expression and pupil animation, both item render paths, harvesting and
+  application, picker editing/export, renderer reload, and optional GeckoLib entities.
 - The dynamic modifier recipe may not display in recipe viewers.

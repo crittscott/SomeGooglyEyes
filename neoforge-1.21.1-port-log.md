@@ -134,3 +134,19 @@ was inspected or changed in this session.
   values, preserving the existing load/reload synchronization.
 - The user verified that the subsequent NeoForge build and complete GameTest run both succeed without
   error. Stage 6 is complete; Stage 7 is next.
+
+## 2026-08-30 — Stage 7 complete
+
+- `:common:compileJava`, `:neoforge:compileJava`, `:neoforge:compileGametestJava`,
+  `:neoforge:runGameTestServer`, and `:neoforge:build` passed. NeoForge discovered and passed all 78
+  required tests and exited cleanly.
+- `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` was verified by path and filesystem metadata
+  only: 468,547 bytes, last written 2026-08-30 23:44:00 UTC. It was not opened or unpacked.
+- Invalidated Fabric regressions passed: `:fabric:compileJava`, `:fabric:compileGametestJava`, and
+  `:fabric:runGameTestServer`; Fabric discovered and passed all 78 required tests and exited cleanly.
+- Updated `player-view.md`, `as-built.md`, and `build-env.md` for the completed NeoForge port. Retained
+  all required physical-client and optional-mod checks as manual.
+- Final Architectury ownership remains 24 imports in 17 common production files. No platform-seam
+  signature changed; Forge must replace common runtime registration, networking, and the single
+  environment lookup, then separately prove whether build-time `@ExpectPlatform` can remain.
+- NeoForge status is `COMPLETE`; Forge status is `READY`. Begin Forge Stage 0 only in a new session.
