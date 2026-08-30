@@ -7,45 +7,42 @@ in `neoforge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Stage 4 complete; Stage 5 is next |
-| Current stage | Stage 4 — Resources and production verification — complete |
-| Current work unit | None — hard stop after passing Stage 4 gates |
+| Overall state | **READY** — Stage 6 complete; Stage 7 is next |
+| Current stage | Stage 6 — Runtime stabilization — complete |
+| Current work unit | None — hard stop after passing Stage 6 gates |
 | Work-unit state | Complete |
-| Failed verification attempts used | 0 of 3 |
-| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status reread for Stage 4 |
+| Failed verification attempts used | 0 of 3 for the final config-lifecycle unit |
+| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status reread for Stage 6 |
 | Common compile state | Passing — explicit Stage 4 cumulative gate |
 | Fabric regression state | Passing at Fabric completion |
 | NeoForge compile state | Passing — explicit Stage 4 cumulative gate |
-| NeoForge GameTest state | Not configured |
+| NeoForge GameTest state | Passing — all 78 required tests and a clean exit, user verified |
 | Forge state | Waiting on the completed NeoForge handoff |
-| Last command | `.\gradlew.bat :common:compileJava :neoforge:compileJava :neoforge:processResources --console=plain` — `BUILD SUCCESSFUL` in 8 seconds |
+| Last command | User-reported NeoForge build and GameTest run — both succeeded without error |
 
 ## Current work-unit definition
 
 ### Scope and invariant
 
-Stage 4 is complete. NeoForge metadata now declares the fixed loader/platform ranges, Architectury
-as the sole required temporary runtime library beyond NeoForge, and GeckoLib 4.7.4 as an optional
-client dependency. Source and processed resources have exact path parity without cross-module
-duplicates; the Access Transformer is present and byte-identical at its processed standard path.
-All 74 vanilla definitions and 171 optional-mod selectors remain unchanged.
+Stage 6 is complete. Picker export now passes the unknown entity identifier to the translation
+component as supported text while preserving the rejection result. NeoForge client and server config
+adapters continue synchronizing values on load/reload and ignore `ModConfigEvent.Unloading`, so they
+do not read cleared values during shutdown. All 78 required tests pass and the server exits cleanly.
 
 ### Intended files
 
-- None until Stage 5 is explicitly delegated.
+- None until Stage 7 is explicitly delegated.
 
 ### Verification command
 
-Stage 4 final gate passed:
-`.\gradlew.bat :common:compileJava :neoforge:compileJava :neoforge:processResources --console=plain`.
+User-verified Stage 6 gate:
+`.\gradlew.bat :neoforge:runGameTestServer --console=plain`.
 
 ### Completion condition
 
-- Met. Processed metadata contains no unresolved placeholders and has the expected dependency
-  ranges/sides. Common has 262 source and 262 processed files; NeoForge has two source and two
-  processed files; neither set has missing/unexpected paths and they have zero cross-module path
-  duplicates. The processed AT hash matches source. Production compiles and resource processing
-  passed on the first attempt.
+- Met. The suite discovers all 78 tests, every required test passes, no config-unload exception
+  occurs, and the server exits cleanly. The user also reports the NeoForge build succeeds without
+  error.
 
 ## Frozen architecture matrix
 
@@ -78,19 +75,20 @@ demonstrated evidence and user approval.
 - `META-INF/accesstransformer.cfg` contains the 36 demonstrated renderer/model access rules required
   by Stage 3.
 - `neoforge/src/main/java` contains 14 production files through Stage 3;
-  `neoforge/src/gametest/java` does not yet exist.
+  `neoforge/src/gametest/java` contains 13 files: 12 holders and one dev-mod entry point.
 - Versions, repositories, module layout, and production source were not changed in Stage 0.
 
 ## Last reduced result
 
-Stage 4 passed its combined common compile, NeoForge compile, and NeoForge resource-processing gate
-in 8 seconds on its first attempt. Deterministic inspection found exact source/output path parity,
-zero duplicated cross-module resource paths, valid JSON throughout, the expected 74 vanilla plus
-171 optional definitions, and an unchanged processed Access Transformer.
+Stage 6 first normalized the unknown picker-export identifier to a supported translation argument.
+The next run discovered all 78 tests and all passed, proving that cause closed, but the known config
+unload exception left shutdown unclean. Both NeoForge config adapters were then made unload-safe. The
+user reports the subsequent NeoForge build and complete GameTest run both succeed without error.
 
 ## Known later-stage failures
 
-Stage 5 NeoForge GameTest configuration and wrappers have not been executed.
+Stage 7 artifact verification, invalidated Fabric regressions, documentation reconciliation, manual
+check recording, and Forge handoff remain.
 
 ## Decisions
 
@@ -132,12 +130,27 @@ Stage 5 NeoForge GameTest configuration and wrappers have not been executed.
 - Stage 4 changed only NeoForge resource expansion and metadata. The 74 vanilla definitions, 171
   optional selectors, common/Fabric sources, protocol, persistence, components, and data formats
   remain unchanged.
+- NeoForge GameTests use a separate `somegoogly_gametest` dev mod while holder annotations and the
+  run property select the production `somegoogly` template namespace.
+- NeoForge's native persistence proof mirrors Fabric's save/load boundary and keeps the same eye-state
+  keys and appearance payload. Loader-specific fake players adapt the five shared player-dependent
+  assertions without changing common test logic.
+- Stage 5 changed only NeoForge build/test source and discovery metadata plus the NeoForge status/log;
+  no common, Fabric, or production source changed.
+- Picker export converts its unknown `ResourceLocation` to text at the translation-component boundary;
+  the preserved shared assertion expects the same visible identifier content.
+- NeoForge client and server config listeners ignore `ModConfigEvent.Unloading` before reading spec
+  values, while retaining their existing load/reload synchronization.
+- The shared picker production/test edit invalidates the corresponding Fabric compile and runtime
+  regression gates for Stage 7. Protocol, persistence, components, data formats, and player-visible
+  wording remain unchanged.
 
 ## Known evidence
 
 - Fabric common, production, resources, 78 GameTests, runtime server, and artifact gates pass.
 - `neoforge/build.gradle` targets NeoForge 21.1.248 and Architectury NeoForge 13.0.8.
-- `neoforge/src/main/java` contains 14 compiling production files; GameTests remain unconfigured.
+- `neoforge/src/main/java` contains 14 compiling production files; NeoForge GameTest compilation now
+  passes with 13 loader test files and an intended 78-test discovery surface.
 - NeoForge metadata exists; its Access Transformer contains the 36 demonstrated renderer/model
   access rules translated from the canonical Access Widener.
 - Processed metadata resolves to NeoForge `[21.1.248,22)`, Minecraft `[1.21.1]`, required
@@ -147,6 +160,8 @@ Stage 5 NeoForge GameTest configuration and wrappers have not been executed.
   remains 48.
 - Common resources and renderer code already target Minecraft 1.21.1.
 - The old Forge source is behavioral reference only and must not be copied mechanically.
+- The user verified that the NeoForge build succeeds and all 78 NeoForge GameTests pass without an
+  unload exception or shutdown error after the Stage 6 fixes.
 
 ## Cumulative gates
 
@@ -156,10 +171,10 @@ Stage 5 NeoForge GameTest configuration and wrappers have not been executed.
 | `:common:compileJava` | Stage 4 cumulative gate passed |
 | `:neoforge:compileJava` | Stage 4 cumulative gate passed with 14 production files |
 | `:neoforge:processResources` | Stage 4 passed; output paths and metadata inspected |
-| `:neoforge:compileGametestJava` | Not configured/run |
-| `:neoforge:runGameTestServer` | Not configured/run |
-| Invalidated Fabric regressions | None yet |
-| `:neoforge:build` | Not run |
+| `:neoforge:compileGametestJava` | Stage 5 passed; 78 intended tests in 12 holders |
+| `:neoforge:runGameTestServer` | Stage 6 passed; all 78 required tests and clean exit, user verified |
+| Invalidated Fabric regressions | Common picker source/test edit requires Stage 7 Fabric gates |
+| `:neoforge:build` | User reports success; Stage 7 artifact-path verification remains |
 
 ## Blockers
 
@@ -167,6 +182,6 @@ None.
 
 ## Exact next action
 
-When explicitly delegated, execute Stage 5: add the NeoForge GameTest source set, expose the 77
-shared assertions plus one NeoForge persistence wrapper, verify deterministic discovery metadata,
-and require `:neoforge:compileGametestJava` to pass before stopping short of server execution.
+When explicitly delegated, execute Stage 7: reconcile invalidated gates, verify the NeoForge artifact
+by path and metadata, run required Fabric regressions, update orientation documents, record manual
+checks, and write the Forge handoff. Do not begin Forge Stage 0 in that session.

@@ -109,7 +109,8 @@ public final class PickerExportService {
             return Component.translatable("somegoogly.command.picker.export_rejected_missing_payload");
         }
         if (!BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unknown_type", typeId);
+            return Component.translatable(
+                    "somegoogly.command.picker.export_rejected_unknown_type", typeId.toString());
         }
         if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");

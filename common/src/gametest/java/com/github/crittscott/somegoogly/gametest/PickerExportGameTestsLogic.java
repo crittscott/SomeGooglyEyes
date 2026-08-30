@@ -47,7 +47,7 @@ public final class PickerExportGameTestsLogic {
         Component result = PickerExportService.export(
                 server(helper), UUID.randomUUID(), type, AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
-                        "somegoogly.command.picker.export_rejected_unknown_type", type)),
+                        "somegoogly.command.picker.export_rejected_unknown_type", type.toString())),
                 "an id absent from the entity registry must be rejected, got: " + result.getString());
         helper.succeed();
     }

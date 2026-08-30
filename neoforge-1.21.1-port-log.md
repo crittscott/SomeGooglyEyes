@@ -109,3 +109,28 @@ was inspected or changed in this session.
   duplicates, no unresolved metadata placeholders, and a byte-identical processed AT.
 - Verification: `:common:compileJava :neoforge:compileJava :neoforge:processResources` passed on
   attempt 1 in 8 seconds. Stage 4 complete; Stage 5 GameTest setup is next; hard stop observed.
+## 2026-08-30 — Stage 5 complete
+
+- Added the NeoForge `gametest` source set, dev-only mod metadata and entry point, dedicated
+  GameTest-server run configuration, 12 discovery holders for all 77 shared assertions, and one
+  NeoForge-native entity persistence save/load test.
+- Deterministic inspection found 77 shared wrappers with zero differences from Fabric, 78 total
+  tests, 12 `@GameTestHolder` classes with unprefixed `somegoogly:empty` templates, matching
+  `somegoogly_gametest` identity, and the enabled `somegoogly` namespace.
+- Verification attempt 1 was an infrastructure failure before Gradle startup because the sandbox
+  denied the wrapper lock. Attempt 2 compiled and exposed three stale eligibility wrapper arguments.
+  The bounded fake-player correction removed them.
+- `.\gradlew.bat :neoforge:compileGametestJava --console=plain` passed in 9 seconds on the final
+  allowed attempt. The dedicated GameTest server was not started. Stage 6 is next.
+## 2026-08-30 — Stage 6 complete
+
+- The user-supplied baseline discovered and ran all 78 tests. One picker-export assertion failed
+  because a `ResourceLocation` was passed directly as a translation argument, and shutdown then
+  threw when the server-config listener read values during `ModConfigEvent.Unloading`.
+- Picker export and its preserved assertion now cross the translation boundary with the unknown
+  entity identifier as text. The next server run passed all 78 required tests, closing that bounded
+  cause, while reproducing only the classified unload exception.
+- NeoForge client and server config adapters now ignore unloading events before reading config-spec
+  values, preserving the existing load/reload synchronization.
+- The user verified that the subsequent NeoForge build and complete GameTest run both succeed without
+  error. Stage 6 is complete; Stage 7 is next.

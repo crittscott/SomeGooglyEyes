@@ -86,7 +86,7 @@ public final class NeoForgeServerConfig {
     }
 
     private static void onConfigChanged(ModConfigEvent event) {
-        if (event.getConfig().getSpec() != SPEC) {
+        if (event instanceof ModConfigEvent.Unloading || event.getConfig().getSpec() != SPEC) {
             return;
         }
         ServerConfig.GOOGLY_EYES_ENABLED.set(GOOGLY_EYES_ENABLED.get());

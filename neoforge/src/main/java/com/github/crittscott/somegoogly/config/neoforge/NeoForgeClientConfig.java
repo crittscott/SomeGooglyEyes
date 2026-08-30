@@ -44,7 +44,7 @@ public final class NeoForgeClientConfig {
     }
 
     private static void onConfigChanged(ModConfigEvent event) {
-        if (event.getConfig().getSpec() != SPEC) {
+        if (event instanceof ModConfigEvent.Unloading || event.getConfig().getSpec() != SPEC) {
             return;
         }
         ClientConfig.DISABLE_GOOGLY_EYES.set(DISABLE_GOOGLY_EYES.get());
