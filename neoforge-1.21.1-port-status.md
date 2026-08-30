@@ -7,52 +7,45 @@ in `neoforge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Stage 1 complete; Stage 2 is next |
-| Current stage | Stage 1 — Bootstrap, registration, configuration, and platform services — **COMPLETE** |
-| Current work unit | Stage 1 cumulative loader foundation |
+| Overall state | **READY** — Stage 4 complete; Stage 5 is next |
+| Current stage | Stage 4 — Resources and production verification — complete |
+| Current work unit | None — hard stop after passing Stage 4 gates |
 | Work-unit state | Complete |
 | Failed verification attempts used | 0 of 3 |
-| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status reread for Stage 1 |
-| Common compile state | Up to date during the passing Stage 1 diagnostic |
+| Stable documents read this session | Yes — `CLAUDE.md`, plan, process, and status reread for Stage 4 |
+| Common compile state | Passing — explicit Stage 4 cumulative gate |
 | Fabric regression state | Passing at Fabric completion |
-| NeoForge compile state | Passing with seven Stage 1 production files |
+| NeoForge compile state | Passing — explicit Stage 4 cumulative gate |
 | NeoForge GameTest state | Not configured |
 | Forge state | Waiting on the completed NeoForge handoff |
-| Last command | `.\gradlew.bat :neoforge:compileJava --console=plain` — `BUILD SUCCESSFUL` in 12 seconds |
+| Last command | `.\gradlew.bat :common:compileJava :neoforge:compileJava :neoforge:processResources --console=plain` — `BUILD SUCCESSFUL` in 8 seconds |
 
 ## Current work-unit definition
 
 ### Scope and invariant
 
-Provide the complete Stage 1 NeoForge loader foundation: one physical-server-safe bootstrap, common
-registration exactly once, server datapack reload registration, native client and per-world server
-configuration, and the four foundational loader-neutral platform implementations. Stage 2 gameplay
-events and runtime persistence/network proof and Stage 3 client rendering remain out of scope.
+Stage 4 is complete. NeoForge metadata now declares the fixed loader/platform ranges, Architectury
+as the sole required temporary runtime library beyond NeoForge, and GeckoLib 4.7.4 as an optional
+client dependency. Source and processed resources have exact path parity without cross-module
+duplicates; the Access Transformer is present and byte-identical at its processed standard path.
+All 74 vanilla definitions and 171 optional-mod selectors remain unchanged.
 
 ### Intended files
 
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/neoforge/SomeGooglyNeoForge.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/config/neoforge/NeoForgeClientConfig.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/config/neoforge/NeoForgeServerConfig.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/config/neoforge/ModVersionLookupImpl.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/item/neoforge/GooglyEyeItemFactoryImpl.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/platform/neoforge/EntityPersistentDataImpl.java`
-- `neoforge/src/main/java/com/github/crittscott/somegoogly/platform/neoforge/NetworkTrackingImpl.java`
-- `neoforge-1.21.1-port-status.md`
-- `neoforge-1.21.1-port-log.md` after verification
-- `neoforge-1.21.1-port-status.md`
-- `neoforge-1.21.1-port-log.md` after Stage 1 verification
+- None until Stage 5 is explicitly delegated.
 
 ### Verification command
 
-Targeted source inspection followed by `.\gradlew.bat :neoforge:compileJava --console=plain`.
+Stage 4 final gate passed:
+`.\gradlew.bat :common:compileJava :neoforge:compileJava :neoforge:processResources --console=plain`.
 
 ### Completion condition
 
-- All seven Stage 1 production files compile with no current-stage diagnostic.
-- Bootstrap, common registration, reload registration, native configuration, and all four platform
-  implementations are present without client rendering or Stage 2 gameplay event code.
-- Remaining implementation work is classified only into later stages.
+- Met. Processed metadata contains no unresolved placeholders and has the expected dependency
+  ranges/sides. Common has 262 source and 262 processed files; NeoForge has two source and two
+  processed files; neither set has missing/unexpected paths and they have zero cross-module path
+  duplicates. The processed AT hash matches source. Production compiles and resource processing
+  passed on the first attempt.
 
 ## Frozen architecture matrix
 
@@ -81,24 +74,23 @@ demonstrated evidence and user approval.
 - `neoforge/build.gradle` keeps the established Loom NeoForge platform, transformed common artifact,
   Architectury NeoForge 13.0.8 runtime, compile-only GeckoLib 4.7.4, and Java 21 root toolchain.
 - `META-INF/neoforge.mods.toml` declares NeoForge, exact Minecraft range, and Architectury as required;
-  optional GeckoLib metadata remains a Stage 4 resource concern.
-- `META-INF/accesstransformer.cfg` is intentionally empty pending demonstrated Stage 3 renderer needs.
-- `neoforge/src/main/java` and `neoforge/src/gametest/java` do not exist; the module currently has no
-  Java implementation or tests.
+  GeckoLib 4.7.4 is optional and client-sided.
+- `META-INF/accesstransformer.cfg` contains the 36 demonstrated renderer/model access rules required
+  by Stage 3.
+- `neoforge/src/main/java` contains 14 production files through Stage 3;
+  `neoforge/src/gametest/java` does not yet exist.
 - Versions, repositories, module layout, and production source were not changed in Stage 0.
 
 ## Last reduced result
 
-The first post-edit Stage 1 diagnostic succeeded in 12 seconds. Common compile, resources, classes,
-and JAR were up to date; `:neoforge:compileJava` executed and passed. No compiler diagnostics remain,
-so failed verification attempts remain 0 of 3.
+Stage 4 passed its combined common compile, NeoForge compile, and NeoForge resource-processing gate
+in 8 seconds on its first attempt. Deterministic inspection found exact source/output path parity,
+zero duplicated cross-module resource paths, valid JSON throughout, the expected 74 vanilla plus
+171 optional definitions, and an unchanged processed Access Transformer.
 
 ## Known later-stage failures
 
-No later-stage compiler failure was exposed. Stage 2 still owns server lifecycle/gameplay event
-adapters, runtime persistence proof, payload lifecycle, and tracking synchronization. Stage 3 still
-owns all client initialization, item rendering, renderer access/layers, picker UI, Access
-Transformer rules, and optional GeckoLib integration.
+Stage 5 NeoForge GameTest configuration and wrappers have not been executed.
 
 ## Decisions
 
@@ -111,18 +103,48 @@ Transformer rules, and optional GeckoLib integration.
   therefore runs inside the NeoForge constructor without the legacy Forge-only `EventBuses` hook.
 - NeoForge-native CLIENT and SERVER specs use `somegoogly-client.toml` and
   `somegoogly-server.toml`; SERVER type retains NeoForge's per-world `serverconfig` location.
-- The item factory deliberately creates the shared item without a client renderer until Stage 3.
-- Native entity persistent data and packet tracking fanout compile; their runtime behavior remains a
-  Stage 2 verification responsibility.
+- The item factory supplies NeoForge's lazy custom client renderer while retaining the shared item
+  behavior and component payload.
+- NeoForge's native entity compound satisfies the project persistence boundary and retains the
+  existing keys; the loader-specific persistence GameTest remains Stage 5/6 runtime proof.
+- NeoForge events cover the complete Stage 2 server surface, so no NeoForge Mixin was added.
+- Damage reactions use `LivingDamageEvent.Post`; harvest drops join `LivingDropsEvent`'s collection;
+  healing and completed trades use their native events.
+- Architectury 13 remains the temporary typed transport. Its NeoForge adapter supplies the
+  authoritative C2S player context; native `PacketDistributor` supplies tracking fanout.
 - No common, Fabric, build, metadata, dependency, version, repository, protocol, persistence-key,
-  item-component, or data-format change was made in Stage 1.
+  item-component, data-format, or player-visible behavior change was made in Stage 2.
+- NeoForge client services are registered once from a physical-client branch, split correctly
+  between the mod and game buses, with clientbound receivers installed before payload registration
+  freezes.
+- The 36 canonical Access Widener entries have a one-for-one named Access Transformer translation;
+  renderer and player maps plus layer insertion remain behind `ClientRendererAccess`.
+- GeckoLib 4.7.4 stays compile-only and optional. The always-loadable platform gate contains no
+  GeckoLib type; typed bone/layer code is reached only after NeoForge reports GeckoLib loaded.
+- Stage 3 changed no common, Fabric, build, metadata, dependency, version, repository, protocol,
+  persistence-key, item-component, or data-format surface.
+- GeckoLib is metadata-optional on the physical client with minimum version 4.7.4 and `AFTER`
+  ordering; Architectury 13.0.8 remains the only required temporary runtime library beyond
+  NeoForge and Minecraft.
+- Common resources remain canonical. NeoForge packages them through `transformProductionNeoForge`
+  and contributes only its expanded mod metadata and Access Transformer; source and processed paths
+  have no duplicates.
+- Stage 4 changed only NeoForge resource expansion and metadata. The 74 vanilla definitions, 171
+  optional selectors, common/Fabric sources, protocol, persistence, components, and data formats
+  remain unchanged.
 
 ## Known evidence
 
 - Fabric common, production, resources, 78 GameTests, runtime server, and artifact gates pass.
 - `neoforge/build.gradle` targets NeoForge 21.1.248 and Architectury NeoForge 13.0.8.
-- `neoforge/src/main/java` and `neoforge/src/gametest/java` contain no implementation.
-- NeoForge metadata exists; its Access Transformer is empty.
+- `neoforge/src/main/java` contains 14 compiling production files; GameTests remain unconfigured.
+- NeoForge metadata exists; its Access Transformer contains the 36 demonstrated renderer/model
+  access rules translated from the canonical Access Widener.
+- Processed metadata resolves to NeoForge `[21.1.248,22)`, Minecraft `[1.21.1]`, required
+  Architectury `[13.0.8,)`, and optional client GeckoLib `[4.7.4,)`, with no placeholders.
+- Common resource source/output counts are 262/262 and NeoForge counts are 2/2, with no missing,
+  unexpected, or cross-module duplicate paths. All JSON resources parse successfully; pack format
+  remains 48.
 - Common resources and renderer code already target Minecraft 1.21.1.
 - The old Forge source is behavioral reference only and must not be copied mechanically.
 
@@ -131,9 +153,9 @@ Transformer rules, and optional GeckoLib integration.
 | Gate | Status |
 | --- | --- |
 | Architecture matrix frozen | Yes — 24 imports in 17 files classified |
-| `:common:compileJava` | Up to date as a dependency of the Stage 0 diagnostic |
-| `:neoforge:compileJava` | Stage 1 passed with seven production files |
-| `:neoforge:processResources` | Not run |
+| `:common:compileJava` | Stage 4 cumulative gate passed |
+| `:neoforge:compileJava` | Stage 4 cumulative gate passed with 14 production files |
+| `:neoforge:processResources` | Stage 4 passed; output paths and metadata inspected |
 | `:neoforge:compileGametestJava` | Not configured/run |
 | `:neoforge:runGameTestServer` | Not configured/run |
 | Invalidated Fabric regressions | None yet |
@@ -145,5 +167,6 @@ None.
 
 ## Exact next action
 
-In a new execution session, reread the controlling documents and begin Stage 2 — server runtime and
-networking — by bounding its first coherent work unit.
+When explicitly delegated, execute Stage 5: add the NeoForge GameTest source set, expose the 77
+shared assertions plus one NeoForge persistence wrapper, verify deterministic discovery metadata,
+and require `:neoforge:compileGametestJava` to pass before stopping short of server execution.

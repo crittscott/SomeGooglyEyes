@@ -27,3 +27,9 @@ description='''${mod_description}'''
     versionRange="[${architectury_api_version},)"
     ordering="AFTER"
     side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    type="optional"
+    versionRange="[${geckolib_version},)"
+    ordering="AFTER"
+    side="CLIENT"

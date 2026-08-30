@@ -53,3 +53,59 @@ No verification commands or stage completions have been recorded.
 - No common, Fabric, build, metadata, dependency, version, repository, protocol, persistence-key,
   item-component, or data-format change was made.
 - Next stage: Stage 2 — server runtime and networking. Not begun.
+
+## Stage 2 — server event bridge
+
+- Added and registered the NeoForge server event bridge for lifecycle, tracking, commands, item
+  interactions, death drops, damage/healing reactions, and completed trades.
+- Static inspection found no stale Forge APIs or new Mixins.
+- Attempt 1 was an infrastructure-only wrapper-lock denial before Gradle started.
+- The identical authorized retry passed `:neoforge:compileJava` in 11 seconds; no source repair was
+  required.
+
+## Stage 2 — persistence and networking proof
+
+- Official NeoForge 1.21.1 API source confirms that the native entity persistent-data compound is
+  written to and read from disk and that tracking distributors use the server chunk map.
+- Official Architectury 1.21 NeoForge source confirms direction-specific typed payload registration,
+  queued handling, and authoritative server-player packet context.
+- Project inspection confirmed protocol 9, bounded codecs, context-derived players in all five C2S
+  picker handlers, handshake timeout, and unchanged persistence keys.
+- No additional implementation edit or compile was required; the cumulative Stage 2 NeoForge
+  production compile remains passing.
+
+## Stage 2 complete
+
+The complete NeoForge server-side production surface compiles. Stage 3 is next; no Stage 3 source
+was inspected or changed in this session.
+
+## Stage 3 — renderer access and layers
+
+- Added the NeoForge `ClientRendererAccess` implementation and client-sided AddLayers registration.
+- Translated all 36 current canonical Access Widener entries into named 1.21.1 Access Transformer
+  rules; deterministic counts match and no stale 1.20.1 rule was copied.
+- `:neoforge:compileJava` passed in 24 seconds on the first attempt with common compile up to date.
+## Stage 3 — ordinary client integration
+
+- Registered clientbound receivers before payload registration; wired client commands, ticks,
+  queued entity state, disconnect cleanup, picker keys/HUD/input, inspection, Slimy Eye tint, and
+  Googly Eye custom rendering through NeoForge's physical-client registrar.
+- Verification: `:neoforge:compileJava` passed on attempt 1 in 9 seconds; common was up to date and
+  NeoForge emitted only its expected deprecation warning for `Item#initializeClient`.
+## Stage 3 — optional GeckoLib and completion
+
+- Added the NeoForge `GeckoCompat` implementation, soft-loaded mod-presence gate, Gecko bone
+  enumeration/path resolution, and per-bone normal/picker rendering layer against the declared
+  compile-only GeckoLib 4.7.4 API. The public gate contains no GeckoLib type.
+- Verification: the Gecko unit passed `:neoforge:compileJava` on attempt 1 in 10 seconds. The explicit
+  Stage 3 final gate, `:common:compileJava :neoforge:compileJava`, then passed in 8 seconds.
+- Stage 3 complete. Stage 4 resource and production verification is next; hard stop observed.
+## Stage 4 — resources and production verification
+
+- Added GeckoLib 4.7.4 to processed NeoForge metadata as an optional client dependency ordered
+  after GeckoLib when present; Architectury remains the sole required temporary runtime library.
+- Deterministic inspection preserved 74 vanilla definitions and 171 optional selectors, found valid
+  JSON throughout, exact common 262/262 and NeoForge 2/2 source/output path parity, zero cross-module
+  duplicates, no unresolved metadata placeholders, and a byte-identical processed AT.
+- Verification: `:common:compileJava :neoforge:compileJava :neoforge:processResources` passed on
+  attempt 1 in 8 seconds. Stage 4 complete; Stage 5 GameTest setup is next; hard stop observed.
