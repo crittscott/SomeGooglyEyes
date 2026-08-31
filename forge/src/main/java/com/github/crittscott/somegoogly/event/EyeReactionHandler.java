@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.event;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -32,7 +32,7 @@ public class EyeReactionHandler {
     }
 
     @SubscribeEvent
-    public void onLivingHurt(LivingHurtEvent event) {
+    public void onLivingDamage(LivingDamageEvent event) {
         if (event.getEntity().level().isClientSide()) {
             return;
         }

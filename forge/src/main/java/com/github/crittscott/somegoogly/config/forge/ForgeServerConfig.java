@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.config.forge;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -78,13 +78,14 @@ public final class ForgeServerConfig {
     private ForgeServerConfig() {
     }
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
+    public static void register(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.SERVER, SPEC,
+                SomeGooglyCommon.MOD_ID + "-server.toml");
+        context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
     }
 
     private static void onConfigChanged(ModConfigEvent event) {
-        if (event.getConfig().getSpec() != SPEC) {
+        if (event instanceof ModConfigEvent.Unloading || event.getConfig().getSpec() != SPEC) {
             return;
         }
         ServerConfig.GOOGLY_EYES_ENABLED.set(GOOGLY_EYES_ENABLED.get());

@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.config.forge;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -36,13 +36,14 @@ public final class ForgeClientConfig {
     private ForgeClientConfig() {
     }
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
+    public static void register(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.CLIENT, SPEC,
+                SomeGooglyCommon.MOD_ID + "-client.toml");
+        context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
     }
 
     private static void onConfigChanged(ModConfigEvent event) {
-        if (event.getConfig().getSpec() != SPEC) {
+        if (event instanceof ModConfigEvent.Unloading || event.getConfig().getSpec() != SPEC) {
             return;
         }
         ClientConfig.DISABLE_GOOGLY_EYES.set(DISABLE_GOOGLY_EYES.get());

@@ -62,3 +62,20 @@ No verification commands or stage completions have been recorded. Forge is waiti
   existing deprecation warnings remain.
 - Failed post-edit verification attempts: 0. The initial sandbox-denied Gradle wrapper launch was
   retried with approved cache access and did not reach compilation.
+
+## Stage 3 — Forge server runtime — complete
+
+- Replaced deprecated global Forge loading-context access with the injected
+  `FMLJavaModLoadingContext`; native content, networking, configs, display compatibility, server
+  events, and physical-client dispatch now originate from that entry point.
+- Registered the preserved `somegoogly-server.toml` and `somegoogly-client.toml` names and ignored
+  config unload notifications after Forge clears their specs.
+- Moved client handler state and registration into a physical-client bootstrap and removed the
+  obsolete synchronized registration of the picker-only `MaybeFloatArgumentType`.
+- Preserved reload/config sync, entity initialization, login/logout, tracking, commands, ticks,
+  shutdown, item application/harvesting, drops, healing, and trade transitions. Damage reactions now
+  use Forge 52 `LivingDamageEvent` final damage.
+- Verification: the first post-edit launch was denied access to the external Gradle wrapper cache;
+  the identical approved retry reached compilation. `:common:compileJava` was up-to-date and
+  `:forge:compileJava` reported only the same nine classified Stage 4 client errors: GeckoLib API,
+  removed HUD/client-command hooks, and renderer skin-map typing. No Stage 3 error remained.
