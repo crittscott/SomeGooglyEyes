@@ -7,18 +7,18 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Forge Stage 4 complete; Stage 5 is next in a new session |
-| Current stage | Stage 4 — Forge client, access, picker, and GeckoLib — complete |
-| Current work unit | None — hard stop after completed Stage 4 |
+| Overall state | **READY** — Forge Stage 5 complete; Stage 6 is next in a new session |
+| Current stage | Stage 5 — Forge resources and cumulative prior-loader regression — complete |
+| Current work unit | None — hard stop after completed Stage 5 |
 | Work-unit state | Complete |
-| Failed verification attempts used | 0 of 3 |
+| Failed verification attempts used | 1 of 3 |
 | Stable documents read this session | Yes |
-| Common compile state | Passing — up-to-date during Stage 4 completion gate |
-| Fabric state | Complete and passing — production compile and all 78 prior GameTests |
-| NeoForge state | Complete and passing — production compile and all 78 prior GameTests |
-| Forge compile state | Passing — Stage 4 completion gate; one GeckoLib removal warning |
+| Common compile state | Passing — Stage 5 cumulative production gate |
+| Fabric state | Complete and passing — Stage 5 production compile and all 78 cumulative GameTests |
+| NeoForge state | Complete and passing — Stage 5 production compile and all 78 cumulative GameTests |
+| Forge compile state | Passing — Stage 5 cumulative production gate |
 | Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
-| Last command | `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain` — passed |
+| Last command | `.\gradlew.bat :neoforge:runGameTestServer --console=plain` — discovered and passed all 78 required tests; clean exit |
 
 ## Prerequisite
 
@@ -83,33 +83,37 @@ inspect old Forge source only as project behavior reference, and run one diagnos
 
 ### Scope and invariant
 
-Stage 4 is complete. Forge's side-gated client bootstrap now owns client commands, picker keys and
-input, HUD and inspector rendering, disconnect cleanup, renderer-reload layer installation, the
-Slimy Eye tint, and client network initialization. The existing item-construction boundary retains
-the 3D Googly Eye renderer. Renderer-map access matches the common wildcard contract, the Forge
-Access Transformer carries the established 1.21.1 rendering access set, and the GeckoLib bridge uses
-the 4.7.4 API behind its existing strict soft-load gate.
+Stage 5 is complete. Forge metadata now declares the exact Minecraft and Forge ranges plus optional
+client GeckoLib compatibility without an Architectury runtime dependency. Processed resources carry
+the established 36-entry Access Transformer and resolved metadata. The common transformed-resource
+boundary retains all shared 1.21.1 resources. The cumulative Fabric and NeoForge regression servers
+each passed all 78 required tests after the shared registration and networking changes.
 
 ### Intended files
 
-- `forge/src/main/java/com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.java`
-- `forge/src/main/java/com/github/crittscott/somegoogly/client/forge/ClientRendererAccessImpl.java`
-- Forge GeckoLib sources under `forge/src/main/java/com/github/crittscott/somegoogly/client/compat/forge/`
-- Removed the four superseded split adapters: `ClientEventHandler`, `EyeInspectIndicator`,
-  `SlimyEyeColors`, and `ForgePickerClient`
-- `forge/src/main/resources/META-INF/accesstransformer.cfg`
+- `forge/build.gradle`
+- `forge/src/main/resources/META-INF/mods.toml`
+- `forge/src/main/resources/META-INF/accesstransformer.cfg` inspected and unchanged
+- `forge-1.21.1-port-status.md`
+- `forge-1.21.1-port-log.md`
 
-### Verification command
+### Verification commands
 
+- `.\gradlew.bat :forge:processResources --console=plain` passed on the permitted identical retry;
+  the initial sandbox lock-access failure consumed one failed attempt
 - `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain`
-  passed in 27 seconds. Common, Fabric, and NeoForge were up-to-date; Forge compiled with one
-  GeckoLib `getModelResource` removal warning.
+  passed with all tasks up-to-date
+- `.\gradlew.bat :fabric:runGameTestServer --console=plain` discovered and passed all 78 required
+  tests and exited cleanly
+- `.\gradlew.bat :neoforge:runGameTestServer --console=plain` discovered and passed all 78 required
+  tests and exited cleanly
 
 ### Completion condition
 
-- Met. All four production compiles pass. Forge client-only registration and the Access Transformer
-  were inspected; renderer, picker, item-presentation, cleanup, and optional-GeckoLib
-  responsibilities are coherently connected without weakening dedicated-server isolation.
+- Met. Forge resource processing, processed metadata, common resource inclusion, Access Transformer
+  discovery, optional GeckoLib declaration, and absence of an Architectury runtime dependency are
+  proven. All four production compiles pass; Fabric and NeoForge each discovered and passed all 78
+  required GameTests and exited cleanly.
 
 ## Frozen Forge architecture decisions
 
@@ -201,6 +205,19 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
   remains reachable only through the `ModList` soft-dependency gate with failure isolation.
 - No common, Fabric, or NeoForge production source changed during Stage 4. Their production compiles
   and Forge production compilation passed together on the first post-edit verification.
+- Stage 5 replaces Forge's template-era metadata prose with its actual declarations and adds
+  GeckoLib 4.7.4+ as an optional client dependency. The Forge Gradle dependency remains
+  `compileOnly`, and neither source nor processed metadata declares an Architectury runtime
+  dependency.
+- Forge resource processing passed. Processed `mods.toml` contains resolved Forge `[52.1.16,53)`,
+  Minecraft `[1.21.1]`, and optional client GeckoLib `[4.7.4,)` ranges with no unresolved
+  placeholders. The processed Access Transformer is present and matches all 36 source declarations.
+- The common processed resource tree contains 262 files, including 74 Minecraft eye definitions and
+  the expanded pack metadata. Forge's established `shadowBundle` consumes
+  `:common:transformProductionForge`, matching the completed loader packaging boundary without
+  adding the common Access Widener to Forge runtime resources.
+- The Stage 5 cumulative production gate passed for common, Fabric, NeoForge, and Forge. Fabric and
+  NeoForge then each discovered and passed all 78 required GameTests and exited cleanly.
 
 ## Cumulative gates
 
@@ -208,23 +225,24 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
 | --- | --- |
 | NeoForge completion handoff | Complete; independently verified |
 | Forge architecture decision | Complete; frozen above |
-| `:common:compileJava` | Stage 4 passed |
-| `:fabric:compileJava` | Stage 4 passed |
-| `:neoforge:compileJava` | Stage 4 passed |
-| `:forge:compileJava` | Stage 4 passed; one GeckoLib removal warning |
-| `:forge:processResources` | Not run |
-| Prior-loader GameTest regressions | Fabric and NeoForge: all 78 passed with clean exits after Stage 2 |
+| `:common:compileJava` | Stage 5 cumulative gate passed |
+| `:fabric:compileJava` | Stage 5 cumulative gate passed |
+| `:neoforge:compileJava` | Stage 5 cumulative gate passed |
+| `:forge:compileJava` | Stage 5 cumulative gate passed |
+| `:forge:processResources` | Stage 5 passed; metadata and Access Transformer inspected |
+| Prior-loader GameTest regressions | Stage 5 Fabric and NeoForge: all 78 passed with clean exits |
 | `:forge:compileGametestJava` | Not run |
 | `:forge:runGameTestServer` | Not run |
 | `:forge:build` | Not run |
 
 ## Blockers
 
-None. Stage 4 is complete; its mandatory hard stop is active.
+None. Stage 5 is complete; its mandatory hard stop is active.
 
 ## Exact next action
 
-In a new session, read the Forge controlling documents and begin Stage 5 only. Reconcile Forge 52
-metadata and processed resources, inspect Access Transformer discovery and dependency declarations,
-then run the cumulative prior-loader regression gates authorized by that stage. Do not begin Stage 6
-in that session.
+In a new session, read the Forge controlling documents and begin Stage 6 only. Port Forge 52
+GameTest discovery metadata, annotations, wrappers, and the test-mod entry point; expose all 77
+shared assertions plus the Forge persistence round trip; then run
+`.\gradlew.bat :forge:compileGametestJava --console=plain`. Do not start the Forge GameTest server or
+begin Stage 7 in that session.

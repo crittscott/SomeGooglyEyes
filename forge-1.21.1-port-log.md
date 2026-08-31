@@ -89,3 +89,18 @@ No verification commands or stage completions have been recorded. Forge is waiti
 - Pre-edit diagnostic: nine classified Stage 4 errors. The initial sandboxed launch could not access the Gradle wrapper lock; the approved identical retry reached compilation.
 - Verification attempt 1: `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain` passed in 27 seconds. Forge emitted one GeckoLib removal warning; the other three compiles were up-to-date.
 - Result: Stage 4 complete with zero failed post-edit attempts. Stage 5 is next in a new session; mandatory hard stop applied.
+
+## 2026-08-31 — Stage 5 complete
+
+- Reconciled Forge 52 metadata and resource expansion: Forge `[52.1.16,53)`, Minecraft `[1.21.1]`,
+  and optional client GeckoLib `[4.7.4,)`; no Architectury runtime dependency is declared.
+- `:forge:processResources` passed on the permitted identical retry after one sandbox wrapper-lock
+  access failure. Processed metadata has no unresolved placeholders; the processed Access
+  Transformer matches all 36 source declarations.
+- Common processed resources contain 262 files, including 74 Minecraft eye definitions and expanded
+  pack metadata; Forge continues to bundle `:common:transformProductionForge` through
+  `shadowBundle`.
+- The cumulative common, Fabric, NeoForge, and Forge production compile gate passed. Fabric and
+  NeoForge each discovered and passed all 78 required GameTests and exited cleanly.
+- Gameplay, registry identities, protocol 9, persistence and item data, configuration semantics, and
+  prior-loader behavior remain unchanged. Stage 6 is next in a new session.
