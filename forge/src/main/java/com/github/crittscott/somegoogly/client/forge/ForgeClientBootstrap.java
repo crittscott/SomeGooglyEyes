@@ -1,42 +1,124 @@
 package com.github.crittscott.somegoogly.client.forge;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
-import com.github.crittscott.somegoogly.client.picker.forge.ForgePickerClient;
+import com.github.crittscott.somegoogly.client.ClientRenderLayers;
+import com.github.crittscott.somegoogly.client.EyeInspector;
+import com.github.crittscott.somegoogly.client.picker.PickerHud;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
+import com.github.crittscott.somegoogly.client.picker.PickerKeys;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
-import com.github.crittscott.somegoogly.event.ClientEventHandler;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
+import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
-import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-/** Physical-client bootstrap kept out of the dedicated-server entry point. */
+/** Physical-client registration kept out of the dedicated-server entry point. */
 public final class ForgeClientBootstrap {
-
-    private static ClientEventHandler clientEventHandler;
 
     private ForgeClientBootstrap() {
     }
 
     public static void register(FMLJavaModLoadingContext context) {
         IEventBus modBus = context.getModEventBus();
+        IEventBus gameBus = MinecraftForge.EVENT_BUS;
+
         ClientNetworkHandler.register();
         ForgeClientNetworkTransport.register();
-        ClientCommandRegistrationEvent.EVENT.register(GooglyClientCommands::register);
         ForgeClientConfig.register(context);
 
-        MinecraftForge.EVENT_BUS.register(clientEventHandler = new ClientEventHandler());
-        MinecraftForge.EVENT_BUS.register(new EyeInspectIndicator());
-        modBus.addListener(SlimyEyeColors::register);
-        modBus.addListener(ForgeClientBootstrap::addLayers);
-        modBus.addListener(ForgePickerClient::registerHud);
-        modBus.addListener(ForgePickerClient::registerKeys);
-        MinecraftForge.EVENT_BUS.register(new ForgePickerClient());
+        modBus.addListener(ForgeClientBootstrap::addRendererLayers);
+        modBus.addListener(ForgeClientBootstrap::registerItemColors);
+        modBus.addListener(ForgeClientBootstrap::registerGuiLayers);
+        modBus.addListener(ForgeClientBootstrap::registerKeyMappings);
+
+        gameBus.addListener(ForgeClientBootstrap::registerClientCommands);
+        gameBus.addListener(ForgeClientBootstrap::onClientTick);
+        gameBus.addListener(ForgeClientBootstrap::onEntityJoin);
+        gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
     }
 
-    private static void addLayers(EntityRenderersEvent.AddLayers event) {
-        clientEventHandler.addLayers();
+    private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
+        ClientRenderLayers.install(Minecraft.getInstance().getEntityRenderDispatcher());
+    }
+
+    private static void registerClientCommands(RegisterClientCommandsEvent event) {
+        GooglyClientCommands.register(event.getDispatcher(), event.getBuildContext());
+    }
+
+    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> tintIndex == 2
+                        ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
+                        : -1,
+                ModItems.SLIMY_EYE.get());
+    }
+
+    private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {
+        event.getLayeredDraw().add(
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                (graphics, partialTick) -> PickerHud.render(
+                        graphics, graphics.guiWidth(), graphics.guiHeight()));
+    }
+
+    private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        event.register(PickerKeys.LOCK);
+        event.register(PickerKeys.PART_NEXT);
+        event.register(PickerKeys.PART_PREV);
+        event.register(PickerKeys.TOGGLE);
+    }
+
+    private static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        ClientNetworkHandler.tick();
+        ClientEyeRuntime.tick();
+        EyeInspector.tick();
+        consumePickerKeys();
+    }
+
+    private static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide()) {
+            ClientNetworkHandler.onEntityLoaded(event.getEntity());
+        }
+    }
+
+    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientNetworkHandler.clearPendingEyeStates();
+        ClientEyeConfigs.clear();
+        ClientEyeRuntime.clear();
+        PickerState.resetOnDisconnect();
+    }
+
+    private static void consumePickerKeys() {
+        while (PickerKeys.TOGGLE.consumeClick()) {
+            PickerInput.handle(PickerKeys.TOGGLE);
+        }
+        while (PickerKeys.LOCK.consumeClick()) {
+            PickerInput.handle(PickerKeys.LOCK);
+        }
+        while (PickerKeys.PART_PREV.consumeClick()) {
+            PickerInput.handle(PickerKeys.PART_PREV);
+        }
+        while (PickerKeys.PART_NEXT.consumeClick()) {
+            PickerInput.handle(PickerKeys.PART_NEXT);
+        }
     }
 }

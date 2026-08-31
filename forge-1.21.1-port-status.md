@@ -7,18 +7,18 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Forge Stage 3 complete; Stage 4 is next in a new session |
-| Current stage | Stage 3 — Forge server runtime — complete |
-| Current work unit | None — hard stop after completed Stage 3 |
+| Overall state | **READY** — Forge Stage 4 complete; Stage 5 is next in a new session |
+| Current stage | Stage 4 — Forge client, access, picker, and GeckoLib — complete |
+| Current work unit | None — hard stop after completed Stage 4 |
 | Work-unit state | Complete |
-| Failed verification attempts used | 1 of 3 — sandbox denied the Gradle cache; the identical approved retry reached compilation |
+| Failed verification attempts used | 0 of 3 |
 | Stable documents read this session | Yes |
-| Common compile state | Passing — up-to-date during Stage 3 diagnostic |
-| Fabric state | Complete and passing — production compile and all 78 GameTests |
-| NeoForge state | Complete and passing — production compile and all 78 GameTests |
-| Forge compile state | Expected red diagnostic: zero Stage 3 errors; the same nine classified Stage 4 client errors remain |
+| Common compile state | Passing — up-to-date during Stage 4 completion gate |
+| Fabric state | Complete and passing — production compile and all 78 prior GameTests |
+| NeoForge state | Complete and passing — production compile and all 78 prior GameTests |
+| Forge compile state | Passing — Stage 4 completion gate; one GeckoLib removal warning |
 | Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
-| Last command | `.\gradlew.bat :forge:compileJava --console=plain` — expected red; no Stage 3 errors and nine Stage 4 client errors |
+| Last command | `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain` — passed |
 
 ## Prerequisite
 
@@ -83,33 +83,33 @@ inspect old Forge source only as project behavior reference, and run one diagnos
 
 ### Scope and invariant
 
-Stage 3 is complete. Forge's injected loading context now owns bootstrap, native deferred content,
-server/client config registration, networking, display compatibility, and physical-client dispatch.
-The authoritative server event adapters cover reload/sync, entity/player/tracking lifecycle,
-commands, ticks, cleanup, eye item interactions and drops, and damage/heal/trade reactions. Existing
-version lookup, native entity persistent data, and Stage 2 tracking/network seams remain valid.
+Stage 4 is complete. Forge's side-gated client bootstrap now owns client commands, picker keys and
+input, HUD and inspector rendering, disconnect cleanup, renderer-reload layer installation, the
+Slimy Eye tint, and client network initialization. The existing item-construction boundary retains
+the 3D Googly Eye renderer. Renderer-map access matches the common wildcard contract, the Forge
+Access Transformer carries the established 1.21.1 rendering access set, and the GeckoLib bridge uses
+the 4.7.4 API behind its existing strict soft-load gate.
 
 ### Intended files
 
-- `forge/src/main/java/com/github/crittscott/somegoogly/forge/SomeGoogly.java`
-- `forge/src/main/java/com/github/crittscott/somegoogly/config/forge/ForgeServerConfig.java`
-- `forge/src/main/java/com/github/crittscott/somegoogly/config/forge/ForgeClientConfig.java`
-- `forge/src/main/java/com/github/crittscott/somegoogly/config/forge/ModVersionLookupImpl.java`
-- `forge/src/main/java/com/github/crittscott/somegoogly/platform/forge/EntityPersistentDataImpl.java`
-- Forge server event adapters under `forge/src/main/java/com/github/crittscott/somegoogly/`
+- `forge/src/main/java/com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.java`
+- `forge/src/main/java/com/github/crittscott/somegoogly/client/forge/ClientRendererAccessImpl.java`
+- Forge GeckoLib sources under `forge/src/main/java/com/github/crittscott/somegoogly/client/compat/forge/`
+- Removed the four superseded split adapters: `ClientEventHandler`, `EyeInspectIndicator`,
+  `SlimyEyeColors`, and `ForgePickerClient`
+- `forge/src/main/resources/META-INF/accesstransformer.cfg`
 
 ### Verification command
 
-- `.\gradlew.bat :forge:compileJava --console=plain` — reached compilation after one sandbox-access
-  retry. Common was up-to-date; Forge reported only the same nine Stage 4 errors: four GeckoLib
-  symbols, three removed HUD/client-command symbols, and two renderer/client-command dependents.
+- `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain`
+  passed in 27 seconds. Common, Fabric, and NeoForge were up-to-date; Forge compiled with one
+  GeckoLib `getModelResource` removal warning.
 
 ### Completion condition
 
-- Met. Forge bootstrap, config, platform seams, reload/sync, entity/player/tracking lifecycle,
-  commands, ticks, cleanup, item interactions/drops, and damage/heal/trade reactions are coherently
-  wired to the common services. The diagnostic contains no Stage 3 error; only the nine previously
-  classified Stage 4 client failures remain.
+- Met. All four production compiles pass. Forge client-only registration and the Access Transformer
+  were inspected; renderer, picker, item-presentation, cleanup, and optional-GeckoLib
+  responsibilities are coherently connected without weakening dedicated-server isolation.
 
 ## Frozen Forge architecture decisions
 
@@ -191,6 +191,16 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
   commands need no synchronized command-argument registry, matching Fabric and NeoForge.
 - Forge server events retain every common service transition. Damage reactions use
   `LivingDamageEvent`, whose amount is the final post-mitigation value in Forge 52.
+- Stage 4 consolidates Forge physical-client lifecycle wiring in `ForgeClientBootstrap`, registered
+  only through the existing `DistExecutor` guard. Forge-native client commands use
+  `RegisterClientCommandsEvent`; the picker HUD uses the 1.21.1-backported
+  `AddGuiOverlayLayersEvent`; key mappings are consumed during the end client tick.
+- The Forge Access Transformer now matches the 36 established NeoForge rendering declarations
+  one-for-one. Forge renderer-map access satisfies the common wildcard skin-map contract.
+- Forge GeckoLib integration now targets the 4.7.4 `software.bernie.geckolib.animatable` package and
+  remains reachable only through the `ModList` soft-dependency gate with failure isolation.
+- No common, Fabric, or NeoForge production source changed during Stage 4. Their production compiles
+  and Forge production compilation passed together on the first post-edit verification.
 
 ## Cumulative gates
 
@@ -198,10 +208,10 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
 | --- | --- |
 | NeoForge completion handoff | Complete; independently verified |
 | Forge architecture decision | Complete; frozen above |
-| `:common:compileJava` | Stage 2 passed |
-| `:fabric:compileJava` | Stage 2 passed |
-| `:neoforge:compileJava` | Stage 2 passed |
-| `:forge:compileJava` | Stage 3 diagnostic: no server/runtime errors; nine Stage 4 client errors remain |
+| `:common:compileJava` | Stage 4 passed |
+| `:fabric:compileJava` | Stage 4 passed |
+| `:neoforge:compileJava` | Stage 4 passed |
+| `:forge:compileJava` | Stage 4 passed; one GeckoLib removal warning |
 | `:forge:processResources` | Not run |
 | Prior-loader GameTest regressions | Fabric and NeoForge: all 78 passed with clean exits after Stage 2 |
 | `:forge:compileGametestJava` | Not run |
@@ -210,10 +220,11 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
 
 ## Blockers
 
-None. Stage 3 is complete; its mandatory hard stop is active.
+None. Stage 4 is complete; its mandatory hard stop is active.
 
 ## Exact next action
 
-In a new session, read the Forge controlling documents and begin Stage 4 only. Port Forge client
-commands, HUD/picker registration, renderer-map access, Access Transformer requirements, item
-presentation, and optional GeckoLib integration. Do not begin Stage 5 in that session.
+In a new session, read the Forge controlling documents and begin Stage 5 only. Reconcile Forge 52
+metadata and processed resources, inspect Access Transformer discovery and dependency declarations,
+then run the cumulative prior-loader regression gates authorized by that stage. Do not begin Stage 6
+in that session.

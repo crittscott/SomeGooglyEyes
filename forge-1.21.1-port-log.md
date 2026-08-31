@@ -79,3 +79,13 @@ No verification commands or stage completions have been recorded. Forge is waiti
   the identical approved retry reached compilation. `:common:compileJava` was up-to-date and
   `:forge:compileJava` reported only the same nine classified Stage 4 client errors: GeckoLib API,
   removed HUD/client-command hooks, and renderer skin-map typing. No Stage 3 error remained.
+
+## 2026-08-31 — Stage 4 complete
+
+- Unit: Forge physical-client lifecycle, rendering/item presentation, access, picker, and optional GeckoLib integration.
+- Replaced the split stale client handlers with one side-gated Forge bootstrap covering client commands, picker HUD/keys/input, inspection, ticks, entity arrival, disconnect cleanup, item tint, renderer-layer installation, and client networking.
+- Updated renderer-map typing and GeckoLib 4.7.4 animatable imports; installed the established 36-entry 1.21.1 Access Transformer set; retained the soft-dependency gate and 3D item-renderer boundary.
+- Removed `ClientEventHandler`, `EyeInspectIndicator`, `SlimyEyeColors`, and `ForgePickerClient` after consolidating their responsibilities.
+- Pre-edit diagnostic: nine classified Stage 4 errors. The initial sandboxed launch could not access the Gradle wrapper lock; the approved identical retry reached compilation.
+- Verification attempt 1: `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain` passed in 27 seconds. Forge emitted one GeckoLib removal warning; the other three compiles were up-to-date.
+- Result: Stage 4 complete with zero failed post-edit attempts. Stage 5 is next in a new session; mandatory hard stop applied.
