@@ -16,15 +16,19 @@ append to it. Reduced verification history belongs in the append-only
 | Work-unit state | Complete |
 | Failed verification attempts used | 1 of 3 |
 | Stable documents read this session | Yes |
-| Gradle sync state | Passing for `common`, `fabric`, `forge`, and `neoforge` |
+| Cross-loader state | **COMPLETE** — Fabric, NeoForge, and Forge builds and 78-test suites pass |
 | Common compile state | Passing on 2026-08-29 after Stage 5 resources; task up to date |
 | Fabric compile state | Passing on 2026-08-29 after Stage 5 resources; task up to date |
-| Forge state | Runtime source remains 1.20.1 and is out of scope for the Fabric port |
-| NeoForge state | Gradle/metadata scaffold only; no runtime Java |
-| Last updated | 2026-08-29 |
-| Last command | `.\gradlew.bat :fabric:build --console=plain` — passed on the identical retry in 14 seconds |
+| Forge state | Complete — build and all 78 GameTests pass |
+| NeoForge state | Complete — build and all 78 GameTests pass |
+| Last updated | 2026-08-31 cross-loader documentation reconciliation |
+| Last command | User verification: all three loader builds and GameTest servers pass without errors |
 
-## Current work-unit definition
+The sections below retain the bounded Fabric-port record. Statements describing NeoForge and Forge
+as future work record the state when the Fabric port closed; the cross-loader fields above and the
+subsequent-completion section below are current.
+
+## Historical Fabric completion work unit
 
 ### Scope and invariant
 
@@ -247,13 +251,13 @@ checks.
 | `:fabric:runGameTestServer` | Passing | User-run Stage 7 gate passed 78 of 78 required tests and exited cleanly in 16 seconds on 2026-08-29 |
 | `:fabric:build` | Passing | Stage 8 gate passed on the identical retry in 14 seconds on 2026-08-29 |
 
-## Deferred loader work
+## Subsequent loader completion
 
-- Forge runtime and GameTest source remains unported from 1.20.1. Architectury API 13 has no Forge
-  platform artifact for Minecraft 1.21.1, so that port requires a deliberate replacement for shared
-  runtime Architectury facilities before its loader adapters and access rules can be completed.
-- NeoForge has 1.21.1 Gradle and metadata scaffolding but no runtime Java, loader adapters, Access
-  Transformer declarations, or GameTests.
+- NeoForge and Forge ports are complete. Each produces a Minecraft 1.21.1 release artifact and its
+  dedicated server discovers and passes all 78 required GameTests with a clean exit.
+- Shared runtime registration and networking now use project-owned loader-neutral boundaries.
+  Fabric and NeoForge retain Architectury API 13 at runtime; Forge uses native runtime facilities
+  and only Architectury's build-time `@ExpectPlatform` transformation.
 
 ## Manual verification still required
 
@@ -272,6 +276,7 @@ None.
 
 ## Exact next action
 
-The Fabric 1.21.1 port is complete. No automated stage remains. Perform the documented physical
-client and optional-mod checks before claiming visual or third-party compatibility. Stage 8 used 1
-of 3 failed attempts: a stale-output cleanup failure whose identical retry passed.
+All three Minecraft 1.21.1 loader ports are complete and their automated build and GameTest gates
+pass. Perform the documented physical-client and optional-mod checks before claiming visual or
+third-party compatibility. The historical Fabric Stage 8 used 1 of 3 failed attempts: a stale-output
+cleanup failure whose identical retry passed.

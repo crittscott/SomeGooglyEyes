@@ -1,7 +1,7 @@
 <!--
   The Modrinth project description. Modrinth renders Markdown directly, but like CurseForge it
   cannot resolve repo-relative paths, so every link and the screenshot are absolute GitHub URLs
-  pointed at the 1.20.1 branch.
+  pointed at the 1.21.1 branch.
 
   To publish: copy this file's content (below the horizontal rule) into Modrinth's description
   editor.
@@ -19,11 +19,11 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Also compatible with GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
+Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
-![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.20.1/docs/googlyeyes-splash.png)
+![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png)
 
-![Loaders: Fabric + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Requires: Architectury API](https://img.shields.io/badge/Requires-Architectury%20API-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.21.1](https://img.shields.io/badge/Minecraft-1.21.1-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
@@ -46,18 +46,18 @@ Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see w
 - **Server settings** (`<world>/serverconfig/somegoogly-server.toml`): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
 - **Client settings** (`config/somegoogly-client.toml`): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.
 
-See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.20.1/docs/configuration.md) for the full list.
+See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/configuration.md) for the full list.
 
 ## Pack and mod authors
 
 Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob in creative mode and export the result as datapack files.
 
-- [The eye definition format](https://github.com/crittscott/SomeGooglyEyes/blob/1.20.1/docs/datapack-format.md)
-- [The in-game authoring workflow and `/sg` commands](https://github.com/crittscott/SomeGooglyEyes/blob/1.20.1/docs/picker.md)
+- [The eye definition format](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/datapack-format.md)
+- [The in-game authoring workflow and `/sg` commands](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/picker.md)
 
 ## Compatibility
 
-The eye placing system works with vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code.
+The eye placing system supports vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.21.1; model changes may require adjusted placements.
 
 Ships with predefined eye configs for:
 
@@ -77,10 +77,11 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
-Available for Forge and Fabric, 1.20.1. Requires [Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api).
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1. Fabric and NeoForge require
+[Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api); Forge does not.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.20.1 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for 1.21.1 with new physics, behaviors, and more.
 
-License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.20.1/LICENSE).
+License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/LICENSE).

@@ -7,18 +7,18 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Forge Stage 5 complete; Stage 6 is next in a new session |
-| Current stage | Stage 5 — Forge resources and cumulative prior-loader regression — complete |
-| Current work unit | None — hard stop after completed Stage 5 |
+| Overall state | **COMPLETE** — all Forge stages and cross-loader automated gates pass |
+| Current stage | Stage 8 — package and documentation reconciliation — complete |
+| Current work unit | None — final Forge handoff recorded |
 | Work-unit state | Complete |
-| Failed verification attempts used | 1 of 3 |
+| Failed verification attempts used | 0 of 3 |
 | Stable documents read this session | Yes |
-| Common compile state | Passing — Stage 5 cumulative production gate |
-| Fabric state | Complete and passing — Stage 5 production compile and all 78 cumulative GameTests |
-| NeoForge state | Complete and passing — Stage 5 production compile and all 78 cumulative GameTests |
-| Forge compile state | Passing — Stage 5 cumulative production gate |
-| Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
-| Last command | `.\gradlew.bat :neoforge:runGameTestServer --console=plain` — discovered and passed all 78 required tests; clean exit |
+| Common compile state | Passing — cumulative production gate |
+| Fabric state | Complete — build and all 78 GameTests pass |
+| NeoForge state | Complete — build and all 78 GameTests pass |
+| Forge compile state | Passing — completed build |
+| Forge GameTest state | Passing — all 78 required tests discovered and passed; server exited cleanly |
+| Last command | User verification: all three loader builds and GameTest servers pass without errors |
 
 ## Prerequisite
 
@@ -79,41 +79,54 @@ imports, freeze retain/replace decisions for build-time injection and all three 
 inspect old Forge source only as project behavior reference, and run one diagnostic
 `.\gradlew.bat :forge:compileJava --console=plain`. Do not edit production source in Stage 0.
 
-## Current work-unit definition
+## Completed Stage 7 work unit
 
 ### Scope and invariant
 
-Stage 5 is complete. Forge metadata now declares the exact Minecraft and Forge ranges plus optional
-client GeckoLib compatibility without an Architectury runtime dependency. Processed resources carry
-the established 36-entry Access Transformer and resolved metadata. The common transformed-resource
-boundary retains all shared 1.21.1 resources. The cumulative Fabric and NeoForge regression servers
-each passed all 78 required tests after the shared registration and networking changes.
+The Stage 7 unit addressed only Forge bootstrap module duplication. Forge no longer extends its raw
+runtime classpath from `common`; `developmentForge` continues to supply Architectury's transformed
+common development module. This is the only loader-specific classpath exception: compile, shadow,
+source-set, and development wiring remain aligned with Fabric and NeoForge. No production source or
+test assertion changed.
 
 ### Intended files
 
 - `forge/build.gradle`
-- `forge/src/main/resources/META-INF/mods.toml`
-- `forge/src/main/resources/META-INF/accesstransformer.cfg` inspected and unchanged
 - `forge-1.21.1-port-status.md`
 - `forge-1.21.1-port-log.md`
 
 ### Verification commands
 
-- `.\gradlew.bat :forge:processResources --console=plain` passed on the permitted identical retry;
-  the initial sandbox lock-access failure consumed one failed attempt
-- `.\gradlew.bat :common:compileJava :fabric:compileJava :neoforge:compileJava :forge:compileJava --console=plain`
-  passed with all tasks up-to-date
-- `.\gradlew.bat :fabric:runGameTestServer --console=plain` discovered and passed all 78 required
-  tests and exited cleanly
-- `.\gradlew.bat :neoforge:runGameTestServer --console=plain` discovered and passed all 78 required
-  tests and exited cleanly
+- User-supplied pre-edit `.\gradlew.bat :forge:runGameTestServer --console=plain` baseline failed
+  before discovery with a duplicate-package `ResolutionException`; this baseline does not consume a
+  post-edit attempt.
+- Post-edit attempt 1: `.\gradlew.bat :forge:runGameTestServer --console=plain` passed in 25s.
 
 ### Completion condition
 
-- Met. Forge resource processing, processed metadata, common resource inclusion, Access Transformer
-  discovery, optional GeckoLib declaration, and absence of an Architectury runtime dependency are
-  proven. All four production compiles pass; Fabric and NeoForge each discovered and passed all 78
-  required GameTests and exited cleanly.
+- Met: Forge passed module bootstrap, discovered exactly 78 tests, passed all 78 required tests,
+  shut down cleanly, and returned a successful Gradle exit. No newly exposed cause remained.
+
+## Stage 8 completion handoff
+
+- The user verified that Fabric, NeoForge, and Forge all build and run their complete GameTest suites
+  without errors. Each dedicated server discovers and passes all 78 required tests.
+- Release artifacts were verified by path and file metadata only; none was opened or unpacked:
+  - `fabric/build/libs/somegoogly-fabric-0.8.1.jar` — 493,712 bytes, last written
+    2026-08-31 23:18:48 UTC;
+  - `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` — 483,318 bytes, last written
+    2026-08-31 23:19:19 UTC;
+  - `forge/build/libs/somegoogly-forge-0.8.1.jar` — 485,525 bytes, last written
+    2026-08-31 23:25:03 UTC.
+- `player-view.md`, `as-built.md`, `build-env.md`, `README.md`, and the CurseForge and Modrinth
+  descriptions now describe all three completed Minecraft 1.21.1 loaders. The earlier loader status
+  documents retain their historical port records with current cross-loader completion notes.
+- The intentional Forge-only build difference is documented: Forge omits the raw common runtime
+  classpath edge because its transformed development module already supplies common code and the raw
+  edge creates duplicate module packages. Compile, source-set, shadow, and development
+  transformation wiring remains aligned across loaders.
+- Automated port work is complete. Physical-client rendering and optional-mod compatibility checks
+  remain manual qualifications and are not automated gate failures.
 
 ## Frozen Forge architecture decisions
 
@@ -218,6 +231,16 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
   adding the common Access Widener to Forge runtime resources.
 - The Stage 5 cumulative production gate passed for common, Fabric, NeoForge, and Forge. Fabric and
   NeoForge then each discovered and passed all 78 required GameTests and exited cleanly.
+- Stage 6 exposes 78 Forge tests through 12 `@GameTestHolder` classes: all 77 shared assertions plus
+  one Forge entity-persistence save/load proof. Explicit namespaced templates replace Forge's removed
+  prefix annotation, and player-dependent wrappers use survival mock players from `GameTestHelper`.
+- Forge GameTest compilation passed on attempt 3. Attempts 1 and 2 were bounded API migrations from
+  removed Forge helpers to compiler-proven Forge 52/vanilla equivalents; no tests were weakened.
+- Stage 7 removed only Forge's raw `runtimeClasspath.extendsFrom common` edge. The retained
+  `developmentForge.extendsFrom common` transformation supplies common code without presenting two
+  modules that export the same package; Fabric and NeoForge build files were not changed.
+- The first post-edit Forge dedicated-server run discovered exactly 78 tests, passed all 78 required
+  tests in 1.017s, shut down cleanly, and completed the Gradle build successfully in 25s.
 
 ## Cumulative gates
 
@@ -231,18 +254,17 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
 | `:forge:compileJava` | Stage 5 cumulative gate passed |
 | `:forge:processResources` | Stage 5 passed; metadata and Access Transformer inspected |
 | Prior-loader GameTest regressions | Stage 5 Fabric and NeoForge: all 78 passed with clean exits |
-| `:forge:compileGametestJava` | Not run |
-| `:forge:runGameTestServer` | Not run |
-| `:forge:build` | Not run |
+| `:forge:compileGametestJava` | Stage 6 passed with 78 intended wrappers |
+| `:forge:runGameTestServer` | Stage 7 passed; all 78 required tests passed with a clean exit |
+| All loader builds and GameTests | User verified passing without errors after Stage 7 |
+| `:forge:build` | Passed per user verification; release artifact metadata verified |
 
 ## Blockers
 
-None. Stage 5 is complete; its mandatory hard stop is active.
+None. The Forge port is complete.
 
 ## Exact next action
 
-In a new session, read the Forge controlling documents and begin Stage 6 only. Port Forge 52
-GameTest discovery metadata, annotations, wrappers, and the test-mod entry point; expose all 77
-shared assertions plus the Forge persistence round trip; then run
-`.\gradlew.bat :forge:compileGametestJava --console=plain`. Do not start the Forge GameTest server or
-begin Stage 7 in that session.
+No automated port stage remains. Perform the documented physical-client and optional-mod checks
+before claiming visual or third-party compatibility. Do not commit or publish without explicit
+authorization.

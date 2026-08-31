@@ -51,7 +51,8 @@ configurations {
         canBeConsumed = false
     }
     compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
+    // Forge dev runs load common through Architectury's transformed development module. Adding the
+    // raw common jar to the runtime classpath gives Forge's module layer duplicate common packages.
     developmentForge.extendsFrom common
 
     // Files in this configuration will be bundled into your mod using the Shadow plugin.

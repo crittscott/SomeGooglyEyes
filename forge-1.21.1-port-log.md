@@ -104,3 +104,42 @@ No verification commands or stage completions have been recorded. Forge is waiti
   NeoForge each discovered and passed all 78 required GameTests and exited cleanly.
 - Gameplay, registry identities, protocol 9, persistence and item data, configuration semantics, and
   prior-loader behavior remain unchanged. Stage 6 is next in a new session.
+
+## 2026-08-31 — Stage 6 complete
+
+- Ported 12 Forge GameTest holder classes to the current shared wrapper surface: 77 shared assertions
+  plus one Forge-native entity-persistence save/load proof, for 78 intended tests.
+- Replaced stale loader-entry-point constants and the NBT-era recipe wrapper name; supplied mock
+  survival players to the five player-dependent shared assertions without changing their logic.
+- Attempt 1 failed with 31 errors because Forge 52 no longer supplies `PrefixGameTestTemplate` or
+  `FakePlayerFactory`. Explicit `somegoogly:empty` templates and the vanilla GameTest mock-player
+  helper replaced those removed facilities.
+- Attempt 2 failed with five errors because `makeMockPlayer` requires a `GameType`. Attempt 3 passed
+  after supplying `GameType.SURVIVAL`.
+- Deterministic inspection found 78 `@GameTest` methods, 12 holders, 12 explicit template constants,
+  and one Forge persistence wrapper. `:forge:compileGametestJava` passed; the server was not started.
+- Production behavior and all shared assertions remain unchanged. Stage 7 is next in a new session.
+
+## 2026-08-31 — Stage 7 complete
+
+- User baseline: Forge aborted before discovery because both a raw common development jar and the
+  Architectury-transformed Forge common module exported `com.github.crittscott.somegoogly`.
+- Scoped correction: removed only `runtimeClasspath.extendsFrom common` from `forge/build.gradle`;
+  retained common compile, shadow/source-set, and `developmentForge` transformation wiring. Fabric
+  and NeoForge build configuration was unchanged.
+- Verification attempt 1: `.\gradlew.bat :forge:runGameTestServer --console=plain` discovered 78
+  tests, passed all 78 required tests in 1.017s, shut down cleanly, and reported `BUILD SUCCESSFUL`
+  in 25s.
+- Stage 7 is complete. Stage 8 was not started.
+
+## 2026-08-31 — Stage 8 complete
+
+- User verification: Fabric, NeoForge, and Forge builds and all three 78-test dedicated GameTest
+  suites pass without errors.
+- Verified release artifacts by path and file metadata only: Fabric 493,712 bytes, NeoForge 483,318
+  bytes, and Forge 485,525 bytes. No artifact was opened or unpacked.
+- Reconciled maintained technical, player-facing, publication, and loader-status documentation for
+  the completed Minecraft 1.21.1 three-loader state.
+- Recorded the intentional Forge-only omission of the raw common runtime edge and retained the
+  shared compile, source-set, shadow, and development transformation structure.
+- Forge Stage 8 and the Forge 1.21.1 port are complete. No Git or publishing action was taken.

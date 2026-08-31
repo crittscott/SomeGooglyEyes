@@ -17,10 +17,13 @@ in `neoforge-1.21.1-port-log.md`, which is not read during normal execution.
 | Fabric regression state | Passing — compile, GameTest compile, and all 78 runtime tests |
 | NeoForge compile state | Passing — Stage 7 rerun |
 | NeoForge GameTest state | Passing — all 78 required tests and a clean exit, Stage 7 rerun |
-| Forge state | **READY** — begin Stage 0 in a new session |
-| Last command | `.\gradlew.bat :fabric:runGameTestServer --console=plain` — successful |
+| Forge state | **COMPLETE** — build and all 78 GameTests pass |
+| Last command | User verification: all three loader builds and GameTest servers pass without errors |
 
-## Current work-unit definition
+The sections below retain the bounded NeoForge-port record and its historical Forge handoff. The
+current cross-loader state is that Fabric, NeoForge, and Forge are complete.
+
+## Historical NeoForge completion work unit
 
 ### Scope and invariant
 
@@ -245,4 +248,6 @@ gate blockers.
 
 ## Exact next action
 
-Hard stop. Begin Forge Stage 0 only in a new session using the exact handoff action above.
+All three Minecraft 1.21.1 loader ports are complete and their automated build and GameTest gates
+pass. No automated port stage remains. Perform the retained physical-client and optional-mod checks
+before claiming visual or third-party compatibility.

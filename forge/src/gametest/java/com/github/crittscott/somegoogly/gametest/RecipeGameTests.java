@@ -1,20 +1,18 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 /**
  * Forge GameTest entry points for {@link RecipeGameTestsLogic}; see that class for the actual
  * assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
-@PrefixGameTestTemplate(false)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 public final class RecipeGameTests {
 
-    private static final String TEMPLATE = "empty";
+    private static final String TEMPLATE = "somegoogly:empty";
 
     private RecipeGameTests() {
     }
@@ -25,8 +23,8 @@ public final class RecipeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void dyeSetsIrisAndKeepsUnrelatedNbt(GameTestHelper helper) {
-        RecipeGameTestsLogic.dyeSetsIrisAndKeepsUnrelatedNbt(helper);
+    public static void dyeSetsIrisAndKeepsUnrelatedComponent(GameTestHelper helper) {
+        RecipeGameTestsLogic.dyeSetsIrisAndKeepsUnrelatedComponent(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)

@@ -150,3 +150,10 @@ was inspected or changed in this session.
   signature changed; Forge must replace common runtime registration, networking, and the single
   environment lookup, then separately prove whether build-time `@ExpectPlatform` can remain.
 - NeoForge status is `COMPLETE`; Forge status is `READY`. Begin Forge Stage 0 only in a new session.
+
+## 2026-08-31 — Subsequent cross-loader completion
+
+- Fabric, NeoForge, and Forge release builds and all three 78-test dedicated GameTest suites are now
+  user-verified passing without errors.
+- Updated the NeoForge status snapshot to preserve its historical Forge handoff while recording the
+  completed three-loader state.

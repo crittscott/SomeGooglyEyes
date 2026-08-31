@@ -18,7 +18,7 @@ The **ender dragon** is hard-excluded: a config for it is refused from any datap
 
 Each entry declares which **mod version** it applies to and which **age** of the mob:
 
-- `version` — either an exact version (`"1.20.1"`) or a bracket range (`"[1.20.1,1.21)"`), matched against the installed version of the file's *namespace* (for `data/minecraft/...` that's the Minecraft version; for a modded namespace, that mod's version). One file can carry placements for several model revisions of the same mob; the matching entries win. If **no** entry matches the installed version, the file still works: the **nearest generation** is used instead — the newest entry older than the installed version, or the oldest entry when the installed version predates them all — and the mismatch is logged (an error when the datapack is stale and should be re-exported, a warning when the mod was downgraded). Eyes are cosmetic, so this degrades gracefully: a placement authored for a different model revision may sit oddly, and an attach point that no longer exists simply doesn't attach.
+- `version` — either an exact version (`"1.21.1"`) or a bracket range (`"[1.21.1,1.22)"`), matched against the installed version of the file's *namespace* (for `data/minecraft/...` that's the Minecraft version; for a modded namespace, that mod's version). One file can carry placements for several model revisions of the same mob; the matching entries win. If **no** entry matches the installed version, the file still works: the **nearest generation** is used instead — the newest entry older than the installed version, or the oldest entry when the installed version predates them all — and the mismatch is logged (an error when the datapack is stale and should be re-exported, a warning when the mod was downgraded). Eyes are cosmetic, so this degrades gracefully: a placement authored for a different model revision may sit oddly, and an attach point that no longer exists simply doesn't attach.
 - `age` — `adult`, `baby`, or `any`. An age-specific entry takes precedence over `any`. Babies and adults can have completely different placements.
 - `enabled` — optional, defaults to `true`. `"enabled": false` is an authoritative off-switch: the mob will never roll eyes at spawn, regardless of the server's spawn-chance config.
 
@@ -62,7 +62,7 @@ Horse, with potential butt eyes:
 {
   "entries": [
     {
-      "version": "[1.20.1,1.21)",
+      "version": "1.21.1",
       "age": "any",
       "enabled": true,
       "variants": [

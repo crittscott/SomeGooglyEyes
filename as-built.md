@@ -12,12 +12,12 @@ It describes what exists, not necessarily what should exist, and is not a design
 ## Project shape
 
 Some Googly Eyes is a Java 21 Minecraft 1.21.1 mod. Its completed runtime targets are Fabric Loader
-0.19.3 with Fabric API 0.116.15+1.21.1 and NeoForge 21.1.248. Both use Architectury API 13.0.8. Its
-mod id is `somegoogly`, its root package is `com.github.crittscott.somegoogly`, and its version is
-`0.8.1`.
+0.19.3 with Fabric API 0.116.15+1.21.1, NeoForge 21.1.248, and Forge 52.1.16. Fabric and NeoForge use
+Architectury API 13.0.8; Forge has no Architectury API runtime dependency. Its mod id is
+`somegoogly`, its root package is `com.github.crittscott.somegoogly`, and its version is `0.8.1`.
 
-The Gradle project contains four modules. `common` is transformed into the completed Fabric and
-NeoForge artifacts; Forge remains the subsequent port surface:
+The Gradle project contains four modules. `common` is transformed into all three completed loader
+artifacts:
 
 | Source tree | Responsibility |
 | --- | --- |
@@ -26,13 +26,15 @@ NeoForge artifacts; Forge remains the subsequent port surface:
 | `common/src/gametest/java` | Shared GameTest assertions |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, platform adapters, Mixins, and metadata |
 | `fabric/src/gametest` | Fabric wrappers and discovery metadata for the shared assertions |
-| `forge/src/main` | Unported 1.20.1-era Forge runtime source beside 1.21.1 build metadata |
+| `forge/src/main` | Forge bootstrap, events, native configuration, platform adapters, client integration, optional GeckoLib bridge, metadata, and Access Transformer |
+| `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, and discovery metadata |
 | `neoforge/src/main` | NeoForge bootstrap, events, native configuration, platform adapters, client integration, optional GeckoLib bridge, metadata, and Access Transformer |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, and discovery metadata |
 
-Common main does not import Forge, Fabric API, or GeckoLib. Loader differences and optional-library
-boundaries pass through adapters or Architectury `@ExpectPlatform` methods. Loader packages remain
-separate from common packages to avoid split packages under Forge's module layer.
+Common main does not import Forge, NeoForge, Fabric API, or GeckoLib. Loader differences and
+optional-library boundaries pass through project-owned adapters or six Architectury
+`@ExpectPlatform` methods. Loader packages remain separate from common packages to avoid split
+packages under Forge's module layer.
 
 The server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions,
 picker authorization, and world mutation. The client owns rendering, model attachment, pupil motion,
@@ -42,12 +44,15 @@ The mod registers two items, one item data component, one creative tab, and two 
 Optometrist is a data-driven enchantment supplied by the common data pack. The mod does not register
 blocks, entities, menus, particles, or sounds.
 
+Common content declarations bind through `ContentRegistrar`. Fabric registers through native
+registries; NeoForge and Forge bind the same handles through their native deferred registers.
+
 ## Configuration and eye definitions
 
 `ServerConfig` and `ClientConfig` define the configuration schema and expose validated runtime values
 through `ConfigValue<T>`. Fabric reads its client and per-world server TOML files directly. NeoForge
-uses native CLIENT and SERVER config specs, synchronizes the shared values on load and reload, and
-ignores unload events after NeoForge has cleared the specs.
+and Forge use native CLIENT and SERVER config specs, synchronize the shared values on load and
+reload, and ignore unload events after their specs have been cleared.
 
 Server configuration controls spawn and harvest chances, entity overrides, behaviors, and the
 picker's destructive spawn-all gate. Client configuration controls local eye visibility.
@@ -72,8 +77,8 @@ and schema identifiers are ordinary strings.
 
 `EyeState` is the gameplay boundary for entity eye state. Its `Snapshot` is the complete unit used by
 server transitions, tracking synchronization, and client packet application. Entity NBT access goes
-through `EntityPersistentData`: Forge uses its persistent compound, while Fabric supplies the same
-boundary with `EntityPersistentDataMixin`.
+through `EntityPersistentData`: NeoForge and Forge use their native persistent compounds, while
+Fabric supplies the same boundary with `EntityPersistentDataMixin`.
 
 The persistent eye fields are:
 
@@ -90,10 +95,10 @@ component. Harvesting captures the effective appearance of the first configured 
 Slimy Eye application preserve that component while leaving unrelated stack components intact.
 Items do not carry placement geometry.
 
-`EyeItemService` owns the shared application and harvesting operations. Fabric callbacks and Mixins
-and NeoForge events adapt platform interactions into that service, so Slimy Eye use, Optometrist
-harvesting, and shears-kill harvesting share one authorization, state-mutation, drop, and durability
-boundary.
+`EyeItemService` owns the shared application and harvesting operations. Fabric callbacks and Mixins,
+NeoForge events, and Forge events adapt platform interactions into that service, so Slimy Eye use,
+Optometrist harvesting, and shears-kill harvesting share one authorization, state-mutation, drop,
+and durability boundary.
 
 ## Eligibility and behaviors
 
@@ -125,9 +130,8 @@ and ageable models, special vanilla and Twilight Forest shapes, Citadel/LLibrary
 GeckoLib bones. Results are cached by model identity and cleared with renderer or runtime resets.
 
 Shared access to vanilla rendering members is declared in the common 1.21.1 Access Widener, which
-Fabric packages and applies directly. NeoForge translates the 36 required entries one-for-one into
-its Access Transformer. Forge's Access Transformer remains a placeholder until that renderer port
-establishes its required members.
+Fabric packages and applies directly. NeoForge and Forge each translate the 36 required entries
+one-for-one into an Access Transformer.
 
 GeckoLib is optional. Common code calls the loader-specific `GeckoCompat` bridge, which checks for
 GeckoLib before using typed integration code. Failure to attach a GeckoLib layer does not prevent the
@@ -138,10 +142,12 @@ model, with tint index 2 derived from its appearance payload.
 
 ## Networking
 
-`NetworkHandler` uses Architectury 13 `NetworkManager` with typed custom-payload wrappers. Gameplay
-payload ids contain protocol version `9`; the port retained the packet bodies, so the wire contract
-did not change. Stable hello and acknowledgment ids negotiate compatibility during login. A mismatch
-or timeout disconnects the client before resolved eye definitions are sent.
+`NetworkHandler` defines vanilla typed custom payloads and codecs behind the project-owned
+`NetworkTransport` boundary. Fabric, NeoForge, and Forge adapters register and send those payloads
+through their native networking APIs. Gameplay payload ids contain protocol version `9`; the packet
+bodies are identical on all three loaders. Stable hello and acknowledgment ids negotiate
+compatibility during login. A mismatch or timeout disconnects the client before resolved eye
+definitions are sent.
 
 Server-to-client payloads carry eye state, resolved definitions, and behavior triggers. Client-to-
 server payloads request picker freeze, spawn, pose, and export operations. Receivers are registered for
@@ -167,8 +173,8 @@ server enablement, and a server-wide cooldown. World export is constrained to th
 directory and triggers a datapack reload. Client export-all writes only to the game-directory export
 tree.
 
-The shared client command code builds one Brigadier tree. The Fabric adapters register it and
-reconcile its picker commands with the server-provided admin branch.
+The shared client command code builds one Brigadier tree. Each loader registers it and reconciles
+its picker commands with the server-provided admin branch.
 
 ## Loader integration
 
@@ -183,23 +189,25 @@ compound, and uses native tracking lookup for fanout. Physical-client registrati
 dedicated-server bootstrap. Client services span the mod and game buses as required, and optional
 GeckoLib types are reached only after the loader reports GeckoLib present.
 
-NeoForge temporarily retains Architectury 13 for common deferred registration, typed networking,
-and one environment lookup. Forge runtime source has not been ported from 1.20.1, and Architectury
-API 13 has no Forge platform artifact for Minecraft 1.21.1. The Forge port must replace those runtime
-facilities while preserving the existing loader-neutral platform seams and wire protocol.
+Forge uses the same project-owned common registration and network boundaries with Forge-native
+deferred registers, payload handling, tracking fanout, configuration, and lifecycle events. Its
+physical-client bootstrap is isolated behind a distribution guard, and its client commands, picker
+overlay, renderer access, item renderer, and optional GeckoLib bridge use Forge 52 APIs. Forge
+retains Architectury's build-time `@ExpectPlatform` transformation but has no Architectury API
+runtime dependency.
 
 ## Automated verification
 
 Seventy-seven shared GameTest assertions live in 12 `*Logic` classes under
-`common/src/gametest/java`. Fabric and NeoForge each expose 78 annotated tests: thin wrappers for the
-shared logic plus one loader-specific entity-persistence save/load test. The assertions cover
+`common/src/gametest/java`. Fabric, NeoForge, and Forge each expose 78 annotated tests: thin wrappers
+for the shared logic plus one loader-specific entity-persistence save/load test. The assertions cover
 configuration selection, eligibility, variants, persistence and serialization, item components,
 recipes, picker operations, harvesting, behaviors, enchantment data, and network protocol
 identifiers.
 
-Both dedicated GameTest servers discover and pass all 78 required tests and exit cleanly. Common,
-Fabric, and NeoForge production compilation passes; both loader GameTest compilations pass; NeoForge
-resource processing and packaging pass. Visual behavior still requires physical-client smoke tests.
+All three dedicated GameTest servers discover and pass all 78 required tests and exit cleanly.
+Common and all loader production compilation, GameTest compilation, resource processing, and builds
+pass. Visual behavior still requires physical-client smoke tests.
 
 ## Operational boundaries
 
@@ -211,9 +219,8 @@ resource processing and packaging pass. Visual behavior still requires physical-
 - Entity persistence on Fabric is provided by the mod's Mixin rather than a component dependency.
 - Network wire incompatibilities require a protocol-version change; display version is not the wire
   compatibility contract.
-- Forge is not implemented; its port starts from the completed Fabric and NeoForge behavior.
-- NeoForge client rendering, item presentation, picker UI, renderer reloads, and optional GeckoLib
-  models remain subject to the manual checks listed in `neoforge-1.21.1-port-plan.md`.
+- Fabric, NeoForge, and Forge client rendering, item presentation, picker UI, renderer reloads, and
+  optional GeckoLib models remain subject to the manual smoke-test matrix.
 - The root `src/` tree, `working-build-env/`, root `run/`, and root-level IDE launch files are not active
   build inputs.
 - Pre-release data and protocol formats have no compatibility layer.

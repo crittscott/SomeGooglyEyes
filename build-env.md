@@ -17,8 +17,8 @@ These versions come from the active wrapper, Gradle scripts, properties, and loa
 | Minecraft | exactly 1.21.1 |
 | Architectury Loom | 1.17.491 |
 | Architectury Gradle plugin | 3.5.169 |
-| Architectury API | 13.0.8; Fabric runtime minimum 13.0.8 |
-| Forge build target | 1.21.1-52.1.16; runtime source not ported |
+| Architectury API | 13.0.8; required at runtime by Fabric and NeoForge only |
+| Forge build target | 1.21.1-52.1.16; completed artifact |
 | Forge runtime range in metadata | `[52.1.16,53)` |
 | FML runtime range in metadata | `[52,53)` |
 | NeoForge build target | 21.1.248; completed artifact |
@@ -36,11 +36,10 @@ The Gradle runtime JVM and compilation toolchain are separate. The current shell
 under Java 17, while every subproject requests a Java 21 toolchain, sets source and target
 compatibility to 21, compiles with `--release 21`, and uses Java 21 for development runs.
 
-Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
-Mixins refer to 1.21.1 internals. Fabric compilation uses the minimum Loader, Fabric API, and
-Architectury API versions declared in metadata. NeoForge compiles and runs against its declared
-minimums. Forge dependency values configure the remaining port target and do not imply a working
-Forge runtime.
+Minecraft is exact because the renderer integration, Access Widener, Access Transformers, and
+Fabric Mixins refer to 1.21.1 internals. Every loader compiles and runs against the minimum versions
+declared in its metadata. Architectury API is required at runtime by Fabric and NeoForge; Forge uses
+only Architectury's build-time transformation.
 
 ## Project layout
 
@@ -49,7 +48,7 @@ The Gradle project includes exactly four modules:
 ```text
 common/   shared production code, resources, and GameTest assertion logic
 fabric/   completed Fabric adapters, metadata, Mixins, GameTests, and packaging
-forge/    1.21.1 build metadata around unported Forge runtime source
+forge/    completed Forge adapters, metadata, access rules, GameTests, and packaging
 neoforge/ completed NeoForge adapters, metadata, access rules, GameTests, and packaging
 ```
 
@@ -81,8 +80,8 @@ dependencies are:
 - JUnit Jupiter through BOM 5.10.2 for its conventional test source set.
 
 The production common JAR excludes the Access Widener. Fabric copies the canonical 1.21.1 file into
-its mod JAR beside `fabric.mod.json`. NeoForge supplies the equivalent demonstrated rules in its
-Access Transformer; Forge retains a placeholder until its client port.
+its mod JAR beside `fabric.mod.json`. NeoForge and Forge each supply the equivalent 36 demonstrated
+rules in an Access Transformer.
 
 Common resource processing expands `mod_id` in `pack.mcmeta`. Shared assets, recipes, language,
 datapack eye definitions, and the GameTest structure fixture are production resources.
@@ -92,24 +91,28 @@ datapack eye definitions, and the GameTest structure fixture are production reso
 All three loader modules apply Shadow and use Architectury's platform-specific Loom setup. Each has:
 
 - a resolvable, non-consumable `common` configuration for common development output;
-- compile and runtime classpaths extended from `common`;
+- a compile classpath extended from `common`;
 - its Architectury development configuration extended from `common`;
 - a `shadowBundle` containing the transformed common production artifact;
 - a remapped release JAR built from the shadowed loader and common output.
 
-This arrangement allows Architectury to transform common `@ExpectPlatform` calls in development and
-in packaged artifacts. Fabric and NeoForge production and packaging paths are verified.
+Fabric and NeoForge also extend their raw runtime classpaths from `common`. Forge deliberately does
+not: its development transformation already supplies common code, and adding the raw common JAR
+would expose the same packages through two modules. Architectury transforms common
+`@ExpectPlatform` calls in development and packaged artifacts. All three production and packaging
+paths are verified.
 
 ### Forge
 
 Forge's build target is `net.minecraftforge:forge:1.21.1-52.1.16`; GeckoLib's Forge 1.21.1 artifact
 at 4.7.4 is compile-only. Architectury API 13 has no Forge platform artifact for Minecraft 1.21.1,
-so the shared runtime Architectury calls need a later Forge-specific architectural resolution.
-Existing Forge Java and GameTest source remains unported and is not a Fabric regression gate.
+so Forge uses native content registration, networking, tracking, configuration, events, and client
+integration behind the common project-owned seams. Architectury remains only a build-time
+`@ExpectPlatform` transformer.
 
 Main resource processing expands `META-INF/mods.toml`; GameTest resource processing independently
-expands the development mod's metadata. These configured tasks do not establish a working Forge
-artifact.
+expands the development mod's metadata. Forge contains 19 production Java files and 13 GameTest
+files. Its verified release artifact is `forge/build/libs/somegoogly-forge-0.8.1.jar`.
 
 ### Fabric
 
@@ -121,6 +124,8 @@ Main resource processing expands `fabric.mod.json` and copies the common Access 
 Fabric resources. Metadata declares exact Minecraft 1.21.1, Java 21, the minimum Loader/API versions, the
 Access Widener, `somegoogly.mixins.json`, and GeckoLib as a suggestion.
 
+The verified release artifact is `fabric/build/libs/somegoogly-fabric-0.8.1.jar`.
+
 ### NeoForge
 
 NeoForge targets `net.neoforged:neoforge:21.1.248`, Architectury NeoForge 13.0.8, and the GeckoLib
@@ -128,28 +133,33 @@ NeoForge 1.21.1 artifact at 4.7.4. Architectury is required at runtime; GeckoLib
 metadata-optional on the physical client. Main resource processing expands `neoforge.mods.toml`, and
 the Access Transformer contains the 36 renderer/model rules required by the shared client code.
 
-The module contains 14 production Java files covering bootstrap, native configuration, server
+The module contains 17 production Java files covering bootstrap, native configuration, server
 events, platform services, client registration/access, and the soft-loaded GeckoLib bridge. Common
 resources are packaged through the transformed common artifact. The verified release artifact is
 `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar`.
 
+The final release artifacts were verified by path and file metadata only:
+
+| Loader | Artifact | Size | Last written (UTC) |
+| --- | --- | ---: | --- |
+| Fabric | `fabric/build/libs/somegoogly-fabric-0.8.1.jar` | 493,712 bytes | 2026-08-31 23:18:48 |
+| NeoForge | `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` | 483,318 bytes | 2026-08-31 23:19:19 |
+| Forge | `forge/build/libs/somegoogly-forge-0.8.1.jar` | 485,525 bytes | 2026-08-31 23:25:03 |
+
 ## GameTest source sets
 
-Fabric and NeoForge each define a `gametest` source set combining 77 shared public assertions with 78
-loader wrappers; the additional test exercises that loader's entity persistence through a save/load
-round trip. Each uses a separate `somegoogly_gametest` development mod and exposes all 12 holders.
-Both dedicated servers discover and pass all 78 required tests and exit cleanly.
-
-Forge still has its earlier GameTest source-set configuration and unported wrappers. It is not a gate
-for the completed Fabric or NeoForge artifacts.
+Fabric, NeoForge, and Forge each define a `gametest` source set combining 77 shared public assertions
+with 78 loader wrappers; the additional test exercises that loader's entity persistence through a
+save/load round trip. Each uses a separate `somegoogly_gametest` development mod and exposes all 12
+holders. All three dedicated servers discover and pass all 78 required tests and exit cleanly.
 
 ## Access configuration
 
 `common/src/main/resources/somegoogly.accesswidener` is the canonical 1.21.1 access declaration used
 by shared compilation and Fabric runtime. It covers the renderer collections and layers, render-type
 factory, model-part children, age-dependent model transforms, and rabbit and llama parts referenced
-by current source. NeoForge's Access Transformer translates all 36 entries one-for-one. Forge's
-Access Transformer remains empty pending its client port.
+by current source. NeoForge and Forge each translate all 36 entries one-for-one in their Access
+Transformers.
 
 ## Wrapper files
 

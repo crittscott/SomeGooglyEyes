@@ -182,3 +182,10 @@ Stage 5 completed with common and Fabric production compiles and Fabric resource
   runtime, deferred Forge/NeoForge ports, and outstanding manual client and optional-mod checks.
 - Stage 8 and the Fabric 1.21.1 port are complete. All six completion gates pass. No Git, GitHub,
   publishing, or release action occurred.
+
+## 2026-08-31 — Subsequent cross-loader completion
+
+- Fabric, NeoForge, and Forge release builds and all three 78-test dedicated GameTest suites are now
+  user-verified passing without errors.
+- Updated the Fabric status snapshot to distinguish its historical port record from the current
+  completed three-loader state.

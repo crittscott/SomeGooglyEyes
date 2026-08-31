@@ -66,4 +66,6 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only â€
 | `disabledEntities` | empty | Entity ids that should not display eyes, e.g. `"minecraft:zombie"`. |
 | `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. |
 
-These are personal preferences: the mob still *has* eyes (other players see them, and they can still be harvested); you just don't render them. Changes take effect without a restart.
+These are personal preferences: the mob still *has* eyes (other players see them, and they can still
+be harvested); you just don't render them. Config reload behavior differs by loader; if a file edit
+is not reflected immediately, reload resources or restart the client.
