@@ -44,3 +44,21 @@ No verification commands or stage completions have been recorded. Forge is waiti
 - Decision: content ids, factories, creative-tab contents, lazy access, packet ids/bodies, protocol
   9, and player behavior remain unchanged. Stage 1 is complete and hard-stops before Stage 2; no
   extra Forge diagnostic was run after the completion gates passed.
+
+## 2026-08-30 — Stage 2 complete: loader-neutral networking
+
+- Replaced common Architectury networking with `NetworkTransport` while preserving protocol 9,
+  all ten payload ids, codecs, packet bodies, bounds, directionality, handshake state, sender
+  authority, and bounded pending client state.
+- Fabric now uses Fabric Networking API payload registries and play receivers/senders; NeoForge uses
+  its native payload registrar and distributors; Forge uses an optional Forge 52 payload channel
+  with native direct and entity-tracking distribution.
+- Common Architectury imports are now only the six retained `@ExpectPlatform` seams in six files.
+- `:common:compileJava` passed; combined Fabric/NeoForge production compilation passed.
+- Fabric and NeoForge GameTest servers each discovered and passed all 78 required tests, including
+  the typed-payload wire-id assertion, and exited cleanly.
+- The Forge diagnostic contains no networking error. Its nine remaining errors are the previously
+  classified Stage 4 GeckoLib, HUD overlay, client-command, and renderer skin-map failures; ten
+  existing deprecation warnings remain.
+- Failed post-edit verification attempts: 0. The initial sandbox-denied Gradle wrapper launch was
+  retried with approved cache access and did not reach compilation.

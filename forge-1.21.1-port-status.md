@@ -7,18 +7,18 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — Forge Stage 1 complete; Stage 2 is next in a new session |
-| Current stage | Stage 1 — Registration and environment decoupling — complete |
-| Current work unit | None — hard stop after completed Stage 1 |
+| Overall state | **READY** — Forge Stage 2 complete; Stage 3 is next in a new session |
+| Current stage | Stage 2 — Networking decoupling — complete |
+| Current work unit | None — hard stop after completed Stage 2 |
 | Work-unit state | Complete |
 | Failed verification attempts used | 0 of 3 |
 | Stable documents read this session | Yes |
-| Common compile state | Passing — Stage 1 gate |
-| Fabric state | Complete and passing — Stage 1 regression compile |
-| NeoForge state | Complete and passing — Stage 1 regression compile |
-| Forge compile state | Stage 0 diagnostic is stale after Stage 1; next diagnostic belongs to Stage 2 if required |
+| Common compile state | Passing — Stage 2 gate |
+| Fabric state | Complete and passing — production compile and all 78 GameTests |
+| NeoForge state | Complete and passing — production compile and all 78 GameTests |
+| Forge compile state | Expected red diagnostic: zero Stage 2 errors; nine classified Stage 4 client errors remain |
 | Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
-| Last command | `.\gradlew.bat :fabric:compileJava :neoforge:compileJava --console=plain` — successful |
+| Last command | `.\gradlew.bat :neoforge:runGameTestServer --console=plain` — successful; all 78 required tests passed and server exited cleanly |
 
 ## Prerequisite
 
@@ -83,27 +83,31 @@ inspect old Forge source only as project behavior reference, and run one diagnos
 
 ### Scope and invariant
 
-Stage 1 is complete. Common registry definitions use one loader-neutral `ContentRegistrar` and
-bind-once `Supplier` handles. Fabric registers through vanilla/Fabric facilities; NeoForge and Forge
-own native deferred registers. Loader entry points pass physical-side state explicitly, so common no
-longer uses `Platform` or `Env`. Architectury networking and all packet semantics remain unchanged
-for Stage 2.
+Stage 2 is complete. `NetworkTransport` owns loader-neutral registration, dispatch context, capability,
+and direct-send seams. Common still owns all ten payload identifiers, codecs, byte bodies, bounds,
+handlers, protocol 9 negotiation, server-derived authorization, and pending client state. Fabric,
+NeoForge, and Forge supply native registration, queued context, sends, and tracking fanout. Common
+contains no Architectury networking import and no loader type.
 
 ### Intended files
 
-- None. Stage 1 is complete and at its mandatory hard stop.
+- None. Stage 2 is complete and at its mandatory hard stop.
 
 ### Verification command
 
-- `.\gradlew.bat :common:compileJava --console=plain` — passed in 10 seconds.
-- `.\gradlew.bat :fabric:compileJava :neoforge:compileJava --console=plain` — passed in 11 seconds.
+- `.\gradlew.bat :common:compileJava --console=plain` — passed in 18 seconds.
+- `.\gradlew.bat :fabric:compileJava :neoforge:compileJava --console=plain` — passed in 14 seconds.
+- `.\gradlew.bat :fabric:runGameTestServer --console=plain` — all 78 tests passed; clean exit.
+- `.\gradlew.bat :neoforge:runGameTestServer --console=plain` — all 78 tests passed; clean exit.
+- `.\gradlew.bat :forge:compileJava --console=plain` — expected red diagnostic with no networking
+  errors; nine Stage 4 client errors and ten existing deprecation warnings remain.
 
 ### Completion condition
 
-- Met. Common has no Architectury runtime registration, creative-tab helper, `Platform`, or `Env`
-  import. The same ids are exposed through stable bind-once handles. Fabric and NeoForge native
-  implementations compile; Forge has its corresponding native deferred-registration adapter and no
-  longer imports `EventBuses`. All required compiles passed on their first run. Stage 2 has not begun.
+- Met. Common has no Architectury networking import; all payload IDs and encoded bodies remain
+  unchanged; Fabric and NeoForge production compiles and all 78 tests pass; Forge has a native
+  payload channel, client capability check, direct sends, and tracking fanout; and its diagnostic
+  contains no Stage 2 failure. All remaining errors are the previously classified Stage 4 surface.
 
 ## Frozen Forge architecture decisions
 
@@ -121,7 +125,7 @@ common Architectury imports.
 | Build-time injection — renderer access | `ClientRendererAccess` | Retain the three common methods; supply only demonstrated Forge access and current map types in Stage 4. |
 | Build-time injection — optional GeckoLib | `GeckoCompat` | Retain the soft-loaded common boundary; port the typed Forge 4.7.4 bridge in Stage 4. |
 | Runtime registration | `ModItems`, `ModDataComponents`, `ModCreativeTabs`, and `ModRecipes` formerly used `DeferredRegister`, `RegistrySupplier`, and `CreativeTabRegistry` | Stage 1 complete: common uses `ContentRegistrar` and final bind-once handles; Fabric registers immediately through native registries and `FabricItemGroup`; NeoForge and Forge use native deferred registers. |
-| Runtime networking | `NetworkHandler`, `ClientNetworkHandler`, and the five picker packet handlers use `NetworkManager` | Stage 2 installs a project-owned transport from each loader bootstrap. Common retains vanilla payload types/codecs and packet semantics; the transport owns direction-specific registration, queued context with server-derived player identity, capability checks, direct sends, and native fanout. |
+| Runtime networking | `NetworkHandler`, `ClientNetworkHandler`, and the five picker packet handlers formerly used `NetworkManager` | Stage 2 complete: common uses `NetworkTransport` with vanilla payload types/codecs; Fabric uses Fabric Networking API, NeoForge uses its payload registrar/distributors, and Forge uses a Forge 52 payload channel. Native adapters own direction registration, queued context, server-derived player identity, capability checks, direct sends, and fanout. |
 | Environment lookup | `NetworkHandler.registerCommon` formerly used `Platform` and `Env` | Stage 1 complete: each loader supplies physical-side state explicitly; client receiver registration remains reachable only from loader client initialization. |
 
 The build-time seams are retained because the Forge module still uses Architectury Loom's Forge
@@ -171,6 +175,12 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
   build-time injection imports and seven networking imports reserved for Stage 2.
 - Common, Fabric, and NeoForge production compiles pass after the registration/environment change.
   The NeoForge compile emitted only its existing deprecated `initializeClient` warning.
+- Stage 2 reduced common Architectury imports to the six retained `@ExpectPlatform` seams in six
+  files. No Architectury networking import remains in any production source.
+- Fabric and NeoForge native transports compile and their dedicated servers each discovered and
+  passed all 78 required tests, including the strengthened typed-payload ID assertion.
+- The Forge 52 payload channel, sends, capability check, and tracking fanout compile. Its diagnostic
+  now reports only nine previously classified Stage 4 client/Gecko/rendering errors.
 
 ## Cumulative gates
 
@@ -178,22 +188,22 @@ input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not ev
 | --- | --- |
 | NeoForge completion handoff | Complete; independently verified |
 | Forge architecture decision | Complete; frozen above |
-| `:common:compileJava` | Stage 1 passed |
-| `:fabric:compileJava` | Stage 1 passed |
-| `:neoforge:compileJava` | Stage 1 passed with one existing deprecation warning |
-| `:forge:compileJava` | Stage 0 diagnostic stale after Stage 1; not required by the Stage 1 completion gate |
+| `:common:compileJava` | Stage 2 passed |
+| `:fabric:compileJava` | Stage 2 passed |
+| `:neoforge:compileJava` | Stage 2 passed |
+| `:forge:compileJava` | Stage 2 diagnostic: no networking errors; nine Stage 4 client errors remain |
 | `:forge:processResources` | Not run |
-| Prior-loader GameTest regressions | Pending after shared runtime changes |
+| Prior-loader GameTest regressions | Fabric and NeoForge: all 78 passed with clean exits after Stage 2 |
 | `:forge:compileGametestJava` | Not run |
 | `:forge:runGameTestServer` | Not run |
 | `:forge:build` | Not run |
 
 ## Blockers
 
-None. Stage 1 is complete; its mandatory hard stop is active.
+None. Stage 2 is complete; its mandatory hard stop is active.
 
 ## Exact next action
 
-In a new session, read the Forge controlling documents and begin Stage 2 only. Bound the networking
-transport work unit before editing, preserve protocol 9 and every packet invariant, and do not start
-Stage 3 in that session.
+In a new session, read the Forge controlling documents and begin Stage 3 only. Bound the Forge
+server-runtime work unit before editing, use the Stage 2 diagnostic as its baseline, and do not begin
+Stage 4 in that session.

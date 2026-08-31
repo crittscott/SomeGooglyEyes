@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.config.fabric.FabricClientConfig;
+import com.github.crittscott.somegoogly.network.fabric.FabricClientNetworkTransport;
 import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -17,6 +18,7 @@ public final class SomeGooglyFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         SomeGooglyCommon.LOGGER.debug("Fabric client debug: client entrypoint invoked");
         ClientNetworkHandler.register();
+        FabricClientNetworkTransport.register();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
             FabricClientCommands.register(dispatcher, context);
             CommandNode<?> sg = dispatcher.getRoot().getChild("sg");

@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
 import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,9 +41,9 @@ public class PickerSpawnAllPacket {
         }
     }
 
-    public static void handle(PickerSpawnAllPacket packet, NetworkManager.PacketContext context) {
+    public static void handle(PickerSpawnAllPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.getPlayer() instanceof ServerPlayer player ? player : null;
+            ServerPlayer sender = context.player();
             if (!PickerPermissions.creative(sender)) {
                 return;
             }

@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
 import com.github.crittscott.somegoogly.registry.neoforge.NeoForgeContentRegistrar;
+import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
 import com.github.crittscott.somegoogly.server.neoforge.NeoForgeServerEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -20,8 +21,9 @@ public final class SomeGooglyNeoForge {
 
     public SomeGooglyNeoForge(IEventBus modBus, ModContainer modContainer, Dist dist) {
         NeoForgeContentRegistrar registrar = new NeoForgeContentRegistrar();
-        SomeGooglyCommon.init(registrar, dist == Dist.CLIENT);
+        SomeGooglyCommon.init(registrar);
         registrar.register(modBus);
+        NeoForgeNetworkTransport.register(modBus);
         NeoForgeServerConfig.register(modBus, modContainer);
         if (dist == Dist.CLIENT) {
             NeoForgeClientConfig.register(modBus, modContainer);

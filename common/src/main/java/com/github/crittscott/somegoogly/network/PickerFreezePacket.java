@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,9 +50,9 @@ public class PickerFreezePacket {
         }
     }
 
-    public static void handle(PickerFreezePacket packet, NetworkManager.PacketContext context) {
+    public static void handle(PickerFreezePacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.getPlayer() instanceof ServerPlayer player ? player : null;
+            ServerPlayer sender = context.player();
             if (packet.freeze) {
                 if (!PickerPermissions.creative(sender)) {
                     return;

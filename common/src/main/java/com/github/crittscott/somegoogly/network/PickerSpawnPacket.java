@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -33,9 +32,9 @@ public class PickerSpawnPacket {
         buffer.writeResourceLocation(packet.typeId);
     }
 
-    public static void handle(PickerSpawnPacket packet, NetworkManager.PacketContext context) {
+    public static void handle(PickerSpawnPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.getPlayer() instanceof ServerPlayer player ? player : null;
+            ServerPlayer sender = context.player();
             if (!PickerPermissions.creative(sender)) {
                 return;
             }

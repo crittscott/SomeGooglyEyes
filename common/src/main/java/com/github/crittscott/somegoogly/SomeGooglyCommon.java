@@ -22,9 +22,9 @@ public final class SomeGooglyCommon {
     }
 
     /** Register content shared by every loader. Called once from each loader's entry point. */
-    public static void init(ContentRegistrar registrar, boolean physicalClient) {
+    public static void init(ContentRegistrar registrar) {
         ModDataComponents.register(registrar);
-        NetworkHandler.registerCommon(physicalClient);
+        NetworkHandler.registerCommon();
         ModItems.register(registrar);
         ModCreativeTabs.register(registrar);
         ModRecipes.register(registrar);

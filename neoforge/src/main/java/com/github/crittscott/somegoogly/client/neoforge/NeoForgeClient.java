@@ -14,6 +14,7 @@ import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.network.neoforge.NeoForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -35,6 +36,7 @@ public final class NeoForgeClient {
     public static void register(IEventBus modBus, IEventBus gameBus) {
         // Architectury receivers must exist before NeoForge freezes payload registrations.
         ClientNetworkHandler.register();
+        NeoForgeClientNetworkTransport.register();
 
         modBus.addListener(NeoForgeClient::addRendererLayers);
         modBus.addListener(NeoForgeClient::registerItemColors);

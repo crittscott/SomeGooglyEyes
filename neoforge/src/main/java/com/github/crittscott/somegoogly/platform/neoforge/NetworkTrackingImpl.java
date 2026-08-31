@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.platform.neoforge;
 
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.github.crittscott.somegoogly.network.NetworkHandler;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -10,7 +10,7 @@ public final class NetworkTrackingImpl {
     private NetworkTrackingImpl() {
     }
 
-    public static void send(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
+    public static void send(Entity entity, boolean includeSelf, NetworkHandler.Payload<?> payload) {
         if (includeSelf) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
         } else {

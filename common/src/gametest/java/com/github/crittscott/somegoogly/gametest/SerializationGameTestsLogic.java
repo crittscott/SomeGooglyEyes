@@ -68,6 +68,19 @@ public final class SerializationGameTestsLogic {
         }
         helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
                 "every gameplay payload must have a unique channel id");
+        List<ResourceLocation> typedPayloads = List.of(
+                NetworkHandler.PROTOCOL_HELLO_PAYLOAD.id(), NetworkHandler.PROTOCOL_ACK_PAYLOAD.id(),
+                NetworkHandler.EYE_STATE_PAYLOAD.id(), NetworkHandler.EYE_CONFIG_PAYLOAD.id(),
+                NetworkHandler.EYE_BEHAVIOR_PAYLOAD.id(), NetworkHandler.PICKER_FREEZE_PAYLOAD.id(),
+                NetworkHandler.PICKER_SPAWN_PAYLOAD.id(), NetworkHandler.PICKER_SPAWN_ALL_PAYLOAD.id(),
+                NetworkHandler.PICKER_MOB_POSE_PAYLOAD.id(), NetworkHandler.PICKER_EXPORT_PAYLOAD.id());
+        helper.assertTrue(typedPayloads.equals(List.of(
+                        NetworkHandler.PROTOCOL_HELLO, NetworkHandler.PROTOCOL_ACK,
+                        NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
+                        NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_SPAWN,
+                        NetworkHandler.PICKER_SPAWN_ALL, NetworkHandler.PICKER_MOB_POSE,
+                        NetworkHandler.PICKER_EXPORT)),
+                "the loader-neutral payload types must preserve every established wire id");
         helper.succeed();
     }
 

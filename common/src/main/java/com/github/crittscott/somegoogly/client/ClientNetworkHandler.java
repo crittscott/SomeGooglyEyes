@@ -9,7 +9,7 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import dev.architectury.networking.NetworkManager;
+import com.github.crittscott.somegoogly.network.NetworkTransport;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -54,17 +54,13 @@ public final class ClientNetworkHandler {
         }
         registered = true;
         SomeGooglyCommon.LOGGER.debug("Client network debug: registering Some Googly Eyes S2C receivers");
-        NetworkHandler.PROTOCOL_HELLO_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
-                ClientNetworkHandler::handleHello);
-        NetworkHandler.EYE_STATE_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
-                ClientNetworkHandler::handle);
-        NetworkHandler.EYE_CONFIG_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
-                ClientNetworkHandler::handleConfigPayload);
-        NetworkHandler.EYE_BEHAVIOR_PAYLOAD.registerReceiver(NetworkManager.Side.S2C,
-                ClientNetworkHandler::handle);
+        NetworkHandler.PROTOCOL_HELLO_PAYLOAD.bindReceiver(ClientNetworkHandler::handleHello);
+        NetworkHandler.EYE_STATE_PAYLOAD.bindReceiver(ClientNetworkHandler::handle);
+        NetworkHandler.EYE_CONFIG_PAYLOAD.bindReceiver(ClientNetworkHandler::handleConfigPayload);
+        NetworkHandler.EYE_BEHAVIOR_PAYLOAD.bindReceiver(ClientNetworkHandler::handle);
     }
 
-    private static void handleHello(String version, NetworkManager.PacketContext context) {
+    private static void handleHello(String version, NetworkTransport.Context context) {
         context.queue(() -> {
             SomeGooglyCommon.LOGGER.debug(
                     "Client network debug: received protocol hello version={} expected={}",
@@ -84,7 +80,7 @@ public final class ClientNetworkHandler {
         });
     }
 
-    private static void handle(EyeStatePacket packet, NetworkManager.PacketContext context) {
+    private static void handle(EyeStatePacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             LivingEntity living = living(packet.entityId());
             int ordinal = ++eyeStatePackets;
@@ -142,7 +138,7 @@ public final class ClientNetworkHandler {
         }
     }
 
-    private static synchronized void handleConfigPayload(byte[] payload, NetworkManager.PacketContext context) {
+    private static synchronized void handleConfigPayload(byte[] payload, NetworkTransport.Context context) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(payload));
         try {
             long generation = buffer.getLong(buffer.readerIndex());
@@ -165,7 +161,7 @@ public final class ClientNetworkHandler {
         }
     }
 
-    private static void handle(EyeConfigSyncPacket packet, NetworkManager.PacketContext context) {
+    private static void handle(EyeConfigSyncPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             if (!protocolAccepted) {
                 disconnect(Component.translatable("somegoogly.network.config_before_handshake"));
@@ -189,7 +185,7 @@ public final class ClientNetworkHandler {
         });
     }
 
-    private static void handle(EyeBehaviorTriggerPacket packet, NetworkManager.PacketContext context) {
+    private static void handle(EyeBehaviorTriggerPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId());
             LivingEntity living = living(packet.entityId());

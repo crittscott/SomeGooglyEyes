@@ -14,6 +14,8 @@ import com.github.crittscott.somegoogly.event.EyeItemInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
 import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
+import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
+import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -27,7 +29,6 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
@@ -64,11 +65,13 @@ public class SomeGoogly {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         COMMAND_ARGUMENTS.register(modEventBus);
         ForgeContentRegistrar registrar = new ForgeContentRegistrar();
-        SomeGooglyCommon.init(registrar, FMLEnvironment.dist == Dist.CLIENT);
+        SomeGooglyCommon.init(registrar);
         registrar.register(modEventBus);
+        ForgeNetworkTransport.register();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientNetworkHandler.register();
+            ForgeClientNetworkTransport.register();
             ClientCommandRegistrationEvent.EVENT.register(GooglyClientCommands::register);
             ForgeClientConfig.register();
 
