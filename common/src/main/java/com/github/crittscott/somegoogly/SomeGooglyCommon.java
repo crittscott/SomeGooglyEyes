@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.item.ModDataComponents;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
+import com.github.crittscott.somegoogly.registry.ContentRegistrar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,11 +22,11 @@ public final class SomeGooglyCommon {
     }
 
     /** Register content shared by every loader. Called once from each loader's entry point. */
-    public static void init() {
-        ModDataComponents.register();
-        NetworkHandler.registerCommon();
-        ModItems.register();
-        ModCreativeTabs.register();
-        ModRecipes.register();
+    public static void init(ContentRegistrar registrar, boolean physicalClient) {
+        ModDataComponents.register(registrar);
+        NetworkHandler.registerCommon(physicalClient);
+        ModItems.register(registrar);
+        ModCreativeTabs.register(registrar);
+        ModRecipes.register(registrar);
     }
 }

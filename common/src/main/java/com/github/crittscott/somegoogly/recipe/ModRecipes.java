@@ -1,29 +1,24 @@
 package com.github.crittscott.somegoogly.recipe;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import dev.architectury.registry.registries.DeferredRegister;
-import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.registries.Registries;
+import com.github.crittscott.somegoogly.registry.ContentRegistrar;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 
 /** Recipe serializer registry: the special {@link EyeModifierRecipe} and the {@link SlimyEyeRecipe}. */
 public final class ModRecipes {
 
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
-            DeferredRegister.create(SomeGooglyCommon.MOD_ID, Registries.RECIPE_SERIALIZER);
-
-    public static final RegistrySupplier<SimpleCraftingRecipeSerializer<EyeModifierRecipe>> EYE_MODIFIER =
-            RECIPE_SERIALIZERS.register("eye_modifier",
-                    () -> new SimpleCraftingRecipeSerializer<>(EyeModifierRecipe::new));
-
-    public static final RegistrySupplier<SlimyEyeRecipe.Serializer> SLIMY_EYE =
-            RECIPE_SERIALIZERS.register("slimy_eye", SlimyEyeRecipe.Serializer::new);
+    public static final ContentRegistrar.Handle<SimpleCraftingRecipeSerializer<EyeModifierRecipe>> EYE_MODIFIER =
+            new ContentRegistrar.Handle<>();
+    public static final ContentRegistrar.Handle<SlimyEyeRecipe.Serializer> SLIMY_EYE =
+            new ContentRegistrar.Handle<>();
 
     private ModRecipes() {
     }
 
-    public static void register() {
-        RECIPE_SERIALIZERS.register();
+    public static void register(ContentRegistrar registrar) {
+        EYE_MODIFIER.bind(registrar.registerRecipeSerializer(
+                "eye_modifier", () -> new SimpleCraftingRecipeSerializer<>(EyeModifierRecipe::new)));
+        SLIMY_EYE.bind(registrar.registerRecipeSerializer(
+                "slimy_eye", SlimyEyeRecipe.Serializer::new));
     }
 }

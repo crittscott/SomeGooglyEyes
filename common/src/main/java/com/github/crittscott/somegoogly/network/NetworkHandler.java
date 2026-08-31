@@ -4,8 +4,6 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.platform.NetworkTracking;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -81,7 +79,7 @@ public final class NetworkHandler {
     }
 
     /** Register server receivers and the clientbound codecs needed on a dedicated server. */
-    public static synchronized void registerCommon() {
+    public static synchronized void registerCommon(boolean physicalClient) {
         if (registered) {
             return;
         }
@@ -93,7 +91,7 @@ public final class NetworkHandler {
         PICKER_SPAWN_ALL_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerSpawnAllPacket::handle);
         PICKER_MOB_POSE_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerMobPosePacket::handle);
         PICKER_EXPORT_PAYLOAD.registerReceiver(NetworkManager.Side.C2S, PickerExportPacket::handle);
-        if (Platform.getEnvironment() == Env.SERVER) {
+        if (!physicalClient) {
             PROTOCOL_HELLO_PAYLOAD.registerS2C();
             EYE_STATE_PAYLOAD.registerS2C();
             EYE_CONFIG_PAYLOAD.registerS2C();

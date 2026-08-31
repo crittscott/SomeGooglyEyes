@@ -13,6 +13,7 @@ import com.github.crittscott.somegoogly.event.ClientEventHandler;
 import com.github.crittscott.somegoogly.event.EyeItemInteractions;
 import com.github.crittscott.somegoogly.event.EyeReactionHandler;
 import com.github.crittscott.somegoogly.event.ServerEventHandler;
+import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -26,10 +27,10 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
-import dev.architectury.platform.forge.EventBuses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,9 +62,10 @@ public class SomeGoogly {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        EventBuses.registerModEventBus(MOD_ID, modEventBus);
         COMMAND_ARGUMENTS.register(modEventBus);
-        SomeGooglyCommon.init();
+        ForgeContentRegistrar registrar = new ForgeContentRegistrar();
+        SomeGooglyCommon.init(registrar, FMLEnvironment.dist == Dist.CLIENT);
+        registrar.register(modEventBus);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientNetworkHandler.register();

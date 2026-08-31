@@ -7,18 +7,18 @@ in `forge-1.21.1-port-log.md`, which is not read during normal execution.
 
 | Field | Value |
 | --- | --- |
-| Overall state | **READY** — NeoForge prerequisite complete; Forge Stage 0 is next |
-| Current stage | Stage 0 — Handoff audit and Forge baseline |
-| Current work unit | NeoForge completion audit and Architectury replacement freeze |
-| Work-unit state | Ready; not started |
+| Overall state | **READY** — Forge Stage 1 complete; Stage 2 is next in a new session |
+| Current stage | Stage 1 — Registration and environment decoupling — complete |
+| Current work unit | None — hard stop after completed Stage 1 |
+| Work-unit state | Complete |
 | Failed verification attempts used | 0 of 3 |
-| Stable documents read this session | No — required when Forge execution becomes ready |
-| Common compile state | Passing at Fabric completion |
-| Fabric state | Complete and passing |
-| NeoForge state | Complete; final handoff recorded below |
-| Forge compile state | Unknown; runtime source remains 1.20.1-era |
+| Stable documents read this session | Yes |
+| Common compile state | Passing — Stage 1 gate |
+| Fabric state | Complete and passing — Stage 1 regression compile |
+| NeoForge state | Complete and passing — Stage 1 regression compile |
+| Forge compile state | Stage 0 diagnostic is stale after Stage 1; next diagnostic belongs to Stage 2 if required |
 | Forge GameTest state | Stale wrappers; not compiled for 1.21.1 |
-| Last command | None for this port |
+| Last command | `.\gradlew.bat :fabric:compileJava :neoforge:compileJava --console=plain` — successful |
 
 ## Prerequisite
 
@@ -83,58 +83,105 @@ inspect old Forge source only as project behavior reference, and run one diagnos
 
 ### Scope and invariant
 
-After the prerequisite is met, audit the NeoForge handoff, freeze how common runtime registration,
-networking, and environment facilities will be replaced for Forge, decide whether build-time
-`@ExpectPlatform` can remain, and obtain one diagnostic Forge compile. No production source is edited
-in Stage 0.
+Stage 1 is complete. Common registry definitions use one loader-neutral `ContentRegistrar` and
+bind-once `Supplier` handles. Fabric registers through vanilla/Fabric facilities; NeoForge and Forge
+own native deferred registers. Loader entry points pass physical-side state explicitly, so common no
+longer uses `Platform` or `Env`. Architectury networking and all packet semantics remain unchanged
+for Stage 2.
 
 ### Intended files
 
-- `forge-1.21.1-port-status.md`
-- `forge-1.21.1-port-log.md` after verification
-- Read-only inspection of the completed common/Fabric/NeoForge surfaces, Forge source, and active
-  Gradle/metadata files
+- None. Stage 1 is complete and at its mandatory hard stop.
 
 ### Verification command
 
-`.\gradlew.bat :forge:compileJava --console=plain`
+- `.\gradlew.bat :common:compileJava --console=plain` — passed in 10 seconds.
+- `.\gradlew.bat :fabric:compileJava :neoforge:compileJava --console=plain` — passed in 11 seconds.
 
 ### Completion condition
 
-- The NeoForge prerequisite is proven.
-- Every common Architectury use has a recorded retain/replace decision and target stage.
-- The diagnostic result is reduced and every error is assigned to Stages 1–4.
-- No production source is edited.
-- Stage 0 is logged and the session hard-stops before Stage 1.
+- Met. Common has no Architectury runtime registration, creative-tab helper, `Platform`, or `Env`
+  import. The same ids are exposed through stable bind-once handles. Fabric and NeoForge native
+  implementations compile; Forge has its corresponding native deferred-registration adapter and no
+  longer imports `EventBuses`. All required compiles passed on their first run. Stage 2 has not begun.
 
-## Initial architecture expectations
+## Frozen Forge architecture decisions
 
-| Category | Expected Forge treatment |
+The independent inventory found the same 24 Architectury imports in the same 17 common production
+files recorded by the NeoForge handoff: six build-time injection imports, nine runtime-registration
+imports, seven runtime-networking imports, and two environment imports. There are no unclassified
+common Architectury imports.
+
+| Category | Exact common surface | Frozen treatment and target stage |
+| --- | --- | --- |
+| Build-time injection — version lookup | `ModVersionLookup` | Retain the common signature and existing `@ExpectPlatform` mechanism; supply the current Forge implementation in Stage 3. |
+| Build-time injection — entity persistence | `EntityPersistentData` | Retain the common boundary and keys; implement with Forge-native persistent entity data in Stage 3. |
+| Build-time injection — tracking fanout | `NetworkTracking` | Retain its `CustomPacketPayload` signature; replace its old Architectury carrier with Forge-native tracking fanout in Stage 2. |
+| Build-time injection — eye item construction | `GooglyEyeItemFactory` | Retain the common factory signature; port Forge's client renderer attachment in Stage 4. |
+| Build-time injection — renderer access | `ClientRendererAccess` | Retain the three common methods; supply only demonstrated Forge access and current map types in Stage 4. |
+| Build-time injection — optional GeckoLib | `GeckoCompat` | Retain the soft-loaded common boundary; port the typed Forge 4.7.4 bridge in Stage 4. |
+| Runtime registration | `ModItems`, `ModDataComponents`, `ModCreativeTabs`, and `ModRecipes` formerly used `DeferredRegister`, `RegistrySupplier`, and `CreativeTabRegistry` | Stage 1 complete: common uses `ContentRegistrar` and final bind-once handles; Fabric registers immediately through native registries and `FabricItemGroup`; NeoForge and Forge use native deferred registers. |
+| Runtime networking | `NetworkHandler`, `ClientNetworkHandler`, and the five picker packet handlers use `NetworkManager` | Stage 2 installs a project-owned transport from each loader bootstrap. Common retains vanilla payload types/codecs and packet semantics; the transport owns direction-specific registration, queued context with server-derived player identity, capability checks, direct sends, and native fanout. |
+| Environment lookup | `NetworkHandler.registerCommon` formerly used `Platform` and `Env` | Stage 1 complete: each loader supplies physical-side state explicitly; client receiver registration remains reachable only from loader client initialization. |
+
+The build-time seams are retained because the Forge module still uses Architectury Loom's Forge
+transformation and `transformProductionForge`, has no Architectury API runtime dependency, and the
+diagnostic compiled common and reached the Forge implementation sources without a missing
+`@ExpectPlatform` annotation or unresolved stub. Every missing Architectury class in the diagnostic
+came from an explicit runtime API import or an exposed runtime-registration type. Final transformed
+artifact resolution remains a later packaging gate.
+
+Frozen invariants: introduce no loader type into common; add no replacement cross-loader library;
+preserve all content ids, registry identities, persistence keys, data components, packet ids and
+bodies, protocol 9, bounds, directions, server authority, configuration semantics, and
+player-visible behavior.
+
+## Stage 0 diagnostic baseline
+
+The authorized command reached Java compilation and failed after 9 seconds with 17 errors and 10
+deprecation warnings. An initial sandboxed launch could not access the existing Gradle wrapper lock;
+the identical approved retry reached the compiler. This pre-edit baseline does not consume a failed
+post-edit attempt.
+
+| Stage | Diagnostic classification |
 | --- | --- |
-| `@ExpectPlatform` injection | Retain only if Forge transformation proves it needs no runtime artifact |
-| Registration/creative tab | Replace runtime Architectury use with loader-neutral project boundary |
-| Networking | Replace `NetworkManager` runtime use while preserving typed payload semantics and protocol 9 |
-| `Platform`/`Env` | Replace with explicit side-safe bootstrap/context |
-| Existing platform seams | Supply current Forge implementations and reuse for prior loaders where appropriate |
+| Stage 1 | 3 errors: missing Architectury `EventBuses` import/use in bootstrap and exposed `RegistrySupplier` from `ModItems.SLIMY_EYE`. |
+| Stage 2 | 5 errors: old `NetworkTrackingImpl` imports/uses `NetworkManager` and uses stale tracking-target call shapes. |
+| Stage 3 | No compiler errors. Six deprecation warnings cover config/mod-context/bootstrap calls; server runtime completeness still requires the planned native lifecycle audit. |
+| Stage 4 | 9 errors: stale GeckoLib animatable API, removed HUD overlay event, missing Architectury client-command event, renderer skin-map type mismatch, and their dependent symbols. Four additional deprecation warnings are client listener registrations. |
+
+The legacy Forge files establish responsibilities only: bootstrap and config; persistence and
+tracking; reload, connection, tracking, commands, ticks, shutdown, item interactions, drops, damage,
+healing, and trades; client lifecycle, item presentation, layers, commands, inspection, picker
+input/HUD, and reload cleanup; and optional GeckoLib. Their API names are not evidence for Forge
+52.1.16.
 
 ## Known evidence
 
 - Forge targets 1.21.1-52.1.16 and has no Architectury 13 Forge runtime dependency.
 - Nineteen Forge production Java files and thirteen GameTest files remain from the 1.20.1-era port.
-- Common currently imports Architectury runtime registration, networking, and environment APIs.
+- Common has exactly 24 Architectury imports in 17 production files, matching the handoff inventory.
+- The six existing `@ExpectPlatform` seams remain the build-time loader boundary; the three runtime
+  categories are assigned to Stages 1 and 2 above.
 - Forge metadata is old-form content around current build variables; its Access Transformer is empty.
-- Fabric is passing; NeoForge will become a mandatory regression gate once complete.
+- Fabric and NeoForge are complete and passing mandatory regression targets.
+- The Stage 0 Forge diagnostic produced 17 classified errors and 10 classified warnings; it made no
+  production edit and consumed no failed post-edit attempt.
+- Stage 1 reduced common Architectury imports from 24 in 17 files to 13 in 13 files: six retained
+  build-time injection imports and seven networking imports reserved for Stage 2.
+- Common, Fabric, and NeoForge production compiles pass after the registration/environment change.
+  The NeoForge compile emitted only its existing deprecated `initializeClient` warning.
 
 ## Cumulative gates
 
 | Gate | Status |
 | --- | --- |
-| NeoForge completion handoff | Complete; Forge is `READY` |
-| Forge architecture decision | Pending |
-| `:common:compileJava` | Previously passing; post-decoupling run pending |
-| `:fabric:compileJava` | Previously passing; post-decoupling run pending |
-| `:neoforge:compileJava` | NeoForge port pending |
-| `:forge:compileJava` | Not run |
+| NeoForge completion handoff | Complete; independently verified |
+| Forge architecture decision | Complete; frozen above |
+| `:common:compileJava` | Stage 1 passed |
+| `:fabric:compileJava` | Stage 1 passed |
+| `:neoforge:compileJava` | Stage 1 passed with one existing deprecation warning |
+| `:forge:compileJava` | Stage 0 diagnostic stale after Stage 1; not required by the Stage 1 completion gate |
 | `:forge:processResources` | Not run |
 | Prior-loader GameTest regressions | Pending after shared runtime changes |
 | `:forge:compileGametestJava` | Not run |
@@ -143,10 +190,10 @@ in Stage 0.
 
 ## Blockers
 
-None. Forge Stage 0 has not started.
+None. Stage 1 is complete; its mandatory hard stop is active.
 
 ## Exact next action
 
-In a new session, read the Forge controlling documents, audit the handoff and common Architectury
-inventory, freeze the Stage 0 architecture decisions, and obtain one diagnostic
-`:forge:compileJava`. Do not edit production source in Stage 0.
+In a new session, read the Forge controlling documents and begin Stage 2 only. Bound the networking
+transport work unit before editing, preserve protocol 9 and every packet invariant, and do not start
+Stage 3 in that session.

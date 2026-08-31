@@ -2,9 +2,7 @@ package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
-import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.DeferredRegister;
-import dev.architectury.registry.registries.RegistrySupplier;
+import com.github.crittscott.somegoogly.registry.ContentRegistrar;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -22,18 +20,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
  */
 public final class ModCreativeTabs {
 
-    public static final DeferredRegister<CreativeModeTab> TABS =
-            DeferredRegister.create(SomeGooglyCommon.MOD_ID, Registries.CREATIVE_MODE_TAB);
-
-    public static final RegistrySupplier<CreativeModeTab> GOOGLY = TABS.register("googly", () ->
-            CreativeTabRegistry.create(builder -> builder
-                    .title(Component.translatable("itemGroup." + SomeGooglyCommon.MOD_ID))
-                    .icon(() -> new ItemStack(ModItems.GOOGLY_EYE.get()))
-                    .displayItems((params, output) -> {
-                        output.accept(ModItems.GOOGLY_EYE.get());
-                        output.accept(ModItems.SLIMY_EYE.get());
-                        output.accept(optometristBook(params.holders()));
-                    })));
+    public static final ContentRegistrar.Handle<CreativeModeTab> GOOGLY = new ContentRegistrar.Handle<>();
 
     private ModCreativeTabs() {
     }
@@ -46,7 +33,15 @@ public final class ModCreativeTabs {
                 new EnchantmentInstance(optometrist, 1));
     }
 
-    public static void register() {
-        TABS.register();
+    public static void register(ContentRegistrar registrar) {
+        GOOGLY.bind(registrar.registerCreativeTab(
+                "googly",
+                Component.translatable("itemGroup." + SomeGooglyCommon.MOD_ID),
+                () -> new ItemStack(ModItems.GOOGLY_EYE.get()),
+                (params, output) -> {
+                    output.accept(ModItems.GOOGLY_EYE.get());
+                    output.accept(ModItems.SLIMY_EYE.get());
+                    output.accept(optometristBook(params.holders()));
+                }));
     }
 }
