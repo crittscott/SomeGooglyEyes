@@ -103,8 +103,9 @@ No automated NeoForge work remains. The physical-client and optional-mod checks 
   only in their assigned later stages.
 - Architectury 13's NeoForge registrar discovers the mod container's event bus; common registration
   therefore runs inside the NeoForge constructor without the legacy Forge-only `EventBuses` hook.
-- NeoForge-native CLIENT and SERVER specs use `somegoogly-client.toml` and
-  `somegoogly-server.toml`; SERVER type retains NeoForge's per-world `serverconfig` location.
+- The NeoForge-native CLIENT spec uses `somegoogly-client.toml`. Server settings use the shared
+  direct loader so every active world creates and reads `serverconfig/somegoogly-server.toml` rather
+  than falling back to NeoForge's instance-wide config directory.
 - The item factory supplies NeoForge's lazy custom client renderer while retaining the shared item
   behavior and component payload.
 - NeoForge's native entity compound satisfies the project persistence boundary and retains the
@@ -143,8 +144,8 @@ No automated NeoForge work remains. The physical-client and optional-mod checks 
   no common, Fabric, or production source changed.
 - Picker export converts its unknown `ResourceLocation` to text at the translation-component boundary;
   the preserved shared assertion expects the same visible identifier content.
-- NeoForge client and server config listeners ignore `ModConfigEvent.Unloading` before reading spec
-  values, while retaining their existing load/reload synchronization.
+- The NeoForge client config listener ignores `ModConfigEvent.Unloading` before reading spec values.
+  Server settings are reset and loaded directly when each world is about to start.
 - The shared picker production/test edit invalidates the corresponding Fabric compile and runtime
   regression gates for Stage 7. Protocol, persistence, components, data formats, and player-visible
   wording remain unchanged.

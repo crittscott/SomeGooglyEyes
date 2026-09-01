@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.config.fabric;
+package com.github.crittscott.somegoogly.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -9,13 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for this mod's boolean, integer, and string-list configuration schema. */
-final class FabricToml {
+/** Narrow TOML reader for this mod's boolean, integer, and string-list configuration schemas. */
+public final class TomlConfig {
 
-    private FabricToml() {
+    private TomlConfig() {
     }
 
-    static Map<String, Object> readOrCreate(Path path, String defaults) throws IOException {
+    public static Map<String, Object> readOrCreate(Path path, String defaults) throws IOException {
         Files.createDirectories(path.getParent());
         if (Files.notExists(path)) {
             Files.writeString(path, defaults, StandardCharsets.UTF_8);
@@ -23,21 +23,17 @@ final class FabricToml {
         return parse(Files.readString(path, StandardCharsets.UTF_8));
     }
 
-    static boolean bool(Map<String, Object> values, String key, boolean fallback) {
+    public static boolean bool(Map<String, Object> values, String key, boolean fallback) {
         Object value = values.get(key);
         return value instanceof Boolean bool ? bool : fallback;
     }
 
-    static int integer(Map<String, Object> values, String key, int fallback) {
+    public static int integer(Map<String, Object> values, String key, int fallback) {
         Object value = values.get(key);
         return value instanceof Integer integer ? integer : fallback;
     }
 
-    static List<String> strings(Map<String, Object> values, String key) {
-        return strings(values, key, List.of());
-    }
-
-    static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
+    public static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
         Object value = values.get(key);
         if (!(value instanceof List<?> list)) {
             return fallback;
@@ -51,7 +47,7 @@ final class FabricToml {
         return strings;
     }
 
-    static String stringList(List<String> values) {
+    public static String stringList(List<String> values) {
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {

@@ -50,9 +50,9 @@ registries; NeoForge and Forge bind the same handles through their native deferr
 ## Configuration and eye definitions
 
 `ServerConfig` and `ClientConfig` define the configuration schema and expose validated runtime values
-through `ConfigValue<T>`. Fabric reads its client and per-world server TOML files directly. NeoForge
-and Forge use native CLIENT and SERVER config specs, synchronize the shared values on load and
-reload, and ignore unload events after their specs have been cleared.
+through `ConfigValue<T>`. Fabric reads its client TOML directly, and Fabric and NeoForge use the same
+direct loader for the active world's server TOML. NeoForge uses a native CLIENT config spec. Forge
+uses native CLIENT and SERVER config specs and synchronizes the shared values on load and reload.
 
 Server configuration controls spawn and harvest chances, entity overrides, behaviors, and the
 picker's destructive spawn-all gate. Client configuration controls local eye visibility.
