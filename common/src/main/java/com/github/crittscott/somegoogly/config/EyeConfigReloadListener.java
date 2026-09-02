@@ -44,11 +44,19 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
+        int skippedModNotInstalled = 0;
+        int failedParse = 0;
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
             if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
                 SomeGooglyCommon.LOGGER.warn(
                         "Ignoring eye config {} — the ender dragon is hard-excluded from googly eyes", entry.getKey());
+                continue;
+            }
+            // A bundled definition for an absent optional mod is the common case, not an error: skip it
+            // quietly and account for it in the summary so the loaded/total gap doesn't read as data loss.
+            if (ModVersionLookup.versionForNamespace(entry.getKey().getNamespace()).isEmpty()) {
+                skippedModNotInstalled++;
                 continue;
             }
             try {
@@ -58,6 +66,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                         .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
                                 "Invalid eye config {}: {}", entry.getKey(), error))
                         .orElse(null);
+                if (file == null) {
+                    failedParse++;
+                    continue;
+                }
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
                 if (config != null && config.hasAnyConfig()) {
                     String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
@@ -68,6 +80,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     }
                 }
             } catch (Exception e) {
+                failedParse++;
                 SomeGooglyCommon.LOGGER.error("Failed to parse eye config {}", entry.getKey(), e);
             }
         }
@@ -79,7 +92,9 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             return;
         }
         ServerEyeConfigs.replaceAll(selected);
-        SomeGooglyCommon.LOGGER.info("Loaded {} selected eye configs from {} files", selected.size(), files.size());
+        SomeGooglyCommon.LOGGER.info(
+                "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse)",
+                selected.size(), files.size(), skippedModNotInstalled, failedParse);
     }
 
     private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
@@ -130,9 +145,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             return set; // nothing usable declared anywhere; nothing to fall back to
         }
         if (VersionRangeMatcher.isEntirelyBelow(nearest, loaded)) {
-            SomeGooglyCommon.LOGGER.error(
+            SomeGooglyCommon.LOGGER.warn(
                     "Eye config {} has no entry for installed version {} of '{}'; using its newest entry"
-                            + " (version {}). The config is out of date — re-export it for the installed version.",
+                            + " (version {}). Placement may be slightly off until it is re-exported for the"
+                            + " installed version — expected for bundled optional-mod definitions.",
                     entityId, loaded, entityId.getNamespace(), nearest);
         } else {
             SomeGooglyCommon.LOGGER.warn(

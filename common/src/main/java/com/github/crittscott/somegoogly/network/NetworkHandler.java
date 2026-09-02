@@ -126,7 +126,7 @@ public final class NetworkHandler {
         PENDING.put(playerId, HANDSHAKE_TIMEOUT_TICKS);
         PROTOCOL_HELLO_PAYLOAD.sendToPlayer(player, PROTOCOL_VERSION);
         SomeGooglyCommon.LOGGER.debug(
-                "Server network debug: sent protocol hello version={} to {}",
+                "Sent protocol hello version={} to {}",
                 PROTOCOL_VERSION, player.getGameProfile().getName());
     }
 
@@ -146,6 +146,9 @@ public final class NetworkHandler {
                 continue;
             }
             iterator.remove();
+            SomeGooglyCommon.LOGGER.info(
+                    "Disconnecting {} ({}): Some Googly Eyes protocol handshake not acknowledged",
+                    player.getGameProfile().getName(), entry.getKey());
             player.connection.disconnect(Component.translatable("somegoogly.network.handshake_timeout"));
         }
     }
@@ -195,7 +198,7 @@ public final class NetworkHandler {
             return;
         }
         SomeGooglyCommon.LOGGER.debug(
-                "Server network debug: sending {} selected eye configs to {}",
+                "Sending {} selected eye configs to {}",
                 ServerEyeConfigs.all().size(), player.getGameProfile().getName());
         EYE_CONFIG_PAYLOAD.sendToPlayer(player, payload);
         LAST_CONFIG_GENERATION.put(player.getUUID(), generation);
@@ -256,13 +259,16 @@ public final class NetworkHandler {
             return;
         }
         if (!PROTOCOL_VERSION.equals(version)) {
+            SomeGooglyCommon.LOGGER.warn(
+                    "Disconnecting {}: Some Googly Eyes protocol mismatch (server {}, client {})",
+                    player.getGameProfile().getName(), PROTOCOL_VERSION, version);
             player.connection.disconnect(protocolMismatch(
                     Component.translatable("somegoogly.network.side.server"), PROTOCOL_VERSION, version));
             return;
         }
         READY.add(playerId);
         SomeGooglyCommon.LOGGER.debug(
-                "Server network debug: accepted protocol acknowledgement from {}",
+                "Accepted protocol acknowledgement from {}",
                 player.getGameProfile().getName());
         sendConfig(player);
     }

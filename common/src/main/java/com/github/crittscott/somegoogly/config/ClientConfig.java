@@ -74,7 +74,7 @@ public final class ClientConfig {
     private static void logBadDisabledEntityEntry(String entry) {
         String key = String.valueOf(entry);
         if (loggedBadDisabledEntityEntries.add(key)) {
-            SomeGooglyCommon.LOGGER.error(
+            SomeGooglyCommon.LOGGER.warn(
                     "Dropping invalid client disabledEntities entry '{}'; expected an entity id like 'minecraft:zombie'",
                     key);
         }

@@ -23,6 +23,6 @@ public final class SomeGooglyFabric implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA)
                 .registerReloadListener(new FabricEyeConfigReloadListener());
 
-        SomeGooglyCommon.LOGGER.info("{} initializing on Fabric", SomeGooglyCommon.MOD_NAME);
+        SomeGooglyCommon.LOGGER.info("{} initialized on Fabric", SomeGooglyCommon.MOD_NAME);
     }
 }

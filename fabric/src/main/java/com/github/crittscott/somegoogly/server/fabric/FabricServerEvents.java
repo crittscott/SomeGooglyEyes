@@ -1,11 +1,6 @@
 package com.github.crittscott.somegoogly.server.fabric;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -16,19 +11,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
-
-    private static final int ENTITY_TYPE_LOG_LIMIT = 30;
-    private static final Set<String> LOGGED_LOAD_TYPES = new HashSet<>();
-    private static final Set<String> LOGGED_TRACKING_TYPES = new HashSet<>();
 
     private FabricServerEvents() {
     }
@@ -44,7 +30,7 @@ public final class FabricServerEvents {
                 EyeItemService.onDeath(mob, source, mob::spawnAtLocation));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
-                onLivingEntityLoaded(living);
+                ServerServices.onLivingEntityLoaded(living);
             }
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
@@ -57,7 +43,6 @@ public final class FabricServerEvents {
         ServerTickEvents.END_SERVER_TICK.register(ServerServices::onServerTick);
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
-                logStartTracking(living, player);
                 ServerServices.onStartTracking(living, player);
             }
         });
@@ -66,30 +51,5 @@ public final class FabricServerEvents {
                 ServerServices.onStopTracking(living);
             }
         });
-    }
-
-    private static void onLivingEntityLoaded(LivingEntity living) {
-        boolean previouslyInitialized = EyeState.isInitialized(living);
-        boolean eligible = ServerEyeConfigs.canEverWearEyes(living);
-        ServerServices.onLivingEntityLoaded(living);
-
-        String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
-        if (LOGGED_LOAD_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_LOAD_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Fabric entity-load debug: type={}, entityId={}, previouslyInitialized={}, configuredEligibility={}, percent={}, hasEyes={}",
-                    type, living.getId(), previouslyInitialized, eligible,
-                    ServerConfig.percentFor(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType())),
-                    EyeState.hasEyes(living));
-        }
-    }
-
-    private static void logStartTracking(LivingEntity living, ServerPlayer player) {
-        String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
-        if (LOGGED_TRACKING_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_TRACKING_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Fabric tracking debug: player={}, type={}, entityId={}, hasEyes={}, protocolReady={}",
-                    player.getGameProfile().getName(), type, living.getId(), EyeState.hasEyes(living),
-                    NetworkHandler.ready(player));
-        }
     }
 }

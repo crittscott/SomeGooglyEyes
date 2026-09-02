@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -130,6 +131,7 @@ public final class PickerFreezeService {
                 return;
             }
         }
+        SomeGooglyCommon.LOGGER.debug("Restoring stranded picker freeze marker on {}", mob.getUUID());
         mob.setNoAi(data.getBoolean(PREV_NO_AI_TAG));
         data.remove(PREV_NO_AI_TAG);
     }

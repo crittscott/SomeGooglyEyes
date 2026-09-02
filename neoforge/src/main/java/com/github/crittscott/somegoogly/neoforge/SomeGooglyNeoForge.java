@@ -31,6 +31,8 @@ public final class SomeGooglyNeoForge {
         }
         NeoForgeServerEvents.register(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(SomeGooglyNeoForge::addReloadListeners);
+
+        SomeGooglyCommon.LOGGER.info("{} initialized on NeoForge", SomeGooglyCommon.MOD_NAME);
     }
 
     private static void addReloadListeners(AddReloadListenerEvent event) {

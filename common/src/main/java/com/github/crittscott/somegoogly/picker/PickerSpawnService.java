@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -179,6 +180,7 @@ public final class PickerSpawnService {
             try {
                 entity = type.create(level);
             } catch (Exception e) {
+                SomeGooglyCommon.LOGGER.debug("Skipping {} in /sg spawnall: entity factory threw", id, e);
                 if (filtering) {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_create_threw",
@@ -292,6 +294,8 @@ public final class PickerSpawnService {
                 ? Component.translatable("somegoogly.command.spawnall.scope", modFilter) : Component.empty();
         Component skippedNote = finalSkipped > 0
                 ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
+        SomeGooglyCommon.LOGGER.info("{} ran /sg spawnall (scope={}): spawned {}, skipped {}",
+                player.getGameProfile().getName(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
         player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.result",
                 finalSpawned, scope, platformNote, finalRows, skippedNote));
         if (filtering && !dropped.isEmpty()) {
@@ -332,6 +336,7 @@ public final class PickerSpawnService {
         try {
             entity = type.create(level);
         } catch (Exception e) {
+            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: entity factory threw", id, e);
             player.sendSystemMessage(Component.translatable(
                     "somegoogly.command.spawn.create_threw", id, e.getClass().getSimpleName()));
             return;

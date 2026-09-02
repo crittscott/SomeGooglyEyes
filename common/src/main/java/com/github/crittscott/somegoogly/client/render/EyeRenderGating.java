@@ -27,6 +27,7 @@ public final class EyeRenderGating {
 
     private static final int DEBUG_DECISION_LIMIT = 80;
     private static final Set<String> LOGGED_DEBUG_DECISIONS = new HashSet<>();
+    private static boolean debugDecisionsCapped;
 
     private EyeRenderGating() {
     }
@@ -65,13 +66,18 @@ public final class EyeRenderGating {
     }
 
     private static void logDecision(ResourceLocation entityType, LivingEntity living, String decision) {
-        String key = entityType + "|" + decision;
-        if (LOGGED_DEBUG_DECISIONS.size() >= DEBUG_DECISION_LIMIT
-                || !LOGGED_DEBUG_DECISIONS.add(key)) {
+        if (debugDecisionsCapped || !SomeGooglyCommon.LOGGER.isDebugEnabled()) {
+            return;
+        }
+        if (LOGGED_DEBUG_DECISIONS.size() >= DEBUG_DECISION_LIMIT) {
+            debugDecisionsCapped = true;
+            return;
+        }
+        if (!LOGGED_DEBUG_DECISIONS.add(entityType + "|" + decision)) {
             return;
         }
         SomeGooglyCommon.LOGGER.debug(
-                "Eye render debug: type={}, entityId={}, baby={}, pickerActive={}, hasEyes={}, decision={}",
+                "Eye render gate: type={}, entityId={}, baby={}, pickerActive={}, hasEyes={}, decision={}",
                 entityType, living.getId(), living.isBaby(), PickerState.isActive(),
                 EyeState.hasEyes(living), decision);
     }

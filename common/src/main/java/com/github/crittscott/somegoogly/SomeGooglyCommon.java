@@ -6,8 +6,8 @@ import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import com.github.crittscott.somegoogly.registry.ContentRegistrar;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mod identity shared by every platform. Kept separate from the platform-specific mod entry point
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public final class SomeGooglyCommon {
     public static final String MOD_ID = "somegoogly";
     public static final String MOD_NAME = "Some Googly Eyes";
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private SomeGooglyCommon() {
     }

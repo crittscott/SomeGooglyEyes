@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.compat.forge;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.fml.ModList;
@@ -12,11 +13,19 @@ import java.util.List;
  * so its classes (and GeckoLib's) load only when GeckoLib is installed.
  *
  * <p>Calls are wrapped in {@code try/catch} so a GeckoLib API mismatch degrades to "no GeckoLib
- * support" rather than crashing.
+ * support" rather than crashing; the first such failure is logged once.
  */
 public final class GeckoCompatImpl {
 
     public static final boolean LOADED = ModList.get().isLoaded("geckolib");
+
+    private static boolean warnedIntegrationFailure;
+
+    static {
+        if (LOADED) {
+            SomeGooglyCommon.LOGGER.info("GeckoLib detected; enabling googly-eye support on GeckoLib renderers");
+        }
+    }
 
     private GeckoCompatImpl() {
     }
@@ -28,7 +37,8 @@ public final class GeckoCompatImpl {
         }
         try {
             return GeckoIntegration.enumerate(renderer, living);
-        } catch (Throwable t) {
+        } catch (Throwable failure) {
+            warnIntegrationFailure(failure);
             return List.of();
         }
     }
@@ -40,8 +50,19 @@ public final class GeckoCompatImpl {
         }
         try {
             return GeckoIntegration.tryAddLayer(renderer);
-        } catch (Throwable t) {
+        } catch (Throwable failure) {
+            warnIntegrationFailure(failure);
             return false;
         }
+    }
+
+    private static void warnIntegrationFailure(Throwable failure) {
+        if (warnedIntegrationFailure) {
+            return;
+        }
+        warnedIntegrationFailure = true;
+        SomeGooglyCommon.LOGGER.warn(
+                "GeckoLib is installed but its integration failed; GeckoLib mobs will render without googly eyes",
+                failure);
     }
 }

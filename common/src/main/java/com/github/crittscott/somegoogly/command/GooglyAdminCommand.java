@@ -150,7 +150,8 @@ public final class GooglyAdminCommand {
     }
 
     private static int feedback(CommandContext<CommandSourceStack> ctx, Component message) {
-        ctx.getSource().sendSuccess(() -> Component.translatable("somegoogly.command.admin.feedback", message), false);
+        // Op-gated world mutation: broadcast to other operators and the console, per vanilla convention.
+        ctx.getSource().sendSuccess(() -> Component.translatable("somegoogly.command.admin.feedback", message), true);
         return 1;
     }
 

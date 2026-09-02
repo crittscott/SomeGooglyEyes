@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,6 +21,7 @@ public final class TomlConfig {
         Files.createDirectories(path.getParent());
         if (Files.notExists(path)) {
             Files.writeString(path, defaults, StandardCharsets.UTF_8);
+            SomeGooglyCommon.LOGGER.info("Wrote default config file {}", path);
         }
         return parse(Files.readString(path, StandardCharsets.UTF_8));
     }

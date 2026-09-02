@@ -14,7 +14,6 @@ import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -26,12 +25,11 @@ import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRe
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-import java.util.stream.Collectors;
-
 /** Fabric registration for client ticks, picker UI/input, colors, and the 3D eye item renderer. */
 public final class FabricClientEvents {
 
-    private static int commandTreeDebugTicks = -1;
+    /** Ticks-since-join countdown for the one-shot picker command-tree merge; -1 when idle or done. */
+    private static int commandTreeMergeTicks = -1;
     private static boolean loggedFirstRendererCallback;
     private static int rendererCallbacks;
     private static int rendererInstalls;
@@ -50,7 +48,7 @@ public final class FabricClientEvents {
                     if (!loggedFirstRendererCallback) {
                         loggedFirstRendererCallback = true;
                         SomeGooglyCommon.LOGGER.debug(
-                                "Fabric render debug: first living-renderer callback type={}, renderer={}, installed={}",
+                                "First living-renderer callback: type={}, renderer={}, installed={}",
                                 BuiltInRegistries.ENTITY_TYPE.getKey(entityType),
                                 renderer.getClass().getName(), installed);
                     }
@@ -62,17 +60,17 @@ public final class FabricClientEvents {
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            logMergedCommandTree(client);
+            mergePickerCommandTree(client);
             ClientNetworkHandler.tick();
             ClientEyeRuntime.tick();
             EyeInspector.tick();
             consumePickerKeys();
         });
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> commandTreeDebugTicks = 0);
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> commandTreeMergeTicks = 0);
         ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
                 ClientNetworkHandler.onEntityLoaded(entity));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            commandTreeDebugTicks = -1;
+            commandTreeMergeTicks = -1;
             ClientNetworkHandler.clearPendingEyeStates();
             ClientEyeConfigs.clear();
             ClientEyeRuntime.clear();
@@ -95,39 +93,29 @@ public final class FabricClientEvents {
 
     public static void logRendererReload(int nonLivingInstalls) {
         SomeGooglyCommon.LOGGER.debug(
-                "Fabric render debug: renderer reload completed; living callbacks={}, new living layers={}, new non-living layers={}",
+                "Renderer reload completed; living callbacks={}, new living layers={}, new non-living layers={}",
                 rendererCallbacks, rendererInstalls, nonLivingInstalls);
         rendererCallbacks = 0;
         rendererInstalls = 0;
     }
 
-    private static void logMergedCommandTree(Minecraft client) {
-        if (commandTreeDebugTicks < 0) {
+    /**
+     * Graft the picker's {@code /sg} verbs onto the server-supplied command dispatcher for completion
+     * and help, once per join. Fabric 1.20.1 executes a matching client command root before consulting
+     * the server, so the picker nodes must also exist on the server dispatcher. The server command tree
+     * arrives a few ticks after join, so this runs from the client tick until {@code /sg} appears (or a
+     * short grace window elapses), then disarms.
+     */
+    private static void mergePickerCommandTree(Minecraft client) {
+        if (commandTreeMergeTicks < 0 || client.getConnection() == null) {
             return;
         }
-        commandTreeDebugTicks++;
-        if (client.getConnection() == null) {
+        boolean present = client.getConnection().getCommands().getRoot().getChild("sg") != null;
+        if (!present && ++commandTreeMergeTicks < 100) {
             return;
         }
-        CommandNode<?> sg = client.getConnection().getCommands().getRoot().getChild("sg");
-        if (sg == null && commandTreeDebugTicks < 100) {
-            return;
-        }
-        String before = children(sg);
         FabricClientCommands.mergeSuggestions(client.getConnection().getCommands());
-        sg = client.getConnection().getCommands().getRoot().getChild("sg");
-        String after = children(sg);
-        SomeGooglyCommon.LOGGER.debug(
-                "Fabric client debug: merged /sg tree before repair [{}], after repair [{}]",
-                before, after);
-        commandTreeDebugTicks = -1;
-    }
-
-    private static String children(CommandNode<?> node) {
-        return node == null ? "missing" : node.getChildren().stream()
-                .map(CommandNode::getName)
-                .sorted()
-                .collect(Collectors.joining(", "));
+        commandTreeMergeTicks = -1;
     }
 
     private static void consumePickerKeys() {

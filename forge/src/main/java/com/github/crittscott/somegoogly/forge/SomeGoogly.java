@@ -14,7 +14,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Forge entry point for Some Googly Eyes. Registers shared content, configuration, networking, and
@@ -25,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 public class SomeGoogly {
     public static final String MOD_ID = SomeGooglyCommon.MOD_ID;
     public static final String MOD_NAME = SomeGooglyCommon.MOD_NAME;
-    public static final Logger LOGGER = SomeGooglyCommon.LOGGER;
 
     public SomeGoogly(FMLJavaModLoadingContext context) {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
@@ -43,5 +41,7 @@ public class SomeGoogly {
 
         context.registerDisplayTest("1", (remoteVersion, isServer) -> true);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeClientBootstrap.register(context));
+
+        SomeGooglyCommon.LOGGER.info("{} initialized on Forge", MOD_NAME);
     }
 }

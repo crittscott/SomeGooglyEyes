@@ -53,7 +53,7 @@ public final class ClientNetworkHandler {
             return;
         }
         registered = true;
-        SomeGooglyCommon.LOGGER.debug("Client network debug: registering Some Googly Eyes S2C receivers");
+        SomeGooglyCommon.LOGGER.debug("Registering client-bound receivers");
         NetworkHandler.PROTOCOL_HELLO_PAYLOAD.bindReceiver(ClientNetworkHandler::handleHello);
         NetworkHandler.EYE_STATE_PAYLOAD.bindReceiver(ClientNetworkHandler::handle);
         NetworkHandler.EYE_CONFIG_PAYLOAD.bindReceiver(ClientNetworkHandler::handleConfigPayload);
@@ -63,7 +63,7 @@ public final class ClientNetworkHandler {
     private static void handleHello(String version, NetworkTransport.Context context) {
         context.queue(() -> {
             SomeGooglyCommon.LOGGER.debug(
-                    "Client network debug: received protocol hello version={} expected={}",
+                    "Received protocol hello version={} expected={}",
                     version, NetworkHandler.PROTOCOL_VERSION);
             if (protocolAccepted) {
                 return;
@@ -76,7 +76,7 @@ public final class ClientNetworkHandler {
             }
             protocolAccepted = true;
             NetworkHandler.PROTOCOL_ACK_PAYLOAD.sendToServerUnchecked(NetworkHandler.PROTOCOL_VERSION);
-            SomeGooglyCommon.LOGGER.debug("Client network debug: sent protocol acknowledgement");
+            SomeGooglyCommon.LOGGER.debug("Sent protocol acknowledgement");
         });
     }
 
@@ -86,7 +86,7 @@ public final class ClientNetworkHandler {
             int ordinal = ++eyeStatePackets;
             if (ordinal <= EYE_STATE_LOG_LIMIT) {
                 SomeGooglyCommon.LOGGER.debug(
-                        "Client eye-state debug: packet #{} entityId={} hasEyes={} resolvedEntity={}",
+                        "Eye-state packet #{} entityId={} hasEyes={} resolvedEntity={}",
                         ordinal, packet.entityId(), packet.hasGooglyEyes(),
                         living == null ? "missing"
                                 : BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()));
@@ -108,7 +108,7 @@ public final class ClientNetworkHandler {
         EyeStatePacket packet = pending.packet();
         if (++appliedQueuedEyeStates <= EYE_STATE_LOG_LIMIT) {
             SomeGooglyCommon.LOGGER.debug(
-                    "Client eye-state debug: applying queued state #{} to entityId={} type={} hasEyes={}",
+                    "Applying queued eye-state #{} to entityId={} type={} hasEyes={}",
                     appliedQueuedEyeStates, entity.getId(),
                     BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()), packet.hasGooglyEyes());
         }
@@ -155,6 +155,7 @@ public final class ClientNetworkHandler {
             lastConfigDecodeNanos = now;
             handle(EyeConfigSyncPacket.decode(buffer), context);
         } catch (RuntimeException invalid) {
+            SomeGooglyCommon.LOGGER.error("Malformed eye-config sync payload from server", invalid);
             context.queue(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
         } finally {
             buffer.release();
@@ -179,7 +180,7 @@ public final class ClientNetworkHandler {
             lastConfigGeneration = packet.generation();
             lastConfigSyncTick = networkTicks;
             SomeGooglyCommon.LOGGER.debug(
-                    "Client eye-config debug: received {} selected entity configs", packet.configs().size());
+                    "Received {} selected entity eye configs", packet.configs().size());
             ClientEyeConfigs.replaceAll(packet.configs());
             ClientEyeRuntime.clear();
         });
@@ -224,8 +225,10 @@ public final class ClientNetworkHandler {
     }
 
     private static void disconnect(net.minecraft.network.chat.Component reason) {
-        if (Minecraft.getInstance().getConnection() != null) {
-            Minecraft.getInstance().getConnection().getConnection().disconnect(reason);
+        var connection = Minecraft.getInstance().getConnection();
+        if (connection != null) {
+            SomeGooglyCommon.LOGGER.warn("Disconnecting from server: {}", reason.getString());
+            connection.getConnection().disconnect(reason);
         }
     }
 }

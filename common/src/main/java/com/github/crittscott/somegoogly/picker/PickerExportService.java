@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -50,7 +51,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
  * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
  * — the one that matters for its datapack; client and server versions may legally differ. Minecraft
- * is pinned to exact 1.20.1; optional-mod exports span the current minor release.
+ * is pinned to exact 1.21.1; optional-mod exports span the current minor release.
  *
  * <p>Every attempt has a short throttle applied before codec work. Each successful export triggers a
  * full datapack reload, so successes have the longer {@link #COOLDOWN_TICKS} per-player limit. Picker
@@ -68,8 +69,8 @@ public final class PickerExportService {
     /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
     public static final long MAX_CONFIG_BYTES = 64 * 1024;
 
-    /** Datapack format for the exact Minecraft version targeted by this source tree (1.20.1). */
-    private static final int GENERATED_PACK_FORMAT = 15;
+    /** Datapack format for the exact Minecraft version targeted by this source tree (1.21.1). */
+    private static final int GENERATED_PACK_FORMAT = 48;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
     private static final Map<UUID, Integer> LAST_ATTEMPT_TICK = new HashMap<>();
@@ -183,7 +184,8 @@ public final class PickerExportService {
             }
             Files.writeString(target, GSON.toJson(json) + "\n");
         } catch (IOException e) {
-            return Component.translatable("somegoogly.command.picker.export_failed", e.getMessage());
+            SomeGooglyCommon.LOGGER.error("Failed to write picker export for {} to {}", typeId, target, e);
+            return Component.translatable("somegoogly.command.picker.export_failed", String.valueOf(e.getMessage()));
         }
 
         LAST_EXPORT_TICK.put(playerId, now);
