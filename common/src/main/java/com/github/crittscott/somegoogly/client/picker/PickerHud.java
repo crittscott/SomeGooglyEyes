@@ -58,9 +58,9 @@ public final class PickerHud {
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB)));
     }
 
-    /** An RGB triple in 0–1 as {@code #RRGGBB} (8-bit, rounded). */
+    /** An RGB triple in 0–1 as {@code RRGGBB} (8-bit, rounded); the {@code eye_line2} template adds the {@code #}. */
     private static String hex(float[] rgb) {
-        return String.format("#%06X", EyeColor.of(rgb).toRgb24());
+        return EyeColor.of(rgb).toHex();
     }
 
     private static List<List<Line>> lines() {
@@ -96,7 +96,7 @@ public final class PickerHud {
         // One block per saved eye in the current variant (two rows). The eye being edited via /sg
         // (selectedIndex) is drawn live from currentEye and highlighted; if nothing is selected, the
         // in-progress currentEye is appended as a trailing "new (unsaved)" block — what /sg save commits.
-        java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
+        List<PickerState.ListedEye> eyes = PickerState.currentEyes();
         for (int idx = 0; idx < eyes.size(); idx++) {
             PickerState.ListedEye listed = eyes.get(idx);
             if (idx == PickerState.selectedIndex()) {

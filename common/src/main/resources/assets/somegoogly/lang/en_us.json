@@ -139,7 +139,7 @@
   "somegoogly.picker.hud.age_baby": "Baby",
   "somegoogly.picker.hud.age_label": "Age:",
   "somegoogly.picker.hud.eye_line1": "%s  part=%s  pos[%s, %s, %s]",
-  "somegoogly.picker.hud.eye_line2": "    incl %s°  azi %s°  eye %s  iris %s  d %s  %sG  c%s i%s%s",
+  "somegoogly.picker.hud.eye_line2": "    incl %s°  azi %s°  eye %s  iris %s  d %s  %sG  c#%s i#%s%s",
   "somegoogly.picker.hud.eye_marker": "#%s",
   "somegoogly.picker.hud.eyes_header_label": "Eyes",
   "somegoogly.picker.hud.eyes_header_value": "(%s):",

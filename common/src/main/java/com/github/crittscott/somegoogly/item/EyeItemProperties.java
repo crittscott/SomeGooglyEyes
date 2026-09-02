@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -14,16 +15,32 @@ import java.util.List;
  */
 public final class EyeItemProperties {
 
+    /**
+     * Tint index of the iris layer in {@code models/item/slimy_eye.json} ({@code layer2}); every
+     * loader's Slimy Eye color handler keys the iris tint on it. Must match that model file.
+     */
+    public static final int SLIMY_EYE_IRIS_TINT_INDEX = 2;
+
     private EyeItemProperties() {
+    }
+
+    /**
+     * The Slimy Eye {@code ItemColor} body shared by all three loaders: the stored iris color for the
+     * iris layer, {@code -1} (no tint) for every other layer.
+     */
+    public static int slimyEyeTint(ItemStack stack, int tintIndex) {
+        return tintIndex == SLIMY_EYE_IRIS_TINT_INDEX
+                ? get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
+                : -1;
     }
 
     /** The tooltip lines describing {@code stack}'s appearance, appended in place. */
     public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
         AppearanceOverride props = get(stack);
         props.iris().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.iris", String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
         props.cornea().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.cornea", String.format("%06X", color.toRgb24())).withStyle(ChatFormatting.GRAY)));
+                tooltip.add(Component.translatable("somegoogly.tooltip.cornea", color.toHex()).withStyle(ChatFormatting.GRAY)));
         props.glow().ifPresent(glow ->
                 tooltip.add(Component.translatable("somegoogly.tooltip.glow",
                         Component.translatable(glow ? "somegoogly.value.on" : "somegoogly.value.off"))

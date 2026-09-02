@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
@@ -25,7 +26,7 @@ public final class FabricServerEvents {
         UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) ->
                 entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
-                        : net.minecraft.world.InteractionResult.PASS);
+                        : InteractionResult.PASS);
         ServerLivingEntityEvents.AFTER_DEATH.register((mob, source) ->
                 EyeItemService.onDeath(mob, source, mob::spawnAtLocation));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {

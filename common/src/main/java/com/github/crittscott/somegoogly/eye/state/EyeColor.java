@@ -56,4 +56,9 @@ public record EyeColor(float r, float g, float b) {
     public int toRgb24() {
         return (channel(r) << 16) | (channel(g) << 8) | channel(b);
     }
+
+    /** {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their own. */
+    public String toHex() {
+        return String.format("%06X", toRgb24());
+    }
 }

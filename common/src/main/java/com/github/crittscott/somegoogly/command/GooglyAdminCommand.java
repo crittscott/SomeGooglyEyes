@@ -46,16 +46,17 @@ import javax.annotation.Nullable;
  */
 public final class GooglyAdminCommand {
 
+    /** The {@code /sg admin behavior} token that picks a random behavior instead of naming one. */
+    private static final String RANDOM_BEHAVIOR_TOKEN = "random";
+
     /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
     private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
-        builder.suggest("random");
+        builder.suggest(RANDOM_BEHAVIOR_TOKEN);
         for (EyeBehavior behavior : EyeBehaviors.all()) {
             builder.suggest(behavior.id().getPath());
         }
         return builder.buildFuture();
     };
-
-    private static final double REACH = 20.0;
 
     private GooglyAdminCommand() {
     }
@@ -104,7 +105,7 @@ public final class GooglyAdminCommand {
         if (target == null) return 0;
 
         EyeBehavior behavior;
-        if (id.equalsIgnoreCase("random")) {
+        if (id.equalsIgnoreCase(RANDOM_BEHAVIOR_TOKEN)) {
             var pool = EyeBehaviors.all();
             behavior = pool.get(target.getRandom().nextInt(pool.size()));
         } else {
@@ -144,8 +145,7 @@ public final class GooglyAdminCommand {
                                             Component targetName = Component.translatable(iris
                                                     ? "somegoogly.value.iris" : "somegoogly.value.cornea");
                                             return feedback(ctx, Component.translatable(
-                                                    "somegoogly.command.admin.tint_set", targetName,
-                                                    String.format("%06X", color.toRgb24())));
+                                                    "somegoogly.command.admin.tint_set", targetName, color.toHex()));
                                         }))));
     }
 
@@ -191,7 +191,7 @@ public final class GooglyAdminCommand {
             return null;
         }
 
-        LivingEntity target = LookTarget.livingInCrosshair(player, REACH);
+        LivingEntity target = LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH);
         if (target == null) {
             source.sendFailure(Component.translatable("somegoogly.command.admin.no_target"));
         }

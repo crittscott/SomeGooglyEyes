@@ -16,6 +16,9 @@ import javax.annotation.Nullable;
  */
 public final class LookTarget {
 
+    /** Aim-pick range (blocks) for the {@code /sg admin} and {@code /sg spawn} verbs. */
+    public static final double DEFAULT_REACH = 20.0;
+
     private LookTarget() {
     }
 

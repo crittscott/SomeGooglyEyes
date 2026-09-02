@@ -76,7 +76,7 @@ Vanilla rendering access is declared once in the common 1.21.1 Access Widener, w
 
 GeckoLib is optional: common code goes through the loader's `GeckoCompat` bridge, which probes for GeckoLib before touching typed integration code, and a failed GeckoLib layer attach must not block mod load.
 
-`GooglyEyeItemRenderer` draws the Googly Eye as a 3D item; the Slimy Eye uses its normal item model with tint index 2 fed from its appearance payload, and that index must stay in sync with the model JSON.
+`GooglyEyeItemRenderer` draws the Googly Eye as a 3D item; the Slimy Eye uses its normal item model, tinted from its appearance payload; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match `layer2` in the model JSON.
 
 ## Networking
 

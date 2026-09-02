@@ -11,7 +11,6 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeClientNetworkTransport;
@@ -58,9 +57,7 @@ public final class NeoForgeClient {
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> tintIndex == 2
-                        ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
-                        : -1,
+        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
                 ModItems.SLIMY_EYE.get());
     }
 

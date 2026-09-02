@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
  */
 public final class EyeState {
 
+    // The namespace is written out rather than composed from SomeGooglyCommon.MOD_ID: these are
+    // persisted NBT keys, and a future mod-id change must not silently orphan saved eye state.
     public static final String EYE_OVERRIDES = "somegoogly:eyeOverrides";
     public static final String HAS_EYES = "somegoogly:hasGooglyEyes";
     public static final String VARIANT_ROLL = "somegoogly:eyeVariantRoll";

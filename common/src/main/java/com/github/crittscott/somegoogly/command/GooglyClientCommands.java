@@ -73,6 +73,9 @@ public class GooglyClientCommands {
     private static final SimpleCommandExceptionType NOT_CREATIVE =
             new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_creative"));
 
+    /** The {@code /sg part} token that clears the current attachment instead of selecting one. */
+    private static final String CLEAR_PART_TOKEN = "none";
+
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
         requireCreative();
         PickerState.activate(); // turn the picker on so the preview/gizmo render
@@ -225,7 +228,7 @@ public class GooglyClientCommands {
         requireCreative();
         requireChosen();
         String target = StringArgumentType.getString(ctx, "target");
-        if (target.equalsIgnoreCase("none")) {
+        if (target.equalsIgnoreCase(CLEAR_PART_TOKEN)) {
             PickerState.clearPart();
             feedback(ctx, "somegoogly.command.picker.part_cleared");
             return 1;

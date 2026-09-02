@@ -61,7 +61,8 @@ public final class EyeConfigLimits {
     public static WireValidation validateWireConfigSet(CompoundTag set) {
         int totalEyes = 0;
         boolean foundAge = false;
-        for (String age : new String[]{"adult", "baby", "any"}) {
+        for (String age : new String[]{
+                EyeConfigModel.AGE_ADULT, EyeConfigModel.AGE_BABY, EyeConfigModel.AGE_ANY}) {
             Tag ageTag = set.get(age);
             if (ageTag == null) {
                 continue;
@@ -86,7 +87,7 @@ public final class EyeConfigLimits {
 
     /** Preflight one picker-export runtime config before its codec constructs nested lists. */
     public static WireValidation validateWireRuntimeConfig(CompoundTag config) {
-        Tag variantsTag = config.get("variants");
+        Tag variantsTag = config.get(EyeConfigModel.FIELD_VARIANTS);
         if (!(variantsTag instanceof ListTag variants)
                 || !variants.isEmpty() && variants.getElementType() != Tag.TAG_COMPOUND) {
             return new WireValidation("variants is not a list", 0);
@@ -97,7 +98,7 @@ public final class EyeConfigLimits {
         int totalEyes = 0;
         for (int variantIndex = 0; variantIndex < variants.size(); variantIndex++) {
             CompoundTag variant = variants.getCompound(variantIndex);
-            Tag headsTag = variant.get("heads");
+            Tag headsTag = variant.get(EyeConfigModel.FIELD_HEADS);
             if (!(headsTag instanceof ListTag heads)
                     || !heads.isEmpty() && heads.getElementType() != Tag.TAG_COMPOUND) {
                 return new WireValidation("variant " + variantIndex + " heads is not a list", 0);
@@ -109,14 +110,14 @@ public final class EyeConfigLimits {
             int variantEyes = 0;
             for (int headIndex = 0; headIndex < heads.size(); headIndex++) {
                 CompoundTag head = heads.getCompound(headIndex);
-                if (!head.contains("attachPoint", Tag.TAG_STRING)) {
+                if (!head.contains(EyeConfigModel.FIELD_ATTACH_POINT, Tag.TAG_STRING)) {
                     return new WireValidation("attachment token is not a string", 0);
                 }
-                int tokenLength = head.getString("attachPoint").length();
+                int tokenLength = head.getString(EyeConfigModel.FIELD_ATTACH_POINT).length();
                 if (tokenLength == 0 || tokenLength > MAX_ATTACH_TOKEN_LENGTH) {
                     return new WireValidation("attachment token length is invalid", 0);
                 }
-                Tag eyesTag = head.get("eyes");
+                Tag eyesTag = head.get(EyeConfigModel.FIELD_EYES);
                 if (!(eyesTag instanceof ListTag eyes)
                         || !eyes.isEmpty() && eyes.getElementType() != Tag.TAG_COMPOUND) {
                     return new WireValidation("eyes is not a list", 0);

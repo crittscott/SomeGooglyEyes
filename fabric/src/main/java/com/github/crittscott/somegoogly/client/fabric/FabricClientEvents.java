@@ -11,7 +11,6 @@ import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -82,9 +81,8 @@ public final class FabricClientEvents {
                     minecraft.getWindow().getGuiScaledHeight());
         });
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 2
-                        ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
-                        : -1,
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
                 ModItems.SLIMY_EYE.get());
 
         GooglyEyeItemRenderer renderer = new GooglyEyeItemRenderer();

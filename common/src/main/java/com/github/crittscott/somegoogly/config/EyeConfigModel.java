@@ -21,6 +21,19 @@ public final class EyeConfigModel {
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
 
+    /**
+     * Serialized field names, shared with the wire preflight in {@code EyeConfigLimits} so the codecs
+     * below and the validator that pivots on the same keys cannot drift apart.
+     */
+    public static final String FIELD_ENABLED = "enabled";
+    public static final String FIELD_VARIANTS = "variants";
+    public static final String FIELD_WEIGHT = "weight";
+    public static final String FIELD_HEADS = "heads";
+    public static final String FIELD_ATTACH_POINT = "attachPoint";
+    public static final String FIELD_EYES = "eyes";
+    public static final String FIELD_VERSION = "version";
+    public static final String FIELD_AGE = "age";
+
     private EyeConfigModel() {
     }
 
@@ -92,8 +105,8 @@ public final class EyeConfigModel {
     /** One head attachment and the eyes placed on it. */
     public static class HeadConfig {
         public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf("attachPoint").forGetter(head -> head.attachPoint),
-                EyeDefinition.CODEC.listOf().fieldOf("eyes").forGetter(head -> head.eyes)
+                Codec.STRING.fieldOf(FIELD_ATTACH_POINT).forGetter(head -> head.attachPoint),
+                EyeDefinition.CODEC.listOf().fieldOf(FIELD_EYES).forGetter(head -> head.eyes)
         ).apply(inst, (attachPoint, eyes) -> {
             HeadConfig head = new HeadConfig();
             head.attachPoint = attachPoint;
@@ -108,8 +121,8 @@ public final class EyeConfigModel {
     /** Runtime structure selected by version and age, then synchronized to clients. */
     public static class RuntimeConfig {
         public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.BOOL.fieldOf("enabled").forGetter(config -> config.enabled),
-                Variant.CODEC.listOf().fieldOf("variants").forGetter(config -> config.variants)
+                Codec.BOOL.fieldOf(FIELD_ENABLED).forGetter(config -> config.enabled),
+                Variant.CODEC.listOf().fieldOf(FIELD_VARIANTS).forGetter(config -> config.variants)
         ).apply(inst, (enabled, variants) -> {
             RuntimeConfig config = new RuntimeConfig();
             config.enabled = enabled;
@@ -201,8 +214,8 @@ public final class EyeConfigModel {
     /** One weighted placement arrangement. */
     public static class Variant {
         public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.DOUBLE.fieldOf("weight").forGetter(variant -> variant.weight),
-                HeadConfig.CODEC.listOf().fieldOf("heads").forGetter(variant -> variant.heads)
+                Codec.DOUBLE.fieldOf(FIELD_WEIGHT).forGetter(variant -> variant.weight),
+                HeadConfig.CODEC.listOf().fieldOf(FIELD_HEADS).forGetter(variant -> variant.heads)
         ).apply(inst, (weight, heads) -> {
             Variant variant = new Variant();
             variant.weight = weight;
@@ -222,10 +235,10 @@ public final class EyeConfigModel {
     /** One version- and age-selectable entry in a datapack file. */
     public static class VersionedEntry {
         public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf("version").forGetter(entry -> entry.version),
-                Codec.STRING.fieldOf("age").forGetter(entry -> entry.age),
-                Codec.BOOL.fieldOf("enabled").forGetter(entry -> entry.enabled),
-                Variant.CODEC.listOf().fieldOf("variants").forGetter(entry -> entry.variants)
+                Codec.STRING.fieldOf(FIELD_VERSION).forGetter(entry -> entry.version),
+                Codec.STRING.fieldOf(FIELD_AGE).forGetter(entry -> entry.age),
+                Codec.BOOL.fieldOf(FIELD_ENABLED).forGetter(entry -> entry.enabled),
+                Variant.CODEC.listOf().fieldOf(FIELD_VARIANTS).forGetter(entry -> entry.variants)
         ).apply(inst, (version, age, enabled, variants) -> {
             VersionedEntry entry = new VersionedEntry();
             entry.version = version;

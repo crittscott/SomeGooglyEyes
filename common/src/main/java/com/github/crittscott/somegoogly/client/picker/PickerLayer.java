@@ -16,6 +16,8 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.List;
+
 /**
  * Picker preview layer: renders the committed eyes plus the live draft eye and the selection gizmo,
  * but <b>only</b> for the entity the picker is locked onto. Eyes are previewed with a centered iris
@@ -46,7 +48,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 
         // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
-        java.util.List<PickerState.ListedEye> eyes = PickerState.currentEyes();
+        List<PickerState.ListedEye> eyes = PickerState.currentEyes();
         for (int i = 0; i < eyes.size(); i++) {
             if (i == PickerState.selectedIndex()) {
                 continue;

@@ -43,7 +43,10 @@ import java.util.UUID;
  */
 public final class PickerFreezeService {
 
-    /** Persistent marker holding a frozen mob's pre-picker NoAi value (crash/unload recovery). */
+    /**
+     * Persistent marker holding a frozen mob's pre-picker NoAi value (crash/unload recovery). The
+     * namespace is written out, not composed from the mod id: a persisted key must stay stable.
+     */
     public static final String PREV_NO_AI_TAG = "somegoogly:pickerPrevNoAi";
 
     private static final Map<UUID, FrozenRecord> FROZEN_BY_PLAYER = new HashMap<>();

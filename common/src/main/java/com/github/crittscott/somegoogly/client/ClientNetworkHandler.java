@@ -224,7 +224,7 @@ public final class ClientNetworkHandler {
                 new PendingEyeState(packet, networkTicks + PENDING_EYE_STATE_TTL_TICKS));
     }
 
-    private static void disconnect(net.minecraft.network.chat.Component reason) {
+    private static void disconnect(Component reason) {
         var connection = Minecraft.getInstance().getConnection();
         if (connection != null) {
             SomeGooglyCommon.LOGGER.warn("Disconnecting from server: {}", reason.getString());

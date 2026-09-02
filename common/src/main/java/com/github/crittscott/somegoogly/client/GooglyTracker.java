@@ -30,8 +30,8 @@ public class GooglyTracker {
     public final Random rand;
 
     // The client tick during which this tracker was last rendered. Drives both the tick loop's decisions
-    // (see ClientEyeRuntime): evict once it's more than 10 ticks stale, and simulate only while it's
-    // being rendered — so off-screen eyes freeze instead of wobbling on unseen.
+    // (see ClientEyeRuntime.EVICT_IDLE_TICKS / SIMULATE_IDLE_TICKS): evict once it's gone stale, and
+    // simulate only while it's being rendered — so off-screen eyes freeze instead of wobbling on unseen.
     public int lastRenderTick;
 
     public double motionX, motionY, motionZ;

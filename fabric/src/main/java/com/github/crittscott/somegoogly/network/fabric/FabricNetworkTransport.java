@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.concurrent.Executor;
+
 /** Fabric play-payload codecs, server receivers, and direct server sends. */
 public final class FabricNetworkTransport {
 
@@ -30,7 +32,7 @@ public final class FabricNetworkTransport {
         });
     }
 
-    private record FabricContext(ServerPlayer player, java.util.concurrent.Executor executor)
+    private record FabricContext(ServerPlayer player, Executor executor)
             implements NetworkTransport.Context {
         @Override
         public void queue(Runnable task) {

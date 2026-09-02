@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,8 +67,8 @@ public final class PickerSpawnService {
 
     /** Edge of each mob's cell — wide enough to seat a 5x5 platform/basin without overlap. */
     private static final int SPACING = 5;
-    /** Reach of the {@code /sg spawn} placement raytrace (matches the admin command's target reach). */
-    private static final double SPAWN_REACH = 20.0;
+    /** Reach of the {@code /sg spawn} placement raytrace. */
+    private static final double SPAWN_REACH = LookTarget.DEFAULT_REACH;
     /** How far in front of the player the first mob in each row stands. */
     private static final int START_OFFSET = 3;
 

@@ -100,7 +100,7 @@ public final class ServerBehaviorScheduler {
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
     public static void onPlayerHurt(LivingEntity mob) {
         MobState state = eventTarget(mob);
-        if (state == null || RANDOM.nextInt(100) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
+        if (state == null || RANDOM.nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
             return;
         }
         start(mob, state, EyeBehaviors.GROW, EyeBehaviors.GROW.defaultDuration(), RANDOM.nextLong());

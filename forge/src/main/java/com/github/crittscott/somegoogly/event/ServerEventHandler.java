@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.event;
 import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.server.ServerServices;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -52,14 +53,14 @@ public class ServerEventHandler {
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         // A disappearing picker client must never strand a frozen mob; the server releases it.
-        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             ServerServices.onPlayerLeft(player);
         }
     }
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             ServerServices.onPlayerJoined(player);
         }
     }
@@ -77,7 +78,7 @@ public class ServerEventHandler {
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
         if (!(event.getTarget() instanceof LivingEntity living)
-                || !(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player)) {
+                || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
 

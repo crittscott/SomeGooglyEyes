@@ -17,6 +17,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -169,7 +170,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                 continue;
             }
 
-            String age = entry.age.trim().toLowerCase(java.util.Locale.ROOT);
+            String age = entry.age.trim().toLowerCase(Locale.ROOT);
             RuntimeConfig runtime = toRuntime(entry);
             switch (age) {
                 case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);

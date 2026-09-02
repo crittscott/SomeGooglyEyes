@@ -12,6 +12,11 @@ import java.util.Map;
 /** Loader-neutral owner of client eye trackers and their simulation lifecycle. */
 public final class ClientEyeRuntime {
 
+    /** Evict a tracker once it has gone unrendered for more than this many client ticks. */
+    private static final int EVICT_IDLE_TICKS = 10;
+    /** Simulate a tracker only while it was rendered this tick or last (freezes off-screen eyes). */
+    private static final int SIMULATE_IDLE_TICKS = 1;
+
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
 
@@ -49,7 +54,7 @@ public final class ClientEyeRuntime {
     }
 
     /**
-     * Advance the tick counter, evict any tracker unrendered for more than 10 ticks, and step the
+     * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
      * physics of those rendered this tick or last. A no-op while there is no level or the game is paused.
      */
     public static void tick() {
@@ -62,9 +67,9 @@ public final class ClientEyeRuntime {
         while (iterator.hasNext()) {
             GooglyTracker tracker = iterator.next().getValue();
             int idle = clientTicks - tracker.lastRenderTick;
-            if (idle > 10) {
+            if (idle > EVICT_IDLE_TICKS) {
                 iterator.remove();
-            } else if (idle <= 1) {
+            } else if (idle <= SIMULATE_IDLE_TICKS) {
                 tracker.update();
             }
         }
