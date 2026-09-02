@@ -42,7 +42,7 @@ Change eligibility knobs (spawn and harvest chances, entity overrides, behavior 
 
 The 74 bundled Minecraft definitions target exactly `1.21.1`. Armadillo, bogged, and breeze have no bundled definition. Optional-mod definitions keep their pre-1.21.1 release ranges and are unverified against 1.21.1 mod builds.
 
-Player-visible strings are translatable `Component`s keyed in `assets/somegoogly/lang/en_us.json`; identifiers, counts, and paths ride as translation arguments across command and packet boundaries. Logs, command literals, config comments, and schema keys are plain strings and are not translated.
+Player-visible strings are translatable `Component`s keyed in `assets/somegoogly/lang/en_us.json`, with identifiers, counts, and paths passed as translation arguments. Logs, command literals, config comments, and schema keys are plain strings and are not translated.
 
 ## Entity and item state
 
@@ -111,4 +111,4 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 - Optional renderer integrations may render no eyes when a model family or attachment token cannot be resolved, and third-party model changes can silently invalidate bundled tokens or placement geometry.
 - Entity persistence on Fabric depends on the mod's own Mixin, not a component dependency.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- Root `src/`, `working-build-env/`, root `run/`, and root-level IDE launch files are not build inputs.
+- Root `src/`, `build-env/`, `working-build-env/`, root `run/`, and root-level IDE launch files are not build inputs; `build-env/` copies the root and module build scripts verbatim.

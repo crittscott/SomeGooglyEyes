@@ -2,6 +2,10 @@ architectury {
     common rootProject.enabled_platforms.split(',')
 }
 
+loom {
+    accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+}
+
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
@@ -9,6 +13,15 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    modCompileOnly "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
 }
 
 // Expands the ${mod_id} placeholder in pack.mcmeta once here, rather than duplicating the same
@@ -19,4 +32,10 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching('pack.mcmeta') {
         expand mod_id: mod_id
     }
+}
+
+// The canonical source remains in common so Loom can widen common compilation. The Fabric module
+// packages it beside fabric.mod.json; Forge supplies equivalent runtime access through patches/AT.
+tasks.named('jar', Jar).configure {
+    exclude 'somegoogly.accesswidener'
 }

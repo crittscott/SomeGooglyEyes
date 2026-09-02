@@ -183,6 +183,32 @@ The checked-in wrapper file fingerprints are:
 | `gradlew.bat` | `BDECF875B6868CBCBD36A1F85EEDF0832F358FF28092C5797ED645F7EDCE77D9` |
 | `gradle-wrapper.jar` | `CB0DA6751C2B753A16AC168BB354870EBB1E162E9083F116729CEC9C781156B8` |
 
+## `build-env` copy
+
+`build-env/` is a copy of the active build scripts, kept so the build configuration can be reviewed
+or reconstructed without the full source tree. Every file in it must match its root or module
+counterpart byte-for-byte:
+
+```text
+build.gradle
+settings.gradle
+gradle.properties
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.properties
+common/build.gradle
+fabric/build.gradle
+forge/build.gradle
+forge/gradle.properties
+neoforge/build.gradle
+neoforge/gradle.properties
+```
+
+`gradle-wrapper.jar` is deliberately absent: `gradlew` together with `gradle-wrapper.properties`
+(pinned to `gradle-9.5.1-bin.zip`) regenerate it through `gradle wrapper`. The files at the
+repository root and under `common`, `fabric`, `forge`, and `neoforge` are authoritative on any
+disagreement.
+
 ## `working-build-env` snapshot
 
 `working-build-env/` is a retained reference snapshot from the earlier three-module environment. It
