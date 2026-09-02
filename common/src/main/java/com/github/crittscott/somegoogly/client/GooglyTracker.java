@@ -15,7 +15,7 @@ import java.util.Random;
  * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
  * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
  *
- * <p>One tracker is kept per tracked {@link LivingEntity} (see {@code ClientEventHandler}), matched
+ * <p>One tracker is kept per tracked {@link LivingEntity} (see {@link ClientEyeRuntime}), matched
  * against the entity's current placement via {@link #matches}. {@link #update()} advances the active
  * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
@@ -30,7 +30,7 @@ public class GooglyTracker {
     public final Random rand;
 
     // The client tick during which this tracker was last rendered. Drives both the tick loop's decisions
-    // (see ClientEventHandler): evict once it's more than 10 ticks stale, and simulate only while it's
+    // (see ClientEyeRuntime): evict once it's more than 10 ticks stale, and simulate only while it's
     // being rendered — so off-screen eyes freeze instead of wobbling on unseen.
     public int lastRenderTick;
 

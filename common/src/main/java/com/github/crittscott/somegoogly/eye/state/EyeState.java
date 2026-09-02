@@ -48,15 +48,18 @@ public final class EyeState {
         writeProperties(data, snapshot.properties());
     }
 
+    /** Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts. */
     public static void clearTints(LivingEntity entity) {
         AppearanceOverride properties = readProperties(entity);
         setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
     }
 
+    /** Drop the cornea tint override only; broadcasts. */
     public static void clearCorneaTint(LivingEntity entity) {
         setProperties(entity, readProperties(entity).withCorneaColor(null));
     }
 
+    /** Drop the iris tint override only; broadcasts. */
     public static void clearIrisTint(LivingEntity entity) {
         setProperties(entity, readProperties(entity).withIrisColor(null));
     }
@@ -70,6 +73,7 @@ public final class EyeState {
         return EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
     }
 
+    /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
     public static boolean hasEyes(LivingEntity entity) {
         return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
     }
@@ -125,6 +129,7 @@ public final class EyeState {
         sync(entity);
     }
 
+    /** Override the cornea color for every one of the mob's eyes; broadcasts. */
     public static void setCorneaTint(LivingEntity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withCorneaColor(color));
     }
@@ -134,11 +139,13 @@ public final class EyeState {
         setProperties(entity, readProperties(entity).withGlow(glow));
     }
 
+    /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
     public static void setHasEyes(LivingEntity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
         sync(entity);
     }
 
+    /** Override the iris color for every one of the mob's eyes; broadcasts. */
     public static void setIrisTint(LivingEntity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withIrisColor(color));
     }

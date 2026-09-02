@@ -31,6 +31,14 @@ public final class EyeItemService {
     private EyeItemService() {
     }
 
+    /**
+     * Right-click-on-entity entry point for both eye items. A Slimy Eye returns
+     * {@link InteractionResult#SUCCESS} on the client and defers the mutation to the server; an
+     * Optometrist-shears harvest runs server-side only, dropping one eye and clearing the mob's eyes
+     * before returning {@code SUCCESS}. Every other case — plain shears, no Optometrist, an eyeless mob,
+     * a mob with no config, or the client side of the shears path — returns {@link InteractionResult#PASS}
+     * so the vanilla interaction is left to proceed.
+     */
     public static InteractionResult interact(Player player, Level level, InteractionHand hand,
                                              LivingEntity mob) {
         ItemStack stack = player.getItemInHand(hand);

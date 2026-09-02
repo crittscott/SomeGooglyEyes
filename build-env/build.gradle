@@ -1,5 +1,4 @@
 plugins {
-    id 'eclipse'
     id 'idea'
     id 'dev.architectury.loom' version '1.17.491' apply false
     id 'architectury-plugin' version '3.5.169'
@@ -18,7 +17,6 @@ allprojects {
 subprojects {
     apply plugin: 'dev.architectury.loom'
     apply plugin: 'architectury-plugin'
-    apply plugin: 'maven-publish'
 
     base {
         archivesName = "$rootProject.mod_id-$project.name"
@@ -28,6 +26,9 @@ subprojects {
         maven { url = 'https://maven.architectury.dev/' }
         maven { url = 'https://maven.neoforged.net/releases/' }
         maven { url = 'https://maven.parchmentmc.org' }
+        // GeckoLib — soft dependency (compile against its API; present at runtime via the modpack).
+        // The one repository Architectury Loom does not inject.
+        maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     }
 
     loom {
@@ -43,10 +44,6 @@ subprojects {
     }
 
     java {
-        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-        // if it is present.
-        withSourcesJar()
-
         toolchain {
             languageVersion = JavaLanguageVersion.of(21)
         }
@@ -63,18 +60,5 @@ subprojects {
         javaLauncher.set(javaToolchains.launcherFor {
             languageVersion = JavaLanguageVersion.of(21)
         })
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = base.archivesName.get()
-                from components.java
-            }
-        }
-
-        repositories {
-            // Add repositories to publish to here.
-        }
     }
 }

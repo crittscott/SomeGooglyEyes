@@ -62,7 +62,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
      * {@code head}, {@code rightEar}, {@code leftEar}, {@code nose}: {@code RabbitModel.renderToBuffer}'s
      * head-group wrap when young, its separate (but equally outside-the-tree) adult wrap otherwise.
      * {@code young} is re-checked on every call rather than baked in when this closure is built, because
-     * {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
+     * {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
      * instance renders both baby and adult rabbits.
      */
     private static Consumer<PoseStack> rabbitHeadWrap(RabbitModel<?> rabbit) {

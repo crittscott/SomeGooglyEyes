@@ -52,8 +52,6 @@ forge/    completed Forge adapters, metadata, access rules, GameTests, and packa
 neoforge/ completed NeoForge adapters, metadata, access rules, GameTests, and packaging
 ```
 
-The root `src/` tree is not part of any active source set.
-
 `settings.gradle` names the root project `somegoogly` and includes `common`, `forge`, `fabric`, and
 `neoforge`.
 Plugin resolution uses this repository order:
@@ -208,34 +206,3 @@ neoforge/gradle.properties
 (pinned to `gradle-9.5.1-bin.zip`) regenerate it through `gradle wrapper`. The files at the
 repository root and under `common`, `fabric`, `forge`, and `neoforge` are authoritative on any
 disagreement.
-
-## `working-build-env` snapshot
-
-`working-build-env/` is a retained reference snapshot from the earlier three-module environment. It
-is not synchronized with the active 1.21.1 four-module build and is not a build input. It contains:
-
-```text
-build.gradle
-settings.gradle
-gradle.properties
-gradlew
-gradlew.bat
-gradle/wrapper/gradle-wrapper.jar
-gradle/wrapper/gradle-wrapper.properties
-common/build.gradle
-common/src/main/resources/pack.mcmeta
-common/src/main/resources/somegoogly.accesswidener
-forge/build.gradle
-forge/gradle.properties
-forge/src/main/resources/META-INF/mods.toml
-forge/src/main/resources/META-INF/accesstransformer.cfg
-forge/src/gametest/resources/META-INF/mods.toml
-fabric/build.gradle
-fabric/src/main/resources/fabric.mod.json
-fabric/src/main/resources/somegoogly.mixins.json
-fabric/src/gametest/resources/fabric.mod.json
-```
-
-The active files at the repository root and under `common`, `fabric`, `forge`, and `neoforge` are
-authoritative. The snapshot does not contain NeoForge and must not be used to infer current versions
-or loader completeness.

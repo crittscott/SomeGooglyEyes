@@ -56,7 +56,7 @@ public class AgeableListResolver extends ModelPartTreeResolver {
     /**
      * The scale/offset {@link AgeableListModel#renderToBuffer} applies around {@code headParts()} for a
      * young entity. {@code young} is re-checked on every call rather than baked in when this closure is
-     * built, because {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the
+     * built, because {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the
      * same model instance renders both baby and adult entities of its type.
      */
     private static Consumer<PoseStack> headWrap(AgeableListModel<?> ageable) {

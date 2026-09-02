@@ -40,11 +40,6 @@ loom {
     }
 }
 
-repositories {
-    // GeckoLib (soft dependency — compile against its API; present at runtime via the modpack).
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 configurations {
     common {
         canBeResolved = true
@@ -70,6 +65,7 @@ dependencies {
     modImplementation "dev.architectury:architectury-neoforge:$rootProject.architectury_api_version"
     modCompileOnly "software.bernie.geckolib:geckolib-neoforge-1.21.1:$rootProject.geckolib_version"
 
+    // common's source uses javax.annotation.Nullable; loader compilation doesn't inherit common's compileOnly deps.
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
@@ -115,8 +111,7 @@ shadowJar {
                 'Specification-Version'   : '1',
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.version,
-                'Implementation-Vendor'   : mod_authors,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                'Implementation-Vendor'   : mod_authors
         ])
     }
 }

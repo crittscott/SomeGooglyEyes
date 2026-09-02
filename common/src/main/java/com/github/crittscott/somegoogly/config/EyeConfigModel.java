@@ -120,11 +120,16 @@ public final class EyeConfigModel {
         public boolean enabled = true;
         public List<Variant> variants = List.of();
 
+        /** Whether a config is present, enabled, and has at least one variant. */
         public static boolean isUsable(@Nullable RuntimeConfig config) {
             return config != null && config.enabled && !config.variants.isEmpty();
         }
 
-        /** Drop empty heads and variants while canonicalizing attachment tokens. */
+        /**
+         * Drop heads with no eyes and variants with no heads, canonicalizing each surviving head's
+         * attach token through {@code canon}. Returns {@code null} when {@code config} is {@code null}
+         * or nothing survives pruning.
+         */
         @Nullable
         public static RuntimeConfig pruned(@Nullable RuntimeConfig config, UnaryOperator<String> canon) {
             if (config == null) {
@@ -178,11 +183,16 @@ public final class EyeConfigModel {
         public RuntimeConfig any;
         public RuntimeConfig baby;
 
+        /**
+         * The runtime config for this age, falling back to the age-independent {@code any} config when
+         * the requested age has none of its own; {@code null} when neither exists.
+         */
         public RuntimeConfig get(boolean isBaby) {
             RuntimeConfig ageConfig = isBaby ? baby : adult;
             return ageConfig != null ? ageConfig : any;
         }
 
+        /** Whether any of the three age slots is populated. */
         public boolean hasAnyConfig() {
             return adult != null || baby != null || any != null;
         }
@@ -203,6 +213,7 @@ public final class EyeConfigModel {
         public List<HeadConfig> heads = List.of();
         public double weight = 1.0;
 
+        /** The selection weight, clamped to be non-negative; a negative authored value reads as {@code 0}. */
         public double weight() {
             return Math.max(0.0, weight);
         }

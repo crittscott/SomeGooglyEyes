@@ -33,6 +33,12 @@ public final class ClientRenderLayers {
     private ClientRenderLayers() {
     }
 
+    /**
+     * Reinstall every eye layer across the whole dispatcher: clear the attachment caches, then walk the
+     * player skin map and the per-type renderer map, adding the vanilla-model layers to living renderers
+     * and the optional GeckoLib layer to the rest. Duplicate-safe through the weak {@code INSTALLED} set,
+     * and skips any entity hidden by {@link ClientConfig}. Call after a renderer rebuild.
+     */
     @SuppressWarnings("rawtypes")
     public static void install(EntityRenderDispatcher dispatcher) {
         Resolvers.clearCaches();

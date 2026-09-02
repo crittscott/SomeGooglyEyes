@@ -18,14 +18,21 @@ public final class ClientEyeRuntime {
     private ClientEyeRuntime() {
     }
 
+    /** Drop every tracker; call on client disconnect and on a resource reload. */
     public static void clear() {
         TRACKERS.clear();
     }
 
+    /** The client-tick counter this runtime advances once per {@link #tick()}. */
     public static int clientTicks() {
         return clientTicks;
     }
 
+    /**
+     * The tracker for this entity's current placement, creating one on first use and replacing any
+     * existing tracker whose {@link HeadInfo} no longer matches (the eye array is shaped from it, so a
+     * variant or age change cannot reuse the old tracker).
+     */
     public static GooglyTracker get(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker == null || !tracker.matches(helper)) {
@@ -35,11 +42,16 @@ public final class ClientEyeRuntime {
         return tracker;
     }
 
+    /** The live tracker for this entity, or {@code null} if none exists yet (no rebuild on mismatch). */
     @Nullable
     public static GooglyTracker peek(LivingEntity living) {
         return TRACKERS.get(living);
     }
 
+    /**
+     * Advance the tick counter, evict any tracker unrendered for more than 10 ticks, and step the
+     * physics of those rendered this tick or last. A no-op while there is no level or the game is paused.
+     */
     public static void tick() {
         clientTicks++;
         Minecraft minecraft = Minecraft.getInstance();

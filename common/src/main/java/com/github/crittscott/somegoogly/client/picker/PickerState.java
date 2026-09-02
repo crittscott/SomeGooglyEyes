@@ -285,6 +285,7 @@ public final class PickerState {
         send(PickerFreezePacket.freeze(clientEntity.getUUID()));
     }
 
+    /** Whether the picker is active and {@code entity} is the mob it currently targets. */
     public static boolean isActiveTarget(LivingEntity entity) {
         return active && entity == target.get();
     }
@@ -535,10 +536,12 @@ public final class PickerState {
         }
     }
 
+    /** The mob currently being edited, or {@code null} when none is chosen or it has been unloaded. */
     public static LivingEntity target() {
         return target.get();
     }
 
+    /** The entity-type id of the chosen mob, or {@code null} when nothing is chosen. */
     public static ResourceLocation targetType() {
         return targetType;
     }
@@ -688,6 +691,7 @@ public final class PickerState {
         target = new WeakReference<>(null);
     }
 
+    /** How many placement-variant drafts the current editing session holds. */
     public static int variantCount() {
         return variants.size();
     }

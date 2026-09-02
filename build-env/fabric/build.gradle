@@ -2,10 +2,6 @@ plugins {
     id 'com.gradleup.shadow'
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 architectury {
     platformSetupLoomIde()
     fabric()
@@ -73,9 +69,7 @@ dependencies {
     // Optional at runtime; needed at compile time by Fabric's GeckoLib render adapter.
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.21.1:$rootProject.geckolib_version"
 
-    // common's source uses javax.annotation.Nullable. Forge gets this transitively through its own
-    // dependency chain; Fabric Loom's does not provide it, so it must be redeclared here even though
-    // common itself already depends on it.
+    // common's source uses javax.annotation.Nullable; loader compilation doesn't inherit common's compileOnly deps.
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 }
 

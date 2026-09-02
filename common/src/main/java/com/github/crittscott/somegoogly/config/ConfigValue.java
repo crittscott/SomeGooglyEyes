@@ -18,6 +18,7 @@ public final class ConfigValue<T> {
         this.value = this.defaultValue;
     }
 
+    /** Create a boolean value; no normalization is applied. */
     public static ConfigValue<Boolean> bool(boolean defaultValue) {
         return new ConfigValue<>(defaultValue, value -> value);
     }
@@ -46,10 +47,12 @@ public final class ConfigValue<T> {
         });
     }
 
+    /** The current normalized value. */
     public T get() {
         return value;
     }
 
+    /** Restore the (already normalized) factory default. */
     public void reset() {
         value = defaultValue;
     }

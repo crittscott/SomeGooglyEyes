@@ -87,7 +87,7 @@ public class TwilightForestResolver extends ModelPartTreeResolver {
 
     /**
      * A young-gated uniform-axis scale followed by a translate. {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches the
+     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
      * resolved chain per (model, token) and the same model instance renders every baby and adult of its
      * type.
      */

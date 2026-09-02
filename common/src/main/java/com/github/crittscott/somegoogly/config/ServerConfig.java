@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 /**
  * Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
- * datapack), so admins can tune how common eyes are — globally and per entity — without editing the
- * 100+ shipped config files. The eye JSONs only decide <i>where</i> eyes go and whether an entity is
+ * datapack), so admins can tune how common eyes are — globally and per entity — without touching the
+ * shipped eye-definition datapacks. Those JSONs only decide <i>where</i> eyes go and whether an entity is
  * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied in
  * {@code ServerServices}); this class decides <i>how often</i> an eligible entity actually rolls
  * eyes. Also hosts the picker's opt-in gate for the destructive {@code /sg spawnall} grid
@@ -198,10 +198,16 @@ public class ServerConfig {
         overrides = List.of();
     }
 
+    /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
     public static boolean validateBehaviorId(String value) {
         return ResourceLocation.tryParse(value) != null;
     }
 
+    /**
+     * Whether a config string is a well-formed {@code "entity-pattern,percent"} override: entity-id
+     * characters plus {@code *}, and a percent within {@code [PERCENT_MIN, PERCENT_MAX]}. The entry guard
+     * for {@link #ENTITY_OVERRIDES}.
+     */
     public static boolean validateOverride(String value) {
         String[] split = value.split(",");
         if (split.length != 2) {

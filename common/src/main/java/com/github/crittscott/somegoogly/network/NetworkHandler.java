@@ -109,7 +109,7 @@ public final class NetworkHandler {
         }
     }
 
-    /** Register physical-client receivers after Fabric has registered their clientbound codecs. */
+    /** Register the physical-client receiver for every clientbound payload, after the loader has bound their codecs. */
     public static void registerClientReceivers(NetworkTransport.ClientReceiverRegistrar registrar) {
         for (PayloadType<?> payloadType : PAYLOAD_TYPES) {
             if (payloadType.direction == Direction.CLIENTBOUND) {
@@ -150,6 +150,7 @@ public final class NetworkHandler {
         }
     }
 
+    /** Forget this player's handshake, ready, and config-generation bookkeeping. */
     public static void playerLeft(ServerPlayer player) {
         PENDING.remove(player.getUUID());
         READY.remove(player.getUUID());
@@ -166,10 +167,16 @@ public final class NetworkHandler {
         cachedConfigPayload = null;
     }
 
+    /** Whether this player finished the protocol handshake and may be sent gameplay payloads. */
     public static boolean ready(ServerPlayer player) {
         return READY.contains(player.getUUID());
     }
 
+    /**
+     * Send the resolved eye-config set to a player, but only when its generation differs from what that
+     * player last received. An encode failure logs once per generation and disconnects the player; a
+     * successful encode is cached and reused for every other player on the same generation.
+     */
     public static void sendConfig(ServerPlayer player) {
         long generation = ServerEyeConfigs.generation();
         if (Long.valueOf(generation).equals(LAST_CONFIG_GENERATION.get(player.getUUID()))) {
@@ -194,38 +201,47 @@ public final class NetworkHandler {
         LAST_CONFIG_GENERATION.put(player.getUUID(), generation);
     }
 
+    /** Send one entity's eye-state snapshot to a single player. */
     public static void sendEyeState(ServerPlayer player, EyeStatePacket packet) {
         EYE_STATE_PAYLOAD.sendToPlayer(player, packet);
     }
 
+    /** Send an eye-state snapshot to every player tracking the entity, plus the entity itself when it is a player. */
     public static void sendEyeStateTrackingAndSelf(Entity entity, EyeStatePacket packet) {
         NetworkTracking.send(entity, true, EYE_STATE_PAYLOAD.payload(packet));
     }
 
+    /** Send a behavior trigger to a single player. */
     public static void sendBehavior(ServerPlayer player, EyeBehaviorTriggerPacket packet) {
         EYE_BEHAVIOR_PAYLOAD.sendToPlayer(player, packet);
     }
 
+    /** Send a behavior trigger to every player tracking the entity, excluding the entity itself. */
     public static void sendBehaviorTracking(Entity entity, EyeBehaviorTriggerPacket packet) {
         NetworkTracking.send(entity, false, EYE_BEHAVIOR_PAYLOAD.payload(packet));
     }
 
+    /** Send the picker freeze/unfreeze request to the server. */
     public static void sendToServer(PickerFreezePacket packet) {
         PICKER_FREEZE_PAYLOAD.sendToServer(packet);
     }
 
+    /** Send the picker test-mob spawn request to the server. */
     public static void sendToServer(PickerSpawnPacket packet) {
         PICKER_SPAWN_PAYLOAD.sendToServer(packet);
     }
 
+    /** Send the picker spawn-all request to the server. */
     public static void sendToServer(PickerSpawnAllPacket packet) {
         PICKER_SPAWN_ALL_PAYLOAD.sendToServer(packet);
     }
 
+    /** Send the picker mob move/rotate request to the server. */
     public static void sendToServer(PickerMobPosePacket packet) {
         PICKER_MOB_POSE_PAYLOAD.sendToServer(packet);
     }
 
+    /** Send the picker world-export request to the server. */
     public static void sendToServer(PickerExportPacket packet) {
         PICKER_EXPORT_PAYLOAD.sendToServer(packet);
     }
@@ -273,10 +289,12 @@ public final class NetworkHandler {
         }
     }
 
+    /** The translated disconnect message for a protocol-version mismatch, from the named side's point of view. */
     public static Component protocolMismatch(Component receiver, String expected, String received) {
         return Component.translatable("somegoogly.network.protocol_mismatch", receiver, expected, received);
     }
 
+    /** A fresh unpooled buffer for manual packet encoding; the caller must {@code release()} it. */
     public static FriendlyByteBuf newBuffer() {
         return new FriendlyByteBuf(Unpooled.buffer());
     }
@@ -341,18 +359,22 @@ public final class NetworkHandler {
             };
         }
 
+        /** The loader-facing custom-payload type token. */
         public CustomPacketPayload.Type<Payload<T>> type() {
             return type;
         }
 
+        /** The stream codec pairing this channel's body decoder and encoder. */
         public StreamCodec<RegistryFriendlyByteBuf, Payload<T>> codec() {
             return codec;
         }
 
+        /** This channel's resource id (protocol-versioned for gameplay payloads, stable for the handshake). */
         public ResourceLocation id() {
             return type.id();
         }
 
+        /** Bind the single receiver for this channel; throws if one is already bound. */
         public synchronized void bindReceiver(NetworkTransport.Receiver<T> receiver) {
             if (this.receiver != null) {
                 throw new IllegalStateException("Receiver is already bound for " + id());
@@ -360,6 +382,7 @@ public final class NetworkHandler {
             this.receiver = receiver;
         }
 
+        /** Dispatch a decoded payload to the bound receiver; throws if none is bound. */
         public void receive(Payload<T> payload, NetworkTransport.Context context) {
             NetworkTransport.Receiver<T> boundReceiver = receiver;
             if (boundReceiver == null) {
@@ -368,25 +391,30 @@ public final class NetworkHandler {
             boundReceiver.receive(payload.value, context);
         }
 
+        /** Send a value on this channel to one player. */
         public void sendToPlayer(ServerPlayer player, T value) {
             NetworkTransport.sendToPlayer(player, payload(value));
         }
 
+        /** Send a value to the server, silently dropping it when the server registered no receiver for this channel. */
         public void sendToServer(T value) {
             if (NetworkTransport.canServerReceive(type)) {
                 sendToServerUnchecked(value);
             }
         }
 
+        /** Send a value to the server without first checking that a server receiver exists. */
         public void sendToServerUnchecked(T value) {
             NetworkTransport.sendToServer(payload(value));
         }
 
+        /** Wrap a bare value in its sendable {@link Payload}. */
         public Payload<T> payload(T value) {
             return new Payload<>(this, value);
         }
     }
 
+    /** The sendable wrapper pairing a value with its {@link PayloadType}. */
     public static final class Payload<T> implements CustomPacketPayload {
         private final PayloadType<T> payloadType;
         private final T value;

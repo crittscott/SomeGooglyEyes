@@ -111,4 +111,4 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 - Optional renderer integrations may render no eyes when a model family or attachment token cannot be resolved, and third-party model changes can silently invalidate bundled tokens or placement geometry.
 - Entity persistence on Fabric depends on the mod's own Mixin, not a component dependency.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- Root `src/`, `build-env/`, `working-build-env/`, root `run/`, and root-level IDE launch files are not build inputs; `build-env/` copies the root and module build scripts verbatim.
+- `build-env/` is not a build input; it copies the root and module build scripts verbatim, and every edit to a build script must be mirrored there.

@@ -49,10 +49,12 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return decoded.isValid() ? decoded : EMPTY;
     }
 
+    /** Whether no field is set, so this override contributes nothing on {@link EyeAppearance#overlay}. */
     public boolean isEmpty() {
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
     }
 
+    /** Whether every set color channel is in range; an unset channel is always valid. */
     public boolean isValid() {
         return cornea.map(EyeColor::isValid).orElse(true) && iris.map(EyeColor::isValid).orElse(true);
     }

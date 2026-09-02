@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  *
  * <p>The work splits in two. {@link #resolve} searches the model's part tree by string name and is the
  * expensive half; {@link #toAttachmentSpace} replays the {@link Attachment} it produced onto the pose and
- * is the per-frame half. The split is what lets {@link Resolvers#ATTACHMENTS} memoize the search: a model
+ * is the per-frame half. The split is what lets {@link AttachmentCache#ATTACHMENTS} memoize the search: a model
  * is a singleton and a token names the same part within it forever.
  */
 public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>, Attachment> {
@@ -114,7 +114,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * the model has no such part (an unknown token, or a model whose worn variant lacks it).
      *
      * <p>The expensive half of the contract: a search of the model's part tree, matching each candidate
-     * path against the token. Called once per (model, token) — see {@link Resolvers#ATTACHMENTS} — so it
+     * path against the token. Called once per (model, token) — see {@link AttachmentCache#ATTACHMENTS} — so it
      * may allocate and walk freely.
      *
      * @param partToken the configured attachment token (a string part name, possibly camelCase)

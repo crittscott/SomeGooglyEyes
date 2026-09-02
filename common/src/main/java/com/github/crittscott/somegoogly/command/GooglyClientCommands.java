@@ -599,7 +599,7 @@ public class GooglyClientCommands {
         } catch (IllegalArgumentException noArg) {
             mod = null;
         }
-        // Spawning is server-side work ({@link PickerSpawnService#spawn}, reached via PickerSpawnAllPacket).
+        // Spawning is server-side work (PickerSpawnService#spawn, reached via PickerSpawnAllPacket).
         NetworkHandler.sendToServer(new PickerSpawnAllPacket(mod));
         if (mod == null) {
             feedback(ctx, "somegoogly.command.picker.spawning_all");

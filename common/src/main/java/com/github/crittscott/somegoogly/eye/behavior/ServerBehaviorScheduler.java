@@ -163,6 +163,11 @@ public final class ServerBehaviorScheduler {
         start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
     }
 
+    /**
+     * Advance the scheduler one server tick: retire finished behaviors, drop states for removed or
+     * unwatched-and-idle mobs, and roll a fresh ambient behavior when a watched eyed mob's cooldown
+     * expires. The eye-state NBT read is deferred to cooldown expiry so eyeless mobs cost nothing per tick.
+     */
     public static void serverTick() {
         now++;
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
