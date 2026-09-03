@@ -7,12 +7,14 @@ import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
@@ -42,6 +44,13 @@ public final class GooglyEyeRenderer {
     private GooglyEyeRenderer() {
     }
 
+    // Scratch space reused by captureGravity across every eye, every frame: the render thread is
+    // single-threaded and one call finishes before the next starts (mirrors GooglyTracker's static
+    // INFLUENCE), so mutating these in place instead of allocating fresh JOML objects is safe.
+    private static final Matrix3f GRAVITY_ROTATION = new Matrix3f();
+    private static final Matrix3f GRAVITY_POSE = new Matrix3f();
+    private static final Vector3f GRAVITY_DOWN = new Vector3f();
+
     /**
      * Record world-down in this eye's pupil plane for the next physics tick, using the eye's fully
      * composed animated pose. The result is independent of camera orientation and uses the tracker
@@ -49,20 +58,17 @@ public final class GooglyEyeRenderer {
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         // localToWorld = (view → world) · (local → view)
-        Matrix3f localToWorld = new Matrix3f().rotation(
-                        Minecraft.getInstance().gameRenderer.getMainCamera().rotation())
-                .mul(new Matrix3f(pose.last().pose()));
-        Vector3f down = localToWorld.invert().transform(new Vector3f(0F, -1F, 0F));
-        eyeInfo.gravX = -down.x;
-        eyeInfo.gravY = -down.y;
+        GRAVITY_ROTATION.rotation(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        GRAVITY_POSE.set(pose.last().pose());
+        GRAVITY_ROTATION.mul(GRAVITY_POSE).invert();
+        GRAVITY_DOWN.set(0F, -1F, 0F);
+        GRAVITY_ROTATION.transform(GRAVITY_DOWN);
+        eyeInfo.gravX = -GRAVITY_DOWN.x;
+        eyeInfo.gravY = -GRAVITY_DOWN.y;
     }
 
     static float lerp(float a, float b, float t) {
         return a + (b - a) * t;
-    }
-
-    static float[] lerpColor(float[] from, float[] to, float t) {
-        return new float[]{lerp(from[0], to[0], t), lerp(from[1], to[1], t), lerp(from[2], to[2], t)};
     }
 
     /**
@@ -80,8 +86,8 @@ public final class GooglyEyeRenderer {
         EyeAppearance look = helper.appearanceAt(headIndex, eyeIndex).overlay(overrides);
 
         // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its center.
-        float[] eyes = placement.positionArray();
-        pose.translate(eyes[0], eyes[1], eyes[2]);
+        Vec3 position = placement.position();
+        pose.translate(position.x, position.y, position.z);
         EyeRenderTransforms.applyRotation(pose, placement);
 
         GooglyTracker.EyeInfo eyeInfo = tracker.eyes[headIndex][eyeIndex];
@@ -101,17 +107,21 @@ public final class GooglyEyeRenderer {
 
         VertexConsumer buffer = bufferSource.getBuffer(RENDER_TYPE);
 
-        float[] corneaColors = look.cornea().toArray();
+        EyeColor cornea = look.cornea();
+        float corneaR = cornea.r(), corneaG = cornea.g(), corneaB = cornea.b();
         // Color-change behavior blends the cornea toward its target color.
         if (eyeInfo.tintColor != null) {
             float tintAmount = lerp(eyeInfo.prevTintAmount, eyeInfo.tintAmount, partialTicks);
             if (tintAmount > 0F) {
-                corneaColors = lerpColor(corneaColors, eyeInfo.tintColor, tintAmount);
+                corneaR = lerp(corneaR, eyeInfo.tintColor[0], tintAmount);
+                corneaG = lerp(corneaG, eyeInfo.tintColor[1], tintAmount);
+                corneaB = lerp(corneaB, eyeInfo.tintColor[2], tintAmount);
             }
         }
-        model.renderCornea(pose, buffer, packedLight, overlay, corneaColors[0], corneaColors[1], corneaColors[2], 1F);
+        model.renderCornea(pose, buffer, packedLight, overlay, corneaR, corneaG, corneaB, 1F);
 
-        float[] irisColors = look.iris().toArray();
+        EyeColor iris = look.iris();
+        float irisR = iris.r(), irisG = iris.g(), irisB = iris.b();
         float irisScale = placement.irisScale();
 
         pose.pushPose();
@@ -122,17 +132,17 @@ public final class GooglyEyeRenderer {
         float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
         float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
         model.moveIris(irisX, irisY, irisScale);
-        model.renderIris(pose, buffer, packedLight, overlay, irisColors[0], irisColors[1], irisColors[2], 1F);
+        model.renderIris(pose, buffer, packedLight, overlay, irisR, irisG, irisB, 1F);
         pose.popPose();
 
         boolean glow = look.glow();
         if (glow) {
             buffer = bufferSource.getBuffer(RENDER_TYPE_EYES);
-            model.renderCornea(pose, buffer, packedLight, overlay, corneaColors[0], corneaColors[1], corneaColors[2], 1F);
+            model.renderCornea(pose, buffer, packedLight, overlay, corneaR, corneaG, corneaB, 1F);
 
             pose.pushPose();
             pose.scale(irisScale, irisScale, 1F);
-            model.renderIris(pose, buffer, packedLight, overlay, irisColors[0], irisColors[1], irisColors[2], 1F);
+            model.renderIris(pose, buffer, packedLight, overlay, irisR, irisG, irisB, 1F);
             pose.popPose();
         }
 

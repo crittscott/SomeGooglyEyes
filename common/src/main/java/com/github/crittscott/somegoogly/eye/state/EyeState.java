@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -102,6 +103,7 @@ public final class EyeState {
         data.putBoolean(HAS_EYES, hasEyes);
         data.putFloat(VARIANT_ROLL, variantRoll);
         if (hasEyes) {
+            ServerBehaviorScheduler.onEyesGained(entity);
             sync(entity);
         }
     }
@@ -133,6 +135,7 @@ public final class EyeState {
         data.putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
         writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
+        ServerBehaviorScheduler.onEyesGained(entity);
         sync(entity);
     }
 
@@ -157,6 +160,9 @@ public final class EyeState {
     /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
     public static void setHasEyes(LivingEntity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
+        if (hasEyes) {
+            ServerBehaviorScheduler.onEyesGained(entity);
+        }
         sync(entity);
     }
 

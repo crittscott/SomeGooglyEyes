@@ -20,10 +20,9 @@ import java.util.Map;
 public final class ClientEyeConfigs {
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
-    private static final Map<CacheKey, HeadInfo> resolved = new HashMap<>();
-
-    private record CacheKey(ResourceLocation entity, boolean baby, int variant) {
-    }
+    // Nested by entity then a packed (variant, baby) key, mirroring ModelMemo's per-frame-allocation-free
+    // pattern: a compound key object would have to be allocated on every call just to probe the cache.
+    private static final Map<ResourceLocation, Map<Integer, HeadInfo>> resolved = new HashMap<>();
 
     private ClientEyeConfigs() {
     }
@@ -49,8 +48,15 @@ public final class ClientEyeConfigs {
         boolean baby = living.isBaby();
         RuntimeConfig config = get(entity, baby);
         int variant = EyeConfigModel.chooseVariantIndex(config, variantRoll);
-        return resolved.computeIfAbsent(new CacheKey(entity, baby, variant),
-                key -> new HeadInfo(config, key.variant()));
+        int key = (variant << 1) | (baby ? 1 : 0);
+        Map<Integer, HeadInfo> byVariant = resolved.computeIfAbsent(entity, e -> new HashMap<>());
+        HeadInfo cached = byVariant.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        HeadInfo created = new HeadInfo(config, variant);
+        byVariant.put(key, created);
+        return created;
     }
 
     /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */

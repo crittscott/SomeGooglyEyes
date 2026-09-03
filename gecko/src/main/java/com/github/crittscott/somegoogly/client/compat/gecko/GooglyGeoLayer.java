@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.client.render.EyeRenderGating;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -105,11 +104,12 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
         Frame frame = new Frame();
         frame.helper = helper;
-        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye), the same as the
-        // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
-        frame.overrides = EyeState.readProperties(living);
         frame.tracker = ClientEyeRuntime.get(living, helper);
         frame.tracker.markRendered(ClientEyeRuntime.clientTicks());
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye), the same as the
+        // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
+        // Mirrored onto the tracker by ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
+        frame.overrides = frame.tracker.overrides;
         frame.headBones = new GeoBone[helper.getHeadCount()];
         for (int h = 0; h < frame.headBones.length; h++) {
             frame.headBones[h] = GeoBones.findBone(bakedModel, helper.getAttachToken(h));

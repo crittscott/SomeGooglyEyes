@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentReso
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,10 +50,6 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
-        // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
-        // shared config below. Same AppearanceOverride an eye item carries.
-        AppearanceOverride overrides = EyeState.readProperties(living);
-
         // Resolve the part-tree strategy for this model family (string names / stable indices).
         M model = this.getParentModel();
         EyeAttachmentResolver resolver = Resolvers.forModel(model);
@@ -64,6 +59,11 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
 
         GooglyTracker tracker = ClientEyeRuntime.get(living, helper);
         tracker.markRendered(ClientEyeRuntime.clientTicks());
+
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
+        // shared config below. Same AppearanceOverride an eye item carries; mirrored onto the tracker by
+        // ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
+        AppearanceOverride overrides = tracker.overrides;
 
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 

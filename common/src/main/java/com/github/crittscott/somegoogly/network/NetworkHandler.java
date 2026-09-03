@@ -182,7 +182,8 @@ public final class NetworkHandler {
      */
     public static void sendConfig(ServerPlayer player) {
         long generation = ServerEyeConfigs.generation();
-        if (Long.valueOf(generation).equals(LAST_CONFIG_GENERATION.get(player.getUUID()))) {
+        Long lastGeneration = LAST_CONFIG_GENERATION.get(player.getUUID());
+        if (lastGeneration != null && lastGeneration == generation) {
             return;
         }
         byte[] payload;

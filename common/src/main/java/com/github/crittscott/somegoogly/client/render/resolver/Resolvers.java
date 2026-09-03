@@ -3,6 +3,8 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import net.minecraft.client.model.EntityModel;
 
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
@@ -22,6 +24,11 @@ public final class Resolvers {
             new ChildMapResolver()
     );
 
+    // Which resolver handles a given model instance never changes for that instance's life, and the
+    // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
+    // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
+    private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
+
     private Resolvers() {
     }
 
@@ -33,6 +40,7 @@ public final class Resolvers {
      */
     public static void clearCaches() {
         AttachmentCache.ATTACHMENTS.clear();
+        BY_MODEL.clear();
         for (EyeAttachmentResolver r : ALL) {
             r.clearModelCache();
         }
@@ -40,6 +48,10 @@ public final class Resolvers {
 
     /** @return a resolver for the model, or {@code null} if none handles it. */
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
+        return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
+    }
+
+    private static EyeAttachmentResolver findResolver(EntityModel<?> model) {
         for (EyeAttachmentResolver r : ALL) {
             if (r.handles(model)) {
                 return r;

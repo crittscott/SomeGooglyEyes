@@ -4,6 +4,8 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -40,6 +42,13 @@ public class GooglyTracker {
 
     public EyeInfo[][] eyes;
 
+    // The mob's current appearance override (dye / redstone / harvested-eye / slimy eye), mirrored here
+    // from EyeStatePacket so the render layers don't re-parse it from NBT every frame. Seeded from NBT
+    // once at construction and kept in sync by ClientNetworkHandler.applyEyeState on every later packet;
+    // a placement change that replaces this tracker re-seeds correctly because the NBT write always lands
+    // before the replacement tracker is constructed.
+    public AppearanceOverride overrides;
+
         // Behaviors are scheduled server-side, one at a time and non-interruptable; the client just plays
     // the active instance, advancing it each tick and interpolating it at render time. All of its state
     // is transient and client-only (no NBT, no sync of progress — only the trigger is sent).
@@ -50,6 +59,7 @@ public class GooglyTracker {
         this.parent = parent;
         this.helper = helper;
         this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
+        this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
 
         for (int i = 0; i < eyes.length; i++) {

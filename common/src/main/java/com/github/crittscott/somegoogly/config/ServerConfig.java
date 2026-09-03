@@ -81,27 +81,35 @@ public class ServerConfig {
     private static List<String> lastParsedSource;
     private static List<Override> overrides = List.of();
 
+    // Resolved view of AMBIENT_BEHAVIOR_POOL, rebuilt only when a loader or test replaces the immutable
+    // list (same rebuild-on-identity-change trick as ENTITY_OVERRIDES above).
+    private static List<String> lastBehaviorPoolSource;
+    private static List<EyeBehavior> enabledBehaviors = List.of();
+
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
     private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
     }
 
     /**
      * The behaviors eligible for ambient play: every registered behavior whose id appears in
-     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored. Recomputed each call —
-     * it's only hit when a mob's ambient timer fires.
+     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored. Hit whenever a mob's
+     * ambient timer fires, so the result is cached and only rebuilt when the pool config changes.
      */
     public static List<EyeBehavior> enabledBehaviors() {
-        Set<String> enabled = new LinkedHashSet<>();
-        for (String id : AMBIENT_BEHAVIOR_POOL.get()) {
-            enabled.add(id);
+        List<String> source = AMBIENT_BEHAVIOR_POOL.get();
+        if (source == lastBehaviorPoolSource) {
+            return enabledBehaviors;
         }
+        Set<String> enabled = new LinkedHashSet<>(source);
         List<EyeBehavior> result = new ArrayList<>();
         for (EyeBehavior behavior : EyeBehaviors.all()) {
             if (enabled.contains(behavior.id().toString())) {
                 result.add(behavior);
             }
         }
-        return result;
+        enabledBehaviors = result;
+        lastBehaviorPoolSource = source;
+        return enabledBehaviors;
     }
 
     /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
@@ -196,6 +204,8 @@ public class ServerConfig {
         SWIRL_ON_TRADE.reset();
         lastParsedSource = null;
         overrides = List.of();
+        lastBehaviorPoolSource = null;
+        enabledBehaviors = List.of();
     }
 
     /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
