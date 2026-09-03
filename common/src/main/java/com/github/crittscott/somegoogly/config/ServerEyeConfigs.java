@@ -31,6 +31,7 @@ public final class ServerEyeConfigs {
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     private static volatile long generation;
+    private static volatile String signature = "";
 
     private ServerEyeConfigs() {
     }
@@ -83,6 +84,29 @@ public final class ServerEyeConfigs {
 
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = next;
+        signature = "";
         generation++;
+    }
+
+    /**
+     * Datapack-reload entry point: swap in the resolved set and bump {@link #generation} only when
+     * {@code nextSignature} (a canonical serialization of {@code next}, computed by the reload
+     * listener) differs from the installed set's. A {@code /reload} triggered for an unrelated
+     * datapack thus stops re-fanning the whole eye-config snapshot to every online player. Returns
+     * whether a swap happened.
+     */
+    public static boolean replaceIfChanged(Map<ResourceLocation, RuntimeConfigSet> next, String nextSignature) {
+        if (nextSignature.equals(signature)) {
+            return false;
+        }
+        configs = next;
+        signature = nextSignature;
+        generation++;
+        return true;
+    }
+
+    /** Drop the content signature so the first reload of the next world always resynchronizes. */
+    public static void onServerStopping() {
+        signature = "";
     }
 }

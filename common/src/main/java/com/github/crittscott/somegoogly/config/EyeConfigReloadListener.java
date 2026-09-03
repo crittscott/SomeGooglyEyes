@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
@@ -92,10 +93,32 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     aggregateError);
             return;
         }
-        ServerEyeConfigs.replaceAll(selected);
+        if (!ServerEyeConfigs.replaceIfChanged(selected, contentSignature(selected))) {
+            SomeGooglyCommon.LOGGER.info(
+                    "Eye config reload produced no change from generation {}; not resyncing clients",
+                    ServerEyeConfigs.generation());
+            return;
+        }
         SomeGooglyCommon.LOGGER.info(
                 "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse)",
                 selected.size(), files.size(), skippedModNotInstalled, failedParse);
+    }
+
+    /**
+     * A canonical, order-independent string identity of the resolved config set: each entry encoded
+     * through {@link RuntimeConfigSet#CODEC} and keyed by entity id in a sorted map. An encode
+     * failure (not expected — these values already decoded once) falls back to an identity hash, so a
+     * suspect entry forces a resync rather than silently comparing equal.
+     */
+    private static String contentSignature(Map<ResourceLocation, RuntimeConfigSet> configs) {
+        Map<String, String> sorted = new TreeMap<>();
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
+            sorted.put(entry.getKey().toString(),
+                    RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).result()
+                            .map(json -> json.toString())
+                            .orElseGet(() -> "?" + System.identityHashCode(entry.getValue())));
+        }
+        return sorted.toString();
     }
 
     private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {

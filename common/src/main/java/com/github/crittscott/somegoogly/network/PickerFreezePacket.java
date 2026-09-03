@@ -2,9 +2,11 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -19,6 +21,15 @@ import java.util.UUID;
  * creative mid-edit.
  */
 public class PickerFreezePacket {
+
+    /**
+     * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
+     * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
+     * the mob's box and the mob's position the server measures to. Keeps a creative client from
+     * freezing an arbitrary mob in any loaded chunk by UUID.
+     */
+    private static final double MAX_FREEZE_DISTANCE_SQ =
+            (LookTarget.DEFAULT_REACH + 4.0) * (LookTarget.DEFAULT_REACH + 4.0);
 
     private final boolean freeze;
     @Nullable
@@ -55,6 +66,12 @@ public class PickerFreezePacket {
             ServerPlayer sender = context.player();
             if (packet.freeze) {
                 if (!PickerPermissions.creative(sender)) {
+                    return;
+                }
+                Entity target = sender.serverLevel().getEntity(packet.mobId);
+                if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
+                    sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                            Component.translatable("somegoogly.command.picker.freeze_too_far")));
                     return;
                 }
                 Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);

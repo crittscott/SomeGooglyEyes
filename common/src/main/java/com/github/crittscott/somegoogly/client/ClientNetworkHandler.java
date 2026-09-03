@@ -30,8 +30,19 @@ public final class ClientNetworkHandler {
     private static final int MAX_PENDING_EYE_STATES = 1_024;
     private static final int PENDING_EYE_STATE_TTL_TICKS = 100;
     private static final int MIN_CONFIG_SYNC_INTERVAL_TICKS = 20;
-    private static final long MIN_CONFIG_DECODE_NANOS = 250_000_000L;
+    private static final long MIN_CONFIG_DECODE_NANOS = 1_000_000_000L;
     private static final Map<Integer, PendingEyeState> PENDING_EYE_STATES = new LinkedHashMap<>();
+
+    // Thread ownership of the mutable statics below:
+    //   - handleConfigPayload runs on the netty thread (under this class's monitor) and owns
+    //     lastWireConfigGeneration and lastConfigDecodeNanos.
+    //   - every context.queue(...) body runs on the client main thread and owns the rest:
+    //     protocolAccepted, networkTicks, lastConfigSyncTick, lastConfigGeneration, the pending map,
+    //     the counters.
+    //   - clearPendingEyeStates (disconnect) resets all of them, including the netty-owned pair
+    //     without holding the monitor; tolerated because the connection is already gone.
+    // The partition is otherwise clean, and a stale read's worst case is a spurious self-disconnect,
+    // never corrupted state.
     private static boolean registered;
     private static boolean protocolAccepted;
     private static int networkTicks;
@@ -139,6 +150,10 @@ public final class ClientNetworkHandler {
     }
 
     private static synchronized void handleConfigPayload(byte[] payload, NetworkTransport.Context context) {
+        if (payload.length < Long.BYTES) {
+            context.queue(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
+            return;
+        }
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(payload));
         try {
             long generation = buffer.getLong(buffer.readerIndex());

@@ -15,6 +15,9 @@ public final class EyeStateSync {
     }
 
     public static void sendTo(LivingEntity entity, ServerPlayer player) {
+        if (EyeState.isDefaultState(entity)) {
+            return;
+        }
         NetworkHandler.sendEyeState(player, packet(entity, EyeState.snapshot(entity)));
     }
 

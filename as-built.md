@@ -54,7 +54,7 @@ Persistent entity keys:
 - `somegoogly:eyeVariantRoll` — stable placement-variant roll;
 - `somegoogly:eyeOverrides` — optional shared appearance overrides.
 
-Related mutations are flushed as one full-snapshot sync. The eye-state key and variant roll are written only when the eye-state key is absent, so the natural-eyes decision survives persistence and transfer.
+Related mutations are flushed as one full-snapshot sync. The eye-state key and variant roll are written only when the eye-state key is absent, so the natural-eyes decision survives persistence and transfer. An absent snapshot reads client-side as no-eyes-no-overrides, so `EyeState.initialize` and `EyeStateSync.sendTo` skip it; mid-life mutations always send.
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
@@ -104,11 +104,10 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Automated verification
 
-77 shared assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 78 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1. Visual behavior is covered only by the manual physical-client smoke-test matrix.
+77 shared assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 78 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1.
 
 ## Operational boundaries
 
 - Optional renderer integrations may render no eyes when a model family or attachment token cannot be resolved, and third-party model changes can silently invalidate bundled tokens or placement geometry.
-- Entity persistence on Fabric depends on the mod's own Mixin, not a component dependency.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
 - `build-env/` is not a build input; it copies the root and module build scripts verbatim, and every edit to a build script must be mirrored there.

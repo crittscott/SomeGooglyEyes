@@ -67,6 +67,7 @@
   "somegoogly.command.picker.export_success": "Exported %s → %s, reloading.",
   "somegoogly.command.picker.feedback": "[Googly] %s",
   "somegoogly.command.picker.freeze_conflict": "That mob is already being edited by %s.",
+  "somegoogly.command.picker.freeze_too_far": "That mob is too far away to edit.",
   "somegoogly.command.picker.glow_set": "glow = %s",
   "somegoogly.command.picker.iris_set": "irisColors set.",
   "somegoogly.command.picker.irisscale_set": "irisScale = %s",

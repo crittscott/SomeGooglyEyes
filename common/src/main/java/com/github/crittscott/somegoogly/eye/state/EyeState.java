@@ -75,17 +75,35 @@ public final class EyeState {
         return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
     }
 
+    /**
+     * Whether this entity's state matches what a freshly created client entity already assumes:
+     * no eyes and no appearance overrides. The start-tracking and spawn-time syncs skip the packet
+     * in this case; a mid-life mutation always sends, because the client may then hold a snapshot
+     * that has to be transitioned back to the default.
+     */
+    public static boolean isDefaultState(LivingEntity entity) {
+        return !hasEyes(entity) && readProperties(entity).isEmpty();
+    }
+
     /** Whether the server has made this entity's one-time natural-eye decision. */
     public static boolean isInitialized(LivingEntity entity) {
         return EntityPersistentData.get(entity).contains(HAS_EYES);
     }
 
-    /** Store the one-time natural-eye decision and placement roll, then synchronize once. */
+    /**
+     * Store the one-time natural-eye decision and placement roll. Broadcasts only when the decision
+     * turned eyes on: an eyeless outcome already equals every client's implicit default, so the
+     * eyeless spawn — the overwhelming majority — costs no packet. The eyed broadcast is kept so a
+     * player who is already tracking when this runs is corrected; later trackers get it from the
+     * start-tracking sync.
+     */
     public static void initialize(LivingEntity entity, boolean hasEyes, float variantRoll) {
         CompoundTag data = EntityPersistentData.get(entity);
         data.putBoolean(HAS_EYES, hasEyes);
         data.putFloat(VARIANT_ROLL, variantRoll);
-        sync(entity);
+        if (hasEyes) {
+            sync(entity);
+        }
     }
 
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */

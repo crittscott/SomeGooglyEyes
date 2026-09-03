@@ -49,6 +49,7 @@ public final class ServerServices {
         PickerFreezeService.onServerStopping(server);
         PickerExportService.onServerStopping();
         PickerRequestLimiter.onServerStopping();
+        ServerEyeConfigs.onServerStopping();
         NetworkHandler.serverStopped();
     }
 
