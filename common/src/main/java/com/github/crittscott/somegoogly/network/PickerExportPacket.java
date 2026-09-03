@@ -18,7 +18,8 @@ import java.util.UUID;
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
  * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); all validation,
  * path construction, the 10-second cooldown, the file write, and the {@code /reload} live in
- * {@link PickerExportService}, creative-gated ({@link PickerPermissions}).
+ * {@link PickerExportService}. Unlike the other picker verbs this one also requires permission
+ * level 2: it forces a server-wide datapack reload, which vanilla reserves for operators.
  *
  * <p>The NBT is read under a {@link PickerExportService#MAX_CONFIG_BYTES} quota — a legitimate config
  * is a few KiB — so an oversized payload decodes to {@code null} (the service rejects it with
@@ -63,6 +64,11 @@ public class PickerExportPacket {
         context.queue(() -> {
             ServerPlayer sender = context.player();
             if (!PickerPermissions.creative(sender)) {
+                return;
+            }
+            if (!sender.hasPermissions(2)) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                        Component.translatable("somegoogly.command.picker.export_rejected_not_operator")));
                 return;
             }
             UUID playerId = sender.getUUID();

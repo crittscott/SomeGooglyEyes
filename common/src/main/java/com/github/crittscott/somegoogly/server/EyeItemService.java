@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
@@ -82,6 +83,37 @@ public final class EyeItemService {
         }
         dropSink.accept(buildEyeDrop(helper, EyeState.readProperties(mob)));
         weapon.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+    }
+
+    /**
+     * Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
+     * another player having applied a Slimy Eye to you. One Googly Eye drops carrying your effective
+     * appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
+     * additionally land one melee hit's worth of self-damage. Returns {@link InteractionResult#PASS}
+     * when it doesn't apply (not sneaking, not shears, no eyes) so the vanilla item use proceeds.
+     */
+    public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!player.isShiftKeyDown() || !(stack.getItem() instanceof ShearsItem)
+                || !EyeState.hasEyes(player)) {
+            return InteractionResult.PASS;
+        }
+        if (player.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        boolean clean = hasOptometrist(stack, player.level().registryAccess());
+        HeadInfo helper = helperFor(player);
+        if (helper.hasConfig()) {
+            player.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(player)));
+        }
+        EyeState.disableAndClearProperties(player);
+        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
+                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+        if (!clean) {
+            player.hurt(player.damageSources().playerAttack(player),
+                    (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        }
+        return InteractionResult.SUCCESS;
     }
 
     private static boolean hasOptometrist(ItemStack stack, HolderLookup.Provider registries) {

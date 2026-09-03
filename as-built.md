@@ -58,7 +58,7 @@ Related mutations are flushed as one full-snapshot sync. The eye-state key and v
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
-`EyeItemService` is the single authorization, mutation, drop, and durability path; Fabric callbacks and Mixins, NeoForge events, and Forge events feed Slimy Eye use, Optometrist harvesting, and shears-kill harvesting into it.
+`EyeItemService` is the single authorization, mutation, drop, and durability path; Fabric callbacks and Mixins, NeoForge events, and Forge events feed Slimy Eye use, Optometrist harvesting, shears-kill harvesting, and sneak-shears self-removal into it. The entity-interact adapter is registered to run after other listeners on every loader (Forge/NeoForge `EventPriority.LOWEST`, Fabric a late `UseEntityCallback` phase) so a protection mod's cancel preempts it. Applying a Slimy Eye to another player additionally requires server PvP enabled and `canHarmPlayer`.
 
 ## Eligibility and behaviors
 
@@ -88,7 +88,7 @@ Each receiver is registered for one direction only. Every picker request re-deri
 
 Client picker and command code owns selection, drafts, previews, and export views; the server owns mob freezing, spawning, movement, and world datapack export. `ModelPartVocabulary` is the shared attachment enumeration and token grammar for both live editing and bulk export, and the two must not drift.
 
-`PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all additionally requires creative mode, explicit server enablement, and a server-wide cooldown. World export is confined to the generated datapack directory and triggers a reload; client export-all writes only under the game-directory export tree.
+`PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all additionally requires creative mode, explicit server enablement, and a server-wide cooldown. World export is confined to the generated datapack directory and triggers a reload, so it alone among the picker verbs requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
 
 The shared client command code builds one Brigadier tree; each loader registers it and reconciles its picker branch with the server-supplied admin branch.
 

@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -56,12 +57,20 @@ public class SlimyEyeItem extends Item {
     /**
      * The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
      * eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
-     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Both the mob
-     * path ({@code EyeItemInteractions}) and the sneak self-apply ({@link #use}) route through here.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Applying to
+     * another player additionally requires server PvP to be enabled and {@code canHarmPlayer} to hold,
+     * so it can't be used to restyle a teammate or anyone in a PvP-off world. Both the mob path
+     * ({@code EyeItemInteractions}) and the sneak self-apply ({@link #use}) route through here.
      */
     public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
         if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
+        }
+        if (target instanceof Player victim && victim != player) {
+            MinecraftServer server = player.getServer();
+            if (server == null || !server.isPvpAllowed() || !player.canHarmPlayer(victim)) {
+                return InteractionResult.FAIL;
+            }
         }
         EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
         if (!player.getAbilities().instabuild) {

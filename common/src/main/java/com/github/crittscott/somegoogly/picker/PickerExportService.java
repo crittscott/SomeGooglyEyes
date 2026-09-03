@@ -19,6 +19,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import javax.annotation.Nullable;
@@ -189,6 +190,9 @@ public final class PickerExportService {
         }
 
         LAST_EXPORT_TICK.put(playerId, now);
+        ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+        SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {} — forcing datapack reload",
+                player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload");
         return Component.translatable("somegoogly.command.picker.export_success", typeId, PACK_NAME);

@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -30,7 +31,9 @@ public final class NeoForgeServerEvents {
 
     public static void register(IEventBus gameBus) {
         gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
-        gameBus.addListener(NeoForgeServerEvents::onEntityInteract);
+        gameBus.addListener(EventPriority.LOWEST,
+                (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
+        gameBus.addListener(NeoForgeServerEvents::onRightClickItem);
         gameBus.addListener(NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedIn);
@@ -49,12 +52,24 @@ public final class NeoForgeServerEvents {
         GooglyAdminCommand.register(event.getDispatcher());
     }
 
+    /**
+     * Lowest priority so a land-claim or region-protection mod that cancels the entity interaction
+     * gets first refusal — this handler consumes the event as soon as it acts.
+     */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         if (!(event.getTarget() instanceof LivingEntity living)) {
             return;
         }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), living);
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
+    private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);

@@ -18,7 +18,7 @@ dependency.
 
 By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn.
 Changing the server chance affects only new mobs. Players receive eyes only from a Slimy Eye, and
-lose them on death. The ender dragon cannot have eyes.
+lose them on death or by shearing them off themselves. The ender dragon cannot have eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby
 definition may gain eyes when it becomes an adult.
@@ -73,7 +73,11 @@ to every eye. The Slimy Eye is consumed unless the player is in creative mode.
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing
 eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may
-also apply one to you.
+also apply one to you, but only where server PvP is on and your teams permit it.
+
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it
+cleanly; plain shears also cost you a normal melee hit's worth of health. Either way one Googly Eye
+drops and the shears lose one durability.
 
 While holding either eye item, sneak and aim at a living entity to see whether it:
 

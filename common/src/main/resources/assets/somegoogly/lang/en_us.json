@@ -60,6 +60,7 @@
   "somegoogly.command.picker.export_rejected_malformed_payload": "Export rejected: malformed eye config payload.",
   "somegoogly.command.picker.export_rejected_missing_payload": "Export rejected: missing or oversized config payload.",
   "somegoogly.command.picker.export_rejected_no_usable_eyes": "Export rejected: config has no usable eyes.",
+  "somegoogly.command.picker.export_rejected_not_operator": "Export rejected: this forces a datapack reload and needs permission level 2.",
   "somegoogly.command.picker.export_rejected_unknown_namespace": "Export rejected: no loaded mod provides namespace '%s'.",
   "somegoogly.command.picker.export_rejected_unknown_type": "Export rejected: unknown entity type %s.",
   "somegoogly.command.picker.export_rejected_unsafe_payload": "Export rejected: unsafe eye config (%s).",
