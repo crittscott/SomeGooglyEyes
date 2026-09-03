@@ -24,7 +24,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -347,11 +346,7 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    public static <S> void register(CommandDispatcher<S> dispatcher, CommandBuildContext context) {
-        register(dispatcher);
-    }
-
-    /** Build the same tree into a dispatcher that does not expose a dynamic command-build context. */
+    /** Build the {@code /sg} picker command tree into the given dispatcher. */
     public static <S> void register(CommandDispatcher<S> dispatcher) {
         LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal("sg");
 

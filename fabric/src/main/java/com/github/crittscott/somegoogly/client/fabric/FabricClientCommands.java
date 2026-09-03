@@ -8,7 +8,6 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.commands.CommandBuildContext;
 
 /** Fabric command routing for the shared picker tree and its colliding server-side admin sibling. */
 public final class FabricClientCommands {
@@ -16,9 +15,8 @@ public final class FabricClientCommands {
     private FabricClientCommands() {
     }
 
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher,
-                                CommandBuildContext context) {
-        GooglyClientCommands.register(dispatcher, context);
+    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+        GooglyClientCommands.register(dispatcher);
 
         // Fabric executes a matching client root before consulting the server. Keep the
         // server-owned /sg admin path reachable by forwarding that disjoint subtree explicitly.

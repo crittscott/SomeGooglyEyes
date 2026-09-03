@@ -16,7 +16,7 @@ public final class SomeGooglyFabricClient implements ClientModInitializer {
         ClientNetworkHandler.register();
         FabricClientNetworkTransport.register();
         ClientCommandRegistrationCallback.EVENT.register(
-                (dispatcher, context) -> FabricClientCommands.register(dispatcher, context));
+                (dispatcher, context) -> FabricClientCommands.register(dispatcher));
         FabricClientConfig.load();
         FabricClientEvents.register();
         SomeGooglyCommon.LOGGER.info("{} client initialized on Fabric", SomeGooglyCommon.MOD_NAME);

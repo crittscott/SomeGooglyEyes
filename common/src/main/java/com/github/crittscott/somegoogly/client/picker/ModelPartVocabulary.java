@@ -91,10 +91,10 @@ public final class ModelPartVocabulary {
             return minecraft.player;
         }
         ClientLevel level = minecraft.level;
-        EntityType<?> type = level == null ? null : BuiltInRegistries.ENTITY_TYPE.get(id);
-        if (type == null) {
+        if (level == null) {
             return null;
         }
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(id);
         try {
             return type.create(level) instanceof LivingEntity living ? living : null;
         } catch (Throwable constructionFailed) {

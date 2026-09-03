@@ -53,7 +53,7 @@ public final class NeoForgeClient {
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
-        GooglyClientCommands.register(event.getDispatcher(), event.getBuildContext());
+        GooglyClientCommands.register(event.getDispatcher());
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
