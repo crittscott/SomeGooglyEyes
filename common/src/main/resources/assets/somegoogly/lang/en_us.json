@@ -85,7 +85,6 @@
   "somegoogly.command.picker.parts_header": "Parts (%s):",
   "somegoogly.command.picker.position": "Position [%s, %s, %s].",
   "somegoogly.command.picker.posrot": "Position [%s, %s, %s], rotation incl %s° azi %s°.",
-  "somegoogly.command.picker.requires_creative": "[Googly] Picker actions require creative mode.",
   "somegoogly.command.picker.rotation": "Rotation incl %s° azi %s°.",
   "somegoogly.command.picker.saved_eye": "Saved eye #%s (variant %s, %s eyes).",
   "somegoogly.command.picker.selection_cleared": "Selection cleared.",

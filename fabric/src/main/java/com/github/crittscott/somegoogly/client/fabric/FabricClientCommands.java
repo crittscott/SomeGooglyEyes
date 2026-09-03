@@ -20,7 +20,7 @@ public final class FabricClientCommands {
                                 CommandBuildContext context) {
         GooglyClientCommands.register(dispatcher, context);
 
-        // Fabric 1.20.1 executes a matching client root before consulting the server. Keep the
+        // Fabric executes a matching client root before consulting the server. Keep the
         // server-owned /sg admin path reachable by forwarding that disjoint subtree explicitly.
         LiteralArgumentBuilder<FabricClientCommandSource> admin =
                 LiteralArgumentBuilder.<FabricClientCommandSource>literal("admin")
@@ -38,7 +38,7 @@ public final class FabricClientCommands {
 
     private static int fallThroughToServer(CommandContext<FabricClientCommandSource> context)
             throws CommandSyntaxException {
-        // Fabric 1.20.1 forwards client commands only when its local dispatcher reports an unknown
+        // Fabric forwards client commands only when its local dispatcher reports an unknown
         // command or a parse failure. This deliberate parse failure preserves the server-owned path.
         throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException()
                 .create(context.getInput());

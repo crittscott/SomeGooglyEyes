@@ -25,9 +25,8 @@ import net.minecraft.world.entity.LivingEntity;
  * {@link Resolvers}, and delegates each eye's drawing to {@link GooglyEyeRenderer}. Picker previews
  * are drawn by the separate {@link com.github.crittscott.somegoogly.client.picker.PickerLayer}.
  *
- * <p>The GeckoLib counterpart is
- * {@link com.github.crittscott.somegoogly.client.compat.GooglyGeoLayer}, which uses the same gate and
- * eye renderer from GeckoLib's per-bone callback.
+ * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which uses the same gate and eye renderer
+ * from GeckoLib's per-bone callback.
  */
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     private final ModelGooglyEye modelGooglyEye;

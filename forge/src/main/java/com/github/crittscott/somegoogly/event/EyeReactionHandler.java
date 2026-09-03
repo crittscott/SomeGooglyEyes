@@ -18,8 +18,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *       being healed (rate-limited), spins its pupils.</li>
  * </ul>
  *
- * Behaviors that are purely ambient (blink, side_eye, stare, cross_eye) and the dormant color_change are
- * not driven from here.
+ * Ambient behaviors (blink, side_eye, stare, cross_eye) and color_change are scheduled through the
+ * config-driven pool and admin command, not driven from here.
  */
 public class EyeReactionHandler {
 

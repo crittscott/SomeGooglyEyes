@@ -20,10 +20,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  * event handlers, while keeping client-only rendering, input, and picker setup behind a physical-side
  * guard. Datapack eye definitions are loaded later through the server reload lifecycle.
  */
-@Mod(SomeGoogly.MOD_ID)
+@Mod(SomeGooglyCommon.MOD_ID)
 public class SomeGoogly {
-    public static final String MOD_ID = SomeGooglyCommon.MOD_ID;
-    public static final String MOD_NAME = SomeGooglyCommon.MOD_NAME;
 
     public SomeGoogly(FMLJavaModLoadingContext context) {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
@@ -33,7 +31,7 @@ public class SomeGoogly {
         SomeGooglyCommon.init(registrar);
         registrar.register(modEventBus);
         ForgeNetworkTransport.register();
-        ForgeServerConfig.register(context);
+        ForgeServerConfig.register();
 
         MinecraftForge.EVENT_BUS.register(new EyeItemInteractions());
         MinecraftForge.EVENT_BUS.register(new EyeReactionHandler());
@@ -42,6 +40,6 @@ public class SomeGoogly {
         context.registerDisplayTest("1", (remoteVersion, isServer) -> true);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeClientBootstrap.register(context));
 
-        SomeGooglyCommon.LOGGER.info("{} initialized on Forge", MOD_NAME);
+        SomeGooglyCommon.LOGGER.info("{} initialized on Forge", SomeGooglyCommon.MOD_NAME);
     }
 }

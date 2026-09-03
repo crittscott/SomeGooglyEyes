@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.client.compat.forge;
+package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -11,16 +11,16 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import java.util.List;
 
 /**
- * GeckoLib-referencing entry points, reached only via {@link GeckoCompatImpl} (so this class — and the
+ * GeckoLib-referencing entry points, reached only via {@code GeckoCompatImpl} (so this class — and the
  * GeckoLib classes it touches — load only when GeckoLib is present).
  */
-final class GeckoIntegration {
+public final class GeckoIntegration {
 
     private GeckoIntegration() {
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
+    @SuppressWarnings({"rawtypes", "unchecked", "removal"})
+    public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
         }
@@ -31,7 +31,7 @@ final class GeckoIntegration {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    static boolean tryAddLayer(EntityRenderer<?> renderer) {
+    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return false;
         }

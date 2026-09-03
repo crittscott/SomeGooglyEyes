@@ -8,6 +8,13 @@ architectury {
 }
 
 sourceSets {
+    main {
+        java {
+            // Shared GeckoLib render integration: one copy compiled into each loader jar against that
+            // loader's own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
+            srcDir rootProject.file('gecko/src/main/java')
+        }
+    }
     gametest {
         java {
             srcDir project(':common').file('src/gametest/java')

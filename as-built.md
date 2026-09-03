@@ -34,7 +34,7 @@ Registered content is declared once in `ContentRegistrar` — two items, one `Da
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly; Fabric and NeoForge share one direct loader for the active world's server TOML; NeoForge adds a native CLIENT spec; Forge uses native CLIENT and SERVER specs and must copy the shared values into `ConfigValue<T>` on load and reload or the two representations diverge.
+`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly; all three loaders load the world's server TOML through the shared `ServerConfigFile`. NeoForge and Forge each also carry a native CLIENT spec whose values must be copied into `ConfigValue<T>` on load and reload or the two representations diverge.
 
 Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, then atomically swaps `ServerEyeConfigs`; the resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
@@ -68,13 +68,13 @@ Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_pro
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs the normal and picker layers on compatible living renderers, guarding against duplicates and reinstalling when renderer state is replaced. `LayerGooglyEyes` must be ordered before the slime outer layer. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached path for occasional server use. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
+`ClientRenderLayers` installs the normal and picker layers on compatible living renderers, guarding against duplicates and reinstalling when renderer state is replaced. `LayerGooglyEyes` must be ordered before the slime outer layer. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached server-side path. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
 
-Attachment resolvers (definition token to model part or bone) live with the render code and cache by model identity, cleared on renderer or runtime reset.
+Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
 
-Vanilla rendering access is declared once in the common 1.21.1 Access Widener, which Fabric applies directly; NeoForge and Forge each carry the same 36 entries transcribed one-for-one into an Access Transformer, and the three lists must match.
+Vanilla rendering access is declared once in the common 1.21.1 Access Widener, which Fabric applies directly; NeoForge and Forge transcribe the same 36 entries into an Access Transformer, and the three lists must match.
 
-GeckoLib is optional: common code goes through the loader's `GeckoCompat` bridge, which probes for GeckoLib before touching typed integration code, and a failed GeckoLib layer attach must not block mod load.
+GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
 `GooglyEyeItemRenderer` draws the Googly Eye as a 3D item; the Slimy Eye uses its normal item model, tinted from its appearance payload; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match `layer2` in the model JSON.
 
@@ -98,13 +98,13 @@ Fabric: Mixins carry what has no callback — persistent entity data, hurt and h
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge: native CLIENT and SERVER config specs with shared values synced on load and reload; the Architectury `@ExpectPlatform` transform is build-time only.
+Forge: a native CLIENT config spec synced to the shared values on load and reload, with the world's server TOML read through the shared `ServerConfigFile`; the Architectury `@ExpectPlatform` transform is build-time only.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 
 ## Automated verification
 
-77 shared assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 78 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1. Visual behavior is covered only by the manual physical-client smoke-test matrix: rendering, item presentation, picker UI, renderer reloads, and optional GeckoLib models.
+77 shared assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 78 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1. Visual behavior is covered only by the manual physical-client smoke-test matrix.
 
 ## Operational boundaries
 

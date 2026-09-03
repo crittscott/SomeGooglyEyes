@@ -56,11 +56,6 @@ public final class EyeState {
         setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
     }
 
-    /** Drop the cornea tint override only; broadcasts. */
-    public static void clearCorneaTint(LivingEntity entity) {
-        setProperties(entity, readProperties(entity).withCorneaColor(null));
-    }
-
     /** Drop the iris tint override only; broadcasts. */
     public static void clearIrisTint(LivingEntity entity) {
         setProperties(entity, readProperties(entity).withIrisColor(null));

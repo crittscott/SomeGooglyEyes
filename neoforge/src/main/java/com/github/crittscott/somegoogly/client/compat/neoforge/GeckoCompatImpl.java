@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.compat.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.compat.gecko.GeckoIntegration;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.ModList;
