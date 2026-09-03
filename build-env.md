@@ -74,8 +74,10 @@ dependencies are:
 
 - Fabric Loader 0.19.3 for portable environment annotations;
 - Architectury API 13.0.8 as a mod compile-only dependency;
-- JSR-305 3.0.2 as a compile-only dependency;
-- JUnit Jupiter through BOM 5.10.2 for its conventional test source set.
+- JSR-305 3.0.2 as a compile-only dependency.
+
+The module has no JUnit test source set; automated verification is the GameTest suite in
+`common/src/gametest` driven per loader.
 
 The production common JAR excludes the Access Widener. Fabric copies the canonical 1.21.1 file into
 its mod JAR beside `fabric.mod.json`. NeoForge and Forge each supply the equivalent 36 demonstrated

@@ -48,5 +48,35 @@ public final class ConfigGameTests {
     public static void shippedPigHasTwoVariants(GameTestHelper helper) {
         ConfigGameTestsLogic.shippedPigHasTwoVariants(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadBumpsGenerationOnlyOnContentChange(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void serverTomlRoundTrips(GameTestHelper helper) {
+        ConfigGameTestsLogic.serverTomlRoundTrips(helper);
+    }
 }
 

@@ -40,4 +40,26 @@ public final class EligibilityGameTests implements FabricGameTest {
         EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(
                 helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
+        EligibilityGameTestsLogic.canEverWearEyesSpansBothAgeBuckets(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        EligibilityGameTestsLogic.naturalDecisionRespectsMasterToggleAndIsOneShot(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeCreativeApplicationDoesNotConsume(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeSelfApplyRequiresSneak(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
 }

@@ -47,4 +47,26 @@ public final class EligibilityGameTests {
         EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
+        EligibilityGameTestsLogic.canEverWearEyesSpansBothAgeBuckets(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        EligibilityGameTestsLogic.naturalDecisionRespectsMasterToggleAndIsOneShot(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeCreativeApplicationDoesNotConsume(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeSelfApplyRequiresSneak(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
 }

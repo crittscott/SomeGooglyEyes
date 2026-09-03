@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -10,11 +11,14 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
@@ -169,6 +173,132 @@ public final class EligibilityGameTestsLogic {
             float roll = EyeState.getVariantRoll(cow);
             helper.assertTrue(roll >= 0F && roll < 1F, "an application should draw a fresh variant roll");
         } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * {@link ServerEyeConfigs#canEverWearEyes} consults <b>both</b> age buckets, so the at-spawn roll is
+     * offered to a mob that only has a config for the life stage it is not currently in — otherwise it
+     * would store {@code hasGooglyEyes=false} for life and never gain eyes on aging.
+     */
+    public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet adultOnly = new RuntimeConfigSet();
+            adultOnly.adult = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, adultOnly));
+            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
+                    "an adult-only config still lets the entity roll at spawn");
+
+            RuntimeConfigSet babyOnly = new RuntimeConfigSet();
+            babyOnly.baby = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, babyOnly));
+            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
+                    "a baby-only config also lets an adult roll, so both buckets are consulted");
+
+            ServerEyeConfigs.replaceAll(Map.of());
+            helper.assertTrue(!ServerEyeConfigs.canEverWearEyes(cow),
+                    "an unconfigured entity can never wear eyes");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * The natural-eye decision in {@link ServerServices#onLivingEntityLoaded}: {@code googlyEyesEnabled}
+     * suppresses the roll but the entity is still marked initialized, and a later load never revisits an
+     * entity that already has a decision and a variant roll.
+     */
+    public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<ResourceLocation, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        int originalPercent = ServerConfig.GLOBAL_PERCENT.get();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, set));
+            ServerConfig.GLOBAL_PERCENT.set(100);
+
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            Cow suppressed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            helper.assertTrue(EyeState.isInitialized(suppressed),
+                    "the decision is still recorded so it is never re-rolled");
+            helper.assertTrue(!EyeState.hasEyes(suppressed), "googlyEyesEnabled=false suppresses the spawn roll");
+
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            Cow eyed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2));
+            helper.assertTrue(EyeState.hasEyes(eyed), "an eligible entity at globalPercent=100 rolls eyes");
+
+            float roll = EyeState.getVariantRoll(eyed);
+            ServerConfig.GLOBAL_PERCENT.set(0);
+            ServerServices.onLivingEntityLoaded(eyed);
+            helper.assertTrue(EyeState.hasEyes(eyed) && EyeState.getVariantRoll(eyed) == roll,
+                    "a later load never revisits an already-initialized entity");
+        } finally {
+            ServerEyeConfigs.replaceAll(originalConfigs);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+            ServerConfig.GLOBAL_PERCENT.set(originalPercent);
+        }
+        helper.succeed();
+    }
+
+    /** A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from the stack. */
+    public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper, Player player) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        EyeState.setHasEyes(cow, false);
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        boolean instabuild = player.getAbilities().instabuild;
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+
+            player.getAbilities().instabuild = true;
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
+            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+
+            helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
+            helper.assertTrue(EyeState.hasEyes(cow), "the target gains eyes");
+            helper.assertTrue(stack.getCount() == 3, "a creative application consumes no eye");
+        } finally {
+            player.getAbilities().instabuild = instabuild;
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /** {@link SlimyEyeItem#use}: only a sneaking use applies the eye to the player; a plain right-click passes. */
+    public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper, Player player) {
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
+            EyeState.setHasEyes(player, false);
+
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            SlimyEyeItem item = (SlimyEyeItem) stack.getItem();
+
+            player.setShiftKeyDown(false);
+            InteractionResultHolder<ItemStack> passed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(passed.getResult() == InteractionResult.PASS,
+                    "a non-sneaking use passes so a stray right-click does not eye the player");
+            helper.assertTrue(!EyeState.hasEyes(player), "nothing was applied");
+
+            player.setShiftKeyDown(true);
+            InteractionResultHolder<ItemStack> consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(consumed.getResult().consumesAction(), "sneak + use applies the eye to the player");
+            helper.assertTrue(EyeState.hasEyes(player), "the player now has eyes");
+        } finally {
+            player.setShiftKeyDown(false);
+            EyeState.disableAndClearProperties(player);
             ServerEyeConfigs.replaceAll(original);
         }
         helper.succeed();

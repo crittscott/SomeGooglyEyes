@@ -104,7 +104,7 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Automated verification
 
-77 shared assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 78 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1.
+100 shared assertions live in 16 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 101 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1. Left to manual client testing (no dedicated-server reach): the `NetworkHandler` login-handshake disconnect paths, the client config-decode throttle, `/sg admin` command authorization and dispatch, and the plain-shears self-removal health cost (fake players are inert to `hurt`).
 
 ## Operational boundaries
 

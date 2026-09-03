@@ -260,7 +260,7 @@ Color channels range from 0 to 1.
   eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.1 require manual compatibility
   verification.
-- Fabric, NeoForge, and Forge pass production builds and all 78 dedicated-server GameTests. Each
+- Fabric, NeoForge, and Forge pass production builds and all 101 dedicated-server GameTests. Each
   loader still requires physical-client smoke testing of ordinary and baby models, players, special
   resolver families, expression and pupil animation, both item render paths, harvesting and
   application, picker editing/export, renderer reload, and optional GeckoLib entities.

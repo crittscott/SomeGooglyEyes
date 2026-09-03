@@ -17,7 +17,11 @@
       "com.github.crittscott.somegoogly.gametest.EyeStateOverrideGameTests",
       "com.github.crittscott.somegoogly.gametest.SpawnGatingGameTests",
       "com.github.crittscott.somegoogly.gametest.EligibilityGameTests",
-      "com.github.crittscott.somegoogly.gametest.BehaviorDeterminismGameTests"
+      "com.github.crittscott.somegoogly.gametest.BehaviorDeterminismGameTests",
+      "com.github.crittscott.somegoogly.gametest.EyeConfigLimitsGameTests",
+      "com.github.crittscott.somegoogly.gametest.EyeItemServiceGameTests",
+      "com.github.crittscott.somegoogly.gametest.BehaviorSchedulerGameTests",
+      "com.github.crittscott.somegoogly.gametest.PickerAuthGameTests"
     ]
   },
   "depends": {
