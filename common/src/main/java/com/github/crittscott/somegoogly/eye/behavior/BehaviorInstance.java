@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 /**
  * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
@@ -21,7 +20,7 @@ public final class BehaviorInstance {
     public final EyeBehavior behavior;
     public final HeadInfo helper;
     public final int duration;
-    public final Random rand;
+    public final RandomSource rand;
 
     /** Completed ticks (1-based after the first tick); {@code age/duration} is the progress fraction. */
     public int age;
@@ -35,6 +34,6 @@ public final class BehaviorInstance {
         this.behavior = behavior;
         this.helper = helper;
         this.duration = Math.max(1, duration);
-        this.rand = new Random(seed);
+        this.rand = RandomSource.create(seed);
     }
 }

@@ -3,9 +3,12 @@ package com.github.crittscott.somegoogly.eye.state;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -15,7 +18,8 @@ import java.util.Optional;
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
  * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
- * network packet writes the same three optional fields directly:
+ * network packet ({@code EyeStatePacket}) uses {@link #STREAM_CODEC}. Both cover the same three
+ * optional fields:
  * <ul>
  *   <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -36,6 +40,13 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
             EyeColor.CODEC.optionalFieldOf("irisColor").forGetter(AppearanceOverride::iris),
             Codec.BOOL.optionalFieldOf("glow").forGetter(AppearanceOverride::glow)
     ).apply(inst, AppearanceOverride::new));
+
+    /** Each field is length-prefixed with a presence boolean; colors ride {@link EyeColor#STREAM_CODEC}. */
+    public static final StreamCodec<ByteBuf, AppearanceOverride> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::cornea,
+            ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::iris,
+            ByteBufCodecs.optional(ByteBufCodecs.BOOL), AppearanceOverride::glow,
+            AppearanceOverride::new);
 
     public static final AppearanceOverride EMPTY =
             new AppearanceOverride(Optional.empty(), Optional.empty(), Optional.empty());

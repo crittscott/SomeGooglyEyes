@@ -2,6 +2,10 @@ package com.github.crittscott.somegoogly.eye.state;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.FastColor;
 
 import java.util.List;
 
@@ -21,6 +25,13 @@ public record EyeColor(float r, float g, float b) {
                     : DataResult.error(() -> "Expected 3 color channels, got " + list.size()),
             color -> List.of(color.r, color.g, color.b));
 
+    /** Three raw floats; validation is the caller's ({@link #isValid()}). */
+    public static final StreamCodec<ByteBuf, EyeColor> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT, EyeColor::r,
+            ByteBufCodecs.FLOAT, EyeColor::g,
+            ByteBufCodecs.FLOAT, EyeColor::b,
+            EyeColor::new);
+
     public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
 
     private static int channel(float v) {
@@ -34,9 +45,9 @@ public record EyeColor(float r, float g, float b) {
 
     public static EyeColor fromRgb24(int rgb) {
         return new EyeColor(
-                ((rgb >> 16) & 0xFF) / 255.0F,
-                ((rgb >> 8) & 0xFF) / 255.0F,
-                (rgb & 0xFF) / 255.0F);
+                FastColor.ARGB32.red(rgb) / 255.0F,
+                FastColor.ARGB32.green(rgb) / 255.0F,
+                FastColor.ARGB32.blue(rgb) / 255.0F);
     }
 
     public boolean isValid() {
@@ -52,9 +63,9 @@ public record EyeColor(float r, float g, float b) {
         return new float[]{r, g, b};
     }
 
-    /** Pack to {@code 0xRRGGBB} for hex display (tooltips). */
+    /** Pack to {@code 0xRRGGBB} for hex display (tooltips); alpha byte is left zero. */
     public int toRgb24() {
-        return (channel(r) << 16) | (channel(g) << 8) | channel(b);
+        return FastColor.ARGB32.color(0, channel(r), channel(g), channel(b));
     }
 
     /** {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their own. */

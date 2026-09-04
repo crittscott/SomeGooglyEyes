@@ -63,9 +63,9 @@ public final class EyeItemService {
     }
 
     /**
-     * Attempt the shears-on-kill harvest, routing the resulting eye through the loader's death-drop
-     * mechanism: NeoForge and Forge add it to their drops event collection, Fabric to the ordinary
-     * world-drop path.
+     * Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
+     * phase: NeoForge and Forge add it to the {@code LivingDropsEvent} collection, Fabric appends it
+     * from a {@code dropCustomDeathLoot} mixin.
      */
     public static void onDeath(LivingEntity mob, DamageSource source, Consumer<ItemStack> dropSink) {
         if (!EyeState.hasEyes(mob)

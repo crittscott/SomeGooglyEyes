@@ -5,7 +5,6 @@ import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -46,8 +45,6 @@ public final class FabricServerEvents {
                     ? InteractionResultHolder.pass(player.getItemInHand(hand))
                     : InteractionResultHolder.success(player.getItemInHand(hand));
         });
-        ServerLivingEntityEvents.AFTER_DEATH.register((mob, source) ->
-                EyeItemService.onDeath(mob, source, mob::spawnAtLocation));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);

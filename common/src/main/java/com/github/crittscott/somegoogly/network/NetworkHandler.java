@@ -28,7 +28,7 @@ import java.util.function.Function;
 /** Cross-loader packet registration, protocol negotiation, and send helpers. */
 public final class NetworkHandler {
 
-    public static final String PROTOCOL_VERSION = "9";
+    public static final String PROTOCOL_VERSION = "10";
     public static final int MAX_PROTOCOL_VERSION_LENGTH = 32;
     public static final ResourceLocation PROTOCOL_HELLO = id("protocol_hello");
     public static final ResourceLocation PROTOCOL_ACK = id("protocol_ack");

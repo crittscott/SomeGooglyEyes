@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,19 +37,9 @@ public class EyeStatePacket {
         if (!Float.isFinite(variantRoll) || variantRoll < 0.0F || variantRoll > 1.0F) {
             throw new DecoderException("Invalid eye placement variant roll");
         }
-        int flags = buffer.readUnsignedByte();
-        if ((flags & ~0x7) != 0) {
-            throw new DecoderException("Unknown eye appearance flags");
-        }
-        AppearanceOverride overrides = AppearanceOverride.EMPTY;
-        if ((flags & 0x1) != 0) {
-            overrides = overrides.withCorneaColor(readColor(buffer));
-        }
-        if ((flags & 0x2) != 0) {
-            overrides = overrides.withIrisColor(readColor(buffer));
-        }
-        if ((flags & 0x4) != 0) {
-            overrides = overrides.withGlow(buffer.readBoolean());
+        AppearanceOverride overrides = AppearanceOverride.STREAM_CODEC.decode(buffer);
+        if (!overrides.isValid()) {
+            throw new DecoderException("Invalid eye appearance color");
         }
         return new EyeStatePacket(entityId, hasGooglyEyes, variantRoll, overrides);
     }
@@ -62,19 +51,7 @@ public class EyeStatePacket {
         buffer.writeInt(packet.entityId);
         buffer.writeBoolean(packet.hasGooglyEyes);
         buffer.writeFloat(packet.variantRoll);
-        int flags = (packet.overrides.cornea().isPresent() ? 0x1 : 0)
-                | (packet.overrides.iris().isPresent() ? 0x2 : 0)
-                | (packet.overrides.glow().isPresent() ? 0x4 : 0);
-        buffer.writeByte(flags);
-        if (packet.overrides.cornea().isPresent()) {
-            writeColor(buffer, packet.overrides.cornea().orElseThrow());
-        }
-        if (packet.overrides.iris().isPresent()) {
-            writeColor(buffer, packet.overrides.iris().orElseThrow());
-        }
-        if (packet.overrides.glow().isPresent()) {
-            buffer.writeBoolean(packet.overrides.glow().orElseThrow());
-        }
+        AppearanceOverride.STREAM_CODEC.encode(buffer, packet.overrides);
     }
 
     public int entityId() {
@@ -100,23 +77,5 @@ public class EyeStatePacket {
     private boolean valid() {
         return Float.isFinite(variantRoll) && variantRoll >= 0.0F && variantRoll <= 1.0F
                 && overrides != null && overrides.isValid();
-    }
-
-    private static EyeColor readColor(FriendlyByteBuf buffer) {
-        EyeColor color = new EyeColor(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-        if (!validColor(color)) {
-            throw new DecoderException("Invalid eye appearance color");
-        }
-        return color;
-    }
-
-    private static void writeColor(FriendlyByteBuf buffer, EyeColor color) {
-        buffer.writeFloat(color.r());
-        buffer.writeFloat(color.g());
-        buffer.writeFloat(color.b());
-    }
-
-    private static boolean validColor(EyeColor color) {
-        return color == null || color.isValid();
     }
 }

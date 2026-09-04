@@ -6,13 +6,13 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
@@ -38,7 +38,7 @@ import java.util.Random;
  */
 public final class ServerBehaviorScheduler {
 
-    private static final Random RANDOM = new Random();
+    private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 

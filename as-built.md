@@ -80,7 +80,7 @@ GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which p
 
 ## Networking
 
-`NetworkHandler` defines the typed custom payloads and codecs behind the project-owned `NetworkTransport` boundary; loader adapters only register and send. Gameplay payload ids embed protocol version `9` and the bodies are byte-identical across loaders, so any wire-format change requires bumping that number. Stable hello and acknowledgment ids run a login handshake, and a mismatch or timeout disconnects the client before resolved eye definitions are sent.
+`NetworkHandler` defines the typed custom payloads and codecs behind the project-owned `NetworkTransport` boundary; loader adapters only register and send. Gameplay payload ids embed protocol version `10` and the bodies are byte-identical across loaders, so any wire-format change requires bumping that number. `EyeStatePacket` composes `AppearanceOverride.STREAM_CODEC` for its appearance fields rather than a hand-rolled flag byte. Stable hello and acknowledgment ids run a login handshake, and a mismatch or timeout disconnects the client before resolved eye definitions are sent.
 
 Each receiver is registered for one direction only. Every picker request re-derives its player from the server packet context and re-checks authorization server-side. `NetworkTracking` abstracts loader-specific tracking-player lookup for fanout. Eye-state packets that arrive before their entity wait in a bounded, expiring pending set and are cleared on disconnect.
 
@@ -94,7 +94,7 @@ The shared client command code builds one Brigadier tree; each loader registers 
 
 ## Loader integration
 
-Fabric: Mixins carry what has no callback — persistent entity data, hurt and heal reactions, completed trades, renderer-dispatcher reload — and the Mixins plus Access Widener target 1.21.1 exactly; configuration is read once at client init or server start with no file watching.
+Fabric: Mixins carry what has no callback — persistent entity data, hurt and heal reactions, completed trades, the shears-on-kill drop (via `dropCustomDeathLoot`, the phase NeoForge/Forge reach through `LivingDropsEvent`), renderer-dispatcher reload — and the Mixins plus Access Widener target 1.21.1 exactly; configuration is read once at client init or server start with no file watching.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 

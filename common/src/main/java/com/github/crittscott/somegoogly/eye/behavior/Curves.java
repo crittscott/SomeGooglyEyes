@@ -1,24 +1,22 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
+import net.minecraft.util.Mth;
+
 /** Small easing/envelope helpers shared by the behaviors. */
 final class Curves {
 
     private Curves() {
     }
 
-    static float clamp01(float t) {
-        return t < 0f ? 0f : Math.min(t, 1f);
-    }
-
     /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */
     static float ease(float t) {
-        t = clamp01(t);
+        t = Mth.clamp(t, 0f, 1f);
         return t * t * (3f - 2f * t);
     }
 
     /** 0 → 1 → 0 over t ∈ [0,1] (a single smooth pulse). */
     static float sinPulse(float t) {
-        return (float) Math.sin(Math.PI * clamp01(t));
+        return (float) Math.sin(Math.PI * Mth.clamp(t, 0f, 1f));
     }
 
     /**
@@ -39,7 +37,7 @@ final class Curves {
      * over the last {@code fall} fraction.
      */
     static float trapezoid(float t, float rise, float fall) {
-        t = clamp01(t);
+        t = Mth.clamp(t, 0f, 1f);
         if (t < rise) {
             return ease(t / rise);
         }
