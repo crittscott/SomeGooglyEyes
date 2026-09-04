@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Server-authoritative store of eye geometry configs, loaded from datapacks by
  * {@link EyeConfigReloadListener}. The server uses this to gate {@code hasGooglyEyes}
- * (see {@code ServerEventHandler}) and to build the sync payload sent to clients.
+ * (see {@code ServerServices#onLivingEntityLoaded}) and to build the sync payload sent to clients.
  *
  * <p>Kept separate from {@link ClientEyeConfigs} so the integrated server and client don't share
  * one static map in single-player.
@@ -42,10 +42,10 @@ public final class ServerEyeConfigs {
 
     /**
      * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
-     * roll ({@code ServerEventHandler}): that decision is stored for life, so a baby that only has an
-     * adult config must still be allowed to roll — otherwise it stores {@code hasGooglyEyes=false} and
-     * never re-rolls, locking it out of eyes forever even after it grows up. The client swaps in the
-     * age-appropriate geometry as the mob ages.
+     * roll ({@code ServerServices#onLivingEntityLoaded}): that decision is stored for life, so a baby
+     * that only has an adult config must still be allowed to roll — otherwise it stores
+     * {@code hasGooglyEyes=false} and never re-rolls, locking it out of eyes forever even after it
+     * grows up. The client swaps in the age-appropriate geometry as the mob ages.
      */
     public static boolean canEverWearEyes(LivingEntity living) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());

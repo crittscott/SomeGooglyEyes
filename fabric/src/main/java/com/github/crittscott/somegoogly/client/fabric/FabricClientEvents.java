@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
@@ -22,36 +21,20 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Fabric registration for client ticks, picker UI/input, colors, and the 3D eye item renderer. */
 public final class FabricClientEvents {
 
     /** Ticks-since-join countdown for the one-shot picker command-tree merge; -1 when idle or done. */
     private static int commandTreeMergeTicks = -1;
-    private static boolean loggedFirstRendererCallback;
-    private static int rendererCallbacks;
-    private static int rendererInstalls;
 
     private FabricClientEvents() {
     }
 
     public static void register() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
-                (entityType, renderer, helper, context) -> {
-                    rendererCallbacks++;
-                    boolean installed = ClientRenderLayers.installLiving(entityType, renderer);
-                    if (installed) {
-                        rendererInstalls++;
-                    }
-                    if (!loggedFirstRendererCallback) {
-                        loggedFirstRendererCallback = true;
-                        SomeGooglyCommon.LOGGER.debug(
-                                "First living-renderer callback: type={}, renderer={}, installed={}",
-                                BuiltInRegistries.ENTITY_TYPE.getKey(entityType),
-                                renderer.getClass().getName(), installed);
-                    }
-                });
+                (entityType, renderer, helper, context) ->
+                        ClientRenderLayers.installLiving(entityType, renderer));
 
         KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);
@@ -89,18 +72,10 @@ public final class FabricClientEvents {
         BuiltinItemRendererRegistry.INSTANCE.register(ModItems.GOOGLY_EYE.get(), renderer::renderByItem);
     }
 
-    public static void logRendererReload(int nonLivingInstalls) {
-        SomeGooglyCommon.LOGGER.debug(
-                "Renderer reload completed; living callbacks={}, new living layers={}, new non-living layers={}",
-                rendererCallbacks, rendererInstalls, nonLivingInstalls);
-        rendererCallbacks = 0;
-        rendererInstalls = 0;
-    }
-
     /**
      * Graft the picker's {@code /sg} verbs onto the server-supplied command dispatcher for completion
-     * and help, once per join. Fabric 1.20.1 executes a matching client command root before consulting
-     * the server, so the picker nodes must also exist on the server dispatcher. The server command tree
+     * and help, once per join. Fabric executes a matching client command root before consulting the
+     * server, so the picker nodes must also exist on the server dispatcher. The server command tree
      * arrives a few ticks after join, so this runs from the client tick until {@code /sg} appears (or a
      * short grace window elapses), then disarms.
      */

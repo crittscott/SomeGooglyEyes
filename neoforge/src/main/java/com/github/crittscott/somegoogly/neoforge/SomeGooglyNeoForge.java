@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.neoforge;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.neoforge.NeoForgeClient;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
-import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
 import com.github.crittscott.somegoogly.registry.neoforge.NeoForgeContentRegistrar;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
@@ -26,8 +25,7 @@ public final class SomeGooglyNeoForge {
         NeoForgeNetworkTransport.register(modBus);
         NeoForgeServerConfig.register(NeoForge.EVENT_BUS);
         if (dist == Dist.CLIENT) {
-            NeoForgeClientConfig.register(modBus, modContainer);
-            NeoForgeClient.register(modBus, NeoForge.EVENT_BUS);
+            NeoForgeClient.register(modBus, NeoForge.EVENT_BUS, modContainer);
         }
         NeoForgeServerEvents.register(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(SomeGooglyNeoForge::addReloadListeners);

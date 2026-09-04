@@ -64,7 +64,8 @@ public final class EyeItemService {
 
     /**
      * Attempt the shears-on-kill harvest, routing the resulting eye through the loader's death-drop
-     * mechanism. Forge supplies its event collection; Fabric supplies the ordinary world-drop path.
+     * mechanism: NeoForge and Forge add it to their drops event collection, Fabric to the ordinary
+     * world-drop path.
      */
     public static void onDeath(LivingEntity mob, DamageSource source, Consumer<ItemStack> dropSink) {
         if (!EyeState.hasEyes(mob)

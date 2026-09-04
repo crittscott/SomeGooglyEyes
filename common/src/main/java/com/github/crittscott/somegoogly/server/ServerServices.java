@@ -18,7 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
-/** Loader-neutral implementation behind Forge and Fabric server lifecycle hooks. */
+/** Loader-neutral implementation behind each loader's server lifecycle hooks. */
 public final class ServerServices {
 
     private ServerServices() {

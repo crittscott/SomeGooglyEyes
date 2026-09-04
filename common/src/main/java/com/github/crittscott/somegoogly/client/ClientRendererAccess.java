@@ -10,7 +10,10 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 
-/** Loader bridge for renderer members that Forge patches public and Fabric leaves private/protected. */
+/**
+ * Loader bridge for renderer members vanilla keeps private/protected: Fabric widens them through the
+ * common Access Widener, NeoForge and Forge through their Access Transformers.
+ */
 public final class ClientRendererAccess {
 
     private ClientRendererAccess() {

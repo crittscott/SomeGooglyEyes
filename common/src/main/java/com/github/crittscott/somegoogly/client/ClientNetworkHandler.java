@@ -110,7 +110,7 @@ public final class ClientNetworkHandler {
         });
     }
 
-    /** Apply an eye-state packet that arrived before Fabric created the corresponding client entity. */
+    /** Apply an eye-state packet that arrived before the client created the corresponding entity. */
     public static void onEntityLoaded(Entity entity) {
         PendingEyeState pending = PENDING_EYE_STATES.remove(entity.getId());
         if (pending == null || pending.expiresAt() < networkTicks || !(entity instanceof LivingEntity living)) {

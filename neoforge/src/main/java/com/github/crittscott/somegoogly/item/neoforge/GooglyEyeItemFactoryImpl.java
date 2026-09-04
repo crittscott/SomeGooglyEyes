@@ -8,7 +8,10 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
-/** NeoForge construction boundary for the registered Googly Eye item. */
+/**
+ * NeoForge construction boundary for the registered Googly Eye item, with its 3D held-item renderer
+ * attached through the {@code Item#initializeClient} override.
+ */
 public final class GooglyEyeItemFactoryImpl {
 
     private GooglyEyeItemFactoryImpl() {
@@ -18,6 +21,7 @@ public final class GooglyEyeItemFactoryImpl {
         return new GooglyEyeItem(properties) {
             @Override
             public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+                // Render the item as the real 3D eye model (tinted by its AppearanceOverride, googly when held).
                 consumer.accept(new IClientItemExtensions() {
                     private GooglyEyeItemRenderer renderer;
 

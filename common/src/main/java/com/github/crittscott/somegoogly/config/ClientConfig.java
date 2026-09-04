@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Client-local rendering preferences shared by both loaders. */
+/** Client-local rendering preferences shared across loaders. */
 public final class ClientConfig {
 
     public static final String DISABLE_GOOGLY_EYES_KEY = "disableGooglyEyes";

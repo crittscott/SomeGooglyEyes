@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
 /**
- * Returns the mod-owned persistent compound attached to an entity. Forge supplies its patched
- * {@code Entity#getPersistentData()} store; Fabric supplies an equivalent field through a Mixin.
+ * Returns the mod-owned persistent compound attached to an entity. NeoForge and Forge expose their
+ * patched {@code Entity#getPersistentData()} store; Fabric supplies an equivalent field through a Mixin.
  */
 public final class EntityPersistentData {
 

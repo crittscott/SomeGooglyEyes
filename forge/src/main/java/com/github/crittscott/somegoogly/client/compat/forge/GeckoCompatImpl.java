@@ -8,14 +8,7 @@ import net.minecraftforge.fml.ModList;
 
 import java.util.List;
 
-/**
- * Soft-dependency gate for GeckoLib. Contains <b>no</b> GeckoLib references, so it always loads;
- * the GeckoLib-touching code in {@link GeckoIntegration} is only reached when {@link #LOADED} is true,
- * so its classes (and GeckoLib's) load only when GeckoLib is installed.
- *
- * <p>Calls are wrapped in {@code try/catch} so a GeckoLib API mismatch degrades to "no GeckoLib
- * support" rather than crashing; the first such failure is logged once.
- */
+/** Forge soft-dependency gate for the shared GeckoLib integration. */
 public final class GeckoCompatImpl {
 
     public static final boolean LOADED = ModList.get().isLoaded("geckolib");
@@ -31,7 +24,6 @@ public final class GeckoCompatImpl {
     private GeckoCompatImpl() {
     }
 
-    /** Bone names for a GeckoLib mob (for the picker), or empty if not GeckoLib / unavailable. */
     public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
         if (!LOADED) {
             return List.of();
@@ -44,7 +36,6 @@ public final class GeckoCompatImpl {
         }
     }
 
-    /** Attach the googly-eye layer if this is a GeckoLib renderer. No-op without GeckoLib. */
     public static boolean tryAddLayer(EntityRenderer<?> renderer) {
         if (!LOADED) {
             return false;

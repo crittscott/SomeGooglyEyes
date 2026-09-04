@@ -8,7 +8,10 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
-/** Forge implementation of {@link com.github.crittscott.somegoogly.item.GooglyEyeItemFactory}. */
+/**
+ * Forge construction boundary for the registered Googly Eye item, with its 3D held-item renderer
+ * attached through the {@code Item#initializeClient} override.
+ */
 public final class GooglyEyeItemFactoryImpl {
 
     private GooglyEyeItemFactoryImpl() {

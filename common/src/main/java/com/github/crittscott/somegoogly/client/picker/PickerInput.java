@@ -5,8 +5,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 
 /**
- * Routes key presses to {@link PickerState} while the picker is active. Registered on the Forge
- * client bus; only the toggle key works when the picker is off.
+ * Routes key presses to {@link PickerState} while the picker is active. Driven from each loader's
+ * client key-mapping and tick hooks; only the toggle key works when the picker is off.
  *
  * <p>The keyboard is navigation + a live view only: toggle the picker, lock onto a mob, and cycle
  * parts. All eye editing (position, rotation, properties, save/delete, export) is done through the

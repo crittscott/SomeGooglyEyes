@@ -20,8 +20,8 @@ import java.util.List;
  * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob.
  *
  * <p>The custom 3D item renderer is attached per loader (see {@code GooglyEyeItemFactory}), not here:
- * Forge's item-renderer hook is a method Forge's runtime patches onto vanilla {@code Item}, so it can't
- * be supplied by the loader-specific item factory.
+ * on NeoForge and Forge it is an {@code Item#initializeClient} override their patched {@code Item}
+ * adds, on Fabric a separate client-init registration.
  */
 public class GooglyEyeItem extends Item {
 

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 
-/** Forge renderer access through the public members supplied by Forge's patches. */
+/** Forge renderer access through the mod's 1.21.1 Access Transformer. */
 public final class ClientRendererAccessImpl {
 
     private ClientRendererAccessImpl() {
@@ -20,7 +20,7 @@ public final class ClientRendererAccessImpl {
     }
 
     public static Map<?, EntityRenderer<? extends Player>> skinMap(EntityRenderDispatcher dispatcher) {
-        return dispatcher.getSkinMap();
+        return dispatcher.playerRenderers;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.client;
 
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.fabric.FabricClientEvents;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,8 +14,6 @@ abstract class EntityRenderDispatcherMixin {
 
     @Inject(method = "onResourceManagerReload", at = @At("TAIL"))
     private void somegoogly$afterRendererReload(ResourceManager manager, CallbackInfo callback) {
-        int nonLivingInstalls = ClientRenderLayers.refreshNonLiving(
-                (EntityRenderDispatcher) (Object) this);
-        FabricClientEvents.logRendererReload(nonLivingInstalls);
+        ClientRenderLayers.refreshNonLiving((EntityRenderDispatcher) (Object) this);
     }
 }

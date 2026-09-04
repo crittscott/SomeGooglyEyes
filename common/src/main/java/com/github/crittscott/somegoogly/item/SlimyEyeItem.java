@@ -31,10 +31,10 @@ import java.util.List;
  * <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
  * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
  *
- * <p>The mob-apply verb ({@link #applyToTarget}) is dispatched from {@code EyeItemInteractions}'s
- * entity-interact handler — which claims the right-click before the target's own interaction can
- * consume it — not through {@code Item#interactLivingEntity}. Only the sneak self-apply
- * ({@link #use}) is dispatched through this class.
+ * <p>The mob-apply verb ({@link #applyToTarget}) is dispatched from each loader's entity-interact
+ * adapter — which claims the right-click before the target's own interaction can consume it — not
+ * through {@code Item#interactLivingEntity}. Only the sneak self-apply ({@link #use}) is dispatched
+ * through this class.
  */
 public class SlimyEyeItem extends Item {
 
@@ -60,7 +60,7 @@ public class SlimyEyeItem extends Item {
      * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Applying to
      * another player additionally requires server PvP to be enabled and {@code canHarmPlayer} to hold,
      * so it can't be used to restyle a teammate or anyone in a PvP-off world. Both the mob path
-     * ({@code EyeItemInteractions}) and the sneak self-apply ({@link #use}) route through here.
+     * (the loader entity-interact adapter) and the sneak self-apply ({@link #use}) route through here.
      */
     public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
         if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {

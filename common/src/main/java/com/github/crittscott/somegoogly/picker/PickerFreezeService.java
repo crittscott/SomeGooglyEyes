@@ -38,8 +38,8 @@ import java.util.UUID;
  *       re-asserted.</li>
  * </ul>
  *
- * <p>All state is transient and single-threaded: every entry point runs on the server thread (packet
- * {@code enqueueWork} / Forge lifecycle events).
+ * <p>All state is transient and single-threaded: every entry point runs on the server thread, reached
+ * from packet handlers and server lifecycle events.
  */
 public final class PickerFreezeService {
 
