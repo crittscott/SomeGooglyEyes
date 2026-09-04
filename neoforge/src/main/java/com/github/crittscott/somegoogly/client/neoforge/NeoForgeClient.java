@@ -1,16 +1,12 @@
 package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.EyeInspector;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
-import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
@@ -79,10 +75,7 @@ public final class NeoForgeClient {
     }
 
     private static void onClientTick(ClientTickEvent.Post event) {
-        ClientNetworkHandler.tick();
-        ClientEyeRuntime.tick();
-        EyeInspector.tick();
-        consumePickerKeys();
+        ClientLifecycle.tick();
     }
 
     private static void onEntityJoin(EntityJoinLevelEvent event) {
@@ -92,24 +85,6 @@ public final class NeoForgeClient {
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        ClientNetworkHandler.clearPendingEyeStates();
-        ClientEyeConfigs.clear();
-        ClientEyeRuntime.clear();
-        PickerState.resetOnDisconnect();
-    }
-
-    private static void consumePickerKeys() {
-        while (PickerKeys.TOGGLE.consumeClick()) {
-            PickerInput.handle(PickerKeys.TOGGLE);
-        }
-        while (PickerKeys.LOCK.consumeClick()) {
-            PickerInput.handle(PickerKeys.LOCK);
-        }
-        while (PickerKeys.PART_PREV.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_PREV);
-        }
-        while (PickerKeys.PART_NEXT.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_NEXT);
-        }
+        ClientLifecycle.onDisconnect();
     }
 }

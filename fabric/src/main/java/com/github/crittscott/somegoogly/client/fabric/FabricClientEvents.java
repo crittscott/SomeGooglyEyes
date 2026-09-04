@@ -1,15 +1,11 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
-import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.EyeInspector;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
-import com.github.crittscott.somegoogly.client.picker.PickerState;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -43,20 +39,14 @@ public final class FabricClientEvents {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             mergePickerCommandTree(client);
-            ClientNetworkHandler.tick();
-            ClientEyeRuntime.tick();
-            EyeInspector.tick();
-            consumePickerKeys();
+            ClientLifecycle.tick();
         });
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> commandTreeMergeTicks = 0);
         ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
                 ClientNetworkHandler.onEntityLoaded(entity));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             commandTreeMergeTicks = -1;
-            ClientNetworkHandler.clearPendingEyeStates();
-            ClientEyeConfigs.clear();
-            ClientEyeRuntime.clear();
-            PickerState.resetOnDisconnect();
+            ClientLifecycle.onDisconnect();
         });
         HudRenderCallback.EVENT.register((graphics, partialTick) -> {
             Minecraft minecraft = Minecraft.getInstance();
@@ -89,20 +79,5 @@ public final class FabricClientEvents {
         }
         FabricClientCommands.mergeSuggestions(client.getConnection().getCommands());
         commandTreeMergeTicks = -1;
-    }
-
-    private static void consumePickerKeys() {
-        while (PickerKeys.TOGGLE.consumeClick()) {
-            PickerInput.handle(PickerKeys.TOGGLE);
-        }
-        while (PickerKeys.LOCK.consumeClick()) {
-            PickerInput.handle(PickerKeys.LOCK);
-        }
-        while (PickerKeys.PART_PREV.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_PREV);
-        }
-        while (PickerKeys.PART_NEXT.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_NEXT);
-        }
     }
 }

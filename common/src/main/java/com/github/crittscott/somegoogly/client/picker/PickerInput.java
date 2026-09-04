@@ -29,6 +29,22 @@ public final class PickerInput {
         }
     }
 
+    /** Drain each picker key's click queue, routing presses to {@link #handle}. Call once per client tick. */
+    public static void consumePendingKeys() {
+        while (PickerKeys.TOGGLE.consumeClick()) {
+            handle(PickerKeys.TOGGLE);
+        }
+        while (PickerKeys.LOCK.consumeClick()) {
+            handle(PickerKeys.LOCK);
+        }
+        while (PickerKeys.PART_PREV.consumeClick()) {
+            handle(PickerKeys.PART_PREV);
+        }
+        while (PickerKeys.PART_NEXT.consumeClick()) {
+            handle(PickerKeys.PART_NEXT);
+        }
+    }
+
     public static void handle(KeyMapping key) {
         // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
         // /sg CLI in chat) so picker bindings don't fire while the player is interacting with a GUI.

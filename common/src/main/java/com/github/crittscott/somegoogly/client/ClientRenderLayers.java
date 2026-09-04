@@ -45,7 +45,7 @@ public final class ClientRenderLayers {
         HashSet<LivingEntityRenderer> playerRenderers = new HashSet<>();
 
         if (!ClientConfig.isEntityDisabled(ResourceLocation.fromNamespaceAndPath("minecraft", "player"))) {
-            Map<?, EntityRenderer<? extends Player>> skinMap = ClientRendererAccess.skinMap(dispatcher);
+            Map<?, EntityRenderer<? extends Player>> skinMap = dispatcher.playerRenderers;
             for (EntityRenderer<? extends Player> renderer : skinMap.values()) {
                 if (renderer instanceof PlayerRenderer playerRenderer) {
                     addLiving(playerRenderer);
@@ -54,7 +54,7 @@ public final class ClientRenderLayers {
             }
         }
 
-        ClientRendererAccess.renderers(dispatcher).forEach((entityType, renderer) -> {
+        dispatcher.renderers.forEach((entityType, renderer) -> {
             if (playerRenderers.contains(renderer)) {
                 return;
             }
@@ -85,7 +85,7 @@ public final class ClientRenderLayers {
     public static int refreshNonLiving(EntityRenderDispatcher dispatcher) {
         Resolvers.clearCaches();
         int[] installed = {0};
-        ClientRendererAccess.renderers(dispatcher).forEach((entityType, renderer) -> {
+        dispatcher.renderers.forEach((entityType, renderer) -> {
             ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
             if (!(renderer instanceof LivingEntityRenderer)
                     && !ClientConfig.isEntityDisabled(id)
@@ -112,8 +112,8 @@ public final class ClientRenderLayers {
                 return true;
             }
         }
-        ClientRendererAccess.addLayer(renderer, eyes);
-        ClientRendererAccess.addLayer(renderer, picker);
+        renderer.addLayer(eyes);
+        renderer.addLayer(picker);
         return true;
     }
 }
