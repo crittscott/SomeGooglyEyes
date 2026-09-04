@@ -98,7 +98,7 @@ Fabric: Mixins carry what has no callback — persistent entity data, hurt and h
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge: a native CLIENT config spec synced to the shared values on load and reload, with the world's server TOML read through the shared `ServerConfigFile`; the Architectury `@ExpectPlatform` transform is build-time only.
+Forge: a required native `PayloadChannel` uses the shared wire-protocol version, direction-validates every payload, and marks each received payload handled; a native CLIENT config spec is synced to the shared values on load and reload, with the world's server TOML read through the shared `ServerConfigFile`; the Architectury `@ExpectPlatform` transform is build-time only.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 
