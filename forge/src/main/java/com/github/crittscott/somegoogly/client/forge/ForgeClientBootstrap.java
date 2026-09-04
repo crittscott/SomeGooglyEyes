@@ -13,6 +13,7 @@ import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -47,6 +48,7 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::registerClientCommands);
         gameBus.addListener(ForgeClientBootstrap::onClientTick);
         gameBus.addListener(ForgeClientBootstrap::onEntityJoin);
+        gameBus.addListener(ForgeClientBootstrap::onLoggingIn);
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
     }
 
@@ -88,6 +90,17 @@ public final class ForgeClientBootstrap {
         if (event.getLevel().isClientSide()) {
             ClientNetworkHandler.onEntityLoaded(event.getEntity());
         }
+    }
+
+    private static void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ResourceLocation channelId =
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "network");
+        var listener = Minecraft.getInstance().getConnection();
+        boolean advertised = listener != null
+                && NetworkContext.get(listener.getConnection()).getRemoteChannels().contains(channelId);
+        SomeGooglyCommon.LOGGER.info(
+                "Connecting: server advertised Some Googly Eyes network channel {}: {}",
+                channelId, advertised);
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {

@@ -12,6 +12,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -59,6 +61,7 @@ public final class EyeItemService {
         EyeState.disableAndClearProperties(mob);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+        playShearSound(mob);
         return InteractionResult.SUCCESS;
     }
 
@@ -110,11 +113,17 @@ public final class EyeItemService {
         EyeState.disableAndClearProperties(player);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+        playShearSound(player);
         if (!clean) {
             player.hurt(player.damageSources().playerAttack(player),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return InteractionResult.SUCCESS;
+    }
+
+    private static void playShearSound(LivingEntity target) {
+        target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+                SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     private static boolean hasOptometrist(ItemStack stack, HolderLookup.Provider registries) {

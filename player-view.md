@@ -44,8 +44,8 @@ one shears durability.
 ### Optometrist
 
 Optometrist is a one-level, treasure-only shears enchantment. Right-click an eyed mob with
-Optometrist shears to remove its eyes without harming it. One Googly Eye drops and the shears lose one
-durability. Plain shears retain their usual interactions.
+Optometrist shears to remove its eyes without harming it. One Googly Eye drops, the shears lose one
+durability, and the standard shearing sound plays. Plain shears retain their usual interactions.
 
 The harvested eye keeps the mob's effective iris color, cornea color, and glow, but not its species
 or eye placement.
@@ -69,7 +69,8 @@ they must be harvested or taken from the creative menu.
 
 Craft a Googly Eye with a slimeball to make a Slimy Eye. Right-click an eligible, eyeless mob to
 apply it. The mob receives an arrangement from its own definition, with the item's appearance applied
-to every eye. The Slimy Eye is consumed unless the player is in creative mode.
+to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative
+mode.
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing
 eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may
@@ -77,7 +78,7 @@ also apply one to you, but only where server PvP is on and your teams permit it.
 
 To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it
 cleanly; plain shears also cost you a normal melee hit's worth of health. Either way one Googly Eye
-drops and the shears lose one durability.
+drops, the shears lose one durability, and the shearing sound plays.
 
 While holding either eye item, sneak and aim at a living entity to see whether it:
 
