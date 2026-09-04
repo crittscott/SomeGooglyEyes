@@ -26,10 +26,10 @@ public final class NeoForgeClientConfig {
                 .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
         DISABLED_ENTITIES = BUILDER.comment("Entity ids that should not display googly eyes")
                 .defineList(ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT,
-                        () -> "minecraft:zombie", value -> value instanceof String);
+                        () -> "", value -> value instanceof String);
         DISABLED_MODS = BUILDER.comment("Mod namespaces whose entities should not display googly eyes")
                 .defineList(ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT,
-                        () -> "minecraft", value -> value instanceof String);
+                        () -> "", value -> value instanceof String);
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

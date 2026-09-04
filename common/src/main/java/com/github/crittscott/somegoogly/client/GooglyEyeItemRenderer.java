@@ -11,10 +11,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Random;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
@@ -62,7 +61,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         private double prevX;
         private double prevY;
         private double prevZ;
-        private final Random rand = new Random();
+        private final RandomSource rand = RandomSource.create();
 
         void update() {
             LocalPlayer player = Minecraft.getInstance().player;

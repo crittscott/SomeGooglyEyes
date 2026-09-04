@@ -28,26 +28,54 @@ public final class TomlConfig {
 
     public static boolean bool(Map<String, Object> values, String key, boolean fallback) {
         Object value = values.get(key);
-        return value instanceof Boolean bool ? bool : fallback;
+        if (value == null) {
+            return fallback;
+        }
+        if (value instanceof Boolean bool) {
+            return bool;
+        }
+        warnMismatch(key, "boolean", value, fallback);
+        return fallback;
     }
 
     public static int integer(Map<String, Object> values, String key, int fallback) {
         Object value = values.get(key);
-        return value instanceof Integer integer ? integer : fallback;
+        if (value == null) {
+            return fallback;
+        }
+        if (value instanceof Integer integer) {
+            return integer;
+        }
+        warnMismatch(key, "integer", value, fallback);
+        return fallback;
     }
 
     public static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
         Object value = values.get(key);
+        if (value == null) {
+            return fallback;
+        }
         if (!(value instanceof List<?> list)) {
+            warnMismatch(key, "string array", value, fallback);
             return fallback;
         }
         List<String> strings = new ArrayList<>();
         for (Object entry : list) {
             if (entry instanceof String string) {
                 strings.add(string);
+            } else {
+                SomeGooglyCommon.LOGGER.warn(
+                        "Config key '{}' has a non-string array entry {} ({}); ignoring it",
+                        key, entry, entry == null ? "null" : entry.getClass().getSimpleName());
             }
         }
         return strings;
+    }
+
+    private static void warnMismatch(String key, String expected, Object value, Object fallback) {
+        SomeGooglyCommon.LOGGER.warn(
+                "Config key '{}' expected a {} but found {} ({}); using default {}",
+                key, expected, value, value.getClass().getSimpleName(), fallback);
     }
 
     public static String stringList(List<String> values) {

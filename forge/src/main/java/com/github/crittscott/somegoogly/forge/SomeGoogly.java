@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -37,7 +38,10 @@ public class SomeGoogly {
         MinecraftForge.EVENT_BUS.register(new EyeReactionHandler());
         MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
 
-        context.registerDisplayTest("1", (remoteVersion, isServer) -> true);
+        // Connection compatibility is decided by the mod's own protocol handshake (NetworkHandler),
+        // not the display version, so tell Forge not to gate connections on this mod's presence.
+        context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORESERVERONLY,
+                (remoteVersion, isServer) -> true);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeClientBootstrap.register(context));
 
         SomeGooglyCommon.LOGGER.info("{} initialized on Forge", SomeGooglyCommon.MOD_NAME);

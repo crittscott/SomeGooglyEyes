@@ -7,11 +7,11 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
@@ -29,7 +29,7 @@ public class GooglyTracker {
 
     public final HeadInfo helper;
     public final LivingEntity parent;
-    public final Random rand;
+    public final RandomSource rand;
 
     // The client tick during which this tracker was last rendered. Drives both the tick loop's decisions
     // (see ClientEyeRuntime.EVICT_IDLE_TICKS / SIMULATE_IDLE_TICKS): evict once it's gone stale, and
@@ -58,7 +58,7 @@ public class GooglyTracker {
     public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
         this.parent = parent;
         this.helper = helper;
-        this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
+        this.rand = RandomSource.create(Math.abs(parent.getUUID().hashCode()) * 8134L);
         this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
 
@@ -152,7 +152,7 @@ public class GooglyTracker {
          * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          */
-        public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
+        public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
