@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
-import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,7 @@ import javax.annotation.Nullable;
 
 /**
  * Client → server: "spawn the {@code /sg spawnall} grid around me", optionally narrowed to one mod
- * namespace. Creative-gated ({@link PickerPermissions}) <b>and</b> refused unless the server config's
+ * namespace. Creative-gated ({@link PickerGate}) <b>and</b> refused unless the server config's
  * {@link ServerConfig#ALLOW_SPAWN_ALL} is enabled (default off — the grid terraforms and mass-spawns
  * with no undo, so an admin must consciously opt in). The layout/terraform work and all feedback
  * are {@link PickerSpawnService#spawn} on the server thread. The filter is validated against the
@@ -44,7 +43,7 @@ public class PickerSpawnAllPacket {
     public static void handle(PickerSpawnAllPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             ServerPlayer sender = context.player();
-            if (!PickerPermissions.creative(sender)) {
+            if (!PickerGate.creative(sender)) {
                 return;
             }
             if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
@@ -55,7 +54,7 @@ public class PickerSpawnAllPacket {
             if (packet.modFilter != null && !packet.modFilter.matches("[a-z0-9_.-]+")) {
                 return;
             }
-            if (!PickerRequestLimiter.allowSpawnAll(sender.serverLevel().getServer())) {
+            if (!PickerGate.allowSpawnAll(sender.serverLevel().getServer())) {
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_cooldown"));
                 return;
             }

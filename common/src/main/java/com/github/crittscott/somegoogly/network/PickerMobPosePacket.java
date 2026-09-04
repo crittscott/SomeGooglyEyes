@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /**
  * Client → server: reposition ({@code /sg mob move}) or turn ({@code /sg mob rot}) the mob being
- * edited. Creative-gated ({@link PickerPermissions}). The move form carries world-axis <b>offsets</b>
+ * edited. Creative-gated ({@link PickerGate}). The move form carries world-axis <b>offsets</b>
  * (0 = leave that axis unchanged), resolved here against the <b>authoritative</b> server entity rather
  * than the client's interpolated copy; the change syncs back through vanilla entity tracking. The two
  * forms are distinguished on the wire by which fields are present: move sets all of x/y/z, rot sets
@@ -81,7 +81,7 @@ public class PickerMobPosePacket {
     public static void handle(PickerMobPosePacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             ServerPlayer sender = context.player();
-            if (!PickerPermissions.creative(sender)) {
+            if (!PickerGate.creative(sender)) {
                 return;
             }
             if (!packet.isValid()) {

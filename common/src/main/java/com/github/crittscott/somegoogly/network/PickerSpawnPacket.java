@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EntityType;
 
 /**
  * Client → server: "spawn one {@code entityTypeId} at the block I'm looking at" — the wire half of
- * {@code /sg spawn}. Creative-gated ({@link PickerPermissions}); placement, fit-checking, and feedback
+ * {@code /sg spawn}. Creative-gated ({@link PickerGate}); placement, fit-checking, and feedback
  * are {@link PickerSpawnService#spawnOne} on the server thread. The id is validated against the entity
  * registry here ({@code ENTITY_TYPE} is a defaulted registry, so an unchecked lookup would silently
  * hand back a pig for garbage input).
@@ -35,7 +35,7 @@ public class PickerSpawnPacket {
     public static void handle(PickerSpawnPacket packet, NetworkTransport.Context context) {
         context.queue(() -> {
             ServerPlayer sender = context.player();
-            if (!PickerPermissions.creative(sender)) {
+            if (!PickerGate.creative(sender)) {
                 return;
             }
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(packet.typeId)) {

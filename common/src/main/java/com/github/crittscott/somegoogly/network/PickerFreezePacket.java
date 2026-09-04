@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,7 @@ import java.util.UUID;
  * restore, crash-proofing — is owned by {@link PickerFreezeService} on the server, so it works from a
  * remote client and survives that client disappearing; this packet only asks.
  *
- * <p>Freezing requires creative mode ({@link PickerPermissions}). <b>Unfreezing does not</b>: it only
+ * <p>Freezing requires creative mode ({@link PickerGate}). <b>Unfreezing does not</b>: it only
  * releases the sender's own frozen mob, and gating it would strand a mob frozen if the player lost
  * creative mid-edit.
  */
@@ -65,7 +65,7 @@ public class PickerFreezePacket {
         context.queue(() -> {
             ServerPlayer sender = context.player();
             if (packet.freeze) {
-                if (!PickerPermissions.creative(sender)) {
+                if (!PickerGate.creative(sender)) {
                     return;
                 }
                 Entity target = sender.serverLevel().getEntity(packet.mobId);

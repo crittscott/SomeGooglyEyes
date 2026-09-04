@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +40,6 @@ public class AgeableListResolver extends ModelPartTreeResolver {
         index(roots, "head", ageable.headParts(), headWrap(ageable));
         index(roots, "body", ageable.bodyParts(), bodyWrap(ageable));
         return roots;
-    }
-
-    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
-    private static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
-                              Consumer<PoseStack> preTransform) {
-        int i = 0;
-        for (ModelPart part : parts) {
-            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
-            i++;
-        }
     }
 
     /**

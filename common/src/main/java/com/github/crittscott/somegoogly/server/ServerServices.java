@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeStateSync;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
-import com.github.crittscott.somegoogly.picker.PickerRequestLimiter;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -41,14 +41,14 @@ public final class ServerServices {
         NetworkHandler.playerLeft(player);
         PickerFreezeService.onPlayerLoggedOut(player);
         PickerExportService.onPlayerLeft(player.getUUID());
-        PickerRequestLimiter.onPlayerLeft(player.getUUID());
+        PickerGate.onPlayerLeft(player.getUUID());
     }
 
     public static void onServerStopping(MinecraftServer server) {
         ServerBehaviorScheduler.clear();
         PickerFreezeService.onServerStopping(server);
         PickerExportService.onServerStopping();
-        PickerRequestLimiter.onServerStopping();
+        PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
         NetworkHandler.serverStopped();
     }
