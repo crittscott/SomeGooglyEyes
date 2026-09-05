@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.NetworkTransport;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.concurrent.Executor;
 
@@ -26,14 +25,13 @@ public final class FabricNetworkTransport {
             public <T> void registerServerbound(NetworkHandler.PayloadType<T> payloadType) {
                 PayloadTypeRegistry.playC2S().register(payloadType.type(), payloadType.codec());
                 ServerPlayNetworking.registerGlobalReceiver(payloadType.type(),
-                        (payload, context) -> payloadType.receive(payload,
-                                new FabricContext(context.player(), context.server())));
+                        (payload, context) -> payloadType.receiveServerbound(payload, context.player(),
+                                new FabricContext(context.server())));
             }
         });
     }
 
-    private record FabricContext(ServerPlayer player, Executor executor)
-            implements NetworkTransport.Context {
+    private record FabricContext(Executor executor) implements NetworkTransport.Context {
         @Override
         public void queue(Runnable task) {
             executor.execute(task);

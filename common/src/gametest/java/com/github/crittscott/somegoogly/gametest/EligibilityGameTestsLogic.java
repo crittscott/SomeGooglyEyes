@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -103,7 +104,7 @@ public final class EligibilityGameTestsLogic {
             // Unconfigured: refused outright, and the eye stays in hand.
             ServerEyeConfigs.replaceAll(Map.of());
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
@@ -112,7 +113,7 @@ public final class EligibilityGameTestsLogic {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
             helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
             helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
@@ -139,7 +140,7 @@ public final class EligibilityGameTestsLogic {
             float roll = EyeState.getVariantRoll(cow);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
             helper.assertTrue(stack.getCount() == 1, "a refused apply should not consume the eye");
@@ -167,7 +168,7 @@ public final class EligibilityGameTestsLogic {
             EntityPersistentData.get(cow).putFloat(EyeState.VARIANT_ROLL, 2F);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
             float roll = EyeState.getVariantRoll(cow);
@@ -261,7 +262,7 @@ public final class EligibilityGameTestsLogic {
 
             player.getAbilities().instabuild = true;
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
             helper.assertTrue(EyeState.hasEyes(cow), "the target gains eyes");

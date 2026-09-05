@@ -12,6 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -47,7 +48,7 @@ public final class EyeItemService {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() instanceof SlimyEyeItem) {
             return level.isClientSide() ? InteractionResult.SUCCESS
-                    : SlimyEyeItem.applyToTarget(stack, player, mob);
+                    : SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, mob);
         }
         if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
                 || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())) {

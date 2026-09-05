@@ -3,6 +3,8 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.util.RandomSource;
 
+import javax.annotation.Nullable;
+
 /**
  * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
  * stateless singletons ({@link EyeBehaviors}); all per-play state lives here, on the mob's client
@@ -17,19 +19,28 @@ import net.minecraft.util.RandomSource;
  */
 public final class BehaviorInstance {
 
+    /** Stateless behavior definition being played. */
     public final EyeBehavior behavior;
+    /** Placement view whose head and eye indexes define per-eye behavior state. */
     public final HeadInfo helper;
+    /** Total play length in ticks, normalized to at least one. */
     public final int duration;
+    /** Deterministic random source initialized from the server-supplied seed. */
     public final RandomSource rand;
 
     /** Completed ticks (1-based after the first tick); {@code age/duration} is the progress fraction. */
     public int age;
 
-    // --- params resolved once in onStart (from the seed) ---
-    public float[] tintColor;            // color-change target
-    public int dirSign;                  // side-eye direction (+1 / -1)
-    public boolean[][] mask;             // blink: which [head][eye] participate
+    /** Color-change target, or {@code null} until a color-change behavior initializes it. */
+    @Nullable
+    public float[] tintColor;
+    /** Seeded side-eye direction: {@code -1} or {@code +1} after side-eye initialization. */
+    public int dirSign;
+    /** Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other behaviors. */
+    @Nullable
+    public boolean[][] mask;
 
+    /** Create unstarted per-play state; the caller next invokes {@link EyeBehavior#onStart}. */
     public BehaviorInstance(EyeBehavior behavior, HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
         this.helper = helper;

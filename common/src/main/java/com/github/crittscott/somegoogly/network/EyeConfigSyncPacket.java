@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import com.mojang.serialization.DataResult;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 /**
  * Server → client sync of the version/age-selected eye geometry configs. Sent on player login and
- * on {@code /reload} (see {@code ServerServices#syncEyeConfigs}). Custom datapack data isn't
+ * on {@code /reload} (see {@link ServerServices#syncEyeConfigs}). Custom datapack data isn't
  * auto-synced, so we carry it ourselves; each entity's selected config set travels as binary NBT
  * (the codec output via {@link NbtOps}), roughly half the size of a JSON-string encoding — this
  * packet goes to every player at login, so wire size matters.

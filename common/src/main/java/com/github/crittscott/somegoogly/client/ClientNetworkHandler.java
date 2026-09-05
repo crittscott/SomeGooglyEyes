@@ -43,7 +43,6 @@ public final class ClientNetworkHandler {
     //     without holding the monitor; tolerated because the connection is already gone.
     // The partition is otherwise clean, and a stale read's worst case is a spurious self-disconnect,
     // never corrupted state.
-    private static boolean registered;
     private static boolean protocolAccepted;
     private static int networkTicks;
     private static int lastConfigSyncTick = Integer.MIN_VALUE;
@@ -59,16 +58,12 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
-    public static synchronized void register() {
-        if (registered) {
-            return;
-        }
-        registered = true;
+    public static void register() {
         SomeGooglyCommon.LOGGER.debug("Registering client-bound receivers");
-        NetworkHandler.PROTOCOL_HELLO_PAYLOAD.bindReceiver(ClientNetworkHandler::handleHello);
-        NetworkHandler.EYE_STATE_PAYLOAD.bindReceiver(ClientNetworkHandler::handle);
-        NetworkHandler.EYE_CONFIG_PAYLOAD.bindReceiver(ClientNetworkHandler::handleConfigPayload);
-        NetworkHandler.EYE_BEHAVIOR_PAYLOAD.bindReceiver(ClientNetworkHandler::handle);
+        NetworkHandler.PROTOCOL_HELLO_PAYLOAD.bindClientReceiver(ClientNetworkHandler::handleHello);
+        NetworkHandler.EYE_STATE_PAYLOAD.bindClientReceiver(ClientNetworkHandler::handle);
+        NetworkHandler.EYE_CONFIG_PAYLOAD.bindClientReceiver(ClientNetworkHandler::handleConfigPayload);
+        NetworkHandler.EYE_BEHAVIOR_PAYLOAD.bindClientReceiver(ClientNetworkHandler::handle);
     }
 
     private static void handleHello(String version, NetworkTransport.Context context) {

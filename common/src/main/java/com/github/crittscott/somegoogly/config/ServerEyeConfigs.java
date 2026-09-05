@@ -3,20 +3,23 @@ package com.github.crittscott.somegoogly.config;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
 /**
  * Server-authoritative store of eye geometry configs, loaded from datapacks by
  * {@link EyeConfigReloadListener}. The server uses this to gate {@code hasGooglyEyes}
- * (see {@code ServerServices#onLivingEntityLoaded}) and to build the sync payload sent to clients.
+ * (see {@link ServerServices#onLivingEntityLoaded}) and to build the sync payload sent to clients.
  *
  * <p>Kept separate from {@link ClientEyeConfigs} so the integrated server and client don't share
- * one static map in single-player.
+ * one static map in single-player. Installed maps are immutable snapshots; their mutable model
+ * values are owned by this store and must be treated as read-only after installation.
  */
 public final class ServerEyeConfigs {
 
@@ -36,13 +39,17 @@ public final class ServerEyeConfigs {
     private ServerEyeConfigs() {
     }
 
+    /**
+     * The immutable installed map. Callers may retain the snapshot across replacements but must not
+     * mutate its {@link RuntimeConfigSet} values.
+     */
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
         return configs;
     }
 
     /**
      * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
-     * roll ({@code ServerServices#onLivingEntityLoaded}): that decision is stored for life, so a baby
+     * roll ({@link ServerServices#onLivingEntityLoaded}): that decision is stored for life, so a baby
      * that only has an adult config must still be allowed to roll — otherwise it stores
      * {@code hasGooglyEyes=false} and never re-rolls, locking it out of eyes forever even after it
      * grows up. The client swaps in the age-appropriate geometry as the mob ages.
@@ -52,11 +59,15 @@ public final class ServerEyeConfigs {
         return RuntimeConfig.isUsable(get(type, false)) || RuntimeConfig.isUsable(get(type, true));
     }
 
+    /** Return the entity's config for the requested age, including the age-independent fallback. */
+    @Nullable
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
     }
 
+    /** Return the entity's config for {@code living}'s current age. */
+    @Nullable
     public static RuntimeConfig get(ResourceLocation entity, LivingEntity living) {
         return get(entity, living.isBaby());
     }
@@ -82,8 +93,13 @@ public final class ServerEyeConfigs {
         return RuntimeConfig.isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
     }
 
+    /**
+     * Force-install a snapshot, discard its content signature, and advance the generation. This is the
+     * unconditional replacement path used by tests; normal datapack reload uses
+     * {@link #replaceIfChanged}.
+     */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
+        configs = Map.copyOf(next);
         signature = "";
         generation++;
     }
@@ -99,7 +115,7 @@ public final class ServerEyeConfigs {
         if (nextSignature.equals(signature)) {
             return false;
         }
-        configs = next;
+        configs = Map.copyOf(next);
         signature = nextSignature;
         generation++;
         return true;

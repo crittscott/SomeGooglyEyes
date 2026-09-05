@@ -16,9 +16,9 @@ import java.util.function.Consumer;
  * shared {@link ModelPartTreeResolver} machinery — so tokens are paths like {@code root/body/head} and a
  * stored {@code head} still suffix-matches.
  *
- * <p>Tried first (before {@link AgeableListResolver}/{@link ChildMapResolver}) because a hierarchical
- * model exposes its root cleanly and unambiguously. Walking the {@code children} map directly (not
- * {@code root().visit()}, which skips cube-less parts) also lets eyes attach to a cube-less pivot/group
+ * <p>This resolver must run before {@link AgeableListResolver} and {@link ChildMapResolver} because a
+ * hierarchical model exposes its root cleanly and unambiguously. Walking the {@code children} map directly
+ * (not {@code root().visit()}, which skips cube-less parts) also lets eyes attach to a cube-less pivot/group
  * joint.
  *
  * <p>{@link AgeableHierarchicalModel} and {@link CamelModel} each wrap their whole {@code root()} render in

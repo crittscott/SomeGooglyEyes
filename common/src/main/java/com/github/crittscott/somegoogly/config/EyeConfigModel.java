@@ -14,6 +14,10 @@ import java.util.function.UnaryOperator;
  * The complete eye-definition data model shared by datapack loading, runtime selection, network
  * synchronization, and picker export. All serialized shapes live together here; resolved rendering
  * views and side-specific storage live elsewhere.
+ *
+ * <p>Every codec field is required on serialized input; the Java initializers are construction defaults,
+ * not decoding defaults. Instances and their lists are mutable while a loader or picker assembles them,
+ * but a validated config graph is treated as read-only after installation in a side-specific store.
  */
 public final class EyeConfigModel {
 
@@ -70,6 +74,7 @@ public final class EyeConfigModel {
             return file;
         }));
 
+        /** Required ordered entries; version selection keeps the first match for each age bucket. */
         public List<VersionedEntry> entries = List.of();
 
         public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
@@ -114,7 +119,9 @@ public final class EyeConfigModel {
             return head;
         }));
 
+        /** Nonblank attachment token, canonicalized when produced by the picker. */
         public String attachPoint;
+        /** Required eye list; installed heads contain at least one eye. */
         public List<EyeDefinition> eyes = List.of();
     }
 
@@ -130,7 +137,9 @@ public final class EyeConfigModel {
             return config;
         }));
 
+        /** Whether this selected age config may be used for rendering and application. */
         public boolean enabled = true;
+        /** Required variants; an enabled installed config has at least one with positive total weight. */
         public List<Variant> variants = List.of();
 
         /** Whether a config is present, enabled, and has at least one variant. */
@@ -192,14 +201,21 @@ public final class EyeConfigModel {
             return set;
         }));
 
+        /** Adult-specific config, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig adult;
+        /** Age-independent fallback, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig any;
+        /** Baby-specific config, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig baby;
 
         /**
          * The runtime config for this age, falling back to the age-independent {@code any} config when
          * the requested age has none of its own; {@code null} when neither exists.
          */
+        @Nullable
         public RuntimeConfig get(boolean isBaby) {
             RuntimeConfig ageConfig = isBaby ? baby : adult;
             return ageConfig != null ? ageConfig : any;
@@ -223,7 +239,9 @@ public final class EyeConfigModel {
             return variant;
         }));
 
+        /** Required attachment groups; an installed variant contains at least one nonempty head. */
         public List<HeadConfig> heads = List.of();
+        /** Authored relative selection weight; validated installed values are finite and nonnegative. */
         public double weight = 1.0;
 
         /** The selection weight, clamped to be non-negative; a negative authored value reads as {@code 0}. */
@@ -248,9 +266,13 @@ public final class EyeConfigModel {
             return entry;
         }));
 
+        /** Authored age selector; reload accepts {@code adult}, {@code baby}, or {@code any}. */
         public String age = AGE_ANY;
+        /** Whether the selected runtime config is enabled. */
         public boolean enabled = true;
+        /** Required authored placement variants. */
         public List<Variant> variants = List.of();
+        /** Required version or version-range selector interpreted by {@link VersionRangeMatcher}. */
         public String version = "";
 
         public static VersionedEntry of(String versionRange, String age, RuntimeConfig config) {

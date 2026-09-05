@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -64,13 +64,12 @@ public class SlimyEyeItem extends Item {
      * so it can't be used to restyle a teammate or anyone in a PvP-off world. Both the mob path
      * (the loader entity-interact adapter) and the sneak self-apply ({@link #use}) route through here.
      */
-    public static InteractionResult applyToTarget(ItemStack stack, Player player, LivingEntity target) {
+    public static InteractionResult applyToTarget(ItemStack stack, ServerPlayer player, LivingEntity target) {
         if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
         }
         if (target instanceof Player victim && victim != player) {
-            MinecraftServer server = player.getServer();
-            if (server == null || !server.isPvpAllowed() || !player.canHarmPlayer(victim)) {
+            if (!player.serverLevel().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
                 return InteractionResult.FAIL;
             }
         }
@@ -93,7 +92,7 @@ public class SlimyEyeItem extends Item {
         if (level.isClientSide()) {
             return InteractionResultHolder.success(stack);
         }
-        return applyToTarget(stack, player, player).consumesAction()
+        return applyToTarget(stack, (ServerPlayer) player, player).consumesAction()
                 ? InteractionResultHolder.consume(stack)
                 : InteractionResultHolder.fail(stack);
     }

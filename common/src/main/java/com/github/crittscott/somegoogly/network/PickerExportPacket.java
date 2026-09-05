@@ -60,9 +60,8 @@ public class PickerExportPacket {
         buffer.writeNbt(packet.configNbt);
     }
 
-    public static void handle(PickerExportPacket packet, NetworkTransport.Context context) {
+    public static void handle(PickerExportPacket packet, ServerPlayer sender, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.player();
             if (!PickerGate.creative(sender)) {
                 return;
             }

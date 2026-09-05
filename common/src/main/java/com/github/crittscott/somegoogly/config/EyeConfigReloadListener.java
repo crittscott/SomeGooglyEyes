@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +94,13 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     aggregateError);
             return;
         }
-        if (!ServerEyeConfigs.replaceIfChanged(selected, contentSignature(selected))) {
+        String signature = contentSignature(selected);
+        if (signature == null) {
+            SomeGooglyCommon.LOGGER.error(
+                    "Eye config reload could not produce a canonical content signature; keeping the previous configs");
+            return;
+        }
+        if (!ServerEyeConfigs.replaceIfChanged(selected, signature)) {
             SomeGooglyCommon.LOGGER.info(
                     "Eye config reload produced no change from generation {}; not resyncing clients",
                     ServerEyeConfigs.generation());
@@ -106,17 +113,21 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
 
     /**
      * A canonical, order-independent string identity of the resolved config set: each entry encoded
-     * through {@link RuntimeConfigSet#CODEC} and keyed by entity id in a sorted map. An encode
-     * failure (not expected — these values already decoded once) falls back to an identity hash, so a
-     * suspect entry forces a resync rather than silently comparing equal.
+     * through {@link RuntimeConfigSet#CODEC} and keyed by entity id in a sorted map. Returns
+     * {@code null} if an internal model/codec invariant prevents canonical encoding.
      */
+    @Nullable
     private static String contentSignature(Map<ResourceLocation, RuntimeConfigSet> configs) {
         Map<String, String> sorted = new TreeMap<>();
         for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
-            sorted.put(entry.getKey().toString(),
-                    RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).result()
-                            .map(json -> json.toString())
-                            .orElseGet(() -> "?" + System.identityHashCode(entry.getValue())));
+            JsonElement encoded = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
+                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
+                            "Cannot encode resolved eye config {}: {}", entry.getKey(), error))
+                    .orElse(null);
+            if (encoded == null) {
+                return null;
+            }
+            sorted.put(entry.getKey().toString(), encoded.toString());
         }
         return sorted.toString();
     }

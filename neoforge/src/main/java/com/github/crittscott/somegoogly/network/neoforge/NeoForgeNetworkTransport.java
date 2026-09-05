@@ -27,23 +27,26 @@ public final class NeoForgeNetworkTransport {
             @Override
             public <T> void registerClientbound(NetworkHandler.PayloadType<T> payloadType) {
                 registrar.playToClient(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> payloadType.receive(payload, new NeoForgeContext(context)));
+                        (payload, context) -> payloadType.receiveClientbound(payload, new NeoForgeContext(context)));
             }
 
             @Override
             public <T> void registerServerbound(NetworkHandler.PayloadType<T> payloadType) {
                 registrar.playToServer(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> payloadType.receive(payload, new NeoForgeContext(context)));
+                        (payload, context) -> payloadType.receiveServerbound(
+                                payload, serverPlayer(context), new NeoForgeContext(context)));
             }
         });
     }
 
-    private record NeoForgeContext(IPayloadContext context) implements NetworkTransport.Context {
-        @Override
-        public ServerPlayer player() {
-            return context.player() instanceof ServerPlayer player ? player : null;
+    private static ServerPlayer serverPlayer(IPayloadContext context) {
+        if (context.player() instanceof ServerPlayer player) {
+            return player;
         }
+        throw new IllegalStateException("Serverbound payload has no authenticated server player");
+    }
 
+    private record NeoForgeContext(IPayloadContext context) implements NetworkTransport.Context {
         @Override
         public void queue(Runnable task) {
             context.enqueueWork(task);

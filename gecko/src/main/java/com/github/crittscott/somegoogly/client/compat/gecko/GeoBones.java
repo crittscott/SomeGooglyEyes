@@ -15,14 +15,13 @@ import java.util.List;
  *
  * <p>Bones are named in the {@code .geo.json}, so enumeration yields real names (better than the
  * vanilla reflection family's {@code #N}). There is deliberately no "move the pose to a bone" here:
- * a GeckoLib layer can only draw at a bone from inside {@code GeoRenderLayer#renderForBone}, where
+ * a GeckoLib layer can only draw at a bone from inside {@link GooglyGeoLayer#renderForBone}, where
  * GeckoLib hands it the fully-composed pose — re-walking bone transforms outside the model render
  * misses the entity's body rotations (see {@link GooglyGeoLayer}). So lookup returns the {@link GeoBone}
  * itself, matched by identity at render time.
  *
- * <p>NOTE: this binds directly to the GeckoLib 4.7.4 API ({@code BakedGeoModel#topLevelBones},
- * {@code GeoBone#getName}/{@code getChildBones}). Those names can change between GeckoLib versions,
- * so this is the first place to look if a GeckoLib update breaks bone attachment.
+ * <p>The adapter requires {@link BakedGeoModel#topLevelBones()}, {@link GeoBone#getName()}, and
+ * {@link GeoBone#getChildBones()}; those methods are its complete GeckoLib bone-enumeration boundary.
  */
 public final class GeoBones {
 
@@ -60,7 +59,7 @@ public final class GeoBones {
     /**
      * First bone (depth-first, so a stable order) whose root→bone name path suffix-matches
      * {@code token} per {@link EyeAttachmentResolver#pathMatches}, or {@code null}. A bare bone name
-     * matches like {@code BakedGeoModel#getBone}; a slash path disambiguates same-named bones under
+     * matches like {@link BakedGeoModel#getBone}; a slash path disambiguates same-named bones under
      * different parents, keeping GeckoLib tokens in the same vocabulary as the vanilla resolvers.
      */
     @Nullable

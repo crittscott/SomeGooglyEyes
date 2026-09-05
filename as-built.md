@@ -10,7 +10,7 @@ This is an orientation to the current code, not a history, conversation, or pros
 
 ## Project shape
 
-Identity: mod id `somegoogly`, root package `com.github.crittscott.somegoogly`, version `0.8.1`, Java 21, Minecraft 1.21.1. Runtime target versions are pinned and must track the Gradle scripts: Fabric Loader 0.19.3 with Fabric API 0.116.15+1.21.1, NeoForge 21.1.248, Forge 52.1.16. Fabric and NeoForge depend on Architectury API 13.0.8; Forge has no Architectury API runtime dependency but keeps the build-time `@ExpectPlatform` transform.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.1`, Java 21, Minecraft 1.21.1. Loader and API versions are pinned in the Gradle scripts and must stay aligned; Forge has no Architectury runtime dependency but retains its build-time `@ExpectPlatform` transform.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
@@ -26,7 +26,7 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, Access Transformer |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no Forge, NeoForge, Fabric API, or GeckoLib type; every loader or optional-library difference passes through a project-owned adapter or one of six Architectury `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge's module layer sees no split package.
+Common main imports no loader or GeckoLib type; differences pass through project-owned adapters or six Architectury `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
 Subsystem ownership: the server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing state.
 
@@ -36,11 +36,9 @@ Registered content is declared once in `ContentRegistrar` — two items, one `Da
 
 `ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly; all three loaders load the world's server TOML through the shared `ServerConfigFile`. NeoForge and Forge each also carry a native CLIENT spec whose values must be copied into `ConfigValue<T>` on load and reload or the two representations diverge.
 
-Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, then atomically swaps `ServerEyeConfigs`; the resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
+Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
 Change eligibility knobs (spawn and harvest chances, entity overrides, behavior toggles, the spawn-all gate) in `ServerConfig`; change local eye visibility in `ClientConfig`.
-
-The 74 bundled Minecraft definitions target exactly `1.21.1`. Armadillo, bogged, and breeze have no bundled definition. Optional-mod definitions keep their pre-1.21.1 release ranges and are unverified against 1.21.1 mod builds.
 
 Player-visible strings are translatable `Component`s keyed in `assets/somegoogly/lang/en_us.json`, with identifiers, counts, and paths passed as translation arguments. Logs, command literals, config comments, and schema keys are plain strings and are not translated.
 
@@ -54,11 +52,11 @@ Persistent entity keys:
 - `somegoogly:eyeVariantRoll` — stable placement-variant roll;
 - `somegoogly:eyeOverrides` — optional shared appearance overrides.
 
-Related mutations are flushed as one full-snapshot sync. The eye-state key and variant roll are written only when the eye-state key is absent, so the natural-eyes decision survives persistence and transfer. An absent snapshot reads client-side as no-eyes-no-overrides, so `EyeState.initialize` and `EyeStateSync.sendTo` skip it; mid-life mutations always send.
+Related mutations flush as one full-snapshot sync. The eye-state key and variant roll are initialized together only when absent, preserving the natural-eyes decision across persistence and transfer. `EyeState.initialize` and `EyeStateSync.sendTo` skip an absent snapshot; mid-life mutations always send.
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
-`EyeItemService` is the single authorization, mutation, drop, and durability path; Fabric callbacks and Mixins, NeoForge events, and Forge events feed Slimy Eye use, Optometrist harvesting, shears-kill harvesting, and sneak-shears self-removal into it. The entity-interact adapter is registered to run after other listeners on every loader (Forge/NeoForge `EventPriority.LOWEST`, Fabric a late `UseEntityCallback` phase) so a protection mod's cancel preempts it. Applying a Slimy Eye to another player additionally requires server PvP enabled and `canHarmPlayer`.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvest paths. Loader adapters run entity interaction after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`.
 
 ## Eligibility and behaviors
 
@@ -76,17 +74,17 @@ Vanilla rendering access is declared once in the common 1.21.1 Access Widener, w
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
-`GooglyEyeItemRenderer` draws the Googly Eye as a 3D item; the Slimy Eye uses its normal item model, tinted from its appearance payload; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match `layer2` in the model JSON.
+`GooglyEyeItemRenderer` draws the 3D Googly Eye; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
 
 ## Networking
 
 `NetworkHandler` defines the typed custom payloads and codecs behind the project-owned `NetworkTransport` boundary; loader adapters only register and send. Gameplay payload ids embed protocol version `10` and the bodies are byte-identical across loaders, so any wire-format change requires bumping that number. `EyeStatePacket` composes `AppearanceOverride.STREAM_CODEC` for its appearance fields rather than a hand-rolled flag byte. Stable hello and acknowledgment ids run a login handshake, and a mismatch or timeout disconnects the client before resolved eye definitions are sent.
 
-Each receiver is registered for one direction only. Every picker request re-derives its player from the server packet context and re-checks authorization server-side. `NetworkTracking` abstracts loader-specific tracking-player lookup for fanout. Eye-state packets that arrive before their entity wait in a bounded, expiring pending set and are cleared on disconnect.
+Each receiver is registered for one direction only; loader adapters pass every serverbound receiver its required authenticated `ServerPlayer`, while clientbound receivers receive only the main-thread handoff. Every picker request re-checks authorization server-side. `NetworkTracking` abstracts loader-specific tracking-player lookup for fanout. Eye-state packets that arrive before their entity wait in a bounded, expiring pending set and are cleared on disconnect.
 
 ## Picker and commands
 
-Client picker and command code owns selection, drafts, previews, and export views; the server owns mob freezing, spawning, movement, and world datapack export. `ModelPartVocabulary` is the shared attachment enumeration and token grammar for both live editing and bulk export, and the two must not drift.
+Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
 `PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all additionally requires creative mode, explicit server enablement, and a server-wide cooldown. World export is confined to the generated datapack directory and triggers a reload, so it alone among the picker verbs requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
 
@@ -94,20 +92,20 @@ The shared client command code builds one Brigadier tree; each loader registers 
 
 ## Loader integration
 
-Fabric: Mixins carry what has no callback — persistent entity data, hurt and heal reactions, completed trades, the shears-on-kill drop (via `dropCustomDeathLoot`, the phase NeoForge/Forge reach through `LivingDropsEvent`), renderer-dispatcher reload — and the Mixins plus Access Widener target 1.21.1 exactly; configuration is read once at client init or server start with no file watching.
+Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the Access Widener target 1.21.1 exactly. Fabric configuration has no file watching.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge: a required native `PayloadChannel` uses the shared wire-protocol version, direction-validates every payload, and marks each received payload handled; a native CLIENT config spec is synced to the shared values on load and reload, with the world's server TOML read through the shared `ServerConfigFile`; the Architectury `@ExpectPlatform` transform is build-time only.
+Forge's required `PayloadChannel` uses the shared protocol, direction-validates payloads, and marks them handled. Its native CLIENT spec copies into shared values on load/reload; `ServerConfigFile` owns world server TOML.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 
 ## Automated verification
 
-100 shared assertions live in 16 `*Logic` classes under `common/src/gametest/java`. Each loader exposes 101 annotated tests — thin wrappers over the shared logic plus one loader-specific entity-persistence save/load test — so the per-loader count must stay at shared + 1. Left to manual client testing (no dedicated-server reach): the `NetworkHandler` login-handshake disconnect paths, the client config-decode throttle, `/sg admin` command authorization and dispatch, and the plain-shears self-removal health cost (fake players are inert to `hurt`).
+Shared assertions live in `common/src/gametest/java`; each loader wraps them and adds one persistence test, so its annotated count stays at shared + 1. `NetworkHandler` handshake failures, config throttling, `/sg admin`, and plain-shears self-damage require manual client testing.
 
 ## Operational boundaries
 
-- Optional renderer integrations may render no eyes when a model family or attachment token cannot be resolved, and third-party model changes can silently invalidate bundled tokens or placement geometry.
+- Optional renderer integrations log recoverable linkage, reflection, construction, and invocation failures once per affected operation and omit eyes when reliable attachment geometry cannot be produced; third-party model changes can still silently invalidate bundled tokens or placement geometry without throwing.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
 - `build-env/` is not a build input; it copies the root and module build scripts verbatim, and every edit to a build script must be mirrored there.

@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.picker;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,8 +28,8 @@ public final class PickerGate {
     }
 
     /** Whether {@code sender} may drive one picker request now: creative, and not already rate-limited this tick. */
-    public static boolean creative(@Nullable ServerPlayer sender) {
-        return sender != null && sender.isCreative() && allowCreativeRequest(sender);
+    public static boolean creative(ServerPlayer sender) {
+        return sender.isCreative() && allowCreativeRequest(sender);
     }
 
     /** Permit at most one creative picker request per player in one server tick. */

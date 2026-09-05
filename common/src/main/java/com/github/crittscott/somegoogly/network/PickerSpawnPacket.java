@@ -32,9 +32,8 @@ public class PickerSpawnPacket {
         buffer.writeResourceLocation(packet.typeId);
     }
 
-    public static void handle(PickerSpawnPacket packet, NetworkTransport.Context context) {
+    public static void handle(PickerSpawnPacket packet, ServerPlayer sender, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.player();
             if (!PickerGate.creative(sender)) {
                 return;
             }

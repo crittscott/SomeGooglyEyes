@@ -14,6 +14,8 @@ import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.payload.PayloadConnection;
 
+import java.util.Objects;
+
 /** Required Forge 52 payload channel, handlers, and packet distribution. */
 public final class ForgeNetworkTransport {
 
@@ -32,13 +34,13 @@ public final class ForgeNetworkTransport {
             @Override
             public <T> void registerClientbound(NetworkHandler.PayloadType<T> payloadType) {
                 connection.play().clientbound().add(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> receive(payloadType, payload, context));
+                        (payload, context) -> receiveClientbound(payloadType, payload, context));
             }
 
             @Override
             public <T> void registerServerbound(NetworkHandler.PayloadType<T> payloadType) {
                 connection.play().serverbound().add(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> receive(payloadType, payload, context));
+                        (payload, context) -> receiveServerbound(payloadType, payload, context));
             }
         });
         channel = connection.play().bidirectional().build();
@@ -60,19 +62,23 @@ public final class ForgeNetworkTransport {
         return channel.isRemotePresent(connection);
     }
 
-    private static <T> void receive(NetworkHandler.PayloadType<T> payloadType,
-                                    NetworkHandler.Payload<T> payload,
-                                    CustomPayloadEvent.Context context) {
-        payloadType.receive(payload, new ForgeContext(context));
+    private static <T> void receiveClientbound(NetworkHandler.PayloadType<T> payloadType,
+                                               NetworkHandler.Payload<T> payload,
+                                               CustomPayloadEvent.Context context) {
+        payloadType.receiveClientbound(payload, new ForgeContext(context));
+        context.setPacketHandled(true);
+    }
+
+    private static <T> void receiveServerbound(NetworkHandler.PayloadType<T> payloadType,
+                                               NetworkHandler.Payload<T> payload,
+                                               CustomPayloadEvent.Context context) {
+        ServerPlayer player = Objects.requireNonNull(
+                context.getSender(), "Serverbound payload has no authenticated sender");
+        payloadType.receiveServerbound(payload, player, new ForgeContext(context));
         context.setPacketHandled(true);
     }
 
     private record ForgeContext(CustomPayloadEvent.Context context) implements NetworkTransport.Context {
-        @Override
-        public ServerPlayer player() {
-            return context.getSender();
-        }
-
         @Override
         public void queue(Runnable task) {
             context.enqueueWork(task);

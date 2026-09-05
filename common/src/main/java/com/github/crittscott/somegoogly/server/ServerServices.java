@@ -24,6 +24,10 @@ public final class ServerServices {
     private ServerServices() {
     }
 
+    /**
+     * Initialize persistent eye state once for a server-side living entity, then reconcile any picker
+     * freeze marker after that state is available.
+     */
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EyeState.isInitialized(living)) {
             applyGooglyDecision(living);
@@ -33,10 +37,12 @@ public final class ServerServices {
         }
     }
 
+    /** Begin protocol negotiation for a newly joined server player. */
     public static void onPlayerJoined(ServerPlayer player) {
         NetworkHandler.beginHandshake(player);
     }
 
+    /** Release all per-player networking and picker state when a server player leaves. */
     public static void onPlayerLeft(ServerPlayer player) {
         NetworkHandler.playerLeft(player);
         PickerFreezeService.onPlayerLoggedOut(player);
@@ -44,6 +50,7 @@ public final class ServerServices {
         PickerGate.onPlayerLeft(player.getUUID());
     }
 
+    /** Clear every server-lifetime service before the server instance is discarded. */
     public static void onServerStopping(MinecraftServer server) {
         ServerBehaviorScheduler.clear();
         PickerFreezeService.onServerStopping(server);
@@ -53,20 +60,27 @@ public final class ServerServices {
         NetworkHandler.serverStopped();
     }
 
+    /** Advance handshake timeouts and behavior scheduling once at the end of a server tick. */
     public static void onServerTick(MinecraftServer server) {
         NetworkHandler.tickHandshake(server);
         ServerBehaviorScheduler.serverTick();
     }
 
+    /**
+     * Send the entity's full eye snapshot before registering the new watcher with behavior scheduling,
+     * whose registration may immediately send a mid-behavior catch-up packet.
+     */
     public static void onStartTracking(LivingEntity living, ServerPlayer player) {
         EyeStateSync.sendTo(living, player);
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
+    /** Remove one watcher from the entity's server-side behavior schedule. */
     public static void onStopTracking(LivingEntity living) {
         ServerBehaviorScheduler.onStopTracking(living);
     }
 
+    /** Send current resolved eye definitions after login or reload, once the handshake is ready. */
     public static void syncEyeConfigs(ServerPlayer player) {
         if (NetworkHandler.ready(player)) {
             NetworkHandler.sendConfig(player);

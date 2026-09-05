@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -12,12 +13,10 @@ import java.util.List;
  * between Fabric's {@code FabricLoader} and the Forge-family {@code ModList}) and delegates the rest here.
  *
  * <p>{@link GeckoIntegration} — and the GeckoLib types it references — is touched only inside a
- * {@code loaded} guard, so it never loads when GeckoLib is absent. A GeckoLib present but broken warns
- * once and renders GeckoLib mobs without eyes rather than failing mod load.
+ * {@code loaded} guard, so it never loads when GeckoLib is absent. A GeckoLib present but broken logs
+ * each affected operation once and renders its mobs without eyes rather than failing mod load.
  */
 public final class GeckoGuard {
-
-    private static boolean warnedIntegrationFailure;
 
     private GeckoGuard() {
     }
@@ -37,7 +36,8 @@ public final class GeckoGuard {
         try {
             return GeckoIntegration.enumerate(renderer, living);
         } catch (Throwable failure) {
-            warnIntegrationFailure(failure);
+            ClientIntegrationFailures.warnOnce(
+                    "GeckoLib", "model-part enumeration", renderer.getClass().getName(), failure);
             return List.of();
         }
     }
@@ -49,18 +49,9 @@ public final class GeckoGuard {
         try {
             return GeckoIntegration.tryAddLayer(renderer);
         } catch (Throwable failure) {
-            warnIntegrationFailure(failure);
+            ClientIntegrationFailures.warnOnce(
+                    "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
             return false;
         }
-    }
-
-    private static void warnIntegrationFailure(Throwable failure) {
-        if (warnedIntegrationFailure) {
-            return;
-        }
-        warnedIntegrationFailure = true;
-        SomeGooglyCommon.LOGGER.warn(
-                "GeckoLib is installed but its integration failed; GeckoLib mobs will render without googly eyes",
-                failure);
     }
 }

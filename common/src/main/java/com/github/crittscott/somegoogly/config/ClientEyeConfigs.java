@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,9 @@ import java.util.Map;
  * {@code EyeConfigSyncPacket}. This store also owns the resolved-view cache used by renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
- * integrated server fills the server store and the local sync fills this one independently.
+ * integrated server fills the server store and the local sync fills this one independently. Installed
+ * maps are immutable snapshots; their mutable model values are owned by this store and must be treated
+ * as read-only after installation.
  */
 public final class ClientEyeConfigs {
 
@@ -27,7 +30,10 @@ public final class ClientEyeConfigs {
     private ClientEyeConfigs() {
     }
 
-    /** The whole synced config set, by entity (used by the picker's {@code exportall} dump). */
+    /**
+     * The immutable synced map, by entity. Callers may retain the snapshot across replacements but must
+     * not mutate its {@link RuntimeConfigSet} values.
+     */
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
         return configs;
     }
@@ -38,6 +44,8 @@ public final class ClientEyeConfigs {
         resolved.clear();
     }
 
+    /** Return the entity's config for the requested age, including the age-independent fallback. */
+    @Nullable
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
@@ -59,9 +67,12 @@ public final class ClientEyeConfigs {
         return created;
     }
 
-    /** Replace the client's configs (e.g. on datapack sync) and invalidate dependent caches. */
+    /**
+     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
+     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
+     */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = next;
+        configs = Map.copyOf(next);
         resolved.clear();
     }
 }

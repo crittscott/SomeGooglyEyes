@@ -17,8 +17,8 @@ import java.util.function.Consumer;
  *
  * <p>This is what gives a cow or a player the stable token {@code head} instead of a positional {@code #0}
  * — the head is a root field whose own name is SRG-mangled in production, so only this group accessor
- * recovers it reliably. Tried after {@link HierarchicalResolver} (named-root models keep their cleaner
- * path) and before {@link ChildMapResolver} (the positional catch-all).
+ * recovers it reliably. It must follow {@link HierarchicalResolver} (named-root models keep their cleaner
+ * path) and precede {@link ChildMapResolver} (the positional catch-all).
  *
  * <p>For a young entity, {@link AgeableListModel#renderToBuffer} wraps {@code headParts()} and
  * {@code bodyParts()} each in their own baby-only scale/offset, applied and popped entirely inside that

@@ -26,11 +26,10 @@ import java.util.Map;
  * {@code renderOnlyHead} path is not covered by this whole-model compensation; per-box scaling and
  * age-specific model classes remain the resolver's and the datapack's responsibility.
  *
- * <p><b>Exotic Birds</b>: the mod is closed-source and the constants are baked from the bytecode of
- * {@code exoticbirds-1.20.1-1.0.0.jar} (hardcoded in each model's {@code renderToBuffer}, unreachable by
- * reflection). Babies are always wrapped; adults on most models. Flamingo's per-part lower-beak wrapper
- * (a z-fight nudge) is deliberately not represented. If Exotic Birds ever updates, re-extract: the table
- * is version-specific to that jar.
+ * <p><b>Exotic Birds</b>: the listed model classes use fixed whole-model transforms for every baby and
+ * for most adults. Compatibility is limited to model versions that retain those class names and
+ * transforms. Flamingo's per-part lower-beak z-fight adjustment is intentionally outside this
+ * whole-model table.
  */
 public final class ThirdPartyModelWraps {
 

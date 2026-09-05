@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -111,7 +112,10 @@ public final class PickerState {
         return active;
     }
 
-    /** The chosen mob's selectable part tokens, in enumeration order. Read-only. */
+    /**
+     * Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must not
+     * mutate the returned backing list.
+     */
     public static List<String> parts() {
         return parts;
     }
@@ -121,7 +125,10 @@ public final class PickerState {
         return partIndex;
     }
 
-    /** The variants being authored for the chosen mob. Read-only; mutate via the variant ops. */
+    /**
+     * Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the list
+     * or its elements; use the variant operations instead.
+     */
     public static List<DraftVariant> variants() {
         return variants;
     }
@@ -193,7 +200,10 @@ public final class PickerState {
         return currentEyes().size();
     }
 
-    /** The current variant's eye list — what save/select/delete and the preview operate on. */
+    /**
+     * Borrowed view of the current variant's eye list. Rendering and feedback callers must not mutate the
+     * returned list or its entries.
+     */
     public static List<ListedEye> currentEyes() {
         return currentVariant().eyes;
     }
@@ -665,7 +675,7 @@ public final class PickerState {
     /**
      * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
      * connection may already be gone, and the server's own logout handling
-     * ({@code PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
+     * ({@link PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
      *
      * <p>The authored drafts go too, along with {@link #targetType}. They were authored against — and
      * seeded from — the server we're leaving, and {@code export} would happily send them to the next

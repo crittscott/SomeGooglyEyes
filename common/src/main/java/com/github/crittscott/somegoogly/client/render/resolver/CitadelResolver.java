@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -44,7 +45,12 @@ public class CitadelResolver extends ReflectedBoxResolver {
                 Method translateAndRotate = boxClass.getMethod("translateAndRotate", PoseStack.class);
                 Field boxName = boxClass.getField("boxName");
                 return new Handles(modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
-            } catch (Throwable ignored) {
+            } catch (ClassNotFoundException absent) {
+                return new Handles(null, null, null, null,
+                        null, null);
+            } catch (Throwable failure) {
+                ClientIntegrationFailures.warnOnce(
+                        "CitadelResolver", "API discovery", ADVANCED_ENTITY_MODEL, failure);
                 return new Handles(null, null, null, null,
                         null, null);
             }
@@ -53,7 +59,7 @@ public class CitadelResolver extends ReflectedBoxResolver {
 
     @Override
     protected boolean available() {
-        return HANDLES.available();
+        return HANDLES.available() && !integrationFailed();
     }
 
     @Override
@@ -63,12 +69,12 @@ public class CitadelResolver extends ReflectedBoxResolver {
 
     @Override
     public boolean handles(EntityModel<?> model) {
-        return HANDLES.available() && HANDLES.modelClass().isInstance(model);
+        return available() && HANDLES.modelClass().isInstance(model);
     }
 
     @Override
     protected List<Object> collectParts(EntityModel<?> model) {
-        if (!HANDLES.available()) {
+        if (!available()) {
             return List.of();
         }
         try {
@@ -83,7 +89,8 @@ public class CitadelResolver extends ReflectedBoxResolver {
                 }
             }
             return parts;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("part collection", model, failure);
             return List.of();
         }
     }
@@ -93,7 +100,9 @@ public class CitadelResolver extends ReflectedBoxResolver {
         try {
             Object value = HANDLES.boxName().get(part);
             return value instanceof String s ? s : "";
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            ClientIntegrationFailures.warnOnce(
+                    "CitadelResolver", "box-name access", part.getClass().getName(), failure);
             return "";
         }
     }
@@ -103,17 +112,22 @@ public class CitadelResolver extends ReflectedBoxResolver {
         try {
             Object parent = HANDLES.getParent().invoke(part);
             return HANDLES.boxClass().isInstance(parent) ? parent : null;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("parent lookup", part, failure);
             return null;
         }
     }
 
     @Override
     protected boolean applyTransform(Object part, PoseStack poseStack) {
+        if (integrationFailed()) {
+            return false;
+        }
         try {
             HANDLES.translateAndRotate().invoke(part, poseStack);
             return true;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("pose transform", part, failure);
             return false;
         }
     }

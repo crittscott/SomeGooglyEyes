@@ -61,9 +61,8 @@ public class PickerFreezePacket {
         }
     }
 
-    public static void handle(PickerFreezePacket packet, NetworkTransport.Context context) {
+    public static void handle(PickerFreezePacket packet, ServerPlayer sender, NetworkTransport.Context context) {
         context.queue(() -> {
-            ServerPlayer sender = context.player();
             if (packet.freeze) {
                 if (!PickerGate.creative(sender)) {
                     return;
@@ -78,7 +77,7 @@ public class PickerFreezePacket {
                 if (error != null) {
                     sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
                 }
-            } else if (sender != null) {
+            } else {
                 PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
             }
         });

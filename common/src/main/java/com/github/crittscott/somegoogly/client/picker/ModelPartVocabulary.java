@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -98,6 +99,8 @@ public final class ModelPartVocabulary {
         try {
             return type.create(level) instanceof LivingEntity living ? living : null;
         } catch (Throwable constructionFailed) {
+            ClientIntegrationFailures.warnOnce(
+                    "entity factory", "picker sample construction", id.toString(), constructionFailed);
             return null;
         }
     }

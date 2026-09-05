@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -38,10 +39,22 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     // boxes hold a reference back to their model, so an entry keeps its own weak key alive and only
     // clearModelCache() actually reclaims it.
     private final Map<EntityModel<?>, ModelIndex> cache = new WeakHashMap<>();
+    private boolean integrationFailed;
 
     @Override
     public void clearModelCache() {
         cache.clear();
+        integrationFailed = false;
+    }
+
+    protected final boolean integrationFailed() {
+        return integrationFailed;
+    }
+
+    protected final void disableIntegration(String operation, Object subject, Throwable failure) {
+        integrationFailed = true;
+        ClientIntegrationFailures.warnOnce(getClass().getSimpleName(), operation,
+                subject.getClass().getName(), failure);
     }
 
     /** Per-model index: the family's boxes, with an index-aligned path token each. */
@@ -76,6 +89,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         List<String> paths = new ArrayList<>(parts.size());
         for (Object part : parts) {
             paths.add(pathOf(part, fallbackNames));
+            if (integrationFailed) {
+                return ModelIndex.EMPTY;
+            }
         }
         return new ModelIndex(List.copyOf(parts), List.copyOf(paths));
     }
@@ -103,7 +119,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                         names.put(box, field.getName());
                     }
                 } catch (Throwable accessDenied) {
-                    // Module/access restriction or anything else: skip this field.
+                    ClientIntegrationFailures.warnOnce(getClass().getSimpleName(),
+                            "fallback field access", model.getClass().getName(), accessDenied);
+                    // Positional names remain a reliable fallback when a Java field is inaccessible.
                 }
             }
         }
@@ -190,6 +208,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
         @Override
         public boolean apply(PoseStack poseStack) {
+            if (integrationFailed) {
+                return false;
+            }
             for (Object part : chain) {
                 if (!applyTransform(part, poseStack)) {
                     return false;
@@ -218,6 +239,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                 return null; // parent cycle: no usable chain
             }
             chain.addFirst(part);
+        }
+        if (integrationFailed) {
+            return null;
         }
         return new BoxChain(chain.toArray());
     }

@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -82,24 +83,19 @@ public final class NetworkHandler {
     private static long cachedConfigGeneration = -1L;
     private static long failedConfigGeneration = -1L;
     private static byte[] cachedConfigPayload;
-    private static boolean registered;
 
     private NetworkHandler() {
     }
 
     /** Bind the direction-specific common server handlers before a loader registers native payloads. */
-    public static synchronized void registerCommon() {
-        if (registered) {
-            return;
-        }
-        registered = true;
-        PROTOCOL_ACK_PAYLOAD.bindReceiver(
-                (version, context) -> context.queue(() -> acknowledge(context, version)));
-        PICKER_FREEZE_PAYLOAD.bindReceiver(PickerFreezePacket::handle);
-        PICKER_SPAWN_PAYLOAD.bindReceiver(PickerSpawnPacket::handle);
-        PICKER_SPAWN_ALL_PAYLOAD.bindReceiver(PickerSpawnAllPacket::handle);
-        PICKER_MOB_POSE_PAYLOAD.bindReceiver(PickerMobPosePacket::handle);
-        PICKER_EXPORT_PAYLOAD.bindReceiver(PickerExportPacket::handle);
+    public static void registerCommon() {
+        PROTOCOL_ACK_PAYLOAD.bindServerReceiver(
+                (version, player, context) -> context.queue(() -> acknowledge(player, version)));
+        PICKER_FREEZE_PAYLOAD.bindServerReceiver(PickerFreezePacket::handle);
+        PICKER_SPAWN_PAYLOAD.bindServerReceiver(PickerSpawnPacket::handle);
+        PICKER_SPAWN_ALL_PAYLOAD.bindServerReceiver(PickerSpawnAllPacket::handle);
+        PICKER_MOB_POSE_PAYLOAD.bindServerReceiver(PickerMobPosePacket::handle);
+        PICKER_EXPORT_PAYLOAD.bindServerReceiver(PickerExportPacket::handle);
     }
 
     /** Supply every typed payload to one loader-native play registration lifecycle. */
@@ -250,11 +246,7 @@ public final class NetworkHandler {
         PICKER_EXPORT_PAYLOAD.sendToServer(packet);
     }
 
-    private static void acknowledge(NetworkTransport.Context context, String version) {
-        ServerPlayer player = context.player();
-        if (player == null) {
-            return;
-        }
+    private static void acknowledge(ServerPlayer player, String version) {
         UUID playerId = player.getUUID();
         if (PENDING.remove(playerId) == null) {
             return;
@@ -347,7 +339,8 @@ public final class NetworkHandler {
         private final CustomPacketPayload.Type<Payload<T>> type;
         private final StreamCodec<RegistryFriendlyByteBuf, Payload<T>> codec;
         private final Direction direction;
-        private NetworkTransport.Receiver<T> receiver;
+        private NetworkTransport.ClientReceiver<T> clientReceiver;
+        private NetworkTransport.ServerReceiver<T> serverReceiver;
 
         private PayloadType(ResourceLocation id, Direction direction, Function<FriendlyByteBuf, T> decoder,
                             BiConsumer<T, FriendlyByteBuf> encoder) {
@@ -381,21 +374,46 @@ public final class NetworkHandler {
             return type.id();
         }
 
-        /** Bind the single receiver for this channel; throws if one is already bound. */
-        public synchronized void bindReceiver(NetworkTransport.Receiver<T> receiver) {
-            if (this.receiver != null) {
+        /** Bind this clientbound channel's receiver; throws for the wrong direction or a duplicate binding. */
+        public synchronized void bindClientReceiver(NetworkTransport.ClientReceiver<T> receiver) {
+            if (direction != Direction.CLIENTBOUND) {
+                throw new IllegalStateException("Cannot bind a client receiver for " + id());
+            }
+            if (clientReceiver != null) {
                 throw new IllegalStateException("Receiver is already bound for " + id());
             }
-            this.receiver = receiver;
+            clientReceiver = receiver;
         }
 
-        /** Dispatch a decoded payload to the bound receiver; throws if none is bound. */
-        public void receive(Payload<T> payload, NetworkTransport.Context context) {
-            NetworkTransport.Receiver<T> boundReceiver = receiver;
+        /** Bind this serverbound channel's receiver; throws for the wrong direction or a duplicate binding. */
+        public synchronized void bindServerReceiver(NetworkTransport.ServerReceiver<T> receiver) {
+            if (direction != Direction.SERVERBOUND) {
+                throw new IllegalStateException("Cannot bind a server receiver for " + id());
+            }
+            if (serverReceiver != null) {
+                throw new IllegalStateException("Receiver is already bound for " + id());
+            }
+            serverReceiver = receiver;
+        }
+
+        /** Dispatch a decoded clientbound payload to the bound receiver; throws if none is bound. */
+        public void receiveClientbound(Payload<T> payload, NetworkTransport.Context context) {
+            NetworkTransport.ClientReceiver<T> boundReceiver = clientReceiver;
             if (boundReceiver == null) {
                 throw new IllegalStateException("No receiver is bound for " + id());
             }
             boundReceiver.receive(payload.value, context);
+        }
+
+        /** Dispatch a decoded serverbound payload with its authenticated sender. */
+        public void receiveServerbound(Payload<T> payload, ServerPlayer player,
+                                       NetworkTransport.Context context) {
+            NetworkTransport.ServerReceiver<T> boundReceiver = serverReceiver;
+            if (boundReceiver == null) {
+                throw new IllegalStateException("No receiver is bound for " + id());
+            }
+            boundReceiver.receive(payload.value,
+                    Objects.requireNonNull(player, "Serverbound payload has no authenticated sender"), context);
         }
 
         /** Send a value on this channel to one player. */
