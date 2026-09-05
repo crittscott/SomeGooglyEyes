@@ -13,7 +13,7 @@ import java.util.Map;
 public final class FabricClientConfig {
 
     private static final String DEFAULTS = """
-            [Client Settings]
+            [client]
             %s = %s
             %s = %s
             %s = %s

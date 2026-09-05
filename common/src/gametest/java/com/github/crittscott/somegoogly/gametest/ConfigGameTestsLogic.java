@@ -304,10 +304,13 @@ public final class ConfigGameTestsLogic {
     /** {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it. */
     public static void serverTomlRoundTrips(GameTestHelper helper) {
         String defaults = """
-                [Server Settings]
+                [server]
                 googlyEyesEnabled = false
                 globalPercent = 17
-                entityOverrides = ["minecraft:zombie,100", "*:*_horse,50"]
+                entityOverrides = [
+                    "minecraft:zombie,100",
+                    "*:*_horse,50"
+                ]
                 """;
         try {
             Path dir = Files.createTempDirectory("somegoogly-toml-test");
@@ -323,7 +326,7 @@ public final class ConfigGameTestsLogic {
                         "a quoted string list round-trips with colons and wildcards intact");
 
                 Files.writeString(file, """
-                        [Server Settings]
+                        [server]
                         googlyEyesEnabled = true
                         globalPercent = 3
                         entityOverrides = []

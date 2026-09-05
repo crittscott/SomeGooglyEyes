@@ -12,17 +12,17 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Creates and loads the active world's server configuration. One {@link #SCHEMA} list drives both the
- * commented default file and the load, so adding a key means adding a single {@link Entry} rather than
- * keeping a positional template and a parallel read block in sync.
+ * Creates and loads Fabric's active-world server configuration. One {@link #SCHEMA} list drives both
+ * the commented default file and the load; its keys, defaults, ranges, and validators must stay aligned
+ * with the native Forge and NeoForge server specs.
  */
 public final class ServerConfigFile {
 
     public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
 
-    private static final String SERVER_SETTINGS = "Server Settings";
-    private static final String BEHAVIORS = "Behaviors";
-    private static final String PICKER = "Picker";
+    private static final String SERVER_SETTINGS = "server";
+    private static final String BEHAVIORS = "behaviors";
+    private static final String PICKER = "picker";
 
     private static final String ENTITY_OVERRIDES_COMMENT = """
             Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).

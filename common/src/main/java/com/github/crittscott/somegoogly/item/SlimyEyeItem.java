@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.List;
 
@@ -79,6 +80,7 @@ public class SlimyEyeItem extends Item {
         }
         target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
+        target.gameEvent(GameEvent.ENTITY_INTERACT, player);
         return InteractionResult.SUCCESS;
     }
 

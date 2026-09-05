@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for this mod's boolean, integer, and string-list configuration schemas. */
+/** Narrow TOML reader for the boolean, integer, and string-list schemas used by Fabric storage. */
 public final class TomlConfig {
 
     private TomlConfig() {
@@ -97,7 +97,10 @@ public final class TomlConfig {
         int arrayDepth = 0;
         for (String rawLine : source.split("\\R")) {
             String line = stripComment(rawLine).trim();
-            if (line.isEmpty() || line.startsWith("[")) {
+            if (line.isEmpty()) {
+                continue;
+            }
+            if (arrayDepth == 0 && line.startsWith("[") && line.endsWith("]")) {
                 continue;
             }
             if (statement.length() > 0) {

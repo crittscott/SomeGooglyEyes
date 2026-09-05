@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.function.Consumer;
 
@@ -63,6 +64,7 @@ public final class EyeItemService {
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         playShearSound(mob);
+        mob.gameEvent(GameEvent.SHEAR, player);
         return InteractionResult.SUCCESS;
     }
 
@@ -88,6 +90,7 @@ public final class EyeItemService {
         }
         dropSink.accept(buildEyeDrop(helper, EyeState.readProperties(mob)));
         weapon.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        mob.gameEvent(GameEvent.SHEAR, player);
     }
 
     /**
@@ -115,6 +118,7 @@ public final class EyeItemService {
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         playShearSound(player);
+        player.gameEvent(GameEvent.SHEAR, player);
         if (!clean) {
             player.hurt(player.damageSources().playerAttack(player),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));

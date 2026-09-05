@@ -27,7 +27,7 @@ public final class SomeGoogly {
         SomeGooglyCommon.init(registrar);
         registrar.register(modEventBus);
         ForgeNetworkTransport.register();
-        ForgeServerConfig.register();
+        ForgeServerConfig.register(context);
 
         ForgeServerEvents.register(MinecraftForge.EVENT_BUS);
         MinecraftForge.EVENT_BUS.addListener(SomeGoogly::addReloadListeners);

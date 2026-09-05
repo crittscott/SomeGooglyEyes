@@ -34,7 +34,9 @@ Registered content is declared once in `ContentRegistrar` — two items, one `Da
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly; all three loaders load the world's server TOML through the shared `ServerConfigFile`. NeoForge and Forge each also carry a native CLIENT spec whose values must be copied into `ConfigValue<T>` on load and reload or the two representations diverge.
+`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly and loads the world's server TOML through `ServerConfigFile`. NeoForge and Forge carry native CLIENT and SERVER specs whose values must be copied into `ConfigValue<T>` on load and reload, and SERVER unload must restore defaults, or the storage and runtime representations diverge.
+
+Server-config keys, defaults, ranges, list validators, and section names must stay aligned across `ServerConfigFile`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
 
 Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
@@ -57,6 +59,8 @@ Related mutations flush as one full-snapshot sync. The eye-state key and variant
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvest paths. Loader adapters run entity interaction after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`.
+
+Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every successful interactive, self, or kill harvest emits `GameEvent.SHEAR`. Refused operations emit neither.
 
 ## Eligibility and behaviors
 
@@ -96,7 +100,7 @@ Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and r
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge's required `PayloadChannel` uses network version 11 and marks payloads handled. Its native CLIENT spec copies into shared values on load/reload; `ServerConfigFile` owns world server TOML.
+Forge's required `PayloadChannel` uses network version 11 and marks payloads handled.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 
