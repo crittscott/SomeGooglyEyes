@@ -63,8 +63,7 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1. Fabric and NeoForge require
-[Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api); Forge does not.
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1.
 
 ## Credits and license
 

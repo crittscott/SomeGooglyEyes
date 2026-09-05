@@ -71,8 +71,6 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-    modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
-
     // Optional at runtime; needed at compile time by Fabric's GeckoLib render adapter.
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.21.1:$rootProject.geckolib_version"
 
@@ -84,7 +82,7 @@ dependencies {
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version, fabric_loader_version: fabric_loader_version,
-            fabric_api_version: fabric_api_version, architectury_api_version: architectury_api_version,
+            fabric_api_version: fabric_api_version,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
     ]

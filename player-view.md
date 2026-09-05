@@ -8,11 +8,9 @@ The mod adds two items, one enchantment, and one creative tab. Eye placement com
 allowing different eye arrangements for vanilla and modded mobs.
 
 Completed artifacts target Minecraft 1.21.1 on Fabric, NeoForge, and Forge. Fabric requires Fabric
-Loader 0.19.3 or newer, Fabric API 0.116.15+1.21.1 or newer, and Architectury API 13.0.8 or newer.
-NeoForge requires NeoForge 21.1.248 or newer within the 21.1 release line and Architectury API
-13.0.8 or newer. Forge requires Forge 52.1.16 or newer within the 52 release line and does not
-require Architectury API. All loaders require Java 21; GeckoLib 4.7.4 or newer is an optional client
-dependency.
+Loader 0.19.3 or newer and Fabric API 0.116.15+1.21.1 or newer. NeoForge requires NeoForge 21.1.248
+or newer within the 21.1 release line. Forge requires Forge 52.1.16 or newer within the 52 release
+line. All loaders require Java 21; GeckoLib 4.7.4 or newer is an optional client dependency.
 
 ## Mobs with eyes
 
