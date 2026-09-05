@@ -21,8 +21,8 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
-// The canonical source remains in common so Loom can widen common compilation. The Fabric module
-// packages it beside fabric.mod.json; Forge supplies equivalent runtime access through patches/AT.
+// The canonical source remains in common so Loom can widen common compilation. Fabric packages it
+// beside fabric.mod.json; the Forge-family loaders copy their shared AT into processed resources.
 tasks.named('jar', Jar).configure {
     exclude 'somegoogly.accesswidener'
 }

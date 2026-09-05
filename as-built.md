@@ -70,7 +70,7 @@ Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_pro
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
 
-Vanilla rendering access is declared once in the common 1.21.1 Access Widener, which Fabric applies directly; NeoForge and Forge transcribe the same 36 entries into an Access Transformer, and the three lists must match.
+Fabric uses the common 1.21.1 Access Widener; Forge and NeoForge copy `gradle/accesstransformer.cfg` into their resources. These two 36-rule access representations must stay aligned.
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 

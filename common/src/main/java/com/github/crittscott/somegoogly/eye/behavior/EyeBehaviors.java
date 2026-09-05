@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The registry of eye behaviors — the seven expressions a mob can play, keyed by id. A plain map, not a
- * Forge registry: these are code-defined client animations, and both sides only need the ids to agree
- * (the server names a behavior in the trigger packet; the client looks it up to play). This class is
- * deliberately free of client-only references so the server can class-load it to pick and schedule.
+ * The registry of eye behaviors — the seven expressions a mob can play, keyed by id. These are
+ * code-defined client animations, and both sides only need the ids to agree (the server names a
+ * behavior in the trigger packet; the client looks it up to play). This class is deliberately free of
+ * client-only references so the server can class-load it to pick and schedule.
  */
 public final class EyeBehaviors {
 

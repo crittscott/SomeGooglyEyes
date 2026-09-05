@@ -31,7 +31,7 @@ public final class NeoForgeClient {
     }
 
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
-        // Architectury receivers must exist before NeoForge freezes payload registrations.
+        // Install the common client receive handoff before registered payload handlers can invoke it.
         ClientNetworkHandler.register();
         NeoForgeClientNetworkTransport.register();
         NeoForgeClientConfig.register(modBus, modContainer);

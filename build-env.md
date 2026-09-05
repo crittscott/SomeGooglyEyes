@@ -17,7 +17,7 @@ These versions come from the active wrapper, Gradle scripts, properties, and loa
 | Minecraft | exactly 1.21.1 |
 | Architectury Loom | 1.17.491 |
 | Architectury Gradle plugin | 3.5.169 |
-| Architectury API | 13.0.8; required at runtime by Fabric and NeoForge only |
+| Architectury API | 13.0.8; compile-time annotations and transformation only |
 | Forge build target | 1.21.1-52.1.16; completed artifact |
 | Forge runtime range in metadata | `[52.1.16,53)` |
 | FML runtime range in metadata | `[52,53)` |
@@ -36,10 +36,10 @@ The Gradle runtime JVM and compilation toolchain are separate. The current shell
 under Java 17, while every subproject requests a Java 21 toolchain, sets source and target
 compatibility to 21, compiles with `--release 21`, and uses Java 21 for development runs.
 
-Minecraft is exact because the renderer integration, Access Widener, Access Transformers, and
-Fabric Mixins refer to 1.21.1 internals. Every loader compiles and runs against the minimum versions
-declared in its metadata. Architectury API is required at runtime by Fabric and NeoForge; Forge uses
-only Architectury's build-time transformation.
+Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
+Mixins refer to 1.21.1 internals. Every loader compiles and runs against the minimum versions declared
+in its metadata. Architectury API supplies compile-time annotations and transformation only; no loader
+requires it at runtime.
 
 ## Project layout
 
@@ -72,7 +72,6 @@ The common module declares Fabric, Forge, and NeoForge as transform targets and 
 `common/src/main/resources/somegoogly.accesswidener` while compiling shared Minecraft code. Its
 dependencies are:
 
-- Fabric Loader 0.19.3 for portable environment annotations;
 - Architectury API 13.0.8 as a mod compile-only dependency;
 - JSR-305 3.0.2 as a compile-only dependency.
 
@@ -80,8 +79,8 @@ The module has no JUnit test source set; automated verification is the GameTest 
 `common/src/gametest` driven per loader.
 
 The production common JAR excludes the Access Widener. Fabric copies the canonical 1.21.1 file into
-its mod JAR beside `fabric.mod.json`. NeoForge and Forge each supply the equivalent 36 demonstrated
-rules in an Access Transformer.
+its mod JAR beside `fabric.mod.json`. NeoForge and Forge copy the canonical Forge-family
+`gradle/accesstransformer.cfg` into their processed resources; its 36 rules mirror the Access Widener.
 
 Common resource processing expands `mod_id` in `pack.mcmeta`. Shared assets, recipes, language,
 datapack eye definitions, and the GameTest structure fixture are production resources.
@@ -116,22 +115,23 @@ files. Its verified release artifact is `forge/build/libs/somegoogly-forge-0.8.1
 
 ### Fabric
 
-Fabric depends on Fabric Loader 0.19.3, Fabric API 0.116.15+1.21.1, and
-`architectury-fabric:13.0.8`. GeckoLib's Fabric 1.21.1 artifact at 4.7.4 is mod compile-only. JSR-305
-is redeclared because common compile-only dependencies do not propagate to loader compilation.
+Fabric depends on Fabric Loader 0.19.3 and Fabric API 0.116.15+1.21.1. GeckoLib's Fabric 1.21.1
+artifact at 4.7.4 is mod compile-only. JSR-305 is redeclared because common compile-only dependencies
+do not propagate to loader compilation.
 
 Main resource processing expands `fabric.mod.json` and copies the common Access Widener into the
-Fabric resources. Metadata declares exact Minecraft 1.21.1, Java 21, the minimum Loader/API versions, the
-Access Widener, `somegoogly.mixins.json`, and GeckoLib as a suggestion.
+Fabric resources. Metadata declares exact Minecraft 1.21.1, Java 21, the minimum Loader/API versions,
+the Access Widener, `somegoogly.mixins.json`, GeckoLib 4.7.4 or newer as a suggestion, and older
+installed GeckoLib versions as incompatible.
 
 The verified release artifact is `fabric/build/libs/somegoogly-fabric-0.8.1.jar`.
 
 ### NeoForge
 
-NeoForge targets `net.neoforged:neoforge:21.1.248`, Architectury NeoForge 13.0.8, and the GeckoLib
-NeoForge 1.21.1 artifact at 4.7.4. Architectury is required at runtime; GeckoLib is compile-only and
-metadata-optional on the physical client. Main resource processing expands `neoforge.mods.toml`, and
-the Access Transformer contains the 36 renderer/model rules required by the shared client code.
+NeoForge targets `net.neoforged:neoforge:21.1.248` and the GeckoLib NeoForge 1.21.1 artifact at 4.7.4.
+Architectury supplies build-time transformation only; GeckoLib is compile-only and metadata-optional
+on the physical client. Main resource processing expands `neoforge.mods.toml` and copies the canonical
+Forge-family Access Transformer containing the 36 rules required by the shared client code.
 
 The module contains 17 production Java files covering bootstrap, native configuration, server
 events, platform services, client registration/access, and the soft-loaded GeckoLib bridge. Common
@@ -156,10 +156,10 @@ holders. All three dedicated servers discover and pass all 78 required tests and
 ## Access configuration
 
 `common/src/main/resources/somegoogly.accesswidener` is the canonical 1.21.1 access declaration used
-by shared compilation and Fabric runtime. It covers the renderer collections and layers, render-type
-factory, model-part children, age-dependent model transforms, and rabbit and llama parts referenced
-by current source. NeoForge and Forge each translate all 36 entries one-for-one in their Access
-Transformers.
+by shared compilation and Fabric runtime. `gradle/accesstransformer.cfg` is the canonical Forge-family
+translation copied into both Forge and NeoForge resources. The two representations cover the same 36
+renderer collections and layers, render-type factory, model-part children, age-dependent model
+transforms, and rabbit and llama parts referenced by current source.
 
 ## Wrapper files
 

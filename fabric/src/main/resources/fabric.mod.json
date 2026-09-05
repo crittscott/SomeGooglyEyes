@@ -27,7 +27,10 @@
     "java": ">=21",
     "fabric-api": ">=${fabric_api_version}"
   },
+  "breaks": {
+    "geckolib": "<${geckolib_version}"
+  },
   "suggests": {
-    "geckolib": "*"
+    "geckolib": ">=${geckolib_version}"
   }
 }

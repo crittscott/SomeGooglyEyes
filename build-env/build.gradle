@@ -61,4 +61,12 @@ subprojects {
             languageVersion = JavaLanguageVersion.of(21)
         })
     }
+
+    if (project.name in ['forge', 'neoforge']) {
+        tasks.named('processResources', ProcessResources).configure {
+            from(rootProject.file('gradle/accesstransformer.cfg')) {
+                into 'META-INF'
+            }
+        }
+    }
 }
