@@ -8,15 +8,18 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 /** Fabric registration for client ticks, picker UI/input, colors, and the 3D eye item renderer. */
 public final class FabricClientEvents {
@@ -41,7 +44,16 @@ public final class FabricClientEvents {
             mergePickerCommandTree(client);
             ClientLifecycle.tick();
         });
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> commandTreeMergeTicks = 0);
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE)) {
+                if (client.getConnection() != null) {
+                    client.getConnection().getConnection()
+                            .disconnect(Component.translatable("somegoogly.network.required_server"));
+                }
+                return;
+            }
+            commandTreeMergeTicks = 0;
+        });
         ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
                 ClientNetworkHandler.onEntityLoaded(entity));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {

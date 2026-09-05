@@ -1,16 +1,20 @@
 package com.github.crittscott.somegoogly.network.neoforge;
 
+import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.NetworkTransport;
+import com.github.crittscott.somegoogly.network.PickerExportPacket;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-/** NeoForge payload registration and server-side transport. */
+/** Required NeoForge payload registration and native packet sends. */
 public final class NeoForgeNetworkTransport {
 
     private NeoForgeNetworkTransport() {
@@ -22,21 +26,17 @@ public final class NeoForgeNetworkTransport {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("0").optional().executesOn(HandlerThread.NETWORK);
-        NetworkHandler.registerPayloads(new NetworkTransport.Registrar() {
-            @Override
-            public <T> void registerClientbound(NetworkHandler.PayloadType<T> payloadType) {
-                registrar.playToClient(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> payloadType.receiveClientbound(payload, new NeoForgeContext(context)));
-            }
-
-            @Override
-            public <T> void registerServerbound(NetworkHandler.PayloadType<T> payloadType) {
-                registrar.playToServer(payloadType.type(), payloadType.codec(),
-                        (payload, context) -> payloadType.receiveServerbound(
-                                payload, serverPlayer(context), new NeoForgeContext(context)));
-            }
-        });
+        PayloadRegistrar registrar = event.registrar(NetworkHandler.NETWORK_VERSION);
+        registrar.playToClient(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC,
+                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+        registrar.playToClient(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC,
+                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+        registrar.playToClient(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC,
+                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+        registrar.playToServer(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC,
+                (payload, context) -> PickerFreezePacket.handle(payload, serverPlayer(context)));
+        registrar.playToServer(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC,
+                (payload, context) -> PickerExportPacket.handle(payload, serverPlayer(context)));
     }
 
     private static ServerPlayer serverPlayer(IPayloadContext context) {
@@ -44,12 +44,5 @@ public final class NeoForgeNetworkTransport {
             return player;
         }
         throw new IllegalStateException("Serverbound payload has no authenticated server player");
-    }
-
-    private record NeoForgeContext(IPayloadContext context) implements NetworkTransport.Context {
-        @Override
-        public void queue(Runnable task) {
-            context.enqueueWork(task);
-        }
     }
 }

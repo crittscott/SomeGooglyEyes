@@ -78,17 +78,17 @@ GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which p
 
 ## Networking
 
-`NetworkHandler` defines the typed custom payloads and codecs behind the project-owned `NetworkTransport` boundary; loader adapters only register and send. Gameplay payload ids embed protocol version `10` and the bodies are byte-identical across loaders, so any wire-format change requires bumping that number. `EyeStatePacket` composes `AppearanceOverride.STREAM_CODEC` for its appearance fields rather than a hand-rolled flag byte. Stable hello and acknowledgment ids run a login handshake, and a mismatch or timeout disconnects the client before resolved eye definitions are sent.
+Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `11`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
 
-Each receiver is registered for one direction only; loader adapters pass every serverbound receiver its required authenticated `ServerPlayer`, while clientbound receivers receive only the main-thread handoff. Every picker request re-checks authorization server-side. `NetworkTracking` abstracts loader-specific tracking-player lookup for fanout. Eye-state packets that arrive before their entity wait in a bounded, expiring pending set and are cleared on disconnect.
+`NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers receive the authenticated `ServerPlayer` and re-check authorization. Eye-state packets include entity id and UUID; packets that precede entity creation wait in a bounded UUID-keyed map cleared on disconnect, preventing numeric-id reuse from applying stale state.
 
 ## Picker and commands
 
-Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
+Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. Spawn and mob-pose operations are server Brigadier commands; only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
 `PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all additionally requires creative mode, explicit server enablement, and a server-wide cooldown. World export is confined to the generated datapack directory and triggers a reload, so it alone among the picker verbs requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
 
-The shared client command code builds one Brigadier tree; each loader registers it and reconciles its picker branch with the server-supplied admin branch.
+The client and server own disjoint branches of one `/sg` Brigadier tree: local editing stays client-side, while admin, spawn, spawn-all, and mob-pose commands are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 
 ## Loader integration
 
@@ -96,13 +96,13 @@ Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and r
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge's required `PayloadChannel` uses the shared protocol, direction-validates payloads, and marks them handled. Its native CLIENT spec copies into shared values on load/reload; `ServerConfigFile` owns world server TOML.
+Forge's required `PayloadChannel` uses network version 11 and marks payloads handled. Its native CLIENT spec copies into shared values on load/reload; `ServerConfigFile` owns world server TOML.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 
 ## Automated verification
 
-Shared assertions live in `common/src/gametest/java`; each loader wraps them and adds one persistence test, so its annotated count stays at shared + 1. `NetworkHandler` handshake failures, config throttling, `/sg admin`, and plain-shears self-damage require manual client testing.
+Shared assertions live in `common/src/gametest/java`; each loader wraps them and adds one persistence test, so its annotated count stays at shared + 1. Required-client rejection, `/sg` server commands, and plain-shears self-damage require manual client testing.
 
 ## Operational boundaries
 

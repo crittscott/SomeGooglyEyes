@@ -37,14 +37,8 @@ public final class ServerServices {
         }
     }
 
-    /** Begin protocol negotiation for a newly joined server player. */
-    public static void onPlayerJoined(ServerPlayer player) {
-        NetworkHandler.beginHandshake(player);
-    }
-
-    /** Release all per-player networking and picker state when a server player leaves. */
+    /** Release all per-player picker state when a server player leaves. */
     public static void onPlayerLeft(ServerPlayer player) {
-        NetworkHandler.playerLeft(player);
         PickerFreezeService.onPlayerLoggedOut(player);
         PickerExportService.onPlayerLeft(player.getUUID());
         PickerGate.onPlayerLeft(player.getUUID());
@@ -57,12 +51,10 @@ public final class ServerServices {
         PickerExportService.onServerStopping();
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
-        NetworkHandler.serverStopped();
     }
 
-    /** Advance handshake timeouts and behavior scheduling once at the end of a server tick. */
-    public static void onServerTick(MinecraftServer server) {
-        NetworkHandler.tickHandshake(server);
+    /** Advance behavior scheduling once at the end of a server tick. */
+    public static void onServerTick() {
         ServerBehaviorScheduler.serverTick();
     }
 
@@ -80,11 +72,9 @@ public final class ServerServices {
         ServerBehaviorScheduler.onStopTracking(living);
     }
 
-    /** Send current resolved eye definitions after login or reload, once the handshake is ready. */
+    /** Send current resolved eye definitions after login or reload. */
     public static void syncEyeConfigs(ServerPlayer player) {
-        if (NetworkHandler.ready(player)) {
-            NetworkHandler.sendConfig(player);
-        }
+        NetworkHandler.sendConfig(player);
     }
 
     private static void applyGooglyDecision(LivingEntity living) {

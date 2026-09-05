@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.server.ServerServices;
 import com.mojang.serialization.DataResult;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -10,42 +9,47 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Server → client sync of the version/age-selected eye geometry configs. Sent on player login and
- * on {@code /reload} (see {@link ServerServices#syncEyeConfigs}). Custom datapack data isn't
- * auto-synced, so we carry it ourselves; each entity's selected config set travels as binary NBT
- * (the codec output via {@link NbtOps}), roughly half the size of a JSON-string encoding — this
- * packet goes to every player at login, so wire size matters.
- *
- * <p>The whole packet must fit vanilla's 1 MiB clientbound custom-payload cap or every client is
- * disconnected at login; {@link #encode} refuses an authored config set before it reaches that ceiling.
- */
-public class EyeConfigSyncPacket {
+/** Server-to-client synchronization of the complete resolved eye-definition set. */
+public class EyeConfigSyncPacket implements CustomPacketPayload {
 
-    // Refuse the payload while there is still headroom under the 1 MiB clientbound payload cap.
-    static final int MAX_PAYLOAD_BYTES = 900 * 1024;
+    public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
+    public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE =
+            new CustomPacketPayload.Type<>(NetworkHandler.EYE_CONFIG);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
+            new StreamCodec<>() {
+                @Override
+                public EyeConfigSyncPacket decode(RegistryFriendlyByteBuf buffer) {
+                    return EyeConfigSyncPacket.decode(buffer);
+                }
+
+                @Override
+                public void encode(RegistryFriendlyByteBuf buffer, EyeConfigSyncPacket packet) {
+                    EyeConfigSyncPacket.encode(packet, buffer);
+                }
+            };
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
-    private final long generation;
 
-    public EyeConfigSyncPacket(long generation, Map<ResourceLocation, RuntimeConfigSet> configs) {
-        this.generation = generation;
+    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs) {
         this.configs = configs;
     }
 
     public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
-        long generation = buffer.readLong();
-        if (generation < 0) {
-            throw new DecoderException("Negative eye config generation");
+        if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
+            throw new DecoderException("Eye config sync payload exceeds network limit");
         }
+        int start = buffer.readerIndex();
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
-            throw new DecoderException("Eye config count exceeds protocol limit: " + size);
+            throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
         Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
         int wireEyes = 0;
@@ -58,14 +62,13 @@ public class EyeConfigSyncPacket {
             if (tag == null) {
                 throw new DecoderException("Missing synced eye config for " + id);
             }
-            EyeConfigLimits.WireValidation wireValidation = EyeConfigLimits.validateWireConfigSet(tag);
-            if (wireValidation.error() != null) {
-                throw new DecoderException("Unsafe synced eye config for " + id + ": "
-                        + wireValidation.error());
+            EyeConfigLimits.WireValidation validation = EyeConfigLimits.validateWireConfigSet(tag);
+            if (validation.error() != null) {
+                throw new DecoderException("Unsafe synced eye config for " + id + ": " + validation.error());
             }
-            wireEyes += wireValidation.eyes();
+            wireEyes += validation.eyes();
             if (wireEyes > EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC) {
-                throw new DecoderException("Synced eye config total exceeds protocol limit");
+                throw new DecoderException("Synced eye config total exceeds network limit");
             }
             RuntimeConfigSet decoded;
             try {
@@ -75,11 +78,14 @@ public class EyeConfigSyncPacket {
             }
             configs.put(id, decoded);
         }
+        if (buffer.readerIndex() - start > MAX_PAYLOAD_BYTES) {
+            throw new DecoderException("Eye config sync payload exceeds network limit");
+        }
         String error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error);
         }
-        return new EyeConfigSyncPacket(generation, configs);
+        return new EyeConfigSyncPacket(configs);
     }
 
     public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
@@ -88,7 +94,6 @@ public class EyeConfigSyncPacket {
             throw new EncoderException("Unsafe eye config sync: " + error);
         }
         int start = buffer.writerIndex();
-        buffer.writeLong(packet.generation);
         buffer.writeVarInt(packet.configs.size());
         for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
@@ -111,7 +116,8 @@ public class EyeConfigSyncPacket {
         return configs;
     }
 
-    public long generation() {
-        return generation;
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

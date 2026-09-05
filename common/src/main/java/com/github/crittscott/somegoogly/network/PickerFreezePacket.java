@@ -4,7 +4,10 @@ import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -20,7 +23,21 @@ import java.util.UUID;
  * releases the sender's own frozen mob, and gating it would strand a mob frozen if the player lost
  * creative mid-edit.
  */
-public class PickerFreezePacket {
+public class PickerFreezePacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE =
+            new CustomPacketPayload.Type<>(NetworkHandler.PICKER_FREEZE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public PickerFreezePacket decode(RegistryFriendlyByteBuf buffer) {
+            return PickerFreezePacket.decode(buffer);
+        }
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buffer, PickerFreezePacket packet) {
+            PickerFreezePacket.encode(packet, buffer);
+        }
+    };
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
@@ -61,25 +78,28 @@ public class PickerFreezePacket {
         }
     }
 
-    public static void handle(PickerFreezePacket packet, ServerPlayer sender, NetworkTransport.Context context) {
-        context.queue(() -> {
-            if (packet.freeze) {
-                if (!PickerGate.creative(sender)) {
-                    return;
-                }
-                Entity target = sender.serverLevel().getEntity(packet.mobId);
-                if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
-                    sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
-                            Component.translatable("somegoogly.command.picker.freeze_too_far")));
-                    return;
-                }
-                Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
-                if (error != null) {
-                    sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
-                }
-            } else {
-                PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
+    public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
+        if (packet.freeze) {
+            if (!PickerGate.creative(sender)) {
+                return;
             }
-        });
+            Entity target = sender.serverLevel().getEntity(packet.mobId);
+            if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                        Component.translatable("somegoogly.command.picker.freeze_too_far")));
+                return;
+            }
+            Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
+            if (error != null) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
+            }
+        } else {
+            PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
+        }
+    }
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

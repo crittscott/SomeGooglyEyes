@@ -37,9 +37,7 @@ import java.util.List;
  * ({@link ServerEyeConfigs#ENDER_DRAGON}) is skipped: it's hard-excluded from eyes, and NoAi
  * doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
  *
- * <p>This is the server-side half: the commands themselves are client commands
- * ({@code GooglyClientCommands}) that send picker request packets ({@code PickerSpawnPacket} /
- * {@code PickerSpawnAllPacket}); their creative-gated handlers call
+ * <p>The server-owned {@code /sg spawn} and {@code /sg spawnall} commands call
  * {@link #spawn(ServerPlayer, String)} / {@link #spawnOne(ServerPlayer, EntityType)} on the server
  * thread, so the verbs work from a remote client as well as in single-player.
  *

@@ -26,6 +26,6 @@ public final class EyeStateSync {
     }
 
     private static EyeStatePacket packet(LivingEntity entity, EyeState.Snapshot snapshot) {
-        return new EyeStatePacket(entity.getId(), snapshot);
+        return new EyeStatePacket(entity.getId(), entity.getUUID(), snapshot);
     }
 }

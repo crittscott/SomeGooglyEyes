@@ -1,11 +1,15 @@
 package com.github.crittscott.somegoogly.command;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.picker.PickerFreezeService;
+import com.github.crittscott.somegoogly.picker.PickerGate;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -16,25 +20,26 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 
 /**
- * The {@code admin} subtree of {@code /sg} — operator (permission level 2) tools, additionally
- * requiring <b>creative mode</b> like the rest of the picker toolset, that mutate the live
- * {@link LivingEntity} the running player is looking at: its has-eyes flag, iris/cornea tint, glow
- * mode, and active cosmetic behavior. Exercises the full per-mob override loop (server NBT write →
- * {@link EyeState} broadcast → client apply → renderer override) and the server-owned behavior schedule.
+ * Server-owned {@code /sg} commands. The creative-only picker branches spawn, move, and rotate
+ * authoring mobs; the {@code admin} subtree additionally requires permission level 2 and changes
+ * the looked-at entity's eye state or active cosmetic behavior.
  *
- * <p>Server-authoritative: registered on the server dispatcher and grafted under a server-side
- * {@code /sg} root. The client {@code /sg} picker verbs and these admin verbs live on disjoint paths
- * ({@code admin …} vs the picker verbs), so Minecraft/Forge command fall-through routes each side's input
- * to the side that owns it — one command name, two registration sources. Real shears / slimy eye / dye /
- * redstone gameplay calls the same {@link EyeState} API; this is the manual driver for it.
+ * <p>The local editing branches use the client dispatcher. The two trees have disjoint child paths
+ * under one {@code /sg} root; loader client adapters preserve routing to these server branches.
  *
  * <ul>
  *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag</li>
@@ -44,7 +49,10 @@ import javax.annotation.Nullable;
  *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behavior now</li>
  * </ul>
  */
-public final class GooglyAdminCommand {
+public final class GooglyServerCommands {
+
+    private static final double MAX_MOB_MOVE = 20.0;
+    private static final double MAX_MOB_MOVE_SQUARED = MAX_MOB_MOVE * MAX_MOB_MOVE;
 
     /** The {@code /sg admin behavior} token that picks a random behavior instead of naming one. */
     private static final String RANDOM_BEHAVIOR_TOKEN = "random";
@@ -58,10 +66,10 @@ public final class GooglyAdminCommand {
         return builder.buildFuture();
     };
 
-    private GooglyAdminCommand() {
+    private GooglyServerCommands() {
     }
 
-    /** The {@code admin} subtree (op-gated), grafted under {@code /sg} by {@link #register}. */
+    /** The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}. */
     private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
         return Commands.literal("admin")
                 .requires(src -> src.hasPermission(2))
@@ -93,6 +101,147 @@ public final class GooglyAdminCommand {
                         .then(Commands.argument("id", StringArgumentType.word())
                                 .suggests(BEHAVIOR_SUGGESTIONS)
                                 .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id")))));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> spawnTree() {
+        return Commands.literal("spawn")
+                .requires(GooglyServerCommands::creativePlayer)
+                .then(Commands.argument("type", ResourceLocationArgument.id())
+                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
+                                BuiltInRegistries.ENTITY_TYPE.keySet().stream()
+                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.get(id).canSummon()),
+                                builder))
+                        .executes(GooglyServerCommands::spawn));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> spawnAllTree() {
+        return Commands.literal("spawnall")
+                .requires(GooglyServerCommands::creativePlayer)
+                .executes(ctx -> spawnAll(ctx, null))
+                .then(Commands.argument("mod", StringArgumentType.word())
+                        .executes(ctx -> spawnAll(ctx, StringArgumentType.getString(ctx, "mod"))));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> mobTree() {
+        return Commands.literal("mob")
+                .requires(GooglyServerCommands::creativePlayer)
+                .then(Commands.literal("move")
+                        .then(Commands.argument("dx", FloatArgumentType.floatArg())
+                                .then(Commands.argument("dy", FloatArgumentType.floatArg())
+                                        .then(Commands.argument("dz", FloatArgumentType.floatArg())
+                                                .executes(GooglyServerCommands::moveMob)))))
+                .then(Commands.literal("rot")
+                        .then(Commands.argument("azimuth", FloatArgumentType.floatArg())
+                                .executes(GooglyServerCommands::rotateMob)));
+    }
+
+    private static int spawn(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = ctx.getSource().getPlayer();
+        ResourceLocation typeId = ctx.getArgument("type", ResourceLocation.class);
+        if (player == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
+            ctx.getSource().sendFailure(Component.translatable(
+                    "somegoogly.command.picker.unknown_entity_type", typeId));
+            return 0;
+        }
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(typeId);
+        if (!type.canSummon()) {
+            ctx.getSource().sendFailure(Component.translatable(
+                    "somegoogly.command.picker.unknown_entity_type", typeId));
+            return 0;
+        }
+        PickerSpawnService.spawnOne(player, type);
+        return 1;
+    }
+
+    private static int spawnAll(CommandContext<CommandSourceStack> ctx, @Nullable String modFilter) {
+        ServerPlayer player = ctx.getSource().getPlayer();
+        if (player == null) {
+            return 0;
+        }
+        if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_disabled"));
+            return 0;
+        }
+        if (modFilter != null && !modFilter.matches("[a-z0-9_.-]+")) {
+            return 0;
+        }
+        if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_cooldown"));
+            return 0;
+        }
+        player.sendSystemMessage(modFilter == null
+                ? Component.translatable("somegoogly.command.picker.spawning_all")
+                : Component.translatable("somegoogly.command.picker.spawning_mod", modFilter));
+        PickerSpawnService.spawn(player, modFilter);
+        return 1;
+    }
+
+    private static int moveMob(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = ctx.getSource().getPlayer();
+        if (player == null) {
+            return 0;
+        }
+        double dx = FloatArgumentType.getFloat(ctx, "dx");
+        double dy = FloatArgumentType.getFloat(ctx, "dy");
+        double dz = FloatArgumentType.getFloat(ctx, "dz");
+        if (!Double.isFinite(dx) || !Double.isFinite(dy) || !Double.isFinite(dz)) {
+            return 0;
+        }
+        if (dx * dx + dy * dy + dz * dz > MAX_MOB_MOVE_SQUARED) {
+            player.sendSystemMessage(Component.translatable(
+                    "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE));
+            return 0;
+        }
+        LivingEntity living = frozenMob(player);
+        if (living == null) {
+            return 0;
+        }
+        living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
+        player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_moved",
+                String.format("%.2f", living.getX()), String.format("%.2f", living.getY()),
+                String.format("%.2f", living.getZ())));
+        return 1;
+    }
+
+    private static int rotateMob(CommandContext<CommandSourceStack> ctx) {
+        ServerPlayer player = ctx.getSource().getPlayer();
+        if (player == null) {
+            return 0;
+        }
+        LivingEntity living = frozenMob(player);
+        if (living == null) {
+            return 0;
+        }
+        float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
+        if (!Float.isFinite(azimuth)) {
+            return 0;
+        }
+        float yaw = Mth.wrapDegrees(azimuth - 90.0F);
+        living.setYRot(yaw);
+        living.setYHeadRot(yaw);
+        living.setYBodyRot(yaw);
+        player.sendSystemMessage(Component.translatable(
+                "somegoogly.command.picker.mob_rotated", String.format("%.0f", azimuth)));
+        return 1;
+    }
+
+    @Nullable
+    private static LivingEntity frozenMob(ServerPlayer player) {
+        var mobId = PickerFreezeService.frozenMobId(player.getUUID());
+        if (mobId == null) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_chosen"));
+            return null;
+        }
+        Entity entity = player.serverLevel().getEntity(mobId);
+        if (!(entity instanceof LivingEntity living)) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_found"));
+            return null;
+        }
+        return living;
+    }
+
+    private static boolean creativePlayer(CommandSourceStack source) {
+        return source.getEntity() instanceof ServerPlayer player && player.isCreative();
     }
 
     /**
@@ -168,9 +317,13 @@ public final class GooglyAdminCommand {
         return Component.translatable(value ? "somegoogly.value.true" : "somegoogly.value.false");
     }
 
-    /** Register the server-side {@code /sg} root carrying the {@code admin} subtree. */
+    /** Register the server-owned world-mutation branches of {@code /sg}. */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("sg").then(adminTree()));
+        dispatcher.register(Commands.literal("sg")
+                .then(adminTree())
+                .then(spawnTree())
+                .then(spawnAllTree())
+                .then(mobTree()));
     }
 
     /**

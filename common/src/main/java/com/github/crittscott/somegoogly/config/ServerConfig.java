@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied in
  * {@code ServerServices}); this class decides <i>how often</i> an eligible entity actually rolls
  * eyes. Also hosts the picker's opt-in gate for the destructive {@code /sg spawnall} grid
- * ({@link #ALLOW_SPAWN_ALL}, enforced server-side in {@code PickerSpawnAllPacket}).
+ * ({@link #ALLOW_SPAWN_ALL}, enforced by the server command).
  */
 public class ServerConfig {
     public static final String ALLOW_SPAWN_ALL_KEY = "allowSpawnAll";

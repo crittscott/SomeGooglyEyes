@@ -1,7 +1,8 @@
 package com.github.crittscott.somegoogly.server.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -13,6 +14,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -33,7 +36,7 @@ public final class FabricServerEvents {
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                GooglyAdminCommand.register(dispatcher));
+                GooglyServerCommands.register(dispatcher));
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
                 entity instanceof LivingEntity living
@@ -50,14 +53,22 @@ public final class FabricServerEvents {
                 ServerServices.onLivingEntityLoaded(living);
             }
         });
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                ServerServices.onPlayerJoined(handler.player));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            if (!ServerPlayNetworking.canSend(handler.player, EyeConfigSyncPacket.TYPE)) {
+                handler.player.connection.disconnect(Component.translatable("somegoogly.network.required_client"));
+                return;
+            }
+            ServerServices.syncEyeConfigs(handler.player);
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) ->
-                ServerServices.syncEyeConfigs(player));
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
+            if (!joined) {
+                ServerServices.syncEyeConfigs(player);
+            }
+        });
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
-        ServerTickEvents.END_SERVER_TICK.register(ServerServices::onServerTick);
+        ServerTickEvents.END_SERVER_TICK.register(server -> ServerServices.onServerTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onStartTracking(living, player);

@@ -16,9 +16,6 @@ import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.google.gson.JsonArray;
 import com.mojang.serialization.JsonOps;
@@ -41,10 +38,8 @@ import java.util.function.Consumer;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
 /**
- * Serialization contracts: the flat-JSON eye codecs round-trip by value (the records implement
- * {@code equals}), and the three server→client packets survive a wire round-trip. Packets carry no
- * getters, so they're checked by <b>byte idempotence</b>: {@code encode} then {@code decode} then
- * {@code encode} must reproduce the original bytes. World-less.
+ * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all five native
+ * payloads preserve their wire representation through encode/decode. World-less.
  */
 public final class SerializationGameTestsLogic {
 
@@ -52,16 +47,10 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
-        helper.assertTrue(NetworkHandler.PROTOCOL_HELLO.getPath().equals("protocol_hello"),
-                "the hello channel must remain stable across gameplay protocol versions");
-        helper.assertTrue(NetworkHandler.PROTOCOL_ACK.getPath().equals("protocol_ack"),
-                "the acknowledgement channel must remain stable across gameplay protocol versions");
-        String prefix = "v" + NetworkHandler.PROTOCOL_VERSION + "/";
+        String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
         List<ResourceLocation> gameplay = List.of(
                 NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
-                NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_SPAWN,
-                NetworkHandler.PICKER_SPAWN_ALL, NetworkHandler.PICKER_MOB_POSE,
-                NetworkHandler.PICKER_EXPORT);
+                NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
         for (ResourceLocation id : gameplay) {
             helper.assertTrue(id.getPath().startsWith(prefix),
                     "gameplay channel " + id + " must carry protocol prefix " + prefix);
@@ -69,18 +58,10 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
                 "every gameplay payload must have a unique channel id");
         List<ResourceLocation> typedPayloads = List.of(
-                NetworkHandler.PROTOCOL_HELLO_PAYLOAD.id(), NetworkHandler.PROTOCOL_ACK_PAYLOAD.id(),
-                NetworkHandler.EYE_STATE_PAYLOAD.id(), NetworkHandler.EYE_CONFIG_PAYLOAD.id(),
-                NetworkHandler.EYE_BEHAVIOR_PAYLOAD.id(), NetworkHandler.PICKER_FREEZE_PAYLOAD.id(),
-                NetworkHandler.PICKER_SPAWN_PAYLOAD.id(), NetworkHandler.PICKER_SPAWN_ALL_PAYLOAD.id(),
-                NetworkHandler.PICKER_MOB_POSE_PAYLOAD.id(), NetworkHandler.PICKER_EXPORT_PAYLOAD.id());
-        helper.assertTrue(typedPayloads.equals(List.of(
-                        NetworkHandler.PROTOCOL_HELLO, NetworkHandler.PROTOCOL_ACK,
-                        NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
-                        NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_SPAWN,
-                        NetworkHandler.PICKER_SPAWN_ALL, NetworkHandler.PICKER_MOB_POSE,
-                        NetworkHandler.PICKER_EXPORT)),
-                "the loader-neutral payload types must preserve every established wire id");
+                EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeBehaviorTriggerPacket.TYPE.id(),
+                PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
+        helper.assertTrue(typedPayloads.equals(gameplay),
+                "the native payload types must preserve every established wire id");
         helper.succeed();
     }
 
@@ -143,7 +124,7 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(17L,
+        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
                 Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()));
         byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
         EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
@@ -154,7 +135,6 @@ public final class SerializationGameTestsLogic {
 
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
         FriendlyByteBuf oversized = new FriendlyByteBuf(Unpooled.buffer());
-        oversized.writeLong(1L);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
         helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(oversized)),
                 "config sync must reject an oversized outer count before allocating entries");
@@ -174,7 +154,6 @@ public final class SerializationGameTestsLogic {
                 new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
         FriendlyByteBuf numeric = new FriendlyByteBuf(Unpooled.buffer());
-        numeric.writeLong(2L);
         numeric.writeVarInt(1);
         numeric.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
         numeric.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, unsafe)
@@ -264,54 +243,19 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    public static void pickerMobPosePacketRoundTrips(GameTestHelper helper) {
-        UUID mob = new UUID(0xABCDL, 0xEF01L);
-        helper.assertTrue(roundTrips(PickerMobPosePacket.move(mob, 1.5, 0.0, -7.25),
-                        PickerMobPosePacket::encode, PickerMobPosePacket::decode),
-                "PickerMobPosePacket's move form (offsets) should survive a wire round-trip");
-        helper.assertTrue(roundTrips(PickerMobPosePacket.rot(mob, 270.0F),
-                        PickerMobPosePacket::encode, PickerMobPosePacket::decode),
-                "PickerMobPosePacket's rot form should survive a wire round-trip");
-        helper.succeed();
-    }
-
-    public static void pickerMobPoseRejectsNonFiniteForms(GameTestHelper helper) {
-        UUID mob = UUID.randomUUID();
-        helper.assertTrue(!PickerMobPosePacket.move(mob, Double.NaN, 0.0, 0.0).isValid(),
-                "NaN movement must be rejected");
-        helper.assertTrue(!PickerMobPosePacket.rot(mob, Float.NaN).isValid(),
-                "NaN rotation must be rejected");
-        helper.assertTrue(PickerMobPosePacket.move(mob, 1.0, 2.0, 3.0).isValid(),
-                "finite movement must remain valid");
-        helper.succeed();
-    }
-
-    public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
-        helper.assertTrue(roundTrips(new PickerSpawnPacket(
-                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow")),
-                        PickerSpawnPacket::encode, PickerSpawnPacket::decode),
-                "PickerSpawnPacket should survive a wire round-trip");
-        helper.assertTrue(roundTrips(new PickerSpawnAllPacket("minecraft"),
-                        PickerSpawnAllPacket::encode, PickerSpawnAllPacket::decode),
-                "PickerSpawnAllPacket's filtered form should survive a wire round-trip");
-        helper.assertTrue(roundTrips(new PickerSpawnAllPacket(null),
-                        PickerSpawnAllPacket::encode, PickerSpawnAllPacket::decode),
-                "PickerSpawnAllPacket's unfiltered form should survive a wire round-trip");
-        helper.succeed();
-    }
-
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         AppearanceOverride overrides =
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
         EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
-        EyeStatePacket withOverrides = new EyeStatePacket(42, snapshot);
+        EyeStatePacket withOverrides = new EyeStatePacket(42, new UUID(1L, 2L), snapshot);
         byte[] a1 = bytes(buffer -> EyeStatePacket.encode(withOverrides, buffer));
         EyeStatePacket d1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(a1)));
         helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
         byte[] a2 = bytes(buffer -> EyeStatePacket.encode(d1, buffer));
         helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 
-        EyeStatePacket noOverrides = new EyeStatePacket(43, false, 0.0F, AppearanceOverride.EMPTY);
+        EyeStatePacket noOverrides = new EyeStatePacket(
+                43, new UUID(3L, 4L), false, 0.0F, AppearanceOverride.EMPTY);
         byte[] b1 = bytes(buffer -> EyeStatePacket.encode(noOverrides, buffer));
         EyeStatePacket e1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(b1)));
         byte[] b2 = bytes(buffer -> EyeStatePacket.encode(e1, buffer));
@@ -322,6 +266,7 @@ public final class SerializationGameTestsLogic {
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         FriendlyByteBuf invalid = new FriendlyByteBuf(Unpooled.buffer());
         invalid.writeInt(42);
+        invalid.writeUUID(new UUID(1L, 2L));
         invalid.writeBoolean(true);
         invalid.writeFloat(Float.NaN);
         invalid.writeByte(0);

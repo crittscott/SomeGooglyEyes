@@ -3,6 +3,9 @@ package com.github.crittscott.somegoogly.network;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -15,7 +18,22 @@ import net.minecraft.resources.ResourceLocation;
  * <p>The client drops the trigger if it has no tracker for the mob yet (not currently rendering it) or if
  * a behavior is already playing — the same "one at a time, non-interruptable" rule the server enforces.
  */
-public class EyeBehaviorTriggerPacket {
+public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE =
+            new CustomPacketPayload.Type<>(NetworkHandler.EYE_BEHAVIOR);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
+            new StreamCodec<>() {
+                @Override
+                public EyeBehaviorTriggerPacket decode(RegistryFriendlyByteBuf buffer) {
+                    return EyeBehaviorTriggerPacket.decode(buffer);
+                }
+
+                @Override
+                public void encode(RegistryFriendlyByteBuf buffer, EyeBehaviorTriggerPacket packet) {
+                    EyeBehaviorTriggerPacket.encode(packet, buffer);
+                }
+            };
 
     private static final int MAX_DURATION_TICKS = 1_200;
 
@@ -74,6 +92,11 @@ public class EyeBehaviorTriggerPacket {
 
     public long seed() {
         return seed;
+    }
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     private static boolean validTiming(int duration, int elapsed) {

@@ -70,21 +70,6 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerMobPosePacketRoundTrips(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerMobPosePacketRoundTrips(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerMobPoseRejectsNonFiniteForms(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerMobPoseRejectsNonFiniteForms(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerSpawnPacketsRoundTrip(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRoundTrips(helper);
     }
@@ -94,4 +79,3 @@ public final class SerializationGameTests {
         SerializationGameTestsLogic.eyeStatePacketRejectsNonFiniteValues(helper);
     }
 }
-

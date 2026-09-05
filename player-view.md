@@ -11,6 +11,7 @@ Completed artifacts target Minecraft 1.21.1 on Fabric, NeoForge, and Forge. Fabr
 Loader 0.19.3 or newer and Fabric API 0.116.15+1.21.1 or newer. NeoForge requires NeoForge 21.1.248
 or newer within the 21.1 release line. Forge requires Forge 52.1.16 or newer within the 52 release
 line. All loaders require Java 21; GeckoLib 4.7.4 or newer is an optional client dependency.
+Multiplayer clients and servers must both have Some Googly Eyes with the same network version.
 
 ## Mobs with eyes
 
@@ -259,8 +260,8 @@ Color channels range from 0 to 1.
   eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.1 require manual compatibility
   verification.
-- Fabric, NeoForge, and Forge pass production builds and all 101 dedicated-server GameTests. Each
-  loader still requires physical-client smoke testing of ordinary and baby models, players, special
+- Fabric, NeoForge, and Forge each contain 99 dedicated-server GameTests. Each loader requires
+  production-build verification and physical-client smoke testing of ordinary and baby models, players, special
   resolver families, expression and pupil animation, both item render paths, harvesting and
   application, picker editing/export, renderer reload, and optional GeckoLib entities.
 - The dynamic modifier recipe may not display in recipe viewers.

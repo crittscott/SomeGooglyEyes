@@ -9,7 +9,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-/** Fabric command routing for the shared picker tree and its colliding server-side admin sibling. */
+/** Fabric command routing for the local picker tree and server-owned {@code /sg} branches. */
 public final class FabricClientCommands {
 
     private FabricClientCommands() {
@@ -18,20 +18,28 @@ public final class FabricClientCommands {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         GooglyClientCommands.register(dispatcher);
 
-        // Fabric executes a matching client root before consulting the server. Keep the
-        // server-owned /sg admin path reachable by forwarding that disjoint subtree explicitly.
-        LiteralArgumentBuilder<FabricClientCommandSource> admin =
-                LiteralArgumentBuilder.<FabricClientCommandSource>literal("admin")
-                        .executes(FabricClientCommands::fallThroughToServer);
-        admin.then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument(
-                        "arguments", StringArgumentType.greedyString())
-                .executes(FabricClientCommands::fallThroughToServer));
-        dispatcher.getRoot().getChild("sg").addChild(admin.build());
+        // Fabric executes a matching client root before consulting the server. Explicit parse
+        // failures forward the disjoint world-mutation branches to the server dispatcher.
+        addServerPath(dispatcher, "admin");
+        addServerPath(dispatcher, "spawn");
+        addServerPath(dispatcher, "spawnall");
+        addServerPath(dispatcher, "mob");
     }
 
     /** Add picker nodes to Minecraft's server-supplied dispatcher for completion and help display. */
     public static <S> void mergeSuggestions(CommandDispatcher<S> dispatcher) {
         GooglyClientCommands.register(dispatcher);
+    }
+
+    private static void addServerPath(
+            CommandDispatcher<FabricClientCommandSource> dispatcher, String name) {
+        LiteralArgumentBuilder<FabricClientCommandSource> node =
+                LiteralArgumentBuilder.<FabricClientCommandSource>literal(name)
+                        .executes(FabricClientCommands::fallThroughToServer);
+        node.then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument(
+                        "arguments", StringArgumentType.greedyString())
+                .executes(FabricClientCommands::fallThroughToServer));
+        dispatcher.getRoot().getChild("sg").addChild(node.build());
     }
 
     private static int fallThroughToServer(CommandContext<FabricClientCommandSource> context)

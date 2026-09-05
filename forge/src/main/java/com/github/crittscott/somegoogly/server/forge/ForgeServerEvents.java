@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.server.forge;
 
-import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
@@ -35,7 +35,6 @@ public final class ForgeServerEvents {
         gameBus.addListener(ForgeServerEvents::onRightClickItem);
         gameBus.addListener(ForgeServerEvents::onLivingDrops);
         gameBus.addListener(ForgeServerEvents::onEntityJoinLevel);
-        gameBus.addListener(ForgeServerEvents::onPlayerLoggedIn);
         gameBus.addListener(ForgeServerEvents::onPlayerLoggedOut);
         gameBus.addListener(ForgeServerEvents::onDatapackSync);
         gameBus.addListener(ForgeServerEvents::onServerStopping);
@@ -48,7 +47,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyAdminCommand.register(event.getDispatcher());
+        GooglyServerCommands.register(event.getDispatcher());
     }
 
     /**
@@ -91,12 +90,6 @@ public final class ForgeServerEvents {
         }
     }
 
-    private static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            ServerServices.onPlayerJoined(player);
-        }
-    }
-
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ServerServices.onPlayerLeft(player);
@@ -112,7 +105,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onServerTick(TickEvent.ServerTickEvent.Post event) {
-        ServerServices.onServerTick(event.getServer());
+        ServerServices.onServerTick();
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {

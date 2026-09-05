@@ -10,9 +10,8 @@ public final class ClientLifecycle {
     private ClientLifecycle() {
     }
 
-    /** Advance client networking, the pupil/behavior runtime, the inspector, and picker key input. */
+    /** Advance the pupil/behavior runtime, inspector, and picker key input. */
     public static void tick() {
-        ClientNetworkHandler.tick();
         ClientEyeRuntime.tick();
         EyeInspector.tick();
         PickerInput.consumePendingKeys();

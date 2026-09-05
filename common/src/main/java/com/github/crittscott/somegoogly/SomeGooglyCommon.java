@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly;
 import com.github.crittscott.somegoogly.item.ModCreativeTabs;
 import com.github.crittscott.somegoogly.item.ModDataComponents;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.recipe.ModRecipes;
 import com.github.crittscott.somegoogly.registry.ContentRegistrar;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public final class SomeGooglyCommon {
     /** Register content shared by every loader. Called once from each loader's entry point. */
     public static void init(ContentRegistrar registrar) {
         ModDataComponents.register(registrar);
-        NetworkHandler.registerCommon();
         ModItems.register(registrar);
         ModCreativeTabs.register(registrar);
         ModRecipes.register(registrar);

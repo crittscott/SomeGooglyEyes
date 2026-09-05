@@ -6,7 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -25,7 +28,21 @@ import java.util.UUID;
  * is a few KiB — so an oversized payload decodes to {@code null} (the service rejects it with
  * feedback) instead of allocating unbounded memory.
  */
-public class PickerExportPacket {
+public class PickerExportPacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<PickerExportPacket> TYPE =
+            new CustomPacketPayload.Type<>(NetworkHandler.PICKER_EXPORT);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public PickerExportPacket decode(RegistryFriendlyByteBuf buffer) {
+            return PickerExportPacket.decode(buffer);
+        }
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buffer, PickerExportPacket packet) {
+            PickerExportPacket.encode(packet, buffer);
+        }
+    };
 
     @Nullable
     private final CompoundTag configNbt;
@@ -60,20 +77,23 @@ public class PickerExportPacket {
         buffer.writeNbt(packet.configNbt);
     }
 
-    public static void handle(PickerExportPacket packet, ServerPlayer sender, NetworkTransport.Context context) {
-        context.queue(() -> {
-            if (!PickerGate.creative(sender)) {
-                return;
-            }
-            if (!sender.hasPermissions(2)) {
-                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
-                        Component.translatable("somegoogly.command.picker.export_rejected_not_operator")));
-                return;
-            }
-            UUID playerId = sender.getUUID();
-            Component result = PickerExportService.export(
-                    sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
-            sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
-        });
+    public static void handle(PickerExportPacket packet, ServerPlayer sender) {
+        if (!PickerGate.creative(sender)) {
+            return;
+        }
+        if (!sender.hasPermissions(2)) {
+            sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                    Component.translatable("somegoogly.command.picker.export_rejected_not_operator")));
+            return;
+        }
+        UUID playerId = sender.getUUID();
+        Component result = PickerExportService.export(
+                sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
+        sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
+    }
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

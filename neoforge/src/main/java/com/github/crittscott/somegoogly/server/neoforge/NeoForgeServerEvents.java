@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.server.neoforge;
 
-import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
@@ -36,7 +36,6 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onRightClickItem);
         gameBus.addListener(NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
-        gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedIn);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);
         gameBus.addListener(NeoForgeServerEvents::onDatapackSync);
         gameBus.addListener(NeoForgeServerEvents::onServerStopping);
@@ -49,7 +48,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyAdminCommand.register(event.getDispatcher());
+        GooglyServerCommands.register(event.getDispatcher());
     }
 
     /**
@@ -92,12 +91,6 @@ public final class NeoForgeServerEvents {
         }
     }
 
-    private static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            ServerServices.onPlayerJoined(player);
-        }
-    }
-
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ServerServices.onPlayerLeft(player);
@@ -113,7 +106,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
-        ServerServices.onServerTick(event.getServer());
+        ServerServices.onServerTick();
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
