@@ -23,7 +23,7 @@ public final class SomeGooglyNeoForge {
         SomeGooglyCommon.init(registrar);
         registrar.register(modBus);
         NeoForgeNetworkTransport.register(modBus);
-        NeoForgeServerConfig.register(modBus, modContainer);
+        NeoForgeServerConfig.register(NeoForge.EVENT_BUS);
         if (dist == Dist.CLIENT) {
             NeoForgeClient.register(modBus, NeoForge.EVENT_BUS, modContainer);
         }

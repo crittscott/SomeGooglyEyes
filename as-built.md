@@ -34,9 +34,9 @@ Registered content is declared once in `ContentRegistrar` — two items, one `Da
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric reads its client TOML directly and loads the world's server TOML through `ServerConfigFile`. NeoForge and Forge carry native CLIENT and SERVER specs whose values must be copied into `ConfigValue<T>` on load and reload, and SERVER unload must restore defaults, or the storage and runtime representations diverge.
+`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric and NeoForge load the world's server TOML through `ServerConfigFile`; Fabric reads its client TOML directly, while NeoForge carries a native CLIENT spec. Forge carries native CLIENT and SERVER specs whose values must be copied into `ConfigValue<T>` on load and reload; NeoForge server stop and Forge SERVER unload must restore defaults, or runtime values can escape their world.
 
-Server-config keys, defaults, ranges, list validators, and section names must stay aligned across `ServerConfigFile`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
+Server-config keys, defaults, ranges, list validators, and section names must stay aligned between `ServerConfigFile` and `ForgeServerConfig`.
 
 Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 

@@ -12,9 +12,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Creates and loads Fabric's active-world server configuration. One {@link #SCHEMA} list drives both
+ * Creates and loads Fabric and NeoForge's active-world server configuration. One {@link #SCHEMA} list drives both
  * the commented default file and the load; its keys, defaults, ranges, and validators must stay aligned
- * with the native Forge and NeoForge server specs.
+ * with the native Forge server spec.
  */
 public final class ServerConfigFile {
 

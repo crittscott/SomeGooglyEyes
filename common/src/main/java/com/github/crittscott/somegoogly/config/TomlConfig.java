@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for the boolean, integer, and string-list schemas used by Fabric storage. */
+/** Narrow TOML reader for the boolean, integer, and string-list schemas used by loader-owned storage. */
 public final class TomlConfig {
 
     private TomlConfig() {
