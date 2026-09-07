@@ -7,7 +7,13 @@
   "authors": [
     "${mod_authors}"
   ],
+  "contact": {
+    "homepage": "https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1",
+    "sources": "https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1",
+    "issues": "https://github.com/crittscott/SomeGooglyEyes/issues"
+  },
   "license": "${mod_license}",
+  "icon": "somegoogly.png",
   "environment": "*",
   "accessWidener": "somegoogly.accesswidener",
   "mixins": [
