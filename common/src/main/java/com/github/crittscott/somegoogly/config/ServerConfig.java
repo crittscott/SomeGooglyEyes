@@ -46,6 +46,10 @@ public class ServerConfig {
     public static final int HARVEST_ON_KILL_PERCENT_DEFAULT = 25;
     public static final int PERCENT_MAX = 100;
     public static final int PERCENT_MIN = 0;
+    public static final String SPAWN_EXCLUDED_ENTITIES_KEY = "spawnExcludedEntities";
+    public static final List<String> SPAWN_EXCLUDED_ENTITIES_DEFAULT = List.of();
+    public static final String SPAWN_EXCLUDED_MODS_KEY = "spawnExcludedMods";
+    public static final List<String> SPAWN_EXCLUDED_MODS_DEFAULT = List.of();
     public static final String SWIRL_HEAL_COOLDOWN_TICKS_KEY = "swirlHealCooldownTicks";
     public static final int SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT = 200;
     public static final String SWIRL_ON_HEAL_KEY = "swirlOnHeal";
@@ -72,6 +76,10 @@ public class ServerConfig {
             ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_ENTITIES =
+            ConfigValue.strings(SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateEntityId);
+    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_MODS =
+            ConfigValue.strings(SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace);
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
             ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
     public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
@@ -85,6 +93,12 @@ public class ServerConfig {
     // list (same rebuild-on-identity-change trick as ENTITY_OVERRIDES above).
     private static List<String> lastBehaviorPoolSource;
     private static List<EyeBehavior> enabledBehaviors = List.of();
+
+    // Deduplicated views of the /sg spawn(all) exclusion lists, rebuilt on identity change like the two above.
+    private static List<String> lastExcludedEntitySource;
+    private static Set<String> excludedSpawnEntities = Set.of();
+    private static List<String> lastExcludedModSource;
+    private static Set<String> excludedSpawnMods = Set.of();
 
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
     private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
@@ -171,6 +185,26 @@ public class ServerConfig {
         return firstWildcard != null ? firstWildcard.percent : GLOBAL_PERCENT.get();
     }
 
+    /**
+     * Whether {@code /sg spawn} and {@code /sg spawnall} should skip this entity type: its exact id is
+     * listed in {@link #SPAWN_EXCLUDED_ENTITIES}, or its namespace in {@link #SPAWN_EXCLUDED_MODS}. Purely
+     * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
+     */
+    public static boolean isSpawnExcluded(ResourceLocation entityType) {
+        List<String> entitySource = SPAWN_EXCLUDED_ENTITIES.get();
+        if (entitySource != lastExcludedEntitySource) {
+            excludedSpawnEntities = Set.copyOf(entitySource);
+            lastExcludedEntitySource = entitySource;
+        }
+        List<String> modSource = SPAWN_EXCLUDED_MODS.get();
+        if (modSource != lastExcludedModSource) {
+            excludedSpawnMods = Set.copyOf(modSource);
+            lastExcludedModSource = modSource;
+        }
+        return excludedSpawnMods.contains(entityType.getNamespace())
+                || excludedSpawnEntities.contains(entityType.toString());
+    }
+
     private static void rebuildIfChanged() {
         List<String> source = ENTITY_OVERRIDES.get();
         if (source == lastParsedSource) {
@@ -199,6 +233,8 @@ public class ServerConfig {
         GOOGLY_EYES_ENABLED.reset();
         GROW_ON_HIT_PERCENT.reset();
         HARVEST_ON_KILL_PERCENT.reset();
+        SPAWN_EXCLUDED_ENTITIES.reset();
+        SPAWN_EXCLUDED_MODS.reset();
         SWIRL_HEAL_COOLDOWN_TICKS.reset();
         SWIRL_ON_HEAL.reset();
         SWIRL_ON_TRADE.reset();
@@ -206,11 +242,25 @@ public class ServerConfig {
         overrides = List.of();
         lastBehaviorPoolSource = null;
         enabledBehaviors = List.of();
+        lastExcludedEntitySource = null;
+        excludedSpawnEntities = Set.of();
+        lastExcludedModSource = null;
+        excludedSpawnMods = Set.of();
     }
 
     /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
     public static boolean validateBehaviorId(String value) {
         return ResourceLocation.tryParse(value) != null;
+    }
+
+    /** Whether a config string parses as an entity {@link ResourceLocation}; the entry guard for {@link #SPAWN_EXCLUDED_ENTITIES}. */
+    public static boolean validateEntityId(String value) {
+        return ResourceLocation.tryParse(value) != null;
+    }
+
+    /** Whether a config string is a bare resource-location namespace; the entry guard for {@link #SPAWN_EXCLUDED_MODS}. */
+    public static boolean validateNamespace(String value) {
+        return value.matches("[a-z0-9_.-]+");
     }
 
     /**

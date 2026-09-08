@@ -109,7 +109,8 @@ public final class GooglyServerCommands {
                 .then(Commands.argument("type", ResourceLocationArgument.id())
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                                 BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.get(id).canSummon()),
+                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.get(id).canSummon())
+                                        .filter(id -> !ServerConfig.isSpawnExcluded(id)),
                                 builder))
                         .executes(GooglyServerCommands::spawn));
     }

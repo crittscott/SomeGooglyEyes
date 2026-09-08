@@ -138,6 +138,8 @@ Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `
 `side_eye`, `stare`, `grow`, `swirl`, and `color_change`.
 
 `allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run.
+`spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and
+`/sg spawnall` skip; both default to empty and affect only those authoring commands.
 
 ### Client display
 
@@ -230,6 +232,10 @@ It does not change the world.
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a
 namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable
 world.
+
+Both spawn commands skip the ender dragon and any entity whose id or namespace is listed in the
+server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall`
+reports each type it skipped and why.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and
 `/sg mob rot <azimuth>`.

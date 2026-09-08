@@ -55,6 +55,8 @@ A mob plays at most one expression at a time; overlapping triggers are dropped, 
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `allowSpawnAll` | `false` | Must be set `true` before `/sg spawnall` will run. See [docs/picker.md](picker.md) for what that command does. |
+| `spawnExcludedMods` | empty | Namespaces that `/sg spawn` and `/sg spawnall` skip, e.g. `"mekanism"`. Authoring commands only — no effect on eye eligibility or natural spawning. |
+| `spawnExcludedEntities` | empty | Entity ids that `/sg spawn` and `/sg spawnall` skip, e.g. `"minecraft:armor_stand"`. Same authoring-only scope. |
 
 ## Client config
 

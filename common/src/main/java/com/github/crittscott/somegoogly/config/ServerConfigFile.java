@@ -32,6 +32,14 @@ public final class ServerConfigFile {
             entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can
             still give the entity eyes by hand with a Slimy Eye.""";
 
+    private static final String SPAWN_EXCLUDED_MODS_COMMENT = """
+            Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
+            These authoring commands only; nothing here changes eye eligibility or natural spawning.""";
+
+    private static final String SPAWN_EXCLUDED_ENTITIES_COMMENT = """
+            Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
+            "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
+
     private static final List<Entry> SCHEMA = List.of(
             bool(SERVER_SETTINGS, ServerConfig.GOOGLY_EYES_ENABLED_KEY, null,
                     ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT, ServerConfig.GOOGLY_EYES_ENABLED),
@@ -58,7 +66,11 @@ public final class ServerConfigFile {
             integer(BEHAVIORS, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY, null,
                     ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS),
             bool(PICKER, ServerConfig.ALLOW_SPAWN_ALL_KEY, null,
-                    ServerConfig.ALLOW_SPAWN_ALL_DEFAULT, ServerConfig.ALLOW_SPAWN_ALL));
+                    ServerConfig.ALLOW_SPAWN_ALL_DEFAULT, ServerConfig.ALLOW_SPAWN_ALL),
+            strings(PICKER, ServerConfig.SPAWN_EXCLUDED_MODS_KEY, SPAWN_EXCLUDED_MODS_COMMENT,
+                    ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig.SPAWN_EXCLUDED_MODS),
+            strings(PICKER, ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, SPAWN_EXCLUDED_ENTITIES_COMMENT,
+                    ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig.SPAWN_EXCLUDED_ENTITIES));
 
     private static final String DEFAULTS = render();
 

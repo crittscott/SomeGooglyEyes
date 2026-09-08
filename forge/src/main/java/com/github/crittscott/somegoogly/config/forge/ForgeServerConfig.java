@@ -26,6 +26,8 @@ public final class ForgeServerConfig {
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
     private static final ForgeConfigSpec.IntValue SWIRL_HEAL_COOLDOWN_TICKS;
     private static final ForgeConfigSpec.BooleanValue ALLOW_SPAWN_ALL;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_MODS;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_ENTITIES;
     private static final ForgeConfigSpec SPEC;
 
     static {
@@ -59,6 +61,14 @@ public final class ForgeServerConfig {
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         builder.pop().push("picker");
         ALLOW_SPAWN_ALL = builder.define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
+        SPAWN_EXCLUDED_MODS = builder.comment(
+                        "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.")
+                .defineList(ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT,
+                        value -> value instanceof String string && ServerConfig.validateNamespace(string));
+        SPAWN_EXCLUDED_ENTITIES = builder.comment(
+                        "Entity ids that /sg spawn and /sg spawnall skip; authoring commands only.")
+                .defineList(ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT,
+                        value -> value instanceof String string && ServerConfig.validateEntityId(string));
         builder.pop();
         SPEC = builder.build();
     }
@@ -92,5 +102,7 @@ public final class ForgeServerConfig {
         ServerConfig.SWIRL_ON_HEAL.set(SWIRL_ON_HEAL.get());
         ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(SWIRL_HEAL_COOLDOWN_TICKS.get());
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
+        ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
+        ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
     }
 }

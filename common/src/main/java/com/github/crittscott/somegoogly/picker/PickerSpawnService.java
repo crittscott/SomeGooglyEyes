@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
@@ -31,11 +32,13 @@ import java.util.List;
 
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
- * googly eyes — every registered living entity, whether or not it has an eye config yet — so the
+ * googly eyes — every summonable living entity, whether or not it has an eye config yet — so the
  * picker can be used on any of them without hunting each one down in survival. The single-mob
  * sibling {@code /sg spawn <type>} lands in {@link #spawnOne}. The ender dragon
  * ({@link ServerEyeConfigs#ENDER_DRAGON}) is skipped: it's hard-excluded from eyes, and NoAi
  * doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
+ * Both verbs also skip any type an admin listed in the server config's {@code spawnExcludedMods} /
+ * {@code spawnExcludedEntities} ({@link ServerConfig#isSpawnExcluded}).
  *
  * <p>The server-owned {@code /sg spawn} and {@code /sg spawnall} commands call
  * {@link #spawn(ServerPlayer, String)} / {@link #spawnOne(ServerPlayer, EntityType)} on the server
@@ -157,8 +160,10 @@ public final class PickerSpawnService {
         // drops and stay quiet.)
         List<Component> dropped = new ArrayList<>();
 
-        // Build one instance of every living entity type (the eye layer can attach to any of them).
-        // We create up front so we can sort, then place; non-living and uncreatable types are dropped.
+        // Build one instance of every summonable living entity type (the eye layer can attach to any of
+        // them). We create up front so we can sort, then place; non-summonable, non-living, and
+        // uncreatable types are dropped. The canSummon gate matches /sg spawn and keeps utility entities
+        // (seats, holograms, boss parts) that happen to extend LivingEntity out of the grid.
         List<Candidate> candidates = new ArrayList<>();
         for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
             ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
@@ -172,6 +177,20 @@ public final class PickerSpawnService {
                 if (filtering) {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_ender_dragon", id.toString()));
+                }
+                continue;
+            }
+            if (!type.canSummon()) {
+                if (filtering) {
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_not_summonable", id.toString()));
+                }
+                continue;
+            }
+            if (ServerConfig.isSpawnExcluded(id)) {
+                if (filtering) {
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_excluded", id.toString()));
                 }
                 continue;
             }
@@ -317,6 +336,10 @@ public final class PickerSpawnService {
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.ender_dragon_excluded", id.toString()));
+            return;
+        }
+        if (ServerConfig.isSpawnExcluded(id)) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.excluded", id.toString()));
             return;
         }
 
