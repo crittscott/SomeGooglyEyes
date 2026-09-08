@@ -195,7 +195,7 @@ public final class PickerExportService {
                 player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload");
-        return Component.translatable("somegoogly.command.picker.export_success", typeId, PACK_NAME);
+        return Component.translatable("somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);
     }
 
     /** Carry a currently-resolved age bucket forward as a {@link VersionedEntry}, unless it's the age being written now or has nothing usable. */

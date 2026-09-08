@@ -171,7 +171,7 @@ public final class PickerSpawnService {
             if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
                 if (filtering) {
                     dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_ender_dragon", id));
+                            "somegoogly.command.spawnall.dropped_ender_dragon", id.toString()));
                 }
                 continue;
             }
@@ -183,14 +183,14 @@ public final class PickerSpawnService {
                 if (filtering) {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_create_threw",
-                            id, e.getClass().getSimpleName()));
+                            id.toString(), e.getClass().getSimpleName()));
                 }
                 continue; // a modded type that won't build with the plain factory — skip it
             }
             if (entity instanceof LivingEntity) {
                 candidates.add(new Candidate(id, entity));
             } else if (filtering && entity == null) {
-                dropped.add(Component.translatable("somegoogly.command.spawnall.dropped_create_null", id));
+                dropped.add(Component.translatable("somegoogly.command.spawnall.dropped_create_null", id.toString()));
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
@@ -279,7 +279,7 @@ public final class PickerSpawnService {
                 skipped++;
                 if (filtering) {
                     dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_add_refused", candidate.id));
+                            "somegoogly.command.spawnall.dropped_add_refused", candidate.id.toString()));
                 }
             }
         }
@@ -316,7 +316,7 @@ public final class PickerSpawnService {
         ServerLevel level = player.serverLevel();
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.ender_dragon_excluded", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.ender_dragon_excluded", id.toString()));
             return;
         }
 
@@ -337,15 +337,15 @@ public final class PickerSpawnService {
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.debug("/sg spawn {}: entity factory threw", id, e);
             player.sendSystemMessage(Component.translatable(
-                    "somegoogly.command.spawn.create_threw", id, e.getClass().getSimpleName()));
+                    "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName()));
             return;
         }
         if (entity == null) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.create_null", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.create_null", id.toString()));
             return;
         }
         if (!(entity instanceof LivingEntity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.not_living", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.not_living", id.toString()));
             return;
         }
 
@@ -358,7 +358,7 @@ public final class PickerSpawnService {
         entity.moveTo(x, pos.getY(), z, yaw, 0.0F);
 
         if (!level.noCollision(entity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.doesnt_fit", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.doesnt_fit", id.toString()));
             return;
         }
 
@@ -370,9 +370,9 @@ public final class PickerSpawnService {
             mob.setYBodyRot(yaw);
         }
         if (level.addFreshEntity(entity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.spawned", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.spawned", id.toString()));
         } else {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.refused", id));
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.refused", id.toString()));
         }
     }
 

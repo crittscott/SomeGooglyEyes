@@ -140,13 +140,13 @@ public final class GooglyServerCommands {
         ResourceLocation typeId = ctx.getArgument("type", ResourceLocation.class);
         if (player == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
             ctx.getSource().sendFailure(Component.translatable(
-                    "somegoogly.command.picker.unknown_entity_type", typeId));
+                    "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
             return 0;
         }
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(typeId);
         if (!type.canSummon()) {
             ctx.getSource().sendFailure(Component.translatable(
-                    "somegoogly.command.picker.unknown_entity_type", typeId));
+                    "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
             return 0;
         }
         PickerSpawnService.spawnOne(player, type);
