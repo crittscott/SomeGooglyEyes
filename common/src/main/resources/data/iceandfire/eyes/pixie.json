@@ -22,7 +22,7 @@
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": -1,
+                  "crossTarget": 1,
                   "corneaColors": [
                     1.0,
                     1.0,
@@ -46,7 +46,7 @@
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": -1,
+                  "crossTarget": 0,
                   "corneaColors": [
                     1.0,
                     1.0,
