@@ -33,8 +33,9 @@ public final class ServerConfigFile {
             still give the entity eyes by hand with a Slimy Eye.""";
 
     private static final String SPAWN_EXCLUDED_MODS_COMMENT = """
-            Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
-            These authoring commands only; nothing here changes eye eligibility or natural spawning.""";
+             Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
+             MineColonies is excluded by default because its mobs require colony-owned spawn context.
+             These authoring commands only; nothing here changes eye eligibility or natural spawning.""";
 
     private static final String SPAWN_EXCLUDED_ENTITIES_COMMENT = """
             Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.

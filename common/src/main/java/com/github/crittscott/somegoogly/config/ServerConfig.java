@@ -49,7 +49,7 @@ public class ServerConfig {
     public static final String SPAWN_EXCLUDED_ENTITIES_KEY = "spawnExcludedEntities";
     public static final List<String> SPAWN_EXCLUDED_ENTITIES_DEFAULT = List.of();
     public static final String SPAWN_EXCLUDED_MODS_KEY = "spawnExcludedMods";
-    public static final List<String> SPAWN_EXCLUDED_MODS_DEFAULT = List.of();
+    public static final List<String> SPAWN_EXCLUDED_MODS_DEFAULT = List.of("minecolonies");
     public static final String SWIRL_HEAL_COOLDOWN_TICKS_KEY = "swirlHealCooldownTicks";
     public static final int SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT = 200;
     public static final String SWIRL_ON_HEAL_KEY = "swirlOnHeal";

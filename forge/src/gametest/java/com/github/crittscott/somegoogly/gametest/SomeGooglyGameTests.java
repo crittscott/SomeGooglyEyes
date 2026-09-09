@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.picker.PickerSpawnServiceGameTestsLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -15,8 +16,7 @@ import net.minecraftforge.gametest.GameTestHolder;
 import java.util.Objects;
 
 /**
- * Forge GameTest entry points for {@link SomeGooglyGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for the shared core and picker-spawn assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 public final class SomeGooglyGameTests {
@@ -34,6 +34,11 @@ public final class SomeGooglyGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.spawnInitializesEyePersistentData(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
 
     /** Exercises Forge's native entity persistent compound through an entity save/load cycle. */

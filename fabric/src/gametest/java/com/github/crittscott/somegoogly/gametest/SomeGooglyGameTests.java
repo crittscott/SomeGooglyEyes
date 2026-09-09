@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.picker.PickerSpawnServiceGameTestsLogic;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.core.BlockPos;
@@ -14,8 +15,8 @@ import net.minecraft.world.entity.animal.Cow;
 import java.util.Objects;
 
 /**
- * Fabric GameTest entry points for {@link SomeGooglyGameTestsLogic}; see that class for the actual
- * assertions. Listed under the {@code somegoogly_gametest} dev-mod's {@code fabric-gametest}
+ * Fabric GameTest entry points for the shared core and picker-spawn assertions. Listed under the
+ * {@code somegoogly_gametest} dev-mod's {@code fabric-gametest}
  * entrypoint since Fabric, unlike Forge's {@code @GameTestHolder} scan, requires explicit enumeration.
  */
 public final class SomeGooglyGameTests implements FabricGameTest {
@@ -30,6 +31,11 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.spawnInitializesEyePersistentData(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
 
     /** Exercises Fabric's entity save/load Mixin rather than only the shared in-memory boundary. */

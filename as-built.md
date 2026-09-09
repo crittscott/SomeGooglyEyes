@@ -1,12 +1,8 @@
 # Some Buckets As-Built Orientation
 
-Orientation to the repository's build structure, subsystem ownership, persistent data, cross-loader boundaries, and maintenance invariants. `player-view.md` covers observable behavior. Not a spec, not a prose restatement of the code; the code wins when they disagree. No history.
+Repository orientation to subsystem ownership and cross-module invariants; `player-view.md` covers observable behavior. The code wins when they disagree.
 
-Length budget: 150 lines / 12k characters. If an edit pushes past that, cut something — don't append.
-
-Per-sentence test: every sentence either (a) names the file/class to open to change a behavior, or (b) names an invariant not visible from any single file — a cross-module contract, an ordering requirement, a "keep these in sync". Sentences that only restate what the code does get deleted, as do enumerations of a method's branches or steps. Update in place.
-
-This is an orientation to the current code, not a history, conversation, or prose rendering of the implementation. It describes what exists, not necessarily what should exist, and is not a design specification.
+Keep this current, under 150 lines and 12k characters, and limited to sentences that name either the file/class to change or an invariant not visible from one file. This is neither history nor a specification.
 
 ## Project shape
 
@@ -90,7 +86,7 @@ Five packet classes implement Minecraft's typed `CustomPacketPayload` contract d
 
 Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. Spawn and mob-pose operations are server Brigadier commands; only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
-`PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all also requires creative mode, explicit server enablement, and a server-wide cooldown. `PickerSpawnService` and `/sg spawn`'s suggestions skip any id or namespace in the `spawnExcludedEntities` / `spawnExcludedMods` config lists (`ServerConfig.isSpawnExcluded`). World export is confined to the generated datapack directory and triggers a reload, so it alone requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
+`PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all also requires creative mode, explicit server enablement, and a server-wide cooldown. `PickerSpawnService` finalizes mobs at their destination with the command spawn reason before applying `NoAI`, persistence, and display rotation; it and `/sg spawn`'s suggestions skip any id or namespace in the `spawnExcludedEntities` / `spawnExcludedMods` config lists (`ServerConfig.isSpawnExcluded`). World export is confined to the generated datapack directory and triggers a reload, so it alone requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
 
 The client and server own disjoint branches of one `/sg` Brigadier tree: local editing stays client-side, while admin, spawn, spawn-all, and mob-pose commands are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 

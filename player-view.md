@@ -139,7 +139,8 @@ Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `
 
 `allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run.
 `spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and
-`/sg spawnall` skip; both default to empty and affect only those authoring commands.
+`/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies`, whose mobs require colony-owned
+spawn context; `spawnExcludedEntities` defaults to empty. Both affect only those authoring commands.
 
 ### Client display
 

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.level.ClipContext;
@@ -280,15 +281,18 @@ public final class PickerSpawnService {
             double z = cellZ + 0.5;
             float yaw = yawToward(x, z, player);
 
-            entity.moveTo(x, y, z, yaw, 0.0F);
-            if (entity instanceof Mob mob) {
-                mob.setNoAi(true);
-                // NoAi mobs still run checkDespawn(); without this, any mob spawned past its category's
-                // despawn distance (64 for ambient fish, 128 for most others) is discarded a few ticks
-                // later, silently emptying the far cells regardless of chunk loading.
-                mob.setPersistenceRequired();
-                mob.setYHeadRot(yaw);
-                mob.setYBodyRot(yaw);
+            try {
+                prepareForCommandSpawn(level, entity, x, y, z, yaw);
+            } catch (Exception e) {
+                skipped++;
+                SomeGooglyCommon.LOGGER.debug(
+                        "Skipping {} in /sg spawnall: finalizeSpawn() threw", candidate.id, e);
+                if (filtering) {
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_finalize_threw",
+                            candidate.id.toString(), e.getClass().getSimpleName()));
+                }
+                continue;
             }
 
             if (level.addFreshEntity(entity)) {
@@ -378,24 +382,48 @@ public final class PickerSpawnService {
         double x = pos.getX() + 0.5;
         double z = pos.getZ() + 0.5;
         float yaw = yawToward(x, z, player);
-        entity.moveTo(x, pos.getY(), z, yaw, 0.0F);
+        try {
+            prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
+        } catch (Exception e) {
+            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: finalizeSpawn() threw", id, e);
+            player.sendSystemMessage(Component.translatable(
+                    "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName()));
+            return;
+        }
 
         if (!level.noCollision(entity)) {
             player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.doesnt_fit", id.toString()));
             return;
         }
 
-        if (entity instanceof Mob mob) {
-            mob.setNoAi(true);
-            // NoAi mobs still run checkDespawn(); without this a far-spawned mob silently despawns.
-            mob.setPersistenceRequired();
-            mob.setYHeadRot(yaw);
-            mob.setYBodyRot(yaw);
-        }
         if (level.addFreshEntity(entity)) {
             player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.spawned", id.toString()));
         } else {
             player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.refused", id.toString()));
+        }
+    }
+
+    /**
+     * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
+     * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
+     * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
+     * to save. Package-private for the shared GameTest regression check.
+     */
+    static void prepareForCommandSpawn(
+            ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
+        entity.moveTo(x, y, z, yaw, 0.0F);
+        if (entity instanceof Mob mob) {
+            mob.finalizeSpawn(
+                    level,
+                    level.getCurrentDifficultyAt(mob.blockPosition()),
+                    MobSpawnType.COMMAND,
+                    null);
+            mob.setNoAi(true);
+            // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.
+            mob.setPersistenceRequired();
+            mob.setYRot(yaw);
+            mob.setYHeadRot(yaw);
+            mob.setYBodyRot(yaw);
         }
     }
 

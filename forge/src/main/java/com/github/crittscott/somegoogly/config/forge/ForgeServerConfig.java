@@ -62,7 +62,8 @@ public final class ForgeServerConfig {
         builder.pop().push("picker");
         ALLOW_SPAWN_ALL = builder.define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
         SPAWN_EXCLUDED_MODS = builder.comment(
-                        "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.")
+                        "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.",
+                        "MineColonies is excluded by default because its mobs require colony-owned spawn context.")
                 .defineList(ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
         SPAWN_EXCLUDED_ENTITIES = builder.comment(

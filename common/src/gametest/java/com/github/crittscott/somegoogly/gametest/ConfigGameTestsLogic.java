@@ -60,12 +60,14 @@ public final class ConfigGameTestsLogic {
 
     /**
      * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must ship
-     * opt-in. Guards the default; the packet-handler refusal itself needs a live player and stays
-     * source-verified like the rest of picker behavior.
+     * opt-in. MineColonies entities require colony-owned context, so that namespace must ship excluded.
+     * The packet-handler refusal itself needs a live player and stays source-verified.
      */
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
         helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
                 "allowSpawnAll must default to false (spawnall is opt-in)");
+        helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_MODS.get().equals(List.of("minecolonies")),
+                "spawnExcludedMods must default to minecolonies");
         helper.succeed();
     }
 
