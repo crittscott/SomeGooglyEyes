@@ -89,7 +89,7 @@ public class GooglyTracker {
         private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
         private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
         private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
-        private static final float R_NOISE = 0.005f;           // tiny per-eye jitter so eyes don't lock-step
+        private static final float R_NOISE = 0.0005f;           // tiny per-eye jitter so eyes don't lock-step
         // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
         // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
         private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
