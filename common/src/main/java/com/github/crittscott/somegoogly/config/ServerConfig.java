@@ -31,9 +31,9 @@ public class ServerConfig {
     public static final String AMBIENT_BEHAVIORS_KEY = "ambientBehaviors";
     public static final boolean AMBIENT_BEHAVIORS_DEFAULT = true;
     public static final String AMBIENT_MAX_TICKS_KEY = "ambientMaxTicks";
-    public static final int AMBIENT_MAX_TICKS_DEFAULT = 400;
+    public static final int AMBIENT_MAX_TICKS_DEFAULT = 800;
     public static final String AMBIENT_MIN_TICKS_KEY = "ambientMinTicks";
-    public static final int AMBIENT_MIN_TICKS_DEFAULT = 100;
+    public static final int AMBIENT_MIN_TICKS_DEFAULT = 200;
     public static final String ENTITY_OVERRIDES_KEY = "entityOverrides";
     public static final List<String> ENTITY_OVERRIDES_DEFAULT = List.of();
     public static final String GLOBAL_PERCENT_KEY = "globalPercent";

@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -47,7 +46,6 @@ public final class GooglyEyeRenderer {
     // Scratch space reused by captureGravity across every eye, every frame: the render thread is
     // single-threaded and one call finishes before the next starts (mirrors GooglyTracker's static
     // INFLUENCE), so mutating these in place instead of allocating fresh JOML objects is safe.
-    private static final Matrix3f GRAVITY_ROTATION = new Matrix3f();
     private static final Matrix3f GRAVITY_POSE = new Matrix3f();
     private static final Vector3f GRAVITY_DOWN = new Vector3f();
 
@@ -57,12 +55,13 @@ public final class GooglyEyeRenderer {
      * simulation's coordinate convention.
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
-        // localToWorld = (view → world) · (local → view)
-        GRAVITY_ROTATION.rotation(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        // The entity pose here is local → world (the view/camera rotation lives in RenderSystem's
+        // model-view matrix, not the entity pose stack), so world-down maps into the eye's pupil
+        // plane straight through the pose's inverse.
         GRAVITY_POSE.set(pose.last().pose());
-        GRAVITY_ROTATION.mul(GRAVITY_POSE).invert();
+        GRAVITY_POSE.invert();
         GRAVITY_DOWN.set(0F, -1F, 0F);
-        GRAVITY_ROTATION.transform(GRAVITY_DOWN);
+        GRAVITY_POSE.transform(GRAVITY_DOWN);
         eyeInfo.gravX = -GRAVITY_DOWN.x;
         eyeInfo.gravY = -GRAVITY_DOWN.y;
     }
