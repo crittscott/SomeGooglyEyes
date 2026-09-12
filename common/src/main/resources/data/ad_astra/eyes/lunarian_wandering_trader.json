@@ -9,13 +9,13 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/head",
+              "attachPoint": "root/head",
               "eyes": [
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": 1,
+                  "crossTarget": -1,
                   "position": [
                     0.13,
                     -0.22,
@@ -34,12 +34,17 @@
                     0.0
                   ],
                   "glows": false
-                },
+                }
+              ]
+            },
+            {
+              "attachPoint": "root/head/nose",
+              "eyes": [
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
-                  "crossTarget": 0,
+                  "crossTarget": -1,
                   "position": [
                     -0.13,
                     -0.22,
