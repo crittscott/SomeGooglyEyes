@@ -50,17 +50,26 @@ Ships with predefined eye configs for:
 
 - Minecraft
 - Alex's Mobs
+- Ars Elemental
 - Ars Nouveau
+- Artifacts
 - Autumnity
 - Exotic Birds
 - Farming for Blockheads
 - Hamsters
 - Ice and Fire
+- Illager Invasion
 - Immersive Engineering
 - Mowzie's Mobs
+- Productive Bees
+- Rotten Creatures
 - Simply Cats
 - Sushi Go Crafting
+- The Bumblezone
+- Tiny Skeletons
 - Twilight Forest
+- Variants & Ventures
+- WilderNature
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
