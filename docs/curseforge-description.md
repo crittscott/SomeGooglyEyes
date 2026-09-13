@@ -49,22 +49,33 @@ The eye placing system supports vanilla models as well as GeckoLib- and Citadel-
 Ships with predefined eye configs for:
 
 - Minecraft
+- Ad Astra
 - Alex's Mobs
 - Ars Elemental
 - Ars Nouveau
 - Artifacts
 - Autumnity
+- EvilCraft
 - Exotic Birds
 - Farming for Blockheads
-- Hamsters
+- Forbidden Arcanus
+- Hamsters Plus Lite
 - Ice and Fire
 - Illager Invasion
 - Immersive Engineering
+- Living Things
+- MmmMmmMmmMmm
 - Mowzie's Mobs
+- Occultism
+- Oh The Biomes We've Gone
 - Productive Bees
+- Regions Unexplored
 - Rotten Creatures
+- Shiny
 - Simply Cats
+- Supplementaries
 - Sushi Go Crafting
+- The Aether
 - The Bumblezone
 - Tiny Skeletons
 - Twilight Forest
