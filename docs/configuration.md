@@ -54,8 +54,8 @@ A mob plays at most one expression at a time; overlapping triggers are dropped, 
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `allowSpawnAll` | `false` | Must be set `true` before `/sg spawnall` will run. See [docs/picker.md](picker.md) for what that command does. |
-| `spawnExcludedMods` | empty | Namespaces that `/sg spawn` and `/sg spawnall` skip, e.g. `"mekanism"`. Authoring commands only — no effect on eye eligibility or natural spawning. |
+| `allowSpawnAll` | `false` | Must be set `true` before `/sg spawnall` will run. **Only enable this on a test or throwaway world** — `/sg spawnall` force-spawns every summonable mob, and mobs from mods like MineColonies or Create can corrupt or destabilize a world when spawned outside their mod's normal context. See [docs/picker.md](picker.md) for what that command does. |
+| `spawnExcludedMods` | `minecolonies`, `create` | Namespaces that `/sg spawn` and `/sg spawnall` skip, e.g. `"mekanism"`. Authoring commands only — no effect on eye eligibility or natural spawning. MineColonies and Create ship excluded by default because their mobs can corrupt or destabilize a world if force-spawned this way; only remove either entry on a world you're prepared to lose. |
 | `spawnExcludedEntities` | empty | Entity ids that `/sg spawn` and `/sg spawnall` skip, e.g. `"minecraft:armor_stand"`. Same authoring-only scope. |
 
 ## Client config

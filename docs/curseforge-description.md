@@ -50,6 +50,7 @@ Ships with predefined eye configs for:
 
 - Minecraft
 - Ad Astra
+- Adorable Hamster Pets
 - Alex's Mobs
 - Ars Elemental
 - Ars Nouveau

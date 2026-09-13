@@ -60,10 +60,17 @@ public final class ForgeServerConfig {
         SWIRL_HEAL_COOLDOWN_TICKS = builder.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         builder.pop().push("picker");
-        ALLOW_SPAWN_ALL = builder.define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
+        ALLOW_SPAWN_ALL = builder.comment(
+                        "Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.",
+                        "WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own",
+                        "mod's normal context, as spawnall does, can corrupt or destabilize the world; MineColonies",
+                        "and Create mobs are known cases (see spawnExcludedMods below).")
+                .define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
         SPAWN_EXCLUDED_MODS = builder.comment(
                         "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.",
-                        "MineColonies is excluded by default because its mobs require colony-owned spawn context.")
+                        "MineColonies and Create are excluded by default because their mobs can corrupt or",
+                        "destabilize a world if force-spawned outside their mod's normal context. Only remove",
+                        "either entry on a world you're prepared to lose.")
                 .defineList(ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
         SPAWN_EXCLUDED_ENTITIES = builder.comment(

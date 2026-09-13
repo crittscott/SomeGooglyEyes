@@ -137,10 +137,14 @@ entityOverrides = [
 Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`,
 `side_eye`, `stare`, `grow`, `swirl`, and `color_change`.
 
-`allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run.
+`allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run. Enable it only
+on a test or throwaway world: `/sg spawnall` force-spawns every summonable mob, including ones, like
+MineColonies' and Create's, that can corrupt or destabilize a world when spawned outside their mod's
+normal context.
 `spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and
-`/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies`, whose mobs require colony-owned
-spawn context; `spawnExcludedEntities` defaults to empty. Both affect only those authoring commands.
+`/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies` and `create` for exactly this
+reason — removing either from the list on a world you care about risks that world; `spawnExcludedEntities`
+defaults to empty. Both affect only those authoring commands.
 
 ### Client display
 
@@ -171,14 +175,15 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to
 clients.
 
-Definitions are included for Minecraft, Ad Astra, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts,
-Autumnity, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Hamsters Plus Lite, Ice
-and Fire, Illager Invasion, Immersive Engineering, Living Things, MmmMmmMmmMmm, Mowzie's Mobs,
-Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny,
-Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight
-Forest, Variants & Ventures, and WilderNature. Optional mods are not required. The optional-mod
-definitions retain their earlier compatibility selectors and have not been verified against Minecraft
-1.21.1 releases. Updates to another mod's models may require its eye definitions to be adjusted.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Alex's Mobs, Ars Elemental,
+Ars Nouveau, Artifacts, Autumnity, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus,
+Hamsters Plus Lite, Ice and Fire, Illager Invasion, Immersive Engineering, Living Things, MmmMmmMmmMmm,
+Mowzie's Mobs, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten
+Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny
+Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. The
+optional-mod definitions retain their earlier compatibility selectors and have not been verified
+against Minecraft 1.21.1 releases. Updates to another mod's models may require its eye definitions to
+be adjusted.
 
 The 74 bundled Minecraft definitions select 1.21.1. Armadillo, bogged, and breeze do not yet have
 bundled eye geometry.
@@ -234,7 +239,9 @@ It does not change the world.
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a
 namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable
-world.
+test world: force-spawning mobs like MineColonies' or Create's outside their mod's normal context can
+corrupt or destabilize the world, which is why both are excluded by default (see `spawnExcludedMods`
+above).
 
 Both spawn commands skip the ender dragon and any entity whose id or namespace is listed in the
 server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall`

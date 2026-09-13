@@ -32,10 +32,18 @@ public final class ServerConfigFile {
             entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can
             still give the entity eyes by hand with a Slimy Eye.""";
 
+    private static final String ALLOW_SPAWN_ALL_COMMENT = """
+             Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.
+             WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own mod's
+             normal context, as spawnall does, can corrupt or destabilize the world; MineColonies and
+             Create mobs are known cases (see spawnExcludedMods below).""";
+
     private static final String SPAWN_EXCLUDED_MODS_COMMENT = """
              Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
-             MineColonies is excluded by default because its mobs require colony-owned spawn context.
-             These authoring commands only; nothing here changes eye eligibility or natural spawning.""";
+             MineColonies and Create are excluded by default because their mobs can corrupt or
+             destabilize a world if force-spawned outside their mod's normal context. Only remove either
+             entry on a world you're prepared to lose. These are authoring commands only; nothing here
+             changes eye eligibility or natural spawning.""";
 
     private static final String SPAWN_EXCLUDED_ENTITIES_COMMENT = """
             Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
@@ -66,7 +74,7 @@ public final class ServerConfigFile {
                     ServerConfig.SWIRL_ON_HEAL_DEFAULT, ServerConfig.SWIRL_ON_HEAL),
             integer(BEHAVIORS, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY, null,
                     ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS),
-            bool(PICKER, ServerConfig.ALLOW_SPAWN_ALL_KEY, null,
+            bool(PICKER, ServerConfig.ALLOW_SPAWN_ALL_KEY, ALLOW_SPAWN_ALL_COMMENT,
                     ServerConfig.ALLOW_SPAWN_ALL_DEFAULT, ServerConfig.ALLOW_SPAWN_ALL),
             strings(PICKER, ServerConfig.SPAWN_EXCLUDED_MODS_KEY, SPAWN_EXCLUDED_MODS_COMMENT,
                     ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig.SPAWN_EXCLUDED_MODS),
