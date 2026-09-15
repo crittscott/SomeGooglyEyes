@@ -83,8 +83,8 @@
                   "crossTarget": -1,
                   "position": [
                     0.065,
-                    0.25,
-                    -0.4
+                    0.18,
+                    -0.33
                   ],
                   "eyeScale": 0.4,
                   "irisScale": 0.6,
@@ -107,8 +107,8 @@
                   "crossTarget": -1,
                   "position": [
                     -0.065,
-                    0.25,
-                    -0.4
+                    0.18,
+                    -0.33
                   ],
                   "eyeScale": 0.4,
                   "irisScale": 0.6,

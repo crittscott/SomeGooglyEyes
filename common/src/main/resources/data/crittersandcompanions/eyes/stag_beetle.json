@@ -82,7 +82,7 @@
                   "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.22,
+                    0.15,
                     0.2,
                     -0.06
                   ],
@@ -106,7 +106,7 @@
                   "azimuth": 180.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.22,
+                    -0.15,
                     0.2,
                     -0.06
                   ],
