@@ -9,7 +9,7 @@ version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1"
-logoFile="somegoogly.png"
+logoFile="somegoogly-sm.png"
 description='''${mod_description}'''
 
 [[dependencies.${mod_id}]]

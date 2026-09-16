@@ -6,7 +6,7 @@ Keep this current, under 150 lines and 12k characters, and limited to sentences 
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.1`, Java 21, Minecraft 1.21.1. Loader and API versions are pinned in the Gradle scripts and must stay aligned; Architectury is a compile-time annotation and transformation dependency, not a runtime dependency on any loader.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.1. Loader and API versions are pinned in the Gradle scripts and must stay aligned; Architectury is a compile-time annotation and transformation dependency, not a runtime dependency on any loader.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
