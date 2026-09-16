@@ -50,22 +50,31 @@ Ships with predefined eye configs for:
 - Minecraft
 - Ad Astra
 - Adorable Hamster Pets
+- AdventureZ
 - Alex's Mobs
 - Ars Elemental
 - Ars Nouveau
 - Artifacts
 - Autumnity
+- Critters and Companions
 - EvilCraft
 - Exotic Birds
 - Farming for Blockheads
 - Forbidden Arcanus
+- Friends & Foes
 - Hamsters Plus Lite
 - Ice and Fire
 - Illager Invasion
 - Immersive Engineering
+- Let's Do Alpine Whispers
+- Let's Do Brewery
+- Let's Do Furniture
+- Let's Do Meadow
+- Let's Do Vinery
 - Living Things
 - MmmMmmMmmMmm
 - Mowzie's Mobs
+- Naturalist
 - Occultism
 - Oh The Biomes We've Gone
 - Productive Bees
