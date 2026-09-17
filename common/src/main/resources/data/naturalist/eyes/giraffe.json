@@ -74,7 +74,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root/hips/shoulders/body/neck/head/head_r1",
+              "attachPoint": "root/neck/skull2",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -82,9 +82,9 @@
                   "azimuth": 270.0,
                   "crossTarget": 1,
                   "position": [
-                    0.17,
-                    -5.34,
-                    -0.86
+                    0.12,
+                    -0.23,
+                    -0.28
                   ],
                   "eyeScale": 0.6,
                   "irisScale": 0.6,
@@ -106,9 +106,9 @@
                   "azimuth": 270.0,
                   "crossTarget": 0,
                   "position": [
-                    -0.17,
-                    -5.34,
-                    -0.86
+                    -0.12,
+                    -0.23,
+                    -0.28
                   ],
                   "eyeScale": 0.6,
                   "irisScale": 0.6,

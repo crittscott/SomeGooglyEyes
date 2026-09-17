@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root/body/skullRot",
+              "attachPoint": "root/body/skullRot/attack/neck",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -17,9 +17,9 @@
                   "azimuth": 270.0,
                   "crossTarget": 1,
                   "position": [
-                    0.35,
+                    0.36,
                     -0.65,
-                    -0.97
+                    -0.98
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -74,7 +74,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root/body/skullRot",
+              "attachPoint": "root/body/neck",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -82,9 +82,9 @@
                   "azimuth": 270.0,
                   "crossTarget": 1,
                   "position": [
-                    0.35,
-                    -0.65,
-                    -0.97
+                    0.18,
+                    -0.25,
+                    -0.48
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -106,9 +106,9 @@
                   "azimuth": 270.0,
                   "crossTarget": 0,
                   "position": [
-                    -0.35,
-                    -0.65,
-                    -0.97
+                    -0.18,
+                    -0.25,
+                    -0.48
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
