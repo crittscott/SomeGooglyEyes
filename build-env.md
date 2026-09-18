@@ -11,30 +11,26 @@ These versions come from the active wrapper, Gradle scripts, properties, and loa
 | --- | --- |
 | Gradle wrapper | 9.5.1 |
 | Java compilation and development runs | Java 21 |
-| Current command-line JDK | Eclipse Temurin 17.0.15+6 |
-| IntelliJ Gradle JVM | JDK 21 |
-| IntelliJ project language level | Java 21 |
 | Minecraft | exactly 1.21.1 |
 | Architectury Loom | 1.17.491 |
 | Architectury Gradle plugin | 3.5.169 |
 | Architectury API | 13.0.8; compile-time annotations and transformation only |
-| Forge build target | 1.21.1-52.1.16; completed artifact |
-| Forge runtime range in metadata | `[52.1.16,53)` |
+| Forge build target | 1.21.1-52.1.2; completed artifact |
+| Forge runtime range in metadata | `[52.1.2,53)` |
 | FML runtime range in metadata | `[52,53)` |
-| NeoForge build target | 21.1.248; completed artifact |
-| NeoForge runtime range in metadata | `[21.1.248,22)` |
-| Fabric Loader | 0.19.3; runtime minimum 0.19.3 |
-| Fabric API | 0.116.15+1.21.1; runtime minimum the same version |
+| NeoForge build target | 21.1.34; completed artifact |
+| NeoForge runtime range in metadata | `[21.1.34,22)` |
+| Fabric Loader | 0.15.11; runtime minimum 0.15.11 |
+| Fabric API | 0.102.1+1.21.1; runtime minimum the same version |
 | Mappings | Mojang official plus Parchment 2024.11.17 for Minecraft 1.21.1 |
 | Shadow plugin | 9.4.3 |
 | GeckoLib | 4.7.4, compile-only and optional at runtime |
 | JSR-305 | 3.0.2, compile-only |
-| JUnit BOM | 5.10.2 |
-| Mod version | 0.8.1 |
+| Mod version | 0.8.2 |
 
-The Gradle runtime JVM and compilation toolchain are separate. The current shell launches Gradle
-under Java 17, while every subproject requests a Java 21 toolchain, sets source and target
-compatibility to 21, compiles with `--release 21`, and uses Java 21 for development runs.
+Every subproject requests a Java 21 toolchain, sets source and target compatibility to 21, compiles
+with `--release 21`, and uses Java 21 for development runs, independent of whatever JVM launches
+Gradle itself.
 
 Minecraft is exact because the renderer integration, Access Widener, Access Transformer, and Fabric
 Mixins refer to 1.21.1 internals. Every loader compiles and runs against the minimum versions declared
@@ -103,19 +99,19 @@ paths are verified.
 
 ### Forge
 
-Forge's build target is `net.minecraftforge:forge:1.21.1-52.1.16`; GeckoLib's Forge 1.21.1 artifact
+Forge's build target is `net.minecraftforge:forge:1.21.1-52.1.2`; GeckoLib's Forge 1.21.1 artifact
 at 4.7.4 is compile-only. Architectury API 13 has no Forge platform artifact for Minecraft 1.21.1,
 so Forge uses native content registration, networking, tracking, configuration, events, and client
 integration behind the common project-owned seams. Architectury remains only a build-time
 `@ExpectPlatform` transformer.
 
 Main resource processing expands `META-INF/mods.toml`; GameTest resource processing independently
-expands the development mod's metadata. Forge contains 19 production Java files and 13 GameTest
-files. Its verified release artifact is `forge/build/libs/somegoogly-forge-0.8.1.jar`.
+expands the development mod's metadata. Forge contains 13 production Java files and 17 GameTest
+files. Its verified release artifact is `forge/build/libs/somegoogly-forge-0.8.2.jar`.
 
 ### Fabric
 
-Fabric depends on Fabric Loader 0.19.3 and Fabric API 0.116.15+1.21.1. GeckoLib's Fabric 1.21.1
+Fabric depends on Fabric Loader 0.15.11 and Fabric API 0.102.1+1.21.1. GeckoLib's Fabric 1.21.1
 artifact at 4.7.4 is mod compile-only. JSR-305 is redeclared because common compile-only dependencies
 do not propagate to loader compilation.
 
@@ -124,34 +120,34 @@ Fabric resources. Metadata declares exact Minecraft 1.21.1, Java 21, the minimum
 the Access Widener, `somegoogly.mixins.json`, GeckoLib 4.7.4 or newer as a suggestion, and older
 installed GeckoLib versions as incompatible.
 
-The verified release artifact is `fabric/build/libs/somegoogly-fabric-0.8.1.jar`.
+The verified release artifact is `fabric/build/libs/somegoogly-fabric-0.8.2.jar`.
 
 ### NeoForge
 
-NeoForge targets `net.neoforged:neoforge:21.1.248` and the GeckoLib NeoForge 1.21.1 artifact at 4.7.4.
+NeoForge targets `net.neoforged:neoforge:21.1.34` and the GeckoLib NeoForge 1.21.1 artifact at 4.7.4.
 Architectury supplies build-time transformation only; GeckoLib is compile-only and metadata-optional
 on the physical client. Main resource processing expands `neoforge.mods.toml` and copies the canonical
 Forge-family Access Transformer containing the 36 rules required by the shared client code.
 
-The module contains 17 production Java files covering bootstrap, native configuration, server
+The module contains 13 production Java files covering bootstrap, native configuration, server
 events, platform services, client registration/access, and the soft-loaded GeckoLib bridge. Common
 resources are packaged through the transformed common artifact. The verified release artifact is
-`neoforge/build/libs/somegoogly-neoforge-0.8.1.jar`.
+`neoforge/build/libs/somegoogly-neoforge-0.8.2.jar`.
 
 The final release artifacts were verified by path and file metadata only:
 
-| Loader | Artifact | Size | Last written (UTC) |
+| Loader | Artifact | Size | Last written (UTC-4) |
 | --- | --- | ---: | --- |
-| Fabric | `fabric/build/libs/somegoogly-fabric-0.8.1.jar` | 493,712 bytes | 2026-08-31 23:18:48 |
-| NeoForge | `neoforge/build/libs/somegoogly-neoforge-0.8.1.jar` | 483,318 bytes | 2026-08-31 23:19:19 |
-| Forge | `forge/build/libs/somegoogly-forge-0.8.1.jar` | 485,525 bytes | 2026-08-31 23:25:03 |
+| Fabric | `fabric/build/libs/somegoogly-fabric-0.8.2.jar` | 742,506 bytes | 2026-09-17 22:15:11 |
+| NeoForge | `neoforge/build/libs/somegoogly-neoforge-0.8.2.jar` | 738,791 bytes | 2026-09-17 22:15:14 |
+| Forge | `forge/build/libs/somegoogly-forge-0.8.2.jar` | 741,769 bytes | 2026-09-17 22:15:13 |
 
 ## GameTest source sets
 
-Fabric, NeoForge, and Forge each define a `gametest` source set combining 77 shared public assertions
-with 78 loader wrappers; the additional test exercises that loader's entity persistence through a
-save/load round trip. Each uses a separate `somegoogly_gametest` development mod and exposes all 12
-holders. All three dedicated servers discover and pass all 78 required tests and exit cleanly.
+Fabric, NeoForge, and Forge each define a `gametest` source set combining 98 shared public assertions
+with 99 loader wrappers; the additional test exercises that loader's entity persistence through a
+save/load round trip. Each uses a separate `somegoogly_gametest` development mod and exposes all 17
+holders. All three dedicated servers discover and pass all 99 required tests and exit cleanly.
 
 ## Access configuration
 

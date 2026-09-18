@@ -8,8 +8,8 @@ The mod adds two items, one enchantment, and one creative tab. Eye placement com
 allowing different eye arrangements for vanilla and modded mobs.
 
 Completed artifacts target Minecraft 1.21.1 on Fabric, NeoForge, and Forge. Fabric requires Fabric
-Loader 0.19.3 or newer and Fabric API 0.116.15+1.21.1 or newer. NeoForge requires NeoForge 21.1.248
-or newer within the 21.1 release line. Forge requires Forge 52.1.16 or newer within the 52 release
+Loader 0.15.11 or newer and Fabric API 0.102.1+1.21.1 or newer. NeoForge requires NeoForge 21.1.34
+or newer within the 21.1 release line. Forge requires Forge 52.1.2 or newer within the 52 release
 line. All loaders require Java 21; GeckoLib 4.7.4 or newer is an optional client dependency.
 Multiplayer clients and servers must both have Some Googly Eyes with the same network version.
 

@@ -44,7 +44,7 @@ Eye placements are ordinary datapack JSON. There's also an in-game authoring too
 
 ## Compatibility
 
-The eye placing system supports vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.20.1 and 1.21.1; model changes may require adjusted placements.
+The eye placing system supports vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.21.1; model changes may require adjusted placements.
 
 Ships with predefined eye configs for:
 
@@ -94,12 +94,10 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1, and for Fabric and Forge on Minecraft
-1.20.1. Fabric and NeoForge require
-[Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api); Forge does not.
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.20.1 and 1.21.1 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for 1.21.1 with new physics, behaviors, and more.
 
 License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/LICENSE).
