@@ -62,6 +62,10 @@ The eye placing system supports vanilla models as well as GeckoLib- and Citadel-
 Ships with predefined eye configs for:
 
 - Minecraft
+- Abnormals Autumnity
+- Abnormals Caverns & Chasms
+- Abnormals Environmental
+- Abnormals Upgrade Aquatic
 - Ad Astra
 - Adorable Hamster Pets
 - AdventureZ
@@ -69,8 +73,8 @@ Ships with predefined eye configs for:
 - Ars Elemental
 - Ars Nouveau
 - Artifacts
-- Autumnity
 - Critters and Companions
+- Ecologics
 - EvilCraft
 - Exotic Birds
 - Farming for Blockheads

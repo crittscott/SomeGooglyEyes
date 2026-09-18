@@ -4,7 +4,7 @@ A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge
 
 Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
-Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
+Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball and stick them on other mobs, or yourself.
 
 Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: In-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
@@ -22,10 +22,10 @@ Includes attachment support for GeckoLib- and Citadel-based mobs, as well as tho
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it — pluck them off first to restyle.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
 ## Eye potential
-Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.
+Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
 
 ## Configuration
 
@@ -48,6 +48,10 @@ The eye placing system supports vanilla models as well as GeckoLib- and Citadel-
 Ships with predefined eye configs for:
 
 - Minecraft
+- Abnormals Autumnity
+- Abnormals Caverns & Chasms
+- Abnormals Environmental
+- Abnormals Upgrade Aquatic
 - Ad Astra
 - Adorable Hamster Pets
 - AdventureZ
@@ -55,8 +59,8 @@ Ships with predefined eye configs for:
 - Ars Elemental
 - Ars Nouveau
 - Artifacts
-- Autumnity
 - Critters and Companions
+- Ecologics
 - EvilCraft
 - Exotic Birds
 - Farming for Blockheads
