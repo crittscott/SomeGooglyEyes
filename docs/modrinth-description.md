@@ -19,7 +19,7 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
+Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png)
 
@@ -57,7 +57,7 @@ Eye placements are ordinary datapack JSON. There's also an in-game authoring too
 
 ## Compatibility
 
-The eye placing system supports vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.21.1; model changes may require adjusted placements.
+The eye placing system supports vanilla models as well as GeckoLib-, Citadel-, and Uranus-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.21.1; model changes may require adjusted placements.
 
 Ships with predefined eye configs for:
 
@@ -81,7 +81,7 @@ Ships with predefined eye configs for:
 - Forbidden Arcanus
 - Friends & Foes
 - Hamsters Plus Lite
-- Ice and Fire
+- Ice and Fire Community Edition
 - Illager Invasion
 - Immersive Engineering
 - Let's Do Alpine Whispers

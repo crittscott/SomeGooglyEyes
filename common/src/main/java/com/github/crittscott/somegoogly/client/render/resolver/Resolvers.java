@@ -18,7 +18,8 @@ public final class Resolvers {
             new HierarchicalResolver(),
             new TwilightForestResolver(),
             new AgeableListResolver(),
-            new CitadelResolver(),
+            AdvancedModelBoxResolver.citadel(),
+            AdvancedModelBoxResolver.uranus(),
             new LLibraryResolver(),
             new RabbitLlamaResolver(),
             new ChildMapResolver()

@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "[2.1.13-1.20.1,2.2)",
+      "version": "[2.1.2,2.2)",
       "age": "any",
       "enabled": true,
       "variants": [

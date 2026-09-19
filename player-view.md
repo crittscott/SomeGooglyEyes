@@ -180,16 +180,18 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to
 clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars
-Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming
-for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire, Illager Invasion,
-Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do
-Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The
-Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats,
-Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest,
-Variants & Ventures, and WilderNature. Optional mods are not required. The optional-mod definitions
-retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.1
-releases. Updates to another mod's models may require its eye definitions to be adjusted.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs,
+Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds,
+Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire
+Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do
+Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's
+Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten
+Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny
+Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required.
+Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the
+optional-mod definitions retain their earlier compatibility selectors and have not been verified
+against Minecraft 1.21.1 releases. Updates to another mod's models may require its eye definitions
+to be adjusted.
 
 The 74 bundled Minecraft definitions select 1.21.1. Armadillo, bogged, and breeze do not yet have
 bundled eye geometry.

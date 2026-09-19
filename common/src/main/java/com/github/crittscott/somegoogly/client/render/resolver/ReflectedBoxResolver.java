@@ -16,7 +16,7 @@ import java.util.WeakHashMap;
 /**
  * Shared machinery for resolvers over reflected "box-tree" model families — external mods whose
  * models keep their own box hierarchy (a flat all-boxes list plus parent pointers and a per-box pose
- * transform) instead of vanilla {@code ModelPart}s. {@link CitadelResolver} and
+ * transform) instead of vanilla {@code ModelPart}s. {@link AdvancedModelBoxResolver} and
  * {@link LLibraryResolver} are the concrete families; each supplies only the reflective handles,
  * while the token/path/index logic lives here so the families can't drift apart.
  *
@@ -53,8 +53,16 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
     protected final void disableIntegration(String operation, Object subject, Throwable failure) {
         integrationFailed = true;
-        ClientIntegrationFailures.warnOnce(getClass().getSimpleName(), operation,
+        ClientIntegrationFailures.warnOnce(familyLabel(), operation,
                 subject.getClass().getName(), failure);
+    }
+
+    /**
+     * The family's name in logs. Defaults to the resolver's class name, which one resolver class
+     * serving several libraries must override so its warnings say which one failed.
+     */
+    protected String familyLabel() {
+        return getClass().getSimpleName();
     }
 
     /** Per-model index: the family's boxes, with an index-aligned path token each. */
@@ -119,7 +127,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                         names.put(box, field.getName());
                     }
                 } catch (Throwable accessDenied) {
-                    ClientIntegrationFailures.warnOnce(getClass().getSimpleName(),
+                    ClientIntegrationFailures.warnOnce(familyLabel(),
                             "fallback field access", model.getClass().getName(), accessDenied);
                     // Positional names remain a reliable fallback when a Java field is inaccessible.
                 }

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * attachment part, so eyes can be drawn relative to it.
  *
  * <p>Different model frameworks expose their part trees differently (see {@link HierarchicalResolver},
- * {@link AgeableListResolver}, {@link CitadelResolver}, and {@link ChildMapResolver}); each converges on
+ * {@link AgeableListResolver}, {@link AdvancedModelBoxResolver}, and {@link ChildMapResolver}); each converges on
  * the same contract here. Implementations must use <b>obfuscation-safe</b> handles only — string part
  * names walked from a stable entry point / positional root indices, never obfuscated field names.
  *
