@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Client-side store of eye geometry configs, populated from the server via
- * {@code EyeConfigSyncPacket}. This store also owns the resolved-view cache used by renderers.
+ * Client-side store of the resolved server eye state, populated from the server via
+ * {@code EyeConfigSyncPacket}: the per-entity eye geometry configs and the current
+ * {@code googlyEyesEnabled} master switch. This store also owns the resolved-view cache used by
+ * renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
  * integrated server fills the server store and the local sync fills this one independently. Installed
@@ -23,6 +25,8 @@ import java.util.Map;
 public final class ClientEyeConfigs {
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
+    // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
+    private static volatile boolean googlyEyesEnabled = true;
     // Nested by entity then a packed (variant, baby) key, mirroring ModelMemo's per-frame-allocation-free
     // pattern: a compound key object would have to be allocated on every call just to probe the cache.
     private static final Map<ResourceLocation, Map<Integer, HeadInfo>> resolved = new HashMap<>();
@@ -41,7 +45,13 @@ public final class ClientEyeConfigs {
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
         configs = Collections.emptyMap();
+        googlyEyesEnabled = true;
         resolved.clear();
+    }
+
+    /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
+    public static boolean googlyEyesEnabled() {
+        return googlyEyesEnabled;
     }
 
     /** Return the entity's config for the requested age, including the age-independent fallback. */
@@ -71,8 +81,9 @@ public final class ClientEyeConfigs {
      * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
      * rendering view. The supplied model values become store-owned and must not be mutated afterward.
      */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled) {
         configs = Map.copyOf(next);
+        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
         resolved.clear();
     }
 }

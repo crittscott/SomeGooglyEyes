@@ -1,16 +1,16 @@
 # Configuration reference
 
-Some Googly Eyes has two config files: a **server** config that controls gameplay (who gets eyes, harvesting, expressions) and a **client** config that controls only what *you* see.
+ **Server** config that controls gameplay (who gets eyes, harvesting, expressions). **Client** config controls only what *you* see.
 
 ## Server config
 
-Location: `<world>/serverconfig/somegoogly-server.toml` .
+`<world>/serverconfig/somegoogly-server.toml`
 
 ### Spawn settings
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `googlyEyesEnabled` | `true` | Master switch for new spawn decisions. Turning it off stops *new* mobs from rolling eyes; mobs that already have eyes keep them. |
+| `googlyEyesEnabled` | `true` | Master switch for the whole mod. Turning it off stops *new* mobs from rolling eyes, hides every eye (old and new) on every client, and refuses hand-applying or harvesting eyes. Existing eye data on entities is left untouched and reappears as soon as this is turned back on. |
 | `globalPercent` | `5` | Default percent chance (0–100) for an eligible mob to spawn with eyes. |
 | `harvestOnKillPercent` | `25` | Percent chance that an eyed mob killed by a player's direct shears blow drops its eye. (The Optometrist enchantment bypasses this with a guaranteed, non-lethal right-click harvest.) |
 | `entityOverrides` | empty | Per-mob spawn chances, one entry per line as `"entity,percent"`. |
@@ -71,3 +71,8 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only �
 These are personal preferences: the mob still *has* eyes (other players see them, and they can still
 be harvested); you just don't render them. Config reload behavior differs by loader; if a file edit
 is not reflected immediately, reload resources or restart the client.
+
+The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for
+anyone regardless of these client settings, and eyes can't be applied or harvested either. The
+creative eye picker ignores `googlyEyesEnabled` — it's an authoring tool, not gameplay, so it still
+previews configured mobs while the switch is off.

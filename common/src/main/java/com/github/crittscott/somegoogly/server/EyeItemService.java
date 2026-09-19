@@ -41,8 +41,8 @@ public final class EyeItemService {
      * {@link InteractionResult#SUCCESS} on the client and defers the mutation to the server; an
      * Optometrist-shears harvest runs server-side only, dropping one eye and clearing the mob's eyes
      * before returning {@code SUCCESS}. Every other case — plain shears, no Optometrist, an eyeless mob,
-     * a mob with no config, or the client side of the shears path — returns {@link InteractionResult#PASS}
-     * so the vanilla interaction is left to proceed.
+     * a mob with no config, {@code googlyEyesEnabled} off, or the client side of the shears path —
+     * returns {@link InteractionResult#PASS} so the vanilla interaction is left to proceed.
      */
     public static InteractionResult interact(Player player, Level level, InteractionHand hand,
                                              LivingEntity mob) {
@@ -52,7 +52,8 @@ public final class EyeItemService {
                     : SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, mob);
         }
         if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
-                || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())) {
+                || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())
+                || !ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             return InteractionResult.PASS;
         }
         HeadInfo helper = helperFor(mob);
@@ -74,7 +75,7 @@ public final class EyeItemService {
      * from a {@code dropCustomDeathLoot} mixin.
      */
     public static void onDeath(LivingEntity mob, DamageSource source, Consumer<ItemStack> dropSink) {
-        if (!EyeState.hasEyes(mob)
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !EyeState.hasEyes(mob)
                 || !(source.getEntity() instanceof Player player)
                 || source.getDirectEntity() != player) {
             return;
@@ -98,12 +99,13 @@ public final class EyeItemService {
      * another player having applied a Slimy Eye to you. One Googly Eye drops carrying your effective
      * appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
      * additionally land one melee hit's worth of self-damage. Returns {@link InteractionResult#PASS}
-     * when it doesn't apply (not sneaking, not shears, no eyes) so the vanilla item use proceeds.
+     * when it doesn't apply (not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so the
+     * vanilla item use proceeds.
      */
     public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown() || !(stack.getItem() instanceof ShearsItem)
-                || !EyeState.hasEyes(player)) {
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !player.isShiftKeyDown()
+                || !(stack.getItem() instanceof ShearsItem) || !EyeState.hasEyes(player)) {
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) {

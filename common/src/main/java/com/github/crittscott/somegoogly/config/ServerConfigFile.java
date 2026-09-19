@@ -24,6 +24,12 @@ public final class ServerConfigFile {
     private static final String BEHAVIORS = "behaviors";
     private static final String PICKER = "picker";
 
+    private static final String GOOGLY_EYES_ENABLED_COMMENT = """
+            Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every
+            client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched
+            and reappears when this is turned back on. Already-connected clients only see the change after
+            a config reload or server restart, since this is a server config value like any other.""";
+
     private static final String ENTITY_OVERRIDES_COMMENT = """
             Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
             '*' wildcards the entity id, e.g. "minecraft:zombie,100", "*:*_horse,50", "alexsmobs:*,0".
@@ -50,7 +56,7 @@ public final class ServerConfigFile {
             "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
 
     private static final List<Entry> SCHEMA = List.of(
-            bool(SERVER_SETTINGS, ServerConfig.GOOGLY_EYES_ENABLED_KEY, null,
+            bool(SERVER_SETTINGS, ServerConfig.GOOGLY_EYES_ENABLED_KEY, GOOGLY_EYES_ENABLED_COMMENT,
                     ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT, ServerConfig.GOOGLY_EYES_ENABLED),
             integer(SERVER_SETTINGS, ServerConfig.GLOBAL_PERCENT_KEY, null,
                     ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.GLOBAL_PERCENT),

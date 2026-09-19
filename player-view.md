@@ -105,10 +105,15 @@ World settings are stored in:
 
 | Key | Default | Effect |
 | --- | ---: | --- |
-| `googlyEyesEnabled` | `true` | Enables eyes on new mobs |
+| `googlyEyesEnabled` | `true` | Master switch for the whole mod |
 | `globalPercent` | `5` | Default spawn chance, 0–100 |
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
+
+While `googlyEyesEnabled` is `false`, no new mob rolls eyes, no client renders any eyes on any mob
+(old or new), and eyes can't be hand-applied or harvested. Existing eye data is kept, not erased, and
+reappears once the switch is turned back on. The creative eye picker is exempt, since it is an
+authoring tool rather than gameplay.
 
 Overrides use `"entity-pattern,percent"`. Exact IDs take priority; otherwise the first matching
 wildcard is used.
@@ -280,5 +285,7 @@ Color channels range from 0 to 1.
 - Fabric, NeoForge, and Forge each contain 99 dedicated-server GameTests. Each loader requires
   production-build verification and physical-client smoke testing of ordinary and baby models, players, special
   resolver families, expression and pupil animation, both item render paths, harvesting and
-  application, picker editing/export, renderer reload, and optional GeckoLib entities.
+  application, picker editing/export, renderer reload, optional GeckoLib entities, and that
+  `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still
+  letting the picker preview.
 - The dynamic modifier recipe may not display in recipe viewers.

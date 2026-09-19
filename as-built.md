@@ -78,7 +78,7 @@ GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which p
 
 ## Networking
 
-Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `11`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
+Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `12`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
 
 `NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers receive the authenticated `ServerPlayer` and re-check authorization. Eye-state packets include entity id and UUID; packets that precede entity creation wait in a bounded UUID-keyed map cleared on disconnect, preventing numeric-id reuse from applying stale state.
 
@@ -96,7 +96,7 @@ Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and r
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge's required `PayloadChannel` uses network version 11 and marks payloads handled.
+Forge's required `PayloadChannel` uses network version 12 and marks payloads handled.
 
 NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
 

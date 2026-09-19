@@ -17,7 +17,10 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Server-to-client synchronization of the complete resolved eye-definition set. */
+/**
+ * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
+ * {@code googlyEyesEnabled} master switch.
+ */
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
@@ -37,9 +40,11 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             };
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
+    private final boolean googlyEyesEnabled;
 
-    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs) {
+    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs, boolean googlyEyesEnabled) {
         this.configs = configs;
+        this.googlyEyesEnabled = googlyEyesEnabled;
     }
 
     public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
@@ -85,7 +90,8 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error);
         }
-        return new EyeConfigSyncPacket(configs);
+        boolean googlyEyesEnabled = buffer.readBoolean();
+        return new EyeConfigSyncPacket(configs, googlyEyesEnabled);
     }
 
     public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
@@ -105,6 +111,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             }
             buffer.writeNbt(compound);
         }
+        buffer.writeBoolean(packet.googlyEyesEnabled);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written
@@ -114,6 +121,10 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
 
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
+    }
+
+    public boolean googlyEyesEnabled() {
+        return googlyEyesEnabled;
     }
 
     @Override

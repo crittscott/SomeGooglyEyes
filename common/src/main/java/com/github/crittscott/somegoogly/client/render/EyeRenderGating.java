@@ -34,8 +34,10 @@ public final class EyeRenderGating {
 
     /**
      * The eye geometry to draw for {@code living}, or {@code null} to draw nothing: honors the client
-     * global/per-entity disables, the server's per-mob has-eyes decision (bypassed while the picker is
-     * active, so authoring shows every configured mob), invisibility, and a usable config.
+     * global/per-entity disables, the server's {@code googlyEyesEnabled} master switch and per-mob
+     * has-eyes decision (both bypassed while the picker is active, since it is an admin authoring tool
+     * and not gameplay — it shows every configured mob regardless of the server switch or that mob's own
+     * roll), invisibility, and a usable config.
      */
     @Nullable
     public static HeadInfo helperToRender(LivingEntity living) {
@@ -46,6 +48,10 @@ public final class EyeRenderGating {
         }
         if (ClientConfig.isEntityDisabled(entityType)) {
             logDecision(entityType, living, "entity/mod client disable");
+            return null;
+        }
+        if (!PickerState.isActive() && !ClientEyeConfigs.googlyEyesEnabled()) {
+            logDecision(entityType, living, "server googlyEyesEnabled=false");
             return null;
         }
         if (!PickerState.isActive() && !EyeState.hasEyes(living)) {

@@ -34,7 +34,7 @@ public final class ClientNetworkHandler {
 
     public static void handle(CustomPacketPayload payload) {
         if (payload instanceof EyeConfigSyncPacket packet) {
-            ClientEyeConfigs.replaceAll(packet.configs());
+            ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled());
             ClientEyeRuntime.clear();
         } else if (payload instanceof EyeStatePacket packet) {
             handleEyeState(packet);

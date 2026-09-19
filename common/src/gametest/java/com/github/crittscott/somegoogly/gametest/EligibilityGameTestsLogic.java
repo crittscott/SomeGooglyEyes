@@ -100,6 +100,7 @@ public final class EligibilityGameTestsLogic {
         EyeState.setHasEyes(cow, false);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             // Unconfigured: refused outright, and the eye stays in hand.
             ServerEyeConfigs.replaceAll(Map.of());
@@ -109,10 +110,18 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
 
-            // Configured: eyes on, the stack's appearance carried across, exactly one eye spent.
+            // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            InteractionResult disabled = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
+            helper.assertTrue(!EyeState.hasEyes(cow), "a disabled apply should not gain eyes");
+            helper.assertTrue(stack.getCount() == 2, "a disabled apply should not consume the eye");
+
+            // Configured and enabled: eyes on, the stack's appearance carried across, exactly one eye spent.
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
             helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
             helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
@@ -121,6 +130,7 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(stack.getCount() == 1, "applying should consume exactly one eye");
         } finally {
             ServerEyeConfigs.replaceAll(original);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
         helper.succeed();
     }

@@ -125,11 +125,12 @@ public final class SerializationGameTestsLogic {
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
-                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()));
+                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()), false);
         byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
         EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
         byte[] second = bytes(buffer -> EyeConfigSyncPacket.encode(decoded, buffer));
         helper.assertTrue(Arrays.equals(first, second), "EyeConfigSyncPacket should survive a wire round-trip");
+        helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
         helper.succeed();
     }
 

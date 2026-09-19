@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.platform.NetworkTracking;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 public final class NetworkHandler {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "11";
+    public static final String NETWORK_VERSION = "12";
 
     public static final ResourceLocation EYE_STATE = versioned("eye_state");
     public static final ResourceLocation EYE_CONFIG = versioned("eye_config");
@@ -23,7 +24,8 @@ public final class NetworkHandler {
     }
 
     public static void sendConfig(ServerPlayer player) {
-        NetworkTransport.sendToPlayer(player, new EyeConfigSyncPacket(ServerEyeConfigs.all()));
+        NetworkTransport.sendToPlayer(player,
+                new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerConfig.GOOGLY_EYES_ENABLED.get()));
     }
 
     public static void sendEyeState(ServerPlayer player, EyeStatePacket packet) {

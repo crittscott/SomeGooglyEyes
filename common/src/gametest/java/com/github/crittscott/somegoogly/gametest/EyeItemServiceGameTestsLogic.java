@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.enchant.ModEnchantments;
@@ -105,6 +106,17 @@ public final class EyeItemServiceGameTestsLogic {
             ServerEyeConfigs.replaceAll(original);
         }
 
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        try {
+            EyeState.setHasEyes(cow, true);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            helper.assertTrue(
+                    EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
+                    "googlyEyesEnabled=false passes rather than harvesting");
+        } finally {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+        }
+
         helper.assertTrue(shears.getDamageValue() == 0, "no passed interaction spends durability");
         helper.assertTrue(EyeState.hasEyes(cow), "no passed interaction removes the eyes");
         helper.succeed();
@@ -145,6 +157,20 @@ public final class EyeItemServiceGameTestsLogic {
         helper.assertTrue(
                 EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
                 "self-removal requires sneaking");
+
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        try {
+            player.setShiftKeyDown(true);
+            EyeState.setHasEyes(player, true);
+            player.setItemInHand(InteractionHand.MAIN_HAND, opto);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            helper.assertTrue(
+                    EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
+                    "googlyEyesEnabled=false blocks self-removal");
+            helper.assertTrue(EyeState.hasEyes(player), "a blocked self-removal leaves the eyes on");
+        } finally {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+        }
 
         EyeState.disableAndClearProperties(player);
         player.setHealth(player.getMaxHealth());

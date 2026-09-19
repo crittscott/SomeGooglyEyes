@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.item;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
@@ -60,13 +61,15 @@ public class SlimyEyeItem extends Item {
     /**
      * The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
      * eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
-     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing. Applying to
-     * another player additionally requires server PvP to be enabled and {@code canHarmPlayer} to hold,
-     * so it can't be used to restyle a teammate or anyone in a PvP-off world. Both the mob path
-     * (the loader entity-interact adapter) and the sneak self-apply ({@link #use}) route through here.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing, as does any
+     * target while {@code googlyEyesEnabled} is off — the master switch blocks hand application the same
+     * as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
+     * enabled and {@code canHarmPlayer} to hold, so it can't be used to restyle a teammate or anyone in a
+     * PvP-off world. Both the mob path (the loader entity-interact adapter) and the sneak self-apply
+     * ({@link #use}) route through here.
      */
     public static InteractionResult applyToTarget(ItemStack stack, ServerPlayer player, LivingEntity target) {
-        if (EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
             return InteractionResult.FAIL;
         }
         if (target instanceof Player victim && victim != player) {

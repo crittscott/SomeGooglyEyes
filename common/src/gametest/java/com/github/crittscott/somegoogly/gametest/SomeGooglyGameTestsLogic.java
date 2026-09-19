@@ -150,6 +150,7 @@ public final class SomeGooglyGameTestsLogic {
         List<ItemStack> drops = new ArrayList<>();
         int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
         Map<ResourceLocation, EyeConfigModel.RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
 
         try {
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
@@ -170,9 +171,15 @@ public final class SomeGooglyGameTestsLogic {
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
             ServerEyeConfigs.replaceAll(Map.of());
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
+
+            ServerEyeConfigs.replaceAll(originalConfigs);
+            EyeState.setHasEyes(cow, true);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
         } finally {
             ServerEyeConfigs.replaceAll(originalConfigs);
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
 
         helper.assertTrue(drops.isEmpty(), "Nonqualifying death harvests should emit no eye stacks");

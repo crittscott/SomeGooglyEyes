@@ -33,8 +33,13 @@ public final class ForgeServerConfig {
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("server");
-        GOOGLY_EYES_ENABLED = builder.define(ServerConfig.GOOGLY_EYES_ENABLED_KEY,
-                ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
+        GOOGLY_EYES_ENABLED = builder.comment(
+                        "Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on",
+                        "every client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left",
+                        "untouched and reappears when this is turned back on. Already-connected clients only see",
+                        "the change after a config reload or server restart, since this is a server config value",
+                        "like any other.")
+                .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
         GLOBAL_PERCENT = builder.defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
                 ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         HARVEST_ON_KILL_PERCENT = builder.defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
