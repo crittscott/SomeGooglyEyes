@@ -8,7 +8,7 @@ Eyes are a collectible resource: harvest them, recolor them, set them in a slime
 
 Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
-![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png)
+![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash-0.8.2.png)
 
 ![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1](https://img.shields.io/badge/Minecraft-1.20.1%20and%201.21.1-8A5A9B?style=for-the-badge)
 
