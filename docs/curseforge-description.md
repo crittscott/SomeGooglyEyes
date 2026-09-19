@@ -6,7 +6,7 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
+Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png)
 
