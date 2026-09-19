@@ -1,4 +1,4 @@
-# Some Buckets As-Built Orientation
+# Some Googly Eyes As-Built Orientation
 
 Repository orientation to subsystem ownership and cross-module invariants; `player-view.md` covers observable behavior. The code wins when they disagree.
 
