@@ -144,10 +144,11 @@ The final release artifacts were verified by path and file metadata only:
 
 ## GameTest source sets
 
-Fabric, NeoForge, and Forge each define a `gametest` source set combining 98 shared public assertions
-with 99 loader wrappers; the additional test exercises that loader's entity persistence through a
+Fabric, NeoForge, and Forge each define a `gametest` source set combining 107 shared public assertions
+with 108 loader wrappers; the additional test exercises that loader's entity persistence through a
 save/load round trip. Each uses a separate `somegoogly_gametest` development mod and exposes all 17
-holders. All three dedicated servers discover and pass all 99 required tests and exit cleanly.
+holders. The prior 99-test suite passed on all three dedicated servers; the nine added eye-item
+migration tests have not yet been run.
 
 ## Access configuration
 

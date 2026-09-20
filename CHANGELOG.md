@@ -13,3 +13,6 @@
 ### Changed
 - Ported from Minecraft 1.20.1 to 1.21.1: item data moves from NBT to data components, and enchantment, loot, and rendering integration follow the 1.21.1 APIs.
 - Architectury API is no longer a runtime dependency on any loader.
+
+### Fixed
+- Googly Eyes and Slimy Eyes loaded from 1.20.1 worlds now convert their retained `EyeProperties` custom data into the 1.21.1 appearance component, preserving iris color, cornea color, and explicit glow state across inventories and containers.

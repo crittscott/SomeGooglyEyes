@@ -54,6 +54,11 @@ or eye placement.
 A Googly Eye is a 3D item whose pupil moves while held. Its tooltip shows stored colors in
 hexadecimal and its glow setting.
 
+When a 1.20.1 world is opened in 1.21.1, stored Googly Eyes and Slimy Eyes retain their iris color,
+cornea color, and glow as each inventory, container, nested container, or dropped stack loads. The
+conversion is automatic and is saved in the current item-component format. It can recover an
+already-upgraded stack only if its old `EyeProperties` custom data is still present.
+
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
 | Modifier | Result |
@@ -284,10 +289,10 @@ Color channels range from 0 to 1.
   eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.1 require manual compatibility
   verification.
-- Fabric, NeoForge, and Forge each contain 99 dedicated-server GameTests. Each loader requires
+- Fabric, NeoForge, and Forge each contain 108 dedicated-server GameTests. Each loader requires
   production-build verification and physical-client smoke testing of ordinary and baby models, players, special
   resolver families, expression and pupil animation, both item render paths, harvesting and
   application, picker editing/export, renderer reload, optional GeckoLib entities, and that
   `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still
-  letting the picker preview.
+  letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

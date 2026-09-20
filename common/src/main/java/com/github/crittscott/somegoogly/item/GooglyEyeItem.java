@@ -30,6 +30,12 @@ public class GooglyEyeItem extends Item {
     }
 
     @Override
+    public void verifyComponentsAfterLoad(ItemStack stack) {
+        super.verifyComponentsAfterLoad(stack);
+        EyeItemProperties.migrateStoredAppearance(stack);
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         EyeItemProperties.appendTooltip(stack, tooltip);
     }

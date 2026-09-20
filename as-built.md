@@ -6,7 +6,7 @@ Keep this current, under 150 lines and 12k characters, and limited to sentences 
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.1. Loader and API versions are pinned in the Gradle scripts and must stay aligned; Architectury is a compile-time annotation and transformation dependency, not a runtime dependency on any loader.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.1. Gradle pins aligned loader/API versions; Architectury is compile-time only.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
@@ -54,6 +54,8 @@ Related mutations flush as one full-snapshot sync. The eye-state key and variant
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
+`EyeItemProperties` converts released 1.20.1 `minecraft:custom_data.EyeProperties` as `GooglyEyeItem` and `SlimyEyeItem` decode via `verifyComponentsAfterLoad`. A current component wins even when empty; converted or superseded old data is removed, malformed data and unrelated custom data are retained.
+
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvest paths. Loader adapters run entity interaction after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`.
 
 Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every successful interactive, self, or kill harvest emits `GameEvent.SHEAR`. Refused operations emit neither.
@@ -86,7 +88,7 @@ Five packet classes implement Minecraft's typed `CustomPacketPayload` contract d
 
 Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. Spawn and mob-pose operations are server Brigadier commands; only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
-`PickerFreezeService` saves and restores each mob's prior `NoAI` value and reconciles freeze markers on mob load, player logout, and server stop; only the owning editor may hold a lock. Picker requests are rate-limited; spawn-all also requires creative mode, explicit server enablement, and a server-wide cooldown. `PickerSpawnService` finalizes mobs at their destination with the command spawn reason before applying `NoAI`, persistence, and display rotation; it and `/sg spawn`'s suggestions skip any id or namespace in the `spawnExcludedEntities` / `spawnExcludedMods` config lists (`ServerConfig.isSpawnExcluded`). World export is confined to the generated datapack directory and triggers a reload, so it alone requires permission level 2 on top of creative; client export-all writes only under the game-directory export tree.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and permits one editor. Requests are rate-limited; spawn-all also requires creative mode, server enablement, and a server-wide cooldown. `PickerSpawnService` finalizes command-spawned mobs before setting `NoAI`, persistence, and display rotation; it and spawn suggestions obey `ServerConfig.isSpawnExcluded`. World export is confined to the generated datapack and requires creative plus permission level 2; export-all stays under the game-directory export tree.
 
 The client and server own disjoint branches of one `/sg` Brigadier tree: local editing stays client-side, while admin, spawn, spawn-all, and mob-pose commands are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 
@@ -102,7 +104,7 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Automated verification
 
-Shared assertions live in `common/src/gametest/java`; each loader wraps them and adds one persistence test, so its annotated count stays at shared + 1. Required-client rejection, `/sg` server commands, and plain-shears self-damage require manual client testing.
+`common/src/gametest/java` supplies 107 shared assertions; each loader wraps them and adds one persistence test, totaling 108. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
 
 ## Operational boundaries
 

@@ -12,6 +12,7 @@
       "com.github.crittscott.somegoogly.gametest.VariantSelectionGameTests",
       "com.github.crittscott.somegoogly.gametest.VersionRangeGameTests",
       "com.github.crittscott.somegoogly.gametest.SerializationGameTests",
+      "com.github.crittscott.somegoogly.gametest.EyeItemMigrationGameTests",
       "com.github.crittscott.somegoogly.gametest.RecipeGameTests",
       "com.github.crittscott.somegoogly.gametest.PickerFreezeGameTests",
       "com.github.crittscott.somegoogly.gametest.EyeStateOverrideGameTests",
