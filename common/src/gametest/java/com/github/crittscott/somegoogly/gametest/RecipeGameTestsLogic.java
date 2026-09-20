@@ -107,6 +107,14 @@ public final class RecipeGameTestsLogic {
         AppearanceOverride carried = EyeItemProperties.get(result);
         helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
         helper.assertTrue(carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
+        helper.assertTrue(EyeItemProperties.slimyEyeTint(result, EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX)
+                        == 0xFF336699,
+                "the slimy eye should render its iris color with full alpha");
+        helper.assertTrue(EyeItemProperties.slimyEyeTint(result, 0) == -1,
+                "the slimy eye should leave non-iris layers untinted");
+        helper.assertTrue(EyeItemProperties.slimyEyeTint(new ItemStack(ModItems.SLIMY_EYE.get()),
+                        EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX) == 0xFF000000,
+                "the slimy eye should render its default black iris with full alpha");
         helper.succeed();
     }
 

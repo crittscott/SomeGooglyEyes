@@ -33,11 +33,11 @@ public final class EyeItemProperties {
 
     /**
      * The Slimy Eye {@code ItemColor} body shared by all three loaders: the stored iris color for the
-     * iris layer, {@code -1} (no tint) for every other layer.
+     * iris layer as opaque ARGB, {@code -1} (no tint) for every other layer.
      */
     public static int slimyEyeTint(ItemStack stack, int tintIndex) {
         return tintIndex == SLIMY_EYE_IRIS_TINT_INDEX
-                ? get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
+                ? get(stack).iris().orElse(EyeColor.BLACK).toOpaqueArgb32()
                 : -1;
     }
 

@@ -68,6 +68,11 @@ public record EyeColor(float r, float g, float b) {
         return FastColor.ARGB32.color(0, channel(r), channel(g), channel(b));
     }
 
+    /** Pack to opaque {@code 0xFFRRGGBB} for APIs that multiply the alpha channel. */
+    public int toOpaqueArgb32() {
+        return FastColor.ARGB32.color(255, channel(r), channel(g), channel(b));
+    }
+
     /** {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their own. */
     public String toHex() {
         return String.format("%06X", toRgb24());
