@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "[1.5.0,1.6)",
+      "version": "[1.4.20,1.5)",
       "age": "adult",
       "enabled": true,
       "variants": [
@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0",
+              "attachPoint": "head/head",
               "eyes": [
                 {
                   "depth": 1.0,
