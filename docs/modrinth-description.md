@@ -62,18 +62,52 @@ The eye placing system works with vanilla models as well as GeckoLib- and Citade
 Ships with predefined eye configs for:
 
 - Minecraft
+- Abnormals Autumnity
+- Abnormals Caverns & Chasms
+- Abnormals Environmental
+- Abnormals Upgrade Aquatic
+- Ad Astra
+- Adorable Hamster Pets
+- AdventureZ
 - Alex's Mobs
+- Ars Elemental
 - Ars Nouveau
-- Autumnity
+- Artifacts
+- Critters and Companions
+- Ecologics
+- EvilCraft
 - Exotic Birds
 - Farming for Blockheads
-- Hamsters
+- Forbidden Arcanus
+- Friends & Foes
+- Hamsters Plus Lite
 - Ice and Fire
+- Illager Invasion
 - Immersive Engineering
+- Let's Do Alpine Whispers
+- Let's Do Brewery
+- Let's Do Furniture
+- Let's Do Meadow
+- Let's Do Vinery
+- Living Things
+- MmmMmmMmmMmm
 - Mowzie's Mobs
+- Naturalist
+- Occultism
+- Oh The Biomes We've Gone
+- Productive Bees
+- Regions Unexplored
+- Rotten Creatures
+- Shiny
 - Simply Cats
+- Supplementaries
 - Sushi Go Crafting
+- The Aether
+- The Bumblezone
+- Tiny Skeletons
 - Twilight Forest
+- Variants & Ventures
+- WilderNature
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
