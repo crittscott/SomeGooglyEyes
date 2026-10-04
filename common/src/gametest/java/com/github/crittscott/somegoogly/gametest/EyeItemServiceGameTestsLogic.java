@@ -32,7 +32,7 @@ import java.util.Map;
  * {@link EyeItemService#interact} (the Optometrist right-click harvest) and
  * {@link EyeItemService#selfRemoveWithShears} (sneak + shears on air). The shears-on-kill harvest and
  * the Slimy Eye application verb are covered by {@link SomeGooglyGameTestsLogic} and
- * {@link EligibilityGameTestsLogic}; these pin the two paths {@code player-view.md} gives their own
+ * {@link EligibilityGameTestsLogic}; these pin the two paths {@code orientation-player.md} gives their own
  * sections that nothing else exercised. The loader adapters' protection-mod / PvP gating around these
  * calls stays source-verified — it needs live listener ordering.
  */

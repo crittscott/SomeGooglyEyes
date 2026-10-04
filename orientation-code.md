@@ -1,25 +1,27 @@
-# Some Googly Eyes As-Built Orientation
+<!-- FIXED HEADER: not content. Do not edit, trim, or count toward the size limit. -->
+> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
+<!-- END FIXED HEADER -->
 
-Repository orientation to subsystem ownership and cross-module invariants; `player-view.md` covers observable behavior. The code wins when they disagree.
+# Some Googly Eyes — code orientation
 
-Keep this current, under 150 lines and 12k characters, and limited to sentences that name either the file/class to change or an invariant not visible from one file. This is neither history nor a specification.
+Build structure, subsystem ownership, persisted state, loader seams, and invariants the code currently maintains. `orientation-player.md` covers observable behavior.
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.1. Gradle pins aligned loader/API versions; Architectury is compile-time only.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.3.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
 | Source tree | Responsibility |
 | --- | --- |
 | `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker |
-| `common/src/main/resources` | Assets, recipes, eye definitions, language, structure fixture |
-| `common/src/gametest/java` | Shared GameTest assertions |
+| `common/src/main/resources` | Assets, recipes, eye definitions, language |
+| `common/src/gametest` | Shared GameTest assertions and the structure fixture |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
 | `fabric/src/gametest` | Fabric wrappers and discovery metadata |
-| `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, Access Transformer |
+| `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, access transformer |
 | `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
-| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, Access Transformer |
+| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
 Common main imports no loader or GeckoLib type; differences pass through project-owned adapters or six Architectury `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
@@ -72,7 +74,7 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
 
-Fabric uses the common 1.21.1 Access Widener; Forge and NeoForge copy `gradle/accesstransformer.cfg` into their resources. These two 36-rule access representations must stay aligned.
+The common `somegoogly.accesswidener` serves common compilation, Fabric, and NeoForge, which converts it to an access transformer at remap. Forge carries its own `META-INF/accesstransformer.cfg`; `verifyCommonAccessMirror`, wired into `check`, fails when it lacks any widener entry.
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
@@ -94,7 +96,7 @@ The client and server own disjoint branches of one `/sg` Brigadier tree: local e
 
 ## Loader integration
 
-Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the Access Widener target 1.21.1 exactly. Fabric configuration has no file watching.
+Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the access widener target the pinned Minecraft version exactly; Fabric writes the fixed `somegoogly.refmap.json` refmap. Fabric configuration has no file watching.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -104,10 +106,10 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Automated verification
 
-`common/src/gametest/java` supplies 107 shared assertions; each loader wraps them and adds one persistence test, totaling 108. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
+`common/src/gametest/java` supplies 107 shared assertions; each loader wraps them and adds one persistence test, totaling 108. Each loader's `gametestJavadoc` documents its full GameTest source set, and root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
 
 ## Operational boundaries
 
 - Optional renderer integrations log recoverable linkage, reflection, construction, and invocation failures once per affected operation and omit eyes when reliable attachment geometry cannot be produced; third-party model changes can still silently invalidate bundled tokens or placement geometry without throwing.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- `build-env/` is not a build input; it copies the root and module build scripts verbatim, and every edit to a build script must be mirrored there.
+- `build-env/` is not a build input; it is a byte-for-byte snapshot of the Gradle scripts, properties, and wrapper described in `build-env.md`, and every edit to one of those files must be mirrored there.
