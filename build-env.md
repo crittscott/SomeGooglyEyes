@@ -50,14 +50,14 @@ Each subproject has the Java plugin's standard production-source `javadoc` task.
 | Architectury Gradle plugin | `3.5.170` | Common/Fabric/Forge/NeoForge project organization and `@ExpectPlatform` |
 | GradleUp Shadow plugin | `9.4.3` | Bundles transformed common output into loader JARs |
 | Java toolchain level | `21` | Compilation, Javadoc, and Java execution |
-| Minecraft | `1.21.3` | Compile and runtime target |
-| Mojang mappings | Official mappings for `1.21.3` | Base mapping layer; no separate mapping version is declared |
-| Parchment mappings | `org.parchmentmc.data:parchment-1.21.3:2024.12.07@zip` | Layer over the official mappings |
-| Forge | `net.minecraftforge:forge:1.21.3-53.1.12` | Exact Forge compile and development-run baseline |
-| NeoForge | `net.neoforged:neoforge:21.3.97` | Exact NeoForge compile and development-run baseline |
+| Minecraft | `1.21.4` | Compile and runtime target |
+| Mojang mappings | Official mappings for `1.21.4` | Base mapping layer; no separate mapping version is declared |
+| Parchment mappings | `org.parchmentmc.data:parchment-1.21.4:2025.03.23@zip` | Layer over the official mappings |
+| Forge | `net.minecraftforge:forge:1.21.4-54.1.18` | Exact Forge compile and development-run baseline |
+| NeoForge | `net.neoforged:neoforge:21.4.158` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency; also supplies the common annotation dependency |
-| Fabric API | `net.fabricmc.fabric-api:fabric-api:0.114.1+1.21.3` | Fabric runtime and development API |
-| GeckoLib | `software.bernie.geckolib:geckolib-<loader>-1.21.3:4.7.3` | Compile-only optional render integration for each loader |
+| Fabric API | `net.fabricmc.fabric-api:fabric-api:0.119.4+1.21.4` | Fabric runtime and development API |
+| GeckoLib | `software.bernie.geckolib:geckolib-<loader>-1.21.4:4.8.5` | Compile-only optional render integration for each loader |
 | JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module |
 
 The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
@@ -70,15 +70,15 @@ These values do not select build tools, but they are versioned inputs consumed b
 | --- | --- |
 | Some Googly Eyes artifact | `0.8.2` |
 | Fabric, Forge, and NeoForge GameTest support mods | `0.8.2` |
-| Minecraft compatibility | exactly `1.21.3`; Forge and NeoForge syntax `[1.21.3]`, Fabric syntax `=1.21.3` |
-| Forge compatibility | `[53.1.12,54)` |
-| Forge JavaFML loader compatibility | `[53,54)` |
-| NeoForge compatibility | `[21.3.97,21.4)` |
+| Minecraft compatibility | exactly `1.21.4`; Forge and NeoForge syntax `[1.21.4]`, Fabric syntax `=1.21.4` |
+| Forge compatibility | `[54.1.18,55)` |
+| Forge JavaFML loader compatibility | `[54,55)` |
+| NeoForge compatibility | `[21.4.158,21.5)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
 | Fabric Loader compatibility | `>=0.16.14` |
 | Fabric Java compatibility | `>=21` |
-| Fabric API runtime declaration | `>=0.114.1+1.21.3`; compilation uses `0.114.1+1.21.3` |
-| GeckoLib | optional on every loader; `4.7.3` or newer when present |
+| Fabric API runtime declaration | `>=0.119.4+1.21.4`; compilation uses `0.119.4+1.21.4` |
+| GeckoLib | optional on every loader; `4.8.5` or newer when present |
 
 ## Resolution and version authorities
 

@@ -8,7 +8,7 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
-displayURL="https://github.com/crittscott/SomeGooglyEyes/tree/1.21.3"
+displayURL="https://github.com/crittscott/SomeGooglyEyes/tree/1.21.4"
 logoFile="somegoogly-sm.png"
 description='''${mod_description}'''
 

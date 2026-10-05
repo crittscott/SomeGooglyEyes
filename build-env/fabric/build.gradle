@@ -68,14 +68,7 @@ configurations {
 }
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven { url = 'https://api.modrinth.com/maven' }
-        }
-        filter {
-            includeGroup 'maven.modrinth'
-        }
-    }
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 dependencies {
@@ -84,7 +77,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
     // Optional at runtime; needed at compile time by the GeckoLib render bridge.
-    modCompileOnly "maven.modrinth:geckolib:$rootProject.geckolib_fabric_compile_version"
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
