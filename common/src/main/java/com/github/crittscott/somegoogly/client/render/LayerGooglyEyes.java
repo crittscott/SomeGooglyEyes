@@ -1,10 +1,8 @@
 package com.github.crittscott.somegoogly.client.render;
 
-import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
-import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -15,37 +13,34 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 /**
- * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It shares visibility decisions with the
- * GeckoLib layer through {@link EyeRenderGating}, resolves configured attachment tokens through
+ * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It draws from the {@link EyeRenderData}
+ * taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves configured attachment tokens through
  * {@link Resolvers}, and delegates each eye's drawing to {@link GooglyEyeRenderer}. Picker previews
  * are drawn by the separate {@link com.github.crittscott.somegoogly.client.picker.PickerLayer}.
  *
  * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which uses the same gate and eye renderer
  * from GeckoLib's per-bone callback.
  */
-public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
+        extends RenderLayer<S, M> {
     private final ModelGooglyEye modelGooglyEye;
 
-    public LayerGooglyEyes(RenderLayerParent<T, M> renderer) {
+    public LayerGooglyEyes(RenderLayerParent<S, M> renderer) {
         super(renderer);
         this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T living,
-                       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
-                       float netHeadYaw, float headPitch) {
-        // While the picker is editing this entity, only its preview layer should draw.
-        if (PickerState.isActiveTarget(living)) {
-            return;
-        }
-
-        // Shared gate (client disables, has-eyes, invisibility, usable config) — see GooglyGeoLayer.
-        HeadInfo helper = EyeRenderGating.helperToRender(living);
-        if (helper == null) {
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, S state,
+                       float yRot, float xRot) {
+        // The picker target and gated-off entities carry no helper (see EyeRenderData.extract).
+        EyeRenderData data = EyeRenderData.of(state);
+        HeadInfo helper = data.helper();
+        GooglyTracker tracker = data.tracker();
+        if (helper == null || tracker == null) {
             return;
         }
 
@@ -56,20 +51,18 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             return;
         }
 
-        GooglyTracker tracker = ClientEyeRuntime.get(living, helper);
-        tracker.markRendered(ClientEyeRuntime.clientTicks());
-
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
         // shared config below. Same AppearanceOverride an eye item carries; mirrored onto the tracker by
         // ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
         AppearanceOverride overrides = tracker.overrides;
 
-        int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
+        int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
+        float partialTicks = data.partialTick();
 
         int headCount = helper.getHeadCount();
         for (int headIndex = 0; headIndex < headCount; headIndex++) {
             poseStack.pushPose();
-            ThirdPartyModelWraps.preTransform(model, poseStack);
+            ThirdPartyModelWraps.preTransform(model, state.isBaby, poseStack);
 
             // Move into this head's animated space, by the configured string part name.
             if (!resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex))) {

@@ -17,8 +17,8 @@ import java.util.Map;
  * {@code toAttachmentSpace}; it is a no-op for every unlisted model.
  *
  * <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
- * dependency on either mod. The branch is chosen by {@code model.young} — the same field the models
- * themselves branch on. A {@code null} adult transform means that branch renders at identity (those
+ * dependency on either mod. The branch is chosen by the render state's baby flag — the same age the
+ * models themselves branch on. A {@code null} adult transform means that branch renders at identity (those
  * models already worked for adults); the Alex's Mobs entries are young-only and always carry a
  * {@code null} adult.
  *
@@ -154,13 +154,13 @@ public final class ThirdPartyModelWraps {
 
     /**
      * Reproduce a listed model's whole-model render transform on {@code poseStack}, choosing the branch by
-     * {@code model.young}. No-op for every unlisted model and for a listed model whose active branch
-     * renders at identity.
+     * {@code young}. No-op for every unlisted model and for a listed model whose active branch renders at
+     * identity.
      */
-    public static void preTransform(EntityModel<?> model, PoseStack poseStack) {
+    public static void preTransform(EntityModel<?> model, boolean young, PoseStack poseStack) {
         String name = model.getClass().getName();
-        apply(EXOTIC_BIRDS.get(name), model.young, poseStack);
-        apply(ALEXS_MOBS.get(name), model.young, poseStack);
+        apply(EXOTIC_BIRDS.get(name), young, poseStack);
+        apply(ALEXS_MOBS.get(name), young, poseStack);
     }
 
     private static void apply(@Nullable Entry entry, boolean young, PoseStack poseStack) {

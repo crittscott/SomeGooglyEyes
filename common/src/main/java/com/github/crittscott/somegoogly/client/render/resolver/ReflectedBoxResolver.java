@@ -106,7 +106,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
     /**
      * Segment names for boxes whose {@link #intrinsicName} is empty: the model's Java field name
-     * holding the box where one exists (guarded reflection by type, like {@code ChildMapResolver}),
+     * holding the box where one exists (guarded reflection by type),
      * else the box's positional {@code #N}. An unlisted, unnamed, field-less box (a stray ancestor)
      * has no entry and is skipped when it appears mid-path.
      */

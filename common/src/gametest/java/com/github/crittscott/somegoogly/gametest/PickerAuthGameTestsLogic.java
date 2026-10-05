@@ -7,8 +7,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 /**
  * The server-side authorization and rate limits behind the client-driven picker verbs:
- * {@link PickerGate#creative} (a null sender is rejected; the rest is a plain
- * {@code isCreative()} check left to source review) and the {@link PickerGate} rate limits (one request
+ * {@link PickerGate#creative} (a plain {@code isCreative()} check left to source review) and the
+ * {@link PickerGate} rate limits (one request
  * per player per tick, plus a server-wide cooldown on the destructive bulk spawn).
  * {@code ConfigGameTestsLogic.spawnAllDefaultsOff} pins the opt-in config default; these pin the
  * silent-rejection gates that keep unauthorized custom-payload spam from amplifying into server work.
@@ -18,12 +18,10 @@ public final class PickerAuthGameTestsLogic {
     private PickerAuthGameTestsLogic() {
     }
 
-    /** A null sender is rejected outright, and a valid sender gets at most one request per tick. */
+    /** A sender gets at most one picker request per tick, and clearing its record resets the limit. */
     public static void pickerRequestsRequireCreativeAndThrottlePerTick(GameTestHelper helper, ServerPlayer player) {
         PickerGate.onPlayerLeft(player.getUUID());
         try {
-            helper.assertTrue(!PickerGate.creative(null), "a null sender is rejected");
-
             helper.assertTrue(PickerGate.allowCreativeRequest(player),
                     "the first request in a tick is allowed");
             helper.assertTrue(!PickerGate.allowCreativeRequest(player),

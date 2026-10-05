@@ -70,8 +70,8 @@ public final class PickerExportService {
     /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
     public static final long MAX_CONFIG_BYTES = 64 * 1024;
 
-    /** Datapack format for the exact Minecraft version targeted by this source tree (1.21.1). */
-    private static final int GENERATED_PACK_FORMAT = 48;
+    /** Datapack format for the exact Minecraft version targeted by this source tree (1.21.3). */
+    private static final int GENERATED_PACK_FORMAT = 57;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
     private static final Map<UUID, Integer> LAST_ATTEMPT_TICK = new HashMap<>();

@@ -13,10 +13,13 @@ rootProject.configureGameTests(project)
 sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
 
 loom {
+    forge {
+        mixinConfig 'somegoogly-common.mixins.json'
+    }
+
     mods {
         main {
             sourceSet sourceSets.main
-            sourceSet project(':common').sourceSets.main
         }
         somegoogly_gametest {
             sourceSet sourceSets.gametest
@@ -40,9 +43,11 @@ configurations {
         canBeResolved = true
         canBeConsumed = false
     }
-    // Runs receive common through loom.mods; adding it to the runtime classpath as well puts its
-    // packages in two modules, which the module system rejects.
+    // Runs receive common only through developmentForge, which Architectury's runtime transformer rewrites
+    // (@ExpectPlatform); listing it in loom.mods as well would load it untransformed and put its
+    // packages in two modules.
     compileClasspath.extendsFrom common
+    developmentForge.extendsFrom common
 
     // Files in this configuration will be bundled into your mod using the Shadow plugin.
     // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
@@ -142,6 +147,9 @@ tasks.named('processGametestResources', ProcessResources).configure {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+    // The common refmap maps to Fabric's intermediary names; this loader runs on Mojang names, which the
+    // common Mixins already use, so they must apply without it.
+    exclude 'somegoogly-common.refmap.json'
 }
 
 remapJar {

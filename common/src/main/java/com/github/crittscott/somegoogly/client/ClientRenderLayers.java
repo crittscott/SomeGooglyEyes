@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
 /** Installs vanilla-model, picker, and optional GeckoLib eye layers after renderer rebuilds. */
 public final class ClientRenderLayers {
 
-    private static final Set<EntityRenderer<?>> INSTALLED =
+    private static final Set<EntityRenderer<?, ?>> INSTALLED =
             Collections.newSetFromMap(new WeakHashMap<>());
 
     private ClientRenderLayers() {
@@ -45,8 +45,8 @@ public final class ClientRenderLayers {
         HashSet<LivingEntityRenderer> playerRenderers = new HashSet<>();
 
         if (!ClientConfig.isEntityDisabled(ResourceLocation.fromNamespaceAndPath("minecraft", "player"))) {
-            Map<?, EntityRenderer<? extends Player>> skinMap = dispatcher.playerRenderers;
-            for (EntityRenderer<? extends Player> renderer : skinMap.values()) {
+            Map<?, EntityRenderer<? extends Player, ?>> skinMap = dispatcher.playerRenderers;
+            for (EntityRenderer<? extends Player, ?> renderer : skinMap.values()) {
                 if (renderer instanceof PlayerRenderer playerRenderer) {
                     addLiving(playerRenderer);
                     playerRenderers.add(playerRenderer);
@@ -73,7 +73,7 @@ public final class ClientRenderLayers {
     /** Add the shared vanilla-model layers through a loader's native renderer-registration event. */
     @SuppressWarnings("rawtypes")
     public static boolean installLiving(EntityType<? extends LivingEntity> entityType,
-                                        LivingEntityRenderer<?, ?> renderer) {
+                                        LivingEntityRenderer<?, ?, ?> renderer) {
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
         if (ClientConfig.isEntityDisabled(id)) {
             return false;

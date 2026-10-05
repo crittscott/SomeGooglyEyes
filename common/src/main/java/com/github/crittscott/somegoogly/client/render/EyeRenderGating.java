@@ -15,13 +15,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The single "should this mob show eyes, and with what geometry" gate, shared by the vanilla
- * {@link LayerGooglyEyes} and the GeckoLib {@code GooglyGeoLayer} so the two can't drift apart on the
- * decision (they already share the drawing via {@link GooglyEyeRenderer}).
+ * The single "should this mob show eyes, and with what geometry" gate. {@link EyeRenderData#extract}
+ * applies it for both the vanilla {@link LayerGooglyEyes} and the GeckoLib {@code GooglyGeoLayer} so the
+ * two can't drift apart on the decision (they already share the drawing via {@link GooglyEyeRenderer}).
  *
- * <p>The picker-target case is <b>not</b> here: the two layers diverge on it (the vanilla layer suppresses
- * itself and lets {@code PickerLayer} draw the preview; the geo layer has no separate preview layer and
- * previews inline), so each handles that branch before calling this.
+ * <p>The picker-target case is <b>not</b> here: {@link EyeRenderData#extract} settles it first, and the
+ * layers then diverge on it (the vanilla layer suppresses itself and lets {@code PickerLayer} draw the
+ * preview; the geo layer has no separate preview layer and previews inline).
  */
 public final class EyeRenderGating {
 

@@ -29,7 +29,7 @@ public final class GeckoGuard {
         }
     }
 
-    public static List<String> enumerate(boolean loaded, EntityRenderer<?> renderer, LivingEntity living) {
+    public static List<String> enumerate(boolean loaded, EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!loaded) {
             return List.of();
         }
@@ -42,7 +42,7 @@ public final class GeckoGuard {
         }
     }
 
-    public static boolean tryAddLayer(boolean loaded, EntityRenderer<?> renderer) {
+    public static boolean tryAddLayer(boolean loaded, EntityRenderer<?, ?> renderer) {
         if (!loaded) {
             return false;
         }

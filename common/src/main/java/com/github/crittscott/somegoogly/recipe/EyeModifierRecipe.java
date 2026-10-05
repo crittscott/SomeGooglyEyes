@@ -44,11 +44,6 @@ public class EyeModifierRecipe extends CustomRecipe {
         return result;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
-    }
-
     @Nullable
     private static Match find(CraftingInput input) {
         ItemStack eye = ItemStack.EMPTY;
@@ -85,13 +80,7 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
-        // Representative stack for recipe-book display; the real output is computed in assemble().
-        return new ItemStack(ModItems.GOOGLY_EYE.get());
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<EyeModifierRecipe> getSerializer() {
         return ModRecipes.EYE_MODIFIER.get();
     }
 

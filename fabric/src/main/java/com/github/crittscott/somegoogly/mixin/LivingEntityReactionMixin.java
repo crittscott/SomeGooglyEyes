@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.mixin;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -14,9 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class LivingEntityReactionMixin {
 
     @Inject(method = "actuallyHurt", at = @At("TAIL"))
-    private void somegoogly$afterHurt(DamageSource source, float amount, CallbackInfo callback) {
+    private void somegoogly$afterHurt(ServerLevel level, DamageSource source, float amount,
+                                      CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (!self.level().isClientSide() && source.getEntity() instanceof Player) {
+        if (source.getEntity() instanceof Player) {
             ServerBehaviorScheduler.onPlayerHurt(self);
         }
     }

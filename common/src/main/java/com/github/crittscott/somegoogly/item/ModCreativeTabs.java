@@ -8,9 +8,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 /**
@@ -29,7 +29,7 @@ public final class ModCreativeTabs {
     private static ItemStack optometristBook(HolderLookup.Provider registries) {
         Holder<Enchantment> optometrist = registries.lookupOrThrow(Registries.ENCHANTMENT)
                 .getOrThrow(ModEnchantments.OPTOMETRIST);
-        return EnchantedBookItem.createForEnchantment(
+        return EnchantmentHelper.createBook(
                 new EnchantmentInstance(optometrist, 1));
     }
 

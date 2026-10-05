@@ -22,6 +22,6 @@ abstract class LivingEntityDeathLootMixin {
     private void somegoogly$harvestEyeOnKill(ServerLevel level, DamageSource damageSource,
                                              boolean recentlyHit, CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;
-        EyeItemService.onDeath(self, damageSource, self::spawnAtLocation);
+        EyeItemService.onDeath(self, damageSource, stack -> self.spawnAtLocation(level, stack));
     }
 }

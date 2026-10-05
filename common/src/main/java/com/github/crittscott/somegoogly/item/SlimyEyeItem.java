@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -95,16 +94,15 @@ public class SlimyEyeItem extends Item {
 
     /** Sneak + use: eye yourself. Without the sneak this would fire on every stray right-click. */
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!player.isShiftKeyDown()) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
-            return InteractionResultHolder.success(stack);
+            return InteractionResult.SUCCESS;
         }
-        return applyToTarget(stack, (ServerPlayer) player, player).consumesAction()
-                ? InteractionResultHolder.consume(stack)
-                : InteractionResultHolder.fail(stack);
+        return applyToTarget(player.getItemInHand(hand), (ServerPlayer) player, player).consumesAction()
+                ? InteractionResult.CONSUME
+                : InteractionResult.FAIL;
     }
 }

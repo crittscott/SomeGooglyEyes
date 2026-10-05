@@ -12,6 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -60,7 +61,7 @@ public final class EyeItemService {
         if (!helper.hasConfig()) {
             return InteractionResult.PASS;
         }
-        mob.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(mob)));
+        mob.spawnAtLocation((ServerLevel) level, buildEyeDrop(helper, EyeState.readProperties(mob)));
         EyeState.disableAndClearProperties(mob);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
@@ -111,10 +112,11 @@ public final class EyeItemService {
         if (player.level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        boolean clean = hasOptometrist(stack, player.level().registryAccess());
+        ServerLevel level = (ServerLevel) player.level();
+        boolean clean = hasOptometrist(stack, level.registryAccess());
         HeadInfo helper = helperFor(player);
         if (helper.hasConfig()) {
-            player.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(player)));
+            player.spawnAtLocation(level, buildEyeDrop(helper, EyeState.readProperties(player)));
         }
         EyeState.disableAndClearProperties(player);
         stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
@@ -122,7 +124,7 @@ public final class EyeItemService {
         playShearSound(player);
         player.gameEvent(GameEvent.SHEAR, player);
         if (!clean) {
-            player.hurt(player.damageSources().playerAttack(player),
+            player.hurtServer(level, player.damageSources().playerAttack(player),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return InteractionResult.SUCCESS;

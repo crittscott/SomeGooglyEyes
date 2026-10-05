@@ -5,6 +5,8 @@ import com.github.crittscott.somegoogly.registry.ContentRegistrar;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /** Forge deferred registration for common content definitions. */
@@ -27,8 +30,10 @@ public final class ForgeContentRegistrar implements ContentRegistrar {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SomeGooglyCommon.MOD_ID);
 
     @Override
-    public <T extends Item> Supplier<T> registerItem(String name, Supplier<T> factory) {
-        return items.register(name, factory);
+    public <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name));
+        return items.register(name, () -> factory.apply(new Item.Properties().setId(key)));
     }
 
     @Override

@@ -20,18 +20,18 @@ public final class GeckoIntegration {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked", "removal"})
-    public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
+    public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
         }
         GeoModel model = geo.getGeoModel();
-        ResourceLocation location = model.getModelResource((GeoAnimatable) living);
+        ResourceLocation location = model.getModelResource((GeoAnimatable) living, geo);
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
+    public static boolean tryAddLayer(EntityRenderer<?, ?> renderer) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return false;
         }

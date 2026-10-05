@@ -18,7 +18,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
@@ -42,12 +41,8 @@ public final class FabricServerEvents {
                 entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
                         : InteractionResult.PASS);
-        UseItemCallback.EVENT.register((player, level, hand) -> {
-            InteractionResult result = EyeItemService.selfRemoveWithShears(player, hand);
-            return result == InteractionResult.PASS
-                    ? InteractionResultHolder.pass(player.getItemInHand(hand))
-                    : InteractionResultHolder.success(player.getItemInHand(hand));
-        });
+        UseItemCallback.EVENT.register((player, level, hand) ->
+                EyeItemService.selfRemoveWithShears(player, hand));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);

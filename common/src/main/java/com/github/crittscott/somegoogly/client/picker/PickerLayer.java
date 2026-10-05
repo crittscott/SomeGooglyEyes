@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
+import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.EyeRenderTransforms;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,7 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 import java.util.List;
 
@@ -23,20 +24,20 @@ import java.util.List;
  * (no physics) — placement is what matters here. The real {@code LayerGooglyEyes} is suppressed for
  * this entity while the picker is active, so you see only the work-in-progress.
  */
-public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class PickerLayer<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
+        extends RenderLayer<S, M> {
 
     private final ModelGooglyEye modelGooglyEye;
 
-    public PickerLayer(RenderLayerParent<T, M> renderer) {
+    public PickerLayer(RenderLayerParent<S, M> renderer) {
         super(renderer);
         this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T living,
-                       float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
-                       float netHeadYaw, float headPitch) {
-        if (!PickerState.isActiveTarget(living)) {
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, S state,
+                       float yRot, float xRot) {
+        if (!EyeRenderData.of(state).pickerTarget()) {
             return;
         }
         M model = this.getParentModel();
@@ -44,7 +45,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         if (resolver == null) {
             return;
         }
-        int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
+        int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
 
         // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
         List<PickerState.ListedEye> eyes = PickerState.currentEyes();
@@ -57,7 +58,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
                 continue;
             }
             poseStack.pushPose();
-            ThirdPartyModelWraps.preTransform(model, poseStack);
+            ThirdPartyModelWraps.preTransform(model, state.isBaby, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
                 renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay, listed.eye);
             }
@@ -69,7 +70,7 @@ public class PickerLayer<T extends LivingEntity, M extends EntityModel<T>> exten
         String token = PickerState.currentPart();
         if (token != null) {
             poseStack.pushPose();
-            ThirdPartyModelWraps.preTransform(model, poseStack);
+            ThirdPartyModelWraps.preTransform(model, state.isBaby, poseStack);
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
                 Gizmo.draw(poseStack, bufferSource);
                 if (PickerState.currentEye() != null) {

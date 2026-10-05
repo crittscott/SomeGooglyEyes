@@ -5,7 +5,7 @@ import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 
 import java.util.List;
 
@@ -45,9 +45,9 @@ public record EyeColor(float r, float g, float b) {
 
     public static EyeColor fromRgb24(int rgb) {
         return new EyeColor(
-                FastColor.ARGB32.red(rgb) / 255.0F,
-                FastColor.ARGB32.green(rgb) / 255.0F,
-                FastColor.ARGB32.blue(rgb) / 255.0F);
+                ARGB.red(rgb) / 255.0F,
+                ARGB.green(rgb) / 255.0F,
+                ARGB.blue(rgb) / 255.0F);
     }
 
     public boolean isValid() {
@@ -65,12 +65,12 @@ public record EyeColor(float r, float g, float b) {
 
     /** Pack to {@code 0xRRGGBB} for hex display (tooltips); alpha byte is left zero. */
     public int toRgb24() {
-        return FastColor.ARGB32.color(0, channel(r), channel(g), channel(b));
+        return ARGB.color(0, channel(r), channel(g), channel(b));
     }
 
     /** Pack to opaque {@code 0xFFRRGGBB} for APIs that multiply the alpha channel. */
     public int toOpaqueArgb32() {
-        return FastColor.ARGB32.color(255, channel(r), channel(g), channel(b));
+        return ARGB.color(255, channel(r), channel(g), channel(b));
     }
 
     /** {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their own. */

@@ -10,36 +10,5 @@ accessible	method	net/minecraft/client/renderer/RenderType	create	(Ljava/lang/St
 
 accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
 
-accessible	method	net/minecraft/client/model/AgeableListModel	headParts	()Ljava/lang/Iterable;
-accessible	method	net/minecraft/client/model/AgeableListModel	bodyParts	()Ljava/lang/Iterable;
-accessible	field	net/minecraft/client/model/AgeableListModel	scaleHead	Z
-accessible	field	net/minecraft/client/model/AgeableListModel	babyYHeadOffset	F
-accessible	field	net/minecraft/client/model/AgeableListModel	babyZHeadOffset	F
-accessible	field	net/minecraft/client/model/AgeableListModel	babyHeadScale	F
-accessible	field	net/minecraft/client/model/AgeableListModel	babyBodyScale	F
-accessible	field	net/minecraft/client/model/AgeableListModel	bodyYOffset	F
-
-accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	youngScaleFactor	F
-accessible	field	net/minecraft/client/model/AgeableHierarchicalModel	bodyYOffset	F
-
-accessible	field	net/minecraft/client/model/RabbitModel	head	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	rightEar	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	leftEar	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	nose	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	leftRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	rightRearFoot	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	leftHaunch	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	rightHaunch	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	body	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/RabbitModel	tail	Lnet/minecraft/client/model/geom/ModelPart;
-
-accessible	field	net/minecraft/client/model/LlamaModel	head	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	body	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	rightHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	leftHindLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	rightFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	rightChest	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/LlamaModel	leftChest	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	adultModel	Lnet/minecraft/client/model/EntityModel;
+accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	babyModel	Lnet/minecraft/client/model/EntityModel;

@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.level.GameType;
 import net.minecraftforge.gametest.GameTestHolder;
 
 /**
@@ -21,18 +20,18 @@ public final class EyeItemServiceGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristInteractHarvestsEyesForOneDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.optometristInteractHarvestsEyesForOneDurability(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristInteractPassesWhenNotApplicable(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.optometristInteractPassesWhenNotApplicable(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

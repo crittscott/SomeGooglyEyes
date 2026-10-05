@@ -16,7 +16,6 @@ import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -87,7 +86,7 @@ public final class EyeItemMigrationGameTestsLogic {
     }
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
-        NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
+        List<Ingredient> ingredients = List.of(
                 Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe("", CraftingBookCategory.MISC,
                 new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);

@@ -109,7 +109,7 @@ public final class GooglyServerCommands {
                 .then(Commands.argument("type", ResourceLocationArgument.id())
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                                 BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.get(id).canSummon())
+                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.getValue(id).canSummon())
                                         .filter(id -> !ServerConfig.isSpawnExcluded(id)),
                                 builder))
                         .executes(GooglyServerCommands::spawn));
@@ -144,7 +144,7 @@ public final class GooglyServerCommands {
                     "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
             return 0;
         }
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(typeId);
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(typeId);
         if (!type.canSummon()) {
             ctx.getSource().sendFailure(Component.translatable(
                     "somegoogly.command.picker.unknown_entity_type", typeId.toString()));

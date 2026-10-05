@@ -6,22 +6,26 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /** Fabric registration through vanilla registries during the mod initializer. */
 public final class FabricContentRegistrar implements ContentRegistrar {
 
     @Override
-    public <T extends Item> Supplier<T> registerItem(String name, Supplier<T> factory) {
-        T value = factory.get();
-        Registry.register(BuiltInRegistries.ITEM, id(name), value);
+    public <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id(name));
+        T value = factory.apply(new Item.Properties().setId(key));
+        Registry.register(BuiltInRegistries.ITEM, key, value);
         return () -> value;
     }
 

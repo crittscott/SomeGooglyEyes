@@ -17,7 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.level.ClipContext;
@@ -197,7 +197,7 @@ public final class PickerSpawnService {
             }
             Entity entity;
             try {
-                entity = type.create(level);
+                entity = type.create(level, EntitySpawnReason.COMMAND);
             } catch (Exception e) {
                 SomeGooglyCommon.LOGGER.debug("Skipping {} in /sg spawnall: entity factory threw", id, e);
                 if (filtering) {
@@ -360,7 +360,7 @@ public final class PickerSpawnService {
 
         Entity entity;
         try {
-            entity = type.create(level);
+            entity = type.create(level, EntitySpawnReason.COMMAND);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.debug("/sg spawn {}: entity factory threw", id, e);
             player.sendSystemMessage(Component.translatable(
@@ -407,16 +407,16 @@ public final class PickerSpawnService {
      * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
      * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
      * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
-     * to save. Package-private for the shared GameTest regression check.
+     * to save. Public for the shared GameTest regression check, which lives in another module.
      */
-    static void prepareForCommandSpawn(
+    public static void prepareForCommandSpawn(
             ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
         entity.moveTo(x, y, z, yaw, 0.0F);
         if (entity instanceof Mob mob) {
             mob.finalizeSpawn(
                     level,
                     level.getCurrentDifficultyAt(mob.blockPosition()),
-                    MobSpawnType.COMMAND,
+                    EntitySpawnReason.COMMAND,
                     null);
             mob.setNoAi(true);
             // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.

@@ -2,13 +2,13 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.picker.PickerSpawnServiceGameTestsLogic;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
@@ -47,7 +47,7 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         EyeState.setIrisTint(original, iris);
 
         CompoundTag saved = original.saveWithoutId(new CompoundTag());
-        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel()));
+        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
         restored.load(saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), "Fabric should restore the has-eyes flag");

@@ -6,12 +6,12 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 import javax.annotation.Nullable;
@@ -36,12 +36,14 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  * and the mismatch is logged — eyes are cosmetic, so degraded placement beats silently dropping the
  * file (which would also permanently store a no-eyes roll for mobs spawned during the window).
  */
-public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
+public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
-    private static final Gson GSON = new Gson();
-
+    /**
+     * Files arrive as raw JSON and are decoded here rather than by the base class, so each file's
+     * parse failure is reported and counted in the reload summary.
+     */
     public EyeConfigReloadListener() {
-        super(GSON, "eyes");
+        super(ExtraCodecs.JSON, "eyes");
     }
 
     @Override

@@ -3,11 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.picker.PickerSpawnServiceGameTestsLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.level.GameType;
@@ -24,6 +25,17 @@ public final class SomeGooglyGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     private SomeGooglyGameTests() {
+    }
+
+    /**
+     * A survival-mode server player for tests whose item and interaction paths run server-side. Forge's
+     * {@code makeMockPlayer} is not a {@code ServerPlayer}, so those paths need the in-level mock instead.
+     */
+    @SuppressWarnings("removal")
+    static ServerPlayer survivalPlayer(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        return player;
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
@@ -50,7 +62,7 @@ public final class SomeGooglyGameTests {
         EyeState.setIrisTint(original, iris);
 
         CompoundTag saved = original.saveWithoutId(new CompoundTag());
-        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel()));
+        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
         restored.load(saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), "Forge should restore the has-eyes flag");
@@ -79,12 +91,12 @@ public final class SomeGooglyGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, survivalPlayer(helper));
     }
 }

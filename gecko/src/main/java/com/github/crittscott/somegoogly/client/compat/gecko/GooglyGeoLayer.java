@@ -1,12 +1,11 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
-import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerLayer;
-import com.github.crittscott.somegoogly.client.render.EyeRenderGating;
+import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
@@ -74,11 +73,11 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
     @Override
     public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
                           MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                          int packedLight, int packedOverlay) {
+                          int packedLight, int packedOverlay, int renderColor) {
         this.frame = null;
-        LivingEntity living = animatable;
+        EyeRenderData data = EyeRenderData.extract(animatable, partialTick);
 
-        if (PickerState.isActiveTarget(living)) {
+        if (data.pickerTarget()) {
             Frame frame = new Frame();
             frame.preview = true;
             frame.savedEyes = PickerState.currentEyes();
@@ -97,15 +96,14 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         }
 
         // Shared gate (client disables, has-eyes, invisibility, usable config) — see LayerGooglyEyes.
-        HeadInfo helper = EyeRenderGating.helperToRender(living);
+        HeadInfo helper = data.helper();
         if (helper == null) {
             return;
         }
 
         Frame frame = new Frame();
         frame.helper = helper;
-        frame.tracker = ClientEyeRuntime.get(living, helper);
-        frame.tracker.markRendered(ClientEyeRuntime.clientTicks());
+        frame.tracker = data.tracker();
         // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye), the same as the
         // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
         // Mirrored onto the tracker by ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
@@ -120,7 +118,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
     @Override
     public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType,
                               MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                              int packedLight, int packedOverlay) {
+                              int packedLight, int packedOverlay, int renderColor) {
         Frame frame = this.frame;
         if (frame == null) {
             return;
@@ -137,7 +135,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
     @Override
     public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
                        MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                       int packedLight, int packedOverlay) {
+                       int packedLight, int packedOverlay, int renderColor) {
         // All bones have rendered; drop the per-render state so no entity/tracker refs outlive the frame.
         this.frame = null;
     }

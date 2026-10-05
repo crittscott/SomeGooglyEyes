@@ -4,6 +4,13 @@ architectury {
 
 loom {
     accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+
+    // The common Mixins need their own refmap: Fabric resolves them against intermediary names, and
+    // the Fabric module's refmap covers only Mixins compiled there.
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = 'somegoogly-common.refmap.json'
+    }
 }
 
 dependencies {

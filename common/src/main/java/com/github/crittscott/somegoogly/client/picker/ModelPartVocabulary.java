@@ -7,10 +7,12 @@ import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -34,9 +36,9 @@ public final class ModelPartVocabulary {
 
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
-        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
-        if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer) {
-            EntityModel<?> model = livingRenderer.getModel();
+        EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+        if (renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer) {
+            EntityModel<?> model = modelFor(livingRenderer, living);
             EyeAttachmentResolver resolver = Resolvers.forModel(model);
             if (resolver != null) {
                 List<String> tokens = resolver.enumerateParts(model);
@@ -49,6 +51,18 @@ public final class ModelPartVocabulary {
         List<String> bones = List.copyOf(GeckoCompat.enumerate(renderer, living));
         return bones.isEmpty() ? null
                 : new ModelPartVocabulary(bones, token -> canonicalizeEnumerated(bones, token));
+    }
+
+    /**
+     * The model {@code renderer} draws {@code living} with. An age-swapping renderer holds separate adult
+     * and baby models and only selects one while rendering, so its current model reflects whichever
+     * entity it drew last.
+     */
+    private static EntityModel<?> modelFor(LivingEntityRenderer<?, ?, ?> renderer, LivingEntity living) {
+        if (renderer instanceof AgeableMobRenderer<?, ?, ?> ageable) {
+            return living.isBaby() ? ageable.babyModel : ageable.adultModel;
+        }
+        return renderer.getModel();
     }
 
     /** Resolve a type through a throwaway client entity so export-all does not depend on nearby mobs. */
@@ -95,9 +109,9 @@ public final class ModelPartVocabulary {
         if (level == null) {
             return null;
         }
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(id);
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(id);
         try {
-            return type.create(level) instanceof LivingEntity living ? living : null;
+            return type.create(level, EntitySpawnReason.COMMAND) instanceof LivingEntity living ? living : null;
         } catch (Throwable constructionFailed) {
             ClientIntegrationFailures.warnOnce(
                     "entity factory", "picker sample construction", id.toString(), constructionFailed);

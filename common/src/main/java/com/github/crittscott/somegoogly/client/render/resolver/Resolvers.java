@@ -8,21 +8,16 @@ import java.util.WeakHashMap;
 
 /**
  * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
- * named-model resolvers come first (they give the cleanest, most stable tokens), and
- * {@link ChildMapResolver} is the catch-all last (it handles every model, falling back to positional
- * root names where no stable name exists).
+ * third-party box-toolkit resolvers come first (their models keep geometry outside the vanilla part tree),
+ * and {@link RootModelResolver} is the catch-all last.
  */
 public final class Resolvers {
 
     private static final List<EyeAttachmentResolver> ALL = List.of(
-            new HierarchicalResolver(),
-            new TwilightForestResolver(),
-            new AgeableListResolver(),
             AdvancedModelBoxResolver.citadel(),
             AdvancedModelBoxResolver.uranus(),
             new LLibraryResolver(),
-            new RabbitLlamaResolver(),
-            new ChildMapResolver()
+            new RootModelResolver()
     );
 
     // Which resolver handles a given model instance never changes for that instance's life, and the

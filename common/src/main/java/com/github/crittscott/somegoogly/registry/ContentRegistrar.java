@@ -8,12 +8,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /** Loader-neutral registration boundary for the mod's four content registries. */
 public interface ContentRegistrar {
 
-    <T extends Item> Supplier<T> registerItem(String name, Supplier<T> factory);
+    /**
+     * Register an item whose properties already carry its registry id, as {@link Item} requires. The
+     * factory receives those keyed properties.
+     */
+    <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory);
 
     <T> Supplier<DataComponentType<T>> registerDataComponent(
             String name, Supplier<DataComponentType<T>> factory);

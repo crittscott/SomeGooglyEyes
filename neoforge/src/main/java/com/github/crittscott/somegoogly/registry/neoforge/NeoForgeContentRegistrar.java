@@ -12,13 +12,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /** NeoForge deferred registration for common content definitions. */
 public final class NeoForgeContentRegistrar implements ContentRegistrar {
 
-    private final DeferredRegister<Item> items =
-            DeferredRegister.create(Registries.ITEM, SomeGooglyCommon.MOD_ID);
+    private final DeferredRegister.Items items = DeferredRegister.createItems(SomeGooglyCommon.MOD_ID);
     private final DeferredRegister<DataComponentType<?>> dataComponents =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, SomeGooglyCommon.MOD_ID);
     private final DeferredRegister<RecipeSerializer<?>> recipeSerializers =
@@ -27,8 +27,8 @@ public final class NeoForgeContentRegistrar implements ContentRegistrar {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SomeGooglyCommon.MOD_ID);
 
     @Override
-    public <T extends Item> Supplier<T> registerItem(String name, Supplier<T> factory) {
-        return items.register(name, factory);
+    public <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        return items.registerItem(name, factory);
     }
 
     @Override

@@ -19,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
@@ -298,14 +297,14 @@ public final class EligibilityGameTestsLogic {
             SlimyEyeItem item = (SlimyEyeItem) stack.getItem();
 
             player.setShiftKeyDown(false);
-            InteractionResultHolder<ItemStack> passed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
-            helper.assertTrue(passed.getResult() == InteractionResult.PASS,
+            InteractionResult passed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(passed == InteractionResult.PASS,
                     "a non-sneaking use passes so a stray right-click does not eye the player");
             helper.assertTrue(!EyeState.hasEyes(player), "nothing was applied");
 
             player.setShiftKeyDown(true);
-            InteractionResultHolder<ItemStack> consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
-            helper.assertTrue(consumed.getResult().consumesAction(), "sneak + use applies the eye to the player");
+            InteractionResult consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(consumed.consumesAction(), "sneak + use applies the eye to the player");
             helper.assertTrue(EyeState.hasEyes(player), "the player now has eyes");
         } finally {
             player.setShiftKeyDown(false);

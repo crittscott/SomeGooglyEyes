@@ -17,7 +17,8 @@
   "environment": "*",
   "accessWidener": "somegoogly.accesswidener",
   "mixins": [
-    "somegoogly.mixins.json"
+    "somegoogly.mixins.json",
+    "somegoogly-common.mixins.json"
   ],
   "entrypoints": {
     "main": [

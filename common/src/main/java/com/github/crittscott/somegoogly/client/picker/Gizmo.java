@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import org.joml.Matrix4f;
 
 import java.util.OptionalDouble;
@@ -35,7 +35,7 @@ public final class Gizmo {
 
     private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
                              float h, float r, float g, float b) {
-        LevelRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
+        ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
     }
 
     public static void draw(PoseStack poseStack, MultiBufferSource buffers) {

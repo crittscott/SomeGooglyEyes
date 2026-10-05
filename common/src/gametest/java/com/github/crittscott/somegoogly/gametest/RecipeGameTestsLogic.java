@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -119,7 +118,7 @@ public final class RecipeGameTestsLogic {
     }
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
-        NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
+        List<Ingredient> ingredients = List.of(
                 Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe("", CraftingBookCategory.MISC,
                 new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);

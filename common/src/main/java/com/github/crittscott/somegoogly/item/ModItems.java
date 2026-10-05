@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.registry.ContentRegistrar;
-import net.minecraft.world.item.Item;
 
 /**
  * Item registry for the mod: the {@link GooglyEyeItem} (the eye itself, an ingredient) and the
@@ -17,9 +16,7 @@ public final class ModItems {
 
     /** Both items are shown in the mod's own creative tab ({@code ModCreativeTabs}), not a vanilla one. */
     public static void register(ContentRegistrar registrar) {
-        GOOGLY_EYE.bind(registrar.registerItem(
-                "googly_eye", () -> GooglyEyeItemFactory.create(new Item.Properties())));
-        SLIMY_EYE.bind(registrar.registerItem(
-                "slimy_eye", () -> new SlimyEyeItem(new Item.Properties())));
+        GOOGLY_EYE.bind(registrar.registerItem("googly_eye", GooglyEyeItemFactory::create));
+        SLIMY_EYE.bind(registrar.registerItem("slimy_eye", SlimyEyeItem::new));
     }
 }

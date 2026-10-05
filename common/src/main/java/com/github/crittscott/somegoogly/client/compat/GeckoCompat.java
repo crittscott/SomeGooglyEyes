@@ -14,13 +14,13 @@ public final class GeckoCompat {
 
     /** Bone names for a GeckoLib mob, or an empty list when GeckoLib is unavailable. */
     @ExpectPlatform
-    public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
+    public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         throw new AssertionError();
     }
 
     /** Attach the googly-eye layer when this is a supported GeckoLib renderer. */
     @ExpectPlatform
-    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
+    public static boolean tryAddLayer(EntityRenderer<?, ?> renderer) {
         throw new AssertionError();
     }
 }

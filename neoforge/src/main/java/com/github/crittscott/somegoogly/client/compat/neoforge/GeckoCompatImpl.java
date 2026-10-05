@@ -19,11 +19,11 @@ public final class GeckoCompatImpl {
     private GeckoCompatImpl() {
     }
 
-    public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
+    public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         return GeckoGuard.enumerate(LOADED, renderer, living);
     }
 
-    public static boolean tryAddLayer(EntityRenderer<?> renderer) {
+    public static boolean tryAddLayer(EntityRenderer<?, ?> renderer) {
         return GeckoGuard.tryAddLayer(LOADED, renderer);
     }
 }

@@ -2,12 +2,8 @@
   "type": "somegoogly:slimy_eye",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "somegoogly:googly_eye"
-    },
-    {
-      "item": "minecraft:slime_ball"
-    }
+    "somegoogly:googly_eye",
+    "minecraft:slime_ball"
   ],
   "result": {
     "id": "somegoogly:slimy_eye"

@@ -32,15 +32,15 @@ Registered content is declared once in `ContentRegistrar` — two items, one `Da
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric and NeoForge load the world's server TOML through `ServerConfigFile`; Fabric reads its client TOML directly, while NeoForge carries a native CLIENT spec. Forge carries native CLIENT and SERVER specs whose values must be copied into `ConfigValue<T>` on load and reload; NeoForge server stop and Forge SERVER unload must restore defaults, or runtime values can escape their world.
+`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric and NeoForge load the world's server TOML through `ServerConfigFile`; Fabric reads client TOML directly, NeoForge uses a native CLIENT spec. Forge carries native CLIENT and SERVER specs copied into `ConfigValue<T>` on load and reload; NeoForge server stop and Forge SERVER unload restore defaults so values cannot escape their world.
 
 Server-config keys, defaults, ranges, list validators, and section names must stay aligned between `ServerConfigFile` and `ForgeServerConfig`.
 
 Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
-Change eligibility knobs (spawn and harvest chances, entity overrides, behavior toggles, the spawn-all gate) in `ServerConfig`; change local eye visibility in `ClientConfig`.
+Eligibility knobs (spawn and harvest chances, overrides, behavior toggles, spawn-all gate) live in `ServerConfig`; local visibility in `ClientConfig`.
 
-Player-visible strings are translatable `Component`s keyed in `assets/somegoogly/lang/en_us.json`, with identifiers, counts, and paths passed as translation arguments. Logs, command literals, config comments, and schema keys are plain strings and are not translated.
+Player-visible strings are translatable `Component`s in `assets/somegoogly/lang/en_us.json`; logs, command literals, config comments, and schema keys are untranslated.
 
 ## Entity and item state
 
@@ -70,21 +70,21 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs the normal and picker layers on compatible living renderers, guarding against duplicates and reinstalling when renderer state is replaced. `LayerGooglyEyes` must be ordered before the slime outer layer. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached server-side path. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
+`ClientRenderLayers` installs the normal and picker layers on compatible living renderers, guarding against duplicates and reinstalling when renderer state is replaced. `LayerGooglyEyes` must be ordered before the slime outer layer. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached server-side path. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
 
-Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
+Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
 The common `somegoogly.accesswidener` serves common compilation, Fabric, and NeoForge, which converts it to an access transformer at remap. Forge carries its own `META-INF/accesstransformer.cfg`; `verifyCommonAccessMirror`, wired into `check`, fails when it lacks any widener entry.
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
-`GooglyEyeItemRenderer` draws the 3D Googly Eye; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
+`GooglyEyeItemRenderer` draws the 3D Googly Eye; `SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
 
 ## Networking
 
 Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `12`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
 
-`NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers receive the authenticated `ServerPlayer` and re-check authorization. Eye-state packets include entity id and UUID; packets that precede entity creation wait in a bounded UUID-keyed map cleared on disconnect, preventing numeric-id reuse from applying stale state.
+`NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; packets preceding entity creation wait in a bounded UUID-keyed map cleared on disconnect.
 
 ## Picker and commands
 
@@ -96,7 +96,7 @@ The client and server own disjoint branches of one `/sg` Brigadier tree: local e
 
 ## Loader integration
 
-Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the access widener target the pinned Minecraft version exactly; Fabric writes the fixed `somegoogly.refmap.json` refmap. Fabric configuration has no file watching.
+Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent;  Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps (`somegoogly.refmap.json`, `somegoogly-common.refmap.json`).
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -110,6 +110,6 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Operational boundaries
 
-- Optional renderer integrations log recoverable linkage, reflection, construction, and invocation failures once per affected operation and omit eyes when reliable attachment geometry cannot be produced; third-party model changes can still silently invalidate bundled tokens or placement geometry without throwing.
+- Optional renderer integrations log recoverable failures once per operation and omit eyes when attachment geometry cannot be produced; third-party model changes can silently invalidate bundled tokens or geometry.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
 - `build-env/` is not a build input; it is a byte-for-byte snapshot of the Gradle scripts, properties, and wrapper described in `build-env.md`, and every edit to one of those files must be mirrored there.
