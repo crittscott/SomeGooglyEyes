@@ -22,23 +22,12 @@ public final class EyeItemProperties {
 
     private static final String LEGACY_PROPERTIES_KEY = "EyeProperties";
 
-    /**
-     * Tint index of the iris layer in {@code models/item/slimy_eye.json} ({@code layer2}); every
-     * loader's Slimy Eye color handler keys the iris tint on it. Must match that model file.
-     */
-    public static final int SLIMY_EYE_IRIS_TINT_INDEX = 2;
-
     private EyeItemProperties() {
     }
 
-    /**
-     * The Slimy Eye {@code ItemColor} body shared by all three loaders: the stored iris color for the
-     * iris layer as opaque ARGB, {@code -1} (no tint) for every other layer.
-     */
-    public static int slimyEyeTint(ItemStack stack, int tintIndex) {
-        return tintIndex == SLIMY_EYE_IRIS_TINT_INDEX
-                ? get(stack).iris().orElse(EyeColor.BLACK).toOpaqueArgb32()
-                : -1;
+    /** The Slimy Eye's iris-layer tint: the stored iris color (black when unset) as opaque ARGB. */
+    public static int slimyEyeIrisColor(ItemStack stack) {
+        return get(stack).iris().orElse(EyeColor.BLACK).toOpaqueArgb32();
     }
 
     /** The tooltip lines describing {@code stack}'s appearance, appended in place. */

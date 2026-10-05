@@ -10,7 +10,7 @@ Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear w
 
 The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks, allowing different eye arrangements for vanilla and modded mobs.
 
-Artifacts target Minecraft 1.21.3 on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.114.1+1.21.3 or newer. NeoForge requires NeoForge 21.3.97 or newer within the 21.3 release line. Forge requires Forge 53.1.12 or newer within the 53 release line. All loaders require Java 21; GeckoLib 4.7.3 or newer is an optional client dependency. Multiplayer clients and servers must both have Some Googly Eyes with the same network version.
+Artifacts target Minecraft 1.21.4 on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.119.4+1.21.4 or newer. NeoForge requires NeoForge 21.4.158 or newer within the 21.4 release line. Forge requires Forge 54.1.18 or newer within the 54 release line. All loaders require Java 21; GeckoLib 4.8.5 or newer is an optional client dependency. Multiplayer clients and servers must both have Some Googly Eyes with the same network version.
 
 ## Mobs with eyes
 
@@ -148,9 +148,9 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the optional-mod definitions retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.3 releases. Updates to another mod's models may require its eye definitions to be adjusted.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the optional-mod definitions retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.4 releases. Updates to another mod's models may require its eye definitions to be adjusted.
 
-The 77 bundled Minecraft definitions select 1.21.3. Armadillo, bogged, and breeze do not yet have bundled eye geometry.
+The 77 bundled Minecraft definitions select 1.21.4. Armadillo, bogged, and breeze do not yet have bundled eye geometry.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
 
@@ -221,6 +221,6 @@ Color channels range from 0 to 1.
 - The ender dragon cannot receive eyes.
 - Armadillo, bogged, and breeze do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
-- Optional-mod definitions and client-side model attachment on 1.21.3 require manual compatibility verification.
+- Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
 - Fabric, NeoForge, and Forge each contain 108 dedicated-server GameTests. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

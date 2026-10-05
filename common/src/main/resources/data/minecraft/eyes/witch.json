@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "1.21.3",
+      "version": "1.21.4",
       "age": "any",
       "enabled": true,
       "variants": [
@@ -100,7 +100,7 @@
       ]
     },
     {
-      "version": "1.21.3",
+      "version": "1.21.4",
       "age": "adult",
       "enabled": true,
       "variants": [

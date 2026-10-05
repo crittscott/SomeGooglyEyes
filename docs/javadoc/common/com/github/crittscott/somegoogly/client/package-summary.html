@@ -89,8 +89,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
-<div class="summary-table two-column-summary">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel">
+<div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></div>
@@ -118,20 +119,29 @@ loadScripts(document, 'script');</script>
 <div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client"><code>ModelGooglyEye</code></a>, tinted by the item's
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="GooglyEyeItemRenderer.Unbaked.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer.Unbaked</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">The unbaked form named by the item definition; it has no fields.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Per-entity client-side eye state: the <a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil-physics simulator for every configured
  eye, plus which <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a> (if any) is currently playing on that entity.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Physics state for one pupil: its position and velocity in the eye's unit disk, the head
  orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
  an active behavior writes each tick.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="SlimyEyeIrisTint.html" title="class in com.github.crittscott.somegoogly.client">SlimyEyeIrisTint</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">The Slimy Eye iris tint: the stack's stored iris color.</div>
+</div>
 </div>
 </div>
 </div>

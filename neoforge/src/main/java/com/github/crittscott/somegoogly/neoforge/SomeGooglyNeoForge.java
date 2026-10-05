@@ -12,7 +12,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 
 /** NeoForge bootstrap for common registration and server datapack resources. */
 @Mod(SomeGooglyCommon.MOD_ID)
@@ -33,7 +33,7 @@ public final class SomeGooglyNeoForge {
         SomeGooglyCommon.LOGGER.info("{} initialized on NeoForge", SomeGooglyCommon.MOD_NAME);
     }
 
-    private static void addReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(new EyeConfigReloadListener());
+    private static void addReloadListeners(AddServerReloadListenersEvent event) {
+        event.addListener(EyeConfigReloadListener.ID, new EyeConfigReloadListener());
     }
 }

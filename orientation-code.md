@@ -4,11 +4,11 @@
 
 # Some Googly Eyes — code orientation
 
-Build structure, subsystem ownership, persisted state, loader seams, and invariants the code currently maintains. `orientation-player.md` covers observable behavior.
+Build structure, ownership, persisted state, loader seams, and invariants. `orientation-player.md` covers observable behavior.
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.3.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.4.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
@@ -24,7 +24,7 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no loader or GeckoLib type; differences pass through project-owned adapters or six Architectury `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
+Common main imports no loader or GeckoLib type; differences pass through project adapters or five `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
 Subsystem ownership: the server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing state.
 
@@ -78,7 +78,7 @@ The common `somegoogly.accesswidener` serves common compilation, Fabric, and Neo
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
-`GooglyEyeItemRenderer` draws the 3D Googly Eye; `SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
+Item definitions in `assets/somegoogly/items/` select the special model renderer `GooglyEyeItemRenderer` (3D Googly Eye) and tint source `SlimyEyeIrisTint` (third in the Slimy Eye's `tints`, matching `layer2`). NeoForge registers both by event; Forge and Fabric put them into vanilla's `ID_MAPPER`s at client init.
 
 ## Networking
 
@@ -96,7 +96,7 @@ The client and server own disjoint branches of one `/sg` Brigadier tree: local e
 
 ## Loader integration
 
-Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent;  Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps (`somegoogly.refmap.json`, `somegoogly-common.refmap.json`).
+Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -110,6 +110,6 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 ## Operational boundaries
 
-- Optional renderer integrations log recoverable failures once per operation and omit eyes when attachment geometry cannot be produced; third-party model changes can silently invalidate bundled tokens or geometry.
+- Optional renderer integrations log recoverable failures once per operation and omit eyes lacking attachment geometry; third-party model changes can silently invalidate bundled tokens or geometry.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- `build-env/` is not a build input; it is a byte-for-byte snapshot of the Gradle scripts, properties, and wrapper described in `build-env.md`, and every edit to one of those files must be mirrored there.
+- `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror every edit to them there.

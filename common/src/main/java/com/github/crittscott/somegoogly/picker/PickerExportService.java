@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -20,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
 
 import javax.annotation.Nullable;
@@ -70,8 +72,6 @@ public final class PickerExportService {
     /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
     public static final long MAX_CONFIG_BYTES = 64 * 1024;
 
-    /** Datapack format for the exact Minecraft version targeted by this source tree (1.21.3). */
-    private static final int GENERATED_PACK_FORMAT = 57;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
     private static final Map<UUID, Integer> LAST_ATTEMPT_TICK = new HashMap<>();
@@ -82,7 +82,7 @@ public final class PickerExportService {
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(GENERATED_PACK_FORMAT);
+            """.formatted(SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {

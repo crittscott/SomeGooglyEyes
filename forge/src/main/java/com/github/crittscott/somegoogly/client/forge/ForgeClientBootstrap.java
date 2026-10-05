@@ -4,20 +4,21 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
+import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.item.ItemTintSources;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -38,9 +39,9 @@ public final class ForgeClientBootstrap {
         ClientNetworkHandler.register();
         ForgeClientNetworkTransport.register();
         ForgeClientConfig.register(context);
+        registerItemModelTypes();
 
         modBus.addListener(ForgeClientBootstrap::addRendererLayers);
-        modBus.addListener(ForgeClientBootstrap::registerItemColors);
         modBus.addListener(ForgeClientBootstrap::registerGuiLayers);
         modBus.addListener(ForgeClientBootstrap::registerKeyMappings);
 
@@ -58,9 +59,14 @@ public final class ForgeClientBootstrap {
         GooglyClientCommands.register(event.getDispatcher());
     }
 
-    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
-                ModItems.SLIMY_EYE.get());
+    /**
+     * Forge has no registration event for item tint sources or special model renderers, so add ours to
+     * vanilla's type maps directly. Runs at mod construction, before the first resource reload resolves
+     * item definitions.
+     */
+    private static void registerItemModelTypes() {
+        ItemTintSources.ID_MAPPER.put(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
+        SpecialModelRenderers.ID_MAPPER.put(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 
     private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {

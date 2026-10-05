@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "somegoogly:item/googly_eye",
+    "model": {
+      "type": "somegoogly:googly_eye"
+    }
+  }
+}

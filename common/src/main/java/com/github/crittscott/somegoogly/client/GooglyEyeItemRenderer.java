@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
@@ -7,13 +8,18 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
@@ -23,17 +29,24 @@ import net.minecraft.world.item.ItemStack;
  * physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
  * ground it's static (pupil centered).
  *
- * <p>Tuning knobs if the eye sits wrong in the slot/hand: {@link #MODEL_SCALE} (size) and the
- * {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang down).
+ * <p>Registered as the {@code somegoogly:googly_eye} special model type and selected by
+ * {@code assets/somegoogly/items/googly_eye.json}; each loader puts {@link Unbaked#MAP_CODEC} under
+ * {@link #ID}. Resource reload bakes a fresh renderer, so held-pupil state resets with it.
+ *
+ * <p>Tuning knobs if the eye sits wrong in the slot/hand: {@link #GUI_SCALE} and {@link #MODEL_SCALE}
+ * (size) and the {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang
+ * down).
  *
  * <p>Draws through {@link GooglyEyeRenderer}'s render types, so the item and the mob eyes share one
  * texture and one pair of pre-built {@code RenderType}s rather than each naming its own.
  */
-public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
+public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOverride> {
+
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "googly_eye");
 
     /**
-     * Inventory size is set HERE, not in the model json: the GUI render path ignores a BEWLR's
-     * {@code gui} display transform (the other contexts honor theirs), so this is the inventory knob.
+     * Inventory size is set HERE, not in the model json: the inventory needs about eight times the
+     * base scale, and vanilla caps a display transform's scale at 4.
      */
     private static final float GUI_SCALE = 1.8F;
     private static final float IRIS_SCALE = 0.6F;
@@ -43,8 +56,19 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     private ModelGooglyEye model;
     private final HeldWobble wobble = new HeldWobble();
 
-    public GooglyEyeItemRenderer() {
-        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    /** The unbaked form named by the item definition; it has no fields. */
+    public record Unbaked() implements SpecialModelRenderer.Unbaked {
+        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(new Unbaked());
+
+        @Override
+        public SpecialModelRenderer<?> bake(EntityModelSet modelSet) {
+            return new GooglyEyeItemRenderer();
+        }
+
+        @Override
+        public MapCodec<Unbaked> type() {
+            return MAP_CODEC;
+        }
     }
 
     /**
@@ -140,9 +164,14 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
-                             MultiBufferSource buffer, int light, int overlay) {
-        AppearanceOverride props = EyeItemProperties.get(stack);
+    public AppearanceOverride extractArgument(ItemStack stack) {
+        return EyeItemProperties.get(stack);
+    }
+
+    @Override
+    public void render(@Nullable AppearanceOverride argument, ItemDisplayContext ctx, PoseStack pose,
+                       MultiBufferSource buffer, int light, int overlay, boolean hasFoil) {
+        AppearanceOverride props = argument != null ? argument : AppearanceOverride.EMPTY;
         float[] cornea = props.cornea().orElse(EyeColor.WHITE).toArray();
         float[] iris = props.iris().orElse(EyeColor.BLACK).toArray();
         boolean glow = props.glow().orElse(false);

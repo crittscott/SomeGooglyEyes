@@ -1,0 +1,19 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "somegoogly:item/slimy_eye",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "somegoogly:slimy_eye_iris"
+      }
+    ]
+  }
+}

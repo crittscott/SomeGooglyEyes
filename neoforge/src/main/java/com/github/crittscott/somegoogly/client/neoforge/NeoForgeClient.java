@@ -5,15 +5,13 @@ import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -24,8 +22,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 /** Physical-client registration for NeoForge client services. */
@@ -41,8 +38,8 @@ public final class NeoForgeClient {
         NeoForgeClientConfig.register(modBus, modContainer);
 
         modBus.addListener(NeoForgeClient::addRendererLayers);
-        modBus.addListener(NeoForgeClient::registerItemColors);
-        modBus.addListener(NeoForgeClient::registerClientExtensions);
+        modBus.addListener(NeoForgeClient::registerItemTintSources);
+        modBus.addListener(NeoForgeClient::registerSpecialModelRenderers);
         modBus.addListener(NeoForgeClient::registerGuiLayers);
         modBus.addListener(NeoForgeClient::registerKeyMappings);
 
@@ -60,24 +57,12 @@ public final class NeoForgeClient {
         GooglyClientCommands.register(event.getDispatcher());
     }
 
-    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
-                ModItems.SLIMY_EYE.get());
+    private static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
     }
 
-    /** Render the Googly Eye as the real 3D eye model (tinted by its AppearanceOverride, googly when held). */
-    private static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new IClientItemExtensions() {
-            private GooglyEyeItemRenderer renderer;
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                if (renderer == null) {
-                    renderer = new GooglyEyeItemRenderer();
-                }
-                return renderer;
-            }
-        }, ModItems.GOOGLY_EYE.get());
+    private static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+        event.register(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {

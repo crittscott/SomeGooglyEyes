@@ -3,7 +3,6 @@ com.github.crittscott.somegoogly.client.compat.gecko
 com.github.crittscott.somegoogly.client.fabric
 com.github.crittscott.somegoogly.config.fabric
 com.github.crittscott.somegoogly.fabric
-com.github.crittscott.somegoogly.item.fabric
 com.github.crittscott.somegoogly.mixin
 com.github.crittscott.somegoogly.network.fabric
 com.github.crittscott.somegoogly.platform.fabric

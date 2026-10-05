@@ -19,9 +19,8 @@ import java.util.List;
  * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
  * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob.
  *
- * <p>The custom 3D item renderer is attached per loader (see {@code GooglyEyeItemFactory}), not here:
- * on NeoForge and Forge it is an {@code Item#initializeClient} override their patched {@code Item}
- * adds, on Fabric a separate client-init registration.
+ * <p>Its 3D look comes from its item definition, which selects the {@code GooglyEyeItemRenderer}
+ * special model, not from this class.
  */
 public class GooglyEyeItem extends Item {
 

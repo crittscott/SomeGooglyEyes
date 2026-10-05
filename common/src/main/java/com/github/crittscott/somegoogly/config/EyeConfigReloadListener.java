@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -38,12 +39,15 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
+    /** The listener's identity for loaders that key reload listeners by id. */
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
+
     /**
      * Files arrive as raw JSON and are decoded here rather than by the base class, so each file's
      * parse failure is reported and counted in the reload summary.
      */
     public EyeConfigReloadListener() {
-        super(ExtraCodecs.JSON, "eyes");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("eyes"));
     }
 
     @Override

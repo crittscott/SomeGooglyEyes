@@ -16,7 +16,7 @@ public final class ModItems {
 
     /** Both items are shown in the mod's own creative tab ({@code ModCreativeTabs}), not a vanilla one. */
     public static void register(ContentRegistrar registrar) {
-        GOOGLY_EYE.bind(registrar.registerItem("googly_eye", GooglyEyeItemFactory::create));
+        GOOGLY_EYE.bind(registrar.registerItem("googly_eye", GooglyEyeItem::new));
         SLIMY_EYE.bind(registrar.registerItem("slimy_eye", SlimyEyeItem::new));
     }
 }

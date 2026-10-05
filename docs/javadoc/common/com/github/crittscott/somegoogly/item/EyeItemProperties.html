@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <p>Summary:</p>
 <ul>
 <li>Nested</li>
-<li><a href="#field-summary">Field</a></li>
+<li>Field</li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -46,7 +46,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Detail:</p>
 <ul>
-<li><a href="#field-detail">Field</a></li>
+<li>Field</li>
 <li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -58,13 +58,13 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -97,24 +97,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- =========== FIELD SUMMARY =========== -->
-<li>
-<section class="field-summary" id="field-summary">
-<h2>Field Summary</h2>
-<div class="caption"><span>Fields</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Field</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final int</code></div>
-<div class="col-second even-row-color"><code><a href="#SLIMY_EYE_IRIS_TINT_INDEX" class="member-name-link">SLIMY_EYE_IRIS_TINT_INDEX</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Tint index of the iris layer in <code>models/item/slimy_eye.json</code> (<code>layer2</code>); every
- loader's Slimy Eye color handler keys the iris tint on it.</div>
-</div>
-</div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -145,11 +127,9 @@ loadScripts(document, 'script');</script>
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeTint(net.minecraft.world.item.ItemStack,int)" class="member-name-link">slimyEyeTint</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
- int&nbsp;tintIndex)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeIrisColor(net.minecraft.world.item.ItemStack)" class="member-name-link">slimyEyeIrisColor</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The Slimy Eye <code>ItemColor</code> body shared by all three loaders: the stored iris color for the
- iris layer as opaque ARGB, <code>-1</code> (no tint) for every other layer.</div>
+<div class="block">The Slimy Eye's iris-layer tint: the stored iris color (black when unset) as opaque ARGB.</div>
 </div>
 </div>
 </div>
@@ -163,42 +143,16 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ============ FIELD DETAIL =========== -->
-<li>
-<section class="field-details" id="field-detail">
-<h2>Field Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="SLIMY_EYE_IRIS_TINT_INDEX">
-<h3>SLIMY_EYE_IRIS_TINT_INDEX</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">SLIMY_EYE_IRIS_TINT_INDEX</span></div>
-<div class="block">Tint index of the iris layer in <code>models/item/slimy_eye.json</code> (<code>layer2</code>); every
- loader's Slimy Eye color handler keys the iris tint on it. Must match that model file.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.item.EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="slimyEyeTint(net.minecraft.world.item.ItemStack,int)">
-<h3>slimyEyeTint</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">slimyEyeTint</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
- int&nbsp;tintIndex)</span></div>
-<div class="block">The Slimy Eye <code>ItemColor</code> body shared by all three loaders: the stored iris color for the
- iris layer as opaque ARGB, <code>-1</code> (no tint) for every other layer.</div>
+<section class="detail" id="slimyEyeIrisColor(net.minecraft.world.item.ItemStack)">
+<h3>slimyEyeIrisColor</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">slimyEyeIrisColor</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">The Slimy Eye's iris-layer tint: the stored iris color (black when unset) as opaque ARGB.</div>
 </section>
 </li>
 <li>
