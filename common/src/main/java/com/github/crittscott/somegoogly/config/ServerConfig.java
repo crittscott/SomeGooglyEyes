@@ -59,6 +59,34 @@ public class ServerConfig {
     public static final int TICKS_MAX = 24000;
     public static final int TICKS_MIN = 1;
 
+    // Config-file comments, one line per comment line, shared by every loader's server config schema.
+    public static final String GOOGLY_EYES_ENABLED_COMMENT = """
+            Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every
+            client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched
+            and reappears when this is turned back on. Clients already connected when the server picks up a
+            change see it only after /reload or reconnecting.""";
+    public static final String ENTITY_OVERRIDES_COMMENT = """
+            Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
+            '*' wildcards the entity id, e.g. "minecraft:zombie,100", "*:*_horse,50", "alexsmobs:*,0".
+            An exact id always wins over a wildcard; among wildcards, the first matching line wins.
+            Entities matching nothing here use globalPercent. A percent of 0 stops NEW spawns of that
+            entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can
+            still give the entity eyes by hand with a Slimy Eye.""";
+    public static final String ALLOW_SPAWN_ALL_COMMENT = """
+            Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.
+            WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own mod's
+            normal context, as spawnall does, can corrupt or destabilize the world; MineColonies and
+            Create mobs are known cases (see spawnExcludedMods below).""";
+    public static final String SPAWN_EXCLUDED_MODS_COMMENT = """
+            Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
+            MineColonies and Create are excluded by default because their mobs can corrupt or
+            destabilize a world if force-spawned outside their mod's normal context. Only remove either
+            entry on a world you're prepared to lose. These are authoring commands only; nothing here
+            changes eye eligibility or natural spawning.""";
+    public static final String SPAWN_EXCLUDED_ENTITIES_COMMENT = """
+            Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
+            "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
+
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
     public static final ConfigValue<List<String>> AMBIENT_BEHAVIOR_POOL =
             ConfigValue.strings(AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId);

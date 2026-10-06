@@ -11,9 +11,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 /** Forge bootstrap for common registration and server datapack resources. */
 @Mod(SomeGooglyCommon.MOD_ID)
@@ -32,7 +32,9 @@ public final class SomeGoogly {
         ForgeServerEvents.register(MinecraftForge.EVENT_BUS);
         MinecraftForge.EVENT_BUS.addListener(SomeGoogly::addReloadListeners);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeClientBootstrap.register(context));
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            ForgeClientBootstrap.register(context);
+        }
 
         SomeGooglyCommon.LOGGER.info("{} initialized on Forge", SomeGooglyCommon.MOD_NAME);
     }

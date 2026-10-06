@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
-import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
@@ -37,7 +36,6 @@ public final class ForgeClientBootstrap {
         IEventBus gameBus = MinecraftForge.EVENT_BUS;
 
         ClientNetworkHandler.register();
-        ForgeClientNetworkTransport.register();
         ForgeClientConfig.register(context);
         registerItemModelTypes();
 
@@ -52,7 +50,7 @@ public final class ForgeClientBootstrap {
     }
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
-        ClientRenderLayers.install(Minecraft.getInstance().getEntityRenderDispatcher());
+        ClientRenderLayers.installAll(Minecraft.getInstance().getEntityRenderDispatcher());
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

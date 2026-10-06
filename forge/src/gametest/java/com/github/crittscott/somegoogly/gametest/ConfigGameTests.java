@@ -71,9 +71,4 @@ public final class ConfigGameTests {
     public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
         ConfigGameTestsLogic.reloadBumpsGenerationOnlyOnContentChange(helper);
     }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void serverTomlRoundTrips(GameTestHelper helper) {
-        ConfigGameTestsLogic.serverTomlRoundTrips(helper);
-    }
 }

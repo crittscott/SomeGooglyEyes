@@ -20,7 +20,7 @@ import net.minecraftforge.network.payload.PayloadConnection;
 
 import java.util.Objects;
 
-/** Required Forge 52 payload channel and native packet distribution. */
+/** Required Forge payload channel and native packet distribution. */
 public final class ForgeNetworkTransport {
 
     private static Channel<CustomPacketPayload> channel;
@@ -52,8 +52,10 @@ public final class ForgeNetworkTransport {
                 (payload, context) -> PickerExportPacket.handle(payload, sender(context)));
 
         channel = connection.play().bidirectional().build();
-        NetworkTransport.installServerSender(
-                (player, payload) -> channel.send(payload, PacketDistributor.PLAYER.with(player)));
+    }
+
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        channel.send(payload, PacketDistributor.PLAYER.with(player));
     }
 
     public static void sendToServer(CustomPacketPayload payload) {

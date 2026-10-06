@@ -26,11 +26,6 @@ public final class FabricClientCommands {
         addServerPath(dispatcher, "mob");
     }
 
-    /** Add picker nodes to Minecraft's server-supplied dispatcher for completion and help display. */
-    public static <S> void mergeSuggestions(CommandDispatcher<S> dispatcher) {
-        GooglyClientCommands.register(dispatcher);
-    }
-
     private static void addServerPath(
             CommandDispatcher<FabricClientCommandSource> dispatcher, String name) {
         LiteralArgumentBuilder<FabricClientCommandSource> node =

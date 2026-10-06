@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.config;
+package com.github.crittscott.somegoogly.config.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 
@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for the boolean, integer, and string-list schemas used by loader-owned storage. */
+/** Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files. */
 public final class TomlConfig {
 
     private TomlConfig() {

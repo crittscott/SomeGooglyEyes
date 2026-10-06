@@ -9,13 +9,17 @@ import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/** Fabric entity-tracking distribution using Fabric API's authoritative lookup. */
-public final class NetworkTrackingImpl {
+/** Fabric clientbound sends; tracking fanout uses Fabric API's authoritative lookup. */
+public final class NetworkingImpl {
 
-    private NetworkTrackingImpl() {
+    private NetworkingImpl() {
     }
 
-    public static void send(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
+    }
+
+    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
         Collection<ServerPlayer> recipients = new ArrayList<>(PlayerLookup.tracking(entity));
         if (includeSelf && entity instanceof ServerPlayer player && !recipients.contains(player)) {
             recipients.add(player);

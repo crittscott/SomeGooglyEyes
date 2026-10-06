@@ -2,10 +2,12 @@ package com.github.crittscott.somegoogly.server.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -19,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -46,6 +49,11 @@ public final class FabricServerEvents {
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);
+            }
+        });
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+            if (source.getEntity() instanceof Player) {
+                ServerBehaviorScheduler.onPlayerHurt(entity);
             }
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

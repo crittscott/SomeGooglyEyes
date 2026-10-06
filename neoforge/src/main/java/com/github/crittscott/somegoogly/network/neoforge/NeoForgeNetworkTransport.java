@@ -9,19 +9,17 @@ import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-/** Required NeoForge payload registration and native packet sends. */
+/** Required NeoForge payload registration and server receivers. */
 public final class NeoForgeNetworkTransport {
 
     private NeoForgeNetworkTransport() {
     }
 
     public static void register(IEventBus modBus) {
-        NetworkTransport.installServerSender(PacketDistributor::sendToPlayer);
         modBus.addListener(NeoForgeNetworkTransport::registerPayloads);
     }
 

@@ -24,17 +24,17 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no loader type, and only the `client.compat.gecko` package imports GeckoLib types; differences pass through project adapters or three `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
+Common main imports no loader type, and only the `client.compat.gecko` package imports GeckoLib types; differences pass through project adapters or five `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
-Subsystem ownership: the server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing state.
+The server owns eligibility, eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing.
 
-Registered content is declared once in `ContentRegistrar` — two items, one `DataComponentType`, one creative tab, two recipe serializers, and nothing else (no blocks, entities, menus, particles, or sounds). Optometrist is a data-driven enchantment from the common data pack. Fabric binds these handles through native registries; NeoForge and Forge bind the same handles through native deferred registers.
+Registered content is declared once in `ContentRegistrar`: two items, one `DataComponentType`, one creative tab, and two recipe serializers. Optometrist is a data-driven enchantment from the common data pack. Fabric binds these handles through native registries; NeoForge and Forge bind the same handles through native deferred registers.
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold the schema and expose validated values as `ConfigValue<T>`. Fabric and NeoForge load the world's server TOML through `ServerConfigFile`; Fabric reads client TOML directly, NeoForge uses a native CLIENT spec. Forge carries native CLIENT and SERVER specs copied into `ConfigValue<T>` on load and reload; NeoForge server stop and Forge SERVER unload restore defaults so values cannot escape their world.
+`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and server comments, exposing validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric has no config system: its own `TomlConfig` reads both files, the server file at server start.
 
-Server-config keys, defaults, ranges, list validators, and section names must stay aligned between `ServerConfigFile` and `ForgeServerConfig`.
+Server-config section names and key order must stay aligned across `FabricServerConfig`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
 
 Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
@@ -44,7 +44,7 @@ Player-visible strings are translatable `Component`s in `assets/somegoogly/lang/
 
 ## Entity and item state
 
-`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, `EntityPersistentDataMixin` on Fabric.
+`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric, into which `EntityPersistentDataMigrationMixin` moves the released `somegoogly:persistentData` key on load.
 
 Persistent entity keys:
 
@@ -70,13 +70,13 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs the normal and picker layers on compatible living renderers, guarding against duplicates and reinstalling when renderer state is replaced. `LayerGooglyEyes` must be ordered before the slime outer layer. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached server-side path. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
+`ClientRenderLayers` installs the normal and picker layers on living renderers and the GeckoLib layer on others, guarding against duplicates and reinstalling after renderer rebuilds: NeoForge from `AddLayers`' renderers, Forge by a dispatcher walk on `AddLayers`, Fabric by its living-renderer callback plus a post-reload dispatcher walk. `LayerGooglyEyes` must be ordered before the slime outer layer. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved eye view per age and placement variant; `ServerEyeConfigs` is the uncached server-side path. `EyeRenderTransforms` owns render rotations; `EyePlacement` owns pupil-plane projection.
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: common compiles against the compile-only `geckolib-common` artifact, and everything goes through `GeckoCompat`, which probes for GeckoLib via `ModVersionLookup` before touching the typed layer and bone code in `client.compat.gecko`; a failed layer attach must not block mod load.
+GeckoLib is optional: common compiles against compile-only `geckolib-common`, and `GeckoCompat` probes for it via `ModVersionLookup` before touching the typed code in `client.compat.gecko`; a failed layer attach must not block mod load.
 
 Item definitions in `assets/somegoogly/items/` select the special model renderer `GooglyEyeItemRenderer` (3D Googly Eye) and tint source `SlimyEyeIrisTint` (third in the Slimy Eye's `tints`, matching `layer2`). NeoForge registers both by event; Forge and Fabric put them into vanilla's `ID_MAPPER`s at client init.
 
@@ -84,7 +84,7 @@ Item definitions in `assets/somegoogly/items/` select the special model renderer
 
 Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `12`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
 
-`NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; packets preceding entity creation wait in a bounded UUID-keyed map cleared on disconnect.
+Sends go through `@ExpectPlatform` bridges `Networking` (player, entity trackers) and client-only `ClientNetworking` (server). `NetworkTransport` is the client receive handoff, keeping client classes out of payload registration. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; packets preceding entity creation wait in a bounded UUID-keyed map cleared on disconnect.
 
 ## Picker and commands
 
@@ -96,17 +96,15 @@ The client and server own disjoint branches of one `/sg` Brigadier tree: local e
 
 ## Loader integration
 
-Fabric Mixins cover persistent data, reactions, trades, shears-kill drops, and renderer reload where callbacks are absent; Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps.
+Fabric Mixins cover persistent-data migration, heal reactions, trades, shears-kill drops, and renderer reload, which lack Fabric API events; Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
-Forge's required `PayloadChannel` uses network version 12 and marks payloads handled.
-
-NeoForge and Forge both isolate physical-client bootstrap from dedicated-server bootstrap.
+Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge isolate physical-client bootstrap from dedicated-server bootstrap.
 
 ## Automated verification
 
-`common/src/gametest/java` supplies 107 shared assertions; each loader wraps them and adds one persistence test, totaling 108. Each loader's `gametestJavadoc` documents its full GameTest source set, and root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
+`common/src/gametest/java` supplies 106 shared assertions; each loader wraps them and adds a persistence test (Fabric also migration and TOML tests): 109 on Fabric, 107 elsewhere. Each loader's `gametestJavadoc` documents its full GameTest source set, and root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
 
 ## Operational boundaries
 

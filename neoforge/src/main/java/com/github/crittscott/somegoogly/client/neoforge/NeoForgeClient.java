@@ -10,9 +10,9 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
-import com.github.crittscott.somegoogly.network.neoforge.NeoForgeClientNetworkTransport;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -34,7 +34,6 @@ public final class NeoForgeClient {
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
         // Install the common client receive handoff before registered payload handlers can invoke it.
         ClientNetworkHandler.register();
-        NeoForgeClientNetworkTransport.register();
         NeoForgeClientConfig.register(modBus, modContainer);
 
         modBus.addListener(NeoForgeClient::addRendererLayers);
@@ -50,7 +49,13 @@ public final class NeoForgeClient {
     }
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
-        ClientRenderLayers.install(Minecraft.getInstance().getEntityRenderDispatcher());
+        ClientRenderLayers.clearCaches();
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            ClientRenderLayers.install(EntityType.PLAYER, event.getSkin(skin));
+        }
+        for (EntityType<?> entityType : event.getEntityTypes()) {
+            ClientRenderLayers.install(entityType, event.getRenderer(entityType));
+        }
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

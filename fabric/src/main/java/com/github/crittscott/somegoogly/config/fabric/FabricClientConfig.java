@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.config.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
-import com.github.crittscott.somegoogly.config.TomlConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;

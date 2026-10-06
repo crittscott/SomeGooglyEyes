@@ -33,19 +33,13 @@ public final class ForgeServerConfig {
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("server");
-        GOOGLY_EYES_ENABLED = builder.comment(
-                        "Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on",
-                        "every client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left",
-                        "untouched and reappears when this is turned back on. Already-connected clients only see",
-                        "the change after a config reload or server restart, since this is a server config value",
-                        "like any other.")
+        GOOGLY_EYES_ENABLED = builder.comment(ServerConfig.GOOGLY_EYES_ENABLED_COMMENT.split("\n"))
                 .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
         GLOBAL_PERCENT = builder.defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
                 ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         HARVEST_ON_KILL_PERCENT = builder.defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
                 ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        ENTITY_OVERRIDES = builder.comment(
-                        "Per-entity eye chances as entity-pattern,percent; exact ids beat the first matching wildcard.")
+        ENTITY_OVERRIDES = builder.comment(ServerConfig.ENTITY_OVERRIDES_COMMENT.split("\n"))
                 .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateOverride(string));
         builder.pop().push("behaviors");
@@ -65,21 +59,12 @@ public final class ForgeServerConfig {
         SWIRL_HEAL_COOLDOWN_TICKS = builder.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         builder.pop().push("picker");
-        ALLOW_SPAWN_ALL = builder.comment(
-                        "Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.",
-                        "WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own",
-                        "mod's normal context, as spawnall does, can corrupt or destabilize the world; MineColonies",
-                        "and Create mobs are known cases (see spawnExcludedMods below).")
+        ALLOW_SPAWN_ALL = builder.comment(ServerConfig.ALLOW_SPAWN_ALL_COMMENT.split("\n"))
                 .define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
-        SPAWN_EXCLUDED_MODS = builder.comment(
-                        "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.",
-                        "MineColonies and Create are excluded by default because their mobs can corrupt or",
-                        "destabilize a world if force-spawned outside their mod's normal context. Only remove",
-                        "either entry on a world you're prepared to lose.")
+        SPAWN_EXCLUDED_MODS = builder.comment(ServerConfig.SPAWN_EXCLUDED_MODS_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
-        SPAWN_EXCLUDED_ENTITIES = builder.comment(
-                        "Entity ids that /sg spawn and /sg spawnall skip; authoring commands only.")
+        SPAWN_EXCLUDED_ENTITIES = builder.comment(ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateEntityId(string));
         builder.pop();
