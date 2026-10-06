@@ -22,11 +22,13 @@ public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot sn
     public static final CustomPacketPayload.Type<EyeStatePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_STATE);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeStatePacket::encode, EyeStatePacket::decode);
+            StreamCodec.ofMember(EyeStatePacket::write, EyeStatePacket::new);
 
-    public static EyeStatePacket decode(FriendlyByteBuf buffer) {
-        int entityId = buffer.readInt();
-        UUID entityUuid = buffer.readUUID();
+    private EyeStatePacket(FriendlyByteBuf buffer) {
+        this(buffer.readInt(), buffer.readUUID(), readSnapshot(buffer));
+    }
+
+    private static EyeState.Snapshot readSnapshot(FriendlyByteBuf buffer) {
         boolean hasGooglyEyes = buffer.readBoolean();
         float variantRoll = buffer.readFloat();
         if (!validRoll(variantRoll)) {
@@ -36,17 +38,16 @@ public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot sn
         if (!overrides.isValid()) {
             throw new DecoderException("Invalid eye appearance color");
         }
-        return new EyeStatePacket(entityId, entityUuid, new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides));
+        return new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides);
     }
 
-    public static void encode(EyeStatePacket packet, FriendlyByteBuf buffer) {
-        EyeState.Snapshot snapshot = packet.snapshot;
-        if (packet.entityUuid == null || snapshot == null || !validRoll(snapshot.variantRoll())
+    private void write(FriendlyByteBuf buffer) {
+        if (entityUuid == null || snapshot == null || !validRoll(snapshot.variantRoll())
                 || snapshot.properties() == null || !snapshot.properties().isValid()) {
             throw new EncoderException("Invalid eye state packet");
         }
-        buffer.writeInt(packet.entityId);
-        buffer.writeUUID(packet.entityUuid);
+        buffer.writeInt(entityId);
+        buffer.writeUUID(entityUuid);
         buffer.writeBoolean(snapshot.hasEyes());
         buffer.writeFloat(snapshot.variantRoll());
         AppearanceOverride.STREAM_CODEC.encode(buffer, snapshot.properties());

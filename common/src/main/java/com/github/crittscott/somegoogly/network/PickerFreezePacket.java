@@ -28,7 +28,7 @@ public class PickerFreezePacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_FREEZE);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC =
-            StreamCodec.ofMember(PickerFreezePacket::encode, PickerFreezePacket::decode);
+            StreamCodec.ofMember(PickerFreezePacket::write, PickerFreezePacket::new);
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
@@ -56,16 +56,15 @@ public class PickerFreezePacket implements CustomPacketPayload {
         return new PickerFreezePacket(false, null);
     }
 
-    public static PickerFreezePacket decode(FriendlyByteBuf buffer) {
-        boolean freeze = buffer.readBoolean();
-        UUID mobId = freeze ? buffer.readUUID() : null;
-        return new PickerFreezePacket(freeze, mobId);
+    private PickerFreezePacket(FriendlyByteBuf buffer) {
+        this.freeze = buffer.readBoolean();
+        this.mobId = freeze ? buffer.readUUID() : null;
     }
 
-    public static void encode(PickerFreezePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBoolean(packet.freeze);
-        if (packet.freeze) {
-            buffer.writeUUID(packet.mobId);
+    private void write(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(freeze);
+        if (freeze) {
+            buffer.writeUUID(mobId);
         }
     }
 

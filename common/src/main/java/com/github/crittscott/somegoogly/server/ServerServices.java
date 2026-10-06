@@ -17,7 +17,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
-/** Loader-neutral implementation behind each loader's server lifecycle hooks. */
+/**
+ * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
+ * service is called on that service directly (behavior ticks, tracking, and reactions go to
+ * {@link ServerBehaviorScheduler}).
+ */
 public final class ServerServices {
 
     private ServerServices() {
@@ -50,11 +54,6 @@ public final class ServerServices {
         ServerEyeConfigs.onServerStopping();
     }
 
-    /** Advance behavior scheduling once at the end of a server tick. */
-    public static void onServerTick() {
-        ServerBehaviorScheduler.serverTick();
-    }
-
     /**
      * Send the entity's full eye snapshot before registering the new watcher with behavior scheduling,
      * whose registration may immediately send a mid-behavior catch-up packet.
@@ -62,11 +61,6 @@ public final class ServerServices {
     public static void onStartTracking(LivingEntity living, ServerPlayer player) {
         EyeState.sendTo(living, player);
         ServerBehaviorScheduler.onStartTracking(living, player);
-    }
-
-    /** Remove one watcher from the entity's server-side behavior schedule. */
-    public static void onStopTracking(LivingEntity living) {
-        ServerBehaviorScheduler.onStopTracking(living);
     }
 
     /** Send current resolved eye definitions after login or reload. */

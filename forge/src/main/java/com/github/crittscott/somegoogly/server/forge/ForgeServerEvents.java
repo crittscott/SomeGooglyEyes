@@ -105,7 +105,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onServerTick(TickEvent.ServerTickEvent.Post event) {
-        ServerServices.onServerTick();
+        ServerBehaviorScheduler.serverTick();
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -117,7 +117,7 @@ public final class ForgeServerEvents {
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
         if (event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStopTracking(living);
+            ServerBehaviorScheduler.onStopTracking(living);
         }
     }
 

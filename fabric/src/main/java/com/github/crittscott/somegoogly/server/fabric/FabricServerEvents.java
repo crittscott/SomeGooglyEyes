@@ -71,7 +71,7 @@ public final class FabricServerEvents {
             }
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
-        ServerTickEvents.END_SERVER_TICK.register(server -> ServerServices.onServerTick());
+        ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onStartTracking(living, player);
@@ -79,7 +79,7 @@ public final class FabricServerEvents {
         });
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
-                ServerServices.onStopTracking(living);
+                ServerBehaviorScheduler.onStopTracking(living);
             }
         });
     }

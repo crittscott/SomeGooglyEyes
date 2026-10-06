@@ -23,7 +23,7 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_BEHAVIOR);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeBehaviorTriggerPacket::encode, EyeBehaviorTriggerPacket::decode);
+            StreamCodec.ofMember(EyeBehaviorTriggerPacket::write, EyeBehaviorTriggerPacket::new);
 
     private static final int MAX_DURATION_TICKS = 1_200;
 
@@ -41,27 +41,26 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
         this.elapsed = elapsed;
     }
 
-    public static EyeBehaviorTriggerPacket decode(FriendlyByteBuf buffer) {
-        int entityId = buffer.readInt();
-        ResourceLocation behaviorId = buffer.readResourceLocation();
-        int duration = buffer.readVarInt();
-        long seed = buffer.readLong();
-        int elapsed = buffer.readVarInt();
+    private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
+        this.entityId = buffer.readInt();
+        this.behaviorId = buffer.readResourceLocation();
+        this.duration = buffer.readVarInt();
+        this.seed = buffer.readLong();
+        this.elapsed = buffer.readVarInt();
         if (!validTiming(duration, elapsed)) {
             throw new DecoderException("Invalid eye behavior timing");
         }
-        return new EyeBehaviorTriggerPacket(entityId, behaviorId, duration, seed, elapsed);
     }
 
-    public static void encode(EyeBehaviorTriggerPacket packet, FriendlyByteBuf buffer) {
-        if (!validTiming(packet.duration, packet.elapsed)) {
+    private void write(FriendlyByteBuf buffer) {
+        if (!validTiming(duration, elapsed)) {
             throw new EncoderException("Invalid eye behavior timing");
         }
-        buffer.writeInt(packet.entityId);
-        buffer.writeResourceLocation(packet.behaviorId);
-        buffer.writeVarInt(packet.duration);
-        buffer.writeLong(packet.seed);
-        buffer.writeVarInt(packet.elapsed);
+        buffer.writeInt(entityId);
+        buffer.writeResourceLocation(behaviorId);
+        buffer.writeVarInt(duration);
+        buffer.writeLong(seed);
+        buffer.writeVarInt(elapsed);
     }
 
     public ResourceLocation behaviorId() {

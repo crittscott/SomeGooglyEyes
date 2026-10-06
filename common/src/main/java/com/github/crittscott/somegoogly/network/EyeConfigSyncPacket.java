@@ -27,7 +27,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_CONFIG);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeConfigSyncPacket::encode, EyeConfigSyncPacket::decode);
+            StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::new);
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final boolean googlyEyesEnabled;
@@ -37,7 +37,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         this.googlyEyesEnabled = googlyEyesEnabled;
     }
 
-    public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
+    private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
         if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
         }
@@ -71,18 +71,18 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error);
         }
-        boolean googlyEyesEnabled = buffer.readBoolean();
-        return new EyeConfigSyncPacket(configs, googlyEyesEnabled);
+        this.configs = configs;
+        this.googlyEyesEnabled = buffer.readBoolean();
     }
 
-    public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
-        String error = EyeConfigLimits.validateSync(packet.configs);
+    private void write(FriendlyByteBuf buffer) {
+        String error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
             throw new EncoderException("Unsafe eye config sync: " + error);
         }
         int start = buffer.writerIndex();
-        buffer.writeVarInt(packet.configs.size());
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
+        buffer.writeVarInt(configs.size());
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             DataResult<Tag> encoded = RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue());
             Tag tag = encoded.result().orElseThrow(() -> new EncoderException(
@@ -92,7 +92,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             }
             buffer.writeNbt(compound);
         }
-        buffer.writeBoolean(packet.googlyEyesEnabled);
+        buffer.writeBoolean(googlyEyesEnabled);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written

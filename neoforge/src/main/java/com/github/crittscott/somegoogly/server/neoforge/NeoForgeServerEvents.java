@@ -106,7 +106,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
-        ServerServices.onServerTick();
+        ServerBehaviorScheduler.serverTick();
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -118,7 +118,7 @@ public final class NeoForgeServerEvents {
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
         if (event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStopTracking(living);
+            ServerBehaviorScheduler.onStopTracking(living);
         }
     }
 

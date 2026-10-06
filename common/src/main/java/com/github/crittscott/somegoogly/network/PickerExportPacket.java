@@ -33,7 +33,7 @@ public class PickerExportPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_EXPORT);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
-            StreamCodec.ofMember(PickerExportPacket::encode, PickerExportPacket::decode);
+            StreamCodec.ofMember(PickerExportPacket::write, PickerExportPacket::new);
 
     @Nullable
     private final CompoundTag configNbt;
@@ -46,9 +46,9 @@ public class PickerExportPacket implements CustomPacketPayload {
         this.configNbt = configNbt;
     }
 
-    public static PickerExportPacket decode(FriendlyByteBuf buffer) {
-        ResourceLocation typeId = buffer.readResourceLocation();
-        String age = buffer.readUtf(16);
+    private PickerExportPacket(FriendlyByteBuf buffer) {
+        this.typeId = buffer.readResourceLocation();
+        this.age = buffer.readUtf(16);
         CompoundTag configNbt;
         try {
             Tag tag = buffer.readNbt(NbtAccounter.create(PickerExportService.MAX_CONFIG_BYTES));
@@ -59,13 +59,13 @@ public class PickerExportPacket implements CustomPacketPayload {
             buffer.readerIndex(buffer.writerIndex());
             configNbt = null;
         }
-        return new PickerExportPacket(typeId, age, configNbt);
+        this.configNbt = configNbt;
     }
 
-    public static void encode(PickerExportPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(packet.typeId);
-        buffer.writeUtf(packet.age, 16);
-        buffer.writeNbt(packet.configNbt);
+    private void write(FriendlyByteBuf buffer) {
+        buffer.writeResourceLocation(typeId);
+        buffer.writeUtf(age, 16);
+        buffer.writeNbt(configNbt);
     }
 
     public static void handle(PickerExportPacket packet, ServerPlayer sender) {

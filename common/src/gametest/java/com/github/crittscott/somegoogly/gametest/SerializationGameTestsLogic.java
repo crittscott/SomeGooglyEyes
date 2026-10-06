@@ -23,7 +23,8 @@ import net.minecraft.nbt.NbtOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
@@ -65,12 +65,30 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    private static byte[] bytes(Consumer<FriendlyByteBuf> encode) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        encode.accept(buffer);
+    private static RegistryFriendlyByteBuf buffer(GameTestHelper helper) {
+        return new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+    }
+
+    private static <T> byte[] bytes(GameTestHelper helper, StreamCodec<RegistryFriendlyByteBuf, T> codec, T packet) {
+        RegistryFriendlyByteBuf buffer = buffer(helper);
+        codec.encode(buffer, packet);
         byte[] out = new byte[buffer.readableBytes()];
         buffer.getBytes(buffer.readerIndex(), out);
         return out;
+    }
+
+    /**
+     * Byte idempotence for one packet form through its {@code STREAM_CODEC}: encode → decode → encode must
+     * reproduce the bytes. Returns the decoded packet.
+     */
+    private static <T> T roundTrip(GameTestHelper helper, StreamCodec<RegistryFriendlyByteBuf, T> codec, T packet,
+                                   String description) {
+        byte[] first = bytes(helper, codec, packet);
+        T decoded = codec.decode(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(first),
+                helper.getLevel().registryAccess()));
+        byte[] second = bytes(helper, codec, decoded);
+        helper.assertTrue(Arrays.equals(first, second), description + " should survive a wire round-trip");
+        return decoded;
     }
 
     private static RuntimeConfigSet sampleConfigSet() {
@@ -116,35 +134,29 @@ public final class SerializationGameTestsLogic {
         EyeBehaviorTriggerPacket packet =
                 new EyeBehaviorTriggerPacket(7,
                         ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
-        byte[] first = bytes(buffer -> EyeBehaviorTriggerPacket.encode(packet, buffer));
-        EyeBehaviorTriggerPacket decoded = EyeBehaviorTriggerPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> EyeBehaviorTriggerPacket.encode(decoded, buffer));
-        helper.assertTrue(Arrays.equals(first, second), "EyeBehaviorTriggerPacket should survive a wire round-trip");
+        roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC, packet, "EyeBehaviorTriggerPacket");
         helper.succeed();
     }
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
                 Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()), false);
-        byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
-        EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> EyeConfigSyncPacket.encode(decoded, buffer));
-        helper.assertTrue(Arrays.equals(first, second), "EyeConfigSyncPacket should survive a wire round-trip");
+        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
         helper.succeed();
     }
 
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
-        FriendlyByteBuf oversized = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(oversized)),
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(oversized)),
                 "config sync must reject an oversized outer count before allocating entries");
 
         RuntimeConfigSet tooManyVariants = sampleConfigSet();
         tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
                 tooManyVariants.any.variants.get(0));
-        FriendlyByteBuf counted = singleConfigPayload(tooManyVariants);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(counted)),
+        RegistryFriendlyByteBuf counted = singleConfigPayload(helper, tooManyVariants);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(counted)),
                 "config sync must reject a config over the variant limit");
 
         RuntimeConfigSet unsafe = sampleConfigSet();
@@ -152,15 +164,15 @@ public final class SerializationGameTestsLogic {
         head.eyes = List.of(new EyeDefinition(
                 new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
-        FriendlyByteBuf numeric = singleConfigPayload(unsafe);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(numeric)),
+        RegistryFriendlyByteBuf numeric = singleConfigPayload(helper, unsafe);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(numeric)),
                 "config sync must reject non-finite placement values");
         helper.succeed();
     }
 
     /** A config-sync payload carrying {@code set} for one entity, written without the encoder's own limit check. */
-    private static FriendlyByteBuf singleConfigPayload(RuntimeConfigSet set) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+    private static RegistryFriendlyByteBuf singleConfigPayload(GameTestHelper helper, RuntimeConfigSet set) {
+        RegistryFriendlyByteBuf buffer = buffer(helper);
         buffer.writeVarInt(1);
         buffer.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
         buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
@@ -214,38 +226,23 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    /** Byte idempotence for one packet form: encode → decode → encode must reproduce the bytes. */
-    private static <T> boolean roundTrips(T packet, java.util.function.BiConsumer<T, FriendlyByteBuf> encode,
-                                          java.util.function.Function<FriendlyByteBuf, T> decode) {
-        byte[] first = bytes(buffer -> encode.accept(packet, buffer));
-        T decoded = decode.apply(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> encode.accept(decoded, buffer));
-        return Arrays.equals(first, second);
-    }
-
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
-        helper.assertTrue(roundTrips(
-                        new PickerExportPacket(
-                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
-                        PickerExportPacket::encode, PickerExportPacket::decode),
-                "PickerExportPacket with a config should survive a wire round-trip");
-        helper.assertTrue(roundTrips(
-                        new PickerExportPacket(
-                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null),
-                        PickerExportPacket::encode, PickerExportPacket::decode),
-                "PickerExportPacket's null-config form should survive a wire round-trip");
+        roundTrip(helper, PickerExportPacket.STREAM_CODEC,
+                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
+                "PickerExportPacket with a config");
+        roundTrip(helper, PickerExportPacket.STREAM_CODEC,
+                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null),
+                "PickerExportPacket's null-config form");
         helper.succeed();
     }
 
     public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
-        helper.assertTrue(roundTrips(PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
-                        PickerFreezePacket::encode, PickerFreezePacket::decode),
-                "PickerFreezePacket's freeze form should survive a wire round-trip");
-        helper.assertTrue(roundTrips(PickerFreezePacket.unfreeze(),
-                        PickerFreezePacket::encode, PickerFreezePacket::decode),
-                "PickerFreezePacket's unfreeze form should survive a wire round-trip");
+        roundTrip(helper, PickerFreezePacket.STREAM_CODEC, PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
+                "PickerFreezePacket's freeze form");
+        roundTrip(helper, PickerFreezePacket.STREAM_CODEC, PickerFreezePacket.unfreeze(),
+                "PickerFreezePacket's unfreeze form");
         helper.succeed();
     }
 
@@ -254,29 +251,23 @@ public final class SerializationGameTestsLogic {
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
         EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
         EyeStatePacket withOverrides = new EyeStatePacket(42, new UUID(1L, 2L), snapshot);
-        byte[] a1 = bytes(buffer -> EyeStatePacket.encode(withOverrides, buffer));
-        EyeStatePacket d1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(a1)));
+        EyeStatePacket d1 = roundTrip(helper, EyeStatePacket.STREAM_CODEC, withOverrides, "EyeStatePacket with overrides");
         helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
-        byte[] a2 = bytes(buffer -> EyeStatePacket.encode(d1, buffer));
-        helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 
         EyeStatePacket noOverrides = new EyeStatePacket(
                 43, new UUID(3L, 4L), new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
-        byte[] b1 = bytes(buffer -> EyeStatePacket.encode(noOverrides, buffer));
-        EyeStatePacket e1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(b1)));
-        byte[] b2 = bytes(buffer -> EyeStatePacket.encode(e1, buffer));
-        helper.assertTrue(Arrays.equals(b1, b2), "EyeStatePacket without overrides should round-trip");
+        roundTrip(helper, EyeStatePacket.STREAM_CODEC, noOverrides, "EyeStatePacket without overrides");
         helper.succeed();
     }
 
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
-        FriendlyByteBuf invalid = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf invalid = buffer(helper);
         invalid.writeInt(42);
         invalid.writeUUID(new UUID(1L, 2L));
         invalid.writeBoolean(true);
         invalid.writeFloat(Float.NaN);
         invalid.writeByte(0);
-        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.decode(invalid)),
+        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.STREAM_CODEC.decode(invalid)),
                 "eye-state sync must reject a non-finite variant roll");
         helper.succeed();
     }
