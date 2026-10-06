@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -26,16 +25,6 @@ public final class ClientRenderLayers {
     /** Clear the attachment caches; call once before a renderer rebuild installs layers again. */
     public static void clearCaches() {
         Resolvers.clearCaches();
-    }
-
-    /**
-     * Reinstall every eye layer across the whole dispatcher after a renderer rebuild: clear the attachment
-     * caches, then {@link #install} each player skin renderer and each per-type renderer.
-     */
-    public static void installAll(EntityRenderDispatcher dispatcher) {
-        clearCaches();
-        dispatcher.playerRenderers.values().forEach(ClientRenderLayers::install);
-        dispatcher.renderers.values().forEach(ClientRenderLayers::install);
     }
 
     /**

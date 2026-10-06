@@ -11,7 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files. */
+/**
+ * Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files. Basic
+ * ({@code "..."}) and literal ({@code '...'}) strings are understood; any other value is logged and skipped.
+ */
 public final class TomlConfig {
 
     private TomlConfig() {
@@ -129,7 +132,9 @@ public final class TomlConfig {
         String key = statement.substring(0, equals).trim();
         String raw = statement.substring(equals + 1).trim();
         Object value = parseValue(raw);
-        if (!key.isEmpty() && value != null) {
+        if (value == null) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' has unreadable value {}; using default", key, raw);
+        } else if (!key.isEmpty()) {
             values.put(key, value);
         }
     }
@@ -154,18 +159,20 @@ public final class TomlConfig {
     private static List<String> parseStringArray(String raw) {
         List<String> values = new ArrayList<>();
         StringBuilder current = new StringBuilder();
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < raw.length(); i++) {
             char c = raw.charAt(i);
             if (escaped) {
                 current.append(c);
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (c == ',' && !quoted) {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (c == ',' && quote == 0) {
                 addArrayEntry(values, current);
             } else {
                 current.append(c);
@@ -185,19 +192,21 @@ public final class TomlConfig {
 
     private static int bracketDelta(String line) {
         int delta = 0;
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
             if (escaped) {
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (!quoted && c == '[') {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (quote == 0 && c == '[') {
                 delta++;
-            } else if (!quoted && c == ']') {
+            } else if (quote == 0 && c == ']') {
                 delta--;
             }
         }
@@ -205,17 +214,19 @@ public final class TomlConfig {
     }
 
     private static String stripComment(String line) {
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
             if (escaped) {
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (c == '#' && !quoted) {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (c == '#' && quote == 0) {
                 return line.substring(0, i);
             }
         }

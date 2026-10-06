@@ -15,9 +15,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Creates and loads the active world's server TOML when the server starts, since Fabric has no config
- * system. One {@link #SCHEMA} list drives both the commented default file and the load; its sections,
- * keys, defaults, and comments match the native Forge and NeoForge server specs.
+ * Creates and loads the active world's server TOML when the server starts and again at the start of
+ * each {@code /reload}, since Fabric has no config system; values return to defaults when the server stops. One
+ * {@link #SCHEMA} list drives both the commented default file and the load; its sections, keys, defaults,
+ * and comments match the native Forge and NeoForge server specs.
  */
 public final class FabricServerConfig {
 
@@ -66,6 +67,9 @@ public final class FabricServerConfig {
 
     public static void register() {
         ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
+        // Before the reload's data-pack sync, so clients receive the re-read master switch.
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
     }
 
     private static void load(MinecraftServer server) {

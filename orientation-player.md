@@ -84,6 +84,8 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`, and its reader accepts basic and literal strings, logging any value it cannot read.
+
 ### Spawn and harvest
 
 | Key | Default | Effect |
@@ -136,7 +138,7 @@ config/somegoogly-client.toml
 | `disabledEntities` | empty | Hides listed entity IDs |
 | `disabledMods` | empty | Hides entities from listed namespaces |
 
-These options affect only display and apply as soon as the loader reloads the file. Invisibility also hides eyes.
+These options affect only display. On NeoForge and Forge they apply as soon as the loader reloads the file; on Fabric they apply at game start. Invisibility also hides eyes.
 
 ## Datapacks and compatibility
 
@@ -222,5 +224,5 @@ Color channels range from 0 to 1.
 - Armadillo, bogged, and breeze do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 109 dedicated-server GameTests; NeoForge and Forge each contain 107. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
+- Fabric contains 110 dedicated-server GameTests; NeoForge and Forge each contain 107. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

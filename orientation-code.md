@@ -32,7 +32,7 @@ Registered content is declared once in `ModContent` and bound through the loader
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric has no config system: its own `TomlConfig` reads both files, the server file at server start.
+`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric has no config system: its own `TomlConfig` reads both files, the server file at server start and each `/reload`, resetting on stop.
 
 Server-config section names and key order must stay aligned across `FabricServerConfig`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
 
@@ -68,7 +68,7 @@ The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, durati
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer and the GeckoLib layer on others, duplicate-safe, after each renderer rebuild (NeoForge and Forge on `AddLayers`, Fabric by its living-renderer callback plus a post-reload dispatcher walk); client hiding is checked per frame. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved view per age and variant; `ServerEyeConfigs` does not cache. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
+`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer and the GeckoLib layer on others, duplicate-safe, after each renderer rebuild (NeoForge and Forge on `AddLayers`, Forge by registry entity type, Fabric by its living-renderer callback plus a post-reload dispatcher walk); client hiding is checked per frame. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved view per age and variant; `ServerEyeConfigs` does not cache. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset, replaying `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
@@ -102,10 +102,10 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` supplies 106 shared assertions; each loader wraps them and adds a persistence test (Fabric also migration and TOML tests): 109 on Fabric, 107 elsewhere. Each loader's `gametestJavadoc` documents its full GameTest source set, and root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
+`common/src/gametest/java` supplies 106 shared assertions; each loader wraps them and adds a persistence test (Fabric also migration and TOML tests): 110 on Fabric, 107 elsewhere. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
 
 ## Operational boundaries
 
-- Optional renderer integrations log recoverable failures once per operation and omit eyes lacking attachment geometry; third-party model changes can silently invalidate bundled tokens or geometry.
+- Optional renderer integrations log recoverable failures once per operation and omit eyes lacking attachment geometry; third-party model changes can silently invalidate bundled geometry.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
 - `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror every edit to them there.

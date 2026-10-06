@@ -121,4 +121,46 @@ public final class ConfigGameTests implements FabricGameTest {
         }
         helper.succeed();
     }
+
+    /**
+     * {@link TomlConfig} reads single-quoted literal strings, keeps quoted {@code #} and {@code ]}, and
+     * falls back to the default for a value it cannot read. In game: on a Fabric server, write
+     * {@code spawnExcludedMods = ['minecolonies', 'create']} and {@code globalPercent = 5.0} into
+     * {@code serverconfig/somegoogly-server.toml}, run {@code /reload}, and check the log warns about
+     * {@code globalPercent} while both mods stay excluded.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void serverTomlReadsLiteralStringsAndSkipsUnreadableValues(GameTestHelper helper) {
+        String source = """
+                [picker]
+                spawnExcludedMods = ['minecolonies', "create"]
+                spawnExcludedEntities = ['mod:a#b', 'mod:c]d'] # trailing comment
+                [server]
+                globalPercent = 5.0
+                """;
+        try {
+            Path dir = Files.createTempDirectory("somegoogly-toml-test");
+            Path file = dir.resolve("server.toml");
+            try {
+                Files.writeString(file, source);
+                Map<String, Object> values = TomlConfig.readOrCreate(file, "");
+                helper.assertTrue(
+                        TomlConfig.strings(values, "spawnExcludedMods", List.of())
+                                .equals(List.of("minecolonies", "create")),
+                        "literal and basic strings mix in one array");
+                helper.assertTrue(
+                        TomlConfig.strings(values, "spawnExcludedEntities", List.of())
+                                .equals(List.of("mod:a#b", "mod:c]d")),
+                        "a literal string keeps # and ] and a trailing comment is stripped");
+                helper.assertTrue(TomlConfig.integer(values, "globalPercent", 7) == 7,
+                        "an unreadable value falls back to the default");
+            } finally {
+                Files.deleteIfExists(file);
+                Files.deleteIfExists(dir);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("TOML literal-string read raised an IOException", e);
+        }
+        helper.succeed();
+    }
 }

@@ -10,10 +10,13 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSources;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
+import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -49,8 +52,22 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
     }
 
+    /**
+     * Forge's event exposes renderers per type but not the set of types that have one, so walk the
+     * entity-type registry. The getter's living bound is generic only; non-living renderers come back too.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
-        ClientRenderLayers.installAll(Minecraft.getInstance().getEntityRenderDispatcher());
+        ClientRenderLayers.clearCaches();
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            ClientRenderLayers.install(event.getPlayerSkin(skin));
+        }
+        for (EntityType entityType : BuiltInRegistries.ENTITY_TYPE) {
+            EntityRenderer<?, ?> renderer = event.getEntityRenderer(entityType);
+            if (renderer != null) {
+                ClientRenderLayers.install(renderer);
+            }
+        }
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
