@@ -24,8 +24,6 @@ public record EyeAppearance(EyeColor cornea, EyeColor iris, boolean glow) {
             Codec.BOOL.fieldOf("glows").forGetter(EyeAppearance::glow)
     ).apply(inst, EyeAppearance::new));
 
-    public static final Codec<EyeAppearance> CODEC = MAP_CODEC.codec();
-
     /** This appearance with the override's present fields layered on top — the single merge op. */
     public EyeAppearance overlay(AppearanceOverride o) {
         return new EyeAppearance(

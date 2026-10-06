@@ -108,6 +108,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>/sg spawn</code> and <code>/sg spawnall</code> refuse the ender dragon, players, and config-excluded types,
+ and <code>/sg spawn</code> suggests only types it accepts.</div>
+</div>
 </div>
 </div>
 </div>
@@ -125,6 +131,16 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>spawnCommandsRefuseDragonPlayersAndExcludedTypes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnCommandsRefuseDragonPlayersAndExcludedTypes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block"><code>/sg spawn</code> and <code>/sg spawnall</code> refuse the ender dragon, players, and config-excluded types,
+ and <code>/sg spawn</code> suggests only types it accepts. In game: type <code>/sg spawn minecraft:ender</code>
+ and see no ender dragon offered; add <code>"minecraft:cow"</code> to <code>spawnExcludedEntities</code>, then
+ <code>/sg spawn minecraft:cow</code> reports the cow as excluded and it is no longer suggested.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>commandSpawnFinalizesBeforeApplyingPickerState</h3>

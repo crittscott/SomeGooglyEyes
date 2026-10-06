@@ -27,7 +27,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -108,8 +107,7 @@ public final class GooglyServerCommands {
                 .then(Commands.argument("type", ResourceLocationArgument.id())
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                                 BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                                        .filter(id -> BuiltInRegistries.ENTITY_TYPE.getValue(id).canSummon())
-                                        .filter(id -> !ServerConfig.isSpawnExcluded(id)),
+                                        .filter(id -> PickerSpawnService.isSpawnable(BuiltInRegistries.ENTITY_TYPE.getValue(id))),
                                 builder))
                         .executes(GooglyServerCommands::spawn));
     }
@@ -143,13 +141,7 @@ public final class GooglyServerCommands {
                     "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
             return 0;
         }
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(typeId);
-        if (!type.canSummon()) {
-            ctx.getSource().sendFailure(Component.translatable(
-                    "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
-            return 0;
-        }
-        PickerSpawnService.spawnOne(player, type);
+        PickerSpawnService.spawnOne(player, BuiltInRegistries.ENTITY_TYPE.getValue(typeId));
         return 1;
     }
 

@@ -61,11 +61,6 @@ public final class EyeState {
         setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
     }
 
-    /** Drop the iris tint override only; broadcasts. */
-    public static void clearIrisTint(LivingEntity entity) {
-        setProperties(entity, readProperties(entity).withIrisColor(null));
-    }
-
     /**
      * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
      * slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.

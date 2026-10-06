@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.migration.fabric.FabricEntityDataMigration;
+import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -39,24 +39,15 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
+    }
+
     /** Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary. */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void fabricEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
-        Cow original = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
-        EyeState.initialize(original, true, 0.375F);
-        EyeState.setIrisTint(original, iris);
-
-        CompoundTag saved = original.saveWithoutId(new CompoundTag());
-        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        restored.load(saved);
-
-        helper.assertTrue(EyeState.hasEyes(restored), "Fabric should restore the has-eyes flag");
-        helper.assertTrue(EyeState.getVariantRoll(restored) == 0.375F,
-                "Fabric should restore the placement-variant roll");
-        helper.assertTrue(iris.equals(EyeState.readProperties(restored).iris().orElse(null)),
-                "Fabric should restore appearance overrides");
-        helper.succeed();
+        SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "Fabric");
     }
 
     /**
@@ -83,6 +74,30 @@ public final class SomeGooglyGameTests implements FabricGameTest {
                 "Released placement-variant roll should migrate");
         helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
                 "Migrated data should not be written under the released key");
+        helper.succeed();
+    }
+
+    /**
+     * Released-key data that is not a compound is kept, not discarded, and the server log names the entity.
+     * In game: give a mob a non-compound {@code somegoogly:persistentData} value in a world saved by the
+     * previous release and open it; the log warns about setting the data aside, and {@code /data get entity}
+     * on the saved mob shows it under {@code somegoogly:unrecognizedReleasedData} in the mod's attachment.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void fabricUnrecognizedReleasedEntityDataIsSetAside(GameTestHelper helper) {
+        Cow source = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
+        CompoundTag saved = source.saveWithoutId(new CompoundTag());
+        saved.putString(RELEASED_PERSISTENT_DATA_KEY, "not a compound");
+
+        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
+        restored.load(saved);
+
+        helper.assertTrue(!EyeState.hasEyes(restored), "Unrecognized released data must not grant eyes");
+        helper.assertTrue("not a compound".equals(EntityPersistentData.get(restored)
+                        .getString(FabricEntityDataMigration.SET_ASIDE_KEY)),
+                "Unrecognized released data should be set aside in the attachment");
+        helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
+                "Set-aside data should not be written under the released key");
         helper.succeed();
     }
 

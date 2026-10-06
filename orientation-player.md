@@ -44,7 +44,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 A Googly Eye is a 3D item whose pupil moves while held. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
-When a 1.20.1 world is opened, stored Googly Eyes and Slimy Eyes retain their iris color, cornea color, and glow as each inventory, container, nested container, or dropped stack loads. The conversion is automatic and is saved in the current item-component format. It can recover an already-upgraded stack only if its old `EyeProperties` custom data is still present.
+Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
@@ -197,7 +197,7 @@ It does not change the world. Both exports declare Minecraft definitions with th
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable test world: force-spawning mobs like MineColonies' or Create's outside their mod's normal context can corrupt or destabilize the world, which is why both are excluded by default (see `spawnExcludedMods` above).
 
-Both spawn commands skip the ender dragon and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall` reports each type it skipped and why.
+Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
@@ -224,5 +224,5 @@ Color channels range from 0 to 1.
 - Armadillo, bogged, and breeze do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 110 dedicated-server GameTests; NeoForge and Forge each contain 107. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
+- Fabric contains 103 dedicated-server GameTests; NeoForge and Forge each contain 99. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

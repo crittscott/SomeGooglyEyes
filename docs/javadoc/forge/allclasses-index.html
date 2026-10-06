@@ -54,21 +54,21 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/forge/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">EntityPersistentDataImpl</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/forge/ClientNetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">ClientNetworkingImpl</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Forge serverbound sends through the mod's payload channel.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/forge/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">EntityPersistentDataImpl</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge implementation of the shared entity-persistence boundary.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html" title="class in com.github.crittscott.somegoogly.client.forge">ForgeClientBootstrap</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html" title="class in com.github.crittscott.somegoogly.client.forge">ForgeClientBootstrap</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Physical-client registration kept out of the dedicated-server entry point.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/forge/ForgeClientConfig.html" title="class in com.github.crittscott.somegoogly.config.forge">ForgeClientConfig</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Forge TOML storage for the shared <code>ClientConfig</code> runtime values.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/forge/ForgeClientNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.forge">ForgeClientNetworkTransport</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/forge/ForgeClientConfig.html" title="class in com.github.crittscott.somegoogly.config.forge">ForgeClientConfig</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Physical-client Forge client-to-server sender.</div>
+<div class="block">Forge TOML storage for the shared <code>ClientConfig</code> runtime values.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -76,7 +76,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/forge/ForgeNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.forge">ForgeNetworkTransport</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Required Forge 52 payload channel and native packet distribution.</div>
+<div class="block">Required Forge payload channel and native packet distribution.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/forge/ForgeServerConfig.html" title="class in com.github.crittscott.somegoogly.config.forge">ForgeServerConfig</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -86,38 +86,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge event wiring for the loader-neutral authoritative server services.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/forge/GeckoCompatImpl.html" title="class in com.github.crittscott.somegoogly.client.compat.forge">GeckoCompatImpl</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/forge/ModVersionLookupImpl.html" title="class in com.github.crittscott.somegoogly.config.forge">ModVersionLookupImpl</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Forge soft-dependency gate for the shared GeckoLib integration; body lives in <a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoGuard.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoGuard</code></a>.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoGuard.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoGuard</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Loader-neutral body of the per-loader <code>GeckoCompatImpl</code> soft-dependency gates.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompatImpl</code> (so this class — and the
- GeckoLib classes it touches — load only when GeckoLib is present).</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">GeckoLib bone access — the GeckoLib analog of vanilla part resolution.</div>
-</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
- <code>LayerGooglyEyes</code> + <code>PickerLayer</code>).</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/forge/ModVersionLookupImpl.html" title="class in com.github.crittscott.somegoogly.config.forge">ModVersionLookupImpl</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge implementation of the loaded-mod version lookup.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/forge/NetworkTrackingImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">NetworkTrackingImpl</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Forge entity-tracking distribution using its chunk-map-backed packet target.</div>
-</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/forge/SomeGoogly.html" title="class in com.github.crittscott.somegoogly.forge">SomeGoogly</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/forge/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">NetworkingImpl</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Forge clientbound sends through the mod's payload channel.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/forge/SomeGoogly.html" title="class in com.github.crittscott.somegoogly.forge">SomeGoogly</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge bootstrap for common registration and server datapack resources.</div>
 </div>
 </div>

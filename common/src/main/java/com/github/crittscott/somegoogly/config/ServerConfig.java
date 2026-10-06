@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.config;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -88,7 +89,7 @@ public class ServerConfig {
 
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
     public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
-            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId, ServerConfig::parseBehaviorPool);
+            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool);
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
     public static final ConfigValue<Integer> AMBIENT_MAX_TICKS =
             ConfigValue.integer(AMBIENT_MAX_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
@@ -104,7 +105,7 @@ public class ServerConfig {
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
-            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateEntityId, Set::copyOf);
+            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
@@ -158,11 +159,30 @@ public class ServerConfig {
         return List.copyOf(built);
     }
 
-    /** Parse one 'pattern,percent' line that {@link #validateOverride} has already accepted. */
+    /**
+     * Parse one {@code "entity-pattern,percent"} line: entity-id characters plus {@code *}, and a percent
+     * within {@code [PERCENT_MIN, PERCENT_MAX]}. Returns {@code null} for a malformed line.
+     */
+    @Nullable
     private static SpawnOverride parse(String entry) {
         String[] split = entry.split(",");
+        if (split.length != 2) {
+            return null;
+        }
         String pattern = split[0].trim();
-        int percent = Integer.parseInt(split[1].trim());
+        // Allow the chars legal in an entity id (namespace:path) plus '*' for wildcards.
+        if (pattern.isEmpty() || !pattern.matches("[a-z0-9_./:*-]+")) {
+            return null;
+        }
+        int percent;
+        try {
+            percent = Integer.parseInt(split[1].trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        if (percent < PERCENT_MIN || percent > PERCENT_MAX) {
+            return null;
+        }
         return pattern.indexOf('*') < 0
                 ? new SpawnOverride(true, pattern, null, percent)
                 : new SpawnOverride(false, null, Pattern.compile(globToRegex(pattern)), percent);
@@ -216,16 +236,11 @@ public class ServerConfig {
         SWIRL_ON_TRADE.reset();
     }
 
-    /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
-    public static boolean validateBehaviorId(String value) {
-        return ResourceLocation.tryParse(value) != null;
-    }
-
     /**
-     * Whether a config string parses as an entity {@link ResourceLocation}; the entry guard for
-     * {@link #SPAWN_EXCLUDED_ENTITIES} and the client's {@code disabledEntities}.
+     * Whether a config string parses as a {@link ResourceLocation}; the entry guard for
+     * {@link #AMBIENT_BEHAVIOR_POOL}, {@link #SPAWN_EXCLUDED_ENTITIES}, and the client's {@code disabledEntities}.
      */
-    public static boolean validateEntityId(String value) {
+    public static boolean validateResourceLocation(String value) {
         return ResourceLocation.tryParse(value) != null;
     }
 
@@ -237,26 +252,8 @@ public class ServerConfig {
         return !value.isEmpty() && ResourceLocation.isValidNamespace(value);
     }
 
-    /**
-     * Whether a config string is a well-formed {@code "entity-pattern,percent"} override: entity-id
-     * characters plus {@code *}, and a percent within {@code [PERCENT_MIN, PERCENT_MAX]}. The entry guard
-     * for {@link #ENTITY_OVERRIDES}.
-     */
+    /** Whether a config string is a well-formed override line ({@link #parse}); the entry guard for {@link #ENTITY_OVERRIDES}. */
     public static boolean validateOverride(String value) {
-        String[] split = value.split(",");
-        if (split.length != 2) {
-            return false;
-        }
-        String pattern = split[0].trim();
-        // Allow the chars legal in an entity id (namespace:path) plus '*' for wildcards.
-        if (pattern.isEmpty() || !pattern.matches("[a-z0-9_./:*-]+")) {
-            return false;
-        }
-        try {
-            int percent = Integer.parseInt(split[1].trim());
-            return percent >= PERCENT_MIN && percent <= PERCENT_MAX;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return parse(value) != null;
     }
 }

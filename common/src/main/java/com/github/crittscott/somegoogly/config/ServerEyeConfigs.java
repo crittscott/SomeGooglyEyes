@@ -33,7 +33,6 @@ public final class ServerEyeConfigs {
             ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon");
 
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
-    private static volatile long generation;
     private static volatile String signature = "";
 
     private ServerEyeConfigs() {
@@ -78,11 +77,6 @@ public final class ServerEyeConfigs {
         return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
-    /** Monotonic identity of the currently installed config map, used by network payload caching. */
-    public static long generation() {
-        return generation;
-    }
-
     /**
      * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
      * config that is enabled and has at least one head. Used by the slimy eye ({@code SlimyEyeItem}),
@@ -94,18 +88,16 @@ public final class ServerEyeConfigs {
     }
 
     /**
-     * Force-install a snapshot, discard its content signature, and advance the generation. This is the
-     * unconditional replacement path used by tests; normal datapack reload uses
-     * {@link #replaceIfChanged}.
+     * Force-install a snapshot and discard its content signature. This is the unconditional replacement
+     * path used by tests; normal datapack reload uses {@link #replaceIfChanged}.
      */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = Map.copyOf(next);
         signature = "";
-        generation++;
     }
 
     /**
-     * Datapack-reload entry point: swap in the resolved set and bump {@link #generation} only when
+     * Datapack-reload entry point: swap in the resolved set only when
      * {@code nextSignature} (a canonical serialization of {@code next}, computed by the reload
      * listener) differs from the installed set's. A {@code /reload} triggered for an unrelated
      * datapack thus stops re-fanning the whole eye-config snapshot to every online player. Returns
@@ -117,7 +109,6 @@ public final class ServerEyeConfigs {
         }
         configs = Map.copyOf(next);
         signature = nextSignature;
-        generation++;
         return true;
     }
 

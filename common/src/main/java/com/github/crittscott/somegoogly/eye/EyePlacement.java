@@ -75,8 +75,6 @@ public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float
             Codec.INT.fieldOf("crossTarget").forGetter(EyePlacement::crossTarget)
     ).apply(inst, EyePlacement::new));
 
-    public static final Codec<EyePlacement> CODEC = MAP_CODEC.codec();
-
     /** The offset as the {@code float[3]} the renderer/model APIs expect. */
     public float[] positionArray() {
         return new float[]{(float) position.x, (float) position.y, (float) position.z};

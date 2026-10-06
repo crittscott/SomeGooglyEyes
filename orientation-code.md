@@ -42,7 +42,7 @@ Player-visible strings are translatable `Component`s in `assets/somegoogly/lang/
 
 ## Entity and item state
 
-`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric, into which `EntityPersistentDataMigrationMixin` moves the released `somegoogly:persistentData` key on load.
+`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the 1.21.1 release's `somegoogly:persistentData` compound into it; a non-compound value is set aside there and logged.
 
 Persistent entity keys:
 
@@ -54,7 +54,7 @@ Related mutations flush as one full-snapshot sync. The eye-state key and variant
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component; harvesting copies the first configured eye's effective appearance, and crafting and Slimy Eye application preserve that component while leaving other stack components untouched. Item stacks never carry placement geometry.
 
-`EyeItemProperties` converts released 1.20.1 `minecraft:custom_data.EyeProperties` as `GooglyEyeItem` and `SlimyEyeItem` decode via `verifyComponentsAfterLoad`. A current component wins even when empty; converted or superseded old data is removed, malformed data and unrelated custom data are retained.
+The item component, entity keys, and server-config keys are unchanged since the 1.21.1 release, so only Fabric entity data needs migration.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvest paths. Loader adapters run entity interaction after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`.
 
@@ -88,7 +88,7 @@ Sends go through `@ExpectPlatform` bridges `Networking` (player, entity trackers
 
 Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. Spawn and mob-pose operations are server Brigadier commands; only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and permits one editor. `PickerGate` owns every picker throttle (per-tick requests, export cooldowns, spawn-all cooldown); spawn-all also requires creative and server enablement. `PickerSpawnService` finalizes command-spawned mobs before setting `NoAI`, persistence, and display rotation; it and spawn suggestions obey `ServerConfig.isSpawnExcluded`. World export is confined to the generated datapack and requires creative plus permission level 2; export-all stays under the game-directory export tree. Both use `ConfigFile.exportVersion`.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and permits one editor. `PickerGate` owns every picker throttle (per-tick requests, export cooldowns, spawn-all cooldown); spawn-all also requires creative and server enablement. `PickerSpawnService` finalizes command-spawned mobs before setting `NoAI`, persistence, and display rotation; its `refusal` (ender dragon, unsummonable, `ServerConfig.isSpawnExcluded`) is the one spawnability rule for both commands and spawn suggestions. World export is confined to the generated datapack and requires creative plus permission level 2; export-all stays under the game-directory export tree. Both use `ConfigFile.exportVersion`.
 
 The client and server own disjoint branches of one `/sg` Brigadier tree: local editing stays client-side, while admin, spawn, spawn-all, and mob-pose commands are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 
@@ -102,7 +102,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` supplies 106 shared assertions; each loader wraps them and adds a persistence test (Fabric also migration and TOML tests): 110 on Fabric, 107 elsewhere. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
+`common/src/gametest/java` supplies 99 shared assertions, including entity save/load persistence; each loader wraps them, and Fabric adds migration and TOML tests: 103 on Fabric, 99 elsewhere. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, plain-shears self-damage, and actual-save migration remain manual checks.
 
 ## Operational boundaries
 

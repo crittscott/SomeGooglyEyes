@@ -275,8 +275,8 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** The eye-config generation bumps only when the resolved content changes; server stop forces the next resync. */
-    public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
+    /** A reload installs a new config set only when the resolved content changes; server stop forces the next resync. */
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -284,15 +284,15 @@ public final class ConfigGameTestsLogic {
                     zombie, fileJson(entryJson("1.21.1", "adult", 1.0)));
 
             new TestReloadListener().applyFiles(files);
-            long afterFirst = ServerEyeConfigs.generation();
+            Map<ResourceLocation, RuntimeConfigSet> afterFirst = ServerEyeConfigs.all();
 
             new TestReloadListener().applyFiles(files);
-            helper.assertTrue(ServerEyeConfigs.generation() == afterFirst,
-                    "an identical reload does not bump the generation");
+            helper.assertTrue(ServerEyeConfigs.all() == afterFirst,
+                    "an identical reload does not replace the installed configs");
 
             ServerEyeConfigs.onServerStopping();
             new TestReloadListener().applyFiles(files);
-            helper.assertTrue(ServerEyeConfigs.generation() == afterFirst + 1,
+            helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
                     "clearing the content signature on server stop forces the next reload to resync");
         } finally {
             ServerEyeConfigs.replaceAll(original);

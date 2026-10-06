@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BehaviorInstance</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
- stateless singletons (<a href="EyeBehaviors.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehaviors</code></a>); all per-play state lives here, on the mob's client
+ stateless enum constants; all per-play state lives here, on the mob's client
  tracker, so it's transient and per-mob.
 
  <p>The only animated state is <a href="#age"><code>age</code></a>: each behavior derives its <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a> directly
@@ -118,7 +118,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Completed ticks (1-based after the first tick); <code>age/duration</code> is the progress fraction.</div>
 </div>
-<div class="col-first odd-row-color"><code>final <a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></code></div>
+<div class="col-first odd-row-color"><code>final <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#behavior" class="member-name-link">behavior</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Stateless behavior definition being played.</div>
@@ -164,7 +164,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,com.github.crittscott.somegoogly.eye.HeadInfo,int,long)" class="member-name-link">BehaviorInstance</a><wbr>(<a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,com.github.crittscott.somegoogly.eye.HeadInfo,int,long)" class="member-name-link">BehaviorInstance</a><wbr>(<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
  <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  int&nbsp;duration,
  long&nbsp;seed)</code></div>
@@ -195,7 +195,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="behavior">
 <h3>behavior</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">behavior</span></div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">behavior</span></div>
 <div class="block">Stateless behavior definition being played.</div>
 </section>
 </li>
@@ -261,7 +261,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,com.github.crittscott.somegoogly.eye.HeadInfo,int,long)">
 <h3>BehaviorInstance</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">BehaviorInstance</span><wbr><span class="parameters">(<a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">BehaviorInstance</span><wbr><span class="parameters">(<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
  <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  int&nbsp;duration,
  long&nbsp;seed)</span></div>

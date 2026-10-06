@@ -111,8 +111,8 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
  (size) and the <code>XP.rotationDegrees(180)</code> (which faces the pupil at the viewer and lets it hang
  down).
 
- <p>Draws through <a href="render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render"><code>GooglyEyeRenderer</code></a>'s render types, so the item and the mob eyes share one
- texture and one pair of pre-built <code>RenderType</code>s rather than each naming its own.</div>
+ <p>Draws through <a href="render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>, so the item and the mob eyes share one drawing
+ path, texture, and pair of render types.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

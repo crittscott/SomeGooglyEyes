@@ -91,7 +91,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">NetworkTransport</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader-installed native send operations and the physical-client receive handoff.</div>
+<div class="block">Physical-client receive handoff. Loader payload registration runs on both distributions, so its
+ clientbound handlers forward here instead of naming client classes; the client installs the receiver.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,20 +111,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#installClientReceiver(java.util.function.Consumer)" class="member-name-link">installClientReceiver</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;receiver)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#installClientSender(java.util.function.Consumer)" class="member-name-link">installClientSender</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;sender)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#installServerSender(java.util.function.BiConsumer)" class="member-name-link">installServerSender</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;net.minecraft.server.level.ServerPlayer,<wbr>net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;sender)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#receiveClientbound(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">receiveClientbound</a><wbr>(net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
- net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer</a><wbr>(net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -143,34 +131,9 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="installServerSender(java.util.function.BiConsumer)">
-<h3>installServerSender</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">installServerSender</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;net.minecraft.server.level.ServerPlayer,<wbr>net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;sender)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="installClientSender(java.util.function.Consumer)">
-<h3>installClientSender</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">installClientSender</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;sender)</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="installClientReceiver(java.util.function.Consumer)">
 <h3>installClientReceiver</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">installClientReceiver</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;&nbsp;receiver)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
-<h3>sendToPlayer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToPlayer</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
- net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
-<h3>sendToServer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToServer</span><wbr><span class="parameters">(net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
 </section>
 </li>
 <li>

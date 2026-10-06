@@ -70,8 +70,8 @@ public final class ConfigGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadBumpsGenerationOnlyOnContentChange(helper);
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 
     /** {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it. */

@@ -27,7 +27,7 @@ public final class NeoForgeClientConfig {
                 .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
         DISABLED_ENTITIES = BUILDER.comment(ClientConfig.DISABLED_ENTITIES_COMMENT)
                 .defineList(ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT,
-                        () -> "", value -> value instanceof String string && ServerConfig.validateEntityId(string));
+                        () -> "", value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
         DISABLED_MODS = BUILDER.comment(ClientConfig.DISABLED_MODS_COMMENT)
                 .defineList(ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT,
                         () -> "", value -> value instanceof String string && ServerConfig.validateNamespace(string));

@@ -98,8 +98,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EyeModifierRecipe</span>
 <span class="extends-implements">extends net.minecraft.world.item.crafting.CustomRecipe</span></div>
 <div class="block">Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one
- <code>googly_eye</code> plus exactly one ingredient recognized by an <a href="EyeModifier.html" title="interface in com.github.crittscott.somegoogly.recipe"><code>EyeModifier</code></a>. There is no
- recipe that <i>creates</i> an eye — this only transforms one you already have.
+ <code>googly_eye</code> plus exactly one modifier ingredient (see <code>modify(com.github.crittscott.somegoogly.eye.state.AppearanceOverride, net.minecraft.world.item.ItemStack)</code>). There is no recipe
+ that <i>creates</i> an eye — this only transforms one you already have.
 
  <p>The output is a copy of the input eye (preserving unrelated data components) with the
  modifier's delta folded onto its <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>.</div>

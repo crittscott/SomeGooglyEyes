@@ -96,7 +96,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Per-frame eye decision for one living entity, taken while its render state is extracted and read back
  by the eye layers, which see only the render state. Either the entity is the picker's target (only the
  picker preview draws), or <code>helper</code> and <code>tracker</code> are both set (normal eyes draw), or
- neither (nothing draws). <code>partialTick</code> is the frame's interpolation for the pupil motion.</div>
+ neither (nothing draws). <code>partialTick</code> is the frame's interpolation for the pupil motion.
+
+ <p><a href="#extract(net.minecraft.world.entity.LivingEntity,float)"><code>extract(net.minecraft.world.entity.LivingEntity, float)</code></a> is the single "should this mob show eyes, and with what geometry" gate, shared by
+ the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a> and the GeckoLib <code>GooglyGeoLayer</code>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

@@ -85,7 +85,7 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button></div>
 <div id="class-summary.tabpanel" role="tabpanel">
 <div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
@@ -94,21 +94,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">The mutable runtime state of the one behavior a mob is currently playing.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
-<div class="block">One named eye expression (stare, blink, grow, …).</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">The seven named eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeBehaviors.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeBehaviors</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The registry of eye behaviors — the seven expressions a mob can play, keyed by id.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">What a single active <a href="EyeBehavior.html" title="interface in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a> exerts on one eye for one <b>simulation tick</b> (not one
+<div class="block">What a single active <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a> exerts on one eye for one <b>simulation tick</b> (not one
  frame).</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">The single authority for which eye behavior a mob is playing, and when.</div>
 </div>
 </div>

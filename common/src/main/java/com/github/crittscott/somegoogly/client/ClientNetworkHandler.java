@@ -90,7 +90,7 @@ public final class ClientNetworkHandler {
         EyeState.applySnapshot(living, packet.snapshot());
         GooglyTracker tracker = ClientEyeRuntime.peek(living);
         if (tracker != null) {
-            tracker.overrides = packet.overrides();
+            tracker.overrides = packet.snapshot().properties();
         }
     }
 

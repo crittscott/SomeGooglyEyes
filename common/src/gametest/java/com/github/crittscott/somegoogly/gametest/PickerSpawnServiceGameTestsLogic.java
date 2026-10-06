@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService.SpawnRefusal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -13,10 +15,36 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /** Shared regression checks for the picker command-spawn lifecycle. */
 public final class PickerSpawnServiceGameTestsLogic {
 
     private PickerSpawnServiceGameTestsLogic() {
+    }
+
+    /**
+     * {@code /sg spawn} and {@code /sg spawnall} refuse the ender dragon, players, and config-excluded types,
+     * and {@code /sg spawn} suggests only types it accepts. In game: type {@code /sg spawn minecraft:ender}
+     * and see no ender dragon offered; add {@code "minecraft:cow"} to {@code spawnExcludedEntities}, then
+     * {@code /sg spawn minecraft:cow} reports the cow as excluded and it is no longer suggested.
+     */
+    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
+        List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        try {
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
+                    "The ender dragon must be refused");
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
+                    "Players must be refused as not summonable");
+            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), "A cow must be spawnable by default");
+
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
+                    "A config-excluded type must be refused");
+        } finally {
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
+        }
+        helper.succeed();
     }
 
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {

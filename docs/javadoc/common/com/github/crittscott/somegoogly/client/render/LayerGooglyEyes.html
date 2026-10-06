@@ -94,12 +94,16 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">LayerGooglyEyes&lt;S extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState,<wbr>M extends net.minecraft.client.model.EntityModel&lt;? super S&gt;&gt;</span>
 <span class="extends-implements">extends net.minecraft.client.renderer.entity.layers.RenderLayer&lt;S,<wbr>M&gt;</span></div>
 <div class="block">Eye layer for vanilla-style <code>LivingEntityRenderer</code>s. It draws from the <a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render"><code>EyeRenderData</code></a>
- taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves configured attachment tokens through
- <a href="resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>Resolvers</code></a>, and delegates each eye's drawing to <a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render"><code>GooglyEyeRenderer</code></a>. Picker previews
- are drawn by the separate <a href="../picker/PickerLayer.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerLayer</code></a>.
+ taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves
+ configured attachment tokens through <a href="resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>Resolvers</code></a>, and delegates each eye's drawing to
+ <a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render"><code>GooglyEyeRenderer</code></a>.
 
- <p>The GeckoLib counterpart is <code>GooglyGeoLayer</code>, which uses the same gate and eye renderer
- from GeckoLib's per-bone callback.</div>
+ <p>For the picker's target the layer draws the authoring preview instead: the edited variant's saved
+ eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
+ is what matters there.
+
+ <p>The GeckoLib counterpart is <code>GooglyGeoLayer</code>, which makes the same split from GeckoLib's
+ per-bone callback.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

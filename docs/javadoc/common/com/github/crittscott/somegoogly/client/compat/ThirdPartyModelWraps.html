@@ -97,8 +97,8 @@ loadScripts(document, 'script');</script>
  without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
  placement. <a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)"><code>preTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, boolean, com.mojang.blaze3d.vertex.PoseStack)</code></a> pre-multiplies the same transform onto the pose stack before the
  resolver walk (the model applies its transform before any part's <code>translateAndRotate</code>, so
- pre-multiplying composes identically). Call it after the layer's <code>pushPose</code>, before
- <code>toAttachmentSpace</code>; it is a no-op for every unlisted model.
+ pre-multiplying composes identically). <code>EyeAttachmentResolver#toAttachmentSpace</code> calls it
+ before replaying the attachment; it is a no-op for every unlisted model.
 
  <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  dependency on either mod. The branch is chosen by the render state's baby flag — the same age the

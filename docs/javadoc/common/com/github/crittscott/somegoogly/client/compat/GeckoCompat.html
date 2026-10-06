@@ -91,7 +91,11 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GeckoCompat</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader bridge for the optional GeckoLib renderer integration.</div>
+<div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.
+
+ <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> — and the GeckoLib types it references — is touched only after the
+ <code>LOADED</code> check, so it never loads when GeckoLib is absent. A GeckoLib present but broken logs
+ each affected operation once and renders its mobs without eyes rather than failing mod load.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

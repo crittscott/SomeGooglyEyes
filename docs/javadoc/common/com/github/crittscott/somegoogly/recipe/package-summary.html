@@ -83,39 +83,14 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
-<div id="class-summary.tabpanel" role="tabpanel">
-<div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
+<div class="caption"><span>Classes</span></div>
+<div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="EyeModifier.html" title="interface in com.github.crittscott.somegoogly.recipe">EyeModifier</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">One "what does this ingredient do to an eye" rule, used by <a href="EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe"><code>EyeModifierRecipe</code></a>.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeModifier.DyeEyeModifier.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifier.DyeEyeModifier</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">1 eye + 1 of the 16 vanilla dyes → that dye's color on the iris (set, not blended).</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeModifier.GlowEyeModifier.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifier.GlowEyeModifier</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Glowstone dust → make the eye glow (explicit on, overriding config).</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeModifier.StripEyeModifier.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifier.StripEyeModifier</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Cobweb → strip every override, leaving a bare eye that falls back to config appearance.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeModifier.UnglowEyeModifier.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifier.UnglowEyeModifier</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Redstone dust → turn the glow off (explicit off, overriding config).</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one
- <code>googly_eye</code> plus exactly one ingredient recognized by an <a href="EyeModifier.html" title="interface in com.github.crittscott.somegoogly.recipe"><code>EyeModifier</code></a>.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ModRecipes.html" title="class in com.github.crittscott.somegoogly.recipe">ModRecipes</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Recipe serializer registry: the special <a href="EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe"><code>EyeModifierRecipe</code></a> and the <a href="SlimyEyeRecipe.html" title="class in com.github.crittscott.somegoogly.recipe"><code>SlimyEyeRecipe</code></a>.</div>
+ <code>googly_eye</code> plus exactly one modifier ingredient (see <code>EyeModifierRecipe.modify(com.github.crittscott.somegoogly.eye.state.AppearanceOverride, net.minecraft.world.item.ItemStack)</code>).</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SlimyEyeRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -125,7 +100,6 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Parses the ordinary shapeless recipe shape.</div>
-</div>
 </div>
 </div>
 </div>

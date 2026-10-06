@@ -28,7 +28,7 @@ public final class EyeStateOverrideGameTestsLogic {
         EyeState.setIrisTint(cow, new EyeColor(0.1F, 0.2F, 0.3F));
         EyeState.setCorneaTint(cow, new EyeColor(0.4F, 0.5F, 0.6F));
 
-        EyeState.clearIrisTint(cow);
+        EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
         AppearanceOverride after = EyeState.readProperties(cow);
         helper.assertTrue(after.iris().isEmpty(), "iris should be cleared");
         helper.assertTrue(after.cornea().isPresent(), "cornea should be untouched when clearing iris");
@@ -62,7 +62,7 @@ public final class EyeStateOverrideGameTestsLogic {
     public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
-        EyeState.clearIrisTint(cow);
+        EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
 
         helper.assertTrue(EyeState.readProperties(cow).isEmpty(), "override should be empty once its only field is cleared");
         helper.assertTrue(EyeState.overridesTagOrNull(cow) == null, "the override compound should be removed when empty");

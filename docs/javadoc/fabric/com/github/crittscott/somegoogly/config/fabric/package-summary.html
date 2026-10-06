@@ -86,11 +86,16 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Loads the active world's server TOML into the shared runtime configuration.</div>
+<div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
+ each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ModVersionLookupImpl.html" title="class in com.github.crittscott.somegoogly.config.fabric">ModVersionLookupImpl</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Fabric implementation of the loaded-mod version lookup.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files.</div>
 </div>
 </div>
 </div>

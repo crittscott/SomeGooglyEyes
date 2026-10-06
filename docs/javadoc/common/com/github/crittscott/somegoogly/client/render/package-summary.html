@@ -103,18 +103,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">Implemented on <code>LivingEntityRenderState</code> by the mod's render-state mixin.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeRenderGating.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderGating</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The single "should this mob show eyes, and with what geometry" gate.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeRenderTransforms.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderTransforms</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Rendering transforms that orient an eye's local pupil axis from its authored placement angles.</div>
-</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Shared eye drawing used by both render layers — the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a> and the
- GeckoLib <code>GooglyGeoLayer</code>.</div>
+<div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
+ and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
+ <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a>&lt;S extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState,<wbr>M extends net.minecraft.client.model.EntityModel&lt;? super S&gt;&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">

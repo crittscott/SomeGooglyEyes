@@ -86,7 +86,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">net.minecraft.world.item.Item
+<div class="inheritance"><a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">com.github.crittscott.somegoogly.item.GooglyEyeItem</a>
 <div class="inheritance">com.github.crittscott.somegoogly.item.SlimyEyeItem</div>
+</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
@@ -96,11 +98,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SlimyEyeItem</span>
-<span class="extends-implements">extends net.minecraft.world.item.Item</span></div>
+<span class="extends-implements">extends <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a></span></div>
 <div class="block">A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
  eyes on that entity, using the appearance the eye carried into the craft
  (<a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>); sneak + use applies it to the player themselves, which is the only way
- a player gets their own eyes (they are excluded from the at-spawn roll).
+ a player gets their own eyes (they are excluded from the at-spawn roll). It shares the Googly Eye's
+ stored appearance and tooltip.
 
  <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
  target's datapack config, on a placement variant freshly rolled by each application. An
@@ -110,10 +113,10 @@ loadScripts(document, 'script');</script>
  <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
  single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
 
- <p>The mob-apply verb (<a href="#applyToTarget(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)"><code>applyToTarget(net.minecraft.world.item.ItemStack, net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.LivingEntity)</code></a>) is dispatched from each loader's entity-interact
- adapter — which claims the right-click before the target's own interaction can consume it — not
- through <code>Item#interactLivingEntity</code>. Only the sneak self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)"><code>use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code></a>) is dispatched
- through this class.</div>
+ <p>The application itself is <a href="../server/EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)"><code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.LivingEntity)</code></a>. The mob path is dispatched from
+ each loader's entity-interact adapter — which claims the right-click before the target's own
+ interaction can consume it — not through <code>Item#interactLivingEntity</code>; only the sneak
+ self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)"><code>use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code></a>) is dispatched through this class.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -162,20 +165,6 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#appendHoverText(net.minecraft.world.item.ItemStack,net.minecraft.world.item.Item.TooltipContext,java.util.List,net.minecraft.world.item.TooltipFlag)" class="member-name-link">appendHoverText</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
- net.minecraft.world.item.Item.TooltipContext&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.network.chat.Component&gt;&nbsp;tooltip,
- net.minecraft.world.item.TooltipFlag&nbsp;flag)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applyToTarget(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">applyToTarget</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
- net.minecraft.server.level.ServerPlayer&nbsp;player,
- net.minecraft.world.entity.LivingEntity&nbsp;target)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
- eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.item.ItemStack</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#create(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int)" class="member-name-link">create</a><wbr>(<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties,
  int&nbsp;count)</code></div>
@@ -189,15 +178,15 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sneak + use: eye yourself.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyComponentsAfterLoad(net.minecraft.world.item.ItemStack)" class="member-name-link">verifyComponentsAfterLoad</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
+<h3 id="methods-inherited-from-class-com.github.crittscott.somegoogly.item.GooglyEyeItem">Methods inherited from class&nbsp;com.github.crittscott.somegoogly.item.<a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a></h3>
+<code><a href="GooglyEyeItem.html#appendHoverText(net.minecraft.world.item.ItemStack,net.minecraft.world.item.Item.TooltipContext,java.util.List,net.minecraft.world.item.TooltipFlag)">appendHoverText</a></code></div>
+<div class="inherited-list">
 <h3 id="methods-inherited-from-class-net.minecraft.world.item.Item">Methods inherited from class&nbsp;net.minecraft.world.item.Item</h3>
-<code>asItem, builtInRegistryHolder, byBlock, byId, canAttackBlock, canFitInsideContainerItems, components, finishUsingItem, getAttackDamageBonus, getBarColor, getBarWidth, getBreakingSound, getCraftingRemainder, getDamageSource, getDefaultInstance, getDefaultMaxStackSize, getDescriptionId, getDestroySpeed, getId, getName, getName, getPlayerPOVHitResult, getTooltipImage, getUseAnimation, getUseDuration, hurtEnemy, interactLivingEntity, inventoryTick, isBarVisible, isCorrectToolForDrops, isFoil, mineBlock, onCraftedBy, onCraftedPostProcess, onDestroyed, onUseTick, overrideOtherStackedOnMe, overrideStackedOnOther, postHurtEnemy, releaseUsing, requiredFeatures, shouldPrintOpWarning, toString, useOn, useOnRelease</code></div>
+<code>asItem, builtInRegistryHolder, byBlock, byId, canAttackBlock, canFitInsideContainerItems, components, finishUsingItem, getAttackDamageBonus, getBarColor, getBarWidth, getBreakingSound, getCraftingRemainder, getDamageSource, getDefaultInstance, getDefaultMaxStackSize, getDescriptionId, getDestroySpeed, getId, getName, getName, getPlayerPOVHitResult, getTooltipImage, getUseAnimation, getUseDuration, hurtEnemy, interactLivingEntity, inventoryTick, isBarVisible, isCorrectToolForDrops, isFoil, mineBlock, onCraftedBy, onCraftedPostProcess, onDestroyed, onUseTick, overrideOtherStackedOnMe, overrideStackedOnOther, postHurtEnemy, releaseUsing, requiredFeatures, shouldPrintOpWarning, toString, useOn, useOnRelease, verifyComponentsAfterLoad</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -230,50 +219,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="verifyComponentsAfterLoad(net.minecraft.world.item.ItemStack)">
-<h3>verifyComponentsAfterLoad</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyComponentsAfterLoad</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<dl class="notes">
-<dt>Overrides:</dt>
-<dd><code>verifyComponentsAfterLoad</code>&nbsp;in class&nbsp;<code>net.minecraft.world.item.Item</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="appendHoverText(net.minecraft.world.item.ItemStack,net.minecraft.world.item.Item.TooltipContext,java.util.List,net.minecraft.world.item.TooltipFlag)">
-<h3>appendHoverText</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">appendHoverText</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
- net.minecraft.world.item.Item.TooltipContext&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.network.chat.Component&gt;&nbsp;tooltip,
- net.minecraft.world.item.TooltipFlag&nbsp;flag)</span></div>
-<dl class="notes">
-<dt>Overrides:</dt>
-<dd><code>appendHoverText</code>&nbsp;in class&nbsp;<code>net.minecraft.world.item.Item</code></dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="create(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int)">
 <h3>create</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.item.ItemStack</span>&nbsp;<span class="element-name">create</span><wbr><span class="parameters">(<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties,
  int&nbsp;count)</span></div>
 <div class="block">A new slimy-eye stack carrying <code>properties</code>.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="applyToTarget(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)">
-<h3>applyToTarget</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">applyToTarget</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
- net.minecraft.server.level.ServerPlayer&nbsp;player,
- net.minecraft.world.entity.LivingEntity&nbsp;target)</span></div>
-<div class="block">The apply verb, server side: an eyeless target passing the shared eligibility predicate gains
- eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
- An already-eyed or ineligible target refuses (<code>FAIL</code>) and consumes nothing, as does any
- target while <code>googlyEyesEnabled</code> is off — the master switch blocks hand application the same
- as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
- enabled and <code>canHarmPlayer</code> to hold, so it can't be used to restyle a teammate or anyone in a
- PvP-off world. Both the mob path (the loader entity-interact adapter) and the sneak self-apply
- (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)"><code>use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code></a>) route through here.</div>
 </section>
 </li>
 <li>

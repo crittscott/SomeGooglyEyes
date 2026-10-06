@@ -98,7 +98,14 @@ loadScripts(document, 'script');</script>
  hands out creative already trusts the player with world edits, and admins should know creative also
  enables the picker. The creative checks in the client CLI and keyboard picker are UX only and never
  trusted; packet handlers use <a href="#creative(net.minecraft.server.level.ServerPlayer)"><code>creative(net.minecraft.server.level.ServerPlayer)</code></a> so unauthorized custom-payload spam cannot amplify into
- server feedback packets.</div>
+ server feedback packets.
+
+ <p>Every picker throttle lives here: one request per player per tick, the server-wide spawn-all
+ cooldown, and the two export limits. Each successful export triggers a full datapack reload, so
+ successes have the longer <a href="#EXPORT_COOLDOWN_TICKS"><code>EXPORT_COOLDOWN_TICKS</code></a>; every attempt has the short
+ <a href="#EXPORT_ATTEMPT_COOLDOWN_TICKS"><code>EXPORT_ATTEMPT_COOLDOWN_TICKS</code></a>, applied before any codec work. Per-player state is released
+ when the player leaves and all of it at server stop, since <code>getTickCount</code> restarts from 0 with
+ the next (single-player) world and a stale large tick would read as a far-future cooldown.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -111,6 +118,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#EXPORT_ATTEMPT_COOLDOWN_TICKS" class="member-name-link">EXPORT_ATTEMPT_COOLDOWN_TICKS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Cheap attempt throttle applied before codec work, including malformed requests.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#EXPORT_COOLDOWN_TICKS" class="member-name-link">EXPORT_COOLDOWN_TICKS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Ticks between successful exports per player (10 seconds; failed validation doesn't arm it).</div>
+</div>
 <div class="col-first even-row-color"><code>static final int</code></div>
 <div class="col-second even-row-color"><code><a href="#SPAWN_ALL_COOLDOWN_TICKS" class="member-name-link">SPAWN_ALL_COOLDOWN_TICKS</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
@@ -144,11 +161,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether <code>sender</code> may drive one picker request now: creative, and not already rate-limited this tick.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportSucceeded(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">exportSucceeded</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Arm the success cooldown after an export was written.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Arm the export attempt throttle and check both export limits.</div>
+</div>
 </div>
 </div>
 </div>
@@ -175,6 +204,36 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="tag-list">
 <li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.picker.PickerGate.SPAWN_ALL_COOLDOWN_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="EXPORT_COOLDOWN_TICKS">
+<h3>EXPORT_COOLDOWN_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">EXPORT_COOLDOWN_TICKS</span></div>
+<div class="block">Ticks between successful exports per player (10 seconds; failed validation doesn't arm it).</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.picker.PickerGate.EXPORT_COOLDOWN_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="EXPORT_ATTEMPT_COOLDOWN_TICKS">
+<h3>EXPORT_ATTEMPT_COOLDOWN_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">EXPORT_ATTEMPT_COOLDOWN_TICKS</span></div>
+<div class="block">Cheap attempt throttle applied before codec work, including malformed requests.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.picker.PickerGate.EXPORT_ATTEMPT_COOLDOWN_TICKS">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -207,6 +266,24 @@ loadScripts(document, 'script');</script>
 <h3>allowSpawnAll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">allowSpawnAll</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
 <div class="block">Arm a server-wide cooldown for the destructive bulk-spawn operation.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)">
+<h3>tryExport</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">tryExport</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Arm the export attempt throttle and check both export limits. Returns <code>null</code> when the export
+ may proceed, or the feedback explaining why it may not.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="exportSucceeded(net.minecraft.server.MinecraftServer,java.util.UUID)">
+<h3>exportSucceeded</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportSucceeded</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Arm the success cooldown after an export was written.</div>
 </section>
 </li>
 <li>

@@ -21,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -32,6 +33,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Core integration checks for loaded cow geometry, spawn-time eye-state initialization, entity
@@ -64,6 +66,29 @@ public final class SomeGooglyGameTestsLogic {
             float roll = data.getFloat(EyeState.VARIANT_ROLL);
             helper.assertTrue(roll >= 0.0F && roll < 1.0F, "Expected variant roll in [0, 1)");
         });
+    }
+
+    /**
+     * Eye state survives an entity save and load through the loader's own persistent-data store. In game:
+     * give a mob eyes and an iris tint with {@code /sg admin}, save and quit, reopen the world, and the mob
+     * still shows the same eyes in the same color.
+     */
+    public static void entityPersistentDataSurvivesSaveLoad(GameTestHelper helper, String loader) {
+        Cow original = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
+        EyeState.initialize(original, true, 0.375F);
+        EyeState.setIrisTint(original, iris);
+
+        CompoundTag saved = original.saveWithoutId(new CompoundTag());
+        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
+        restored.load(saved);
+
+        helper.assertTrue(EyeState.hasEyes(restored), loader + " should restore the has-eyes flag");
+        helper.assertTrue(EyeState.getVariantRoll(restored) == 0.375F,
+                loader + " should restore the placement-variant roll");
+        helper.assertTrue(iris.equals(EyeState.readProperties(restored).iris().orElse(null)),
+                loader + " should restore appearance overrides");
+        helper.succeed();
     }
 
     public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {

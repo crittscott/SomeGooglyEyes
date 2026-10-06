@@ -91,10 +91,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeConfigLimitsGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Semantic-bound coverage for <code>EyeConfigLimits.validateRuntimeConfig(RuntimeConfig)</code> — the
- object-graph validator that guards datapack reload and picker export. Its wire-preflight twin
- (<code>validateWireRuntimeConfig</code>) is exercised by <a href="SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SerializationGameTestsLogic</code></a> and
- <a href="PickerExportGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>PickerExportGameTestsLogic</code></a>; these tests pin the parallel checks on the decoded form so the
- two cannot drift. Pure and world-less: only <code>GameTestHelper</code> assertions touch the framework.</div>
+ object-graph validator that guards datapack reload, picker export, and (through
+ <code>validateSync</code>) network decode, which <a href="SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SerializationGameTestsLogic</code></a> and
+ <a href="PickerExportGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>PickerExportGameTestsLogic</code></a> exercise end to end. Pure and world-less: only <code>GameTestHelper</code> assertions touch the framework.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

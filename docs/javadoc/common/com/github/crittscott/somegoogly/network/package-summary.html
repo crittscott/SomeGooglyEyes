@@ -83,8 +83,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
-<div class="summary-table two-column-summary">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel">
+<div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></div>
@@ -99,18 +100,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Server-to-client synchronization of the complete resolved eye-definition set, plus the current
  <code>googlyEyesEnabled</code> master switch.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">Server → client sync of a single entity's full eye state: the <code>hasGooglyEyes</code> flag, the chosen
  placement-variant roll, plus the optional per-mob appearance overrides (see <a href="../eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>).</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The mod's five payload ids and small loader-neutral send surface.</div>
+<div class="block">The mod's network version and its five payload ids.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Loader-installed native send operations and the physical-client receive handoff.</div>
+<div class="block">Physical-client receive handoff.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -120,6 +121,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Client → server: "freeze the mob I'm editing" (or release it).</div>
+</div>
 </div>
 </div>
 </div>

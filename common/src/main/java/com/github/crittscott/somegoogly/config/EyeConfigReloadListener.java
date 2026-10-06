@@ -64,7 +64,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             }
             // A bundled definition for an absent optional mod is the common case, not an error: skip it
             // quietly and account for it in the summary so the loaded/total gap doesn't read as data loss.
-            if (ModVersionLookup.versionForNamespace(entry.getKey().getNamespace()).isEmpty()) {
+            Optional<String> loadedVersion = ModVersionLookup.versionForNamespace(entry.getKey().getNamespace());
+            if (loadedVersion.isEmpty()) {
                 skippedModNotInstalled++;
                 continue;
             }
@@ -79,7 +80,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                     failedParse++;
                     continue;
                 }
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file);
+                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get());
                 if (config != null && config.hasAnyConfig()) {
                     String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
                     if (error == null) {
@@ -107,9 +108,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             return;
         }
         if (!ServerEyeConfigs.replaceIfChanged(selected, signature)) {
-            SomeGooglyCommon.LOGGER.info(
-                    "Eye config reload produced no change from generation {}; not resyncing clients",
-                    ServerEyeConfigs.generation());
+            SomeGooglyCommon.LOGGER.info("Eye config reload produced no change; not resyncing clients");
             return;
         }
         SomeGooglyCommon.LOGGER.info(
@@ -146,16 +145,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         return next;
     }
 
-    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file) {
-        if (file == null || file.entries.isEmpty()) {
+    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded) {
+        if (file.entries.isEmpty()) {
             return null;
         }
-
-        Optional<String> loadedVersion = ModVersionLookup.versionForNamespace(entityId.getNamespace());
-        if (loadedVersion.isEmpty()) {
-            return null;
-        }
-        String loaded = loadedVersion.get();
 
         List<VersionedEntry> validEntries = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {

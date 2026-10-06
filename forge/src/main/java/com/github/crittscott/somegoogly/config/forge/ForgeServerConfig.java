@@ -51,7 +51,7 @@ public final class ForgeServerConfig {
                 ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         AMBIENT_BEHAVIOR_POOL = builder.defineList(
                 ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
-                value -> value instanceof String string && ServerConfig.validateBehaviorId(string));
+                value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
         GROW_ON_HIT_PERCENT = builder.defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
                 ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         SWIRL_ON_TRADE = builder.define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
@@ -66,7 +66,7 @@ public final class ForgeServerConfig {
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
         SPAWN_EXCLUDED_ENTITIES = builder.comment(ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT,
-                        value -> value instanceof String string && ServerConfig.validateEntityId(string));
+                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
         builder.pop();
         SPEC = builder.build();
     }

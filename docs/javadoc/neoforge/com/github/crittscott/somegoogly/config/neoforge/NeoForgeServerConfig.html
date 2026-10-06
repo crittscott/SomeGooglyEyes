@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">NeoForgeServerConfig</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loads NeoForge server settings from the active world's serverconfig directory.</div>
+<div class="block">NeoForge-native world server configuration backed by the shared runtime values.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,7 +107,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(net.neoforged.bus.api.IEventBus)" class="member-name-link">register</a><wbr>(net.neoforged.bus.api.IEventBus&nbsp;gameBus)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(net.neoforged.bus.api.IEventBus,net.neoforged.fml.ModContainer)" class="member-name-link">register</a><wbr>(net.neoforged.bus.api.IEventBus&nbsp;modBus,
+ net.neoforged.fml.ModContainer&nbsp;modContainer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -127,9 +128,10 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="register(net.neoforged.bus.api.IEventBus)">
+<section class="detail" id="register(net.neoforged.bus.api.IEventBus,net.neoforged.fml.ModContainer)">
 <h3>register</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(net.neoforged.bus.api.IEventBus&nbsp;gameBus)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(net.neoforged.bus.api.IEventBus&nbsp;modBus,
+ net.neoforged.fml.ModContainer&nbsp;modContainer)</span></div>
 </section>
 </li>
 </ul>

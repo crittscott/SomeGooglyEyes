@@ -128,19 +128,19 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry wins.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadBumpsGenerationOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadBumpsGenerationOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-config generation bumps only when the resolved content changes; server stop forces the next resync.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to nothing.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">No datapack, from any namespace, may install an eye config for the ender dragon.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop forces the next resync.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -148,19 +148,14 @@ loadScripts(document, 'script');</script>
 <div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedConfigsLoadForKnownEntities</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedPigHasTwoVariants</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedConfigsLoadForKnownEntities</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedPigHasTwoVariants</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
  opt-in.</div>
 </div>
@@ -256,17 +251,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="reloadBumpsGenerationOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>reloadBumpsGenerationOnlyOnContentChange</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadBumpsGenerationOnlyOnContentChange</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-config generation bumps only when the resolved content changes; server stop forces the next resync.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>serverTomlRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.</div>
+<section class="detail" id="reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>reloadReplacesConfigsOnlyOnContentChange</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadReplacesConfigsOnlyOnContentChange</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop forces the next resync.</div>
 </section>
 </li>
 </ul>

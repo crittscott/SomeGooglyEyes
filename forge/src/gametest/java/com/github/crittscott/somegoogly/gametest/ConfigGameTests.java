@@ -68,7 +68,7 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadBumpsGenerationOnlyOnContentChange(helper);
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 }

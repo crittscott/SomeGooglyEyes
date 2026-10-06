@@ -94,6 +94,10 @@ loadScripts(document, 'script');</script>
 <dt>All Implemented Interfaces:</dt>
 <dd><code>net.minecraft.world.flag.FeatureElement</code>, <code>net.minecraft.world.level.ItemLike</code></dd>
 </dl>
+<dl class="notes">
+<dt>Direct Known Subclasses:</dt>
+<dd><code><a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyEyeItem</span>
 <span class="extends-implements">extends net.minecraft.world.item.Item</span></div>
@@ -105,7 +109,8 @@ loadScripts(document, 'script');</script>
  a mob reuses the mob's configured placement (see <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>).
 
  <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
- <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a>, which is what actually sticks eyes onto a mob.
+ <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a>, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
+ for the stored appearance and tooltip.
 
  <p>Its 3D look comes from its item definition, which selects the <code>GooglyEyeItemRenderer</code>
  special model, not from this class.</div>
@@ -169,15 +174,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A new eye-item stack carrying <code>properties</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#verifyComponentsAfterLoad(net.minecraft.world.item.ItemStack)" class="member-name-link">verifyComponentsAfterLoad</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-net.minecraft.world.item.Item">Methods inherited from class&nbsp;net.minecraft.world.item.Item</h3>
-<code>asItem, builtInRegistryHolder, byBlock, byId, canAttackBlock, canFitInsideContainerItems, components, finishUsingItem, getAttackDamageBonus, getBarColor, getBarWidth, getBreakingSound, getCraftingRemainder, getDamageSource, getDefaultInstance, getDefaultMaxStackSize, getDescriptionId, getDestroySpeed, getId, getName, getName, getPlayerPOVHitResult, getTooltipImage, getUseAnimation, getUseDuration, hurtEnemy, interactLivingEntity, inventoryTick, isBarVisible, isCorrectToolForDrops, isFoil, mineBlock, onCraftedBy, onCraftedPostProcess, onDestroyed, onUseTick, overrideOtherStackedOnMe, overrideStackedOnOther, postHurtEnemy, releaseUsing, requiredFeatures, shouldPrintOpWarning, toString, use, useOn, useOnRelease</code></div>
+<code>asItem, builtInRegistryHolder, byBlock, byId, canAttackBlock, canFitInsideContainerItems, components, finishUsingItem, getAttackDamageBonus, getBarColor, getBarWidth, getBreakingSound, getCraftingRemainder, getDamageSource, getDefaultInstance, getDefaultMaxStackSize, getDescriptionId, getDestroySpeed, getId, getName, getName, getPlayerPOVHitResult, getTooltipImage, getUseAnimation, getUseDuration, hurtEnemy, interactLivingEntity, inventoryTick, isBarVisible, isCorrectToolForDrops, isFoil, mineBlock, onCraftedBy, onCraftedPostProcess, onDestroyed, onUseTick, overrideOtherStackedOnMe, overrideStackedOnOther, postHurtEnemy, releaseUsing, requiredFeatures, shouldPrintOpWarning, toString, use, useOn, useOnRelease, verifyComponentsAfterLoad</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -209,16 +211,6 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="verifyComponentsAfterLoad(net.minecraft.world.item.ItemStack)">
-<h3>verifyComponentsAfterLoad</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">verifyComponentsAfterLoad</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<dl class="notes">
-<dt>Overrides:</dt>
-<dd><code>verifyComponentsAfterLoad</code>&nbsp;in class&nbsp;<code>net.minecraft.world.item.Item</code></dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="appendHoverText(net.minecraft.world.item.ItemStack,net.minecraft.world.item.Item.TooltipContext,java.util.List,net.minecraft.world.item.TooltipFlag)">
 <h3>appendHoverText</h3>

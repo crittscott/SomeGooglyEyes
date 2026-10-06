@@ -56,9 +56,6 @@ public final class PickerExporter {
             return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
         RuntimeConfig config = PickerState.toConfig();
-        if (config.variants.isEmpty()) {
-            return Component.translatable("somegoogly.command.picker.export_nothing_committed");
-        }
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
         Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElse(null);
         if (!(encoded instanceof CompoundTag tag)) {

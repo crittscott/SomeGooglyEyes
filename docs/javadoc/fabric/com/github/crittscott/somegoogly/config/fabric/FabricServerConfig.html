@@ -91,7 +91,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FabricServerConfig</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loads the active world's server TOML into the shared runtime configuration.</div>
+<div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
+ each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops. One
+ <code>SCHEMA</code> list drives both the commented default file and the load; its sections, keys, defaults,
+ and comments match the native Forge and NeoForge server specs.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

@@ -37,7 +37,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li>Field</li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
@@ -57,7 +57,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -117,6 +117,24 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="PickerSpawnService.SpawnRefusal.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Why <code>/sg spawn</code> and <code>/sg spawnall</code> refuse an entity type, in the order <a href="#refusal(net.minecraft.world.entity.EntityType)"><code>refusal(net.minecraft.world.entity.EntityType&lt;?&gt;)</code></a>
+ checks them, with the feedback each command gives.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -128,16 +146,26 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)" class="member-name-link">prepareForCommandSpawn</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSpawnable(net.minecraft.world.entity.EntityType)" class="member-name-link">isSpawnable</a><wbr>(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their suggestions too.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)" class="member-name-link">prepareForCommandSpawn</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
  net.minecraft.world.entity.Entity&nbsp;entity,
  double&nbsp;x,
  double&nbsp;y,
  double&nbsp;z,
  float&nbsp;yaw)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
  the picker's frozen display state.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusal(net.minecraft.world.entity.EntityType)" class="member-name-link">refusal</a><wbr>(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">spawn</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
@@ -169,6 +197,21 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="isSpawnable(net.minecraft.world.entity.EntityType)">
+<h3>isSpawnable</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpawnable</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
+<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their suggestions too.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="refusal(net.minecraft.world.entity.EntityType)">
+<h3>refusal</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></span>&nbsp;<span class="element-name">refusal</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
+<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)">
 <h3>spawn</h3>

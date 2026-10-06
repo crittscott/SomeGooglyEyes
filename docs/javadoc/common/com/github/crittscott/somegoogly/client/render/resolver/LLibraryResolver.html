@@ -227,7 +227,7 @@ loadScripts(document, 'script');</script>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver">Methods inherited from interface&nbsp;com.github.crittscott.somegoogly.client.render.resolver.<a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></h3>
-<code><a href="EyeAttachmentResolver.html#toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.model.EntityModel,java.lang.String)">toAttachmentSpace</a></code></div>
+<code><a href="EyeAttachmentResolver.html#toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.model.EntityModel,java.lang.String,boolean)">toAttachmentSpace</a></code></div>
 </section>
 </li>
 </ul>
@@ -384,7 +384,7 @@ loadScripts(document, 'script');</script>
  the model has no such part (an unknown token, or a model whose worn variant lacks it).
 
  <p>The expensive half of the contract: a search of the model's part tree, matching each candidate
- path against the token. Called once per (model, token) — see <code>AttachmentCache.ATTACHMENTS</code> — so it
+ path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it
  may allocate and walk freely.</div>
 <dl class="notes">
 <dt>Specified by:</dt>

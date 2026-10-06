@@ -22,7 +22,7 @@ public final class ClientConfig {
 
     public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = ConfigValue.bool(DISABLE_GOOGLY_EYES_DEFAULT);
     public static final ConfigValue.Parsed<Set<ResourceLocation>> DISABLED_ENTITIES = ConfigValue.parsedStrings(
-            DISABLED_ENTITIES_DEFAULT, ServerConfig::validateEntityId,
+            DISABLED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation,
             entries -> entries.stream().map(ResourceLocation::parse).collect(Collectors.toUnmodifiableSet()));
     public static final ConfigValue.Parsed<Set<String>> DISABLED_MODS = ConfigValue.parsedStrings(
             DISABLED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);

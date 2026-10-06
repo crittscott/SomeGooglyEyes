@@ -1,12 +1,12 @@
 com.github.crittscott.somegoogly
 com.github.crittscott.somegoogly.client
 com.github.crittscott.somegoogly.client.compat
+com.github.crittscott.somegoogly.client.compat.gecko
 com.github.crittscott.somegoogly.client.picker
 com.github.crittscott.somegoogly.client.render
 com.github.crittscott.somegoogly.client.render.resolver
 com.github.crittscott.somegoogly.command
 com.github.crittscott.somegoogly.config
-com.github.crittscott.somegoogly.enchant
 com.github.crittscott.somegoogly.eye
 com.github.crittscott.somegoogly.eye.behavior
 com.github.crittscott.somegoogly.eye.state

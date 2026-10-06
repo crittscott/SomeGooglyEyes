@@ -19,7 +19,7 @@ import java.util.List;
  *
  * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
  * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
- * for the stored appearance, migration, and tooltip.
+ * for the stored appearance and tooltip.
  *
  * <p>Its 3D look comes from its item definition, which selects the {@code GooglyEyeItemRenderer}
  * special model, not from this class.
@@ -28,12 +28,6 @@ public class GooglyEyeItem extends Item {
 
     public GooglyEyeItem(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        super.verifyComponentsAfterLoad(stack);
-        EyeItemProperties.migrateStoredAppearance(stack);
     }
 
     @Override

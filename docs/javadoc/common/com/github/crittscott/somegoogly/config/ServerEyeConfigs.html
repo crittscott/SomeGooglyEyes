@@ -141,52 +141,47 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether this entity can wear eyes at <b>any</b> life stage (baby or adult).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#generation()" class="member-name-link">generation</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Monotonic identity of the currently installed config map, used by network payload caching.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
  boolean&nbsp;baby)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return the entity's config for <code>living</code>'s current age.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isEligible(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isEligible</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isEligible(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isEligible</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
  config that is enabled and has at least one head.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop the content signature so the first reload of the next world always resynchronizes.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Force-install a snapshot, discard its content signature, and advance the generation.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(java.util.Map,java.lang.String)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;nextSignature)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Datapack-reload entry point: swap in the resolved set and bump <code>generation</code> only when
+<div class="block">Force-install a snapshot and discard its content signature.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(java.util.Map,java.lang.String)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;nextSignature)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Datapack-reload entry point: swap in the resolved set only when
  <code>nextSignature</code> (a canonical serialization of <code>next</code>, computed by the reload
  listener) differs from the installed set's.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
  net.minecraft.world.entity.LivingEntity&nbsp;living,
  float&nbsp;variantRoll)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolve the selected variant without sharing the client's renderer cache.</div>
 </div>
 </div>
@@ -271,13 +266,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="generation()">
-<h3>generation</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">generation</span>()</div>
-<div class="block">Monotonic identity of the currently installed config map, used by network payload caching.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="isEligible(net.minecraft.world.entity.LivingEntity)">
 <h3>isEligible</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEligible</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
@@ -291,9 +279,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="replaceAll(java.util.Map)">
 <h3>replaceAll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</span></div>
-<div class="block">Force-install a snapshot, discard its content signature, and advance the generation. This is the
- unconditional replacement path used by tests; normal datapack reload uses
- <a href="#replaceIfChanged(java.util.Map,java.lang.String)"><code>replaceIfChanged(java.util.Map&lt;net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet&gt;, java.lang.String)</code></a>.</div>
+<div class="block">Force-install a snapshot and discard its content signature. This is the unconditional replacement
+ path used by tests; normal datapack reload uses <a href="#replaceIfChanged(java.util.Map,java.lang.String)"><code>replaceIfChanged(java.util.Map&lt;net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet&gt;, java.lang.String)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -301,7 +288,7 @@ loadScripts(document, 'script');</script>
 <h3>replaceIfChanged</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">replaceIfChanged</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;nextSignature)</span></div>
-<div class="block">Datapack-reload entry point: swap in the resolved set and bump <code>generation</code> only when
+<div class="block">Datapack-reload entry point: swap in the resolved set only when
  <code>nextSignature</code> (a canonical serialization of <code>next</code>, computed by the reload
  listener) differs from the installed set's. A <code>/reload</code> triggered for an unrelated
  datapack thus stops re-fanning the whole eye-config snapshot to every online player. Returns

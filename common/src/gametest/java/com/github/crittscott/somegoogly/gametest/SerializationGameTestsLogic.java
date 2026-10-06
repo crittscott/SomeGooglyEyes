@@ -261,7 +261,7 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 
         EyeStatePacket noOverrides = new EyeStatePacket(
-                43, new UUID(3L, 4L), false, 0.0F, AppearanceOverride.EMPTY);
+                43, new UUID(3L, 4L), new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
         byte[] b1 = bytes(buffer -> EyeStatePacket.encode(noOverrides, buffer));
         EyeStatePacket e1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(b1)));
         byte[] b2 = bytes(buffer -> EyeStatePacket.encode(e1, buffer));

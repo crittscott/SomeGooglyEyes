@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientRenderLayers</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Installs vanilla-model, picker, and optional GeckoLib eye layers after renderer rebuilds.</div>
+<div class="block">Installs the vanilla-model and optional GeckoLib eye layers after renderer rebuilds.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,22 +107,15 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#install(net.minecraft.client.renderer.entity.EntityRenderDispatcher)" class="member-name-link">install</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderDispatcher&nbsp;dispatcher)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Reinstall every eye layer across the whole dispatcher: clear the attachment caches, then walk the
- player skin map and the per-type renderer map, adding the vanilla-model layers to living renderers
- and the optional GeckoLib layer to the rest.</div>
+<div class="block">Clear the attachment caches; call once before a renderer rebuild installs layers again.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#installLiving(net.minecraft.world.entity.EntityType,net.minecraft.client.renderer.entity.LivingEntityRenderer)" class="member-name-link">installLiving</a><wbr>(net.minecraft.world.entity.EntityType&lt;? extends net.minecraft.world.entity.LivingEntity&gt;&nbsp;entityType,
- net.minecraft.client.renderer.entity.LivingEntityRenderer&lt;?,<wbr>?,<wbr>?&gt;&nbsp;renderer)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#install(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">install</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Add the shared vanilla-model layers through a loader's native renderer-registration event.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refreshNonLiving(net.minecraft.client.renderer.entity.EntityRenderDispatcher)" class="member-name-link">refreshNonLiving</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderDispatcher&nbsp;dispatcher)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Refresh attachment caches and install optional layers on non-vanilla renderer families.</div>
+<div class="block">Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the optional
+ GeckoLib layer on any other.</div>
 </div>
 </div>
 </div>
@@ -142,28 +135,20 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="install(net.minecraft.client.renderer.entity.EntityRenderDispatcher)">
+<section class="detail" id="clearCaches()">
+<h3>clearCaches</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
+<div class="block">Clear the attachment caches; call once before a renderer rebuild installs layers again.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="install(net.minecraft.client.renderer.entity.EntityRenderer)">
 <h3>install</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">install</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderDispatcher&nbsp;dispatcher)</span></div>
-<div class="block">Reinstall every eye layer across the whole dispatcher: clear the attachment caches, then walk the
- player skin map and the per-type renderer map, adding the vanilla-model layers to living renderers
- and the optional GeckoLib layer to the rest. Duplicate-safe through the weak <code>INSTALLED</code> set,
- and skips any entity hidden by <a href="../config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientConfig</code></a>. Call after a renderer rebuild.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="installLiving(net.minecraft.world.entity.EntityType,net.minecraft.client.renderer.entity.LivingEntityRenderer)">
-<h3>installLiving</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">installLiving</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;? extends net.minecraft.world.entity.LivingEntity&gt;&nbsp;entityType,
- net.minecraft.client.renderer.entity.LivingEntityRenderer&lt;?,<wbr>?,<wbr>?&gt;&nbsp;renderer)</span></div>
-<div class="block">Add the shared vanilla-model layers through a loader's native renderer-registration event.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="refreshNonLiving(net.minecraft.client.renderer.entity.EntityRenderDispatcher)">
-<h3>refreshNonLiving</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">refreshNonLiving</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderDispatcher&nbsp;dispatcher)</span></div>
-<div class="block">Refresh attachment caches and install optional layers on non-vanilla renderer families.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">install</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</span></div>
+<div class="block">Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the optional
+ GeckoLib layer on any other. Duplicate-safe through the weak <code>INSTALLED</code> set. Client-hidden
+ entities still get the layer; the per-frame render gate hides them, so a config change applies
+ without a renderer rebuild.</div>
 </section>
 </li>
 </ul>

@@ -170,9 +170,9 @@ loadScripts(document, 'script');</script>
  no reload) — it just captures what's authored/live so it can be copied into the mod's
  <code>resources/</code>.
 
- <p>The declared version range is re-synthesized from the currently-loaded version of each entity's
- namespace (<a href="../../config/VersionRangeMatcher.html#rangeFor(java.lang.String)"><code>VersionRangeMatcher.rangeFor(java.lang.String)</code></a>); the original entry's declared range isn't
- preserved in the runtime config, so it can't be recovered.</div>
+ <p>The declared version is re-synthesized from the currently-loaded version of each entity's
+ namespace (<a href="../../config/EyeConfigModel.ConfigFile.html#exportVersion(java.lang.String)"><code>EyeConfigModel.ConfigFile.exportVersion(java.lang.String)</code></a>), exactly as <code>/sg export</code> declares it; the
+ original entry's declared range isn't preserved in the runtime config, so it can't be recovered.</div>
 </section>
 </li>
 </ul>

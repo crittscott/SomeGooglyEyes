@@ -107,26 +107,34 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.LivingEntity)" class="member-name-link">interact</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">applySlimyEye</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
+ gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.LivingEntity)" class="member-name-link">interact</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.InteractionHand&nbsp;hand,
  net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Right-click-on-entity entry point for both eye items.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onDeath(net.minecraft.world.entity.LivingEntity,net.minecraft.world.damagesource.DamageSource,java.util.function.Consumer)" class="member-name-link">onDeath</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onDeath(net.minecraft.world.entity.LivingEntity,net.minecraft.world.damagesource.DamageSource,java.util.function.Consumer)" class="member-name-link">onDeath</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.damagesource.DamageSource&nbsp;source,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;dropSink)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
  phase: NeoForge and Forge add it to the <code>LivingDropsEvent</code> collection, Fabric appends it
  from a <code>dropCustomDeathLoot</code> mixin.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
  another player having applied a Slimy Eye to you.</div>
 </div>
@@ -160,6 +168,22 @@ loadScripts(document, 'script');</script>
  before returning <code>SUCCESS</code>. Every other case — plain shears, no Optometrist, an eyeless mob,
  a mob with no config, <code>googlyEyesEnabled</code> off, or the client side of the shears path —
  returns <code>InteractionResult.PASS</code> so the vanilla interaction is left to proceed.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)">
+<h3>applySlimyEye</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">applySlimyEye</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</span></div>
+<div class="block">The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
+ gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
+ An already-eyed or ineligible target refuses (<code>FAIL</code>) and consumes nothing, as does any
+ target while <code>googlyEyesEnabled</code> is off — the master switch blocks hand application the same
+ as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
+ enabled and <code>canHarmPlayer</code> to hold, so it can't be used to restyle a teammate or anyone in a
+ PvP-off world. Both the mob path (<a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.LivingEntity)"><code>interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.LivingEntity)</code></a>) and the sneak self-apply
+ (<code>SlimyEyeItem#use</code>) route through here.</div>
 </section>
 </li>
 <li>

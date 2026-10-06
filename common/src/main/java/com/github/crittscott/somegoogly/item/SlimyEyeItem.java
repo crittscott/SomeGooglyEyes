@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
  * eyes on that entity, using the appearance the eye carried into the craft
  * ({@link EyeItemProperties}); sneak + use applies it to the player themselves, which is the only way
  * a player gets their own eyes (they are excluded from the at-spawn roll). It shares the Googly Eye's
- * stored appearance, migration, and tooltip.
+ * stored appearance and tooltip.
  *
  * <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
  * target's datapack config, on a placement variant freshly rolled by each application. An

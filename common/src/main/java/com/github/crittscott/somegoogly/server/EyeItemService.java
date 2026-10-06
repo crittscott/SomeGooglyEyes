@@ -30,6 +30,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /** Loader-neutral implementation of applying and harvesting googly-eye items. */
@@ -62,12 +63,7 @@ public final class EyeItemService {
         if (!helper.hasConfig()) {
             return InteractionResult.PASS;
         }
-        mob.spawnAtLocation((ServerLevel) level, buildEyeDrop(helper, EyeState.readProperties(mob)));
-        EyeState.disableAndClearProperties(mob);
-        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-        playShearSound(mob);
-        mob.gameEvent(GameEvent.SHEAR, player);
+        shearEyes((ServerLevel) level, mob, player, hand, buildEyeDrop(helper, EyeState.readProperties(mob)));
         return InteractionResult.SUCCESS;
     }
 
@@ -145,19 +141,29 @@ public final class EyeItemService {
         ServerLevel level = (ServerLevel) player.level();
         boolean clean = hasOptometrist(stack, level.registryAccess());
         HeadInfo helper = helperFor(player);
-        if (helper.hasConfig()) {
-            player.spawnAtLocation(level, buildEyeDrop(helper, EyeState.readProperties(player)));
-        }
-        EyeState.disableAndClearProperties(player);
-        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-        playShearSound(player);
-        player.gameEvent(GameEvent.SHEAR, player);
+        shearEyes(level, player, player, hand,
+                helper.hasConfig() ? buildEyeDrop(helper, EyeState.readProperties(player)) : null);
         if (!clean) {
             player.hurtServer(level, player.damageSources().playerAttack(player),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * The shared outcome of shearing eyes off {@code target} with the shears in {@code actor}'s {@code hand}:
+     * drop {@code drop} (if any) at the target, clear its eyes, wear the shears, play the shearing sound,
+     * and emit {@link GameEvent#SHEAR}.
+     */
+    private static void shearEyes(ServerLevel level, LivingEntity target, Player actor, InteractionHand hand,
+                                  @Nullable ItemStack drop) {
+        if (drop != null) {
+            target.spawnAtLocation(level, drop);
+        }
+        EyeState.disableAndClearProperties(target);
+        actor.getItemInHand(hand).hurtAndBreak(1, actor, LivingEntity.getSlotForHand(hand));
+        playShearSound(target);
+        target.gameEvent(GameEvent.SHEAR, actor);
     }
 
     private static void playShearSound(LivingEntity target) {
