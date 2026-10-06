@@ -8,8 +8,8 @@
     "${mod_authors}"
   ],
   "contact": {
-    "homepage": "https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1",
-    "sources": "https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1",
+    "homepage": "https://github.com/crittscott/SomeGooglyEyes/tree/${minecraft_version}",
+    "sources": "https://github.com/crittscott/SomeGooglyEyes/tree/${minecraft_version}",
     "issues": "https://github.com/crittscott/SomeGooglyEyes/issues"
   },
   "license": "${mod_license}",

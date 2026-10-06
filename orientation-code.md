@@ -14,17 +14,17 @@ The Gradle project has four modules; `common` is transformed into all three load
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker |
+| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration |
 | `common/src/main/resources` | Assets, recipes, eye definitions, language |
 | `common/src/gametest` | Shared GameTest assertions and the structure fixture |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
 | `fabric/src/gametest` | Fabric wrappers and discovery metadata |
-| `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, access transformer |
+| `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, metadata |
 | `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
-| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata |
+| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no loader or GeckoLib type; differences pass through project adapters or five `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
+Common main imports no loader type, and only the `client.compat.gecko` package imports GeckoLib types; differences pass through project adapters or three `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
 Subsystem ownership: the server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing state.
 
@@ -74,9 +74,9 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
-The common `somegoogly.accesswidener` serves common compilation, Fabric, and NeoForge, which converts it to an access transformer at remap. Forge carries its own `META-INF/accesstransformer.cfg`; `verifyCommonAccessMirror`, wired into `check`, fails when it lacks any widener entry.
+The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
+GeckoLib is optional: common compiles against the compile-only `geckolib-common` artifact, and everything goes through `GeckoCompat`, which probes for GeckoLib via `ModVersionLookup` before touching the typed layer and bone code in `client.compat.gecko`; a failed layer attach must not block mod load.
 
 Item definitions in `assets/somegoogly/items/` select the special model renderer `GooglyEyeItemRenderer` (3D Googly Eye) and tint source `SlimyEyeIrisTint` (third in the Slimy Eye's `tints`, matching `layer2`). NeoForge registers both by event; Forge and Fabric put them into vanilla's `ID_MAPPER`s at client init.
 

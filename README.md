@@ -10,7 +10,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 ![Googly Eyes splash](docs/googlyeyes-splash-0.8.2.png)
 
-![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1](https://img.shields.io/badge/Minecraft-1.20.1%20and%201.21.1-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
@@ -97,10 +97,10 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1 and 1.20.1.
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.21.1 and 1.20.1 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for 1.21.4 with new physics, behaviors, and more.
 
 License: [**GPL-3.0**](LICENSE).

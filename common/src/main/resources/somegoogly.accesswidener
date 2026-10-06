@@ -12,3 +12,6 @@ accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/M
 
 accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	adultModel	Lnet/minecraft/client/model/EntityModel;
 accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	babyModel	Lnet/minecraft/client/model/EntityModel;
+
+# Forge has no special model renderer registration event; see ForgeClientBootstrap.
+accessible	field	net/minecraft/client/renderer/special/SpecialModelRenderers	ID_MAPPER	Lnet/minecraft/util/ExtraCodecs$LateBoundIdMapper;

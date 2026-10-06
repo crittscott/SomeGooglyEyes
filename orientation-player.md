@@ -110,8 +110,8 @@ entityOverrides = [
 | Key | Default | Effect |
 | --- | --- | --- |
 | `ambientBehaviors` | `true` | Enables idle expressions |
-| `ambientMinTicks` | `100` | Minimum idle interval |
-| `ambientMaxTicks` | `400` | Maximum idle interval |
+| `ambientMinTicks` | `200` | Minimum idle interval |
+| `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
 | `growOnHitPercent` | `20` | Bulge chance after player damage |
 | `swirlOnTrade` | `true` | Swirl after a trade |

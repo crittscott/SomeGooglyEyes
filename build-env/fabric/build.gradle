@@ -8,9 +8,6 @@ architectury {
 }
 
 rootProject.configureGameTests(project)
-// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
-// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
-sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
 
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
@@ -67,17 +64,10 @@ configurations {
     }
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
-
-    // Optional at runtime; needed at compile time by the GeckoLib render bridge.
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
