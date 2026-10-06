@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.BlockPos;
@@ -37,7 +38,7 @@ import java.util.Map;
  *
  * <p>{@link #slimyEyeAppliesOnlyToEligibleTargets}, {@link #slimyEyeRefusesAnAlreadyEyedTarget}, and
  * {@link #slimyEyeRerollsThePlacementVariant} then pin the apply verb
- * ({@link SlimyEyeItem#applyToTarget}): an eyeless, configured mob gains eyes carrying the stack's
+ * ({@link EyeItemService#applySlimyEye}): an eyeless, configured mob gains eyes carrying the stack's
  * appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or already-eyed
  * mob is refused with nothing consumed and nothing touched.
  */
@@ -104,7 +105,7 @@ public final class EligibilityGameTestsLogic {
             // Unconfigured: refused outright, and the eye stays in hand.
             ServerEyeConfigs.replaceAll(Map.of());
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
@@ -114,14 +115,14 @@ public final class EligibilityGameTestsLogic {
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            InteractionResult disabled = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "a disabled apply should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a disabled apply should not consume the eye");
 
             // Configured and enabled: eyes on, the stack's appearance carried across, exactly one eye spent.
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
             helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
@@ -149,7 +150,7 @@ public final class EligibilityGameTestsLogic {
             float roll = EyeState.getVariantRoll(cow);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
             helper.assertTrue(stack.getCount() == 1, "a refused apply should not consume the eye");
@@ -177,7 +178,7 @@ public final class EligibilityGameTestsLogic {
             EntityPersistentData.get(cow).putFloat(EyeState.VARIANT_ROLL, 2F);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
             float roll = EyeState.getVariantRoll(cow);
@@ -271,7 +272,7 @@ public final class EligibilityGameTestsLogic {
 
             player.getAbilities().instabuild = true;
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, cow);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
             helper.assertTrue(EyeState.hasEyes(cow), "the target gains eyes");

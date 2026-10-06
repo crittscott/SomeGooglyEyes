@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.config.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -22,14 +23,14 @@ public final class NeoForgeClientConfig {
 
     static {
         BUILDER.push("Client Settings");
-        DISABLE_GOOGLY_EYES = BUILDER.comment("Disable display of all googly eyes on this client.")
+        DISABLE_GOOGLY_EYES = BUILDER.comment(ClientConfig.DISABLE_GOOGLY_EYES_COMMENT)
                 .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
-        DISABLED_ENTITIES = BUILDER.comment("Entity ids that should not display googly eyes")
+        DISABLED_ENTITIES = BUILDER.comment(ClientConfig.DISABLED_ENTITIES_COMMENT)
                 .defineList(ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT,
-                        () -> "", value -> value instanceof String);
-        DISABLED_MODS = BUILDER.comment("Mod namespaces whose entities should not display googly eyes")
+                        () -> "", value -> value instanceof String string && ServerConfig.validateEntityId(string));
+        DISABLED_MODS = BUILDER.comment(ClientConfig.DISABLED_MODS_COMMENT)
                 .defineList(ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT,
-                        () -> "", value -> value instanceof String);
+                        () -> "", value -> value instanceof String string && ServerConfig.validateNamespace(string));
         BUILDER.pop();
         SPEC = BUILDER.build();
     }
@@ -50,6 +51,5 @@ public final class NeoForgeClientConfig {
         ClientConfig.DISABLE_GOOGLY_EYES.set(DISABLE_GOOGLY_EYES.get());
         ClientConfig.DISABLED_ENTITIES.set(new ArrayList<>(DISABLED_ENTITIES.get()));
         ClientConfig.DISABLED_MODS.set(new ArrayList<>(DISABLED_MODS.get()));
-        ClientConfig.invalidateCaches();
     }
 }

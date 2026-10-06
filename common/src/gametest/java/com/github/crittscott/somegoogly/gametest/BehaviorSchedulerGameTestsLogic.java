@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
@@ -40,12 +40,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.STARE, 10, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
                     "the first trigger starts");
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 10, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
                     "a second trigger is dropped while one is playing");
             advance(10);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 10, 3L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
                     "once the active behavior elapses a new trigger starts");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -69,12 +69,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     "the first heal starts a swirl");
 
-            advance(EyeBehaviors.SWIRL.defaultDuration());
+            advance(EyeBehavior.SWIRL.defaultDuration());
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
                     "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -100,19 +100,19 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.SWIRL_ON_HEAL.set(false);
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
                     "swirlOnHeal=false suppresses the heal swirl");
             advance(3);
 
             ServerConfig.SWIRL_ON_TRADE.set(false);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
                     "swirlOnTrade=false suppresses the trade swirl");
             advance(3);
 
             ServerConfig.GROW_ON_HIT_PERCENT.set(0);
             ServerBehaviorScheduler.onPlayerHurt(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 3L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
                     "growOnHitPercent=0 never rolls the hurt grow");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -140,7 +140,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     "an eyeless mob's game events never start a behavior even while it is tracked");
         } finally {
             ServerBehaviorScheduler.clear();

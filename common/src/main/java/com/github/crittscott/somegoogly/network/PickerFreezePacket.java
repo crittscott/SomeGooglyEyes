@@ -27,17 +27,8 @@ public class PickerFreezePacket implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_FREEZE);
-    public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public PickerFreezePacket decode(RegistryFriendlyByteBuf buffer) {
-            return PickerFreezePacket.decode(buffer);
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buffer, PickerFreezePacket packet) {
-            PickerFreezePacket.encode(packet, buffer);
-        }
-    };
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC =
+            StreamCodec.ofMember(PickerFreezePacket::encode, PickerFreezePacket::decode);
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester: the picker reach

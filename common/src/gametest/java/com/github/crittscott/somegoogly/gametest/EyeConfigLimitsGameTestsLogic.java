@@ -15,10 +15,9 @@ import java.util.List;
 
 /**
  * Semantic-bound coverage for {@link EyeConfigLimits#validateRuntimeConfig(RuntimeConfig)} — the
- * object-graph validator that guards datapack reload and picker export. Its wire-preflight twin
- * ({@code validateWireRuntimeConfig}) is exercised by {@link SerializationGameTestsLogic} and
- * {@link PickerExportGameTestsLogic}; these tests pin the parallel checks on the decoded form so the
- * two cannot drift. Pure and world-less: only {@link GameTestHelper} assertions touch the framework.
+ * object-graph validator that guards datapack reload, picker export, and (through
+ * {@code validateSync}) network decode, which {@link SerializationGameTestsLogic} and
+ * {@link PickerExportGameTestsLogic} exercise end to end. Pure and world-less: only {@link GameTestHelper} assertions touch the framework.
  */
 public final class EyeConfigLimitsGameTestsLogic {
 

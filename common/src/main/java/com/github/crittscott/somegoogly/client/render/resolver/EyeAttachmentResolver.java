@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
  *
  * <p>The work splits in two. {@link #resolve} searches the model's part tree by string name and is the
  * expensive half; {@link #toAttachmentSpace} replays the {@link Attachment} it produced onto the pose and
- * is the per-frame half. The split is what lets {@link AttachmentCache#ATTACHMENTS} memoize the search: a model
+ * is the per-frame half. The split is what lets {@link Resolvers#ATTACHMENTS} memoize the search: a model
  * is a singleton and a token names the same part within it forever.
  */
 public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>, Attachment> {
@@ -114,7 +115,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * the model has no such part (an unknown token, or a model whose worn variant lacks it).
      *
      * <p>The expensive half of the contract: a search of the model's part tree, matching each candidate
-     * path against the token. Called once per (model, token) — see {@link AttachmentCache#ATTACHMENTS} — so it
+     * path against the token. Called once per (model, token) — see {@link Resolvers#ATTACHMENTS} — so it
      * may allocate and walk freely.
      *
      * @param partToken the configured attachment token (a string part name, possibly camelCase)
@@ -124,15 +125,22 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
     Attachment resolve(EntityModel<?> model, String partToken);
 
     /**
-     * Move {@code poseStack} into the named part's current (this-frame, post-animation) space.
-     * The caller is responsible for {@code pushPose()}/{@code popPose()} around this call.
+     * Move {@code poseStack} into the named part's current (this-frame, post-animation) space, first
+     * reproducing any whole-model transform the model applies outside its part tree
+     * ({@link ThirdPartyModelWraps}). The caller is responsible for {@code pushPose()}/{@code popPose()}
+     * around this call.
      *
      * @param partToken the configured attachment token (a string part name, possibly camelCase)
+     * @param young     the render state's baby flag, which selects the model's age branch
      * @return {@code true} if the part was found and the pose moved; {@code false} otherwise (caller
      *         should skip drawing for this head)
      */
-    default boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
-        Attachment attachment = AttachmentCache.ATTACHMENTS.get(model, partToken, this);
-        return attachment != null && attachment.apply(poseStack);
+    default boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken, boolean young) {
+        Attachment attachment = Resolvers.ATTACHMENTS.get(model, partToken, this);
+        if (attachment == null) {
+            return false;
+        }
+        ThirdPartyModelWraps.preTransform(model, young, poseStack);
+        return attachment.apply(poseStack);
     }
 }

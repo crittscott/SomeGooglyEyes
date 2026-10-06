@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -51,7 +51,7 @@ public class SlimyEyeRecipe implements CraftingRecipe {
         ItemStack result = delegate.assemble(input, registries);
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
-            if (stack.is(ModItems.GOOGLY_EYE.get())) {
+            if (stack.is(ModContent.GOOGLY_EYE.get())) {
                 EyeItemProperties.set(result, EyeItemProperties.get(stack));
                 break;
             }
@@ -81,7 +81,7 @@ public class SlimyEyeRecipe implements CraftingRecipe {
 
     @Override
     public RecipeSerializer<SlimyEyeRecipe> getSerializer() {
-        return ModRecipes.SLIMY_EYE.get();
+        return ModContent.SLIMY_EYE_RECIPE.get();
     }
 
     /**

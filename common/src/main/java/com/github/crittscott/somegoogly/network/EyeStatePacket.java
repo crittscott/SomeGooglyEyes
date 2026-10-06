@@ -21,17 +21,8 @@ public class EyeStatePacket implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<EyeStatePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_STATE);
-    public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public EyeStatePacket decode(RegistryFriendlyByteBuf buffer) {
-            return EyeStatePacket.decode(buffer);
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buffer, EyeStatePacket packet) {
-            EyeStatePacket.encode(packet, buffer);
-        }
-    };
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC =
+            StreamCodec.ofMember(EyeStatePacket::encode, EyeStatePacket::decode);
 
     private final int entityId;
     private final UUID entityUuid;

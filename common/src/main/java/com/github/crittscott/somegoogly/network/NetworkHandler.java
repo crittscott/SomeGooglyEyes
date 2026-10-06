@@ -1,15 +1,13 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
-import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 
-/** The mod's five payload ids and small loader-neutral send surface. */
+/**
+ * The mod's network version and its five payload ids. Sends go straight through the loader bridges,
+ * {@link com.github.crittscott.somegoogly.platform.Networking} and
+ * {@link com.github.crittscott.somegoogly.platform.ClientNetworking}.
+ */
 public final class NetworkHandler {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
@@ -22,35 +20,6 @@ public final class NetworkHandler {
     public static final ResourceLocation PICKER_EXPORT = versioned("picker_export");
 
     private NetworkHandler() {
-    }
-
-    public static void sendConfig(ServerPlayer player) {
-        Networking.sendToPlayer(player,
-                new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerConfig.GOOGLY_EYES_ENABLED.get()));
-    }
-
-    public static void sendEyeState(ServerPlayer player, EyeStatePacket packet) {
-        Networking.sendToPlayer(player, packet);
-    }
-
-    public static void sendEyeStateTrackingAndSelf(Entity entity, EyeStatePacket packet) {
-        Networking.sendTracking(entity, true, packet);
-    }
-
-    public static void sendBehavior(ServerPlayer player, EyeBehaviorTriggerPacket packet) {
-        Networking.sendToPlayer(player, packet);
-    }
-
-    public static void sendBehaviorTracking(Entity entity, EyeBehaviorTriggerPacket packet) {
-        Networking.sendTracking(entity, false, packet);
-    }
-
-    public static void sendToServer(PickerFreezePacket packet) {
-        ClientNetworking.sendToServer(packet);
-    }
-
-    public static void sendToServer(PickerExportPacket packet) {
-        ClientNetworking.sendToServer(packet);
     }
 
     private static ResourceLocation versioned(String path) {

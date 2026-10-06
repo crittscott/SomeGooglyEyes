@@ -32,17 +32,8 @@ public class PickerExportPacket implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_EXPORT);
-    public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public PickerExportPacket decode(RegistryFriendlyByteBuf buffer) {
-            return PickerExportPacket.decode(buffer);
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buffer, PickerExportPacket packet) {
-            PickerExportPacket.encode(packet, buffer);
-        }
-    };
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
+            StreamCodec.ofMember(PickerExportPacket::encode, PickerExportPacket::decode);
 
     @Nullable
     private final CompoundTag configNbt;

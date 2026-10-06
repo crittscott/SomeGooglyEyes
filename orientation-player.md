@@ -136,7 +136,7 @@ config/somegoogly-client.toml
 | `disabledEntities` | empty | Hides listed entity IDs |
 | `disabledMods` | empty | Hides entities from listed namespaces |
 
-These options affect only display. Re-enabling a previously disabled entity or namespace may require a resource reload or restart. Invisibility also hides eyes.
+These options affect only display and apply as soon as the loader reloads the file. Invisibility also hides eyes.
 
 ## Datapacks and compatibility
 
@@ -165,7 +165,7 @@ The picker is an in-world authoring tool for creative players. Its keys are rebi
 | `[` | Select previous model part |
 | `]` | Select next model part |
 
-While the picker is active, configured mobs display eyes regardless of spawn chance. A chosen mob is frozen, and the HUD and axis gizmo show the current editing state. Releasing it or leaving the server restores its previous AI state. Only one player may edit a mob at a time.
+While the picker is active, configured mobs display eyes regardless of spawn chance. A chosen mob is frozen, and the HUD and axis gizmo show the current editing state. Preview eyes show their colors and glow, with pupils centered. Releasing it or leaving the server restores its previous AI state. Only one player may edit a mob at a time.
 
 ### Workflow
 
@@ -187,7 +187,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world.
+It does not change the world. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
 
 ### Test mobs
 

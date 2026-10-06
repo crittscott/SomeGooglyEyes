@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
@@ -55,7 +54,7 @@ public final class ClientNetworkHandler {
     }
 
     private static void handleBehavior(EyeBehaviorTriggerPacket packet) {
-        EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId());
+        EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
         LivingEntity living = living(packet.entityId());
         if (behavior == null || living == null) {
             return;

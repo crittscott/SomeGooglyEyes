@@ -27,17 +27,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_CONFIG);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
-            new StreamCodec<>() {
-                @Override
-                public EyeConfigSyncPacket decode(RegistryFriendlyByteBuf buffer) {
-                    return EyeConfigSyncPacket.decode(buffer);
-                }
-
-                @Override
-                public void encode(RegistryFriendlyByteBuf buffer, EyeConfigSyncPacket packet) {
-                    EyeConfigSyncPacket.encode(packet, buffer);
-                }
-            };
+            StreamCodec.ofMember(EyeConfigSyncPacket::encode, EyeConfigSyncPacket::decode);
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final boolean googlyEyesEnabled;
@@ -57,7 +47,6 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
         Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
-        int wireEyes = 0;
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
             if (configs.containsKey(id)) {
@@ -66,14 +55,6 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             CompoundTag tag = buffer.readNbt();
             if (tag == null) {
                 throw new DecoderException("Missing synced eye config for " + id);
-            }
-            EyeConfigLimits.WireValidation validation = EyeConfigLimits.validateWireConfigSet(tag);
-            if (validation.error() != null) {
-                throw new DecoderException("Unsafe synced eye config for " + id + ": " + validation.error());
-            }
-            wireEyes += validation.eyes();
-            if (wireEyes > EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC) {
-                throw new DecoderException("Synced eye config total exceeds network limit");
             }
             RuntimeConfigSet decoded;
             try {

@@ -23,17 +23,7 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_BEHAVIOR);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
-            new StreamCodec<>() {
-                @Override
-                public EyeBehaviorTriggerPacket decode(RegistryFriendlyByteBuf buffer) {
-                    return EyeBehaviorTriggerPacket.decode(buffer);
-                }
-
-                @Override
-                public void encode(RegistryFriendlyByteBuf buffer, EyeBehaviorTriggerPacket packet) {
-                    EyeBehaviorTriggerPacket.encode(packet, buffer);
-                }
-            };
+            StreamCodec.ofMember(EyeBehaviorTriggerPacket::encode, EyeBehaviorTriggerPacket::decode);
 
     private static final int MAX_DURATION_TICKS = 1_200;
 

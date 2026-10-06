@@ -13,12 +13,18 @@ public final class FabricClientConfig {
 
     private static final String DEFAULTS = """
             [client]
+            # %s
             %s = %s
+            # %s
             %s = %s
+            # %s
             %s = %s
             """.formatted(
+            ClientConfig.DISABLE_GOOGLY_EYES_COMMENT,
             ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT,
+            ClientConfig.DISABLED_ENTITIES_COMMENT,
             ClientConfig.DISABLED_ENTITIES_KEY, TomlConfig.stringList(ClientConfig.DISABLED_ENTITIES_DEFAULT),
+            ClientConfig.DISABLED_MODS_COMMENT,
             ClientConfig.DISABLED_MODS_KEY, TomlConfig.stringList(ClientConfig.DISABLED_MODS_DEFAULT));
 
     private FabricClientConfig() {
@@ -35,7 +41,6 @@ public final class FabricClientConfig {
                     ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT));
             ClientConfig.DISABLED_MODS.set(TomlConfig.strings(values,
                     ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT));
-            ClientConfig.invalidateCaches();
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}", path, e);
         }

@@ -2,12 +2,13 @@ package com.github.crittscott.somegoogly.server;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -50,7 +51,7 @@ public final class EyeItemService {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() instanceof SlimyEyeItem) {
             return level.isClientSide() ? InteractionResult.SUCCESS
-                    : SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, mob);
+                    : applySlimyEye(stack, (ServerPlayer) player, mob);
         }
         if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
                 || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())
@@ -67,6 +68,35 @@ public final class EyeItemService {
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         playShearSound(mob);
         mob.gameEvent(GameEvent.SHEAR, player);
+        return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
+     * gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing, as does any
+     * target while {@code googlyEyesEnabled} is off — the master switch blocks hand application the same
+     * as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
+     * enabled and {@code canHarmPlayer} to hold, so it can't be used to restyle a teammate or anyone in a
+     * PvP-off world. Both the mob path ({@link #interact}) and the sneak self-apply
+     * ({@code SlimyEyeItem#use}) route through here.
+     */
+    public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, LivingEntity target) {
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
+            return InteractionResult.FAIL;
+        }
+        if (target instanceof Player victim && victim != player) {
+            if (!player.serverLevel().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
+                return InteractionResult.FAIL;
+            }
+        }
+        EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+                SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
+        target.gameEvent(GameEvent.ENTITY_INTERACT, player);
         return InteractionResult.SUCCESS;
     }
 
@@ -138,7 +168,7 @@ public final class EyeItemService {
     private static boolean hasOptometrist(ItemStack stack, HolderLookup.Provider registries) {
         return EnchantmentHelper.getItemEnchantmentLevel(
                 registries.lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(ModEnchantments.OPTOMETRIST),
+                        .getOrThrow(ModContent.OPTOMETRIST),
                 stack) > 0;
     }
 

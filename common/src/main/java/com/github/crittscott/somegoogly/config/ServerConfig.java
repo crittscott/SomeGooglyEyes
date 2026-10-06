@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -24,10 +23,10 @@ public class ServerConfig {
     public static final boolean ALLOW_SPAWN_ALL_DEFAULT = false;
     public static final String AMBIENT_BEHAVIOR_POOL_KEY = "ambientBehaviorPool";
     public static final List<String> AMBIENT_BEHAVIOR_POOL_DEFAULT = List.of(
-            EyeBehaviors.BLINK.id().toString(),
-            EyeBehaviors.CROSS_EYE.id().toString(),
-            EyeBehaviors.SIDE_EYE.id().toString(),
-            EyeBehaviors.STARE.id().toString());
+            EyeBehavior.BLINK.id().toString(),
+            EyeBehavior.CROSS_EYE.id().toString(),
+            EyeBehavior.SIDE_EYE.id().toString(),
+            EyeBehavior.STARE.id().toString());
     public static final String AMBIENT_BEHAVIORS_KEY = "ambientBehaviors";
     public static final boolean AMBIENT_BEHAVIORS_DEFAULT = true;
     public static final String AMBIENT_MAX_TICKS_KEY = "ambientMaxTicks";
@@ -88,15 +87,15 @@ public class ServerConfig {
             "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
 
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
-    public static final ConfigValue<List<String>> AMBIENT_BEHAVIOR_POOL =
-            ConfigValue.strings(AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId);
+    public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
+            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId, ServerConfig::parseBehaviorPool);
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
     public static final ConfigValue<Integer> AMBIENT_MAX_TICKS =
             ConfigValue.integer(AMBIENT_MAX_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
     public static final ConfigValue<Integer> AMBIENT_MIN_TICKS =
             ConfigValue.integer(AMBIENT_MIN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
-    public static final ConfigValue<List<String>> ENTITY_OVERRIDES =
-            ConfigValue.strings(ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride);
+    public static final ConfigValue.Parsed<List<SpawnOverride>> ENTITY_OVERRIDES = ConfigValue.parsedStrings(
+            ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride, ServerConfig::parseOverrides);
     public static final ConfigValue<Integer> GLOBAL_PERCENT =
             ConfigValue.integer(GLOBAL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     public static final ConfigValue<Boolean> GOOGLY_EYES_ENABLED = ConfigValue.bool(GOOGLY_EYES_ENABLED_DEFAULT);
@@ -104,54 +103,36 @@ public class ServerConfig {
             ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
-    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_ENTITIES =
-            ConfigValue.strings(SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateEntityId);
-    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_MODS =
-            ConfigValue.strings(SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace);
+    public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
+            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateEntityId, Set::copyOf);
+    public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
+            SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
             ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
     public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
     public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(SWIRL_ON_TRADE_DEFAULT);
 
-    // Compiled view of ENTITY_OVERRIDES, rebuilt whenever a loader or test replaces the immutable list.
-    private static List<String> lastParsedSource;
-    private static List<Override> overrides = List.of();
-
-    // Resolved view of AMBIENT_BEHAVIOR_POOL, rebuilt only when a loader or test replaces the immutable
-    // list (same rebuild-on-identity-change trick as ENTITY_OVERRIDES above).
-    private static List<String> lastBehaviorPoolSource;
-    private static List<EyeBehavior> enabledBehaviors = List.of();
-
-    // Deduplicated views of the /sg spawn(all) exclusion lists, rebuilt on identity change like the two above.
-    private static List<String> lastExcludedEntitySource;
-    private static Set<String> excludedSpawnEntities = Set.of();
-    private static List<String> lastExcludedModSource;
-    private static Set<String> excludedSpawnMods = Set.of();
-
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
-    private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
+    private record SpawnOverride(boolean exact, String literalId, Pattern pattern, int percent) {
     }
 
     /**
      * The behaviors eligible for ambient play: every registered behavior whose id appears in
-     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored. Hit whenever a mob's
-     * ambient timer fires, so the result is cached and only rebuilt when the pool config changes.
+     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored.
      */
     public static List<EyeBehavior> enabledBehaviors() {
-        List<String> source = AMBIENT_BEHAVIOR_POOL.get();
-        if (source == lastBehaviorPoolSource) {
-            return enabledBehaviors;
-        }
-        Set<String> enabled = new LinkedHashSet<>(source);
+        return AMBIENT_BEHAVIOR_POOL.parsed();
+    }
+
+    private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
+        Set<String> enabled = new LinkedHashSet<>(pool);
         List<EyeBehavior> result = new ArrayList<>();
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
+        for (EyeBehavior behavior : EyeBehavior.values()) {
             if (enabled.contains(behavior.id().toString())) {
                 result.add(behavior);
             }
         }
-        enabledBehaviors = result;
-        lastBehaviorPoolSource = source;
-        return enabledBehaviors;
+        return List.copyOf(result);
     }
 
     /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
@@ -169,28 +150,22 @@ public class ServerConfig {
         return regex.toString();
     }
 
-    /**
-     * Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
-     * already ran, but reloads can still surface bad entries, so we stay defensive).
-     */
-    private static Override parse(String entry) {
+    private static List<SpawnOverride> parseOverrides(List<String> entries) {
+        List<SpawnOverride> built = new ArrayList<>();
+        for (String entry : entries) {
+            built.add(parse(entry));
+        }
+        return List.copyOf(built);
+    }
+
+    /** Parse one 'pattern,percent' line that {@link #validateOverride} has already accepted. */
+    private static SpawnOverride parse(String entry) {
         String[] split = entry.split(",");
-        if (split.length != 2) {
-            return null;
-        }
         String pattern = split[0].trim();
-        int percent;
-        try {
-            percent = Integer.parseInt(split[1].trim());
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        if (pattern.isEmpty() || percent < PERCENT_MIN || percent > PERCENT_MAX) {
-            return null;
-        }
+        int percent = Integer.parseInt(split[1].trim());
         return pattern.indexOf('*') < 0
-                ? new Override(true, pattern, null, percent)
-                : new Override(false, null, Pattern.compile(globToRegex(pattern)), percent);
+                ? new SpawnOverride(true, pattern, null, percent)
+                : new SpawnOverride(false, null, Pattern.compile(globToRegex(pattern)), percent);
     }
 
     /**
@@ -198,10 +173,9 @@ public class ServerConfig {
      * the first matching wildcard override, else {@link #GLOBAL_PERCENT}.
      */
     public static int percentFor(ResourceLocation entityType) {
-        rebuildIfChanged();
         String id = entityType.toString();
-        Override firstWildcard = null;
-        for (Override o : overrides) {
+        SpawnOverride firstWildcard = null;
+        for (SpawnOverride o : ENTITY_OVERRIDES.parsed()) {
             if (o.exact) {
                 if (o.literalId.equals(id)) {
                     return o.percent; // exact match beats any wildcard, regardless of list order
@@ -219,34 +193,8 @@ public class ServerConfig {
      * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
      */
     public static boolean isSpawnExcluded(ResourceLocation entityType) {
-        List<String> entitySource = SPAWN_EXCLUDED_ENTITIES.get();
-        if (entitySource != lastExcludedEntitySource) {
-            excludedSpawnEntities = Set.copyOf(entitySource);
-            lastExcludedEntitySource = entitySource;
-        }
-        List<String> modSource = SPAWN_EXCLUDED_MODS.get();
-        if (modSource != lastExcludedModSource) {
-            excludedSpawnMods = Set.copyOf(modSource);
-            lastExcludedModSource = modSource;
-        }
-        return excludedSpawnMods.contains(entityType.getNamespace())
-                || excludedSpawnEntities.contains(entityType.toString());
-    }
-
-    private static void rebuildIfChanged() {
-        List<String> source = ENTITY_OVERRIDES.get();
-        if (source == lastParsedSource) {
-            return;
-        }
-        List<Override> built = new ArrayList<>();
-        for (String entry : source) {
-            Override parsed = parse(entry);
-            if (parsed != null) {
-                built.add(parsed);
-            }
-        }
-        overrides = built;
-        lastParsedSource = source;
+        return SPAWN_EXCLUDED_MODS.parsed().contains(entityType.getNamespace())
+                || SPAWN_EXCLUDED_ENTITIES.parsed().contains(entityType.toString());
     }
 
     /** Restore built-in defaults before a loader applies a newly opened world's values. */
@@ -266,14 +214,6 @@ public class ServerConfig {
         SWIRL_HEAL_COOLDOWN_TICKS.reset();
         SWIRL_ON_HEAL.reset();
         SWIRL_ON_TRADE.reset();
-        lastParsedSource = null;
-        overrides = List.of();
-        lastBehaviorPoolSource = null;
-        enabledBehaviors = List.of();
-        lastExcludedEntitySource = null;
-        excludedSpawnEntities = Set.of();
-        lastExcludedModSource = null;
-        excludedSpawnMods = Set.of();
     }
 
     /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
@@ -281,14 +221,20 @@ public class ServerConfig {
         return ResourceLocation.tryParse(value) != null;
     }
 
-    /** Whether a config string parses as an entity {@link ResourceLocation}; the entry guard for {@link #SPAWN_EXCLUDED_ENTITIES}. */
+    /**
+     * Whether a config string parses as an entity {@link ResourceLocation}; the entry guard for
+     * {@link #SPAWN_EXCLUDED_ENTITIES} and the client's {@code disabledEntities}.
+     */
     public static boolean validateEntityId(String value) {
         return ResourceLocation.tryParse(value) != null;
     }
 
-    /** Whether a config string is a bare resource-location namespace; the entry guard for {@link #SPAWN_EXCLUDED_MODS}. */
+    /**
+     * Whether a config string is a bare resource-location namespace; the entry guard for
+     * {@link #SPAWN_EXCLUDED_MODS}, the client's {@code disabledMods}, and the {@code /sg spawnall} filter.
+     */
     public static boolean validateNamespace(String value) {
-        return value.matches("[a-z0-9_.-]+");
+        return !value.isEmpty() && ResourceLocation.isValidNamespace(value);
     }
 
     /**

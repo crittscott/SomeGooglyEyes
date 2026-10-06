@@ -23,12 +23,12 @@ import net.minecraft.nbt.NbtOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,28 +140,33 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(oversized)),
                 "config sync must reject an oversized outer count before allocating entries");
 
-        CompoundTag tooManyVariants = new CompoundTag();
-        ListTag variants = new ListTag();
-        for (int i = 0; i <= EyeConfigLimits.MAX_VARIANTS_PER_CONFIG; i++) {
-            variants.add(new CompoundTag());
-        }
-        tooManyVariants.put("variants", variants);
-        helper.assertTrue(EyeConfigLimits.validateWireRuntimeConfig(tooManyVariants).limitExceeded(),
-                "raw nested lists must be budgeted before codec parsing");
+        RuntimeConfigSet tooManyVariants = sampleConfigSet();
+        tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
+                tooManyVariants.any.variants.get(0));
+        FriendlyByteBuf counted = singleConfigPayload(tooManyVariants);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(counted)),
+                "config sync must reject a config over the variant limit");
 
         RuntimeConfigSet unsafe = sampleConfigSet();
         HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
         head.eyes = List.of(new EyeDefinition(
                 new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
-        FriendlyByteBuf numeric = new FriendlyByteBuf(Unpooled.buffer());
-        numeric.writeVarInt(1);
-        numeric.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
-        numeric.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, unsafe)
-                .result().orElseThrow());
+        FriendlyByteBuf numeric = singleConfigPayload(unsafe);
         helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(numeric)),
                 "config sync must reject non-finite placement values");
         helper.succeed();
+    }
+
+    /** A config-sync payload carrying {@code set} for one entity, written without the encoder's own limit check. */
+    private static FriendlyByteBuf singleConfigPayload(RuntimeConfigSet set) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        buffer.writeVarInt(1);
+        buffer.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
+                .result().orElseThrow());
+        buffer.writeBoolean(true);
+        return buffer;
     }
 
     public static void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {

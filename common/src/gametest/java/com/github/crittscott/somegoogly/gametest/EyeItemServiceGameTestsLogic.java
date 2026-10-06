@@ -3,11 +3,10 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -43,7 +42,7 @@ public final class EyeItemServiceGameTestsLogic {
 
     private static ItemStack optometristShears(GameTestHelper helper) {
         Holder<Enchantment> optometrist = helper.getLevel().registryAccess()
-                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModEnchantments.OPTOMETRIST);
+                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ModContent.OPTOMETRIST);
         ItemStack shears = new ItemStack(Items.SHEARS);
         shears.enchant(optometrist, 1);
         return shears;
@@ -68,7 +67,7 @@ public final class EyeItemServiceGameTestsLogic {
 
         List<ItemEntity> drops = helper.getLevel().getEntitiesOfClass(
                 ItemEntity.class, cow.getBoundingBox().inflate(4.0));
-        helper.assertTrue(drops.size() == 1 && drops.get(0).getItem().is(ModItems.GOOGLY_EYE.get()),
+        helper.assertTrue(drops.size() == 1 && drops.get(0).getItem().is(ModContent.GOOGLY_EYE.get()),
                 "exactly one Googly Eye is dropped");
         helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0).getItem()).iris().orElse(null)),
                 "the dropped eye carries the mob's effective iris color");

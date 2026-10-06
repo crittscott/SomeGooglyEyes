@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -113,7 +113,7 @@ public final class ServerBehaviorScheduler {
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong())) {
+        if (start(mob, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
     }
@@ -127,7 +127,7 @@ public final class ServerBehaviorScheduler {
         if (state == null) {
             return;
         }
-        start(mob, state, EyeBehaviors.GROW, EyeBehaviors.GROW.defaultDuration(), RANDOM.nextLong());
+        start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -153,7 +153,7 @@ public final class ServerBehaviorScheduler {
         // they pick it up in sync rather than seeing nothing until the next one.
         if (state.busyUntil != 0 && state.activeId != null) {
             int elapsed = (int) Math.max(0, now - state.startedAt);
-            NetworkHandler.sendBehavior(player,
+            Networking.sendToPlayer(player,
                     new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
                             state.activeDuration, state.activeSeed, elapsed));
         }
@@ -180,7 +180,7 @@ public final class ServerBehaviorScheduler {
         if (state == null) {
             return;
         }
-        start(villager, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong());
+        start(villager, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong());
     }
 
     private static void rollAmbient(LivingEntity mob, MobState state) {
@@ -250,7 +250,7 @@ public final class ServerBehaviorScheduler {
         // A started behavior needs retiring at busyUntil regardless of eye state or tracking, which
         // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
         ACTIVE.putIfAbsent(mob, state);
-        NetworkHandler.sendBehaviorTracking(mob,
+        Networking.sendTracking(mob, false,
                 new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
         return true;
     }

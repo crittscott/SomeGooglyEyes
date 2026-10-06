@@ -8,9 +8,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -55,87 +52,6 @@ public final class EyeConfigLimits {
     @Nullable
     public static String validateRuntimeConfig(RuntimeConfig config) {
         return validateRuntimeConfig(config, new Budget());
-    }
-
-    /** Preflight nested wire lists before codecs allocate the corresponding runtime object graph. */
-    public static WireValidation validateWireConfigSet(CompoundTag set) {
-        int totalEyes = 0;
-        boolean foundAge = false;
-        for (String age : new String[]{
-                EyeConfigModel.AGE_ADULT, EyeConfigModel.AGE_BABY, EyeConfigModel.AGE_ANY}) {
-            Tag ageTag = set.get(age);
-            if (ageTag == null) {
-                continue;
-            }
-            foundAge = true;
-            if (!(ageTag instanceof CompoundTag runtime)) {
-                return new WireValidation(age + " config is not a compound", 0);
-            }
-            WireValidation result = validateWireRuntimeConfig(runtime);
-            if (result.error() != null) {
-                return new WireValidation(age + ": " + result.error(), 0);
-            }
-            totalEyes += result.eyes();
-            if (totalEyes > MAX_TOTAL_EYES_PER_SYNC) {
-                return new WireValidation("total eye count exceeds " + MAX_TOTAL_EYES_PER_SYNC, 0);
-            }
-        }
-        return foundAge
-                ? new WireValidation(null, totalEyes)
-                : new WireValidation("config set has no age configuration", 0);
-    }
-
-    /** Preflight one picker-export runtime config before its codec constructs nested lists. */
-    public static WireValidation validateWireRuntimeConfig(CompoundTag config) {
-        Tag variantsTag = config.get(EyeConfigModel.FIELD_VARIANTS);
-        if (!(variantsTag instanceof ListTag variants)
-                || !variants.isEmpty() && variants.getElementType() != Tag.TAG_COMPOUND) {
-            return new WireValidation("variants is not a list", 0);
-        }
-        if (variants.size() > MAX_VARIANTS_PER_CONFIG) {
-            return new WireValidation("variant count exceeds " + MAX_VARIANTS_PER_CONFIG, 0);
-        }
-        int totalEyes = 0;
-        for (int variantIndex = 0; variantIndex < variants.size(); variantIndex++) {
-            CompoundTag variant = variants.getCompound(variantIndex);
-            Tag headsTag = variant.get(EyeConfigModel.FIELD_HEADS);
-            if (!(headsTag instanceof ListTag heads)
-                    || !heads.isEmpty() && heads.getElementType() != Tag.TAG_COMPOUND) {
-                return new WireValidation("variant " + variantIndex + " heads is not a list", 0);
-            }
-            if (heads.size() > MAX_HEADS_PER_VARIANT) {
-                return new WireValidation("variant " + variantIndex + " head count exceeds "
-                        + MAX_HEADS_PER_VARIANT, 0);
-            }
-            int variantEyes = 0;
-            for (int headIndex = 0; headIndex < heads.size(); headIndex++) {
-                CompoundTag head = heads.getCompound(headIndex);
-                if (!head.contains(EyeConfigModel.FIELD_ATTACH_POINT, Tag.TAG_STRING)) {
-                    return new WireValidation("attachment token is not a string", 0);
-                }
-                int tokenLength = head.getString(EyeConfigModel.FIELD_ATTACH_POINT).length();
-                if (tokenLength == 0 || tokenLength > MAX_ATTACH_TOKEN_LENGTH) {
-                    return new WireValidation("attachment token length is invalid", 0);
-                }
-                Tag eyesTag = head.get(EyeConfigModel.FIELD_EYES);
-                if (!(eyesTag instanceof ListTag eyes)
-                        || !eyes.isEmpty() && eyes.getElementType() != Tag.TAG_COMPOUND) {
-                    return new WireValidation("eyes is not a list", 0);
-                }
-                if (eyes.size() > MAX_EYES_PER_HEAD) {
-                    return new WireValidation("eye count exceeds " + MAX_EYES_PER_HEAD, 0);
-                }
-                variantEyes += eyes.size();
-                totalEyes += eyes.size();
-                if (variantEyes > MAX_EYES_PER_VARIANT) {
-                    return new WireValidation("variant eye count exceeds " + MAX_EYES_PER_VARIANT, 0);
-                }
-                if (totalEyes > MAX_TOTAL_EYES_PER_SYNC) {
-                    return new WireValidation("total eye count exceeds " + MAX_TOTAL_EYES_PER_SYNC, 0);
-                }
-            }
-        }
-        return new WireValidation(null, totalEyes);
     }
 
     private static String validateConfigSet(RuntimeConfigSet set, Budget budget) {
@@ -265,11 +181,5 @@ public final class EyeConfigLimits {
 
     private static final class Budget {
         private int totalEyes;
-    }
-
-    public record WireValidation(@Nullable String error, int eyes) {
-        public boolean limitExceeded() {
-            return error != null && (error.contains("exceeds") || error.contains("length is invalid"));
-        }
     }
 }

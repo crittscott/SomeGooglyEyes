@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +46,7 @@ public final class EyeItemProperties {
 
     public static AppearanceOverride get(ItemStack stack) {
         AppearanceOverride properties =
-                stack.getOrDefault(ModDataComponents.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
+                stack.getOrDefault(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
         return properties.isValid() ? properties : AppearanceOverride.EMPTY;
     }
 
@@ -61,7 +62,7 @@ public final class EyeItemProperties {
         }
 
         CompoundTag customTag = customData.copyTag();
-        if (stack.has(ModDataComponents.EYE_PROPERTIES.get())) {
+        if (stack.has(ModContent.EYE_PROPERTIES.get())) {
             removeLegacyProperties(stack, customTag);
             return;
         }
@@ -91,9 +92,9 @@ public final class EyeItemProperties {
 
     public static void set(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {
-            stack.remove(ModDataComponents.EYE_PROPERTIES.get());
+            stack.remove(ModContent.EYE_PROPERTIES.get());
         } else {
-            stack.set(ModDataComponents.EYE_PROPERTIES.get(), properties);
+            stack.set(ModContent.EYE_PROPERTIES.get(), properties);
         }
     }
 }

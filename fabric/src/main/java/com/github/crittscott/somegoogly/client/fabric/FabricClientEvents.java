@@ -29,7 +29,7 @@ public final class FabricClientEvents {
     public static void register() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
-                        ClientRenderLayers.install(entityType, renderer));
+                        ClientRenderLayers.install(renderer));
 
         KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);

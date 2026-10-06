@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.command;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
@@ -60,7 +59,7 @@ public final class GooglyServerCommands {
     /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
     private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
         builder.suggest(RANDOM_BEHAVIOR_TOKEN);
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
+        for (EyeBehavior behavior : EyeBehavior.values()) {
             builder.suggest(behavior.id().getPath());
         }
         return builder.buildFuture();
@@ -163,7 +162,7 @@ public final class GooglyServerCommands {
             player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_disabled"));
             return 0;
         }
-        if (modFilter != null && !modFilter.matches("[a-z0-9_.-]+")) {
+        if (modFilter != null && !ServerConfig.validateNamespace(modFilter)) {
             return 0;
         }
         if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
@@ -256,12 +255,12 @@ public final class GooglyServerCommands {
 
         EyeBehavior behavior;
         if (id.equalsIgnoreCase(RANDOM_BEHAVIOR_TOKEN)) {
-            var pool = EyeBehaviors.all();
-            behavior = pool.get(target.getRandom().nextInt(pool.size()));
+            EyeBehavior[] pool = EyeBehavior.values();
+            behavior = pool[target.getRandom().nextInt(pool.length)];
         } else {
             ResourceLocation key = id.indexOf(':') >= 0 ? ResourceLocation.tryParse(id)
                     : ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, id);
-            behavior = key == null ? null : EyeBehaviors.byId(key);
+            behavior = key == null ? null : EyeBehavior.byId(key);
         }
         if (behavior == null) {
             ctx.getSource().sendFailure(Component.translatable("somegoogly.command.admin.unknown_behavior", id));

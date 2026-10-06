@@ -6,8 +6,8 @@ import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -668,7 +668,7 @@ public final class PickerState {
     /** Send a picker request if a connection exists (guards races around disconnect). */
     private static void send(PickerFreezePacket packet) {
         if (Minecraft.getInstance().getConnection() != null) {
-            NetworkHandler.sendToServer(packet);
+            ClientNetworking.sendToServer(packet);
         }
     }
 

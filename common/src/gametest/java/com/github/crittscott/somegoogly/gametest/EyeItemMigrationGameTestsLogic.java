@@ -10,9 +10,8 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModDataComponents;
-import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.registry.ModContent;
+import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import net.minecraft.core.BlockPos;
@@ -52,7 +51,7 @@ public final class EyeItemMigrationGameTestsLogic {
     }
 
     private static List<Item> eyeItems() {
-        return List.of(ModItems.GOOGLY_EYE.get(), ModItems.SLIMY_EYE.get());
+        return List.of(ModContent.GOOGLY_EYE.get(), ModContent.SLIMY_EYE.get());
     }
 
     private static ItemStack legacyStack(Item item, AppearanceOverride appearance, int count) {
@@ -87,9 +86,9 @@ public final class EyeItemMigrationGameTestsLogic {
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
         List<Ingredient> ingredients = List.of(
-                Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
+                Ingredient.of(ModContent.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe("", CraftingBookCategory.MISC,
-                new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
+                new ItemStack(ModContent.SLIMY_EYE.get()), ingredients);
     }
 
     private static RuntimeConfig usableConfig() {
@@ -184,16 +183,16 @@ public final class EyeItemMigrationGameTestsLogic {
 
         for (Item item : eyeItems()) {
             ItemStack conflict = legacyStack(item, old, 1);
-            conflict.set(ModDataComponents.EYE_PROPERTIES.get(), current);
+            conflict.set(ModContent.EYE_PROPERTIES.get(), current);
             ItemStack resolved = decode(conflict, registries);
             helper.assertTrue(EyeItemProperties.get(resolved).equals(current),
                     "an existing current component must win without field merging");
             assertLegacyAbsent(helper, resolved);
 
             ItemStack emptyConflict = legacyStack(item, old, 1);
-            emptyConflict.set(ModDataComponents.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
+            emptyConflict.set(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
             ItemStack emptyResolved = decode(emptyConflict, registries);
-            helper.assertTrue(emptyResolved.has(ModDataComponents.EYE_PROPERTIES.get())
+            helper.assertTrue(emptyResolved.has(ModContent.EYE_PROPERTIES.get())
                             && EyeItemProperties.get(emptyResolved).isEmpty(),
                     "component presence must win even when the current component is empty");
             assertLegacyAbsent(helper, emptyResolved);
@@ -201,7 +200,7 @@ public final class EyeItemMigrationGameTestsLogic {
             CompoundTag malformed = new CompoundTag();
             malformed.putString("irisColor", "not-a-color");
             ItemStack retained = decode(legacyStack(item, malformed, 1), registries);
-            helper.assertTrue(!retained.has(ModDataComponents.EYE_PROPERTIES.get()),
+            helper.assertTrue(!retained.has(ModContent.EYE_PROPERTIES.get()),
                     "malformed old data must not invent a current component");
             helper.assertTrue(customTag(retained).contains(LEGACY_PROPERTIES_KEY),
                     "malformed old data must remain available for recovery");
@@ -241,7 +240,7 @@ public final class EyeItemMigrationGameTestsLogic {
                 .withIrisColor(new EyeColor(0.5F, 0.6F, 0.7F))
                 .withCorneaColor(cornea)
                 .withGlow(false);
-        ItemStack migrated = decode(legacyStack(ModItems.GOOGLY_EYE.get(), expected, 1), registries);
+        ItemStack migrated = decode(legacyStack(ModContent.GOOGLY_EYE.get(), expected, 1), registries);
 
         EyeModifierRecipe modifierRecipe = new EyeModifierRecipe(CraftingBookCategory.MISC);
         ItemStack dyed = modifierRecipe.assemble(grid(migrated, new ItemStack(Items.RED_DYE)), registries);
@@ -269,7 +268,7 @@ public final class EyeItemMigrationGameTestsLogic {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(0.2F, 0.5F, 0.8F)).withGlow(false);
-        ItemStack migrated = decode(legacyStack(ModItems.SLIMY_EYE.get(), expected, 2), registries);
+        ItemStack migrated = decode(legacyStack(ModContent.SLIMY_EYE.get(), expected, 2), registries);
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
 
@@ -283,7 +282,7 @@ public final class EyeItemMigrationGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             player.getAbilities().instabuild = false;
 
-            InteractionResult result = SlimyEyeItem.applyToTarget(migrated, (ServerPlayer) player, cow);
+            InteractionResult result = EyeItemService.applySlimyEye(migrated, (ServerPlayer) player, cow);
             helper.assertTrue(result.consumesAction(), "a migrated Slimy Eye must apply successfully");
             helper.assertTrue(EyeState.readProperties(cow).equals(expected),
                     "the mob must receive the converted appearance");
@@ -302,7 +301,7 @@ public final class EyeItemMigrationGameTestsLogic {
         AppearanceOverride expected = AppearanceOverride.EMPTY.withGlow(true);
         BlockPos pos = new BlockPos(1, 1, 1);
         ChestBlockEntity source = new ChestBlockEntity(pos, Blocks.CHEST.defaultBlockState());
-        source.setItem(0, legacyStack(ModItems.GOOGLY_EYE.get(), expected, 4));
+        source.setItem(0, legacyStack(ModContent.GOOGLY_EYE.get(), expected, 4));
 
         CompoundTag saved = source.saveWithFullMetadata(registries);
         BlockEntity loaded = BlockEntity.loadStatic(pos, Blocks.CHEST.defaultBlockState(), saved, registries);
@@ -318,7 +317,7 @@ public final class EyeItemMigrationGameTestsLogic {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(0.6F, 0.4F, 0.2F));
-        ItemStack inner = legacyStack(ModItems.SLIMY_EYE.get(), expected, 2);
+        ItemStack inner = legacyStack(ModContent.SLIMY_EYE.get(), expected, 2);
         ItemStack shulker = new ItemStack(Items.SHULKER_BOX);
         shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(inner)));
 

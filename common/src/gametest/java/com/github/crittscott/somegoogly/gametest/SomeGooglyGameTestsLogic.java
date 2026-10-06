@@ -7,11 +7,10 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -105,7 +104,7 @@ public final class SomeGooglyGameTestsLogic {
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         Holder.Reference<Enchantment> optometrist = helper.getLevel().registryAccess()
                 .lookupOrThrow(Registries.ENCHANTMENT)
-                .getOrThrow(ModEnchantments.OPTOMETRIST);
+                .getOrThrow(ModContent.OPTOMETRIST);
         helper.assertTrue(optometrist.value().isSupportedItem(new ItemStack(Items.SHEARS)),
                 "Optometrist should accept shears");
         helper.assertTrue(!optometrist.value().isSupportedItem(new ItemStack(Items.IRON_PICKAXE)),
@@ -134,7 +133,7 @@ public final class SomeGooglyGameTestsLogic {
         }
 
         helper.assertTrue(drops.size() == 1, "A qualifying death harvest should emit exactly one stack");
-        helper.assertTrue(drops.get(0).is(ModItems.GOOGLY_EYE.get()), "The emitted stack should be a Googly Eye");
+        helper.assertTrue(drops.get(0).is(ModContent.GOOGLY_EYE.get()), "The emitted stack should be a Googly Eye");
         helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0)).iris().orElse(null)),
                 "The harvested eye should capture the entity's effective iris color");
         helper.assertTrue(shears.getDamageValue() == 1, "A successful death harvest should damage the shears once");

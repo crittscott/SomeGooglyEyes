@@ -25,6 +25,13 @@ public final class Resolvers {
     // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
     private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
 
+    /**
+     * Attach points resolved once per (model instance, token) and replayed every frame, shared by every
+     * resolver. A datapack reload must <b>not</b> clear this (new configs change which token is asked for,
+     * not what a token names inside a model); {@link #clearCaches} clears it when the models are replaced.
+     */
+    static final ModelMemo<EntityModel<?>, Attachment> ATTACHMENTS = new ModelMemo<>();
+
     private Resolvers() {
     }
 
@@ -35,7 +42,7 @@ public final class Resolvers {
      * entries keep their own key alive (see {@link ModelMemo}).
      */
     public static void clearCaches() {
-        AttachmentCache.ATTACHMENTS.clear();
+        ATTACHMENTS.clear();
         BY_MODEL.clear();
         for (EyeAttachmentResolver r : ALL) {
             r.clearModelCache();

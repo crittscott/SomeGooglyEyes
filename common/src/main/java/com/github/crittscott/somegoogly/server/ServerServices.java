@@ -4,11 +4,10 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.eye.state.EyeStateSync;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.picker.PickerExportService;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -40,7 +39,6 @@ public final class ServerServices {
     /** Release all per-player picker state when a server player leaves. */
     public static void onPlayerLeft(ServerPlayer player) {
         PickerFreezeService.onPlayerLoggedOut(player);
-        PickerExportService.onPlayerLeft(player.getUUID());
         PickerGate.onPlayerLeft(player.getUUID());
     }
 
@@ -48,7 +46,6 @@ public final class ServerServices {
     public static void onServerStopping(MinecraftServer server) {
         ServerBehaviorScheduler.clear();
         PickerFreezeService.onServerStopping(server);
-        PickerExportService.onServerStopping();
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
     }
@@ -63,7 +60,7 @@ public final class ServerServices {
      * whose registration may immediately send a mid-behavior catch-up packet.
      */
     public static void onStartTracking(LivingEntity living, ServerPlayer player) {
-        EyeStateSync.sendTo(living, player);
+        EyeState.sendTo(living, player);
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
@@ -74,7 +71,8 @@ public final class ServerServices {
 
     /** Send current resolved eye definitions after login or reload. */
     public static void syncEyeConfigs(ServerPlayer player) {
-        NetworkHandler.sendConfig(player);
+        Networking.sendToPlayer(player,
+                new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerConfig.GOOGLY_EYES_ENABLED.get()));
     }
 
     private static void applyGooglyDecision(LivingEntity living) {

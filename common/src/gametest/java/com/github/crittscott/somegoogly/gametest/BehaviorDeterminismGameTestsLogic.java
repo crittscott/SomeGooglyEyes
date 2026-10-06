@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -71,7 +70,7 @@ public final class BehaviorDeterminismGameTestsLogic {
 
     public static void blinkMaskIsSeedDeterministic(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
-        EyeBehavior blink = EyeBehaviors.byId(
+        EyeBehavior blink = EyeBehavior.byId(
                 ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "blink"));
         helper.assertTrue(blink != null, "blink behavior should be registered");
 
@@ -86,7 +85,7 @@ public final class BehaviorDeterminismGameTestsLogic {
 
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
+        for (EyeBehavior behavior : EyeBehavior.values()) {
             BehaviorInstance a = playTo(behavior, headInfo, 8, 4242L);
             BehaviorInstance b = playTo(behavior, headInfo, 8, 4242L);
             helper.assertTrue(statesMatch(behavior, a, b, headInfo),
@@ -99,7 +98,7 @@ public final class BehaviorDeterminismGameTestsLogic {
         // A mid-effect joiner replays elapsed ticks to catch up; that must equal natural playback to the
         // same age (the equivalence GooglyTracker#startBehavior relies on, verified on the instance itself).
         HeadInfo headInfo = helperFor(helper);
-        EyeBehavior swirl = EyeBehaviors.byId(
+        EyeBehavior swirl = EyeBehavior.byId(
                 ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "swirl"));
         helper.assertTrue(swirl != null, "swirl behavior should be registered");
 

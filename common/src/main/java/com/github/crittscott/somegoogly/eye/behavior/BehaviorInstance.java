@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 /**
  * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
- * stateless singletons ({@link EyeBehaviors}); all per-play state lives here, on the mob's client
+ * stateless enum constants; all per-play state lives here, on the mob's client
  * tracker, so it's transient and per-mob.
  *
  * <p>The only animated state is {@link #age}: each behavior derives its {@link EyeInfluence} directly

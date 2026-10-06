@@ -1,9 +1,12 @@
 package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -25,8 +28,9 @@ import javax.annotation.Nullable;
  * </ul>
  *
  * <p>The read helpers and {@link Snapshot} are side-safe. Server mutation methods write a complete
- * coherent transition and then broadcast one snapshot, while packet handling installs a snapshot
- * without sending it back to the server.
+ * coherent transition and then broadcast one snapshot to the entity's trackers (and the entity itself
+ * when it is a player); {@link #sendTo} brings one new tracker up to date. Packet handling installs a
+ * snapshot without sending it back to the server.
  */
 public final class EyeState {
 
@@ -188,7 +192,21 @@ public final class EyeState {
         }
     }
 
+    /**
+     * Send one newly tracking player the entity's snapshot, unless it equals the client default
+     * ({@link #isDefaultState}).
+     */
+    public static void sendTo(LivingEntity entity, ServerPlayer player) {
+        if (!isDefaultState(entity)) {
+            Networking.sendToPlayer(player, packet(entity));
+        }
+    }
+
     private static void sync(LivingEntity entity) {
-        EyeStateSync.sync(entity, snapshot(entity));
+        Networking.sendTracking(entity, true, packet(entity));
+    }
+
+    private static EyeStatePacket packet(LivingEntity entity) {
+        return new EyeStatePacket(entity.getId(), entity.getUUID(), snapshot(entity));
     }
 }

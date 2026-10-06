@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.eye.state;
 
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -31,7 +31,7 @@ import java.util.Optional;
  * eye item carries "what the eye looks like", and attaching it reuses that mob's configured placement.
  *
  * <p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have no
- * presence here (see {@link EyeBehaviors}).
+ * presence here (see {@link EyeBehavior}).
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 

@@ -13,8 +13,8 @@ import java.util.Map;
  * without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
  * placement. {@link #preTransform} pre-multiplies the same transform onto the pose stack before the
  * resolver walk (the model applies its transform before any part's {@code translateAndRotate}, so
- * pre-multiplying composes identically). Call it after the layer's {@code pushPose}, before
- * {@code toAttachmentSpace}; it is a no-op for every unlisted model.
+ * pre-multiplying composes identically). {@code EyeAttachmentResolver#toAttachmentSpace} calls it
+ * before replaying the attachment; it is a no-op for every unlisted model.
  *
  * <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  * dependency on either mod. The branch is chosen by the render state's baby flag — the same age the

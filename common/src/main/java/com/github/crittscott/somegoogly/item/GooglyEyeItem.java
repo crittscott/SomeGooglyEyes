@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,8 @@ import java.util.List;
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
  *
  * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
- * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob.
+ * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
+ * for the stored appearance, migration, and tooltip.
  *
  * <p>Its 3D look comes from its item definition, which selects the {@code GooglyEyeItemRenderer}
  * special model, not from this class.
@@ -41,7 +43,7 @@ public class GooglyEyeItem extends Item {
 
     /** A new eye-item stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
-        ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
+        ItemStack stack = new ItemStack(ModContent.GOOGLY_EYE.get(), count);
         EyeItemProperties.set(stack, properties);
         return stack;
     }

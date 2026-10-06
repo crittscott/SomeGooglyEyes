@@ -4,9 +4,9 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -101,22 +101,22 @@ public final class RecipeGameTestsLogic {
         helper.assertTrue(recipe.matches(grid, helper.getLevel()), "an eye and a slimeball should match");
 
         ItemStack result = recipe.assemble(grid, registries);
-        helper.assertTrue(result.is(ModItems.SLIMY_EYE.get()), "the result should be a slimy eye");
+        helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), "the result should be a slimy eye");
 
         AppearanceOverride carried = EyeItemProperties.get(result);
         helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
         helper.assertTrue(carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
         helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(result) == 0xFF336699,
                 "the slimy eye should render its iris color with full alpha");
-        helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(new ItemStack(ModItems.SLIMY_EYE.get())) == 0xFF000000,
+        helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(new ItemStack(ModContent.SLIMY_EYE.get())) == 0xFF000000,
                 "the slimy eye should render its default black iris with full alpha");
         helper.succeed();
     }
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
         List<Ingredient> ingredients = List.of(
-                Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
+                Ingredient.of(ModContent.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe("", CraftingBookCategory.MISC,
-                new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
+                new ItemStack(ModContent.SLIMY_EYE.get()), ingredients);
     }
 }

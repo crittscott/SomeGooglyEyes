@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
@@ -37,8 +36,8 @@ import javax.annotation.Nullable;
  * (size) and the {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang
  * down).
  *
- * <p>Draws through {@link GooglyEyeRenderer}'s render types, so the item and the mob eyes share one
- * texture and one pair of pre-built {@code RenderType}s rather than each naming its own.
+ * <p>Draws through {@link GooglyEyeRenderer#drawEye}, so the item and the mob eyes share one drawing
+ * path, texture, and pair of render types.
  */
 public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOverride> {
 
@@ -139,16 +138,6 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         }
     }
 
-    private static void drawEye(ModelGooglyEye m, PoseStack pose, VertexConsumer vc, int light, int overlay,
-                                float[] cornea, float[] iris, float irisX, float irisY) {
-        m.renderCornea(pose, vc, light, overlay, cornea[0], cornea[1], cornea[2], 1F);
-        pose.pushPose();
-        pose.scale(IRIS_SCALE, IRIS_SCALE, 1F);
-        m.moveIris(irisX, irisY, IRIS_SCALE);
-        m.renderIris(pose, vc, light, overlay, iris[0], iris[1], iris[2], 1F);
-        pose.popPose();
-    }
-
     private static boolean isHeld(ItemDisplayContext ctx) {
         return ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
                 || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
@@ -199,10 +188,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
         pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
 
-        drawEye(m, pose, buffer.getBuffer(GooglyEyeRenderer.RENDER_TYPE), light, overlay, cornea, iris, irisX, irisY);
-        if (glow) {
-            drawEye(m, pose, buffer.getBuffer(GooglyEyeRenderer.RENDER_TYPE_EYES), light, overlay, cornea, iris, irisX, irisY);
-        }
+        GooglyEyeRenderer.drawEye(pose, m, buffer, light, overlay, cornea, iris, IRIS_SCALE, irisX, irisY, glow);
         pose.popPose();
     }
 }

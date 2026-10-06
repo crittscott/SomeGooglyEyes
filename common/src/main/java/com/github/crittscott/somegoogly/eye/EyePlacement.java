@@ -6,6 +6,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
  * stays in front of the cornea.
  *
  * <p>{@code crossTarget} is the index of another eye <b>in the same head</b> that this eye rolls its
- * pupil toward during the cross-eye behavior (see {@code CrossEyeBehavior}); {@link #NO_CROSS_TARGET}
+ * pupil toward during the cross-eye behavior (see {@code EyeBehavior#CROSS_EYE}); {@link #NO_CROSS_TARGET}
  * means this eye doesn't cross. It's a within-head index into that head's {@code eyes} list.
  *
  * <p>Everything is {@code float}: these are authored through {@code /sg} commands whose args parse as
@@ -80,16 +82,24 @@ public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float
         return new float[]{(float) position.x, (float) position.y, (float) position.z};
     }
 
+    /**
+     * The rotation from the attachment part's frame into this eye's local frame, whose -Z is the pupil
+     * axis: azimuth turns about the part's vertical axis, then inclination tilts about the horizontal.
+     */
+    public Quaternionf orientation() {
+        return orientation(inclination, azimuth);
+    }
+
+    /** {@link #orientation()} for raw authored angles, in degrees. */
+    public static Quaternionf orientation(double inclination, double azimuth) {
+        return new Quaternionf()
+                .rotationY((float) Math.toRadians(-(azimuth + 90.0)))
+                .rotateX((float) Math.toRadians(90.0 - inclination));
+    }
+
     /** Project a head-frame direction into this eye's local pupil-plane right/up basis. */
     public float[] projectToPupilPlane(double dx, double dy, double dz) {
-        double a = Math.toRadians(-(azimuth + 90.0));
-        double b = Math.toRadians(90.0 - inclination);
-        double ca = Math.cos(a);
-        double sa = Math.sin(a);
-        double cb = Math.cos(b);
-        double sb = Math.sin(b);
-        float x = (float) (dx * ca + dz * -sa);
-        float y = (float) (dx * (sa * sb) + dy * cb + dz * (ca * sb));
-        return new float[]{x, y};
+        Vector3f local = orientation().conjugate().transform(new Vector3f((float) dx, (float) dy, (float) dz));
+        return new float[]{local.x, local.y};
     }
 }
