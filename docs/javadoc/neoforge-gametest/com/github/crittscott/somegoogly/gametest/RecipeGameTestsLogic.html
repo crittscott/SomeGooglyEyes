@@ -90,14 +90,14 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">RecipeGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The mod's two crafting recipes, driven directly through a headless 2×1 grid (no player/menu UI):
+<div class="block">The mod's two crafting recipes, driven through a headless 2×1 grid (no player/menu UI):
 
  <ul>
    <li><code>eye_modifier</code> — one googly eye plus one recognized modifier transforms the eye's
        <code>AppearanceOverride</code>. Modifier→color mappings are asserted by presence, not exact RGB, so
        they don't pin a particular dye palette.</li>
-   <li><code>slimy_eye</code> — eye plus slimeball, which must carry the eye's appearance onto the
-       applicator. That copy is the whole reason the recipe isn't a plain shapeless one.</li>
+   <li><code>slimy_eye</code> — eye plus slimeball, a vanilla <code>crafting_transmute</code> looked up through the
+       server's recipe manager, which must carry the eye's appearance onto the applicator.</li>
  </ul></div>
 </section>
 <section class="summary">

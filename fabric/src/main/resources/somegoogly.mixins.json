@@ -9,9 +9,6 @@
     "LivingEntityReactionMixin",
     "MerchantResultSlotMixin"
   ],
-  "client": [
-    "client.EntityRenderDispatcherMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

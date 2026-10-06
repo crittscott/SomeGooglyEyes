@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
@@ -32,8 +33,6 @@ public final class NeoForgeClient {
     }
 
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
-        // Install the common client receive handoff before registered payload handlers can invoke it.
-        ClientNetworkHandler.register();
         NeoForgeClientConfig.register(modBus, modContainer);
 
         modBus.addListener(NeoForgeClient::addRendererLayers);
@@ -46,6 +45,9 @@ public final class NeoForgeClient {
         gameBus.addListener(NeoForgeClient::onClientTick);
         gameBus.addListener(NeoForgeClient::onEntityJoin);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
+        if (GeckoCompat.isLoaded()) {
+            NeoForgeGeckoLayers.register(gameBus);
+        }
     }
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {

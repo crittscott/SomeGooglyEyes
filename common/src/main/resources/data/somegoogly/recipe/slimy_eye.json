@@ -1,11 +1,7 @@
 {
-  "type": "somegoogly:slimy_eye",
+  "type": "minecraft:crafting_transmute",
   "category": "misc",
-  "ingredients": [
-    "somegoogly:googly_eye",
-    "minecraft:slime_ball"
-  ],
-  "result": {
-    "id": "somegoogly:slimy_eye"
-  }
+  "input": "somegoogly:googly_eye",
+  "material": "minecraft:slime_ball",
+  "result": "somegoogly:slimy_eye"
 }

@@ -5,7 +5,6 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
-import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
@@ -24,8 +23,9 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 /**
  * Everything the mod registers, declared once and bound through each loader's {@link ContentRegistrar}:
  * the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
- * component both carry, the mod's creative tab, and the two recipe serializers. The Optometrist
- * enchantment is data-driven, so only its resource key lives here.
+ * component both carry, the mod's creative tab, and the eye-modifier recipe serializer. The Optometrist
+ * enchantment is data-driven, so only its resource key lives here; the Slimy Eye recipe is a vanilla
+ * {@code crafting_transmute}, so it needs no serializer.
  */
 public final class ModContent {
 
@@ -43,8 +43,6 @@ public final class ModContent {
     public static final ContentRegistrar.Handle<CreativeModeTab> CREATIVE_TAB = new ContentRegistrar.Handle<>();
 
     public static final ContentRegistrar.Handle<CustomRecipe.Serializer<EyeModifierRecipe>> EYE_MODIFIER_RECIPE =
-            new ContentRegistrar.Handle<>();
-    public static final ContentRegistrar.Handle<SlimyEyeRecipe.Serializer> SLIMY_EYE_RECIPE =
             new ContentRegistrar.Handle<>();
 
     public static final ResourceKey<Enchantment> OPTOMETRIST = ResourceKey.create(
@@ -77,8 +75,6 @@ public final class ModContent {
 
         EYE_MODIFIER_RECIPE.bind(registrar.registerRecipeSerializer(
                 "eye_modifier", () -> new CustomRecipe.Serializer<>(EyeModifierRecipe::new)));
-        SLIMY_EYE_RECIPE.bind(registrar.registerRecipeSerializer(
-                "slimy_eye", SlimyEyeRecipe.Serializer::new));
     }
 
     /** An enchanted book holding {@link #OPTOMETRIST} at its max level. */

@@ -1,10 +1,12 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
@@ -15,12 +17,20 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 
-/** Fabric registration for client ticks, picker UI/input, and the eye items' tint and 3D renderer types. */
+/**
+ * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, and the eye
+ * items' tint and 3D renderer types.
+ */
 public final class FabricClientEvents {
 
     private FabricClientEvents() {
@@ -30,6 +40,21 @@ public final class FabricClientEvents {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));
+        if (GeckoCompat.isLoaded()) {
+            FabricGeckoLayers.register();
+        }
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                new SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public ResourceLocation getFabricId() {
+                        return ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches");
+                    }
+
+                    @Override
+                    public void onResourceManagerReload(ResourceManager manager) {
+                        ClientRenderLayers.clearCaches();
+                    }
+                });
 
         KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);

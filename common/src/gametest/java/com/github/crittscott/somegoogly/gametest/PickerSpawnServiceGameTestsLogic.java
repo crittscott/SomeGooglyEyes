@@ -52,11 +52,12 @@ public final class PickerSpawnServiceGameTestsLogic {
         BlockPos destination = helper.absolutePos(new BlockPos(2, 2, 2));
         float yaw = 37.0F;
 
-        PickerSpawnService.prepareForCommandSpawn(
+        boolean finalized = PickerSpawnService.prepareForCommandSpawn(
                 helper.getLevel(), cow,
                 destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
                 yaw);
 
+        helper.assertTrue(finalized, "An uncancelled command spawn must report successful finalization");
         helper.assertTrue(cow.finalizeCalls == 1, "Command-spawn preparation must finalize a mob exactly once");
         helper.assertTrue(cow.spawnType == EntitySpawnReason.COMMAND,
                 "Command-spawn preparation must use the command spawn reason");

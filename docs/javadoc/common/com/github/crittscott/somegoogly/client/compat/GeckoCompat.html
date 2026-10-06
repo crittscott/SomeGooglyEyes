@@ -117,9 +117,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Bone names for a GeckoLib mob, or an empty list when GeckoLib is unavailable.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">tryAddLayer</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isLoaded()" class="member-name-link">isLoaded</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Attach the googly-eye layer when this is a supported GeckoLib renderer.</div>
+<div class="block">Whether GeckoLib is present.</div>
 </div>
 </div>
 </div>
@@ -147,10 +147,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)">
-<h3>tryAddLayer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryAddLayer</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</span></div>
-<div class="block">Attach the googly-eye layer when this is a supported GeckoLib renderer.</div>
+<section class="detail" id="isLoaded()">
+<h3>isLoaded</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isLoaded</span>()</div>
+<div class="block">Whether GeckoLib is present. Loader code checks this before registering its GeckoLib render-layer
+ listener, whose class names GeckoLib's loader-specific event type.</div>
 </section>
 </li>
 </ul>

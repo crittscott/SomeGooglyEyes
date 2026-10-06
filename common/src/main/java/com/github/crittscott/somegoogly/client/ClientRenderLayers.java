@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -13,7 +12,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-/** Installs the vanilla-model and optional GeckoLib eye layers after renderer rebuilds. */
+/**
+ * Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
+ * not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.
+ */
 public final class ClientRenderLayers {
 
     private static final Set<EntityRenderer<?, ?>> INSTALLED =
@@ -22,23 +24,20 @@ public final class ClientRenderLayers {
     private ClientRenderLayers() {
     }
 
-    /** Clear the attachment caches; call once before a renderer rebuild installs layers again. */
+    /** Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or after it. */
     public static void clearCaches() {
         Resolvers.clearCaches();
     }
 
     /**
-     * Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the optional
-     * GeckoLib layer on any other. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden
-     * entities still get the layer; the per-frame render gate hides them, so a config change applies
-     * without a renderer rebuild.
+     * Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
+     * ignored. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
+     * layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.
      */
     @SuppressWarnings("rawtypes")
     public static void install(EntityRenderer<?, ?> renderer) {
         if (renderer instanceof LivingEntityRenderer livingRenderer) {
             addLiving(livingRenderer);
-        } else if (INSTALLED.add(renderer)) {
-            GeckoCompat.tryAddLayer(renderer);
         }
     }
 

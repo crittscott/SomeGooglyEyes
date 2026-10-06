@@ -151,7 +151,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their suggestions too.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)" class="member-name-link">prepareForCommandSpawn</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
  net.minecraft.world.entity.Entity&nbsp;entity,
  double&nbsp;x,
@@ -241,7 +241,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)">
 <h3>prepareForCommandSpawn</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">prepareForCommandSpawn</span><wbr><span class="parameters">(net.minecraft.server.level.ServerLevel&nbsp;level,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">prepareForCommandSpawn</span><wbr><span class="parameters">(net.minecraft.server.level.ServerLevel&nbsp;level,
  net.minecraft.world.entity.Entity&nbsp;entity,
  double&nbsp;x,
  double&nbsp;y,
@@ -250,7 +250,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
  the picker's frozen display state. Some modded mobs leave required persistent fields unset until
  <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.SpawnGroupData)</code>; inserting a factory-created mob without this step can make it impossible
- to save. Public for the shared GameTest regression check, which lives in another module.</div>
+ to save. Finalization goes through the loader's finalize-spawn event, as <code>/summon</code> does, so
+ other mods' listeners initialize the mob too. Public for the shared GameTest regression check, which
+ lives in another module.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be added</dd>
+</dl>
 </section>
 </li>
 </ul>

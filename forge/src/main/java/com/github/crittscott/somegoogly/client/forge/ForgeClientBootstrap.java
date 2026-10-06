@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
@@ -38,7 +39,6 @@ public final class ForgeClientBootstrap {
         IEventBus modBus = context.getModEventBus();
         IEventBus gameBus = MinecraftForge.EVENT_BUS;
 
-        ClientNetworkHandler.register();
         ForgeClientConfig.register(context);
         registerItemModelTypes();
 
@@ -50,6 +50,9 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::onClientTick);
         gameBus.addListener(ForgeClientBootstrap::onEntityJoin);
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
+        if (GeckoCompat.isLoaded()) {
+            ForgeGeckoLayers.register(gameBus);
+        }
     }
 
     /**

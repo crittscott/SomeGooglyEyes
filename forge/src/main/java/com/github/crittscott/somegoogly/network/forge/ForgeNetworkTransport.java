@@ -1,11 +1,11 @@
 package com.github.crittscott.somegoogly.network.forge;
 
+import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.network.NetworkTransport;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -37,13 +37,13 @@ public final class ForgeNetworkTransport {
 
         connection.play().clientbound().addMain(
                 EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleEyeState(payload));
         connection.play().clientbound().addMain(
                 EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleEyeConfigSync(payload));
         connection.play().clientbound().addMain(
                 EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleBehavior(payload));
         connection.play().serverbound().addMain(
                 PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC,
                 (payload, context) -> PickerFreezePacket.handle(payload, sender(context)));

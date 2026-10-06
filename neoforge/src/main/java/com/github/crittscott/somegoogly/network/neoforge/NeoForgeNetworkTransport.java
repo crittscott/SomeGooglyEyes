@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.network.neoforge;
 
+import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.network.NetworkTransport;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,11 +26,11 @@ public final class NeoForgeNetworkTransport {
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(NetworkHandler.NETWORK_VERSION);
         registrar.playToClient(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleEyeState(payload));
         registrar.playToClient(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleEyeConfigSync(payload));
         registrar.playToClient(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC,
-                (payload, context) -> NetworkTransport.receiveClientbound(payload));
+                (payload, context) -> ClientNetworkHandler.handleBehavior(payload));
         registrar.playToServer(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC,
                 (payload, context) -> PickerFreezePacket.handle(payload, serverPlayer(context)));
         registrar.playToServer(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC,

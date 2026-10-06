@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.picker;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.platform.MobSpawning;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -301,8 +302,9 @@ public final class PickerSpawnService {
             double z = cellZ + 0.5;
             float yaw = yawToward(x, z, player);
 
+            boolean finalized;
             try {
-                prepareForCommandSpawn(level, entity, x, y, z, yaw);
+                finalized = prepareForCommandSpawn(level, entity, x, y, z, yaw);
             } catch (Exception e) {
                 skipped++;
                 SomeGooglyCommon.LOGGER.debug(
@@ -311,6 +313,14 @@ public final class PickerSpawnService {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_finalize_threw",
                             candidate.id.toString(), e.getClass().getSimpleName()));
+                }
+                continue;
+            }
+            if (!finalized) {
+                skipped++;
+                if (filtering) {
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_cancelled", candidate.id.toString()));
                 }
                 continue;
             }
@@ -399,12 +409,17 @@ public final class PickerSpawnService {
         double x = pos.getX() + 0.5;
         double z = pos.getZ() + 0.5;
         float yaw = yawToward(x, z, player);
+        boolean finalized;
         try {
-            prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
+            finalized = prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.debug("/sg spawn {}: finalizeSpawn() threw", id, e);
             player.sendSystemMessage(Component.translatable(
                     "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName()));
+            return;
+        }
+        if (!finalized) {
+            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.cancelled", id.toString()));
             return;
         }
 
@@ -424,17 +439,19 @@ public final class PickerSpawnService {
      * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
      * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
      * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
-     * to save. Public for the shared GameTest regression check, which lives in another module.
+     * to save. Finalization goes through the loader's finalize-spawn event, as {@code /summon} does, so
+     * other mods' listeners initialize the mob too. Public for the shared GameTest regression check, which
+     * lives in another module.
+     *
+     * @return false when a finalize-spawn listener cancelled the spawn; the entity must then not be added
      */
-    public static void prepareForCommandSpawn(
+    public static boolean prepareForCommandSpawn(
             ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
         entity.moveTo(x, y, z, yaw, 0.0F);
         if (entity instanceof Mob mob) {
-            mob.finalizeSpawn(
-                    level,
-                    level.getCurrentDifficultyAt(mob.blockPosition()),
-                    EntitySpawnReason.COMMAND,
-                    null);
+            if (!MobSpawning.finalizeSpawn(mob, level, EntitySpawnReason.COMMAND)) {
+                return false;
+            }
             mob.setNoAi(true);
             // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.
             mob.setPersistenceRequired();
@@ -442,6 +459,7 @@ public final class PickerSpawnService {
             mob.setYHeadRot(yaw);
             mob.setYBodyRot(yaw);
         }
+        return true;
     }
 
     /** Source-block column height that keeps a water mob of this size submerged (at least one block). */

@@ -13,10 +13,6 @@ loom {
     }
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 dependencies {
     // Supplies the Mixin annotations for the common Mixins. Do NOT use Fabric Loader API from common.
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"

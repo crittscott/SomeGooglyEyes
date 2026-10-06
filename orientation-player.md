@@ -57,7 +57,7 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 
 Modifiers may be applied in successive crafting operations. Googly Eyes have no creation recipe; they must be harvested or taken from the creative menu.
 
-Craft a Googly Eye with a slimeball to make a Slimy Eye. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
+Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
@@ -197,7 +197,7 @@ It does not change the world. Both exports declare Minecraft definitions with th
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable test world: force-spawning mobs like MineColonies' or Create's outside their mod's normal context can corrupt or destabilize the world, which is why both are excluded by default (see `spawnExcludedMods` above).
 
-Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
+Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 

@@ -42,17 +42,11 @@ public final class GeckoCompat {
         }
     }
 
-    /** Attach the googly-eye layer when this is a supported GeckoLib renderer. */
-    public static boolean tryAddLayer(EntityRenderer<?, ?> renderer) {
-        if (!LOADED) {
-            return false;
-        }
-        try {
-            return GeckoIntegration.tryAddLayer(renderer);
-        } catch (Throwable failure) {
-            ClientIntegrationFailures.warnOnce(
-                    "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
-            return false;
-        }
+    /**
+     * Whether GeckoLib is present. Loader code checks this before registering its GeckoLib render-layer
+     * listener, whose class names GeckoLib's loader-specific event type.
+     */
+    public static boolean isLoaded() {
+        return LOADED;
     }
 }

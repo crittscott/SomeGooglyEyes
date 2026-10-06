@@ -91,8 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GeckoIntegration</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> (so this class — and the
- GeckoLib classes it touches — load only when GeckoLib is present).</div>
+<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> or from loader listeners registered
+ after its presence check (so this class — and the GeckoLib classes it touches — load only when GeckoLib is
+ present).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,12 +108,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compileLayers(software.bernie.geckolib.renderer.GeoEntityRenderer,java.util.function.Consumer)" class="member-name-link">compileLayers</a><wbr>(software.bernie.geckolib.renderer.GeoEntityRenderer&lt;?&gt;&nbsp;renderer,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;software.bernie.geckolib.renderer.layer.GeoRenderLayer&gt;&nbsp;addLayer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
+ renderer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">tryAddLayer</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -139,9 +144,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)">
-<h3>tryAddLayer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">tryAddLayer</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</span></div>
+<section class="detail" id="compileLayers(software.bernie.geckolib.renderer.GeoEntityRenderer,java.util.function.Consumer)">
+<h3>compileLayers</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">compileLayers</span><wbr><span class="parameters">(software.bernie.geckolib.renderer.GeoEntityRenderer&lt;?&gt;&nbsp;renderer,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;software.bernie.geckolib.renderer.layer.GeoRenderLayer&gt;&nbsp;addLayer)</span></div>
+<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
+ renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.</div>
 </section>
 </li>
 </ul>

@@ -93,8 +93,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Everything the mod registers, declared once and bound through each loader's <a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry"><code>ContentRegistrar</code></a>:
  the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
- component both carry, the mod's creative tab, and the two recipe serializers. The Optometrist
- enchantment is data-driven, so only its resource key lives here.</div>
+ component both carry, the mod's creative tab, and the eye-modifier recipe serializer. The Optometrist
+ enchantment is data-driven, so only its resource key lives here; the Slimy Eye recipe is a vanilla
+ <code>crafting_transmute</code>, so it needs no serializer.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,9 +128,6 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#SLIMY_EYE_RECIPE" class="member-name-link">SLIMY_EYE_RECIPE</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -197,12 +195,6 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="EYE_MODIFIER_RECIPE">
 <h3>EYE_MODIFIER_RECIPE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.crafting.CustomRecipe.Serializer&lt;<a href="../recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a>&gt;&gt;</span>&nbsp;<span class="element-name">EYE_MODIFIER_RECIPE</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="SLIMY_EYE_RECIPE">
-<h3>SLIMY_EYE_RECIPE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</span>&nbsp;<span class="element-name">SLIMY_EYE_RECIPE</span></div>
 </section>
 </li>
 <li>
