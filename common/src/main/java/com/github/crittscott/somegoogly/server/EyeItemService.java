@@ -25,7 +25,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -54,7 +53,7 @@ public final class EyeItemService {
             return level.isClientSide() ? InteractionResult.SUCCESS
                     : applySlimyEye(stack, (ServerPlayer) player, mob);
         }
-        if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
+        if (level.isClientSide() || !stack.is(ModContent.SHEARS)
                 || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())
                 || !ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             return InteractionResult.PASS;
@@ -87,9 +86,7 @@ public final class EyeItemService {
             }
         }
         EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
+        stack.consume(1, player);
         target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
         target.gameEvent(GameEvent.ENTITY_INTERACT, player);
@@ -108,7 +105,7 @@ public final class EyeItemService {
             return;
         }
         ItemStack weapon = player.getMainHandItem();
-        if (!(weapon.getItem() instanceof ShearsItem)
+        if (!weapon.is(ModContent.SHEARS)
                 || mob.getRandom().nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.HARVEST_ON_KILL_PERCENT.get()) {
             return;
         }
@@ -133,7 +130,7 @@ public final class EyeItemService {
     public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !player.isShiftKeyDown()
-                || !(stack.getItem() instanceof ShearsItem) || !EyeState.hasEyes(player)) {
+                || !stack.is(ModContent.SHEARS) || !EyeState.hasEyes(player)) {
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) {

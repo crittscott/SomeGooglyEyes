@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.storage.LevelResource;
 
 import javax.annotation.Nullable;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +38,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
  * client-authored eye config, writes it as canonical datapack JSON into the world's
- * {@code somegoogly-picker} pack, and {@code /reload}s so it persists and re-syncs through the normal
+ * {@code somegoogly-picker} pack, and reloads datapacks as {@code /reload} does so it persists and re-syncs through the normal
  * path. Owning this on the server is what lets a remote client export.
  *
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
@@ -146,8 +148,28 @@ public final class PickerExportService {
         SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {} — forcing datapack reload",
                 player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
-        server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "reload");
+        reloadDatapacks(server);
         return Component.translatable("somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);
+    }
+
+    /**
+     * What {@code /reload} does: rescan the pack repository so a first export's new pack is found, keep
+     * the selected packs plus any newly discovered pack the world hasn't disabled, and reload with them.
+     */
+    private static void reloadDatapacks(MinecraftServer server) {
+        PackRepository repository = server.getPackRepository();
+        repository.reload();
+        Collection<String> packs = new ArrayList<>(repository.getSelectedIds());
+        Collection<String> disabled = server.getWorldData().getDataConfiguration().dataPacks().getDisabled();
+        for (String id : repository.getAvailableIds()) {
+            if (!disabled.contains(id) && !packs.contains(id)) {
+                packs.add(id);
+            }
+        }
+        server.reloadResources(packs).exceptionally(e -> {
+            SomeGooglyCommon.LOGGER.error("Datapack reload after picker export failed", e);
+            return null;
+        });
     }
 
     /** Carry a currently-resolved age bucket forward as a {@link VersionedEntry}, unless it's the age being written now or has nothing usable. */

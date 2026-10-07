@@ -12,8 +12,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -56,6 +58,14 @@ public final class ModContent {
     public static final ResourceKey<DamageType> SELF_SHEAR = ResourceKey.create(
             Registries.DAMAGE_TYPE,
             ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "self_shear"));
+
+    /**
+     * Items that harvest eyes as shears: vanilla shears plus the conventional {@code c:tools/shear} tag,
+     * so modded shears count without extending {@code ShearsItem}.
+     */
+    public static final TagKey<Item> SHEARS = TagKey.create(
+            Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "shears"));
 
     private ModContent() {
     }

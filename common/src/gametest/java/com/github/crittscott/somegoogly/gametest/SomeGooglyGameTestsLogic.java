@@ -20,15 +20,18 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +92,31 @@ public final class SomeGooglyGameTestsLogic {
         helper.assertTrue(iris.equals(EyeState.readProperties(restored).iris().orElse(null)),
                 loader + " should restore appearance overrides");
         helper.succeed();
+    }
+
+    /**
+     * A mob Minecraft converts into another keeps its eye state. In game: give a mooshroom eyes and an iris
+     * tint with {@code /sg admin}, then shear it; the cow it becomes shows the same eyes in the same color.
+     */
+    public static void conversionKeepsEyeState(GameTestHelper helper) {
+        MushroomCow mooshroom = helper.spawnWithNoFreeWill(EntityType.MOOSHROOM, new BlockPos(2, 2, 2));
+        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
+        EyeState.initialize(mooshroom, true, 0.375F);
+        EyeState.setIrisTint(mooshroom, iris);
+
+        mooshroom.shear(helper.getLevel(), SoundSource.PLAYERS, new ItemStack(Items.SHEARS));
+
+        helper.succeedWhen(() -> {
+            AABB area = new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8);
+            List<Cow> cows = helper.getLevel().getEntitiesOfClass(Cow.class, area,
+                    cow -> cow.getType() == EntityType.COW);
+            helper.assertTrue(cows.size() == 1, "Expected the sheared mooshroom to become one cow");
+            Cow cow = cows.getFirst();
+            helper.assertTrue(EyeState.hasEyes(cow), "Converted mob should keep its eyes");
+            helper.assertTrue(EyeState.getVariantRoll(cow) == 0.375F, "Converted mob should keep its variant roll");
+            helper.assertTrue(iris.equals(EyeState.readProperties(cow).iris().orElse(null)),
+                    "Converted mob should keep its appearance overrides");
+        });
     }
 
     public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {

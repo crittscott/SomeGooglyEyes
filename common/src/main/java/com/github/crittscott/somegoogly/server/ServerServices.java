@@ -41,11 +41,16 @@ public final class ServerServices {
 
     /**
      * Initialize persistent eye state once for a server-side living entity, then reconcile any picker
-     * freeze marker after that state is available.
+     * freeze marker after that state is available. A player joining a level (login, respawn, dimension
+     * change) gets their own snapshot: their client has just built a fresh local player, and a player is
+     * never their own tracker, so the start-tracking sync doesn't cover them.
      */
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EyeState.isInitialized(living)) {
             applyGooglyDecision(living);
+        }
+        if (living instanceof ServerPlayer player) {
+            EyeState.sendTo(player, player);
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);

@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * shared datapack config ({@link com.github.crittscott.somegoogly.config.EyeConfigModel}).
  *
  * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
- * dimension changes, and aging. The loader-specific persistence bridge maps that compound onto each
+ * dimension changes, aging, mob conversion, and a player leaving the End ({@link #copy}). The loader-specific persistence bridge maps that compound onto each
  * platform's entity storage. Three pieces:
  * <ul>
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
@@ -46,6 +46,26 @@ public final class EyeState {
 
     /** The full portable state synchronized for one living entity. */
     public record Snapshot(boolean hasEyes, float variantRoll, AppearanceOverride properties) {
+    }
+
+    /**
+     * Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
+     * or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh. Copying
+     * before or after the replacement joins its level both work: an initialized target is never re-rolled,
+     * and the broadcast reaches whoever already tracks it.
+     */
+    public static void copy(LivingEntity source, LivingEntity target) {
+        if (!isInitialized(source)) {
+            return;
+        }
+        CompoundTag data = EntityPersistentData.get(target);
+        data.putBoolean(HAS_EYES, hasEyes(source));
+        data.putFloat(VARIANT_ROLL, getVariantRoll(source));
+        writeProperties(data, readProperties(source));
+        if (hasEyes(target)) {
+            ServerBehaviorScheduler.onEyesGained(target);
+        }
+        sync(target);
     }
 
     /** Install a synchronized snapshot on the client without broadcasting it. */

@@ -102,6 +102,11 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void conversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.eyeStateAppearanceOverridesRoundTrip(helper);
     }

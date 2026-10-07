@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.server.forge;
 
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +14,7 @@ import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -44,6 +46,19 @@ public final class ForgeServerEvents {
         gameBus.addListener(ForgeServerEvents::onLivingDamage);
         gameBus.addListener(ForgeServerEvents::onLivingHeal);
         gameBus.addListener(ForgeServerEvents::onTrade);
+        gameBus.addListener(ForgeServerEvents::onPlayerClone);
+        gameBus.addListener(ForgeServerEvents::onLivingConversion);
+    }
+
+    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) {
+            EyeState.copy(event.getOriginal(), event.getEntity());
+        }
+    }
+
+    private static void onLivingConversion(LivingConversionEvent.Post event) {
+        EyeState.copy(event.getEntity(), event.getOutcome());
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {

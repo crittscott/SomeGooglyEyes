@@ -14,7 +14,7 @@ Artifacts target Minecraft 1.21.4 on Fabric, NeoForge, and Forge. Fabric require
 
 ## Mobs with eyes
 
-By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn. Changing the server chance affects only new mobs. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon cannot have eyes.
+By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn. Changing the server chance affects only new mobs. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon cannot have eyes. A mob that converts into another (a cured zombie villager, a sheared mooshroom) keeps its eyes, as does a player leaving the End.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
@@ -32,7 +32,7 @@ Only one expression plays at a time, and expressions are cosmetic.
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears here and throughout mean vanilla shears or any item in the conventional `c:tools/shear` tag. A successful harvest costs one shears durability.
 
 ### Optometrist
 
@@ -224,5 +224,5 @@ Color channels range from 0 to 1.
 - Armadillo, bogged, and breeze do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 103 dedicated-server GameTests; NeoForge and Forge each contain 99. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 104 dedicated-server GameTests; NeoForge and Forge each contain 100. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

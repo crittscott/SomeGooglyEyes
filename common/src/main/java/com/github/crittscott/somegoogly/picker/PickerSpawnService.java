@@ -325,7 +325,7 @@ public final class PickerSpawnService {
                 continue;
             }
 
-            if (level.addFreshEntity(entity)) {
+            if (level.tryAddFreshEntityWithPassengers(entity)) {
                 spawned++;
                 columnIndex++;
             } else {
@@ -426,7 +426,7 @@ public final class PickerSpawnService {
             return;
         }
 
-        if (level.addFreshEntity(entity)) {
+        if (level.tryAddFreshEntityWithPassengers(entity)) {
             tell(player, "somegoogly.command.spawn.spawned", id.toString());
         } else {
             tell(player, "somegoogly.command.spawn.refused", id.toString());
@@ -449,6 +449,13 @@ public final class PickerSpawnService {
         if (entity instanceof Mob mob) {
             if (!MobSpawning.finalizeSpawn(mob, level, EntitySpawnReason.COMMAND)) {
                 return false;
+            }
+            // Freeze finalize-spawned riders (spider jockeys) with their mount.
+            for (Entity rider : mob.getIndirectPassengers()) {
+                if (rider instanceof Mob riderMob) {
+                    riderMob.setNoAi(true);
+                    riderMob.setPersistenceRequired();
+                }
             }
             mob.setNoAi(true);
             // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.

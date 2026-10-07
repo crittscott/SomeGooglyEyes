@@ -3,11 +3,13 @@ package com.github.crittscott.somegoogly.server.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -41,15 +43,24 @@ public final class FabricServerEvents {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 GooglyServerCommands.register(dispatcher, registryAccess));
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
+        // Fabric's use callbacks fire before vanilla's spectator check, so callers must make it themselves.
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
-                entity instanceof LivingEntity living
+                !player.isSpectator() && entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
                         : InteractionResult.PASS);
         UseItemCallback.EVENT.register((player, level, hand) ->
-                EyeItemService.selfRemoveWithShears(player, hand));
+                player.isSpectator() ? InteractionResult.PASS : EyeItemService.selfRemoveWithShears(player, hand));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);
+            }
+        });
+        ServerLivingEntityEvents.MOB_CONVERSION.register((previous, converted, context) ->
+                EyeState.copy(previous, converted));
+        // Leaving the End replaces the player; eyes applied to a player are still lost on death.
+        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
+            if (alive) {
+                EyeState.copy(oldPlayer, newPlayer);
             }
         });
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {

@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.server.neoforge;
 
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,6 +15,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
@@ -45,6 +47,19 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onLivingDamage);
         gameBus.addListener(NeoForgeServerEvents::onLivingHeal);
         gameBus.addListener(NeoForgeServerEvents::onTrade);
+        gameBus.addListener(NeoForgeServerEvents::onPlayerClone);
+        gameBus.addListener(NeoForgeServerEvents::onLivingConversion);
+    }
+
+    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) {
+            EyeState.copy(event.getOriginal(), event.getEntity());
+        }
+    }
+
+    private static void onLivingConversion(LivingConversionEvent.Post event) {
+        EyeState.copy(event.getEntity(), event.getOutcome());
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
