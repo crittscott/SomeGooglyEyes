@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.server;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
@@ -17,12 +18,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 /**
  * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
  * service is called on that service directly (behavior ticks, tracking, and reactions go to
  * {@link ServerBehaviorScheduler}).
  */
 public final class ServerServices {
+
+    /**
+     * The definitions and master switch connected clients last received, or {@code null} before the first
+     * send since server start. Read and written on the server thread only.
+     */
+    @Nullable
+    private static Map<ResourceLocation, RuntimeConfigSet> sentEyeConfigs;
+    private static boolean sentGooglyEyesEnabled;
 
     private ServerServices() {
     }
@@ -52,6 +64,7 @@ public final class ServerServices {
         PickerFreezeService.onServerStopping(server);
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
+        sentEyeConfigs = null;
     }
 
     /**
@@ -63,10 +76,40 @@ public final class ServerServices {
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
-    /** Send current resolved eye definitions after login or reload. */
+    /** Send the current resolved eye definitions and master switch to a joining player. */
     public static void syncEyeConfigs(ServerPlayer player) {
-        Networking.sendToPlayer(player,
-                new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerConfig.GOOGLY_EYES_ENABLED.get()));
+        if (sentEyeConfigs == null) {
+            // Nobody has received a view yet, so every connected client now holds this one.
+            recordSentEyeConfigs();
+        }
+        Networking.sendToPlayer(player, eyeConfigPacket());
+    }
+
+    /**
+     * Send the current resolved eye definitions and master switch to every player, but only when either
+     * differs from what clients last received. Runs once after each datapack reload and each server-config
+     * apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.
+     */
+    public static void broadcastEyeConfigsIfChanged(MinecraftServer server) {
+        if (sentEyeConfigs == ServerEyeConfigs.all()
+                && sentGooglyEyesEnabled == ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+            return;
+        }
+        recordSentEyeConfigs();
+        EyeConfigSyncPacket packet = eyeConfigPacket();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            Networking.sendToPlayer(player, packet);
+        }
+    }
+
+    private static void recordSentEyeConfigs() {
+        sentEyeConfigs = ServerEyeConfigs.all();
+        sentGooglyEyesEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+    }
+
+    private static EyeConfigSyncPacket eyeConfigPacket() {
+        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded(),
+                ServerConfig.GOOGLY_EYES_ENABLED.get());
     }
 
     private static void applyGooglyDecision(LivingEntity living) {

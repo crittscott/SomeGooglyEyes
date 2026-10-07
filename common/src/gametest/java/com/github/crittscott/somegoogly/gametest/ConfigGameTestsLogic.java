@@ -275,7 +275,7 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** A reload installs a new config set only when the resolved content changes; server stop forces the next resync. */
+    /** A reload installs a new config set only when the resolved content changes; server stop clears the installed set. */
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -293,7 +293,7 @@ public final class ConfigGameTestsLogic {
             ServerEyeConfigs.onServerStopping();
             new TestReloadListener().applyFiles(files);
             helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
-                    "clearing the content signature on server stop forces the next reload to resync");
+                    "server stop clears the installed set, so the next reload installs anew");
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }

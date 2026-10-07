@@ -1,15 +1,19 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +23,9 @@ import java.util.Map;
  *
  * <p>Kept separate from {@link ClientEyeConfigs} so the integrated server and client don't share
  * one static map in single-player. Installed maps are immutable snapshots; their mutable model
- * values are owned by this store and must be treated as read-only after installation.
+ * values are owned by this store and must be treated as read-only after installation. Each snapshot
+ * carries its sets' NBT encoding, which is both the sync payload content and the identity a reload
+ * compares to decide whether anything changed.
  */
 public final class ServerEyeConfigs {
 
@@ -32,8 +38,13 @@ public final class ServerEyeConfigs {
     public static final ResourceLocation ENDER_DRAGON =
             ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon");
 
-    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
-    private static volatile String signature = "";
+    private record Installed(Map<ResourceLocation, RuntimeConfigSet> configs,
+                             Map<ResourceLocation, CompoundTag> encoded) {
+    }
+
+    private static final Installed EMPTY = new Installed(Map.of(), Map.of());
+
+    private static volatile Installed installed = EMPTY;
 
     private ServerEyeConfigs() {
     }
@@ -43,7 +54,12 @@ public final class ServerEyeConfigs {
      * mutate its {@link RuntimeConfigSet} values.
      */
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
-        return configs;
+        return installed.configs();
+    }
+
+    /** The installed sets encoded through {@link RuntimeConfigSet#CODEC}; read-only, like {@link #all}. */
+    public static Map<ResourceLocation, CompoundTag> encoded() {
+        return installed.encoded();
     }
 
     /**
@@ -61,7 +77,7 @@ public final class ServerEyeConfigs {
     /** Return the entity's config for the requested age, including the age-independent fallback. */
     @Nullable
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
-        RuntimeConfigSet set = configs.get(entity);
+        RuntimeConfigSet set = installed.configs().get(entity);
         return set == null ? null : set.get(baby);
     }
 
@@ -88,32 +104,50 @@ public final class ServerEyeConfigs {
     }
 
     /**
-     * Force-install a snapshot and discard its content signature. This is the unconditional replacement
-     * path used by tests; normal datapack reload uses {@link #replaceIfChanged}.
+     * Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. Returns {@code null}, after logging,
+     * if an internal model/codec invariant prevents encoding.
      */
+    @Nullable
+    public static Map<ResourceLocation, CompoundTag> encode(Map<ResourceLocation, RuntimeConfigSet> configs) {
+        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
+        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
+            Tag tag = RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue())
+                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
+                            "Cannot encode resolved eye config {}: {}", entry.getKey(), error))
+                    .orElse(null);
+            if (!(tag instanceof CompoundTag compound)) {
+                return null;
+            }
+            encoded.put(entry.getKey(), compound);
+        }
+        return Map.copyOf(encoded);
+    }
+
+    /** Unconditionally install a snapshot. This is the replacement path used by tests. */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        configs = Map.copyOf(next);
-        signature = "";
+        Map<ResourceLocation, CompoundTag> encoded = encode(next);
+        if (encoded == null) {
+            throw new IllegalArgumentException("Eye configs cannot be encoded");
+        }
+        installed = new Installed(Map.copyOf(next), encoded);
     }
 
     /**
-     * Datapack-reload entry point: swap in the resolved set only when
-     * {@code nextSignature} (a canonical serialization of {@code next}, computed by the reload
-     * listener) differs from the installed set's. A {@code /reload} triggered for an unrelated
-     * datapack thus stops re-fanning the whole eye-config snapshot to every online player. Returns
-     * whether a swap happened.
+     * Datapack-reload entry point: install {@code next} only when its encoding differs from the installed
+     * set's, so a {@code /reload} for an unrelated datapack leaves the installed snapshot, and therefore
+     * every client's copy, alone. Returns whether a swap happened.
      */
-    public static boolean replaceIfChanged(Map<ResourceLocation, RuntimeConfigSet> next, String nextSignature) {
-        if (nextSignature.equals(signature)) {
+    public static boolean replaceIfChanged(Map<ResourceLocation, RuntimeConfigSet> next,
+                                           Map<ResourceLocation, CompoundTag> nextEncoded) {
+        if (nextEncoded.equals(installed.encoded())) {
             return false;
         }
-        configs = Map.copyOf(next);
-        signature = nextSignature;
+        installed = new Installed(Map.copyOf(next), Map.copyOf(nextEncoded));
         return true;
     }
 
-    /** Drop the content signature so the first reload of the next world always resynchronizes. */
+    /** Drop the installed set so nothing carries over to the next world. */
     public static void onServerStopping() {
-        signature = "";
+        installed = EMPTY;
     }
 }

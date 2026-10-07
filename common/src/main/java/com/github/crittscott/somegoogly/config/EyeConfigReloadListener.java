@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -15,14 +16,12 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.function.Predicate;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
@@ -101,40 +100,18 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                     aggregateError);
             return;
         }
-        String signature = contentSignature(selected);
-        if (signature == null) {
-            SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload could not produce a canonical content signature; keeping the previous configs");
+        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
+        if (encoded == null) {
+            SomeGooglyCommon.LOGGER.error("Eye config reload could not be encoded; keeping the previous configs");
             return;
         }
-        if (!ServerEyeConfigs.replaceIfChanged(selected, signature)) {
-            SomeGooglyCommon.LOGGER.info("Eye config reload produced no change; not resyncing clients");
+        if (!ServerEyeConfigs.replaceIfChanged(selected, encoded)) {
+            SomeGooglyCommon.LOGGER.info("Eye config reload produced no change");
             return;
         }
         SomeGooglyCommon.LOGGER.info(
                 "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse)",
                 selected.size(), files.size(), skippedModNotInstalled, failedParse);
-    }
-
-    /**
-     * A canonical, order-independent string identity of the resolved config set: each entry encoded
-     * through {@link RuntimeConfigSet#CODEC} and keyed by entity id in a sorted map. Returns
-     * {@code null} if an internal model/codec invariant prevents canonical encoding.
-     */
-    @Nullable
-    private static String contentSignature(Map<ResourceLocation, RuntimeConfigSet> configs) {
-        Map<String, String> sorted = new TreeMap<>();
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
-            JsonElement encoded = RuntimeConfigSet.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue())
-                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
-                            "Cannot encode resolved eye config {}: {}", entry.getKey(), error))
-                    .orElse(null);
-            if (encoded == null) {
-                return null;
-            }
-            sorted.put(entry.getKey().toString(), encoded.toString());
-        }
-        return sorted.toString();
     }
 
     private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {

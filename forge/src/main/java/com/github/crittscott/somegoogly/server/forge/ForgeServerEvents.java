@@ -96,8 +96,14 @@ public final class ForgeServerEvents {
         }
     }
 
+    /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
-        event.getPlayers().forEach(ServerServices::syncEyeConfigs);
+        ServerPlayer player = event.getPlayer();
+        if (player != null) {
+            ServerServices.syncEyeConfigs(player);
+        } else {
+            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+        }
     }
 
     private static void onServerStopping(ServerStoppingEvent event) {

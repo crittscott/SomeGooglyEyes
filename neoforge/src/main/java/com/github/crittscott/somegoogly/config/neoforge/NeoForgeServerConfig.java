@@ -2,11 +2,14 @@ package com.github.crittscott.somegoogly.config.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.server.ServerServices;
+import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,5 +106,10 @@ public final class NeoForgeServerConfig {
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
         ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
         ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
+        // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (event instanceof ModConfigEvent.Reloading && server != null) {
+            server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
+        }
     }
 }

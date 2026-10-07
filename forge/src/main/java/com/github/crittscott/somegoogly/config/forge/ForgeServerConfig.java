@@ -2,10 +2,13 @@ package com.github.crittscott.somegoogly.config.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.server.ServerServices;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,5 +105,10 @@ public final class ForgeServerConfig {
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
         ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
         ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
+        // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (event instanceof ModConfigEvent.Reloading && server != null) {
+            server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
+        }
     }
 }

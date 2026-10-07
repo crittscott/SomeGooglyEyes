@@ -42,7 +42,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye is a 3D item whose pupil moves while held. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye is a 3D item whose pupil moves while you hold it in first person; other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
 Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
@@ -84,7 +84,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`, and its reader accepts basic and literal strings, logging any value it cannot read.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric's reader accepts basic and literal strings, logging any value it cannot read.
 
 ### Spawn and harvest
 

@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
@@ -139,8 +140,9 @@ public final class SerializationGameTestsLogic {
     }
 
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
-                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()), false);
+        Map<ResourceLocation, RuntimeConfigSet> configs =
+                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
+        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false);
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
         helper.succeed();

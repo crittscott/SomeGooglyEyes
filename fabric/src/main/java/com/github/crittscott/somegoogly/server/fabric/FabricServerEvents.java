@@ -65,11 +65,9 @@ public final class FabricServerEvents {
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
-            if (!joined) {
-                ServerServices.syncEyeConfigs(player);
-            }
-        });
+        // Once per reload, after the eye definitions and the re-read server config are both applied.
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) ->
+                ServerServices.broadcastEyeConfigsIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {

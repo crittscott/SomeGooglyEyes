@@ -67,7 +67,7 @@ public final class FabricServerConfig {
 
     public static void register() {
         ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
-        // Before the reload's data-pack sync, so clients receive the re-read master switch.
+        // Before the reload's eye-config broadcast, so clients receive the re-read master switch.
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
     }

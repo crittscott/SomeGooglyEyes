@@ -2,12 +2,10 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.mojang.serialization.DataResult;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,7 +17,10 @@ import java.util.Map;
 
 /**
  * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- * {@code googlyEyesEnabled} master switch.
+ * {@code googlyEyesEnabled} master switch. The server builds it from the installed set and that set's
+ * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
+ * validated when installed, so writing it to each connection only copies tags. The client decodes and
+ * re-validates everything it receives.
  */
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
@@ -30,10 +31,14 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::new);
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
+    private final Map<ResourceLocation, CompoundTag> encoded;
     private final boolean googlyEyesEnabled;
 
-    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs, boolean googlyEyesEnabled) {
+    /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
+    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
+                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled) {
         this.configs = configs;
+        this.encoded = encoded;
         this.googlyEyesEnabled = googlyEyesEnabled;
     }
 
@@ -47,6 +52,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
         Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
+        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
             if (configs.containsKey(id)) {
@@ -63,6 +69,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
                 throw new DecoderException("Malformed synced eye config for " + id, e);
             }
             configs.put(id, decoded);
+            encoded.put(id, tag);
         }
         if (buffer.readerIndex() - start > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
@@ -72,25 +79,16 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             throw new DecoderException("Unsafe synced eye config: " + error);
         }
         this.configs = configs;
+        this.encoded = encoded;
         this.googlyEyesEnabled = buffer.readBoolean();
     }
 
     private void write(FriendlyByteBuf buffer) {
-        String error = EyeConfigLimits.validateSync(configs);
-        if (error != null) {
-            throw new EncoderException("Unsafe eye config sync: " + error);
-        }
         int start = buffer.writerIndex();
-        buffer.writeVarInt(configs.size());
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
+        buffer.writeVarInt(encoded.size());
+        for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
-            DataResult<Tag> encoded = RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue());
-            Tag tag = encoded.result().orElseThrow(() -> new EncoderException(
-                    "Could not encode synced eye config for " + entry.getKey()));
-            if (!(tag instanceof CompoundTag compound)) {
-                throw new EncoderException("Synced eye config did not encode as a compound for " + entry.getKey());
-            }
-            buffer.writeNbt(compound);
+            buffer.writeNbt(entry.getValue());
         }
         buffer.writeBoolean(googlyEyesEnabled);
         int written = buffer.writerIndex() - start;

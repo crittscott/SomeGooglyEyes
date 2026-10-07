@@ -10,9 +10,10 @@ public final class ClientLifecycle {
     private ClientLifecycle() {
     }
 
-    /** Advance the pupil/behavior runtime, inspector, and picker key input. */
+    /** Advance the pupil/behavior runtime, held-eye pupil, inspector, and picker key input. */
     public static void tick() {
         ClientEyeRuntime.tick();
+        GooglyEyeItemRenderer.tick();
         EyeInspector.tick();
         PickerInput.consumePendingKeys();
     }
@@ -22,6 +23,7 @@ public final class ClientLifecycle {
         ClientNetworkHandler.clearPendingEyeStates();
         ClientEyeConfigs.clear();
         ClientEyeRuntime.clear();
+        GooglyEyeItemRenderer.reset();
         PickerState.resetOnDisconnect();
     }
 }

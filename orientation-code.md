@@ -24,21 +24,21 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no loader type, and only the `client.compat.gecko` package imports GeckoLib types; differences pass through project adapters or six `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
+Common main imports no loader type, and only `client.compat.gecko` imports GeckoLib; differences pass through adapters or six `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
-The server owns eligibility, eye state, item actions, behaviors, datapack definitions, picker authorization, and world mutation; the client owns rendering, model attachment, pupil motion, inspection, and picker UI and editing.
+The server owns eligibility, eye state, item actions, behaviors, definitions, picker authorization, and world mutation; the client owns rendering, attachment, pupil motion, inspection, and picker UI.
 
 Registered content is declared once in `ModContent` and bound through the loader's `ContentRegistrar`: two items, one `DataComponentType`, one creative tab, and the eye-modifier recipe serializer; the Slimy Eye recipe is vanilla `crafting_transmute`. Optometrist is a data-driven enchantment from the common data pack.
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric has no config system: its own `TomlConfig` reads both files, the server file at server start and each `/reload`, resetting on stop.
+`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric's own `TomlConfig` reads both files, the server file at start and each `/reload`, resetting on stop.
 
 Server-config section names and key order must stay aligned across `FabricServerConfig`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
 
-Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates exactly one version per entity type, canonically encodes the resolved set, then atomically swaps `ServerEyeConfigs`; failure at any stage keeps the previous set. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
+Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates one version per entity type, encodes the set to NBT, and atomically swaps `ServerEyeConfigs` only if that encoding differs; failure keeps the previous set. The stored encoding is the sync payload. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode.
 
-Player-visible strings are translatable `Component`s in `en_us.json`; logs, command literals, config comments, and schema keys are not.
+Player-visible strings are `Component`s in `en_us.json`; logs, command literals, config comments, and schema keys are not.
 
 ## Entity and item state
 
@@ -64,37 +64,39 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; once an entity is initialized, later configuration changes never revisit it.
 
-The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation from it, so no per-tick animation packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed entities and takes damage, heal, and trade triggers from loader adapters. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities and is never persisted.
+The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation from it, so no per-tick animation packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed entities and takes damage, heal, and trade triggers from adapters. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each renderer rebuild (NeoForge and Forge on `AddLayers`, Forge by registry entity type, Fabric by its living-renderer callback, clearing caches from a client reload listener); GeckoLib renderers get theirs from GeckoLib's entity `CompileRenderLayers` event. Client hiding is checked per frame. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved view per age and variant; `ServerEyeConfigs` does not cache. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
+`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each renderer rebuild (NeoForge and Forge on `AddLayers`, Forge by registry entity type, Fabric by its living-renderer callback, clearing caches from a client reload listener); GeckoLib renderers get theirs from GeckoLib's entity `CompileRenderLayers` event. Client hiding is checked per frame. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved view per age and variant. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); the held item's pupil is one local-player simulation ticked by `ClientLifecycle` and drawn in first person only; `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
 
-Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset, replaying `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
+Attachment resolvers (token to model part or bone) cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: common compiles against compile-only `geckolib-common` and each loader against its own GeckoLib artifact; `GeckoCompat` probes for it via `ModVersionLookup`, and nothing touches `client.compat.gecko` or registers a loader's layer listener unless it is present. A failed layer attach must not block mod load.
+GeckoLib is optional: common compiles against compile-only `geckolib-common`, each loader against its own artifact; nothing touches `client.compat.gecko` or registers a layer listener unless `GeckoCompat` finds it. A failed layer attach must not block mod load.
 
-Item definitions in `assets/somegoogly/items/` select the special model renderer `GooglyEyeItemRenderer` (3D Googly Eye) and tint source `SlimyEyeIrisTint` (third in the Slimy Eye's `tints`, matching `layer2`). NeoForge registers both by event; Forge and Fabric put them into vanilla's `ID_MAPPER`s at client init.
+Item definitions in `assets/somegoogly/items/` select special model renderer `GooglyEyeItemRenderer` and tint source `SlimyEyeIrisTint` (third in the Slimy Eye's `tints`, matching `layer2`). NeoForge registers both by event; Forge and Fabric put them into vanilla's `ID_MAPPER`s at client init.
 
 ## Networking
 
 Five `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `12`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
 
-Sends go through `@ExpectPlatform` bridges `Networking` (player, entity trackers) and client-only `ClientNetworking` (server). Clientbound handlers reach `ClientNetworkHandler` only inside lambda bodies, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; ones preceding their entity wait in a bounded UUID map cleared on disconnect.
+The eye-definition packet also carries `googlyEyesEnabled`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set or switch differs from what was last sent, since it resets client trackers.
+
+Sends go through `@ExpectPlatform` bridges `Networking` (player, entity trackers) and client-only `ClientNetworking` (server). Clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; ones preceding their entity wait in a bounded UUID map cleared on disconnect.
 
 ## Picker and commands
 
-Client picker code owns drafts and previews; the server owns mob freezing, spawning, movement, and world export. Spawn and mob-pose operations are server Brigadier commands; only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
+The client owns picker drafts and previews; the server owns freezing, spawning, movement, and world export. Only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
 `PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and permits one editor. `PickerGate` owns every picker throttle (per-tick requests, export cooldowns, spawn-all cooldown); spawn-all also requires creative and server enablement. `PickerSpawnService` finalizes command-spawned mobs through `MobSpawning` (the loader's finalize-spawn event on NeoForge and Forge; a cancelled spawn is not added) before setting `NoAI`, persistence, and display rotation; its `refusal` (ender dragon, unsummonable, `ServerConfig.isSpawnExcluded`) is the one spawnability rule for both commands and spawn suggestions. World export is confined to the generated datapack and requires creative plus permission level 2; export-all stays under the game-directory export tree. Both use `ConfigFile.exportVersion`.
 
-The client and server own disjoint branches of one `/sg` Brigadier tree: local editing stays client-side, while admin, spawn, spawn-all, and mob-pose commands are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
+Client and server own disjoint branches of one `/sg` tree: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 
 ## Loader integration
 
-Fabric Mixins cover persistent-data migration, heal reactions, trades, and shears-kill drops, which lack Fabric API events; Mixins and the access widener target the pinned Minecraft version exactly; Fabric and common write fixed refmaps.
+Fabric Mixins cover persistent-data migration, heal reactions, trades, and shears-kill drops, which lack Fabric API events; they and the access widener target the pinned Minecraft version; Fabric and common write fixed refmaps.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -106,5 +108,5 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Operational boundaries
 
-- Optional renderer integrations log recoverable failures once and omit eyes lacking attachment geometry; third-party model changes can invalidate bundled geometry.
+- Optional renderer integrations log recoverable failures once and omit eyes lacking attachment geometry.
 - `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror every edit to them there.
