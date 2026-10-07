@@ -20,7 +20,6 @@ public final class ClientLifecycle {
 
     /** Drop all per-connection client eye state when leaving a world or server. */
     public static void onDisconnect() {
-        ClientNetworkHandler.clearPendingEyeStates();
         ClientEyeConfigs.clear();
         ClientEyeRuntime.clear();
         GooglyEyeItemRenderer.reset();

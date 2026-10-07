@@ -18,11 +18,11 @@ public final class Networking {
     }
 
     /**
-     * Send a clientbound payload to every player tracking {@code entity}. When {@code includeSelf} is
-     * true and the entity is a server player, that player is also a recipient.
+     * Send a clientbound payload to every player tracking {@code entity} and, when the entity is itself
+     * a server player, to that player too.
      */
     @ExpectPlatform
-    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
+    public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
         throw new AssertionError();
     }
 }

@@ -62,10 +62,8 @@ public final class ForgeNetworkTransport {
         channel.send(payload, PacketDistributor.SERVER.noArg());
     }
 
-    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
-        channel.send(payload, includeSelf
-                ? PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity)
-                : PacketDistributor.TRACKING_ENTITY.with(entity));
+    public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
+        channel.send(payload, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
     }
 
     private static ServerPlayer sender(CustomPayloadEvent.Context context) {

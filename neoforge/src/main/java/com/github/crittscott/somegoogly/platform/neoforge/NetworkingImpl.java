@@ -15,11 +15,7 @@ public final class NetworkingImpl {
         PacketDistributor.sendToPlayer(player, payload);
     }
 
-    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
-        if (includeSelf) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
-        } else {
-            PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
-        }
+    public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
     }
 }

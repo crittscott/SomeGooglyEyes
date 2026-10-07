@@ -56,9 +56,6 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public final class PickerExportService {
 
-    /** Quota for the packet's encoded config; a legitimate config is a few KiB. */
-    public static final long MAX_CONFIG_BYTES = 64 * 1024;
-
     private static final String PACK_MCMETA = """
             {
               "pack": {
@@ -77,13 +74,10 @@ public final class PickerExportService {
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
     public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
-                                   String age, @Nullable CompoundTag configNbt) {
+                                   String age, CompoundTag configNbt) {
         Component throttled = PickerGate.tryExport(server, playerId);
         if (throttled != null) {
             return throttled;
-        }
-        if (configNbt == null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_missing_payload");
         }
         if (!BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
             return Component.translatable(

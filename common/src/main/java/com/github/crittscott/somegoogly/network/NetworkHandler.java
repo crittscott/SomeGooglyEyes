@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class NetworkHandler {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "13";
+    public static final String NETWORK_VERSION = "14";
 
     public static final ResourceLocation EYE_STATE = versioned("eye_state");
     public static final ResourceLocation EYE_CONFIG = versioned("eye_config");
@@ -22,7 +22,8 @@ public final class NetworkHandler {
     private NetworkHandler() {
     }
 
-    private static ResourceLocation versioned(String path) {
+    /** A mod-namespaced id under the current network version. */
+    public static ResourceLocation versioned(String path) {
         return ResourceLocation.fromNamespaceAndPath(
                 SomeGooglyCommon.MOD_ID, "v" + NETWORK_VERSION + "/" + path);
     }

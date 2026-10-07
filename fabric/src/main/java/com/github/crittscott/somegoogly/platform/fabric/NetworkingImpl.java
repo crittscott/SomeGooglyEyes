@@ -19,9 +19,9 @@ public final class NetworkingImpl {
         ServerPlayNetworking.send(player, payload);
     }
 
-    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
+    public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
         Collection<ServerPlayer> recipients = new ArrayList<>(PlayerLookup.tracking(entity));
-        if (includeSelf && entity instanceof ServerPlayer player && !recipients.contains(player)) {
+        if (entity instanceof ServerPlayer player && !recipients.contains(player)) {
             recipients.add(player);
         }
         recipients.forEach(player -> ServerPlayNetworking.send(player, payload));

@@ -47,8 +47,8 @@ public final class PickerExporter {
 
     /**
      * Send the committed draft for the chosen mob to the server to be written and reloaded. Client-side
-     * we only guard the obvious (something committed) and codec-encode the draft; all real validation —
-     * and the authoritative feedback — is the server's ({@code PickerExportService}).
+     * we only guard the obvious (something committed, small enough to send) and codec-encode the draft;
+     * all real validation — and the authoritative feedback — is the server's ({@code PickerExportService}).
      */
     public static Component export() {
         ResourceLocation type = PickerState.targetType();
@@ -58,7 +58,11 @@ public final class PickerExporter {
         RuntimeConfig config = PickerState.toConfig();
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
         CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).getOrThrow();
-        ClientNetworking.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
+        PickerExportPacket packet = new PickerExportPacket(type, PickerState.currentDraftAge(), tag);
+        if (!packet.fitsServerbound()) {
+            return Component.translatable("somegoogly.command.picker.export_too_large");
+        }
+        ClientNetworking.sendToServer(packet);
         return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
 

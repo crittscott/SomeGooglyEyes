@@ -258,9 +258,13 @@ public final class SerializationGameTestsLogic {
         roundTrip(helper, PickerExportPacket.STREAM_CODEC,
                 new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
                 "PickerExportPacket with a config");
-        roundTrip(helper, PickerExportPacket.STREAM_CODEC,
-                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null),
-                "PickerExportPacket's null-config form");
+
+        RegistryFriendlyByteBuf noConfig = buffer(helper);
+        noConfig.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        noConfig.writeUtf(AGE_ADULT);
+        noConfig.writeNbt(null);
+        helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(noConfig)),
+                "picker export must reject a packet with no config");
         helper.succeed();
     }
 
@@ -276,20 +280,19 @@ public final class SerializationGameTestsLogic {
         AppearanceOverride overrides =
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
         EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
-        EyeStatePacket withOverrides = new EyeStatePacket(42, new UUID(1L, 2L), snapshot);
+        EyeStatePacket withOverrides = new EyeStatePacket(42, snapshot);
         EyeStatePacket d1 = roundTrip(helper, EyeStatePacket.STREAM_CODEC, withOverrides, "EyeStatePacket with overrides");
         helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
 
         EyeStatePacket noOverrides = new EyeStatePacket(
-                43, new UUID(3L, 4L), new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
+                43, new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
         roundTrip(helper, EyeStatePacket.STREAM_CODEC, noOverrides, "EyeStatePacket without overrides");
         helper.succeed();
     }
 
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         RegistryFriendlyByteBuf invalid = buffer(helper);
-        invalid.writeInt(42);
-        invalid.writeUUID(new UUID(1L, 2L));
+        invalid.writeVarInt(42);
         invalid.writeBoolean(true);
         invalid.writeFloat(Float.NaN);
         invalid.writeByte(0);

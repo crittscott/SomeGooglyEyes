@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -24,7 +23,6 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 /** Physical-client registration for NeoForge client services. */
 public final class NeoForgeClient {
@@ -43,7 +41,6 @@ public final class NeoForgeClient {
 
         gameBus.addListener(NeoForgeClient::registerClientCommands);
         gameBus.addListener(NeoForgeClient::onClientTick);
-        gameBus.addListener(NeoForgeClient::onEntityJoin);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
@@ -88,12 +85,6 @@ public final class NeoForgeClient {
 
     private static void onClientTick(ClientTickEvent.Post event) {
         ClientLifecycle.tick();
-    }
-
-    private static void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide()) {
-            ClientNetworkHandler.onEntityLoaded(event.getEntity());
-        }
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {

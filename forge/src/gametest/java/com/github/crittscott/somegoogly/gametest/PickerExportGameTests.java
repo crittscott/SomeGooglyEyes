@@ -28,8 +28,8 @@ public final class PickerExportGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsMissingPayload(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsMissingPayload(helper);
+    public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportPacketRefusesOversizedConfig(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)

@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -25,7 +24,6 @@ import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -48,7 +46,6 @@ public final class ForgeClientBootstrap {
 
         gameBus.addListener(ForgeClientBootstrap::registerClientCommands);
         gameBus.addListener(ForgeClientBootstrap::onClientTick);
-        gameBus.addListener(ForgeClientBootstrap::onEntityJoin);
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
@@ -106,12 +103,6 @@ public final class ForgeClientBootstrap {
             return;
         }
         ClientLifecycle.tick();
-    }
-
-    private static void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide()) {
-            ClientNetworkHandler.onEntityLoaded(event.getEntity());
-        }
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {

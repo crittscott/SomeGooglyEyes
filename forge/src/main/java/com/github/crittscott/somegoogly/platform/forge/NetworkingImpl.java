@@ -15,7 +15,7 @@ public final class NetworkingImpl {
         ForgeNetworkTransport.sendToPlayer(player, payload);
     }
 
-    public static void sendTracking(Entity entity, boolean includeSelf, CustomPacketPayload payload) {
-        ForgeNetworkTransport.sendTracking(entity, includeSelf, payload);
+    public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
+        ForgeNetworkTransport.sendTrackingAndSelf(entity, payload);
     }
 }

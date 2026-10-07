@@ -2,10 +2,10 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,7 +14,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -25,26 +24,27 @@ import java.util.UUID;
  * {@link PickerExportService}. Unlike the other picker verbs this one also requires permission
  * level 2: it forces a server-wide datapack reload, which vanilla reserves for operators.
  *
- * <p>The NBT is read under a {@link PickerExportService#MAX_CONFIG_BYTES} quota — a legitimate config
- * is a few KiB — so an oversized payload decodes to {@code null} (the service rejects it with
- * feedback) instead of allocating unbounded memory.
+ * <p>The client refuses to send a packet that fails {@link #fitsServerbound()}, so a malformed or
+ * oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.
  */
 public class PickerExportPacket implements CustomPacketPayload {
 
     /** Wire bound on the age string; comfortably above the longest age name. */
     private static final int MAX_AGE_LENGTH = 16;
 
+    /** Vanilla's cap on a serverbound custom payload's encoded data. */
+    public static final int MAX_SERVERBOUND_BYTES = 32767;
+
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_EXPORT);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
             StreamCodec.ofMember(PickerExportPacket::write, PickerExportPacket::new);
 
-    @Nullable
     private final CompoundTag configNbt;
     private final ResourceLocation typeId;
     private final String age;
 
-    public PickerExportPacket(ResourceLocation typeId, String age, @Nullable CompoundTag configNbt) {
+    public PickerExportPacket(ResourceLocation typeId, String age, CompoundTag configNbt) {
         this.typeId = typeId;
         this.age = age;
         this.configNbt = configNbt;
@@ -53,17 +53,22 @@ public class PickerExportPacket implements CustomPacketPayload {
     private PickerExportPacket(FriendlyByteBuf buffer) {
         this.typeId = buffer.readResourceLocation();
         this.age = buffer.readUtf(MAX_AGE_LENGTH);
-        CompoundTag configNbt;
-        try {
-            Tag tag = buffer.readNbt(NbtAccounter.create(PickerExportService.MAX_CONFIG_BYTES));
-            configNbt = tag instanceof CompoundTag compound ? compound : null;
-        } catch (RuntimeException oversized) {
-            // Quota exceeded mid-read: consume the rest (nothing follows the tag) and let the
-            // service reject the null payload with feedback instead of the decode killing the connection.
-            buffer.readerIndex(buffer.writerIndex());
-            configNbt = null;
+        CompoundTag configNbt = buffer.readNbt();
+        if (configNbt == null) {
+            throw new DecoderException("Picker export packet has no config");
         }
         this.configNbt = configNbt;
+    }
+
+    /** Whether this packet's encoded data fits under {@link #MAX_SERVERBOUND_BYTES}. */
+    public boolean fitsServerbound() {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            write(buffer);
+            return buffer.readableBytes() <= MAX_SERVERBOUND_BYTES;
+        } finally {
+            buffer.release();
+        }
     }
 
     private void write(FriendlyByteBuf buffer) {

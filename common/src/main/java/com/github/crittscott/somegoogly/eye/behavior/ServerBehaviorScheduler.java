@@ -250,7 +250,7 @@ public final class ServerBehaviorScheduler {
         // A started behavior needs retiring at busyUntil regardless of eye state or tracking, which
         // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
         ACTIVE.putIfAbsent(mob, state);
-        Networking.sendTracking(mob, false,
+        Networking.sendTrackingAndSelf(mob,
                 new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
         return true;
     }

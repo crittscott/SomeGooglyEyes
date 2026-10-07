@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -11,7 +10,6 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -68,8 +66,6 @@ public final class FabricClientEvents {
                         .disconnect(Component.translatable("somegoogly.network.required_server"));
             }
         });
-        ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
-                ClientNetworkHandler.onEntityLoaded(entity));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudRenderCallback.EVENT.register((graphics, partialTick) -> {
             Minecraft minecraft = Minecraft.getInstance();

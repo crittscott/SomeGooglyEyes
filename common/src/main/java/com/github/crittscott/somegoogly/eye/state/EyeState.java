@@ -201,10 +201,10 @@ public final class EyeState {
     }
 
     private static void sync(LivingEntity entity) {
-        Networking.sendTracking(entity, true, packet(entity));
+        Networking.sendTrackingAndSelf(entity, packet(entity));
     }
 
     private static EyeStatePacket packet(LivingEntity entity) {
-        return new EyeStatePacket(entity.getId(), entity.getUUID(), snapshot(entity));
+        return new EyeStatePacket(entity.getId(), snapshot(entity));
     }
 }

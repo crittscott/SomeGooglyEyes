@@ -9,15 +9,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.UUID;
-
 /**
  * Server → client sync of a single entity's full eye state: the {@code hasGooglyEyes} flag, the chosen
  * placement-variant roll, plus the optional per-mob appearance overrides (see {@link EyeState}). Sent on
  * start-tracking (so a newly watching player gets current state) and whenever the state is mutated
- * mid-life (so changes from shears / dye / redstone appear immediately on every tracking client).
+ * mid-life (so changes from shears / dye / redstone appear immediately on every tracking client). Both
+ * paths follow the entity's own spawn on the same connection, so the client always knows the entity id.
  */
-public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot snapshot) implements CustomPacketPayload {
+public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<EyeStatePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.EYE_STATE);
@@ -25,7 +24,7 @@ public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot sn
             StreamCodec.ofMember(EyeStatePacket::write, EyeStatePacket::new);
 
     private EyeStatePacket(FriendlyByteBuf buffer) {
-        this(buffer.readInt(), buffer.readUUID(), readSnapshot(buffer));
+        this(buffer.readVarInt(), readSnapshot(buffer));
     }
 
     private static EyeState.Snapshot readSnapshot(FriendlyByteBuf buffer) {
@@ -39,12 +38,11 @@ public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot sn
     }
 
     private void write(FriendlyByteBuf buffer) {
-        if (entityUuid == null || snapshot == null || !validRoll(snapshot.variantRoll())
+        if (snapshot == null || !validRoll(snapshot.variantRoll())
                 || snapshot.properties() == null || !snapshot.properties().isValid()) {
             throw new EncoderException("Invalid eye state packet");
         }
-        buffer.writeInt(entityId);
-        buffer.writeUUID(entityUuid);
+        buffer.writeVarInt(entityId);
         buffer.writeBoolean(snapshot.hasEyes());
         buffer.writeFloat(snapshot.variantRoll());
         AppearanceOverride.STREAM_CODEC.encode(buffer, snapshot.properties());

@@ -70,7 +70,7 @@ The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, durati
 
 `ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each renderer rebuild (NeoForge and Forge on `AddLayers`, Forge by registry entity type, Fabric by its living-renderer callback, clearing caches from a client reload listener); GeckoLib renderers get theirs from GeckoLib's entity `CompileRenderLayers` event. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches the resolved view per age and variant. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); the held item's pupil is one local-player simulation ticked by `ClientLifecycle` and drawn in first person only; `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
 
-Attachment resolvers (token to part or bone) cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
+Attachment resolvers cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate instances scaled in their part poses; the picker picks an `AgeableMobRenderer`'s model by entity age.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
@@ -80,15 +80,15 @@ Item definitions in `assets/somegoogly/items/` select special model renderer `Go
 
 ## Networking
 
-Five `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `13`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel version; Fabric checks at play join that the peer declared the versioned payloads and disconnects it otherwise.
+Five `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `14`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel version; Fabric disconnects, during configuration, a client that cannot receive its never-sent `Handshake` payload.
 
 The eye-definition packet also carries `googlyEyesEnabled`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set or switch changed, since it resets client trackers.
 
-Sends go through `@ExpectPlatform` bridges `Networking` (player, entity trackers) and client-only `ClientNetworking` (server). Clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization. Eye-state packets carry entity id and UUID; early ones wait in a bounded UUID map cleared on disconnect.
+Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state and behavior packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
 
 ## Picker and commands
 
-The client owns picker drafts and previews; the server owns freezing, spawning, movement, and world export. Only freeze selection and client-authored export cross custom payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
+The client owns picker drafts and previews; the server owns freezing, spawning, movement, and world export; only freeze and export cross payloads. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
 `PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and allows one editor. `PickerGate` owns every picker throttle (per-tick requests, export cooldowns, spawn-all cooldown); spawn-all also requires creative and server enablement. `PickerSpawnService` finalizes command-spawned mobs through `MobSpawning` (the loader's finalize-spawn event on NeoForge and Forge; a cancelled spawn is not added) before setting `NoAI`, persistence, and display rotation; its `refusal` (ender dragon, unsummonable, `ServerConfig.isSpawnExcluded`) is the one spawnability rule for both commands and spawn suggestions. World export is confined to the generated datapack and requires creative plus permission level 2; export-all stays under the game-directory export tree. Both use `ConfigFile.exportVersion`.
 
@@ -96,7 +96,7 @@ Client and server own disjoint `/sg` branches: editing is client-side; admin, sp
 
 ## Loader integration
 
-Fabric Mixins cover persistent-data migration, heal reactions, trades, and shears-kill drops (no Fabric API events); they and the access widener target the pinned Minecraft version; Fabric and common write fixed refmaps.
+Fabric Mixins cover persistent-data migration, heal reactions, trades, and shears-kill drops (no Fabric API events) and target the pinned Minecraft version; Fabric and common write fixed refmaps.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -108,5 +108,5 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Operational boundaries
 
-- Optional renderer integrations log recoverable failures once and omit eyes lacking attachment geometry.
+- Optional renderer integrations log recoverable failures once and omit eyes lacking geometry.
 - `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror edits there.

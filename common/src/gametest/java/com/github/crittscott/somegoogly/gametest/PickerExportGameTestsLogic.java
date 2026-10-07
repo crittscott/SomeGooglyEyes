@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -61,13 +62,22 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
-    public static void exportRejectsMissingPayload(GameTestHelper helper) {
-        // A null tag is what an over-quota payload decodes to (PickerExportPacket).
-        Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null);
-        helper.assertTrue(result.equals(Component.translatable(
-                        "somegoogly.command.picker.export_rejected_missing_payload")),
-                "a null/oversized payload must be rejected, got: " + result.getString());
+    /**
+     * The client's pre-send size check. In game: author a mob with a very large number of eyes in the
+     * picker and run {@code /sg export}; the client answers "too large to send" instead of the server
+     * disconnecting you, while an ordinary config exports normally.
+     */
+    public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
+        ResourceLocation cow = ResourceLocation.fromNamespaceAndPath("minecraft", "cow");
+        CompoundTag small = new CompoundTag();
+        small.putBoolean("enabled", true);
+        helper.assertTrue(new PickerExportPacket(cow, AGE_ADULT, small).fitsServerbound(),
+                "an ordinary config must fit in a serverbound payload");
+
+        CompoundTag large = new CompoundTag();
+        large.putString("padding", "x".repeat(PickerExportPacket.MAX_SERVERBOUND_BYTES));
+        helper.assertTrue(!new PickerExportPacket(cow, AGE_ADULT, large).fitsServerbound(),
+                "a config larger than vanilla's serverbound payload cap must be refused before sending");
         helper.succeed();
     }
 
