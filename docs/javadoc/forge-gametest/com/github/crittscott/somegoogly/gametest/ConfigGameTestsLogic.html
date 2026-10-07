@@ -110,9 +110,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyShippedConfigHasNonBlankAttachTokens(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyShippedConfigHasNonBlankAttachTokens</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyShippedMinecraftDefinitionLoads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyShippedMinecraftDefinitionLoads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every head in every shipped config must carry a non-blank attach token.</div>
+<div class="block">Every bundled Minecraft eye definition loads and is usable for each age it declares.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactMinecraftGenerationIsSelected</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -151,16 +151,6 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedConfigsLoadForKnownEntities</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The bundled cow and player definitions load.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedPigHasTwoVariants</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The bundled pig has a common head placement and a rarer rear placement.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -207,23 +197,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>shippedConfigsLoadForKnownEntities</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shippedConfigsLoadForKnownEntities</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The bundled cow and player definitions load. In game: sneak while holding a Googly Eye and aim at an
- eyeless cow, then at another player; both report that they can receive eyes.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="everyShippedConfigHasNonBlankAttachTokens(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>everyShippedConfigHasNonBlankAttachTokens</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">everyShippedConfigHasNonBlankAttachTokens</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every head in every shipped config must carry a non-blank attach token. The attachPoint is required
- (no default), so a token that loads as <code>null</code>/empty means a corrupt data edit — this catches
- that across every shipped file in one cheap headless check. It does not (and can't, on the dedicated
- server, where the client-only resolvers don't load) verify the token resolves to a real model part;
- that needs an in-client pass. No in-game form; guards that every bundled definition names a place
- on the model to put its eyes.</div>
+<section class="detail" id="everyShippedMinecraftDefinitionLoads(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>everyShippedMinecraftDefinitionLoads</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">everyShippedMinecraftDefinitionLoads</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every bundled Minecraft eye definition loads and is usable for each age it declares. In game: set
+ <code>globalPercent = 100</code>, spawn one of each mob that has a file under <code>data/minecraft/eyes</code>,
+ and every one of them has eyes; the server log reports no invalid or unsafe eye config.</div>
 </section>
 </li>
 <li>
@@ -235,15 +214,6 @@ loadScripts(document, 'script');</script>
  <code>"[1.20,1.21)"</code> with blue irises and adult and baby entries for the running version with red
  irises, run <code>/reload</code>, and set <code>entityOverrides = ["minecraft:zombie,100"]</code>; adult and
  baby zombies spawn with red irises.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>shippedPigHasTwoVariants</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shippedPigHasTwoVariants</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The bundled pig has a common head placement and a rarer rear placement. In game: set
- <code>entityOverrides = ["minecraft:pig,100"]</code> and spawn a few dozen pigs; most have eyes on their
- heads, and a few have them on their rear.</div>
 </section>
 </li>
 <li>

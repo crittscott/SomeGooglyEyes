@@ -146,13 +146,18 @@ loadScripts(document, 'script');</script>
 <div class="block">With every range above the installed version, the oldest generation is used.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rangeBoundsRespectInclusivity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rangeBoundsRespectInclusivity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optionalModVersionRangeSynthesis</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Square brackets include a bound and parentheses exclude it.</div>
+<div class="block">Exports declare another mod's definitions for that mod's current minor release.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shorterVersionPadsWithZero</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rangeBoundsRespectInclusivity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rangeBoundsRespectInclusivity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Square brackets include a bound and parentheses exclude it.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shorterVersionPadsWithZero</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A shorter version pads with zeros, so <code>1.20</code> equals <code>1.20.0</code>.</div>
 </div>
 </div>
@@ -242,6 +247,15 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shorterVersionPadsWithZero</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A shorter version pads with zeros, so <code>1.20</code> equals <code>1.20.0</code>. No in-game form; guards
  version matching for mods that omit a patch number.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>optionalModVersionRangeSynthesis</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optionalModVersionRangeSynthesis</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Exports declare another mod's definitions for that mod's current minor release. In game: with an
+ optional mod installed (say version 4.12.4), run <code>/sg exportall</code>; that mod's files under
+ <code>somegoogly-export</code> declare <code>"version": "[4.12.4,4.13)"</code>.</div>
 </section>
 </li>
 </ul>

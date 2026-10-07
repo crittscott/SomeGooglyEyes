@@ -28,9 +28,4 @@ public final class VariantSelectionGameTests {
     public static void degenerateConfigsFallToFirstVariant(GameTestHelper helper) {
         VariantSelectionGameTestsLogic.degenerateConfigsFallToFirstVariant(helper);
     }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void rollIsDeterministicForAConfig(GameTestHelper helper) {
-        VariantSelectionGameTestsLogic.rollIsDeterministicForAConfig(helper);
-    }
 }

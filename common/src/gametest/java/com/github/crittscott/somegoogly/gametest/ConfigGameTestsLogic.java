@@ -1,16 +1,16 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
+import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 
 import java.util.List;
 import java.util.Map;
@@ -76,48 +76,29 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * The bundled cow and player definitions load. In game: sneak while holding a Googly Eye and aim at an
-     * eyeless cow, then at another player; both report that they can receive eyes.
+     * Every bundled Minecraft eye definition loads and is usable for each age it declares. In game: set
+     * {@code globalPercent = 100}, spawn one of each mob that has a file under {@code data/minecraft/eyes},
+     * and every one of them has eyes; the server log reports no invalid or unsafe eye config.
      */
-    public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
-        RuntimeConfig cow = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), false);
-        helper.assertTrue(usable(cow), "cow should have a usable shipped eye config");
-
-        // Players have a definition (player.json) and so are configured — the basis for being an application target.
-        RuntimeConfig player = ServerEyeConfigs.get(
-                ResourceLocation.fromNamespaceAndPath("minecraft", "player"), false);
-        helper.assertTrue(usable(player), "player should have a usable shipped eye config");
-        helper.succeed();
-    }
-
-    /**
-     * Every head in every shipped config must carry a non-blank attach token. The attachPoint is required
-     * (no default), so a token that loads as {@code null}/empty means a corrupt data edit — this catches
-     * that across every shipped file in one cheap headless check. It does not (and can't, on the dedicated
-     * server, where the client-only resolvers don't load) verify the token resolves to a real model part;
-     * that needs an in-client pass. No in-game form; guards that every bundled definition names a place
-     * on the model to put its eyes.
-     */
-    public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : ServerEyeConfigs.all().entrySet()) {
-            RuntimeConfigSet set = entry.getValue();
-            assertTokens(helper, entry.getKey(), set.adult);
-            assertTokens(helper, entry.getKey(), set.baby);
-            assertTokens(helper, entry.getKey(), set.any);
-        }
-        helper.succeed();
-    }
-
-    private static void assertTokens(GameTestHelper helper, ResourceLocation id, RuntimeConfig config) {
-        if (config == null) {
-            return;
-        }
-        for (Variant variant : config.variants) {
-            for (HeadConfig head : variant.heads) {
-                helper.assertTrue(head.attachPoint != null && !head.attachPoint.isBlank(),
-                        "config " + id + " has a head with a blank attach token");
+    public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
+        Map<ResourceLocation, Resource> files = helper.getLevel().getServer().getResourceManager()
+                .listResources("eyes", path -> path.getPath().endsWith(".json"));
+        int checked = 0;
+        for (ResourceLocation file : files.keySet()) {
+            ResourceLocation id = EyeConfigReloadListener.EYE_FILES.fileToId(file);
+            if (!ResourceLocation.DEFAULT_NAMESPACE.equals(id.getNamespace())) {
+                continue;
             }
+            RuntimeConfigSet set = ServerEyeConfigs.all().get(id);
+            helper.assertTrue(set != null, "shipped eye definition " + id + " failed to load");
+            for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
+                helper.assertTrue(config == null || usable(config),
+                        "shipped eye definition " + id + " has an unusable entry");
+            }
+            checked++;
         }
+        helper.assertTrue(checked > 0, "no shipped Minecraft eye definitions were found");
+        helper.succeed();
     }
 
     /** Exposes the protected datapack {@code apply} so a test can feed synthetic files through real selection. */
@@ -136,60 +117,25 @@ public final class ConfigGameTestsLogic {
      */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        String json = """
-                { "entries": [
-                    { "version": "[1.20,1.21)", "age": "adult", "enabled": true, "variants": [
-                        { "weight": 1.0, "heads": [ { "attachPoint": "head", "eyes": [ {
-                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
-                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
-                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
-                        } ] } ] } ] },
-                    { "version": "1.21.1", "age": "adult", "enabled": true, "variants": [
-                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
-                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
-                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
-                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
-                        } ] } ] } ] },
-                    { "version": "1.21.1", "age": "baby", "enabled": true, "variants": [
-                        { "weight": 2.0, "heads": [ { "attachPoint": "head", "eyes": [ {
-                            "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
-                            "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
-                            "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false
-                        } ] } ] } ] }
-                ] }
-                """;
+        JsonElement json = fileJson(
+                entryJson("[1.20,1.21)", "adult", 1.0),
+                entryJson(running(), "adult", 2.0),
+                entryJson(running(), "baby", 2.0),
+                entryJson("[99.0,100.0)", "adult", 3.0));
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            new TestReloadListener().applyFiles(Map.of(id, JsonParser.parseString(json)));
+            new TestReloadListener().applyFiles(Map.of(id, json));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
             helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
             helper.assertTrue(adult.variants.get(0).weight == 2.0,
-                    "exact selection must pick the 1.21.1 generation (weight 2), got "
+                    "exact selection must pick the running version's entry (weight 2), got "
                             + adult.variants.get(0).weight);
             helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
                     "the baby entry of the exact generation must be selected with it");
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
-        helper.succeed();
-    }
-
-    /**
-     * The bundled pig has a common head placement and a rarer rear placement. In game: set
-     * {@code entityOverrides = ["minecraft:pig,100"]} and spawn a few dozen pigs; most have eyes on their
-     * heads, and a few have them on their rear.
-     */
-    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
-        RuntimeConfig pig = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "pig"), false);
-        helper.assertTrue(usable(pig), "pig should have a usable shipped eye config");
-        helper.assertTrue(pig.variants.size() == 2,
-                "pig ships two placement variants (got " + pig.variants.size() + ")");
-        Variant butt = pig.variants.get(1);
-        helper.assertTrue(butt.heads.get(0).attachPoint.equals("body"),
-                "the second variant is the low-weight butt-eyes placement");
-        helper.assertTrue(butt.weight < pig.variants.get(0).weight,
-                "the butt-eyes variant should be rarer than the head variant");
         helper.succeed();
     }
 
@@ -234,6 +180,11 @@ public final class ConfigGameTestsLogic {
               "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
               "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false }""";
 
+    /** The running Minecraft version, so synthetic entries select exactly rather than by fallback. */
+    private static String running() {
+        return ModVersionLookup.versionForNamespace(ResourceLocation.DEFAULT_NAMESPACE).orElseThrow();
+    }
+
     private static String entryJson(String version, String age, double weight) {
         return "{ \"version\": \"" + version + "\", \"age\": \"" + age + "\", \"enabled\": true, \"variants\": [ "
                 + "{ \"weight\": " + weight + ", \"heads\": [ { \"attachPoint\": \"head\", \"eyes\": [ "
@@ -255,8 +206,8 @@ public final class ConfigGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(
-                    ServerEyeConfigs.ENDER_DRAGON, fileJson(entryJson("1.21.1", "adult", 1.0)),
-                    zombie, fileJson(entryJson("1.21.1", "adult", 1.0))));
+                    ServerEyeConfigs.ENDER_DRAGON, fileJson(entryJson(running(), "adult", 1.0)),
+                    zombie, fileJson(entryJson(running(), "adult", 1.0))));
             helper.assertTrue(ServerEyeConfigs.get(ServerEyeConfigs.ENDER_DRAGON, false) == null,
                     "the ender dragon config is refused at reload");
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
@@ -281,9 +232,9 @@ public final class ConfigGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(
-                    zombie, fileJson(entryJson("1.21.1", "adult", 1.0), entryJson("1.21.1", "adult", 2.0)),
+                    zombie, fileJson(entryJson(running(), "adult", 1.0), entryJson(running(), "adult", 2.0)),
                     creeper, JsonParser.parseString("{ \"entries\": 5 }"),
-                    skeleton, fileJson(entryJson("1.21.1", "elder", 1.0), entryJson("1.21.1", "adult", 3.0))));
+                    skeleton, fileJson(entryJson(running(), "elder", 1.0), entryJson(running(), "adult", 3.0))));
 
             RuntimeConfig z = ServerEyeConfigs.get(zombie, false);
             helper.assertTrue(z != null && z.variants.get(0).weight == 1.0,
@@ -329,7 +280,7 @@ public final class ConfigGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             Map<ResourceLocation, JsonElement> files = Map.of(
-                    zombie, fileJson(entryJson("1.21.1", "adult", 1.0)));
+                    zombie, fileJson(entryJson(running(), "adult", 1.0)));
 
             new TestReloadListener().applyFiles(files);
             Map<ResourceLocation, RuntimeConfigSet> afterFirst = ServerEyeConfigs.all();

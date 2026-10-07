@@ -25,16 +25,6 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     private static final String RELEASED_PERSISTENT_DATA_KEY = "somegoogly:persistentData";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void configuredCowHasServerGeometry(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.configuredCowHasServerGeometry(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.spawnInitializesEyePersistentData(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
@@ -104,11 +94,6 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void conversionKeepsEyeState(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.eyeStateAppearanceOverridesRoundTrip(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)

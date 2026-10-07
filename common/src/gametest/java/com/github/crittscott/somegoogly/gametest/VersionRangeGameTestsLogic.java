@@ -130,4 +130,17 @@ public final class VersionRangeGameTestsLogic {
         helper.assertTrue(VersionRangeMatcher.matches("1.20", "1.20"), "1.20 should exactly match 1.20");
         helper.succeed();
     }
+
+    /**
+     * Exports declare another mod's definitions for that mod's current minor release. In game: with an
+     * optional mod installed (say version 4.12.4), run {@code /sg exportall}; that mod's files under
+     * {@code somegoogly-export} declare {@code "version": "[4.12.4,4.13)"}.
+     */
+    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
+        helper.assertTrue("[4.12.4,4.13)".equals(VersionRangeMatcher.rangeFor("4.12.4")),
+                "an optional-mod version becomes an inclusive-to-next-minor range");
+        helper.assertTrue("banana".equals(VersionRangeMatcher.rangeFor("banana")),
+                "an unparseable version falls back to an exact-match entry");
+        helper.succeed();
+    }
 }

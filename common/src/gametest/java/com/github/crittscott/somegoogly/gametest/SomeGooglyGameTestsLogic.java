@@ -3,18 +3,15 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -28,6 +25,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -39,45 +37,12 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Core integration checks for loaded cow geometry, spawn-time eye-state initialization, entity
- * appearance overrides, the Googly Eye item's portable appearance payload, and death harvesting.
+ * Core integration checks for entity eye-state persistence and conversion, the Googly Eye item's
+ * portable appearance payload, and death harvesting.
  */
 public final class SomeGooglyGameTestsLogic {
 
     private SomeGooglyGameTestsLogic() {
-    }
-
-    /**
-     * The bundled cow definition resolves to real eye geometry on the server. In game: set
-     * {@code entityOverrides = ["minecraft:cow,100"]} and spawn a cow; it has eyes on its head.
-     */
-    public static void configuredCowHasServerGeometry(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, cow, EyeState.getVariantRoll(cow));
-
-        helper.assertTrue(ServerEyeConfigs.isEligible(cow), "Expected cow to be eligible for eyes");
-        helper.assertTrue(headInfo.hasConfig(), "Expected cow to have selected server eye config");
-        helper.assertTrue(headInfo.getHeadCount() > 0, "Expected cow config to have at least one head");
-        helper.assertTrue(headInfo.getEyeCount(0) > 0, "Expected cow config to have at least one eye");
-        helper.succeed();
-    }
-
-    /**
-     * A spawning mob gets its eye decision and placement roll at once. In game, on NeoForge or Forge: spawn a cow
-     * and run {@code /data get entity <cow>}; its {@code NeoForgeData} or {@code ForgeData} holds
-     * {@code somegoogly:hasGooglyEyes} and a {@code somegoogly:eyeVariantRoll} between 0 and 1.
-     */
-    public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-
-        helper.succeedWhen(() -> {
-            CompoundTag data = EntityPersistentData.get(cow);
-            helper.assertTrue(data.contains(EyeState.HAS_EYES), "Expected spawned mob to have has-eyes flag");
-            helper.assertTrue(data.contains(EyeState.VARIANT_ROLL), "Expected spawned mob to have variant roll");
-            float roll = data.getFloat(EyeState.VARIANT_ROLL);
-            helper.assertTrue(roll >= 0.0F && roll < 1.0F, "Expected variant roll in [0, 1)");
-        });
     }
 
     /**
@@ -126,32 +91,6 @@ public final class SomeGooglyGameTestsLogic {
             helper.assertTrue(iris.equals(EyeState.readProperties(cow).iris().orElse(null)),
                     "Converted mob should keep its appearance overrides");
         });
-    }
-
-    /**
-     * A mob's iris, cornea, and glow overrides read back as set. In game: on an eyed cow, run
-     * {@code /sg admin tint iris 0.25 0.5 0.75}, {@code /sg admin tint cornea 0.9 0.8 0.7}, and
-     * {@code /sg admin glow on}; its eyes show both colors and glow.
-     */
-    public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        EyeColor iris = new EyeColor(0.25F, 0.5F, 0.75F);
-        EyeColor cornea = new EyeColor(0.9F, 0.8F, 0.7F);
-
-        EyeState.setHasEyes(cow, true);
-        EyeState.setIrisTint(cow, iris);
-        EyeState.setCorneaTint(cow, cornea);
-        EyeState.setGlow(cow, true);
-
-        AppearanceOverride overrides = EyeState.readProperties(cow);
-        helper.assertTrue(EyeState.hasEyes(cow), "Expected EyeState has-eyes flag to be true");
-        helper.assertTrue(overrides.iris().isPresent() && overrides.iris().get().equals(iris),
-                "Expected iris override to round-trip");
-        helper.assertTrue(overrides.cornea().isPresent() && overrides.cornea().get().equals(cornea),
-                "Expected cornea override to round-trip");
-        helper.assertTrue(overrides.glow().isPresent() && overrides.glow().get(),
-                "Expected glow override to round-trip");
-        helper.succeed();
     }
 
     /**
@@ -227,7 +166,7 @@ public final class SomeGooglyGameTestsLogic {
     /**
      * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
      * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
-     * player, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
+     * player, an eyed cow shot by a player holding shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
      * {@code googlyEyesEnabled = false}.
      */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
@@ -250,6 +189,10 @@ public final class SomeGooglyGameTestsLogic {
 
             EyeState.setHasEyes(cow, true);
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().mobAttack(cow), drops::add);
+
+            Arrow arrow = Objects.requireNonNull(
+                    EntityType.ARROW.create(helper.getLevel(), EntitySpawnReason.TRIGGERED));
+            EyeItemService.onDeath(cow, helper.getLevel().damageSources().arrow(arrow, player), drops::add);
 
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(0);
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);

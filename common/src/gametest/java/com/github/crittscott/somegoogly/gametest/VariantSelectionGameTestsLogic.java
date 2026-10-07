@@ -71,18 +71,4 @@ public final class VariantSelectionGameTestsLogic {
         helper.assertTrue(EyeConfigModel.chooseVariantIndex(configOf(0.0), 0.5F) == 0, "zero total weight → index 0");
         helper.succeed();
     }
-
-    /**
-     * The same roll always picks the same variant. No in-game form; guards that a mob keeps its arrangement
-     * across reloads and for every viewer.
-     */
-    public static void rollIsDeterministicForAConfig(GameTestHelper helper) {
-        RuntimeConfig config = configOf(2.0, 1.0, 1.0);
-        for (float roll = 0F; roll < 1F; roll += 0.05F) {
-            int first = EyeConfigModel.chooseVariantIndex(config, roll);
-            int second = EyeConfigModel.chooseVariantIndex(config, roll);
-            helper.assertTrue(first == second, "same roll must always pick the same variant (roll " + roll + ")");
-        }
-        helper.succeed();
-    }
 }

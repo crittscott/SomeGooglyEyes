@@ -48,11 +48,6 @@ public final class PickerExportGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
-        PickerExportGameTestsLogic.optionalModVersionRangeSynthesis(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
     }

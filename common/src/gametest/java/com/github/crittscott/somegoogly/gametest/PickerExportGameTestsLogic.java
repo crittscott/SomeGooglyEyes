@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
-import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
@@ -159,19 +158,6 @@ public final class PickerExportGameTestsLogic {
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unsafe_payload", error)),
                 "non-finite exported geometry must be rejected, got: " + result.getString());
-        helper.succeed();
-    }
-
-    /**
-     * Exports declare another mod's definitions for that mod's current minor release. In game: with an
-     * optional mod installed (say version 4.12.4), run {@code /sg exportall}; that mod's files under
-     * {@code somegoogly-export} declare {@code "version": "[4.12.4,4.13)"}.
-     */
-    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
-        helper.assertTrue("[4.12.4,4.13)".equals(VersionRangeMatcher.rangeFor("4.12.4")),
-                "an optional-mod version becomes an inclusive-to-next-minor range");
-        helper.assertTrue("banana".equals(VersionRangeMatcher.rangeFor("banana")),
-                "an unparseable version falls back to an exact-match entry");
         helper.succeed();
     }
 

@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,11 @@ public final class EyeItemServiceGameTestsLogic {
         ItemStack shears = new ItemStack(Items.SHEARS);
         shears.enchant(optometrist, 1);
         return shears;
+    }
+
+    private static List<ItemEntity> droppedEyes(GameTestHelper helper, Player player) {
+        return helper.getLevel().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(2.0),
+                item -> item.getItem().is(ModContent.GOOGLY_EYE.get()));
     }
 
     /**
@@ -143,10 +149,13 @@ public final class EyeItemServiceGameTestsLogic {
      * with {@code googlyEyesEnabled = false}, nothing happens.
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {
+        Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
+        player.moveTo(at.x, at.y, at.z);
         player.setHealth(player.getMaxHealth());
         player.setShiftKeyDown(true);
         EyeState.setHasEyes(player, true);
-        EyeState.setIrisTint(player, new EyeColor(0.1F, 0.2F, 0.3F));
+        EyeColor iris = new EyeColor(0.1F, 0.2F, 0.3F);
+        EyeState.setIrisTint(player, iris);
 
         ItemStack opto = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, opto);
@@ -156,6 +165,10 @@ public final class EyeItemServiceGameTestsLogic {
         helper.assertTrue(opto.getDamageValue() == 1, "one durability for the clean removal");
         helper.assertTrue(player.getHealth() == player.getMaxHealth(),
                 "Optometrist self-removal deals no self-damage");
+        List<ItemEntity> drops = droppedEyes(helper, player);
+        helper.assertTrue(drops.size() == 1, "the clean removal drops one Googly Eye");
+        helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0).getItem()).iris().orElse(null)),
+                "the dropped eye carries the player's iris color");
 
         ItemStack plain = new ItemStack(Items.SHEARS);
         player.setItemInHand(InteractionHand.MAIN_HAND, plain);
@@ -164,6 +177,7 @@ public final class EyeItemServiceGameTestsLogic {
         helper.assertTrue(costly == InteractionResult.SUCCESS, "plain-shears self-removal still succeeds");
         helper.assertTrue(plain.getDamageValue() == 1, "one durability for the plain removal");
         helper.assertTrue(!EyeState.hasEyes(player), "the plain-shears path also removes the eyes");
+        helper.assertTrue(droppedEyes(helper, player).size() == 2, "the plain removal drops a second Googly Eye");
 
         player.setShiftKeyDown(false);
         EyeState.setHasEyes(player, true);
@@ -186,6 +200,7 @@ public final class EyeItemServiceGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
 
+        droppedEyes(helper, player).forEach(ItemEntity::discard);
         EyeState.disableAndClearProperties(player);
         player.setHealth(player.getMaxHealth());
         helper.succeed();

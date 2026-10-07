@@ -63,5 +63,9 @@ public final class VersionRangeGameTests {
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
     }
-}
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
+    }
+}
