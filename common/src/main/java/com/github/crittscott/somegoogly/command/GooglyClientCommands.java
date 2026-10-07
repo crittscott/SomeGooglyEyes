@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -28,7 +29,8 @@ import java.util.function.Consumer;
 /**
  * The {@code /sg} command tree — the in-game eye-placement CLI. Each loader registers the same
  * source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives entirely
- * in the client-side {@link PickerState}. Like the keyboard picker, they require <b>creative mode</b>.
+ * in the client-side {@link PickerState}. Like the keyboard picker, they require creative mode and
+ * permission level 2 ({@link PickerGate#mayUsePicker}).
  *
  * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
  * call the same {@link PickerState} methods, so they stay in lock-step.
@@ -54,8 +56,8 @@ public class GooglyClientCommands {
             new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.no_part"));
     private static final SimpleCommandExceptionType NOT_CHOSEN =
             new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_chosen"));
-    private static final SimpleCommandExceptionType NOT_CREATIVE =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_creative"));
+    private static final SimpleCommandExceptionType NOT_AUTHORIZED =
+            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_authorized"));
 
     /** The {@code /sg part} token that clears the current attachment instead of selecting one. */
     private static final String CLEAR_PART_TOKEN = "none";
@@ -64,14 +66,14 @@ public class GooglyClientCommands {
     private static final Component SELECTED_MARK = Component.translatable("somegoogly.picker.selected_mark");
 
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         PickerState.activate(); // turn the picker on so the preview/gizmo render
         feedback(ctx, "somegoogly.command.picker.feedback", PickerState.lockOn());
         return 1;
     }
 
     private static int create(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         float x = FloatArgumentType.getFloat(ctx, "x");
         float y = FloatArgumentType.getFloat(ctx, "y");
@@ -83,7 +85,7 @@ public class GooglyClientCommands {
     }
 
     private static int delete(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.delete(n)) {
@@ -94,7 +96,7 @@ public class GooglyClientCommands {
     }
 
     private static int dupe(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.dupe(n)) {
@@ -106,14 +108,14 @@ public class GooglyClientCommands {
 
     /** Exports the chosen mob's draft; {@code requireChosen} keeps it from firing at a stale target. */
     private static int export(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.export());
         return 1;
     }
 
     private static int exportAll(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.exportAll());
         return 1;
     }
@@ -126,7 +128,7 @@ public class GooglyClientCommands {
     }
 
     private static int listEyes(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         List<ListedEye> list = PickerState.currentEyes();
         feedback(ctx, "somegoogly.command.picker.eyes_header", PickerState.variantIndex() + 1, list.size());
@@ -145,7 +147,7 @@ public class GooglyClientCommands {
     }
 
     private static int listParts(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.parts_header", PickerState.parts().size());
         for (int i = 0; i < PickerState.parts().size(); i++) {
@@ -155,7 +157,7 @@ public class GooglyClientCommands {
     }
 
     private static int listVariants(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.variants_header", PickerState.variantCount());
         for (int i = 0; i < PickerState.variantCount(); i++) {
@@ -167,7 +169,7 @@ public class GooglyClientCommands {
     }
 
     private static int move(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
@@ -180,7 +182,7 @@ public class GooglyClientCommands {
     }
 
     private static int part(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         String target = StringArgumentType.getString(ctx, "target");
         if (target.equalsIgnoreCase(CLEAR_PART_TOKEN)) {
@@ -202,7 +204,7 @@ public class GooglyClientCommands {
     }
 
     private static int posrot(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
@@ -225,7 +227,7 @@ public class GooglyClientCommands {
     }
 
     private static int propCrossTarget(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         int n = IntegerArgumentType.getInteger(ctx, "v");
@@ -242,7 +244,7 @@ public class GooglyClientCommands {
     }
 
     private static int propCorneaColor(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
@@ -252,7 +254,7 @@ public class GooglyClientCommands {
     }
 
     private static int propDepth(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -262,7 +264,7 @@ public class GooglyClientCommands {
     }
 
     private static int propEyeScale(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -272,7 +274,7 @@ public class GooglyClientCommands {
     }
 
     private static int propGlow(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
@@ -283,7 +285,7 @@ public class GooglyClientCommands {
     }
 
     private static int propIrisColor(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
@@ -293,7 +295,7 @@ public class GooglyClientCommands {
     }
 
     private static int propIrisScale(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -439,10 +441,10 @@ public class GooglyClientCommands {
         }
     }
 
-    private static void requireCreative() throws CommandSyntaxException {
+    private static void requireAuthorized() throws CommandSyntaxException {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !player.isCreative()) {
-            throw NOT_CREATIVE.create();
+        if (player == null || !PickerGate.mayUsePicker(player)) {
+            throw NOT_AUTHORIZED.create();
         }
     }
 
@@ -454,7 +456,7 @@ public class GooglyClientCommands {
     }
 
     private static int rot(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
@@ -466,7 +468,7 @@ public class GooglyClientCommands {
     }
 
     private static int save(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         if (!PickerState.save()) {
@@ -478,7 +480,7 @@ public class GooglyClientCommands {
     }
 
     private static int select(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.select(n)) {
@@ -489,14 +491,14 @@ public class GooglyClientCommands {
     }
 
     private static int unchoose(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         PickerState.unlock();
         feedback(ctx, "somegoogly.command.picker.selection_cleared");
         return 1;
     }
 
     private static int variantDelete(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (n > PickerState.variantCount()) {
@@ -510,7 +512,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantNew(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = PickerState.newVariant();
         feedback(ctx, "somegoogly.command.picker.added_variant", n, PickerState.variantCount());
@@ -518,7 +520,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantSelect(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.selectVariant(n)) {
@@ -529,7 +531,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantWeight(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         float w = FloatArgumentType.getFloat(ctx, "w");
         PickerState.setVariantWeight(w);

@@ -27,7 +27,7 @@ import java.util.function.UnaryOperator;
  * shipped data uses. Two entry points:
  * <ul>
  *   <li>{@link #export()} — the single committed mob, sent to the server as a
- *       {@code PickerExportPacket}; the creative-gated server handler validates it, writes
+ *       {@code PickerExportPacket}; the authorization-gated server handler validates it, writes
  *       {@code world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}, and {@code /reload}s
  *       so it persists and re-syncs through the normal path. Works from a remote client; the result
  *       arrives as a server chat message (rate-limited server-side to one export per 10 seconds).</li>

@@ -125,7 +125,8 @@ public final class EyeItemService {
      * Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
      * another player having applied a Slimy Eye to you. One Googly Eye drops carrying your effective
      * appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
-     * additionally land one melee hit's worth of self-damage. Returns {@link InteractionResult#PASS}
+     * additionally deal one melee hit's worth of {@link ModContent#SELF_SHEAR} damage, which has no
+     * attacker so PvP and team rules don't cancel it. Returns {@link InteractionResult#PASS}
      * when it doesn't apply (not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so the
      * vanilla item use proceeds.
      */
@@ -144,7 +145,8 @@ public final class EyeItemService {
         shearEyes(level, player, player, hand,
                 helper.hasConfig() ? buildEyeDrop(helper, EyeState.readProperties(player)) : null);
         if (!clean) {
-            player.hurtServer(level, player.damageSources().playerAttack(player),
+            player.hurtServer(level, new DamageSource(level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE)
+                            .getOrThrow(ModContent.SELF_SHEAR)),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return InteractionResult.SUCCESS;

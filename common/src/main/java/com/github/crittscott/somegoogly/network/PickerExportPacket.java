@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -21,8 +20,7 @@ import java.util.UUID;
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
  * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); all validation,
  * path construction, the 10-second cooldown, the file write, and the {@code /reload} live in
- * {@link PickerExportService}. Unlike the other picker verbs this one also requires permission
- * level 2: it forces a server-wide datapack reload, which vanilla reserves for operators.
+ * {@link PickerExportService}. Like every picker verb it requires {@link PickerGate#authorized}.
  *
  * <p>The client refuses to send a packet that fails {@link #fitsServerbound()}, so a malformed or
  * oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.
@@ -78,12 +76,7 @@ public class PickerExportPacket implements CustomPacketPayload {
     }
 
     public static void handle(PickerExportPacket packet, ServerPlayer sender) {
-        if (!PickerGate.creative(sender)) {
-            return;
-        }
-        if (!sender.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
-            sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
-                    Component.translatable("somegoogly.command.picker.export_rejected_not_operator")));
+        if (!PickerGate.authorized(sender)) {
             return;
         }
         UUID playerId = sender.getUUID();

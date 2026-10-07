@@ -19,9 +19,9 @@ import java.util.UUID;
  * restore, crash-proofing — is owned by {@link PickerFreezeService} on the server, so it works from a
  * remote client and survives that client disappearing; this packet only asks.
  *
- * <p>Freezing requires creative mode ({@link PickerGate}). <b>Unfreezing does not</b>: it only
- * releases the sender's own frozen mob, and gating it would strand a mob frozen if the player lost
- * creative mid-edit.
+ * <p>Freezing requires picker authorization ({@link PickerGate#authorized}). <b>Unfreezing does
+ * not</b>: it only releases the sender's own frozen mob, and gating it would strand a mob frozen if the
+ * player lost creative or operator status mid-edit.
  */
 public class PickerFreezePacket implements CustomPacketPayload {
 
@@ -33,7 +33,7 @@ public class PickerFreezePacket implements CustomPacketPayload {
     /**
      * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
      * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
-     * the mob's box and the mob's position the server measures to. Keeps a creative client from
+     * the mob's box and the mob's position the server measures to. Keeps an authorized client from
      * freezing an arbitrary mob in any loaded chunk by UUID.
      */
     private static final double FREEZE_DISTANCE_SLACK = 4.0;
@@ -71,7 +71,7 @@ public class PickerFreezePacket implements CustomPacketPayload {
 
     public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
         if (packet.freeze) {
-            if (!PickerGate.creative(sender)) {
+            if (!PickerGate.authorized(sender)) {
                 return;
             }
             Entity target = sender.serverLevel().getEntity(packet.mobId);

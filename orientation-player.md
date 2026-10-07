@@ -61,7 +61,7 @@ Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appe
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health, even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 While holding either eye item, sneak and aim at a living entity to see whether it:
 
@@ -158,7 +158,7 @@ Resource packs can replace eye textures and item models. The mod has no JEI plug
 
 ## Creative eye picker
 
-The picker is an in-world authoring tool for creative players. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
+The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
 
 | Key | Action |
 | --- | --- |

@@ -35,9 +35,9 @@ import net.minecraft.world.entity.LivingEntity;
 import javax.annotation.Nullable;
 
 /**
- * Server-owned {@code /sg} commands. The creative-only picker branches spawn, move, and rotate
- * authoring mobs; the {@code admin} subtree additionally requires permission level 2 and changes
- * the looked-at entity's eye state or active cosmetic behavior.
+ * Server-owned {@code /sg} commands. Both kinds require creative mode and permission level 2: the
+ * picker branches ({@link PickerGate#mayUsePicker}) spawn, move, and rotate authoring mobs; the
+ * {@code admin} subtree changes the looked-at entity's eye state or active cosmetic behavior.
  *
  * <p>The local editing branches use the client dispatcher. The two trees have disjoint child paths
  * under one {@code /sg} root; loader client adapters preserve routing to these server branches.
@@ -115,7 +115,7 @@ public final class GooglyServerCommands {
 
     private static LiteralArgumentBuilder<CommandSourceStack> spawnTree(CommandBuildContext buildContext) {
         return Commands.literal("spawn")
-                .requires(GooglyServerCommands::creativePlayer)
+                .requires(GooglyServerCommands::pickerUser)
                 .then(Commands.argument("type", ResourceArgument.resource(buildContext, Registries.ENTITY_TYPE))
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                                 BuiltInRegistries.ENTITY_TYPE.keySet().stream()
@@ -126,7 +126,7 @@ public final class GooglyServerCommands {
 
     private static LiteralArgumentBuilder<CommandSourceStack> spawnAllTree() {
         return Commands.literal("spawnall")
-                .requires(GooglyServerCommands::creativePlayer)
+                .requires(GooglyServerCommands::pickerUser)
                 .executes(ctx -> spawnAll(ctx, null))
                 .then(Commands.argument("mod", StringArgumentType.word())
                         .executes(ctx -> spawnAll(ctx, StringArgumentType.getString(ctx, "mod"))));
@@ -134,7 +134,7 @@ public final class GooglyServerCommands {
 
     private static LiteralArgumentBuilder<CommandSourceStack> mobTree() {
         return Commands.literal("mob")
-                .requires(GooglyServerCommands::creativePlayer)
+                .requires(GooglyServerCommands::pickerUser)
                 .then(Commands.literal("move")
                         .then(Commands.argument("dx", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))
                                 .then(Commands.argument("dy", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))
@@ -224,8 +224,8 @@ public final class GooglyServerCommands {
         return living;
     }
 
-    private static boolean creativePlayer(CommandSourceStack source) {
-        return source.getEntity() instanceof ServerPlayer player && player.isCreative();
+    private static boolean pickerUser(CommandSourceStack source) {
+        return source.getEntity() instanceof ServerPlayer player && PickerGate.mayUsePicker(player);
     }
 
     /**

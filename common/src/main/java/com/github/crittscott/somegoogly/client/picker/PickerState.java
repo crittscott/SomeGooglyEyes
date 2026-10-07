@@ -28,7 +28,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
- * which share this state. Creative-mode only; works in single-player and from a remote client alike —
+ * which share this state. Creative operators only; works in single-player and from a remote client alike —
  * the operations that touch the server (mob freezing, export) go through the C2S picker packets and
  * are re-authorized server-side. Workflow: choose a mob, pick a part to use as the coordinate frame,
  * shape a <i>current eye</i> (position / rotation / properties), then save it to a flat, numbered

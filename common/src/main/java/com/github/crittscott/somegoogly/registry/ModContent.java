@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -23,8 +24,8 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
  * Everything the mod registers, declared once and bound through each loader's {@link ContentRegistrar}:
  * the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
  * component both carry, the mod's creative tab, and the eye-modifier recipe serializer. The Optometrist
- * enchantment is data-driven, so only its resource key lives here; the Slimy Eye recipe is a vanilla
- * {@code crafting_transmute}, so it needs no serializer.
+ * enchantment and self-shear damage type are data-driven, so only their resource keys live here; the
+ * Slimy Eye recipe is a vanilla {@code crafting_transmute}, so it needs no serializer.
  */
 public final class ModContent {
 
@@ -47,6 +48,14 @@ public final class ModContent {
     public static final ResourceKey<Enchantment> OPTOMETRIST = ResourceKey.create(
             Registries.ENCHANTMENT,
             ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "optometrist"));
+
+    /**
+     * The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
+     * attacker, so PvP, team, and claim rules that guard player-on-player damage do not cancel it.
+     */
+    public static final ResourceKey<DamageType> SELF_SHEAR = ResourceKey.create(
+            Registries.DAMAGE_TYPE,
+            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "self_shear"));
 
     private ModContent() {
     }

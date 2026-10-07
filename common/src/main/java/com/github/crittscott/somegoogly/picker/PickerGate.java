@@ -1,10 +1,12 @@
 package com.github.crittscott.somegoogly.picker;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -15,11 +17,12 @@ import java.util.UUID;
  * Server-side authorization and throttling for client-driven picker operations — the two halves of the
  * same gate, always checked together by the packet handlers.
  *
- * <p>Authorization is creative mode and nothing else: no extra op/permission/config check. A server that
- * hands out creative already trusts the player with world edits, and admins should know creative also
- * enables the picker. The creative checks in the client CLI and keyboard picker are UX only and never
- * trusted; packet handlers use {@link #creative} so unauthorized custom-payload spam cannot amplify into
- * server feedback packets.
+ * <p>Authorization ({@link #mayUsePicker}) is creative mode plus permission level 2, the level of vanilla
+ * {@code /summon}, {@code /tp}, and {@code /fill}: the picker freezes, moves, and spawns mobs and can
+ * rewrite blocks without firing the events protection mods listen to, so it is an operator tool. The
+ * client CLI and keyboard picker apply the same rule as UX only and are never trusted; packet handlers
+ * use {@link #authorized}, which refuses silently so unauthorized custom-payload spam cannot amplify
+ * into server feedback packets.
  *
  * <p>Every picker throttle lives here: one request per player per tick, the server-wide spawn-all
  * cooldown, and the two export limits. Each successful export triggers a full datapack reload, so
@@ -46,13 +49,18 @@ public final class PickerGate {
     private PickerGate() {
     }
 
-    /** Whether {@code sender} may drive one picker request now: creative, and not already rate-limited this tick. */
-    public static boolean creative(ServerPlayer sender) {
-        return sender.isCreative() && allowCreativeRequest(sender);
+    /** Whether {@code player} may use the picker at all: creative mode and permission level 2. */
+    public static boolean mayUsePicker(Player player) {
+        return player.isCreative() && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
     }
 
-    /** Permit at most one creative picker request per player in one server tick. */
-    public static boolean allowCreativeRequest(ServerPlayer player) {
+    /** Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not rate-limited this tick. */
+    public static boolean authorized(ServerPlayer sender) {
+        return mayUsePicker(sender) && allowRequest(sender);
+    }
+
+    /** Permit at most one picker request per player in one server tick. */
+    public static boolean allowRequest(ServerPlayer player) {
         int now = player.serverLevel().getServer().getTickCount();
         Integer last = LAST_REQUEST_TICK.put(player.getUUID(), now);
         return last == null || last != now;

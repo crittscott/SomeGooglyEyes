@@ -7,8 +7,9 @@ import net.minecraft.server.level.ServerPlayer;
 
 /**
  * The server-side authorization and rate limits behind the client-driven picker verbs:
- * {@link PickerGate#creative} (a plain {@code isCreative()} check left to source review) and the
- * {@link PickerGate} rate limits (one request
+ * {@link PickerGate#mayUsePicker} (creative plus permission level 2, verified manually: in-game, a
+ * creative player without op cannot toggle the picker, run {@code /sg spawn}, {@code /sg spawnall},
+ * or {@code /sg mob}, and an op in creative can) and the {@link PickerGate} rate limits (one request
  * per player per tick, plus a server-wide cooldown on the destructive bulk spawn).
  * {@code ConfigGameTestsLogic.spawnAllDefaultsOff} pins the opt-in config default; these pin the
  * silent-rejection gates that keep unauthorized custom-payload spam from amplifying into server work.
@@ -19,16 +20,16 @@ public final class PickerAuthGameTestsLogic {
     }
 
     /** A sender gets at most one picker request per tick, and clearing its record resets the limit. */
-    public static void pickerRequestsRequireCreativeAndThrottlePerTick(GameTestHelper helper, ServerPlayer player) {
+    public static void pickerRequestsThrottlePerTick(GameTestHelper helper, ServerPlayer player) {
         PickerGate.onPlayerLeft(player.getUUID());
         try {
-            helper.assertTrue(PickerGate.allowCreativeRequest(player),
+            helper.assertTrue(PickerGate.allowRequest(player),
                     "the first request in a tick is allowed");
-            helper.assertTrue(!PickerGate.allowCreativeRequest(player),
+            helper.assertTrue(!PickerGate.allowRequest(player),
                     "a second request in the same tick is refused");
 
             PickerGate.onPlayerLeft(player.getUUID());
-            helper.assertTrue(PickerGate.allowCreativeRequest(player),
+            helper.assertTrue(PickerGate.allowRequest(player),
                     "clearing the player's record lets the next request through");
         } finally {
             PickerGate.onPlayerLeft(player.getUUID());

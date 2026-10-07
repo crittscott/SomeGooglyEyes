@@ -1,7 +1,9 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -15,11 +17,6 @@ import net.minecraft.network.chat.Component;
 public final class PickerInput {
 
     private PickerInput() {
-    }
-
-    private static boolean inCreative() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.player.isCreative();
     }
 
     private static void message(String key, Object... args) {
@@ -54,9 +51,10 @@ public final class PickerInput {
 
         if (key == PickerKeys.TOGGLE) {
             if (!PickerState.isActive()) {
-                // The picker is a creative-mode authoring tool; don't let it turn on otherwise.
-                if (!inCreative()) {
-                    message("somegoogly.command.picker.toggle_requires_creative");
+                // The server refuses picker requests from anyone else, so don't let the picker turn on.
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player == null || !PickerGate.mayUsePicker(player)) {
+                    message("somegoogly.command.picker.not_authorized");
                     return;
                 }
                 PickerState.activate();
