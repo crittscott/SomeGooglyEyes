@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.eye.state;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ARGB;
@@ -13,24 +14,35 @@ import java.util.List;
  * One RGB color, each channel 0..1. The single color representation across the mod — config,
  * item/entity override, and the renderer all use this.
  *
- * <p>Serialized as a {@code [r, g, b]} list, the datapack JSON's color layout.
+ * <p>Serialized as a {@code [r, g, b]} list, the datapack JSON's color layout. Both codecs reject a
+ * channel outside 0..1 on decode, so every decoded color is in range.
  */
 public record EyeColor(float r, float g, float b) {
 
     public static final EyeColor BLACK = new EyeColor(0F, 0F, 0F);
 
     public static final Codec<EyeColor> CODEC = Codec.FLOAT.listOf().comapFlatMap(
-            list -> list.size() == 3
-                    ? DataResult.success(new EyeColor(list.get(0), list.get(1), list.get(2)))
-                    : DataResult.error(() -> "Expected 3 color channels, got " + list.size()),
+            list -> {
+                if (list.size() != 3) {
+                    return DataResult.error(() -> "Expected 3 color channels, got " + list.size());
+                }
+                EyeColor color = new EyeColor(list.get(0), list.get(1), list.get(2));
+                return color.isValid()
+                        ? DataResult.success(color)
+                        : DataResult.error(() -> "Color channel outside 0..1: " + list);
+            },
             color -> List.of(color.r, color.g, color.b));
 
-    /** Three raw floats; validation is the caller's ({@link #isValid()}). */
     public static final StreamCodec<ByteBuf, EyeColor> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, EyeColor::r,
             ByteBufCodecs.FLOAT, EyeColor::g,
             ByteBufCodecs.FLOAT, EyeColor::b,
-            EyeColor::new);
+            EyeColor::new).map(color -> {
+                if (!color.isValid()) {
+                    throw new DecoderException("Color channel outside 0..1");
+                }
+                return color;
+            }, color -> color);
 
     public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
 
@@ -51,11 +63,11 @@ public record EyeColor(float r, float g, float b) {
     }
 
     public boolean isValid() {
-        return validChannel(r) && validChannel(g) && validChannel(b);
+        return channelInRange(r) && channelInRange(g) && channelInRange(b);
     }
 
-    private static boolean validChannel(float value) {
-        return Float.isFinite(value) && value >= 0.0F && value <= 1.0F;
+    private static boolean channelInRange(float value) {
+        return value >= 0.0F && value <= 1.0F;
     }
 
     /** The renderer/model APIs take a {@code float[3]}. */

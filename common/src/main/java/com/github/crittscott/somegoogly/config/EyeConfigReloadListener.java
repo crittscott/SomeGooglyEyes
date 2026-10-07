@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
@@ -80,7 +81,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                     continue;
                 }
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get());
-                if (config != null && config.hasAnyConfig()) {
+                if (config.hasAnyConfig()) {
                     String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
                     if (error == null) {
                         selected.put(entry.getKey(), config);
@@ -101,8 +102,11 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             return;
         }
         Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
-        if (encoded == null) {
-            SomeGooglyCommon.LOGGER.error("Eye config reload could not be encoded; keeping the previous configs");
+        int wireSize = EyeConfigSyncPacket.wireSize(encoded);
+        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+            SomeGooglyCommon.LOGGER.error(
+                    "Eye config reload encodes to {} bytes, exceeding the {}-byte sync limit; keeping the previous configs",
+                    wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES);
             return;
         }
         if (!ServerEyeConfigs.replaceIfChanged(selected, encoded)) {
@@ -123,10 +127,6 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     }
 
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded) {
-        if (file.entries.isEmpty()) {
-            return null;
-        }
-
         List<VersionedEntry> validEntries = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
             if (VersionRangeMatcher.isValid(entry.version)) {

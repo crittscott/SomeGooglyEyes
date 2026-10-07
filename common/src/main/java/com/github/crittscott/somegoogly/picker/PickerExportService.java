@@ -137,9 +137,7 @@ public final class PickerExportService {
         file.entries = entries;
 
         try {
-            if (!file.writeJson(target)) {
-                return Component.translatable("somegoogly.command.picker.export_rejected_encode_failed");
-            }
+            file.writeJson(target);
             Path meta = packDir.resolve("pack.mcmeta");
             if (!Files.exists(meta)) {
                 Files.writeString(meta, PACK_MCMETA);

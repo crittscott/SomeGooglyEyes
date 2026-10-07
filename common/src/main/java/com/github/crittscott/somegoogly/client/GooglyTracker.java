@@ -294,7 +294,7 @@ public class GooglyTracker {
         behavior.onStart(instance);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
-        instance.age = Math.max(0, Math.min(elapsed, instance.duration));
+        instance.age = elapsed;
         if (instance.age >= instance.duration) {
             return false; // already finished by the time we'd show it (stale catch-up); nothing to play
         }

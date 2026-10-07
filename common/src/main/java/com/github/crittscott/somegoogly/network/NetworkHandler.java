@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class NetworkHandler {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "12";
+    public static final String NETWORK_VERSION = "13";
 
     public static final ResourceLocation EYE_STATE = versioned("eye_state");
     public static final ResourceLocation EYE_CONFIG = versioned("eye_config");

@@ -43,7 +43,7 @@ public final class EyeConfigModel {
         }
         double total = 0;
         for (Variant variant : config.variants) {
-            total += variant.weight();
+            total += variant.weight;
         }
         if (total <= 0) {
             return 0;
@@ -51,7 +51,7 @@ public final class EyeConfigModel {
         double target = roll * total;
         double accumulated = 0;
         for (int i = 0; i < config.variants.size(); i++) {
-            accumulated += config.variants.get(i).weight();
+            accumulated += config.variants.get(i).weight;
             if (target < accumulated) {
                 return i;
             }
@@ -84,18 +84,11 @@ public final class EyeConfigModel {
                     .map(version -> "minecraft".equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
         }
 
-        /**
-         * Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories.
-         * Returns {@code false}, writing nothing, when the file fails to encode.
-         */
-        public boolean writeJson(Path path) throws IOException {
-            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).result().orElse(null);
-            if (json == null) {
-                return false;
-            }
+        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
+        public void writeJson(Path path) throws IOException {
+            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow();
             Files.createDirectories(path.getParent());
             Files.writeString(path, GSON.toJson(json) + "\n");
-            return true;
         }
 
         public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
@@ -194,7 +187,7 @@ public final class EyeConfigModel {
                     continue;
                 }
                 Variant variant = new Variant();
-                variant.weight = sourceVariant.weight();
+                variant.weight = sourceVariant.weight;
                 variant.heads = heads;
                 variants.add(variant);
             }
@@ -264,11 +257,6 @@ public final class EyeConfigModel {
         public List<HeadConfig> heads = List.of();
         /** Authored relative selection weight; validated installed values are finite and nonnegative. */
         public double weight = 1.0;
-
-        /** The selection weight, clamped to be non-negative; a negative authored value reads as {@code 0}. */
-        public double weight() {
-            return Math.max(0.0, weight);
-        }
     }
 
     /** One version- and age-selectable entry in a datapack file. */

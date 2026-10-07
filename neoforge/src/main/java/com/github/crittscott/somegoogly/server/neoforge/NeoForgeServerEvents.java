@@ -48,7 +48,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyServerCommands.register(event.getDispatcher());
+        GooglyServerCommands.register(event.getDispatcher(), event.getBuildContext());
     }
 
     /**
@@ -92,9 +92,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            ServerServices.onPlayerLeft(player);
-        }
+        ServerServices.onPlayerLeft((ServerPlayer) event.getEntity());
     }
 
     /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
@@ -116,9 +114,8 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer player
-                && event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStartTracking(living, player);
+        if (event.getTarget() instanceof LivingEntity living) {
+            ServerServices.onStartTracking(living, (ServerPlayer) event.getEntity());
         }
     }
 
@@ -129,9 +126,8 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onLivingDamage(LivingDamageEvent.Post event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide() && event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(living);
+        if (event.getSource().getEntity() instanceof Player) {
+            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
         }
     }
 

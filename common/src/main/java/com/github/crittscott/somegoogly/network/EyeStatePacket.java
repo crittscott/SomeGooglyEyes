@@ -35,9 +35,6 @@ public record EyeStatePacket(int entityId, UUID entityUuid, EyeState.Snapshot sn
             throw new DecoderException("Invalid eye placement variant roll");
         }
         AppearanceOverride overrides = AppearanceOverride.STREAM_CODEC.decode(buffer);
-        if (!overrides.isValid()) {
-            throw new DecoderException("Invalid eye appearance color");
-        }
         return new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides);
     }
 

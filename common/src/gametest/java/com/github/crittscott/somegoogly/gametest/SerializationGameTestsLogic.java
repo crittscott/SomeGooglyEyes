@@ -193,6 +193,30 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
+     * Both color codecs reject a channel outside {@code 0..1} or non-finite on decode. In-game,
+     * {@code /give @s somegoogly:googly_eye[somegoogly:eye_properties={irisColor:[2f,0f,0f]}]} fails to
+     * parse instead of producing an eye item.
+     */
+    public static void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
+        for (float bad : new float[]{2.0F, -0.5F, Float.NaN, Float.POSITIVE_INFINITY}) {
+            JsonArray channels = new JsonArray();
+            channels.add(Float.valueOf(bad));
+            channels.add(Float.valueOf(0.5F));
+            channels.add(Float.valueOf(0.5F));
+            helper.assertTrue(EyeColor.CODEC.parse(JsonOps.INSTANCE, channels).result().isEmpty(),
+                    "codec must reject channel " + bad);
+
+            RegistryFriendlyByteBuf buffer = buffer(helper);
+            buffer.writeFloat(bad);
+            buffer.writeFloat(0.5F);
+            buffer.writeFloat(0.5F);
+            helper.assertTrue(throwsRuntime(() -> EyeColor.STREAM_CODEC.decode(buffer)),
+                    "stream codec must reject channel " + bad);
+        }
+        helper.succeed();
+    }
+
+    /**
      * The canonical form is whatever {@code encode} produces, so this is the guard that stops a field
      * added to the record from being silently dropped on the way to disk: a value-equal round-trip can
      * only pass if every field was written. {@code DEFAULT} would round-trip even with a field elided,

@@ -6,8 +6,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -160,15 +158,7 @@ public final class EyeConfigLimits {
                 && (crossTarget < 0 || crossTarget >= eyeCount || crossTarget == eyeIndex)) {
             return "cross-eye target is not another eye in the same head";
         }
-        EyeAppearance appearance = eye.appearance();
-        if (!validColor(appearance.cornea()) || !validColor(appearance.iris())) {
-            return "color channel is not finite or outside 0..1";
-        }
         return null;
-    }
-
-    private static boolean validColor(EyeColor color) {
-        return color.isValid();
     }
 
     private static boolean finiteBounded(double value, double bound) {

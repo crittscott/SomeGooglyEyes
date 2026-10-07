@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +47,6 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
         }
-        int start = buffer.readerIndex();
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
@@ -71,9 +71,6 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             configs.put(id, decoded);
             encoded.put(id, tag);
         }
-        if (buffer.readerIndex() - start > MAX_PAYLOAD_BYTES) {
-            throw new DecoderException("Eye config sync payload exceeds network limit");
-        }
         String error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error);
@@ -83,14 +80,30 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         this.googlyEyesEnabled = buffer.readBoolean();
     }
 
-    private void write(FriendlyByteBuf buffer) {
-        int start = buffer.writerIndex();
+    /** The number of bytes a packet carrying {@code encoded} occupies on the wire. */
+    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            writeBody(buffer, encoded, false);
+            return buffer.writerIndex();
+        } finally {
+            buffer.release();
+        }
+    }
+
+    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
+                                  boolean googlyEyesEnabled) {
         buffer.writeVarInt(encoded.size());
         for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
         buffer.writeBoolean(googlyEyesEnabled);
+    }
+
+    private void write(FriendlyByteBuf buffer) {
+        int start = buffer.writerIndex();
+        writeBody(buffer, encoded, googlyEyesEnabled);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written

@@ -23,13 +23,13 @@ public final class EyeConfigLimitsGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void numericPlacementBoundsAreEnforced(GameTestHelper helper) {
-        EyeConfigLimitsGameTestsLogic.numericPlacementBoundsAreEnforced(helper);
+    public static void variantWeightMustBeNonnegative(GameTestHelper helper) {
+        EyeConfigLimitsGameTestsLogic.variantWeightMustBeNonnegative(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void colorChannelsMustBeInRange(GameTestHelper helper) {
-        EyeConfigLimitsGameTestsLogic.colorChannelsMustBeInRange(helper);
+    public static void numericPlacementBoundsAreEnforced(GameTestHelper helper) {
+        EyeConfigLimitsGameTestsLogic.numericPlacementBoundsAreEnforced(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)

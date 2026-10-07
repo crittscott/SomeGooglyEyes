@@ -16,12 +16,15 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,8 +52,8 @@ import javax.annotation.Nullable;
  */
 public final class GooglyServerCommands {
 
-    private static final double MAX_MOB_MOVE = 20.0;
-    private static final double MAX_MOB_MOVE_SQUARED = MAX_MOB_MOVE * MAX_MOB_MOVE;
+    private static final float MAX_MOB_MOVE = 20.0F;
+    private static final double MAX_MOB_MOVE_SQUARED = (double) MAX_MOB_MOVE * MAX_MOB_MOVE;
 
     /** The {@code /sg admin behavior} token that picks a random behavior instead of naming one. */
     private static final String RANDOM_BEHAVIOR_TOKEN = "random";
@@ -101,10 +104,10 @@ public final class GooglyServerCommands {
                                 .executes(ctx -> behavior(ctx, StringArgumentType.getString(ctx, "id")))));
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> spawnTree() {
+    private static LiteralArgumentBuilder<CommandSourceStack> spawnTree(CommandBuildContext buildContext) {
         return Commands.literal("spawn")
                 .requires(GooglyServerCommands::creativePlayer)
-                .then(Commands.argument("type", ResourceLocationArgument.id())
+                .then(Commands.argument("type", ResourceArgument.resource(buildContext, Registries.ENTITY_TYPE))
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                                 BuiltInRegistries.ENTITY_TYPE.keySet().stream()
                                         .filter(id -> PickerSpawnService.isSpawnable(BuiltInRegistries.ENTITY_TYPE.getValue(id))),
@@ -124,37 +127,30 @@ public final class GooglyServerCommands {
         return Commands.literal("mob")
                 .requires(GooglyServerCommands::creativePlayer)
                 .then(Commands.literal("move")
-                        .then(Commands.argument("dx", FloatArgumentType.floatArg())
-                                .then(Commands.argument("dy", FloatArgumentType.floatArg())
-                                        .then(Commands.argument("dz", FloatArgumentType.floatArg())
+                        .then(Commands.argument("dx", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))
+                                .then(Commands.argument("dy", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))
+                                        .then(Commands.argument("dz", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))
                                                 .executes(GooglyServerCommands::moveMob)))))
                 .then(Commands.literal("rot")
-                        .then(Commands.argument("azimuth", FloatArgumentType.floatArg())
+                        .then(Commands.argument("azimuth", FloatArgumentType.floatArg(-360.0F, 360.0F))
                                 .executes(GooglyServerCommands::rotateMob)));
     }
 
-    private static int spawn(CommandContext<CommandSourceStack> ctx) {
-        ServerPlayer player = ctx.getSource().getPlayer();
-        ResourceLocation typeId = ctx.getArgument("type", ResourceLocation.class);
-        if (player == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(typeId)) {
-            ctx.getSource().sendFailure(Component.translatable(
-                    "somegoogly.command.picker.unknown_entity_type", typeId.toString()));
-            return 0;
-        }
-        PickerSpawnService.spawnOne(player, BuiltInRegistries.ENTITY_TYPE.getValue(typeId));
+    private static int spawn(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        PickerSpawnService.spawnOne(player, ResourceArgument.getResource(ctx, "type", Registries.ENTITY_TYPE).value());
         return 1;
     }
 
-    private static int spawnAll(CommandContext<CommandSourceStack> ctx, @Nullable String modFilter) {
-        ServerPlayer player = ctx.getSource().getPlayer();
-        if (player == null) {
-            return 0;
-        }
+    private static int spawnAll(CommandContext<CommandSourceStack> ctx, @Nullable String modFilter)
+            throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
         if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
             player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_disabled"));
             return 0;
         }
         if (modFilter != null && !ServerConfig.validateNamespace(modFilter)) {
+            ctx.getSource().sendFailure(Component.translatable("somegoogly.command.picker.spawnall_invalid_mod", modFilter));
             return 0;
         }
         if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
@@ -168,17 +164,11 @@ public final class GooglyServerCommands {
         return 1;
     }
 
-    private static int moveMob(CommandContext<CommandSourceStack> ctx) {
-        ServerPlayer player = ctx.getSource().getPlayer();
-        if (player == null) {
-            return 0;
-        }
+    private static int moveMob(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
         double dx = FloatArgumentType.getFloat(ctx, "dx");
         double dy = FloatArgumentType.getFloat(ctx, "dy");
         double dz = FloatArgumentType.getFloat(ctx, "dz");
-        if (!Double.isFinite(dx) || !Double.isFinite(dy) || !Double.isFinite(dz)) {
-            return 0;
-        }
         if (dx * dx + dy * dy + dz * dz > MAX_MOB_MOVE_SQUARED) {
             player.sendSystemMessage(Component.translatable(
                     "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE));
@@ -195,19 +185,13 @@ public final class GooglyServerCommands {
         return 1;
     }
 
-    private static int rotateMob(CommandContext<CommandSourceStack> ctx) {
-        ServerPlayer player = ctx.getSource().getPlayer();
-        if (player == null) {
-            return 0;
-        }
+    private static int rotateMob(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
         LivingEntity living = frozenMob(player);
         if (living == null) {
             return 0;
         }
         float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
-        if (!Float.isFinite(azimuth)) {
-            return 0;
-        }
         float yaw = Mth.wrapDegrees(azimuth - 90.0F);
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
@@ -241,7 +225,7 @@ public final class GooglyServerCommands {
      * a full {@code somegoogly:stare}, or {@code random}) on the looked-at mob. Exercises the full
      * server → packet → client play path. Honors the one-at-a-time rule, so it reports if dropped.
      */
-    private static int behavior(CommandContext<CommandSourceStack> ctx, String id) {
+    private static int behavior(CommandContext<CommandSourceStack> ctx, String id) throws CommandSyntaxException {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
 
@@ -296,7 +280,8 @@ public final class GooglyServerCommands {
         return 1;
     }
 
-    private static int glow(CommandContext<CommandSourceStack> ctx, @Nullable Boolean value) {
+    private static int glow(CommandContext<CommandSourceStack> ctx, @Nullable Boolean value)
+            throws CommandSyntaxException {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
         EyeState.setGlow(target, value);
@@ -310,10 +295,10 @@ public final class GooglyServerCommands {
     }
 
     /** Register the server-owned world-mutation branches of {@code /sg}. */
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("sg")
                 .then(adminTree())
-                .then(spawnTree())
+                .then(spawnTree(buildContext))
                 .then(spawnAllTree())
                 .then(mobTree()));
     }
@@ -321,16 +306,13 @@ public final class GooglyServerCommands {
     /**
      * The shared per-execution guard: the sender must be a player <b>in creative mode</b> (the op-level-2
      * gate on the subtree is registration-time only), looking at a living entity. Returns that entity, or
-     * {@code null} (with feedback) when any of that fails. Every admin verb calls this first.
+     * {@code null} (with feedback) when it isn't creative or isn't looking at one; a non-player sender
+     * gets vanilla's player-required error. Every admin verb calls this first.
      */
     @Nullable
-    private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx) {
+    private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
-        ServerPlayer player = source.getPlayer();
-        if (player == null) {
-            source.sendFailure(Component.translatable("somegoogly.command.admin.not_a_player"));
-            return null;
-        }
+        ServerPlayer player = source.getPlayerOrException();
         if (!player.isCreative()) {
             source.sendFailure(Component.translatable("somegoogly.command.admin.requires_creative"));
             return null;

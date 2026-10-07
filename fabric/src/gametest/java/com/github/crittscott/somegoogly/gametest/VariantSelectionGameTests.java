@@ -26,9 +26,4 @@ public final class VariantSelectionGameTests implements FabricGameTest {
     public static void rollIsDeterministicForAConfig(GameTestHelper helper) {
         VariantSelectionGameTestsLogic.rollIsDeterministicForAConfig(helper);
     }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void weightDefaultsAndClamping(GameTestHelper helper) {
-        VariantSelectionGameTestsLogic.weightDefaultsAndClamping(helper);
-    }
 }

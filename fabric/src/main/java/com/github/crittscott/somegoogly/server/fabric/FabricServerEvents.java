@@ -38,7 +38,7 @@ public final class FabricServerEvents {
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                GooglyServerCommands.register(dispatcher));
+                GooglyServerCommands.register(dispatcher, registryAccess));
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
                 entity instanceof LivingEntity living

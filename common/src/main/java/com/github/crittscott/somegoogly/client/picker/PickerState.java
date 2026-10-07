@@ -354,7 +354,7 @@ public final class PickerState {
         if (config != null && config.enabled) {
             for (Variant v : config.variants) {
                 DraftVariant dv = new DraftVariant();
-                dv.weight = v.weight();
+                dv.weight = v.weight;
                 for (HeadConfig head : v.heads) {
                     String part = vocabulary.canonicalize(head.attachPoint);
                     int headStart = dv.eyes.size();

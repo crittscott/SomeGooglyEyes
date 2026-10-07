@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -64,10 +65,12 @@ public final class EyeState {
     /**
      * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
      * slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
-     * Defaults to 0 (the first variant) when unset.
+     * Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
+     * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(LivingEntity entity) {
-        return EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
+        float roll = EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
+        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */

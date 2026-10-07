@@ -146,10 +146,10 @@ public final class ConfigGameTestsLogic {
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
             helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
-            helper.assertTrue(adult.variants.get(0).weight() == 2.0,
+            helper.assertTrue(adult.variants.get(0).weight == 2.0,
                     "exact selection must pick the 1.21.1 generation (weight 2), got "
-                            + adult.variants.get(0).weight());
-            helper.assertTrue(baby != null && baby.variants.get(0).weight() == 2.0,
+                            + adult.variants.get(0).weight);
+            helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
                     "the baby entry of the exact generation must be selected with it");
         } finally {
             ServerEyeConfigs.replaceAll(original);
@@ -165,7 +165,7 @@ public final class ConfigGameTestsLogic {
         Variant butt = pig.variants.get(1);
         helper.assertTrue(butt.heads.get(0).attachPoint.equals("body"),
                 "the second variant is the low-weight butt-eyes placement");
-        helper.assertTrue(butt.weight() < pig.variants.get(0).weight(),
+        helper.assertTrue(butt.weight < pig.variants.get(0).weight,
                 "the butt-eyes variant should be rarer than the head variant");
         helper.succeed();
     }
@@ -247,12 +247,12 @@ public final class ConfigGameTestsLogic {
                     skeleton, fileJson(entryJson("1.21.1", "elder", 1.0), entryJson("1.21.1", "adult", 3.0))));
 
             RuntimeConfig z = ServerEyeConfigs.get(zombie, false);
-            helper.assertTrue(z != null && z.variants.get(0).weight() == 1.0,
+            helper.assertTrue(z != null && z.variants.get(0).weight == 1.0,
                     "a duplicate age/version entry keeps the first");
             helper.assertTrue(ServerEyeConfigs.get(creeper, false) == null,
                     "a malformed file is skipped without aborting the batch");
             RuntimeConfig s = ServerEyeConfigs.get(skeleton, false);
-            helper.assertTrue(s != null && s.variants.get(0).weight() == 3.0,
+            helper.assertTrue(s != null && s.variants.get(0).weight == 3.0,
                     "an invalid age is ignored while its file's valid entries still load");
         } finally {
             ServerEyeConfigs.replaceAll(original);

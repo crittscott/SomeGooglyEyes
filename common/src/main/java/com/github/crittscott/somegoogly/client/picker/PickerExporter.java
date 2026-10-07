@@ -9,7 +9,6 @@ import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -57,10 +56,7 @@ public final class PickerExporter {
         }
         RuntimeConfig config = PickerState.toConfig();
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
-        Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElse(null);
-        if (!(encoded instanceof CompoundTag tag)) {
-            return Component.translatable("somegoogly.command.picker.export_encode_failed");
-        }
+        CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).getOrThrow();
         ClientNetworking.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
         return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
@@ -125,10 +121,9 @@ public final class PickerExporter {
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }
-                if (file.writeJson(root.resolve("data").resolve(id.getNamespace()).resolve("eyes")
-                        .resolve(id.getPath() + ".json"))) {
-                    files++;
-                }
+                file.writeJson(root.resolve("data").resolve(id.getNamespace()).resolve("eyes")
+                        .resolve(id.getPath() + ".json"));
+                files++;
             }
         } catch (IOException e) {
             return Component.translatable("somegoogly.command.picker.export_all_failed", e.getMessage());

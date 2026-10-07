@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -73,6 +72,17 @@ public final class EyeConfigLimitsGameTestsLogic {
                 "expected a rejection mentioning '" + fragment + "', got " + error);
     }
 
+    /**
+     * A variant weight must be finite and nonnegative. In-game, a datapack eye definition with
+     * {@code "weight": -5} is ignored on {@code /reload}, with an "invalid weight" error in the log.
+     */
+    public static void variantWeightMustBeNonnegative(GameTestHelper helper) {
+        Variant negative = variant(1, 1);
+        negative.weight = -5.0;
+        assertRejected(helper, config(negative), "invalid weight");
+        helper.succeed();
+    }
+
     /** {@code crossTarget} must name a different eye in the same head, or be {@link EyePlacement#NO_CROSS_TARGET}. */
     public static void crossTargetMustReferenceAnotherEyeInTheSameHead(GameTestHelper helper) {
         EyePlacement selfTarget = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
@@ -108,13 +118,6 @@ public final class EyeConfigLimitsGameTestsLogic {
                         Vec3.ZERO, 1F, 1F, 1F,
                         EyePlacement.DEFAULT_INCLINATION, 9_000F, -1),
                 EyeAppearance.DEFAULT)), "angle");
-        helper.succeed();
-    }
-
-    /** Every color channel must be finite and within {@code 0..1}. */
-    public static void colorChannelsMustBeInRange(GameTestHelper helper) {
-        EyeAppearance badIris = new EyeAppearance(EyeColor.WHITE, new EyeColor(2F, 0F, 0F), false);
-        assertRejected(helper, configWithEye(new EyeDefinition(EyePlacement.DEFAULT, badIris)), "color channel");
         helper.succeed();
     }
 

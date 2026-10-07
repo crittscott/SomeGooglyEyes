@@ -10,7 +10,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -57,7 +56,7 @@ public final class ModContent {
         EYE_PROPERTIES.bind(registrar.registerDataComponent(
                 "eye_properties", () -> DataComponentType.<AppearanceOverride>builder()
                         .persistent(AppearanceOverride.CODEC)
-                        .networkSynchronized(ByteBufCodecs.fromCodecWithRegistries(AppearanceOverride.CODEC))
+                        .networkSynchronized(AppearanceOverride.STREAM_CODEC)
                         .build()));
 
         GOOGLY_EYE.bind(registrar.registerItem("googly_eye", GooglyEyeItem::new));

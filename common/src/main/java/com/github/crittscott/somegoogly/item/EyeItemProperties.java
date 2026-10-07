@@ -38,9 +38,7 @@ public final class EyeItemProperties {
     }
 
     public static AppearanceOverride get(ItemStack stack) {
-        AppearanceOverride properties =
-                stack.getOrDefault(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
-        return properties.isValid() ? properties : AppearanceOverride.EMPTY;
+        return stack.getOrDefault(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
     }
 
     public static void set(ItemStack stack, AppearanceOverride properties) {

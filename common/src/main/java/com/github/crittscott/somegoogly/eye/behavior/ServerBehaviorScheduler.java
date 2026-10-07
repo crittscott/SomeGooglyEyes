@@ -151,8 +151,8 @@ public final class ServerBehaviorScheduler {
 
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
-        if (state.busyUntil != 0 && state.activeId != null) {
-            int elapsed = (int) Math.max(0, now - state.startedAt);
+        if (state.busyUntil != 0) {
+            int elapsed = (int) (now - state.startedAt);
             Networking.sendToPlayer(player,
                     new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
                             state.activeDuration, state.activeSeed, elapsed));

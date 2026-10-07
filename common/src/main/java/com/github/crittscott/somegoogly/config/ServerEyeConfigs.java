@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -8,7 +7,6 @@ import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -103,33 +101,19 @@ public final class ServerEyeConfigs {
         return RuntimeConfig.isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
     }
 
-    /**
-     * Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. Returns {@code null}, after logging,
-     * if an internal model/codec invariant prevents encoding.
-     */
-    @Nullable
+    /** Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. */
     public static Map<ResourceLocation, CompoundTag> encode(Map<ResourceLocation, RuntimeConfigSet> configs) {
         Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
         for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
-            Tag tag = RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue())
-                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
-                            "Cannot encode resolved eye config {}: {}", entry.getKey(), error))
-                    .orElse(null);
-            if (!(tag instanceof CompoundTag compound)) {
-                return null;
-            }
-            encoded.put(entry.getKey(), compound);
+            encoded.put(entry.getKey(), (CompoundTag) RuntimeConfigSet.CODEC
+                    .encodeStart(NbtOps.INSTANCE, entry.getValue()).getOrThrow());
         }
         return Map.copyOf(encoded);
     }
 
     /** Unconditionally install a snapshot. This is the replacement path used by tests. */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        Map<ResourceLocation, CompoundTag> encoded = encode(next);
-        if (encoded == null) {
-            throw new IllegalArgumentException("Eye configs cannot be encoded");
-        }
-        installed = new Installed(Map.copyOf(next), encoded);
+        installed = new Installed(Map.copyOf(next), encode(next));
     }
 
     /**
