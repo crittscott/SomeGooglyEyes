@@ -100,12 +100,10 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
  and reload" — the wire half of <code>/sg export</code>. The config travels as codec-encoded NBT (the
  same <code>RuntimeConfig.CODEC</code> the sync packet uses in the other direction); all validation,
  path construction, the 10-second cooldown, the file write, and the <code>/reload</code> live in
- <a href="../picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker"><code>PickerExportService</code></a>. Unlike the other picker verbs this one also requires permission
- level 2: it forces a server-wide datapack reload, which vanilla reserves for operators.
+ <a href="../picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker"><code>PickerExportService</code></a>. Like every picker verb it requires <a href="../picker/PickerGate.html#authorized(net.minecraft.server.level.ServerPlayer)"><code>PickerGate.authorized(net.minecraft.server.level.ServerPlayer)</code></a>.
 
- <p>The NBT is read under a <a href="../picker/PickerExportService.html#MAX_CONFIG_BYTES"><code>PickerExportService.MAX_CONFIG_BYTES</code></a> quota — a legitimate config
- is a few KiB — so an oversized payload decodes to <code>null</code> (the service rejects it with
- feedback) instead of allocating unbounded memory.</div>
+ <p>The client refuses to send a packet that fails <a href="#fitsServerbound()"><code>fitsServerbound()</code></a>, so a malformed or
+ oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,12 +125,17 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final net.minecraft.network.codec.StreamCodec<wbr>&lt;net.minecraft.network.RegistryFriendlyByteBuf,<wbr><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#TYPE" class="member-name-link">TYPE</a></code></div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#MAX_SERVERBOUND_BYTES" class="member-name-link">MAX_SERVERBOUND_BYTES</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Vanilla's cap on a serverbound custom payload's encoded data.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.network.codec.StreamCodec<wbr>&lt;net.minecraft.network.RegistryFriendlyByteBuf,<wbr><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#TYPE" class="member-name-link">TYPE</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -162,20 +165,18 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fitsServerbound()" class="member-name-link">fitsServerbound</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Whether this packet's encoded data fits under <a href="#MAX_SERVERBOUND_BYTES"><code>MAX_SERVERBOUND_BYTES</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#encode(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode</a><wbr>(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
- net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handle(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.server.level.ServerPlayer)" class="member-name-link">handle</a><wbr>(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handle(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.server.level.ServerPlayer)" class="member-name-link">handle</a><wbr>(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
  net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -193,6 +194,21 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="MAX_SERVERBOUND_BYTES">
+<h3>MAX_SERVERBOUND_BYTES</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">MAX_SERVERBOUND_BYTES</span></div>
+<div class="block">Vanilla's cap on a serverbound custom payload's encoded data.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.network.PickerExportPacket.MAX_SERVERBOUND_BYTES">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="TYPE">
 <h3>TYPE</h3>
@@ -218,7 +234,6 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h3>PickerExportPacket</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PickerExportPacket</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;typeId,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;age,
- @Nullable
  net.minecraft.nbt.CompoundTag&nbsp;configNbt)</span></div>
 </section>
 </li>
@@ -231,16 +246,10 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="decode(net.minecraft.network.FriendlyByteBuf)">
-<h3>decode</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></span>&nbsp;<span class="element-name">decode</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="encode(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.network.FriendlyByteBuf)">
-<h3>encode</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">encode</span><wbr><span class="parameters">(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
- net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<section class="detail" id="fitsServerbound()">
+<h3>fitsServerbound</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">fitsServerbound</span>()</div>
+<div class="block">Whether this packet's encoded data fits under <a href="#MAX_SERVERBOUND_BYTES"><code>MAX_SERVERBOUND_BYTES</code></a>.</div>
 </section>
 </li>
 <li>

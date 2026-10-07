@@ -88,6 +88,19 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="block-list">
 <li>
+<div class="caption"><span>com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Constant Field</div>
+<div class="table-header col-last">Value</div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.command.GooglyServerCommands.ROOT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html#ROOT">ROOT</a></code></div>
+<div class="col-last even-row-color"><code>"sg"</code></div>
+</div>
+</li>
+</ul>
+<ul class="block-list">
+<li>
 <div class="caption"><span>com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config">ClientConfig</a></span></div>
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -114,6 +127,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ClientConfig.DISABLED_MODS_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#DISABLED_MODS_KEY">DISABLED_MODS_KEY</a></code></div>
 <div class="col-last even-row-color"><code>"disabledMods"</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ClientConfig.FILE_NAME">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#FILE_NAME">FILE_NAME</a></code></div>
+<div class="col-last odd-row-color"><code>"somegoogly-client.toml"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ClientConfig.SECTION">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#SECTION">SECTION</a></code></div>
+<div class="col-last even-row-color"><code>"client"</code></div>
 </div>
 </li>
 <li>
@@ -204,39 +223,51 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.ENTITY_OVERRIDES_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ENTITY_OVERRIDES_KEY">ENTITY_OVERRIDES_KEY</a></code></div>
 <div class="col-last odd-row-color"><code>"entityOverrides"</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GLOBAL_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GLOBAL_PERCENT_DEFAULT">GLOBAL_PERCENT_DEFAULT</a></code></div>
-<div class="col-last even-row-color"><code>5</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GLOBAL_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GLOBAL_PERCENT_KEY">GLOBAL_PERCENT_KEY</a></code></div>
-<div class="col-last odd-row-color"><code>"globalPercent"</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_COMMENT">GOOGLY_EYES_ENABLED_COMMENT</a></code></div>
-<div class="col-last even-row-color"><code>"Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every\nclient, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched\nand reappears when this is turned back on. Clients already connected when the server picks up a\nchange see it only after /reload or reconnecting."</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_DEFAULT">GOOGLY_EYES_ENABLED_DEFAULT</a></code></div>
-<div class="col-last odd-row-color"><code>true</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_KEY">GOOGLY_EYES_ENABLED_KEY</a></code></div>
-<div class="col-last even-row-color"><code>"googlyEyesEnabled"</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_DEFAULT">GROW_ON_HIT_PERCENT_DEFAULT</a></code></div>
-<div class="col-last odd-row-color"><code>20</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_KEY">GROW_ON_HIT_PERCENT_KEY</a></code></div>
-<div class="col-last even-row-color"><code>"growOnHitPercent"</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#HARVEST_ON_KILL_PERCENT_DEFAULT">HARVEST_ON_KILL_PERCENT_DEFAULT</a></code></div>
-<div class="col-last odd-row-color"><code>25</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.HARVEST_ON_KILL_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#HARVEST_ON_KILL_PERCENT_KEY">HARVEST_ON_KILL_PERCENT_KEY</a></code></div>
-<div class="col-last even-row-color"><code>"harvestOnKillPercent"</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PERCENT_MAX">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PERCENT_MAX">PERCENT_MAX</a></code></div>
-<div class="col-last odd-row-color"><code>100</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PERCENT_MIN">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PERCENT_MIN">PERCENT_MIN</a></code></div>
-<div class="col-last even-row-color"><code>0</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.FILE_NAME">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#FILE_NAME">FILE_NAME</a></code></div>
+<div class="col-last even-row-color"><code>"somegoogly-server.toml"</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GLOBAL_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GLOBAL_PERCENT_DEFAULT">GLOBAL_PERCENT_DEFAULT</a></code></div>
+<div class="col-last odd-row-color"><code>5</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GLOBAL_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GLOBAL_PERCENT_KEY">GLOBAL_PERCENT_KEY</a></code></div>
+<div class="col-last even-row-color"><code>"globalPercent"</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_COMMENT">GOOGLY_EYES_ENABLED_COMMENT</a></code></div>
+<div class="col-last odd-row-color"><code>"Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every\nclient, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched\nand reappears when this is turned back on. Clients already connected when the server picks up a\nchange see it only after /reload or reconnecting."</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_DEFAULT">GOOGLY_EYES_ENABLED_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>true</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GOOGLY_EYES_ENABLED_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GOOGLY_EYES_ENABLED_KEY">GOOGLY_EYES_ENABLED_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"googlyEyesEnabled"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_DEFAULT">GROW_ON_HIT_PERCENT_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>20</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_KEY">GROW_ON_HIT_PERCENT_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"growOnHitPercent"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#HARVEST_ON_KILL_PERCENT_DEFAULT">HARVEST_ON_KILL_PERCENT_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>25</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.HARVEST_ON_KILL_PERCENT_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#HARVEST_ON_KILL_PERCENT_KEY">HARVEST_ON_KILL_PERCENT_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"harvestOnKillPercent"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PERCENT_MAX">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PERCENT_MAX">PERCENT_MAX</a></code></div>
+<div class="col-last even-row-color"><code>100</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PERCENT_MIN">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PERCENT_MIN">PERCENT_MIN</a></code></div>
+<div class="col-last odd-row-color"><code>0</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_BEHAVIORS">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_BEHAVIORS">SECTION_BEHAVIORS</a></code></div>
+<div class="col-last even-row-color"><code>"behaviors"</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_PICKER">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_PICKER">SECTION_PICKER</a></code></div>
+<div class="col-last odd-row-color"><code>"picker"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_SERVER">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_SERVER">SECTION_SERVER</a></code></div>
+<div class="col-last even-row-color"><code>"server"</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SPAWN_EXCLUDED_ENTITIES_COMMENT">SPAWN_EXCLUDED_ENTITIES_COMMENT</a></code></div>
 <div class="col-last odd-row-color"><code>"Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.\n\"minecraft:armor_stand\". Same authoring-only scope as spawnExcludedMods."</code></div>
@@ -337,22 +368,22 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Value</div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.network.NetworkHandler.NETWORK_VERSION">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#NETWORK_VERSION">NETWORK_VERSION</a></code></div>
-<div class="col-last even-row-color"><code>"12"</code></div>
+<div class="col-last even-row-color"><code>"14"</code></div>
 </div>
 </li>
-</ul>
-<ul class="block-list">
 <li>
-<div class="caption"><span>com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker">PickerExportService</a></span></div>
+<div class="caption"><span>com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></span></div>
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Constant Field</div>
 <div class="table-header col-last">Value</div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.picker.PickerExportService.MAX_CONFIG_BYTES">public&nbsp;static&nbsp;final&nbsp;long</code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/picker/PickerExportService.html#MAX_CONFIG_BYTES">MAX_CONFIG_BYTES</a></code></div>
-<div class="col-last even-row-color"><code>65536L</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.network.PickerExportPacket.MAX_SERVERBOUND_BYTES">public&nbsp;static&nbsp;final&nbsp;int</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#MAX_SERVERBOUND_BYTES">MAX_SERVERBOUND_BYTES</a></code></div>
+<div class="col-last even-row-color"><code>32767</code></div>
 </div>
 </li>
+</ul>
+<ul class="block-list">
 <li>
 <div class="caption"><span>com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></span></div>
 <div class="summary-table three-column-summary">

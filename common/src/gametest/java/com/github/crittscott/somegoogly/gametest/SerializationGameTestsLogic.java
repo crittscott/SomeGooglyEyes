@@ -47,6 +47,10 @@ public final class SerializationGameTestsLogic {
     private SerializationGameTestsLogic() {
     }
 
+    /**
+     * Every payload id is unique and carries the network version. No in-game form; guards that a client and
+     * server with different network versions refuse each other instead of misreading packets.
+     */
     public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
         String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
         List<ResourceLocation> gameplay = List.of(
@@ -107,6 +111,10 @@ public final class SerializationGameTestsLogic {
         return set;
     }
 
+    /**
+     * Appearance overrides save only the fields that are set, and reject invalid colors. No in-game form; guards
+     * that a mob or item keeps exactly the colors and glow it was given across save and load.
+     */
     public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
         helper.assertTrue(AppearanceOverride.fromNbt(null).equals(AppearanceOverride.EMPTY),
                 "null tag → EMPTY");
@@ -131,6 +139,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The behavior trigger survives the wire. No in-game form; guards that every client sees the expression
+     * the server started.
+     */
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         EyeBehaviorTriggerPacket packet =
                 new EyeBehaviorTriggerPacket(7,
@@ -139,6 +151,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The eye-definition sync survives the wire. No in-game form; guards that joining clients draw the same
+     * eyes the server's datapacks define.
+     */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
                 Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
@@ -148,6 +164,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The client refuses an eye-definition sync with too many entries, too many variants, or non-finite
+     * geometry. No in-game form with an unmodified server; guards clients against a malicious server.
+     */
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
         RegistryFriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
@@ -183,6 +203,10 @@ public final class SerializationGameTestsLogic {
         return buffer;
     }
 
+    /**
+     * A color must have exactly three channels. In game: a datapack eye definition with
+     * {@code "irisColors": [0.5, 0.5]} is ignored on {@code /reload}, with an error in the log.
+     */
     public static void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {
         JsonArray twoChannels = new JsonArray();
         twoChannels.add(Float.valueOf(0.5F));
@@ -220,7 +244,8 @@ public final class SerializationGameTestsLogic {
      * The canonical form is whatever {@code encode} produces, so this is the guard that stops a field
      * added to the record from being silently dropped on the way to disk: a value-equal round-trip can
      * only pass if every field was written. {@code DEFAULT} would round-trip even with a field elided,
-     * so the sample deliberately sets each field away from its default.
+     * so the sample deliberately sets each field away from its default. No in-game form; guards that
+     * {@code /sg export} writes every eye property an author set.
      */
     public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
         EyeDefinition sample = new EyeDefinition(
@@ -240,7 +265,8 @@ public final class SerializationGameTestsLogic {
     /**
      * Float-precision serialization: a value typed as {@code 0.22} must come back out as {@code 0.22},
      * not as the {@code 0.2199999988079071} a double-widened float prints as. The datapack files are
-     * hand-edited, so this is what keeps them readable.
+     * hand-edited, so this is what keeps them readable. In game: give an eye in the picker a
+     * position component of 0.22 and run {@code /sg exportall}; the exported JSON reads {@code 0.22}.
      */
     public static void eyeFieldsSerializeAtFloatPrecision(GameTestHelper helper) {
         EyeDefinition sample = new EyeDefinition(
@@ -252,6 +278,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The picker export request survives the wire, and a request with no definition is refused on decode. No
+     * in-game form; guards that {@code /sg export} delivers exactly the definition the client authored.
+     */
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
@@ -268,6 +298,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Picker choose and release requests survive the wire. No in-game form; guards that {@code V} in the
+     * picker freezes and releases the intended mob.
+     */
     public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
         roundTrip(helper, PickerFreezePacket.STREAM_CODEC, PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
                 "PickerFreezePacket's freeze form");
@@ -276,6 +310,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
+     * every watching client sees a mob's eyes, placement, and colors as the server has them.
+     */
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         AppearanceOverride overrides =
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
@@ -290,6 +328,10 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
+     * unmodified server; guards clients against a malicious server.
+     */
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         RegistryFriendlyByteBuf invalid = buffer(helper);
         invalid.writeVarInt(42);

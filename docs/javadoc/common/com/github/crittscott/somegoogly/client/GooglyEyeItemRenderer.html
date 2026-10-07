@@ -99,13 +99,14 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client"><code>ModelGooglyEye</code></a>, tinted by the item's
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>. Reuses the in-world eye model so the item and the mob eyes can't drift.
 
- <p>When the item is <b>held</b> (any hand context) the pupil is alive — a small standalone googly
- physics driven by the holder's look movement plus gravity. In the inventory / item frame / on the
- ground it's static (pupil centered).
+ <p>When the local player holds the item, its first-person view has a live pupil — a small standalone
+ googly physics driven by the player's look movement plus gravity, stepped from the client tick. Every
+ other view (inventory, item frame, ground, and any player's hand in third person, since a special model
+ renderer is not told who holds the item) is static, pupil centered.
 
  <p>Registered as the <code>somegoogly:googly_eye</code> special model type and selected by
  <code>assets/somegoogly/items/googly_eye.json</code>; each loader puts <a href="GooglyEyeItemRenderer.Unbaked.html#MAP_CODEC"><code>GooglyEyeItemRenderer.Unbaked.MAP_CODEC</code></a> under
- <a href="#ID"><code>ID</code></a>. Resource reload bakes a fresh renderer, so held-pupil state resets with it.
+ <a href="#ID"><code>ID</code></a>.
 
  <p>Tuning knobs if the eye sits wrong in the slot/hand: <code>GUI_SCALE</code> and <code>MODEL_SCALE</code>
  (size) and the <code>XP.rotationDegrees(180)</code> (which faces the pupil at the viewer and lets it hang
@@ -166,7 +167,7 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
@@ -184,6 +185,16 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
  int&nbsp;overlay,
  boolean&nbsp;hasFoil)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop held-eye state when leaving a world or server.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+</div>
 </div>
 </div>
 </div>
@@ -229,6 +240,20 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="tick()">
+<h3>tick</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
+<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reset()">
+<h3>reset</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
+<div class="block">Drop held-eye state when leaving a world or server.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="extractArgument(net.minecraft.world.item.ItemStack)">
 <h3>extractArgument</h3>

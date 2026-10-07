@@ -47,6 +47,10 @@ public final class SomeGooglyGameTestsLogic {
     private SomeGooglyGameTestsLogic() {
     }
 
+    /**
+     * The bundled cow definition resolves to real eye geometry on the server. In game: set
+     * {@code entityOverrides = ["minecraft:cow,100"]} and spawn a cow; it has eyes on its head.
+     */
     public static void configuredCowHasServerGeometry(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
@@ -59,6 +63,11 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A spawning mob gets its eye decision and placement roll at once. In game, on NeoForge or Forge: spawn a cow
+     * and run {@code /data get entity <cow>}; its {@code NeoForgeData} or {@code ForgeData} holds
+     * {@code somegoogly:hasGooglyEyes} and a {@code somegoogly:eyeVariantRoll} between 0 and 1.
+     */
     public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
 
@@ -119,6 +128,11 @@ public final class SomeGooglyGameTestsLogic {
         });
     }
 
+    /**
+     * A mob's iris, cornea, and glow overrides read back as set. In game: on an eyed cow, run
+     * {@code /sg admin tint iris 0.25 0.5 0.75}, {@code /sg admin tint cornea 0.9 0.8 0.7}, and
+     * {@code /sg admin glow on}; its eyes show both colors and glow.
+     */
     public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeColor iris = new EyeColor(0.25F, 0.5F, 0.75F);
@@ -140,6 +154,10 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A Googly Eye stack carries its appearance. In game: harvest an eye from a cow given an iris, cornea, and
+     * glow with {@code /sg admin}; the dropped eye's tooltip lists all three.
+     */
     public static void googlyEyeItemStoresAppearanceOverride(GameTestHelper helper) {
         AppearanceOverride appearance = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(0.1F, 0.2F, 0.3F))
@@ -154,6 +172,10 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Optometrist goes only on shears and is treasure-only. In game: in an anvil, an Optometrist book combines
+     * with shears but not with a pickaxe, and the enchantment never appears in an enchanting table.
+     */
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         Holder.Reference<Enchantment> optometrist = helper.getLevel().registryAccess()
                 .lookupOrThrow(Registries.ENCHANTMENT)
@@ -167,6 +189,12 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A shears kill can drop one Googly Eye carrying the mob's look. In game: set
+     * {@code harvestOnKillPercent = 100}, tint an eyed cow's iris with {@code /sg admin tint iris 0.2 0.4 0.6},
+     * and kill it in survival with melee blows from shears; one Googly Eye with that iris color drops with the
+     * cow's loot, and the shears lose one durability for the harvest.
+     */
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         ItemStack shears = new ItemStack(Items.SHEARS);
@@ -196,6 +224,12 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
+     * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
+     * player, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
+     * {@code googlyEyesEnabled = false}.
+     */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         ItemStack shears = new ItemStack(Items.SHEARS);

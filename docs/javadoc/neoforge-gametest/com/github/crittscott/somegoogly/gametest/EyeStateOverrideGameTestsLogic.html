@@ -90,10 +90,13 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeStateOverrideGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Server-side coverage of the <code>EyeState</code> mutation API beyond the existing all-fields round-trip:
- sparse overrides, atomic tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping
- the override so eyes fall back to per-eye config glow. Server mutation calls also broadcast an
- <code>EyeStatePacket</code>; with no trackers in the test that is a no-op, exercised here for safety.</div>
+<div class="block">The <code>EyeState</code> appearance-override mutations behind <code>/sg admin</code>: sparse overrides, atomic
+ tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping the override so eyes fall back
+ to per-eye config glow. Each mutation also sends an <code>EyeStatePacket</code>, which reaches no one here
+ because the test has no tracking players.
+
+ <p>The in-game steps below run as a creative operator (permission level 2) looking at a cow that
+ already has eyes (for example, after <code>/sg admin eyes true</code>).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,22 +113,35 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingEveryFieldRemovesTheCompound</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Clearing the last override removes the override data entirely.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintRemovesOnlyThatField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Removing one color override leaves the other in place.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintsPreservesGlow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Clearing colors keeps a glow override.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowOverrideCanBeSetAndDropped</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A glow override can be set and then dropped back to the definition's glow.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingOneFieldLeavesOthersAbsent</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Setting one color leaves every other field at the definition's value.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">snapshotAppliesAllFieldsTogether</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A full eye-state snapshot applies eyes, variant, and appearance together, as a client does when it
+ receives one.</div>
+</div>
 </div>
 </div>
 </div>
@@ -147,36 +163,55 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>clearingTintRemovesOnlyThatField</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingTintRemovesOnlyThatField</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Removing one color override leaves the other in place. No in-game form, since
+ <code>/sg admin tint clear</code> removes both colors at once; guards that edits to one appearance field
+ never disturb another.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>glowOverrideCanBeSetAndDropped</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">glowOverrideCanBeSetAndDropped</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A glow override can be set and then dropped back to the definition's glow. In game: run
+ <code>/sg admin glow on</code> and the cow's eyes glow; run <code>/sg admin glow config</code> and they return to
+ the glow its eye definition specifies (none, for the bundled cow).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>settingOneFieldLeavesOthersAbsent</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingOneFieldLeavesOthersAbsent</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Setting one color leaves every other field at the definition's value. In game:
+ <code>/sg admin tint iris 1 0 0</code> turns only the irises red; the corneas keep their default color and
+ the eyes do not start glowing.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>clearingEveryFieldRemovesTheCompound</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingEveryFieldRemovesTheCompound</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Clearing the last override removes the override data entirely. In game:
+ <code>/sg admin tint iris 1 0 0</code>, then <code>/sg admin tint clear</code>; the eyes look as they did before,
+ and on NeoForge or Forge <code>/data get entity &lt;cow&gt;</code> shows no <code>somegoogly:eyeOverrides</code> key in
+ <code>NeoForgeData</code> or <code>ForgeData</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>clearingTintsPreservesGlow</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingTintsPreservesGlow</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Clearing colors keeps a glow override. In game: <code>/sg admin tint iris 1 0 0</code>,
+ <code>/sg admin tint cornea 0 0 1</code>, and <code>/sg admin glow on</code>; then <code>/sg admin tint clear</code>
+ restores the default colors while the eyes keep glowing.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>snapshotAppliesAllFieldsTogether</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">snapshotAppliesAllFieldsTogether</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A full eye-state snapshot applies eyes, variant, and appearance together, as a client does when it
+ receives one. In game: give the cow a red iris and <code>/sg admin glow on</code>, walk far enough away that
+ it unloads from view, and come back; it reappears with the same eyes, red irises, and glow at once.</div>
 </section>
 </li>
 </ul>

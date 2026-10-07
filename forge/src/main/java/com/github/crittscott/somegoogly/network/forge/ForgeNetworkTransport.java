@@ -28,6 +28,7 @@ public final class ForgeNetworkTransport {
     private ForgeNetworkTransport() {
     }
 
+    /** Build the channel and register every payload; called once from the mod constructor, before any send. */
     public static void register() {
         ResourceLocation channelId = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "network");
         PayloadConnection<CustomPacketPayload> connection = ChannelBuilder
@@ -54,14 +55,17 @@ public final class ForgeNetworkTransport {
         channel = connection.play().bidirectional().build();
     }
 
+    /** Send to one player. */
     public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         channel.send(payload, PacketDistributor.PLAYER.with(player));
     }
 
+    /** Send from the client to the server. */
     public static void sendToServer(CustomPacketPayload payload) {
         channel.send(payload, PacketDistributor.SERVER.noArg());
     }
 
+    /** Send to every player tracking {@code entity}, and to the entity itself if it is a player. */
     public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
         channel.send(payload, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
     }

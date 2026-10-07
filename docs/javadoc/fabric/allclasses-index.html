@@ -50,8 +50,9 @@ loadScripts(document, 'script');</script>
 <h1 title="All Classes and Interfaces" class="title">All Classes and Interfaces</h1>
 </div>
 <div id="all-classes-table">
-<div class="caption"><span>Classes</span></div>
-<div class="summary-table two-column-summary">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="all-classes-table-tab0" role="tab" aria-selected="true" aria-controls="all-classes-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="all-classes-table-tab2" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab2', 2)" class="table-tab">Classes</button><button id="all-classes-table-tab4" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div id="all-classes-table.tabpanel" role="tabpanel">
+<div class="summary-table two-column-summary" aria-labelledby="all-classes-table-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/ClientNetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">ClientNetworkingImpl</a></div>
@@ -96,38 +97,43 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric payload codecs and server receivers.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Configuration-phase marker that is registered but never sent.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
  each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html" title="class in com.github.crittscott.somegoogly.server.fabric">FabricServerEvents</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html" title="class in com.github.crittscott.somegoogly.server.fabric">FabricServerEvents</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric event wiring for the loader-neutral authoritative server services.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/MobSpawningImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">MobSpawningImpl</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/MobSpawningImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">MobSpawningImpl</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric implementation of the shared spawn-finalization boundary.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/ModVersionLookupImpl.html" title="class in com.github.crittscott.somegoogly.config.fabric">ModVersionLookupImpl</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/ModVersionLookupImpl.html" title="class in com.github.crittscott.somegoogly.config.fabric">ModVersionLookupImpl</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric implementation of the loaded-mod version lookup.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">NetworkingImpl</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">NetworkingImpl</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric clientbound sends; tracking fanout uses Fabric API's authoritative lookup.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/fabric/SomeGooglyFabric.html" title="class in com.github.crittscott.somegoogly.fabric">SomeGooglyFabric</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/fabric/SomeGooglyFabric.html" title="class in com.github.crittscott.somegoogly.fabric">SomeGooglyFabric</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric entry point for shared content plus Fabric configuration, resources, and server events.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/fabric/SomeGooglyFabricClient.html" title="class in com.github.crittscott.somegoogly.client.fabric">SomeGooglyFabricClient</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/fabric/SomeGooglyFabricClient.html" title="class in com.github.crittscott.somegoogly.client.fabric">SomeGooglyFabricClient</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric client entry point for configuration, networking, rendering, input, HUD, and commands.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files.</div>
+</div>
 </div>
 </div>
 </div>

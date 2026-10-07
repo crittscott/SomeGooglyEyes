@@ -112,22 +112,34 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freezeCapturesAndUnfreezeRestores(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">freezeCapturesAndUnfreezeRestores</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Choosing a mob freezes it, and releasing it restores its AI.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freezePreservesAlreadyForcedNoAi(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">freezePreservesAlreadyForcedNoAi</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A mob that had no AI before the picker keeps none after release.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freezeRefusesSecondEditor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">freezeRefusesSecondEditor</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Only one player may edit a mob at a time.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#joinDuringLiveEditReassertsTheFreeze(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">joinDuringLiveEditReassertsTheFreeze</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A chosen mob whose chunk reloads mid-edit stays frozen.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#staleMarkerIsRestoredOnJoin(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">staleMarkerIsRestoredOnJoin</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A mob left frozen by a crash recovers when it next loads.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#switchingMobsReleasesThePreviousOne(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchingMobsReleasesThePreviousOne</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Choosing a new mob releases the previous one.</div>
+</div>
 </div>
 </div>
 </div>
@@ -149,36 +161,51 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="freezeCapturesAndUnfreezeRestores(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>freezeCapturesAndUnfreezeRestores</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">freezeCapturesAndUnfreezeRestores</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Choosing a mob freezes it, and releasing it restores its AI. In game: as a creative operator, press
+ <code>K</code> to open the picker and <code>V</code> on a cow; it stops moving. Press <code>V</code> again and it wanders
+ as before.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="freezePreservesAlreadyForcedNoAi(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>freezePreservesAlreadyForcedNoAi</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">freezePreservesAlreadyForcedNoAi</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A mob that had no AI before the picker keeps none after release. In game:
+ <code>/summon cow ~ ~ ~ {NoAI:1b}</code>, choose it with <code>V</code>, and release it; it still stands still.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="freezeRefusesSecondEditor(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>freezeRefusesSecondEditor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">freezeRefusesSecondEditor</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Only one player may edit a mob at a time. In game: with two creative operators, one chooses a cow with
+ <code>V</code>; the second's <code>V</code> on it is refused with a message, and the cow stays frozen until the
+ first releases it.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="switchingMobsReleasesThePreviousOne(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>switchingMobsReleasesThePreviousOne</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">switchingMobsReleasesThePreviousOne</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Choosing a new mob releases the previous one. In game: choose one cow with <code>V</code>, then another; the
+ first starts wandering again while the second is frozen.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="staleMarkerIsRestoredOnJoin(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>staleMarkerIsRestoredOnJoin</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">staleMarkerIsRestoredOnJoin</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A mob left frozen by a crash recovers when it next loads. In game: choose a cow with <code>V</code>, then end
+ the server process without a clean stop; after restarting and returning, the cow wanders again.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="joinDuringLiveEditReassertsTheFreeze(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>joinDuringLiveEditReassertsTheFreeze</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">joinDuringLiveEditReassertsTheFreeze</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A chosen mob whose chunk reloads mid-edit stays frozen. In game: choose a cow with <code>V</code>, fly far
+ enough away that its chunk unloads, and come back; it is still frozen, and releasing it with <code>V</code>
+ lets it wander.</div>
 </section>
 </li>
 </ul>

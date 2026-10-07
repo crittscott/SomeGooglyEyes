@@ -18,6 +18,11 @@ public final class SpawnGatingGameTestsLogic {
     private SpawnGatingGameTestsLogic() {
     }
 
+    /**
+     * {@code globalPercent = 100} always grants eyes and {@code 0} never does. In game: with no
+     * {@code entityOverrides}, set {@code globalPercent = 100} and every spawned cow has eyes; set it to
+     * {@code 0} and none of the new ones do.
+     */
     public static void fullPercentGrantsEyesAndZeroDeniesThem(GameTestHelper helper) {
         int original = ServerConfig.GLOBAL_PERCENT.get();
         try {
@@ -34,6 +39,10 @@ public final class SpawnGatingGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Every spawned mob stores a placement roll, with or without eyes. In game: set {@code globalPercent = 0},
+     * spawn a pig, and give it eyes with a Slimy Eye; it gets the placement its own stored roll selects.
+     */
     public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
         // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later application
         // uses this mob's own arrangement.

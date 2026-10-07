@@ -19,7 +19,11 @@ public final class PickerAuthGameTestsLogic {
     private PickerAuthGameTestsLogic() {
     }
 
-    /** A sender gets at most one picker request per tick, and clearing its record resets the limit. */
+    /**
+     * A sender gets at most one picker request per tick, and clearing its record resets the limit. No
+     * in-game form, since a player at the keyboard cannot send two picker requests in one tick; guards the
+     * server against custom-payload spam from a modified client.
+     */
     public static void pickerRequestsThrottlePerTick(GameTestHelper helper, ServerPlayer player) {
         PickerGate.onPlayerLeft(player.getUUID());
         try {
@@ -37,7 +41,12 @@ public final class PickerAuthGameTestsLogic {
         helper.succeed();
     }
 
-    /** {@code allowSpawnAll} arms a server-wide cooldown; a second call inside the window is refused. */
+    /**
+     * {@code allowSpawnAll} arms a server-wide cooldown; a second call inside the window is refused. In
+     * game, on a disposable world with {@code allowSpawnAll = true}: as a creative operator, run
+     * {@code /sg spawnall minecraft} twice within 10 seconds; the second is refused. After the cooldown it
+     * runs again.
+     */
     public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
         PickerGate.onServerStopping();

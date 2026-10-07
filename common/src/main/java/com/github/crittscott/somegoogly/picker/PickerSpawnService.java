@@ -438,8 +438,8 @@ public final class PickerSpawnService {
      * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
      * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
      * to save. Finalization goes through the loader's finalize-spawn event, as {@code /summon} does, so
-     * other mods' listeners initialize the mob too. Public for the shared GameTest regression check, which
-     * lives in another module.
+     * other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
+     * which lives in another module.
      *
      * @return false when a finalize-spawn listener cancelled the spawn; the entity must then not be added
      */

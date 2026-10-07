@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerSpawnServiceGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Shared regression checks for the picker command-spawn lifecycle.</div>
+<div class="block">The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,7 +107,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -145,6 +147,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>commandSpawnFinalizesBeforeApplyingPickerState</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">commandSpawnFinalizesBeforeApplyingPickerState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it. In
+ game: as a creative operator, <code>/sg spawn minecraft:zombie</code> at a block; the zombie appears frozen,
+ facing you, with the equipment and variants a <code>/summon</code> zombie gets, and it is still
+ there after the world is saved and reopened.</div>
 </section>
 </li>
 </ul>

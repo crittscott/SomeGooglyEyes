@@ -91,7 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ServerServices</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader-neutral implementation behind each loader's server lifecycle hooks.</div>
+<div class="block">Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
+ service is called on that service directly (behavior ticks, tracking, and reactions go to
+ <a href="../eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>ServerBehaviorScheduler</code></a>).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,25 +109,26 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onLivingEntityLoaded</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)" class="member-name-link">broadcastEyeConfigsIfChanged</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Send the current resolved eye definitions and master switch to every player, but only when either
+ differs from what clients last received.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onLivingEntityLoaded</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Initialize persistent eye state once for a server-side living entity, then reconcile any picker
  freeze marker after that state is available.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLeft</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLeft</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Release all per-player picker state when a server player leaves.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Clear every server-lifetime service before the server instance is discarded.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerTick()" class="member-name-link">onServerTick</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Advance behavior scheduling once at the end of a server tick.</div>
+<div class="block">Clear every server-lifetime service before the server instance is discarded.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)" class="member-name-link">onStartTracking</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
@@ -135,14 +138,9 @@ loadScripts(document, 'script');</script>
  whose registration may immediately send a mid-behavior catch-up packet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onStopTracking(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onStopTracking</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncEyeConfigs</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Remove one watcher from the entity's server-side behavior schedule.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncEyeConfigs</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send current resolved eye definitions after login or reload.</div>
+<div class="block">Send the current resolved eye definitions and master switch to a joining player.</div>
 </div>
 </div>
 </div>
@@ -166,7 +164,9 @@ loadScripts(document, 'script');</script>
 <h3>onLivingEntityLoaded</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onLivingEntityLoaded</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
 <div class="block">Initialize persistent eye state once for a server-side living entity, then reconcile any picker
- freeze marker after that state is available.</div>
+ freeze marker after that state is available. A player joining a level (login, respawn, dimension
+ change) gets their own snapshot: their client has just built a fresh local player, and a player is
+ never their own tracker, so the start-tracking sync doesn't cover them.</div>
 </section>
 </li>
 <li>
@@ -184,13 +184,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="onServerTick()">
-<h3>onServerTick</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerTick</span>()</div>
-<div class="block">Advance behavior scheduling once at the end of a server tick.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)">
 <h3>onStartTracking</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onStartTracking</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living,
@@ -200,17 +193,19 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="onStopTracking(net.minecraft.world.entity.LivingEntity)">
-<h3>onStopTracking</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onStopTracking</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
-<div class="block">Remove one watcher from the entity's server-side behavior schedule.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="syncEyeConfigs(net.minecraft.server.level.ServerPlayer)">
 <h3>syncEyeConfigs</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">syncEyeConfigs</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Send current resolved eye definitions after login or reload.</div>
+<div class="block">Send the current resolved eye definitions and master switch to a joining player.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)">
+<h3>broadcastEyeConfigsIfChanged</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">broadcastEyeConfigsIfChanged</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
+<div class="block">Send the current resolved eye definitions and master switch to every player, but only when either
+ differs from what clients last received. Runs once after each datapack reload and each server-config
+ apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.</div>
 </section>
 </li>
 </ul>

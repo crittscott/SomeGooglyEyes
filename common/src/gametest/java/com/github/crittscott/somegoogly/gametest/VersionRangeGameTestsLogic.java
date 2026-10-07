@@ -18,12 +18,20 @@ public final class VersionRangeGameTestsLogic {
     private VersionRangeGameTestsLogic() {
     }
 
+    /**
+     * An exact version matches only itself. No in-game form; guards which entry of an eye definition loads
+     * for the installed game or mod version.
+     */
     public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
         helper.assertTrue(VersionRangeMatcher.matches("1.20.1", "1.20.1"), "exact version should match itself");
         helper.assertTrue(!VersionRangeMatcher.matches("1.20.1", "1.20.2"), "exact version should not match a different one");
         helper.succeed();
     }
 
+    /**
+     * A malformed range or blank version never matches. No in-game form; guards that a bad version string in
+     * a datapack loads nothing rather than everything.
+     */
     public static void malformedRangeDoesNotMatch(GameTestHelper helper) {
         helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1", "1.20.1"), "range with no closing bracket should not match");
         helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1-1.21)", "1.20.5"), "range with no comma should not match");
@@ -32,6 +40,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Square brackets include a bound and parentheses exclude it. No in-game form; guards which entry of an
+     * eye definition loads for the installed version.
+     */
     public static void rangeBoundsRespectInclusivity(GameTestHelper helper) {
         // [lower,upper): lower inclusive, upper exclusive.
         helper.assertTrue(VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.1"), "inclusive lower bound should match");
@@ -45,6 +57,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * With every range below the installed version, the newest generation is used. No in-game form; guards
+     * that an outdated datapack still gives mobs eyes.
+     */
     public static void nearestPicksNewestOlderGeneration(GameTestHelper helper) {
         // Installed version newer than every range: the stale-datapack case.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.1,1.2)"), "1.3");
@@ -53,6 +69,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * With every range above the installed version, the oldest generation is used. No in-game form; guards
+     * that a datapack written for a newer mod version still gives mobs eyes.
+     */
     public static void nearestPicksOldestNewerGenerationOnDowngrade(GameTestHelper helper) {
         // Installed version older than every range: the mod-downgrade case.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.1,1.2)"), "0.9");
@@ -61,6 +81,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A version in a gap between ranges uses the older neighbor. No in-game form; guards which fallback entry
+     * loads.
+     */
     public static void nearestGapResolvesToOlderNeighbor(GameTestHelper helper) {
         // Version ordering has no distance metric, so a gap resolves by ordering: older neighbor wins.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.3,1.4)"), "1.2");
@@ -69,6 +93,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The fallback treats exact versions as point ranges and skips malformed ones. No in-game form; guards
+     * that one bad entry does not block the fallback.
+     */
     public static void nearestHandlesExactAndMalformedDeclarations(GameTestHelper helper) {
         // Exact versions are point ranges; malformed declarations are skipped, as in matches().
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.20.1", "1.0.0"), "2.0");
@@ -79,6 +107,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Whether a range lies wholly below the installed version, which sets the fallback's log level. No
+     * in-game form; guards that an outdated datapack is logged as an error and a downgrade as a warning.
+     */
     public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
         // Drives the fallback's log level: below = stale datapack (error), not below = downgrade (warn).
         helper.assertTrue(VersionRangeMatcher.isEntirelyBelow("[1.0,1.1)", "1.2"),
@@ -88,6 +120,10 @@ public final class VersionRangeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A shorter version pads with zeros, so {@code 1.20} equals {@code 1.20.0}. No in-game form; guards
+     * version matching for mods that omit a patch number.
+     */
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         // 1.20 and 1.20.0 compare equal (missing trailing tokens pad to zero).
         helper.assertTrue(VersionRangeMatcher.matches("[1.20,1.21)", "1.20.0"), "1.20.0 should sit on the 1.20 lower bound");

@@ -93,7 +93,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The <code>/sg</code> command tree — the in-game eye-placement CLI. Each loader registers the same
  source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives entirely
- in the client-side <a href="../client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>. Like the keyboard picker, they require <b>creative mode</b>.
+ in the client-side <a href="../client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>. Like the keyboard picker, they require creative mode and
+ permission level 2 (<a href="../picker/PickerGate.html#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>).
 
  <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
  call the same <a href="../client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> methods, so they stay in lock-step.

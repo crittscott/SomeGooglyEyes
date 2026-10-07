@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
  shared datapack config (<a href="../../config/EyeConfigModel.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigModel</code></a>).
 
  <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
- dimension changes, and aging. The loader-specific persistence bridge maps that compound onto each
+ dimension changes, aging, mob conversion, and a player leaving the End (<a href="#copy(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)"><code>copy(net.minecraft.world.entity.LivingEntity, net.minecraft.world.entity.LivingEntity)</code></a>). The loader-specific persistence bridge maps that compound onto each
  platform's entity storage. Three pieces:
  <ul>
    <li><code>somegoogly:hasGooglyEyes</code> — the on/off flag, rolled at spawn and mutable mid-life
@@ -174,96 +174,103 @@ loadScripts(document, 'script');</script>
 <div class="block">Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#disableAndClearProperties(net.minecraft.world.entity.LivingEntity)" class="member-name-link">disableAndClearProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#copy(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)" class="member-name-link">copy</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;source,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Disable eyes and clear their entity-wide appearance with one synchronization.</div>
+<div class="block">Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
+ or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enableWithProperties(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">enableWithProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
- <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#disableAndClearProperties(net.minecraft.world.entity.LivingEntity)" class="member-name-link">disableAndClearProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Disable eyes and clear their entity-wide appearance with one synchronization.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enableWithProperties(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">enableWithProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+ <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Apply a portable appearance, reroll placement, and enable eyes with one synchronization.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getVariantRoll(net.minecraft.world.entity.LivingEntity)" class="member-name-link">getVariantRoll</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getVariantRoll(net.minecraft.world.entity.LivingEntity)" class="member-name-link">getVariantRoll</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
  slimy-eye application turns eyes on.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasEyes(net.minecraft.world.entity.LivingEntity)" class="member-name-link">hasEyes</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasEyes(net.minecraft.world.entity.LivingEntity)" class="member-name-link">hasEyes</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether the entity currently has eyes; <code>false</code> when the flag has never been set.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initialize(net.minecraft.world.entity.LivingEntity,boolean,float)" class="member-name-link">initialize</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initialize(net.minecraft.world.entity.LivingEntity,boolean,float)" class="member-name-link">initialize</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  boolean&nbsp;hasEyes,
  float&nbsp;variantRoll)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Store the one-time natural-eye decision and placement roll.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isDefaultState(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isDefaultState</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isDefaultState(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isDefaultState</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether this entity's state matches what a freshly created client entity already assumes:
  no eyes and no appearance overrides.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInitialized(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isInitialized</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInitialized(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isInitialized</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether the server has made this entity's one-time natural-eye decision.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.nbt.CompoundTag</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overridesTagOrNull(net.minecraft.world.entity.LivingEntity)" class="member-name-link">overridesTagOrNull</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.nbt.CompoundTag</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overridesTagOrNull(net.minecraft.world.entity.LivingEntity)" class="member-name-link">overridesTagOrNull</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The overrides compound, or <code>null</code> if absent (used by the sync packet).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readProperties(net.minecraft.world.entity.LivingEntity)" class="member-name-link">readProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readProperties(net.minecraft.world.entity.LivingEntity)" class="member-name-link">readProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Read the mob's appearance override as <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (<a href="AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a>
  when none).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTo(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sendTo</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTo(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sendTo</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Send one newly tracking player the entity's snapshot, unless it equals the client default
  (<a href="#isDefaultState(net.minecraft.world.entity.LivingEntity)"><code>isDefaultState(net.minecraft.world.entity.LivingEntity)</code></a>).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setCorneaTint(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">setCorneaTint</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setCorneaTint(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">setCorneaTint</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Override the cornea color for every one of the mob's eyes; broadcasts.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setGlow(net.minecraft.world.entity.LivingEntity,java.lang.Boolean)" class="member-name-link">setGlow</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setGlow(net.minecraft.world.entity.LivingEntity,java.lang.Boolean)" class="member-name-link">setGlow</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;glow)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the override (eyes fall back to per-eye config glow).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setHasEyes(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setHasEyes</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setHasEyes(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setHasEyes</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  boolean&nbsp;hasEyes)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setIrisTint(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">setIrisTint</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setIrisTint(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">setIrisTint</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Override the iris color for every one of the mob's eyes; broadcasts.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setProperties(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">setProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setProperties(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">setProperties</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity,
  <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Replace the mob's whole appearance override (used by the slimy eye and harvest).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#snapshot(net.minecraft.world.entity.LivingEntity)" class="member-name-link">snapshot</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#snapshot(net.minecraft.world.entity.LivingEntity)" class="member-name-link">snapshot</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Read all synchronized fields as one coherent value.</div>
 </div>
 </div>
@@ -334,6 +341,17 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="copy(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)">
+<h3>copy</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">copy</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;source,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</span></div>
+<div class="block">Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
+ or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh. Copying
+ before or after the replacement joins its level both work: an initialized target is never re-rolled,
+ and the broadcast reaches whoever already tracks it.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="applySnapshot(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot)">
 <h3>applySnapshot</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">applySnapshot</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;entity,
@@ -354,7 +372,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getVariantRoll</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;entity)</span></div>
 <div class="block">The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
  slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
- Defaults to 0 (the first variant) when unset.</div>
+ Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
+ clamped into range, and a non-finite one as 0.</div>
 </section>
 </li>
 <li>

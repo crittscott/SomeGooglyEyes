@@ -96,7 +96,8 @@ loadScripts(document, 'script');</script>
 <div class="block">One RGB color, each channel 0..1. The single color representation across the mod — config,
  item/entity override, and the renderer all use this.
 
- <p>Serialized as a <code>[r, g, b]</code> list, the datapack JSON's color layout.</div>
+ <p>Serialized as a <code>[r, g, b]</code> list, the datapack JSON's color layout. Both codecs reject a
+ channel outside 0..1 on decode, so every decoded color is in range.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -117,9 +118,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final net.minecraft.network.codec.StreamCodec<wbr>&lt;io.netty.buffer.ByteBuf,<wbr><a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Three raw floats; validation is the caller's (<a href="#isValid()"><code>isValid()</code></a>).</div>
-</div>
+<div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#WHITE" class="member-name-link">WHITE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
@@ -246,7 +245,6 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="STREAM_CODEC">
 <h3>STREAM_CODEC</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.network.codec.StreamCodec&lt;io.netty.buffer.ByteBuf,<wbr><a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;</span>&nbsp;<span class="element-name">STREAM_CODEC</span></div>
-<div class="block">Three raw floats; validation is the caller's (<a href="#isValid()"><code>isValid()</code></a>).</div>
 </section>
 </li>
 <li>

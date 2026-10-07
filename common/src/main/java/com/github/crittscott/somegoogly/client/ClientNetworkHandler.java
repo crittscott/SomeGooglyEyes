@@ -21,11 +21,13 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
+    /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
     public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
         ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled());
         ClientEyeRuntime.clear();
     }
 
+    /** Apply a full eye-state snapshot to a known living entity; an unknown id is ignored. */
     public static void handleEyeState(EyeStatePacket packet) {
         LivingEntity living = living(packet.entityId());
         if (living == null) {
@@ -38,6 +40,7 @@ public final class ClientNetworkHandler {
         }
     }
 
+    /** Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored. */
     public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
         LivingEntity living = living(packet.entityId());

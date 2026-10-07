@@ -121,19 +121,22 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective triggers.</div>
+<div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective
+ triggers.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healSwirlIsRateLimited</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob is idle.</div>
+<div class="block">A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
+ is idle.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">oneBehaviorAtATimeUntilItElapses</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it elapses.</div>
+<div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
+ elapses.</div>
 </div>
 </div>
 </div>
@@ -157,7 +160,10 @@ loadScripts(document, 'script');</script>
 <h3>oneBehaviorAtATimeUntilItElapses</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">oneBehaviorAtATimeUntilItElapses</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it elapses.</div>
+<div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
+ elapses. In game: as a creative operator, look at an eyed mob and run <code>/sg admin behavior swirl</code>,
+ then <code>/sg admin behavior blink</code> while it swirls; the blink does not play. Run it again after the
+ swirl ends and it does.</div>
 </section>
 </li>
 <li>
@@ -165,7 +171,10 @@ loadScripts(document, 'script');</script>
 <h3>healSwirlIsRateLimited</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">healSwirlIsRateLimited</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob is idle.</div>
+<div class="block">A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
+ is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
+ and heal it again within <code>swirlHealCooldownTicks</code> (default 200) after the first heal, and they do
+ not.</div>
 </section>
 </li>
 <li>
@@ -173,7 +182,10 @@ loadScripts(document, 'script');</script>
 <h3>gameEventTriggersRespectConfig</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">gameEventTriggersRespectConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective triggers.</div>
+<div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective
+ triggers. In game: set <code>swirlOnHeal = false</code>, <code>swirlOnTrade = false</code>, and
+ <code>growOnHitPercent = 0</code> in the server config and apply it; healing an eyed cow, trading with an
+ eyed villager, and hitting either never changes their eyes.</div>
 </section>
 </li>
 <li>
@@ -181,7 +193,9 @@ loadScripts(document, 'script');</script>
 <h3>eyelessTrackedMobIgnoresGameEvents</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyelessTrackedMobIgnoresGameEvents</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
+ since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
+ mobs.</div>
 </section>
 </li>
 </ul>

@@ -37,10 +37,12 @@ public final class EyeItemProperties {
                         .withStyle(ChatFormatting.GRAY)));
     }
 
+    /** The stack's appearance override, or {@link AppearanceOverride#EMPTY} when it has none. */
     public static AppearanceOverride get(ItemStack stack) {
         return stack.getOrDefault(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
     }
 
+    /** Store {@code properties} on the stack; an empty override removes the component. */
     public static void set(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {
             stack.remove(ModContent.EYE_PROPERTIES.get());

@@ -34,6 +34,11 @@ public final class PickerFreezeGameTestsLogic {
         return cow;
     }
 
+    /**
+     * Choosing a mob freezes it, and releasing it restores its AI. In game: as a creative operator, press
+     * {@code K} to open the picker and {@code V} on a cow; it stops moving. Press {@code V} again and it wanders
+     * as before.
+     */
     public static void freezeCapturesAndUnfreezeRestores(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();
@@ -53,6 +58,10 @@ public final class PickerFreezeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A mob that had no AI before the picker keeps none after release. In game:
+     * {@code /summon cow ~ ~ ~ {NoAI:1b}}, choose it with {@code V}, and release it; it still stands still.
+     */
     public static void freezePreservesAlreadyForcedNoAi(GameTestHelper helper) {
         // The "mob was already NoAi before the picker" case; forced explicitly, since
         // spawnWithNoFreeWill does not touch the flag.
@@ -68,6 +77,11 @@ public final class PickerFreezeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Only one player may edit a mob at a time. In game: with two creative operators, one chooses a cow with
+     * {@code V}; the second's {@code V} on it is refused with a message, and the cow stays frozen until the
+     * first releases it.
+     */
     public static void freezeRefusesSecondEditor(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID first = UUID.randomUUID();
@@ -85,6 +99,10 @@ public final class PickerFreezeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Choosing a new mob releases the previous one. In game: choose one cow with {@code V}, then another; the
+     * first starts wandering again while the second is frozen.
+     */
     public static void switchingMobsReleasesThePreviousOne(GameTestHelper helper) {
         Cow first = spawnCow(helper, new BlockPos(2, 2, 2));
         Cow second = spawnCow(helper, new BlockPos(4, 2, 2));
@@ -102,6 +120,10 @@ public final class PickerFreezeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A mob left frozen by a crash recovers when it next loads. In game: choose a cow with {@code V}, then end
+     * the server process without a clean stop; after restarting and returning, the cow wanders again.
+     */
     public static void staleMarkerIsRestoredOnJoin(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();
@@ -118,6 +140,11 @@ public final class PickerFreezeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A chosen mob whose chunk reloads mid-edit stays frozen. In game: choose a cow with {@code V}, fly far
+     * enough away that its chunk unloads, and come back; it is still frozen, and releasing it with {@code V}
+     * lets it wander.
+     */
     public static void joinDuringLiveEditReassertsTheFreeze(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();

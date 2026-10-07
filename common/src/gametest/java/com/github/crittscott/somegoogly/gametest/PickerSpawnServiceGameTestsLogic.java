@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/** Shared regression checks for the picker command-spawn lifecycle. */
+/** The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order. */
 public final class PickerSpawnServiceGameTestsLogic {
 
     private PickerSpawnServiceGameTestsLogic() {
@@ -47,6 +47,12 @@ public final class PickerSpawnServiceGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it. In
+     * game: as a creative operator, {@code /sg spawn minecraft:zombie} at a block; the zombie appears frozen,
+     * facing you, with the equipment and variants a {@code /summon} zombie gets, and it is still
+     * there after the world is saved and reopened.
+     */
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
         TrackingCow cow = new TrackingCow(helper.getLevel());
         BlockPos destination = helper.absolutePos(new BlockPos(2, 2, 2));

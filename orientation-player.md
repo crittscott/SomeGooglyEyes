@@ -152,7 +152,7 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 
 Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the optional-mod definitions retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.4 releases. Updates to another mod's models may require its eye definitions to be adjusted.
 
-The 77 bundled Minecraft definitions select 1.21.4. Armadillo, bogged, and breeze do not yet have bundled eye geometry.
+The 77 bundled Minecraft definitions all select 1.21.4 and are enabled, including the player and armor stand. Axolotl, creaking, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
 
@@ -221,7 +221,7 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - The ender dragon cannot receive eyes.
-- Armadillo, bogged, and breeze do not have bundled eye definitions.
+- Axolotl, creaking, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
 - Fabric contains 104 dedicated-server GameTests; NeoForge and Forge each contain 100. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.

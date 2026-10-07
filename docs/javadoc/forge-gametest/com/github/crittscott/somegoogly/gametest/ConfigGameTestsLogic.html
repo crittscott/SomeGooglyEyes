@@ -117,20 +117,24 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactMinecraftGenerationIsSelected</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Exact Minecraft-version selection, end to end, including paired adult/baby entries.</div>
+<div class="block">Minecraft-version selection, end to end, including paired adult/baby entries.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry wins.</div>
+<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
+ wins.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to nothing.</div>
+<div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to
+ nothing.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -140,7 +144,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A reload installs a new config set only when the resolved content changes; server stop forces the next resync.</div>
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears the
+ installed set.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -149,10 +154,14 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedConfigsLoadForKnownEntities</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The bundled cow and player definitions load.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shippedPigHasTwoVariants</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The bundled pig has a common head placement and a rarer rear placement.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -180,6 +189,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>percentForResolvesExactBeforeWildcard</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">percentForResolvesExactBeforeWildcard</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.
+ In game: set <code>globalPercent = 2</code> and
+ <code>entityOverrides = ["minecraft:zombie,100", "minecraft:*,50"]</code> in the server config, then spawn
+ mobs from eggs: every zombie has eyes, about half of the cows do, and only the occasional modded mob.</div>
 </section>
 </li>
 <li>
@@ -188,14 +201,17 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAllDefaultsOff</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
  opt-in. MineColonies and Create entities require spawn context this command does not provide, so
- those namespaces must ship excluded. The packet-handler refusal itself needs a live player and
- stays source-verified.</div>
+ those namespaces must ship excluded. In game: in a new world, the generated
+ <code>serverconfig/somegoogly-server.toml</code> has <code>allowSpawnAll = false</code> and
+ <code>spawnExcludedMods = ["minecolonies", "create"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="shippedConfigsLoadForKnownEntities(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>shippedConfigsLoadForKnownEntities</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shippedConfigsLoadForKnownEntities</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The bundled cow and player definitions load. In game: sneak while holding a Googly Eye and aim at an
+ eyeless cow, then at another player; both report that they can receive eyes.</div>
 </section>
 </li>
 <li>
@@ -204,57 +220,80 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">everyShippedConfigHasNonBlankAttachTokens</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Every head in every shipped config must carry a non-blank attach token. The attachPoint is required
  (no default), so a token that loads as <code>null</code>/empty means a corrupt data edit — this catches
- that across all 80+ files in one cheap headless check. It does not (and can't, on the dedicated
+ that across every shipped file in one cheap headless check. It does not (and can't, on the dedicated
  server, where the client-only resolvers don't load) verify the token resolves to a real model part;
- that needs an in-client pass.</div>
+ that needs an in-client pass. No in-game form; guards that every bundled definition names a place
+ on the model to put its eyes.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exactMinecraftGenerationIsSelected</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exactMinecraftGenerationIsSelected</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Exact Minecraft-version selection, end to end, including paired adult/baby entries.</div>
+<div class="block">Minecraft-version selection, end to end, including paired adult/baby entries. In game: add a
+ datapack with <code>data/minecraft/eyes/zombie.json</code> holding an adult entry for
+ <code>"[1.20,1.21)"</code> with blue irises and adult and baby entries for the running version with red
+ irises, run <code>/reload</code>, and set <code>entityOverrides = ["minecraft:zombie,100"]</code>; adult and
+ baby zombies spawn with red irises.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="shippedPigHasTwoVariants(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>shippedPigHasTwoVariants</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shippedPigHasTwoVariants</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The bundled pig has a common head placement and a rarer rear placement. In game: set
+ <code>entityOverrides = ["minecraft:pig,100"]</code> and spawn a few dozen pigs; most have eyes on their
+ heads, and a few have them on their rear.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>percentForResolvesWildcardsInListOrder</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">percentForResolvesWildcardsInListOrder</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry wins.</div>
+<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
+ wins. In game: set <code>globalPercent = 2</code> and
+ <code>entityOverrides = ["*:*_horse,50", "minecraft:*,10"]</code>, then spawn mobs from eggs: about half
+ of the skeleton horses have eyes, about one zombie in ten, and only the occasional modded mob.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>reloadHardExcludesEnderDragon</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadHardExcludesEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">No datapack, from any namespace, may install an eye config for the ender dragon.</div>
+<div class="block">No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
+ datapack with <code>data/minecraft/eyes/ender_dragon.json</code> and run <code>/reload</code>; the server log
+ reports the dragon file refused, and sneaking with a Googly Eye at an ender dragon still reports no
+ configuration.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>reloadToleratesBadFilesAndDuplicates</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadToleratesBadFilesAndDuplicates</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
+<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.
+ In game: add a datapack whose <code>zombie.json</code> has two adult entries for the same version,
+ whose <code>creeper.json</code> is <code>{ "entries": 5 }</code>, and whose <code>skeleton.json</code> has an
+ <code>"elder"</code> entry beside a valid adult one; <code>/reload</code> logs the problems and completes, and
+ zombies and skeletons still get eyes, the zombies from the first entry.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>reloadFallsBackToNearestGeneration</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadFallsBackToNearestGeneration</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to nothing.</div>
+<div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to
+ nothing. In game: add a datapack whose <code>zombie.json</code> has a single entry for
+ <code>"[1.16,1.17)"</code>, run <code>/reload</code>, and zombies still spawn with those eyes.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>reloadReplacesConfigsOnlyOnContentChange</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadReplacesConfigsOnlyOnContentChange</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A reload installs a new config set only when the resolved content changes; server stop forces the next resync.</div>
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears the
+ installed set. In game: near some eyed mobs, run <code>/reload</code> with no datapack changes; their
+ pupils keep moving without resetting. Change an eye definition and <code>/reload</code> again, and every
+ eye resets to the new definition.</div>
 </section>
 </li>
 </ul>

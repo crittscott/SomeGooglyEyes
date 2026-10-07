@@ -30,7 +30,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         }
     }
 
-    /** "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it elapses. */
+    /**
+     * "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
+     * elapses. In game: as a creative operator, look at an eyed mob and run {@code /sg admin behavior swirl},
+     * then {@code /sg admin behavior blink} while it swirls; the blink does not play. Run it again after the
+     * swirl ends and it does.
+     */
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         ServerBehaviorScheduler.clear();
@@ -54,7 +59,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob is idle. */
+    /**
+     * A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
+     * is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
+     * and heal it again within {@code swirlHealCooldownTicks} (default 200) after the first heal, and they do
+     * not.
+     */
     public static void healSwirlIsRateLimited(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
@@ -85,7 +95,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective triggers. */
+    /**
+     * {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective
+     * triggers. In game: set {@code swirlOnHeal = false}, {@code swirlOnTrade = false}, and
+     * {@code growOnHitPercent = 0} in the server config and apply it; healing an eyed cow, trading with an
+     * eyed villager, and hitting either never changes their eyes.
+     */
     public static void gameEventTriggersRespectConfig(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
@@ -124,7 +139,11 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** A tracked mob with no eyes is not an event target: heal and trade triggers no-op. */
+    /**
+     * A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
+     * since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
+     * mobs.
+     */
     public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();

@@ -97,7 +97,9 @@ loadScripts(document, 'script');</script>
 
  <p>Kept separate from <a href="ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a> so the integrated server and client don't share
  one static map in single-player. Installed maps are immutable snapshots; their mutable model
- values are owned by this store and must be treated as read-only after installation.</div>
+ values are owned by this store and must be treated as read-only after installation. Each snapshot
+ carries its sets' NBT encoding, which is both the sync payload content and the identity a reload
+ compares to decide whether anything changed.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -141,6 +143,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether this entity can wear eyes at <b>any</b> life stage (baby or adult).</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#encode(java.util.Map)" class="member-name-link">encode</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Encode each set through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a> as NBT.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#encoded()" class="member-name-link">encoded</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The installed sets encoded through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only, like <a href="#all()"><code>all()</code></a>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
  boolean&nbsp;baby)</code></div>
@@ -162,20 +174,20 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop the content signature so the first reload of the next world always resynchronizes.</div>
+<div class="block">Drop the installed set so nothing carries over to the next world.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Force-install a snapshot and discard its content signature.</div>
+<div class="block">Unconditionally install a snapshot.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(java.util.Map,java.lang.String)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;nextSignature)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(java.util.Map,java.util.Map)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;nextEncoded)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Datapack-reload entry point: swap in the resolved set only when
- <code>nextSignature</code> (a canonical serialization of <code>next</code>, computed by the reload
- listener) differs from the installed set's.</div>
+<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
+ set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
+ every client's copy, alone.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
@@ -228,6 +240,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="encoded()">
+<h3>encoded</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</span>&nbsp;<span class="element-name">encoded</span>()</div>
+<div class="block">The installed sets encoded through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only, like <a href="#all()"><code>all()</code></a>.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="canEverWearEyes(net.minecraft.world.entity.LivingEntity)">
 <h3>canEverWearEyes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canEverWearEyes</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
@@ -276,30 +295,34 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="replaceAll(java.util.Map)">
-<h3>replaceAll</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</span></div>
-<div class="block">Force-install a snapshot and discard its content signature. This is the unconditional replacement
- path used by tests; normal datapack reload uses <a href="#replaceIfChanged(java.util.Map,java.lang.String)"><code>replaceIfChanged(java.util.Map&lt;net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet&gt;, java.lang.String)</code></a>.</div>
+<section class="detail" id="encode(java.util.Map)">
+<h3>encode</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</span>&nbsp;<span class="element-name">encode</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</span></div>
+<div class="block">Encode each set through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a> as NBT.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="replaceIfChanged(java.util.Map,java.lang.String)">
+<section class="detail" id="replaceAll(java.util.Map)">
+<h3>replaceAll</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</span></div>
+<div class="block">Unconditionally install a snapshot. This is the replacement path used by tests.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="replaceIfChanged(java.util.Map,java.util.Map)">
 <h3>replaceIfChanged</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">replaceIfChanged</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;nextSignature)</span></div>
-<div class="block">Datapack-reload entry point: swap in the resolved set only when
- <code>nextSignature</code> (a canonical serialization of <code>next</code>, computed by the reload
- listener) differs from the installed set's. A <code>/reload</code> triggered for an unrelated
- datapack thus stops re-fanning the whole eye-config snapshot to every online player. Returns
- whether a swap happened.</div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;nextEncoded)</span></div>
+<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
+ set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
+ every client's copy, alone. Returns whether a swap happened.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="onServerStopping()">
 <h3>onServerStopping</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerStopping</span>()</div>
-<div class="block">Drop the content signature so the first reload of the next world always resynchronizes.</div>
+<div class="block">Drop the installed set so nothing carries over to the next world.</div>
 </section>
 </li>
 </ul>

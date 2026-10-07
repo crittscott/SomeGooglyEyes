@@ -108,47 +108,73 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#appearanceOverrideSparseNbtRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">appearanceOverrideSparseNbtRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Appearance overrides save only the fields that are set, and reject invalid colors.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">behaviorTriggerPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The behavior trigger survives the wire.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The eye-definition sync survives the wire.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeColorRejectsWrongChannelCount</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeDefinitionCodecRoundTripsEveryField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeDefinitionCodecRoundTripsEveryField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The client refuses an eye-definition sync with too many entries, too many variants, or non-finite
+ geometry.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeColorRejectsOutOfRangeChannels(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeColorRejectsOutOfRangeChannels</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Both color codecs reject a channel outside <code>0..1</code> or non-finite on decode.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeColorRejectsWrongChannelCount</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A color must have exactly three channels.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeDefinitionCodecRoundTripsEveryField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeDefinitionCodecRoundTripsEveryField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The canonical form is whatever <code>encode</code> produces, so this is the guard that stops a field
  added to the record from being silently dropped on the way to disk: a value-equal round-trip can
  only pass if every field was written.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeFieldsSerializeAtFloatPrecision(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeFieldsSerializeAtFloatPrecision</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeFieldsSerializeAtFloatPrecision(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeFieldsSerializeAtFloatPrecision</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Float-precision serialization: a value typed as <code>0.22</code> must come back out as <code>0.22</code>,
  not as the <code>0.2199999988079071</code> a double-widened float prints as.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRejectsNonFiniteValues</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRejectsNonFiniteValues</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The client refuses an eye-state packet with a non-finite placement roll.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreVersionedAndUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Entity eye state survives the wire, with and without appearance overrides.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreVersionedAndUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Every payload id is unique and carries the network version.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Picker choose and release requests survive the wire.</div>
+</div>
 </div>
 </div>
 </div>
@@ -170,36 +196,57 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>networkProtocolIdsAreVersionedAndUnique</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreVersionedAndUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every payload id is unique and carries the network version. No in-game form; guards that a client and
+ server with different network versions refuse each other instead of misreading packets.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="appearanceOverrideSparseNbtRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>appearanceOverrideSparseNbtRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">appearanceOverrideSparseNbtRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Appearance overrides save only the fields that are set, and reject invalid colors. No in-game form; guards
+ that a mob or item keeps exactly the colors and glow it was given across save and load.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>behaviorTriggerPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">behaviorTriggerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The behavior trigger survives the wire. No in-game form; guards that every client sees the expression
+ the server started.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The eye-definition sync survives the wire. No in-game form; guards that joining clients draw the same
+ eyes the server's datapacks define.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncRejectsOversizedAndUnsafePayloads</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncRejectsOversizedAndUnsafePayloads</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The client refuses an eye-definition sync with too many entries, too many variants, or non-finite
+ geometry. No in-game form with an unmodified server; guards clients against a malicious server.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>eyeColorRejectsWrongChannelCount</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsWrongChannelCount</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A color must have exactly three channels. In game: a datapack eye definition with
+ <code>"irisColors": [0.5, 0.5]</code> is ignored on <code>/reload</code>, with an error in the log.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeColorRejectsOutOfRangeChannels(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeColorRejectsOutOfRangeChannels</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsOutOfRangeChannels</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Both color codecs reject a channel outside <code>0..1</code> or non-finite on decode. In-game,
+ <code>/give @s somegoogly:googly_eye[somegoogly:eye_properties={irisColor:[2f,0f,0f]}]</code> fails to
+ parse instead of producing an eye item.</div>
 </section>
 </li>
 <li>
@@ -209,7 +256,8 @@ loadScripts(document, 'script');</script>
 <div class="block">The canonical form is whatever <code>encode</code> produces, so this is the guard that stops a field
  added to the record from being silently dropped on the way to disk: a value-equal round-trip can
  only pass if every field was written. <code>DEFAULT</code> would round-trip even with a field elided,
- so the sample deliberately sets each field away from its default.</div>
+ so the sample deliberately sets each field away from its default. No in-game form; guards that
+ <code>/sg export</code> writes every eye property an author set.</div>
 </section>
 </li>
 <li>
@@ -218,31 +266,40 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeFieldsSerializeAtFloatPrecision</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Float-precision serialization: a value typed as <code>0.22</code> must come back out as <code>0.22</code>,
  not as the <code>0.2199999988079071</code> a double-widened float prints as. The datapack files are
- hand-edited, so this is what keeps them readable.</div>
+ hand-edited, so this is what keeps them readable. In game: give an eye in the picker a
+ position component of 0.22 and run <code>/sg exportall</code>; the exported JSON reads <code>0.22</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>pickerExportPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerExportPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode. No
+ in-game form; guards that <code>/sg export</code> delivers exactly the definition the client authored.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>pickerFreezePacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerFreezePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Picker choose and release requests survive the wire. No in-game form; guards that <code>V</code> in the
+ picker freezes and releases the intended mob.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>eyeStatePacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
+ every watching client sees a mob's eyes, placement, and colors as the server has them.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>eyeStatePacketRejectsNonFiniteValues</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
+ unmodified server; guards clients against a malicious server.</div>
 </section>
 </li>
 </ul>

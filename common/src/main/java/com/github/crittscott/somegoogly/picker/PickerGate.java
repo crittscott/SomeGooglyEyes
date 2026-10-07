@@ -103,12 +103,14 @@ public final class PickerGate {
         LAST_EXPORT_TICK.put(playerId, server.getTickCount());
     }
 
+    /** Forget a player's request and export throttles; called from {@code ServerServices.onPlayerLeft}. */
     public static void onPlayerLeft(UUID playerId) {
         LAST_REQUEST_TICK.remove(playerId);
         LAST_EXPORT_ATTEMPT_TICK.remove(playerId);
         LAST_EXPORT_TICK.remove(playerId);
     }
 
+    /** Forget every throttle, including the spawn-all cooldown; called from {@code ServerServices.onServerStopping}. */
     public static void onServerStopping() {
         LAST_REQUEST_TICK.clear();
         LAST_EXPORT_ATTEMPT_TICK.clear();

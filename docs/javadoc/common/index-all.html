@@ -102,9 +102,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ALLOW_SPAWN_ALL_KEY" class="member-name-link">ALLOW_SPAWN_ALL_KEY</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#allowCreativeRequest(net.minecraft.server.level.ServerPlayer)" class="member-name-link">allowCreativeRequest(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#allowRequest(net.minecraft.server.level.ServerPlayer)" class="member-name-link">allowRequest(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
 <dd>
-<div class="block">Permit at most one creative picker request per player in one server tick.</div>
+<div class="block">Permit at most one picker request per player in one server tick.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#allowSpawnAll(net.minecraft.server.MinecraftServer)" class="member-name-link">allowSpawnAll(MinecraftServer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
 <dd>
@@ -206,6 +206,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>AuthoredExport</code> record class.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#authorized(net.minecraft.server.level.ServerPlayer)" class="member-name-link">authorized(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
+<dd>
+<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="com/github/crittscott/somegoogly/picker/PickerGate.html#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not rate-limited this tick.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html#available()" class="member-name-link">available()</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html#available()" class="member-name-link">available()</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">LLibraryResolver</a></dt>
@@ -263,6 +267,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html#boxClass()" class="member-name-link">boxClass()</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">LLibraryResolver</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)" class="member-name-link">broadcastEyeConfigsIfChanged(MinecraftServer)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
+<dd>
+<div class="block">Send the current resolved eye definitions and master switch to every player, but only when either
+ differs from what clients last received.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html#byId(net.minecraft.resources.ResourceLocation)" class="member-name-link">byId(ResourceLocation)</a> - Static method in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></dt>
 <dd>
 <div class="block">Look up a behavior by id, or <code>null</code> for an unregistered identifier.</div>
@@ -343,8 +352,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The CLI <code>part none</code> op.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#clearPendingEyeStates()" class="member-name-link">clearPendingEyeStates()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#clearTints(net.minecraft.world.entity.LivingEntity)" class="member-name-link">clearTints(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
 <dd>
 <div class="block">Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts.</div>
@@ -488,6 +495,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/EyeDraft.html#copy()" class="member-name-link">copy()</a> - Method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#copy(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)" class="member-name-link">copy(LivingEntity, LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
+<dd>
+<div class="block">Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
+ or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#cornea()" class="member-name-link">cornea()</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>cornea</code> record component.</div>
@@ -513,10 +525,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#createEye(float,float,float)" class="member-name-link">createEye(float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
 <div class="block">The CLI <code>create x y z</code> op: start a fresh current eye at the given position.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#creative(net.minecraft.server.level.ServerPlayer)" class="member-name-link">creative(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
-<dd>
-<div class="block">Whether <code>sender</code> may drive one picker request now: creative, and not already rate-limited this tick.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/ModContent.html#CREATIVE_TAB" class="member-name-link">CREATIVE_TAB</a> - Static variable in class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ModContent.html" title="class in com.github.crittscott.somegoogly.registry">ModContent</a></dt>
 <dd>
@@ -572,16 +580,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Turn the picker off and release the frozen mob; the authored drafts stay in memory.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode(FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode(FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode(FriendlyByteBuf)</a> - Static method in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode(FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html#decode(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">decode(FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/EyeDefinition.html#DEFAULT" class="member-name-link">DEFAULT</a> - Static variable in record class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye">EyeDefinition</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/EyePlacement.html#DEFAULT" class="member-name-link">DEFAULT</a> - Static variable in record class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></dt>
@@ -708,16 +706,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Apply a portable appearance, reroll placement, and enable eyes with one synchronization.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html#encode(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode(EyeBehaviorTriggerPacket, FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#encode(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode(EyeConfigSyncPacket, FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#encode(com.github.crittscott.somegoogly.network.EyeStatePacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode(EyeStatePacket, FriendlyByteBuf)</a> - Static method in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#encode(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode(PickerExportPacket, FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html#encode(com.github.crittscott.somegoogly.network.PickerFreezePacket,net.minecraft.network.FriendlyByteBuf)" class="member-name-link">encode(PickerFreezePacket, FriendlyByteBuf)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#encode(java.util.Map)" class="member-name-link">encode(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
+<dd>
+<div class="block">Encode each set through <a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a> as NBT.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#encoded()" class="member-name-link">encoded()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
+<dd>
+<div class="block">The installed sets encoded through <a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only, like <a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#all()"><code>ServerEyeConfigs.all()</code></a>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.SpawnRefusal.html#ENDER_DRAGON" class="member-name-link">ENDER_DRAGON</a> - Enum constant in enum class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#ENDER_DRAGON" class="member-name-link">ENDER_DRAGON</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
@@ -743,10 +739,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/platform/EntityPersistentData.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">EntityPersistentData</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
 <dd>
 <div class="block">Returns the mod-owned persistent compound attached to an entity.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#entityUuid()" class="member-name-link">entityUuid()</a> - Method in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
-<dd>
-<div class="block">Returns the value of the <code>entityUuid</code> record component.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.ConfigFile.html#entries" class="member-name-link">entries</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.ConfigFile.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.ConfigFile</a></dt>
 <dd>
@@ -861,6 +853,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#EYE_CONFIG" class="member-name-link">EYE_CONFIG</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html#EYE_FILES" class="member-name-link">EYE_FILES</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigReloadListener</a></dt>
+<dd>
+<div class="block">Where eye definitions live inside a data pack: <code>data/&lt;namespace&gt;/eyes/&lt;path&gt;.json</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/ModContent.html#EYE_MODIFIER_RECIPE" class="member-name-link">EYE_MODIFIER_RECIPE</a> - Static variable in class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ModContent.html" title="class in com.github.crittscott.somegoogly.registry">ModContent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#EYE_OVERRIDES" class="member-name-link">EYE_OVERRIDES</a> - Static variable in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
@@ -951,8 +947,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Server-to-client synchronization of the complete resolved eye-definition set, plus the current
  <code>googlyEyesEnabled</code> master switch.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#%3Cinit%3E(java.util.Map,boolean)" class="member-name-link">EyeConfigSyncPacket(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;, boolean)</a> - Constructor for class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#%3Cinit%3E(java.util.Map,java.util.Map,boolean)" class="member-name-link">EyeConfigSyncPacket(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;, Map&lt;ResourceLocation, CompoundTag&gt;, boolean)</a> - Constructor for class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
+<dd>
+<div class="block"><code>encoded</code> must hold exactly <code>configs</code>, each encoded through <a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/EyeDefinition.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye">EyeDefinition</a> - Record Class in <a href="com/github/crittscott/somegoogly/eye/package-summary.html">com.github.crittscott.somegoogly.eye</a></dt>
 <dd>
 <div class="block">The complete datapack description of one eye on a mob: its <a href="com/github/crittscott/somegoogly/eye/EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a> (where/how big/aimed)
@@ -968,6 +966,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/EyeDraft.html#%3Cinit%3E()" class="member-name-link">EyeDraft()</a> - Constructor for class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html#eyeFile(java.nio.file.Path,net.minecraft.resources.ResourceLocation)" class="member-name-link">eyeFile(Path, ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigReloadListener</a></dt>
+<dd>
+<div class="block">The file under data-pack root <code>packRoot</code> that holds <code>typeId</code>'s eye definition.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeInfluence.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a> - Class in <a href="com/github/crittscott/somegoogly/eye/behavior/package-summary.html">com.github.crittscott.somegoogly.eye.behavior</a></dt>
 <dd>
 <div class="block">What a single active <a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a> exerts on one eye for one <b>simulation tick</b> (not one
@@ -1049,7 +1051,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Server → client sync of a single entity's full eye state: the <code>hasGooglyEyes</code> flag, the chosen
  placement-variant roll, plus the optional per-mob appearance overrides (see <a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>).</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#%3Cinit%3E(int,java.util.UUID,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot)" class="member-name-link">EyeStatePacket(int, UUID, EyeState.Snapshot)</a> - Constructor for record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#%3Cinit%3E(int,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot)" class="member-name-link">EyeStatePacket(int, EyeState.Snapshot)</a> - Constructor for record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>EyeStatePacket</code> record class.</div>
 </dd>
@@ -1062,6 +1064,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The family's name in logs.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#FILE_NAME" class="member-name-link">FILE_NAME</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config">ClientConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#FILE_NAME" class="member-name-link">FILE_NAME</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/MobSpawning.html#finalizeSpawn(net.minecraft.world.entity.Mob,net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.EntitySpawnReason)" class="member-name-link">finalizeSpawn(Mob, ServerLevel, EntitySpawnReason)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/MobSpawning.html" title="class in com.github.crittscott.somegoogly.platform">MobSpawning</a></dt>
 <dd>
 <div class="block">Finalize <code>mob</code> at its current position; false when a listener cancelled the spawn.</div>
@@ -1070,6 +1076,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">First bone (depth-first, so a stable order) whose root→bone name path suffix-matches
  <code>token</code> per <a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#pathMatches(java.lang.String,java.lang.String)"><code>EyeAttachmentResolver.pathMatches(java.lang.String, java.lang.String)</code></a>, or <code>null</code>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#fitsServerbound()" class="member-name-link">fitsServerbound()</a> - Method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></dt>
+<dd>
+<div class="block">Whether this packet's encoded data fits under <a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#MAX_SERVERBOUND_BYTES"><code>PickerExportPacket.MAX_SERVERBOUND_BYTES</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#forEntity(net.minecraft.world.entity.LivingEntity)" class="member-name-link">forEntity(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
 <dd>&nbsp;</dd>
@@ -1154,7 +1164,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Return the entity's config for <code>living</code>'s current age.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/EntityPersistentData.html#get(net.minecraft.world.entity.Entity)" class="member-name-link">get(Entity)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/EntityPersistentData.html" title="class in com.github.crittscott.somegoogly.platform">EntityPersistentData</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The entity's live, mutable persistent compound; never null, and written in place.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#get(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">get(LivingEntity, HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
 <div class="block">The tracker for this entity's current placement, creating one on first use and replacing any
@@ -1162,7 +1174,9 @@ loadScripts(document, 'script');</script>
  variant or age change cannot reuse the old tracker).</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/item/EyeItemProperties.html#get(net.minecraft.world.item.ItemStack)" class="member-name-link">get(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.item.<a href="com/github/crittscott/somegoogly/item/EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item">EyeItemProperties</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The stack's appearance override, or <a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a> when it has none.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#getAttachToken(int)" class="member-name-link">getAttachToken(int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
 <div class="block">This head's model attachment token, or <code>null</code> when the head index is out of range.</div>
@@ -1304,11 +1318,17 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.Handle.html#%3Cinit%3E()" class="member-name-link">Handle()</a> - Constructor for class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior(EyeBehaviorTriggerPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync(EyeConfigSyncPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState(EyeStatePacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles(EntityModel&lt;?&gt;)</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles(EntityModel&lt;?&gt;)</a> - Method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></dt>
@@ -1516,7 +1536,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the whole declared range sits at or below <code>version</code> (its upper bound does).</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#isEntityDisabled(net.minecraft.resources.ResourceLocation)" class="member-name-link">isEntityDisabled(ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config">ClientConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Whether the client hides eyes on this entity type, by its id or its namespace.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#isInitialized(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isInitialized(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
 <dd>
 <div class="block">Whether the server has made this entity's one-time natural-eye decision.</div>
@@ -1615,10 +1637,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_ATTACH_TOKEN_LENGTH" class="member-name-link">MAX_ATTACH_TOKEN_LENGTH</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/picker/PickerExportService.html#MAX_CONFIG_BYTES" class="member-name-link">MAX_CONFIG_BYTES</a> - Static variable in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker">PickerExportService</a></dt>
-<dd>
-<div class="block">Quota for the packet's encoded config; a legitimate config is a few KiB.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_CONFIGS_PER_SYNC" class="member-name-link">MAX_CONFIGS_PER_SYNC</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_EYES_PER_HEAD" class="member-name-link">MAX_EYES_PER_HEAD</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
@@ -1629,6 +1647,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#MAX_PAYLOAD_BYTES" class="member-name-link">MAX_PAYLOAD_BYTES</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#MAX_SERVERBOUND_BYTES" class="member-name-link">MAX_SERVERBOUND_BYTES</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></dt>
+<dd>
+<div class="block">Vanilla's cap on a serverbound custom payload's encoded data.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_TOTAL_EYES_PER_SYNC" class="member-name-link">MAX_TOTAL_EYES_PER_SYNC</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_VARIANTS_PER_CONFIG" class="member-name-link">MAX_VARIANTS_PER_CONFIG</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
@@ -1642,6 +1664,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html#%3Cinit%3E()" class="member-name-link">MaybeFloatArgumentType()</a> - Constructor for class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html" title="class in com.github.crittscott.somegoogly.command">MaybeFloatArgumentType</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#mayUsePicker(net.minecraft.world.entity.player.Player)" class="member-name-link">mayUsePicker(Player)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
+<dd>
+<div class="block">Whether <code>player</code> may use the picker at all: creative mode and permission level 2.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/MobSpawning.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">MobSpawning</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
 <dd>
 <div class="block">Runs a mob's spawn finalization the way the loader's own spawn paths do, so other mods' finalize-spawn
@@ -1767,10 +1793,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Drop all per-connection client eye state when leaving a world or server.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#onEntityLoaded(net.minecraft.world.entity.Entity)" class="member-name-link">onEntityLoaded(Entity)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>
-<div class="block">Apply eye state that reached the client before its entity was created.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html#onEyesGained(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onEyesGained(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></dt>
 <dd>
 <div class="block">Promote <code>mob</code> into the per-tick-walked <code>ServerBehaviorScheduler.ACTIVE</code> set now that it's known to have eyes.</div>
@@ -1795,7 +1817,9 @@ loadScripts(document, 'script');</script>
 <div class="block">A player damaged <code>mob</code>: roll the configured chance to play 'grow'.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft(UUID)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Forget a player's request and export throttles; called from <code>ServerServices.onPlayerLeft</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#onPlayerLeft(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLeft(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
 <dd>
 <div class="block">Release all per-player picker state when a server player leaves.</div>
@@ -1806,10 +1830,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#onServerStopping()" class="member-name-link">onServerStopping()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
-<div class="block">Drop the content signature so the first reload of the next world always resynchronizes.</div>
+<div class="block">Drop the installed set so nothing carries over to the next world.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#onServerStopping()" class="member-name-link">onServerStopping()</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping(MinecraftServer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></dt>
 <dd>
 <div class="block">Restore every frozen mob synchronously at server stop — before the final world save — so a
@@ -1818,10 +1844,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping(MinecraftServer)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
 <dd>
 <div class="block">Clear every server-lifetime service before the server instance is discarded.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#onServerTick()" class="member-name-link">onServerTick()</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
-<dd>
-<div class="block">Advance behavior scheduling once at the end of a server tick.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html#onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)" class="member-name-link">onStart(BehaviorInstance)</a> - Method in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></dt>
 <dd>
@@ -1839,10 +1861,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html#onStopTracking(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onStopTracking(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></dt>
 <dd>
 <div class="block">A player stopped tracking <code>mob</code> (including on its death/unload).</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#onStopTracking(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onStopTracking(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
-<dd>
-<div class="block">Remove one watcher from the entity's server-side behavior schedule.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html#onTrade(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onTrade(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></dt>
 <dd>
@@ -1944,7 +1962,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Server-side half of <code>/sg export</code> (reached via <code>PickerExportPacket</code>): validates a
  client-authored eye config, writes it as canonical datapack JSON into the world's
- <code>somegoogly-picker</code> pack, and <code>/reload</code>s so it persists and re-syncs through the normal
+ <code>somegoogly-picker</code> pack, and reloads datapacks as <code>/reload</code> does so it persists and re-syncs through the normal
  path.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a> - Class in <a href="com/github/crittscott/somegoogly/network/package-summary.html">com.github.crittscott.somegoogly.network</a></dt>
@@ -2098,7 +2116,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Bind every handle; the data component first, since the items' stacks carry it.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html#register(com.mojang.brigadier.CommandDispatcher)" class="member-name-link">register(CommandDispatcher&lt;CommandSourceStack&gt;)</a> - Static method in class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html#register(com.mojang.brigadier.CommandDispatcher,net.minecraft.commands.CommandBuildContext)" class="member-name-link">register(CommandDispatcher&lt;CommandSourceStack&gt;, CommandBuildContext)</a> - Static method in class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></dt>
 <dd>
 <div class="block">Register the server-owned world-mutation branches of <code>/sg</code>.</div>
 </dd>
@@ -2145,18 +2163,22 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#replaceAll(java.util.Map)" class="member-name-link">replaceAll(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
-<div class="block">Force-install a snapshot and discard its content signature.</div>
+<div class="block">Unconditionally install a snapshot.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html#replaceAll(java.util.Map,boolean)" class="member-name-link">replaceAll(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;, boolean)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></dt>
 <dd>
 <div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
  rendering view.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#replaceIfChanged(java.util.Map,java.lang.String)" class="member-name-link">replaceIfChanged(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;, String)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#replaceIfChanged(java.util.Map,java.util.Map)" class="member-name-link">replaceIfChanged(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;, Map&lt;ResourceLocation, CompoundTag&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
-<div class="block">Datapack-reload entry point: swap in the resolved set only when
- <code>nextSignature</code> (a canonical serialization of <code>next</code>, computed by the reload
- listener) differs from the installed set's.</div>
+<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
+ set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
+ every client's copy, alone.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#reset()" class="member-name-link">reset()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
+<dd>
+<div class="block">Drop held-eye state when leaving a world or server.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html#reset()" class="member-name-link">reset()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a></dt>
 <dd>&nbsp;</dd>
@@ -2207,6 +2229,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Picks the first <a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> that handles a given model.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html#ROOT" class="member-name-link">ROOT</a> - Static variable in class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></dt>
+<dd>
+<div class="block">The <code>/sg</code> root literal, shared by the server tree, the client tree, and Fabric's routing.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render.resolver">RootModelResolver</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/resolver/package-summary.html">com.github.crittscott.somegoogly.client.render.resolver</a></dt>
 <dd>
 <div class="block">Resolver for every model whose geometry hangs off <code>Model.root()</code> — all vanilla models and
@@ -2232,6 +2258,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#scaleMul" class="member-name-link">scaleMul</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#SECTION" class="member-name-link">SECTION</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config">ClientConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_BEHAVIORS" class="member-name-link">SECTION_BEHAVIORS</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_PICKER" class="member-name-link">SECTION_PICKER</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_SERVER" class="member-name-link">SECTION_SERVER</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html#seed()" class="member-name-link">seed()</a> - Method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#segments(java.lang.String)" class="member-name-link">segments(String)</a> - Static method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></dt>
@@ -2250,6 +2284,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The CLI <code>variant &lt;n&gt;</code> op (1-based): switch to a variant for editing; false if out of range.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/registry/ModContent.html#SELF_SHEAR" class="member-name-link">SELF_SHEAR</a> - Static variable in class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ModContent.html" title="class in com.github.crittscott.somegoogly.registry">ModContent</a></dt>
+<dd>
+<div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/EyeItemService.html#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears(Player, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/EyeItemService.html" title="class in com.github.crittscott.somegoogly.server">EyeItemService</a></dt>
 <dd>
 <div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
@@ -2266,9 +2304,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/ClientNetworking.html#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.platform">ClientNetworking</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/platform/Networking.html#sendTracking(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTracking(Entity, boolean, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform">Networking</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/platform/Networking.html#sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTrackingAndSelf(Entity, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform">Networking</a></dt>
 <dd>
-<div class="block">Send a clientbound payload to every player tracking <code>entity</code>.</div>
+<div class="block">Send a clientbound payload to every player tracking <code>entity</code> and, when the entity is itself
+ a server player, to that player too.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a> - Class in <a href="com/github/crittscott/somegoogly/eye/behavior/package-summary.html">com.github.crittscott.somegoogly.eye.behavior</a></dt>
 <dd>
@@ -2287,7 +2326,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.server">ServerServices</a> - Class in <a href="com/github/crittscott/somegoogly/server/package-summary.html">com.github.crittscott.somegoogly.server</a></dt>
 <dd>
-<div class="block">Loader-neutral implementation behind each loader's server lifecycle hooks.</div>
+<div class="block">Loader-neutral server lifecycle hooks that coordinate several services.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html#serverTick()" class="member-name-link">serverTick()</a> - Static method in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></dt>
 <dd>
@@ -2298,7 +2337,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html#set(java.util.List)" class="member-name-link">set(List&lt;String&gt;)</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/item/EyeItemProperties.html#set(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">set(ItemStack, AppearanceOverride)</a> - Static method in class com.github.crittscott.somegoogly.item.<a href="com/github/crittscott/somegoogly/item/EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item">EyeItemProperties</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Store <code>properties</code> on the stack; an empty override removes the component.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#set(T)" class="member-name-link">set(T)</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
 <dd>
 <div class="block">Assign a value after applying the normalization established by the factory method.</div>
@@ -2371,6 +2412,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#setVariantWeight(double)" class="member-name-link">setVariantWeight(double)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
 <div class="block">The CLI <code>variant weight &lt;w&gt;</code> op: set the current variant's relative weight (clamped &gt;= 0).</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/registry/ModContent.html#SHEARS" class="member-name-link">SHEARS</a> - Static variable in class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ModContent.html" title="class in com.github.crittscott.somegoogly.registry">ModContent</a></dt>
+<dd>
+<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
+ so modded shears count without extending <code>ShearsItem</code>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html#SIDE_EYE" class="member-name-link">SIDE_EYE</a> - Enum constant in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></dt>
 <dd>
@@ -2470,9 +2516,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Each field is length-prefixed with a presence boolean; colors ride <a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></dt>
-<dd>
-<div class="block">Three raw floats; validation is the caller's (<a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#isValid()"><code>EyeColor.isValid()</code></a>).</div>
-</dd>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
@@ -2513,7 +2557,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncEyeConfigs(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
 <dd>
-<div class="block">Send current resolved eye definitions after login or reload.</div>
+<div class="block">Send the current resolved eye definitions and master switch to a joining player.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:T">T</h2>
@@ -2539,10 +2583,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientLifecycle.html#tick()" class="member-name-link">tick()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientLifecycle.html" title="class in com.github.crittscott.somegoogly.client">ClientLifecycle</a></dt>
 <dd>
-<div class="block">Advance the pupil/behavior runtime, inspector, and picker key input.</div>
+<div class="block">Advance the pupil/behavior runtime, held-eye pupil, inspector, and picker key input.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/EyeInspector.html#tick()" class="member-name-link">tick()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/EyeInspector.html" title="class in com.github.crittscott.somegoogly.client">EyeInspector</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#tick()" class="member-name-link">tick()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
+<dd>
+<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#TICKS_MAX" class="member-name-link">TICKS_MAX</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#TICKS_MIN" class="member-name-link">TICKS_MIN</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
@@ -2589,8 +2637,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#toNbt()" class="member-name-link">toNbt()</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>
-<div class="block">Encode this override as a compound, returning an empty compound if encoding fails or produces a
- different NBT tag type.</div>
+<div class="block">Encode this override as a compound.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#toOpaqueArgb32()" class="member-name-link">toOpaqueArgb32()</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></dt>
 <dd>
@@ -2795,6 +2842,10 @@ the order they are declared.</div>
 <dd>
 <div class="block">Required version or version-range selector interpreted by <a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config"><code>VersionRangeMatcher</code></a>.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#versioned(java.lang.String)" class="member-name-link">versioned(String)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
+<dd>
+<div class="block">A mod-namespaced id under the current network version.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html#%3Cinit%3E()" class="member-name-link">VersionedEntry()</a> - Constructor for class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.VersionedEntry</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ModVersionLookup.html#versionForNamespace(java.lang.String)" class="member-name-link">versionForNamespace(String)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ModVersionLookup.html" title="class in com.github.crittscott.somegoogly.config">ModVersionLookup</a></dt>
@@ -2818,12 +2869,12 @@ the order they are declared.</div>
 <dd>
 <div class="block">Authored relative selection weight; validated installed values are finite and nonnegative.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html#weight()" class="member-name-link">weight()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a></dt>
-<dd>
-<div class="block">The selection weight, clamped to be non-negative; a negative authored value reads as <code>0</code>.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#WHITE" class="member-name-link">WHITE</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#wireSize(java.util.Map)" class="member-name-link">wireSize(Map&lt;ResourceLocation, CompoundTag&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
+<dd>
+<div class="block">The number of bytes a packet carrying <code>encoded</code> occupies on the wire.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor(EyeColor)</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>
 <div class="block"><code>null</code> clears the field.</div>

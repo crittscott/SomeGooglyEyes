@@ -9,10 +9,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
 /**
- * Server-side coverage of the {@link EyeState} mutation API beyond the existing all-fields round-trip:
- * sparse overrides, atomic tint clearing, snapshot installation, and {@code setGlow(null)} dropping
- * the override so eyes fall back to per-eye config glow. Server mutation calls also broadcast an
- * {@code EyeStatePacket}; with no trackers in the test that is a no-op, exercised here for safety.
+ * The {@link EyeState} appearance-override mutations behind {@code /sg admin}: sparse overrides, atomic
+ * tint clearing, snapshot installation, and {@code setGlow(null)} dropping the override so eyes fall back
+ * to per-eye config glow. Each mutation also sends an {@code EyeStatePacket}, which reaches no one here
+ * because the test has no tracking players.
+ *
+ * <p>The in-game steps below run as a creative operator (permission level 2) looking at a cow that
+ * already has eyes (for example, after {@code /sg admin eyes true}).
  */
 public final class EyeStateOverrideGameTestsLogic {
 
@@ -23,6 +26,11 @@ public final class EyeStateOverrideGameTestsLogic {
         return helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
     }
 
+    /**
+     * Removing one color override leaves the other in place. No in-game form, since
+     * {@code /sg admin tint clear} removes both colors at once; guards that edits to one appearance field
+     * never disturb another.
+     */
     public static void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         EyeState.setIrisTint(cow, new EyeColor(0.1F, 0.2F, 0.3F));
@@ -35,6 +43,11 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A glow override can be set and then dropped back to the definition's glow. In game: run
+     * {@code /sg admin glow on} and the cow's eyes glow; run {@code /sg admin glow config} and they return to
+     * the glow its eye definition specifies (none, for the bundled cow).
+     */
     public static void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
 
@@ -47,6 +60,11 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Setting one color leaves every other field at the definition's value. In game:
+     * {@code /sg admin tint iris 1 0 0} turns only the irises red; the corneas keep their default color and
+     * the eyes do not start glowing.
+     */
     public static void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
@@ -59,6 +77,12 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Clearing the last override removes the override data entirely. In game:
+     * {@code /sg admin tint iris 1 0 0}, then {@code /sg admin tint clear}; the eyes look as they did before,
+     * and on NeoForge or Forge {@code /data get entity <cow>} shows no {@code somegoogly:eyeOverrides} key in
+     * {@code NeoForgeData} or {@code ForgeData}.
+     */
     public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
@@ -69,6 +93,11 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Clearing colors keeps a glow override. In game: {@code /sg admin tint iris 1 0 0},
+     * {@code /sg admin tint cornea 0 0 1}, and {@code /sg admin glow on}; then {@code /sg admin tint clear}
+     * restores the default colors while the eyes keep glowing.
+     */
     public static void clearingTintsPreservesGlow(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         EyeState.setIrisTint(cow, new EyeColor(0.1F, 0.2F, 0.3F));
@@ -83,6 +112,11 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A full eye-state snapshot applies eyes, variant, and appearance together, as a client does when it
+     * receives one. In game: give the cow a red iris and {@code /sg admin glow on}, walk far enough away that
+     * it unloads from view, and come back; it reappears with the same eyes, red irises, and glow at once.
+     */
     public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
         Cow cow = spawnCow(helper);
         AppearanceOverride properties = AppearanceOverride.EMPTY

@@ -109,21 +109,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearPendingEyeStates()" class="member-name-link">clearPendingEyeStates</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior</a><wbr>(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEntityLoaded(net.minecraft.world.entity.Entity)" class="member-name-link">onEntityLoaded</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior</a><wbr>(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Apply eye state that reached the client before its entity was created.</div>
+<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
 </div>
 </div>
 </div>
@@ -146,31 +144,21 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
 <h3>handleEyeConfigSync</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeConfigSync</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</span></div>
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)">
 <h3>handleEyeState</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeState</span><wbr><span class="parameters">(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</span></div>
+<div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)">
 <h3>handleBehavior</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleBehavior</span><wbr><span class="parameters">(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="onEntityLoaded(net.minecraft.world.entity.Entity)">
-<h3>onEntityLoaded</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityLoaded</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
-<div class="block">Apply eye state that reached the client before its entity was created.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="clearPendingEyeStates()">
-<h3>clearPendingEyeStates</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearPendingEyeStates</span>()</div>
+<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
 </section>
 </li>
 </ul>

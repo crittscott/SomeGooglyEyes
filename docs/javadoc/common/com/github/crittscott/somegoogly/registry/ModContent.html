@@ -94,8 +94,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Everything the mod registers, declared once and bound through each loader's <a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry"><code>ContentRegistrar</code></a>:
  the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
  component both carry, the mod's creative tab, and the eye-modifier recipe serializer. The Optometrist
- enchantment is data-driven, so only its resource key lives here; the Slimy Eye recipe is a vanilla
- <code>crafting_transmute</code>, so it needs no serializer.</div>
+ enchantment and self-shear damage type are data-driven, so only their resource keys live here; the
+ Slimy Eye recipe is a vanilla <code>crafting_transmute</code>, so it needs no serializer.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -125,6 +125,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#OPTOMETRIST" class="member-name-link">OPTOMETRIST</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.damagesource.DamageType&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SELF_SHEAR" class="member-name-link">SELF_SHEAR</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes.</div>
+</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.tags.TagKey<wbr>&lt;net.minecraft.world.item.Item&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#SHEARS" class="member-name-link">SHEARS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
+ so modded shears count without extending <code>ShearsItem</code>.</div>
+</div>
 <div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
@@ -201,6 +212,22 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="OPTOMETRIST">
 <h3>OPTOMETRIST</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceKey&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</span>&nbsp;<span class="element-name">OPTOMETRIST</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="SELF_SHEAR">
+<h3>SELF_SHEAR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceKey&lt;net.minecraft.world.damagesource.DamageType&gt;</span>&nbsp;<span class="element-name">SELF_SHEAR</span></div>
+<div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
+ attacker, so PvP, team, and claim rules that guard player-on-player damage do not cancel it.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SHEARS">
+<h3>SHEARS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.tags.TagKey&lt;net.minecraft.world.item.Item&gt;</span>&nbsp;<span class="element-name">SHEARS</span></div>
+<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
+ so modded shears count without extending <code>ShearsItem</code>.</div>
 </section>
 </li>
 </ul>

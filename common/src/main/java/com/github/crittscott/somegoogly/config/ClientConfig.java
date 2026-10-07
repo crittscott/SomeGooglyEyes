@@ -35,6 +35,7 @@ public final class ClientConfig {
     private ClientConfig() {
     }
 
+    /** Whether the client hides eyes on this entity type, by its id or its namespace. */
     public static boolean isEntityDisabled(ResourceLocation entityType) {
         return DISABLED_MODS.parsed().contains(entityType.getNamespace())
                 || DISABLED_ENTITIES.parsed().contains(entityType);

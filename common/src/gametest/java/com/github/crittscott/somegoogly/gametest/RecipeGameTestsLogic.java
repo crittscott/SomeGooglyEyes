@@ -45,6 +45,10 @@ public final class RecipeGameTestsLogic {
         return new EyeModifierRecipe(CraftingBookCategory.MISC);
     }
 
+    /**
+     * A cobweb clears every appearance override. In game: craft a Googly Eye with red dye, then craft the
+     * result with a cobweb; the new eye's tooltip lists no colors or glow.
+     */
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         ItemStack tinted = GooglyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(1F, 0F, 0F)), 1);
@@ -56,6 +60,10 @@ public final class RecipeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Dye sets the iris color and keeps the eye's other data. In game: rename a Googly Eye in an anvil and craft
+     * it with red dye; the result keeps the name and its tooltip shows an iris color.
+     */
     public static void dyeSetsIrisAndKeepsUnrelatedComponent(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         ItemStack eye = GooglyEyeItem.create(AppearanceOverride.EMPTY, 1);
@@ -71,6 +79,10 @@ public final class RecipeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Glowstone forces glow on and redstone forces it off. In game: craft a Googly Eye with glowstone dust and
+     * its tooltip shows glow on; craft one with redstone dust and it shows glow off.
+     */
     public static void glowstoneAndRedstoneToggleGlow(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
 
@@ -85,6 +97,10 @@ public final class RecipeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Two Googly Eyes with no modifier are not a recipe. In game: put two Googly Eyes in a crafting grid; no
+     * result appears.
+     */
     public static void twoEyesDoNotMatch(GameTestHelper helper) {
         CraftingInput grid = grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
                 GooglyEyeItem.create(AppearanceOverride.EMPTY, 1));
@@ -92,6 +108,11 @@ public final class RecipeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A Slimy Eye keeps the Googly Eye's appearance and name. In game: rename a Googly Eye, craft it with blue
+     * dye and glowstone dust, then with a slimeball; the Slimy Eye keeps the name, its tooltip shows the same
+     * iris color and glow, and its icon's iris is blue.
+     */
     public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);

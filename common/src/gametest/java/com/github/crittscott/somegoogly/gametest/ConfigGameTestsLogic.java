@@ -31,6 +31,12 @@ public final class ConfigGameTestsLogic {
         return RuntimeConfig.isUsable(config);
     }
 
+    /**
+     * An exact {@code entityOverrides} id wins over a wildcard, and an unmatched id uses {@code globalPercent}.
+     * In game: set {@code globalPercent = 2} and
+     * {@code entityOverrides = ["minecraft:zombie,100", "minecraft:*,50"]} in the server config, then spawn
+     * mobs from eggs: every zombie has eyes, about half of the cows do, and only the occasional modded mob.
+     */
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
         int originalGlobal = ServerConfig.GLOBAL_PERCENT.get();
         List<String> originalOverrides = ServerConfig.ENTITY_OVERRIDES.get();
@@ -57,8 +63,9 @@ public final class ConfigGameTestsLogic {
     /**
      * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must ship
      * opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-     * those namespaces must ship excluded. The packet-handler refusal itself needs a live player and
-     * stays source-verified.
+     * those namespaces must ship excluded. In game: in a new world, the generated
+     * {@code serverconfig/somegoogly-server.toml} has {@code allowSpawnAll = false} and
+     * {@code spawnExcludedMods = ["minecolonies", "create"]}, and {@code /sg spawnall} refuses to run.
      */
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
         helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
@@ -68,6 +75,10 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The bundled cow and player definitions load. In game: sneak while holding a Googly Eye and aim at an
+     * eyeless cow, then at another player; both report that they can receive eyes.
+     */
     public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
         RuntimeConfig cow = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), false);
         helper.assertTrue(usable(cow), "cow should have a usable shipped eye config");
@@ -82,9 +93,10 @@ public final class ConfigGameTestsLogic {
     /**
      * Every head in every shipped config must carry a non-blank attach token. The attachPoint is required
      * (no default), so a token that loads as {@code null}/empty means a corrupt data edit — this catches
-     * that across all 80+ files in one cheap headless check. It does not (and can't, on the dedicated
+     * that across every shipped file in one cheap headless check. It does not (and can't, on the dedicated
      * server, where the client-only resolvers don't load) verify the token resolves to a real model part;
-     * that needs an in-client pass.
+     * that needs an in-client pass. No in-game form; guards that every bundled definition names a place
+     * on the model to put its eyes.
      */
     public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {
         for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : ServerEyeConfigs.all().entrySet()) {
@@ -115,7 +127,13 @@ public final class ConfigGameTestsLogic {
         }
     }
 
-    /** Exact Minecraft-version selection, end to end, including paired adult/baby entries. */
+    /**
+     * Minecraft-version selection, end to end, including paired adult/baby entries. In game: add a
+     * datapack with {@code data/minecraft/eyes/zombie.json} holding an adult entry for
+     * {@code "[1.20,1.21)"} with blue irises and adult and baby entries for the running version with red
+     * irises, run {@code /reload}, and set {@code entityOverrides = ["minecraft:zombie,100"]}; adult and
+     * baby zombies spawn with red irises.
+     */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         String json = """
@@ -157,6 +175,11 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The bundled pig has a common head placement and a rarer rear placement. In game: set
+     * {@code entityOverrides = ["minecraft:pig,100"]} and spawn a few dozen pigs; most have eyes on their
+     * heads, and a few have them on their rear.
+     */
     public static void shippedPigHasTwoVariants(GameTestHelper helper) {
         RuntimeConfig pig = ServerEyeConfigs.get(ResourceLocation.fromNamespaceAndPath("minecraft", "pig"), false);
         helper.assertTrue(usable(pig), "pig should have a usable shipped eye config");
@@ -170,7 +193,12 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** {@code entityOverrides}: an exact id always wins; among wildcards, the first matching list entry wins. */
+    /**
+     * {@code entityOverrides}: an exact id always wins; among wildcards, the first matching list entry
+     * wins. In game: set {@code globalPercent = 2} and
+     * {@code entityOverrides = ["*:*_horse,50", "minecraft:*,10"]}, then spawn mobs from eggs: about half
+     * of the skeleton horses have eyes, about one zombie in ten, and only the occasional modded mob.
+     */
     public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
         int originalGlobal = ServerConfig.GLOBAL_PERCENT.get();
         List<String> originalOverrides = ServerConfig.ENTITY_OVERRIDES.get();
@@ -216,7 +244,12 @@ public final class ConfigGameTestsLogic {
         return JsonParser.parseString("{ \"entries\": [ " + String.join(", ", entries) + " ] }");
     }
 
-    /** No datapack, from any namespace, may install an eye config for the ender dragon. */
+    /**
+     * No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
+     * datapack with {@code data/minecraft/eyes/ender_dragon.json} and run {@code /reload}; the server log
+     * reports the dragon file refused, and sneaking with a Googly Eye at an ender dragon still reports no
+     * configuration.
+     */
     public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -234,7 +267,13 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload. */
+    /**
+     * One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.
+     * In game: add a datapack whose {@code zombie.json} has two adult entries for the same version,
+     * whose {@code creeper.json} is {@code { "entries": 5 }}, and whose {@code skeleton.json} has an
+     * {@code "elder"} entry beside a valid adult one; {@code /reload} logs the problems and completes, and
+     * zombies and skeletons still get eyes, the zombies from the first entry.
+     */
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         ResourceLocation creeper = ResourceLocation.fromNamespaceAndPath("minecraft", "creeper");
@@ -260,7 +299,11 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** An entry with no range covering the loaded version degrades to its nearest generation, not to nothing. */
+    /**
+     * An entry with no range covering the loaded version degrades to its nearest generation, not to
+     * nothing. In game: add a datapack whose {@code zombie.json} has a single entry for
+     * {@code "[1.16,1.17)"}, run {@code /reload}, and zombies still spawn with those eyes.
+     */
     public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -275,7 +318,12 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** A reload installs a new config set only when the resolved content changes; server stop clears the installed set. */
+    /**
+     * A reload installs a new config set only when the resolved content changes; server stop clears the
+     * installed set. In game: near some eyed mobs, run {@code /reload} with no datapack changes; their
+     * pupils keep moving without resetting. Change an eye definition and {@code /reload} again, and every
+     * eye resets to the new definition.
+     */
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();

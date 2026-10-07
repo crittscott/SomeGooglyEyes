@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
  shipped data uses. Two entry points:
  <ul>
    <li><a href="#export()"><code>export()</code></a> — the single committed mob, sent to the server as a
-       <code>PickerExportPacket</code>; the creative-gated server handler validates it, writes
+       <code>PickerExportPacket</code>; the authorization-gated server handler validates it, writes
        <code>world/datapacks/somegoogly-picker/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>, and <code>/reload</code>s
        so it persists and re-syncs through the normal path. Works from a remote client; the result
        arrives as a server chat message (rate-limited server-side to one export per 10 seconds).</li>
@@ -155,8 +155,8 @@ loadScripts(document, 'script');</script>
 <h3>export</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">export</span>()</div>
 <div class="block">Send the committed draft for the chosen mob to the server to be written and reloaded. Client-side
- we only guard the obvious (something committed) and codec-encode the draft; all real validation —
- and the authoritative feedback — is the server's (<code>PickerExportService</code>).</div>
+ we only guard the obvious (something committed, small enough to send) and codec-encode the draft;
+ all real validation — and the authoritative feedback — is the server's (<code>PickerExportService</code>).</div>
 </section>
 </li>
 <li>

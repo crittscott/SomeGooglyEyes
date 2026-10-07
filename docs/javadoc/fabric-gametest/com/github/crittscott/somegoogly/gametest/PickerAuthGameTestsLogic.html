@@ -91,8 +91,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerAuthGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The server-side authorization and rate limits behind the client-driven picker verbs:
- <code>PickerGate.creative(net.minecraft.server.level.ServerPlayer)</code> (a plain <code>isCreative()</code> check left to source review) and the
- <code>PickerGate</code> rate limits (one request
+ <code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code> (creative plus permission level 2, verified manually: in-game, a
+ creative player without op cannot toggle the picker, run <code>/sg spawn</code>, <code>/sg spawnall</code>,
+ or <code>/sg mob</code>, and an op in creative can) and the <code>PickerGate</code> rate limits (one request
  per player per tick, plus a server-wide cooldown on the destructive bulk spawn).
  <code>ConfigGameTestsLogic.spawnAllDefaultsOff</code> pins the opt-in config default; these pin the
  silent-rejection gates that keep unauthorized custom-payload spam from amplifying into server work.</div>
@@ -111,7 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerRequestsRequireCreativeAndThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">pickerRequestsRequireCreativeAndThrottlePerTick</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerRequestsThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">pickerRequestsThrottlePerTick</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A sender gets at most one picker request per tick, and clearing its record resets the limit.</div>
@@ -139,18 +140,23 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="pickerRequestsRequireCreativeAndThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>pickerRequestsRequireCreativeAndThrottlePerTick</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerRequestsRequireCreativeAndThrottlePerTick</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<section class="detail" id="pickerRequestsThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>pickerRequestsThrottlePerTick</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerRequestsThrottlePerTick</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A sender gets at most one picker request per tick, and clearing its record resets the limit.</div>
+<div class="block">A sender gets at most one picker request per tick, and clearing its record resets the limit. No
+ in-game form, since a player at the keyboard cannot send two picker requests in one tick; guards the
+ server against custom-payload spam from a modified client.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="spawnAllHasAServerWideCooldown(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>spawnAllHasAServerWideCooldown</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAllHasAServerWideCooldown</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>allowSpawnAll</code> arms a server-wide cooldown; a second call inside the window is refused.</div>
+<div class="block"><code>allowSpawnAll</code> arms a server-wide cooldown; a second call inside the window is refused. In
+ game, on a disposable world with <code>allowSpawnAll = true</code>: as a creative operator, run
+ <code>/sg spawnall minecraft</code> twice within 10 seconds; the second is refused. After the cooldown it
+ runs again.</div>
 </section>
 </li>
 </ul>

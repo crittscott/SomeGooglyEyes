@@ -110,10 +110,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fullPercentGrantsEyesAndZeroDeniesThem(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fullPercentGrantsEyesAndZeroDeniesThem</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>globalPercent = 100</code> always grants eyes and <code>0</code> never does.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAlwaysAssignsAVariantRoll</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Every spawned mob stores a placement roll, with or without eyes.</div>
+</div>
 </div>
 </div>
 </div>
@@ -135,12 +139,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="fullPercentGrantsEyesAndZeroDeniesThem(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>fullPercentGrantsEyesAndZeroDeniesThem</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fullPercentGrantsEyesAndZeroDeniesThem</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block"><code>globalPercent = 100</code> always grants eyes and <code>0</code> never does. In game: with no
+ <code>entityOverrides</code>, set <code>globalPercent = 100</code> and every spawned cow has eyes; set it to
+ <code>0</code> and none of the new ones do.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>spawnAlwaysAssignsAVariantRoll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAlwaysAssignsAVariantRoll</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every spawned mob stores a placement roll, with or without eyes. In game: set <code>globalPercent = 0</code>,
+ spawn a pig, and give it eyes with a Slimy Eye; it gets the placement its own stored roll selects.</div>
 </section>
 </li>
 </ul>

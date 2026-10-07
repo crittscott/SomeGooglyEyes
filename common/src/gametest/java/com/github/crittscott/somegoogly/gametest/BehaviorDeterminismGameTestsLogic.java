@@ -68,6 +68,11 @@ public final class BehaviorDeterminismGameTestsLogic {
         return true;
     }
 
+    /**
+     * The same seed picks the same blinking eyes. In game: two players on one server, both creative
+     * operators, look at the same eyed mob with several eyes; one runs {@code /sg admin behavior blink}
+     * until a partial blink plays, and both screens show the same eyes closing.
+     */
     public static void blinkMaskIsSeedDeterministic(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
         EyeBehavior blink = EyeBehavior.byId(
@@ -83,6 +88,12 @@ public final class BehaviorDeterminismGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Every behavior animates identically from the same seed. In game: with two players watching one eyed
+     * mob, run {@code /sg admin behavior <id>} for each of {@code blink}, {@code cross_eye}, {@code side_eye},
+     * {@code stare}, {@code grow}, {@code swirl}, and {@code color_change}; both screens show the same
+     * animation, direction, and color.
+     */
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
         for (EyeBehavior behavior : EyeBehavior.values()) {
@@ -94,6 +105,12 @@ public final class BehaviorDeterminismGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A viewer who arrives mid-behavior sees the same frame as one who watched from the start. In game: one
+     * player watches an eyed mob while a second stands out of tracking range; run
+     * {@code /sg admin behavior swirl} and have the second player {@code /tp} beside the mob at once; both
+     * see the swirl at the same point.
+     */
     public static void fastForwardMatchesNaturalPlayback(GameTestHelper helper) {
         // A mid-effect joiner replays elapsed ticks to catch up; that must equal natural playback to the
         // same age (the equivalence GooglyTracker#startBehavior relies on, verified on the instance itself).

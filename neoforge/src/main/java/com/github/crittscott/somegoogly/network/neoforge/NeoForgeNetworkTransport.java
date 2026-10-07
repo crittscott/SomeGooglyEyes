@@ -19,6 +19,7 @@ public final class NeoForgeNetworkTransport {
     private NeoForgeNetworkTransport() {
     }
 
+    /** Register the payloads when the mod bus fires its payload event; called once from the mod constructor. */
     public static void register(IEventBus modBus) {
         modBus.addListener(NeoForgeNetworkTransport::registerPayloads);
     }

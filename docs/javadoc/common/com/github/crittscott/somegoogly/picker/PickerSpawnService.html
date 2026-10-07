@@ -251,8 +251,8 @@ loadScripts(document, 'script');</script>
  the picker's frozen display state. Some modded mobs leave required persistent fields unset until
  <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.SpawnGroupData)</code>; inserting a factory-created mob without this step can make it impossible
  to save. Finalization goes through the loader's finalize-spawn event, as <code>/summon</code> does, so
- other mods' listeners initialize the mob too. Public for the shared GameTest regression check, which
- lives in another module.</div>
+ other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
+ which lives in another module.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be added</dd>

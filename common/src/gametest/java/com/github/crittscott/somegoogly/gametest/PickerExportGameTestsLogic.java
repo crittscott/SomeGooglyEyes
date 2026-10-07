@@ -43,6 +43,10 @@ public final class PickerExportGameTestsLogic {
         return helper.getLevel().getServer();
     }
 
+    /**
+     * Export refuses an entity type the server does not know. No in-game form with an unmodified client, which
+     * exports only mobs that exist; guards the server against a forged export packet.
+     */
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
         ResourceLocation type = ResourceLocation.fromNamespaceAndPath("somegoogly", "not_a_real_mob");
         Component result = PickerExportService.export(
@@ -53,6 +57,11 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Export refuses the ender dragon. In game: as a creative operator, summon an ender dragon, choose it in the
+     * picker with {@code V}, create an eye with {@code /sg create 0 0 0}, and run {@code /sg export}; the export
+     * is refused with a message and nothing is written.
+     */
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
                 ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
@@ -83,9 +92,9 @@ public final class PickerExportGameTestsLogic {
 
     /**
      * {@code RuntimeConfig.CODEC}'s fields are required, so a wrong-typed field is a decode failure
-     * rather than something DFU swallows into a default. That's what gives the service's
-     * malformed-payload rejection something to catch — with optional fields this payload decoded
-     * "successfully" as an empty config and only the no-usable-eyes check refused it.
+     * rather than something DFU swallows into a default, and the service refuses the payload as
+     * malformed. No in-game form with an unmodified client; guards the server against a forged export
+     * packet.
      */
     public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
         CompoundTag garbage = new CompoundTag();
@@ -99,7 +108,10 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
-    /** An empty compound is missing required fields, so it never reaches the usable-eyes check. */
+    /**
+     * An empty compound is missing required fields, so it never reaches the usable-eyes check. No in-game
+     * form with an unmodified client; guards the server against a forged export packet.
+     */
     public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
                 ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, new CompoundTag());
@@ -109,7 +121,11 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
-    /** A well-formed config that simply carries no eyes is refused by the usable-eyes check. */
+    /**
+     * A well-formed config that simply carries no eyes is refused by the usable-eyes check. In game:
+     * choose a mob in the picker, delete every eye with {@code /sg delete}, and run {@code /sg export}; the
+     * export is refused because there are no eyes to draw.
+     */
     public static void exportRejectsConfigWithNoUsableEyes(GameTestHelper helper) {
         Tag empty = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, new RuntimeConfig())
                 .result().orElseThrow();
@@ -121,6 +137,10 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Export refuses geometry outside the validator's limits, such as a non-finite position. No in-game form,
+     * since picker commands accept only finite numbers; guards the server against a forged export packet.
+     */
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         HeadConfig head = new HeadConfig();
         head.attachPoint = "head";
@@ -142,6 +162,11 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Exports declare another mod's definitions for that mod's current minor release. In game: with an
+     * optional mod installed (say version 4.12.4), run {@code /sg exportall}; that mod's files under
+     * {@code somegoogly-export} declare {@code "version": "[4.12.4,4.13)"}.
+     */
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         helper.assertTrue("[4.12.4,4.13)".equals(VersionRangeMatcher.rangeFor("4.12.4")),
                 "an optional-mod version becomes an inclusive-to-next-minor range");
@@ -154,7 +179,8 @@ public final class PickerExportGameTestsLogic {
      * The written form pins values that equal their defaults rather than eliding them, so a file's
      * meaning can't drift with the code. {@code crossTarget} sits at its default in most real configs,
      * so it's the field checked by name here; that no field is dropped at all is guarded by the value
-     * round-trip in {@code SerializationGameTests}.
+     * round-trip in {@code SerializationGameTests}. In game: run {@code /sg exportall} and open any
+     * exported JSON; every eye lists {@code "crossTarget"}, including {@code -1}.
      */
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         HeadConfig head = new HeadConfig();

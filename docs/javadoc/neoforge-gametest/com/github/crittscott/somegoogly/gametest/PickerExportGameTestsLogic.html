@@ -116,36 +116,47 @@ loadScripts(document, 'script');</script>
  meaning can't drift with the code.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsConfigWithNoUsableEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsConfigWithNoUsableEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportPacketRefusesOversizedConfig(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportPacketRefusesOversizedConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The client's pre-send size check.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsConfigWithNoUsableEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsConfigWithNoUsableEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A well-formed config that simply carries no eyes is refused by the usable-eyes check.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsEmptyPayloadAsMalformed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsEmptyPayloadAsMalformed</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsEmptyPayloadAsMalformed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsEmptyPayloadAsMalformed</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An empty compound is missing required fields, so it never reaches the usable-eyes check.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsGarbageTypedField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsGarbageTypedField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>RuntimeConfig.CODEC</code>'s fields are required, so a wrong-typed field is a decode failure
- rather than something DFU swallows into a default.</div>
+<div class="block">Export refuses the ender dragon.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsMissingPayload(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsMissingPayload</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsGarbageTypedField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsGarbageTypedField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>RuntimeConfig.CODEC</code>'s fields are required, so a wrong-typed field is a decode failure
+ rather than something DFU swallows into a default, and the service refuses the payload as
+ malformed.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsUnknownEntityType(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsUnknownEntityType</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Export refuses an entity type the server does not know.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsUnsafeNumericConfig(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsUnsafeNumericConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optionalModVersionRangeSynthesis</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Exports declare another mod's definitions for that mod's current minor release.</div>
+</div>
 </div>
 </div>
 </div>
@@ -167,18 +178,26 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="exportRejectsUnknownEntityType(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsUnknownEntityType</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsUnknownEntityType</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Export refuses an entity type the server does not know. No in-game form with an unmodified client, which
+ exports only mobs that exist; guards the server against a forged export packet.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="exportRejectsEnderDragon(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsEnderDragon</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Export refuses the ender dragon. In game: as a creative operator, summon an ender dragon, choose it in the
+ picker with <code>V</code>, create an eye with <code>/sg create 0 0 0</code>, and run <code>/sg export</code>; the export
+ is refused with a message and nothing is written.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="exportRejectsMissingPayload(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>exportRejectsMissingPayload</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsMissingPayload</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<section class="detail" id="exportPacketRefusesOversizedConfig(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>exportPacketRefusesOversizedConfig</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportPacketRefusesOversizedConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The client's pre-send size check. In game: author a mob with a very large number of eyes in the
+ picker and run <code>/sg export</code>; the client answers "too large to send" instead of the server
+ disconnecting you, while an ordinary config exports normally.</div>
 </section>
 </li>
 <li>
@@ -186,35 +205,43 @@ loadScripts(document, 'script');</script>
 <h3>exportRejectsGarbageTypedField</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsGarbageTypedField</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>RuntimeConfig.CODEC</code>'s fields are required, so a wrong-typed field is a decode failure
- rather than something DFU swallows into a default. That's what gives the service's
- malformed-payload rejection something to catch — with optional fields this payload decoded
- "successfully" as an empty config and only the no-usable-eyes check refused it.</div>
+ rather than something DFU swallows into a default, and the service refuses the payload as
+ malformed. No in-game form with an unmodified client; guards the server against a forged export
+ packet.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="exportRejectsEmptyPayloadAsMalformed(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsEmptyPayloadAsMalformed</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsEmptyPayloadAsMalformed</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An empty compound is missing required fields, so it never reaches the usable-eyes check.</div>
+<div class="block">An empty compound is missing required fields, so it never reaches the usable-eyes check. No in-game
+ form with an unmodified client; guards the server against a forged export packet.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="exportRejectsConfigWithNoUsableEyes(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsConfigWithNoUsableEyes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsConfigWithNoUsableEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A well-formed config that simply carries no eyes is refused by the usable-eyes check.</div>
+<div class="block">A well-formed config that simply carries no eyes is refused by the usable-eyes check. In game:
+ choose a mob in the picker, delete every eye with <code>/sg delete</code>, and run <code>/sg export</code>; the
+ export is refused because there are no eyes to draw.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="exportRejectsUnsafeNumericConfig(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsUnsafeNumericConfig</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsUnsafeNumericConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position. No in-game form,
+ since picker commands accept only finite numbers; guards the server against a forged export packet.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>optionalModVersionRangeSynthesis</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optionalModVersionRangeSynthesis</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Exports declare another mod's definitions for that mod's current minor release. In game: with an
+ optional mod installed (say version 4.12.4), run <code>/sg exportall</code>; that mod's files under
+ <code>somegoogly-export</code> declare <code>"version": "[4.12.4,4.13)"</code>.</div>
 </section>
 </li>
 <li>
@@ -224,7 +251,8 @@ loadScripts(document, 'script');</script>
 <div class="block">The written form pins values that equal their defaults rather than eliding them, so a file's
  meaning can't drift with the code. <code>crossTarget</code> sits at its default in most real configs,
  so it's the field checked by name here; that no field is dropped at all is guarded by the value
- round-trip in <code>SerializationGameTests</code>.</div>
+ round-trip in <code>SerializationGameTests</code>. In game: run <code>/sg exportall</code> and open any
+ exported JSON; every eye lists <code>"crossTarget"</code>, including <code>-1</code>.</div>
 </section>
 </li>
 </ul>

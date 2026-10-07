@@ -94,11 +94,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of the
  same gate, always checked together by the packet handlers.
 
- <p>Authorization is creative mode and nothing else: no extra op/permission/config check. A server that
- hands out creative already trusts the player with world edits, and admins should know creative also
- enables the picker. The creative checks in the client CLI and keyboard picker are UX only and never
- trusted; packet handlers use <a href="#creative(net.minecraft.server.level.ServerPlayer)"><code>creative(net.minecraft.server.level.ServerPlayer)</code></a> so unauthorized custom-payload spam cannot amplify into
- server feedback packets.
+ <p>Authorization (<a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>) is creative mode plus permission level 2, the level of vanilla
+ <code>/summon</code>, <code>/tp</code>, and <code>/fill</code>: the picker freezes, moves, and spawns mobs and can
+ rewrite blocks without firing the events protection mods listen to, so it is an operator tool. The
+ client CLI and keyboard picker apply the same rule as UX only and are never trusted; packet handlers
+ use <a href="#authorized(net.minecraft.server.level.ServerPlayer)"><code>authorized(net.minecraft.server.level.ServerPlayer)</code></a>, which refuses silently so unauthorized custom-payload spam cannot amplify
+ into server feedback packets.
 
  <p>Every picker throttle lives here: one request per player per tick, the server-wide spawn-all
  cooldown, and the two export limits. Each successful export triggers a full datapack reload, so
@@ -146,9 +147,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#allowCreativeRequest(net.minecraft.server.level.ServerPlayer)" class="member-name-link">allowCreativeRequest</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#allowRequest(net.minecraft.server.level.ServerPlayer)" class="member-name-link">allowRequest</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Permit at most one creative picker request per player in one server tick.</div>
+<div class="block">Permit at most one picker request per player in one server tick.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#allowSpawnAll(net.minecraft.server.MinecraftServer)" class="member-name-link">allowSpawnAll</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
@@ -156,9 +157,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Arm a server-wide cooldown for the destructive bulk-spawn operation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#creative(net.minecraft.server.level.ServerPlayer)" class="member-name-link">creative</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#authorized(net.minecraft.server.level.ServerPlayer)" class="member-name-link">authorized</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether <code>sender</code> may drive one picker request now: creative, and not already rate-limited this tick.</div>
+<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not rate-limited this tick.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportSucceeded(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">exportSucceeded</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
@@ -166,16 +167,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Arm the success cooldown after an export was written.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#mayUsePicker(net.minecraft.world.entity.player.Player)" class="member-name-link">mayUsePicker</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether <code>player</code> may use the picker at all: creative mode and permission level 2.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Forget a player's request and export throttles; called from <code>ServerServices.onPlayerLeft</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Arm the export attempt throttle and check both export limits.</div>
 </div>
 </div>
@@ -248,17 +258,24 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="creative(net.minecraft.server.level.ServerPlayer)">
-<h3>creative</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">creative</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;sender)</span></div>
-<div class="block">Whether <code>sender</code> may drive one picker request now: creative, and not already rate-limited this tick.</div>
+<section class="detail" id="mayUsePicker(net.minecraft.world.entity.player.Player)">
+<h3>mayUsePicker</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">mayUsePicker</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
+<div class="block">Whether <code>player</code> may use the picker at all: creative mode and permission level 2.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="allowCreativeRequest(net.minecraft.server.level.ServerPlayer)">
-<h3>allowCreativeRequest</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">allowCreativeRequest</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Permit at most one creative picker request per player in one server tick.</div>
+<section class="detail" id="authorized(net.minecraft.server.level.ServerPlayer)">
+<h3>authorized</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">authorized</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;sender)</span></div>
+<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not rate-limited this tick.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="allowRequest(net.minecraft.server.level.ServerPlayer)">
+<h3>allowRequest</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">allowRequest</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Permit at most one picker request per player in one server tick.</div>
 </section>
 </li>
 <li>
@@ -290,12 +307,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="onPlayerLeft(java.util.UUID)">
 <h3>onPlayerLeft</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onPlayerLeft</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Forget a player's request and export throttles; called from <code>ServerServices.onPlayerLeft</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="onServerStopping()">
 <h3>onServerStopping</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerStopping</span>()</div>
+<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
 </section>
 </li>
 </ul>

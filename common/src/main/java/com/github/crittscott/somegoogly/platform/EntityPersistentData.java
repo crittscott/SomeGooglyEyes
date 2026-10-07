@@ -13,6 +13,7 @@ public final class EntityPersistentData {
     private EntityPersistentData() {
     }
 
+    /** The entity's live, mutable persistent compound; never null, and written in place. */
     @ExpectPlatform
     public static CompoundTag get(Entity entity) {
         throw new AssertionError();

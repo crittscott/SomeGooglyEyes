@@ -93,9 +93,10 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
 
- <p>The cornea and iris are two complete shallow cylinders, each with front and rear caps. The
- iris stays physically in front of the cornea, so their surfaces never overlap or need z-fighting
- offsets. The 16-sided rim reads as round at item scale while remaining inexpensive.</div>
+ <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
+ so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
+ front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
+ inexpensive, and each cap is drawn as a fan of quads over its ring.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

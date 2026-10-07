@@ -108,19 +108,26 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Build the channel and register every payload; called once from the mod constructor, before any send.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Send to one player.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer</a><wbr>(net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Send from the client to the server.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTracking(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTracking</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
- boolean&nbsp;includeSelf,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTrackingAndSelf</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Send to every player tracking <code>entity</code>, and to the entity itself if it is a player.</div>
+</div>
 </div>
 </div>
 </div>
@@ -142,6 +149,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="register()">
 <h3>register</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
+<div class="block">Build the channel and register every payload; called once from the mod constructor, before any send.</div>
 </section>
 </li>
 <li>
@@ -149,20 +157,22 @@ loadScripts(document, 'script');</script>
 <h3>sendToPlayer</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToPlayer</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
+<div class="block">Send to one player.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
 <h3>sendToServer</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToServer</span><wbr><span class="parameters">(net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
+<div class="block">Send from the client to the server.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="sendTracking(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
-<h3>sendTracking</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTracking</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
- boolean&nbsp;includeSelf,
+<section class="detail" id="sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
+<h3>sendTrackingAndSelf</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTrackingAndSelf</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
+<div class="block">Send to every player tracking <code>entity</code>, and to the entity itself if it is a player.</div>
 </section>
 </li>
 </ul>

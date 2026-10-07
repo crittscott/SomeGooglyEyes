@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
  * Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
  * datapack), so admins can tune how common eyes are — globally and per entity — without touching the
  * shipped eye-definition datapacks. Those JSONs only decide <i>where</i> eyes go and whether an entity is
- * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied in
- * {@code ServerServices}); this class decides <i>how often</i> an eligible entity actually rolls
+ * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied by
+ * {@code EyeConfigModel.RuntimeConfig.isUsable}); this class decides <i>how often</i> an eligible entity actually rolls
  * eyes. Also hosts the picker's opt-in gate for the destructive {@code /sg spawnall} grid
  * ({@link #ALLOW_SPAWN_ALL}, enforced by the server command).
  */

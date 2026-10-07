@@ -109,24 +109,25 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#colorChannelsMustBeInRange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">colorChannelsMustBeInRange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#containerCountCapsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">containerCountCapsAreEnforced</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every color channel must be finite and within <code>0..1</code>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#containerCountCapsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">containerCountCapsAreEnforced</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The per-container count caps reject before the object graph is walked.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#crossTargetMustReferenceAnotherEyeInTheSameHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">crossTargetMustReferenceAnotherEyeInTheSameHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>crossTarget</code> must name a different eye in the same head, or be
+ <code>EyePlacement.NO_CROSS_TARGET</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#crossTargetMustReferenceAnotherEyeInTheSameHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">crossTargetMustReferenceAnotherEyeInTheSameHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#numericPlacementBoundsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">numericPlacementBoundsAreEnforced</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>crossTarget</code> must name a different eye in the same head, or be <code>EyePlacement.NO_CROSS_TARGET</code>.</div>
+<div class="block">Position, scale/depth, and angle each have a finite hard range.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#numericPlacementBoundsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">numericPlacementBoundsAreEnforced</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#variantWeightMustBeNonnegative(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">variantWeightMustBeNonnegative</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Position, scale/depth, and angle each have a finite hard range.</div>
+<div class="block">A variant weight must be finite and nonnegative.</div>
 </div>
 </div>
 </div>
@@ -146,31 +147,39 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="variantWeightMustBeNonnegative(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>variantWeightMustBeNonnegative</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">variantWeightMustBeNonnegative</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A variant weight must be finite and nonnegative. In-game, a datapack eye definition with
+ <code>"weight": -5</code> is ignored on <code>/reload</code>, with an "invalid weight" error in the log.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="crossTargetMustReferenceAnotherEyeInTheSameHead(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>crossTargetMustReferenceAnotherEyeInTheSameHead</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">crossTargetMustReferenceAnotherEyeInTheSameHead</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>crossTarget</code> must name a different eye in the same head, or be <code>EyePlacement.NO_CROSS_TARGET</code>.</div>
+<div class="block"><code>crossTarget</code> must name a different eye in the same head, or be
+ <code>EyePlacement.NO_CROSS_TARGET</code>. In game, a datapack eye definition whose only eye has
+ <code>"crossTarget": 0</code> is ignored on <code>/reload</code>, with a "cross-eye target" error in the log;
+ with a second eye in that head, it loads.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="numericPlacementBoundsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>numericPlacementBoundsAreEnforced</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">numericPlacementBoundsAreEnforced</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Position, scale/depth, and angle each have a finite hard range.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="colorChannelsMustBeInRange(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>colorChannelsMustBeInRange</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">colorChannelsMustBeInRange</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every color channel must be finite and within <code>0..1</code>.</div>
+<div class="block">Position, scale/depth, and angle each have a finite hard range. In game, a datapack eye definition
+ with <code>"position": [100.0, 0.0, 0.0]</code>, <code>"eyeScale": 64.0</code>, or <code>"azimuth": 9000.0</code>
+ is ignored on <code>/reload</code>, with an error naming the out-of-range field in the log.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="containerCountCapsAreEnforced(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>containerCountCapsAreEnforced</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">containerCountCapsAreEnforced</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The per-container count caps reject before the object graph is walked.</div>
+<div class="block">The per-container count caps reject before the object graph is walked. In game, a datapack eye
+ definition with more than <code>EyeConfigLimits.MAX_EYES_PER_HEAD</code> eyes in one head (or too many
+ variants, heads, or eyes per variant) is ignored on <code>/reload</code>, with a count error in the log.</div>
 </section>
 </li>
 </ul>

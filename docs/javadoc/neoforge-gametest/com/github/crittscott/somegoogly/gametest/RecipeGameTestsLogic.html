@@ -115,19 +115,29 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#cobwebClearsAllOverrides(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">cobwebClearsAllOverrides</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A cobweb clears every appearance override.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dyeSetsIrisAndKeepsUnrelatedComponent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">dyeSetsIrisAndKeepsUnrelatedComponent</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Dye sets the iris color and keeps the eye's other data.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#glowstoneAndRedstoneToggleGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowstoneAndRedstoneToggleGlow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Glowstone forces glow on and redstone forces it off.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeCarriesTheEyesAppearance(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeCarriesTheEyesAppearance</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A Slimy Eye keeps the Googly Eye's appearance and name.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">twoEyesDoNotMatch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Two Googly Eyes with no modifier are not a recipe.</div>
+</div>
 </div>
 </div>
 </div>
@@ -149,30 +159,41 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="cobwebClearsAllOverrides(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>cobwebClearsAllOverrides</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">cobwebClearsAllOverrides</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A cobweb clears every appearance override. In game: craft a Googly Eye with red dye, then craft the
+ result with a cobweb; the new eye's tooltip lists no colors or glow.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="dyeSetsIrisAndKeepsUnrelatedComponent(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>dyeSetsIrisAndKeepsUnrelatedComponent</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">dyeSetsIrisAndKeepsUnrelatedComponent</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Dye sets the iris color and keeps the eye's other data. In game: rename a Googly Eye in an anvil and craft
+ it with red dye; the result keeps the name and its tooltip shows an iris color.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="glowstoneAndRedstoneToggleGlow(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>glowstoneAndRedstoneToggleGlow</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">glowstoneAndRedstoneToggleGlow</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Glowstone forces glow on and redstone forces it off. In game: craft a Googly Eye with glowstone dust and
+ its tooltip shows glow on; craft one with redstone dust and it shows glow off.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>twoEyesDoNotMatch</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">twoEyesDoNotMatch</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Two Googly Eyes with no modifier are not a recipe. In game: put two Googly Eyes in a crafting grid; no
+ result appears.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="slimyEyeCarriesTheEyesAppearance(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>slimyEyeCarriesTheEyesAppearance</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeCarriesTheEyesAppearance</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A Slimy Eye keeps the Googly Eye's appearance and name. In game: rename a Googly Eye, craft it with blue
+ dye and glowstone dust, then with a slimeball; the Slimy Eye keeps the name, its tooltip shows the same
+ iris color and glow, and its icon's iris is blue.</div>
 </section>
 </li>
 </ul>

@@ -94,8 +94,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
  datapack), so admins can tune how common eyes are — globally and per entity — without touching the
  shipped eye-definition datapacks. Those JSONs only decide <i>where</i> eyes go and whether an entity is
- eligible at all (their <code>enabled</code> flag is an authoritative hard on/off, applied in
- <code>ServerServices</code>); this class decides <i>how often</i> an eligible entity actually rolls
+ eligible at all (their <code>enabled</code> flag is an authoritative hard on/off, applied by
+ <code>EyeConfigModel.RuntimeConfig.isUsable</code>); this class decides <i>how often</i> an eligible entity actually rolls
  eyes. Also hosts the picker's opt-in gate for the destructive <code>/sg spawnall</code> grid
  (<a href="#ALLOW_SPAWN_ALL"><code>ALLOW_SPAWN_ALL</code></a>, enforced by the server command).</div>
 </section>
@@ -170,50 +170,62 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#ENTITY_OVERRIDES_KEY" class="member-name-link">ENTITY_OVERRIDES_KEY</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#GLOBAL_PERCENT" class="member-name-link">GLOBAL_PERCENT</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#GLOBAL_PERCENT_DEFAULT" class="member-name-link">GLOBAL_PERCENT_DEFAULT</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#GLOBAL_PERCENT_KEY" class="member-name-link">GLOBAL_PERCENT_KEY</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#GOOGLY_EYES_ENABLED" class="member-name-link">GOOGLY_EYES_ENABLED</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#GOOGLY_EYES_ENABLED_COMMENT" class="member-name-link">GOOGLY_EYES_ENABLED_COMMENT</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#GOOGLY_EYES_ENABLED_DEFAULT" class="member-name-link">GOOGLY_EYES_ENABLED_DEFAULT</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#GOOGLY_EYES_ENABLED_KEY" class="member-name-link">GOOGLY_EYES_ENABLED_KEY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#FILE_NAME" class="member-name-link">FILE_NAME</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#GROW_ON_HIT_PERCENT" class="member-name-link">GROW_ON_HIT_PERCENT</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#GLOBAL_PERCENT" class="member-name-link">GLOBAL_PERCENT</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final int</code></div>
-<div class="col-second even-row-color"><code><a href="#GROW_ON_HIT_PERCENT_DEFAULT" class="member-name-link">GROW_ON_HIT_PERCENT_DEFAULT</a></code></div>
+<div class="col-second even-row-color"><code><a href="#GLOBAL_PERCENT_DEFAULT" class="member-name-link">GLOBAL_PERCENT_DEFAULT</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#GROW_ON_HIT_PERCENT_KEY" class="member-name-link">GROW_ON_HIT_PERCENT_KEY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#GLOBAL_PERCENT_KEY" class="member-name-link">GLOBAL_PERCENT_KEY</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#GOOGLY_EYES_ENABLED" class="member-name-link">GOOGLY_EYES_ENABLED</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#GOOGLY_EYES_ENABLED_COMMENT" class="member-name-link">GOOGLY_EYES_ENABLED_COMMENT</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#GOOGLY_EYES_ENABLED_DEFAULT" class="member-name-link">GOOGLY_EYES_ENABLED_DEFAULT</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#GOOGLY_EYES_ENABLED_KEY" class="member-name-link">GOOGLY_EYES_ENABLED_KEY</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT" class="member-name-link">HARVEST_ON_KILL_PERCENT</a></code></div>
+<div class="col-second even-row-color"><code><a href="#GROW_ON_HIT_PERCENT" class="member-name-link">GROW_ON_HIT_PERCENT</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT_DEFAULT" class="member-name-link">HARVEST_ON_KILL_PERCENT_DEFAULT</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#GROW_ON_HIT_PERCENT_DEFAULT" class="member-name-link">GROW_ON_HIT_PERCENT_DEFAULT</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT_KEY" class="member-name-link">HARVEST_ON_KILL_PERCENT_KEY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#GROW_ON_HIT_PERCENT_KEY" class="member-name-link">GROW_ON_HIT_PERCENT_KEY</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#PERCENT_MAX" class="member-name-link">PERCENT_MAX</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT" class="member-name-link">HARVEST_ON_KILL_PERCENT</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final int</code></div>
-<div class="col-second even-row-color"><code><a href="#PERCENT_MIN" class="member-name-link">PERCENT_MIN</a></code></div>
+<div class="col-second even-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT_DEFAULT" class="member-name-link">HARVEST_ON_KILL_PERCENT_DEFAULT</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#HARVEST_ON_KILL_PERCENT_KEY" class="member-name-link">HARVEST_ON_KILL_PERCENT_KEY</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#PERCENT_MAX" class="member-name-link">PERCENT_MAX</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#PERCENT_MIN" class="member-name-link">PERCENT_MIN</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#SECTION_BEHAVIORS" class="member-name-link">SECTION_BEHAVIORS</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#SECTION_PICKER" class="member-name-link">SECTION_PICKER</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#SECTION_SERVER" class="member-name-link">SECTION_SERVER</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SPAWN_EXCLUDED_ENTITIES" class="member-name-link">SPAWN_EXCLUDED_ENTITIES</a></code></div>
@@ -795,6 +807,62 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="tag-list">
 <li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.config.ServerConfig.TICKS_MIN">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="FILE_NAME">
+<h3>FILE_NAME</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">FILE_NAME</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.config.ServerConfig.FILE_NAME">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SECTION_SERVER">
+<h3>SECTION_SERVER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SECTION_SERVER</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.config.ServerConfig.SECTION_SERVER">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SECTION_BEHAVIORS">
+<h3>SECTION_BEHAVIORS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SECTION_BEHAVIORS</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.config.ServerConfig.SECTION_BEHAVIORS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SECTION_PICKER">
+<h3>SECTION_PICKER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SECTION_PICKER</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.config.ServerConfig.SECTION_PICKER">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>

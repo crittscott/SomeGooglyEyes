@@ -21,6 +21,7 @@ public final class TomlConfig {
     private TomlConfig() {
     }
 
+    /** Parse the file at {@code path} into key/value pairs, first writing {@code defaults} there if it is missing. */
     public static Map<String, Object> readOrCreate(Path path, String defaults) throws IOException {
         Files.createDirectories(path.getParent());
         if (Files.notExists(path)) {
@@ -30,6 +31,7 @@ public final class TomlConfig {
         return parse(Files.readString(path, StandardCharsets.UTF_8));
     }
 
+    /** The boolean at {@code key}, or {@code fallback} when absent or, logged, of another type. */
     public static boolean bool(Map<String, Object> values, String key, boolean fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -42,6 +44,7 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /** The integer at {@code key}, or {@code fallback} when absent or, logged, of another type. */
     public static int integer(Map<String, Object> values, String key, int fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -54,6 +57,10 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /**
+     * The string array at {@code key}, or {@code fallback} when absent or, logged, not an array. Non-string
+     * entries are logged and dropped.
+     */
     public static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -104,6 +111,7 @@ public final class TomlConfig {
                 key, expected, value, value.getClass().getSimpleName(), fallback);
     }
 
+    /** Render {@code values} as a TOML array of escaped basic strings, for writing default files. */
     public static String stringList(List<String> values) {
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < values.size(); i++) {

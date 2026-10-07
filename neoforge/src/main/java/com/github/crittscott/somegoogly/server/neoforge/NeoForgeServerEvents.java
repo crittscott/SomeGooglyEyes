@@ -31,6 +31,7 @@ public final class NeoForgeServerEvents {
     private NeoForgeServerEvents() {
     }
 
+    /** Subscribe the server listeners to the game bus; called once from the mod constructor. */
     public static void register(IEventBus gameBus) {
         gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST,

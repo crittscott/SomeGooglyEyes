@@ -93,9 +93,11 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>EyeItemService.interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.LivingEntity)</code> (the Optometrist right-click harvest) and
  <code>EyeItemService.selfRemoveWithShears(net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code> (sneak + shears on air). The shears-on-kill harvest and
  the Slimy Eye application verb are covered by <a href="SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SomeGooglyGameTestsLogic</code></a> and
- <a href="EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>EligibilityGameTestsLogic</code></a>; these pin the two paths <code>orientation-player.md</code> gives their own
- sections that nothing else exercised. The loader adapters' protection-mod / PvP gating around these
- calls stays source-verified — it needs live listener ordering.</div>
+ <a href="EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>EligibilityGameTestsLogic</code></a>. The loader adapters' protection-mod / PvP gating around these calls
+ stays source-verified — it needs live listener ordering.
+
+ <p>For the in-game steps below, get Optometrist shears from an Optometrist book in an anvil, or with
+ <code>/give @s shears[enchantments={levels:{"somegoogly:optometrist":1}}]</code>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -114,7 +116,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractHarvestsEyesForOneDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractHarvestsEyesForOneDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Right-click an eyed, configured mob with Optometrist shears: one eye drops, eyes clear, one durability.</div>
+<div class="block">Right-click an eyed, configured mob with Optometrist shears: one eye drops, eyes clear, one
+ durability.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractPassesWhenNotApplicable(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractPassesWhenNotApplicable</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -151,7 +154,10 @@ loadScripts(document, 'script');</script>
 <h3>optometristInteractHarvestsEyesForOneDurability</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristInteractHarvestsEyesForOneDurability</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">Right-click an eyed, configured mob with Optometrist shears: one eye drops, eyes clear, one durability.</div>
+<div class="block">Right-click an eyed, configured mob with Optometrist shears: one eye drops, eyes clear, one
+ durability. In game: give a cow eyes and an iris color with <code>/sg admin eyes true</code> and
+ <code>/sg admin tint iris 0.2 0.6 0.9</code>, then right-click it in survival with Optometrist shears; its
+ eyes vanish, one Googly Eye with that iris color drops, and the shears lose one durability.</div>
 </section>
 </li>
 <li>
@@ -159,7 +165,10 @@ loadScripts(document, 'script');</script>
 <h3>optometristInteractPassesWhenNotApplicable</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristInteractPassesWhenNotApplicable</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing.</div>
+<div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing. In game: on an
+ eyed sheep, a stick does nothing and plain shears shear its wool as usual; Optometrist shears do
+ nothing to an eyeless cow, nor to an eyed one while <code>googlyEyesEnabled = false</code>. No eye drops
+ and the Optometrist shears keep full durability.</div>
 </section>
 </li>
 <li>
@@ -170,7 +179,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
  Optometrist; only a non-sneaking use is left to the vanilla item. The plain-shears self-damage
  (a melee hit's worth of health) is not asserted here — fake players are inert to <code>hurt</code> —
- and stays source-verified.</div>
+ and stays source-verified. In game: apply a Slimy Eye to yourself, then sneak and right-click the
+ air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
+ and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
+ with <code>googlyEyesEnabled = false</code>, nothing happens.</div>
 </section>
 </li>
 </ul>

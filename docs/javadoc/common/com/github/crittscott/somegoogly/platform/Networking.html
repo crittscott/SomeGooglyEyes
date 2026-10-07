@@ -113,11 +113,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Send a clientbound payload to one player.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTracking(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTracking</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
- boolean&nbsp;includeSelf,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTrackingAndSelf</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send a clientbound payload to every player tracking <code>entity</code>.</div>
+<div class="block">Send a clientbound payload to every player tracking <code>entity</code> and, when the entity is itself
+ a server player, to that player too.</div>
 </div>
 </div>
 </div>
@@ -145,13 +145,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="sendTracking(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
-<h3>sendTracking</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTracking</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
- boolean&nbsp;includeSelf,
+<section class="detail" id="sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)">
+<h3>sendTrackingAndSelf</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTrackingAndSelf</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
  net.minecraft.network.protocol.common.custom.CustomPacketPayload&nbsp;payload)</span></div>
-<div class="block">Send a clientbound payload to every player tracking <code>entity</code>. When <code>includeSelf</code> is
- true and the entity is a server player, that player is also a recipient.</div>
+<div class="block">Send a clientbound payload to every player tracking <code>entity</code> and, when the entity is itself
+ a server player, to that player too.</div>
 </section>
 </li>
 </ul>

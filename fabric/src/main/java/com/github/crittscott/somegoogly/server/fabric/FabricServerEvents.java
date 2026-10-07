@@ -40,6 +40,7 @@ public final class FabricServerEvents {
     private FabricServerEvents() {
     }
 
+    /** Subscribe the server listeners; called once from the mod initializer. */
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 GooglyServerCommands.register(dispatcher, registryAccess));

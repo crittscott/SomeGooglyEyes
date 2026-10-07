@@ -147,9 +147,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Server-side coverage of the <code>EyeState</code> mutation API beyond the existing all-fields round-trip:
- sparse overrides, atomic tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping
- the override so eyes fall back to per-eye config glow.</div>
+<div class="block">The <code>EyeState</code> appearance-override mutations behind <code>/sg admin</code>: sparse overrides, atomic
+ tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping the override so eyes fall back
+ to per-eye config glow.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerAuthGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerAuthGameTests</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
@@ -159,8 +159,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerAuthGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerAuthGameTestsLogic</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">The server-side authorization and rate limits behind the client-driven picker verbs:
- <code>PickerGate.creative(net.minecraft.server.level.ServerPlayer)</code> (a plain <code>isCreative()</code> check left to source review) and the
- <code>PickerGate</code> rate limits (one request
+ <code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code> (creative plus permission level 2, verified manually: in-game, a
+ creative player without op cannot toggle the picker, run <code>/sg spawn</code>, <code>/sg spawnall</code>,
+ or <code>/sg mob</code>, and an op in creative can) and the <code>PickerGate</code> rate limits (one request
  per player per tick, plus a server-wide cooldown on the destructive bulk spawn).</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerExportGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerExportGameTests</a></div>
@@ -186,7 +187,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerSpawnServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerSpawnServiceGameTestsLogic</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Shared regression checks for the picker command-spawn lifecycle.</div>
+<div class="block">The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RecipeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -237,7 +238,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="VariantSelectionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTestsLogic</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Pure-logic coverage of <code>EyeConfigModel.chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig, float)</code> and <code>EyeConfigModel.Variant.weight()</code> — the
+<div class="block">Pure-logic coverage of <code>EyeConfigModel.chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig, float)</code> — the
  deterministic weighted pick that lets the client and server agree on a mob's arrangement from its
  stored roll without sending an index.</div>
 </div>

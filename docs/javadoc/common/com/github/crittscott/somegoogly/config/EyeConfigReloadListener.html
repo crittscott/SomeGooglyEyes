@@ -126,9 +126,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final net.minecraft.resources.ResourceLocation</code></div>
-<div class="col-second even-row-color"><code><a href="#ID" class="member-name-link">ID</a></code></div>
+<div class="col-first even-row-color"><code>static final net.minecraft.resources.FileToIdConverter</code></div>
+<div class="col-second even-row-color"><code><a href="#EYE_FILES" class="member-name-link">EYE_FILES</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Where eye definitions live inside a data pack: <code>data/&lt;namespace&gt;/eyes/&lt;path&gt;.json</code>.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.resources.ResourceLocation</code></div>
+<div class="col-second odd-row-color"><code><a href="#ID" class="member-name-link">ID</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The listener's identity for loaders that key reload listeners by id.</div>
 </div>
 </div>
@@ -155,7 +160,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
@@ -166,6 +171,12 @@ loadScripts(document, 'script');</script>
  net.minecraft.server.packs.resources.ResourceManager&nbsp;resourceManager,
  net.minecraft.util.profiling.ProfilerFiller&nbsp;profiler)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeFile(java.nio.file.Path,net.minecraft.resources.ResourceLocation)" class="member-name-link">eyeFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;packRoot,
+ net.minecraft.resources.ResourceLocation&nbsp;typeId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The file under data-pack root <code>packRoot</code> that holds <code>typeId</code>'s eye definition.</div>
+</div>
 </div>
 </div>
 </div>
@@ -199,6 +210,13 @@ loadScripts(document, 'script');</script>
 <div class="block">The listener's identity for loaders that key reload listeners by id.</div>
 </section>
 </li>
+<li>
+<section class="detail" id="EYE_FILES">
+<h3>EYE_FILES</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.resources.FileToIdConverter</span>&nbsp;<span class="element-name">EYE_FILES</span></div>
+<div class="block">Where eye definitions live inside a data pack: <code>data/&lt;namespace&gt;/eyes/&lt;path&gt;.json</code>.</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -223,6 +241,14 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="eyeFile(java.nio.file.Path,net.minecraft.resources.ResourceLocation)">
+<h3>eyeFile</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">eyeFile</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;packRoot,
+ net.minecraft.resources.ResourceLocation&nbsp;typeId)</span></div>
+<div class="block">The file under data-pack root <code>packRoot</code> that holds <code>typeId</code>'s eye definition.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="apply(java.util.Map,net.minecraft.server.packs.resources.ResourceManager,net.minecraft.util.profiling.ProfilerFiller)">
 <h3>apply</h3>
