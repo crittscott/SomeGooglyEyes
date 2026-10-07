@@ -21,6 +21,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,6 +67,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         int skippedModNotInstalled = 0;
         int failedParse = 0;
+        int rejected = 0;
+        Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
             if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
@@ -91,18 +94,38 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                     failedParse++;
                     continue;
                 }
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get());
-                if (config.hasAnyConfig()) {
-                    String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
-                    if (error == null) {
-                        selected.put(entry.getKey(), config);
-                    } else {
-                        SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error);
-                    }
+                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
+                if (!config.hasAnyConfig()) {
+                    rejected++;
+                    continue;
+                }
+                String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+                if (error == null) {
+                    selected.put(entry.getKey(), config);
+                } else {
+                    rejected++;
+                    SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error);
                 }
             } catch (Exception e) {
                 failedParse++;
                 SomeGooglyCommon.LOGGER.error("Failed to parse eye config {}", entry.getKey(), e);
+            }
+        }
+        int fallbackTotal = 0;
+        for (Map.Entry<Fallback, Integer> fallback : fallbacks.entrySet()) {
+            Fallback key = fallback.getKey();
+            fallbackTotal += fallback.getValue();
+            if (key.downgrade()) {
+                SomeGooglyCommon.LOGGER.warn(
+                        "{} eye configs for '{}' have no entry for installed version {}; using their oldest entry"
+                                + " (version {}) — expected after a mod downgrade.",
+                        fallback.getValue(), key.namespace(), key.installed(), key.used());
+            } else {
+                SomeGooglyCommon.LOGGER.warn(
+                        "{} eye configs for '{}' have no entry for installed version {}; using their newest entry"
+                                + " (version {}). Placement may be slightly off until they are re-exported for the"
+                                + " installed version — expected for bundled optional-mod definitions.",
+                        fallback.getValue(), key.namespace(), key.installed(), key.used());
             }
         }
         String aggregateError = EyeConfigLimits.validateSync(selected);
@@ -125,8 +148,9 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             return;
         }
         SomeGooglyCommon.LOGGER.info(
-                "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse)",
-                selected.size(), files.size(), skippedModNotInstalled, failedParse);
+                "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse,"
+                        + " {} rejected: no usable entry or unsafe; {} using another version's entry)",
+                selected.size(), files.size(), skippedModNotInstalled, failedParse, rejected, fallbackTotal);
     }
 
     private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
@@ -137,7 +161,12 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         return next;
     }
 
-    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded) {
+    /** One namespace's version fallback during a reload; reloads count files per fallback and log each once. */
+    private record Fallback(String namespace, String installed, String used, boolean downgrade) {
+    }
+
+    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded,
+                                                           Map<Fallback, Integer> fallbacks) {
         List<VersionedEntry> validEntries = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
             if (VersionRangeMatcher.isValid(entry.version)) {
@@ -157,7 +186,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
 
         // No entry declares itself valid for the installed version. A misplaced eye can't crash
         // anything (unresolved attach tokens simply don't attach), so fall back to the nearest
-        // generation instead of dropping the file — and say so in the log.
+        // generation instead of dropping the file — and record it for the reload's log.
         List<String> declared = new ArrayList<>();
         for (VersionedEntry entry : validEntries) {
             declared.add(entry.version);
@@ -166,18 +195,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         if (nearest == null) {
             return set; // nothing usable declared anywhere; nothing to fall back to
         }
-        if (VersionRangeMatcher.isEntirelyBelow(nearest, loaded)) {
-            SomeGooglyCommon.LOGGER.warn(
-                    "Eye config {} has no entry for installed version {} of '{}'; using its newest entry"
-                            + " (version {}). Placement may be slightly off until it is re-exported for the"
-                            + " installed version — expected for bundled optional-mod definitions.",
-                    entityId, loaded, entityId.getNamespace(), nearest);
-        } else {
-            SomeGooglyCommon.LOGGER.warn(
-                    "Eye config {} has no entry for installed version {} of '{}'; using its oldest entry"
-                            + " (version {}) — expected after a mod downgrade.",
-                    entityId, loaded, entityId.getNamespace(), nearest);
-        }
+        boolean downgrade = !VersionRangeMatcher.isEntirelyBelow(nearest, loaded);
+        fallbacks.merge(new Fallback(entityId.getNamespace(), loaded, nearest, downgrade), 1, Integer::sum);
         // Same-version entries fall back as one generation, so adult/baby pairs stay together.
         return select(entityId, validEntries, entry -> nearest.equals(entry.version));
     }

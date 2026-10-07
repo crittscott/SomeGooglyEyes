@@ -34,7 +34,8 @@ public class ConfigValue<T> {
 
     /**
      * Create a string-list value whose default and every subsequently assigned list are filtered by
-     * {@code valid} and stored as an immutable copy. Rejected entries are silently omitted.
+     * {@code valid} and stored as an immutable copy. Rejected entries are omitted; reporting them is
+     * the job of whichever config reader supplied the raw list.
      */
     public static ConfigValue<List<String>> strings(List<String> defaultValue, Predicate<String> valid) {
         return new ConfigValue<>(defaultValue, filter(valid));

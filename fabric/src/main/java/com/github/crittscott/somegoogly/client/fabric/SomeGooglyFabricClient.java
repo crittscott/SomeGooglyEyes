@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.fabric.FabricClientConfig;
 import com.github.crittscott.somegoogly.network.fabric.FabricClientNetworkTransport;
 import net.fabricmc.api.ClientModInitializer;
@@ -17,6 +16,5 @@ public final class SomeGooglyFabricClient implements ClientModInitializer {
                 (dispatcher, context) -> FabricClientCommands.register(dispatcher));
         FabricClientConfig.load();
         FabricClientEvents.register();
-        SomeGooglyCommon.LOGGER.info("{} client initialized on Fabric", SomeGooglyCommon.MOD_NAME);
     }
 }

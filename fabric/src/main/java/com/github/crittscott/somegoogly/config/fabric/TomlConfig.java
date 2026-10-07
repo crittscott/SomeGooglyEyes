@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ConfigValue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -73,6 +74,28 @@ public final class TomlConfig {
             }
         }
         return strings;
+    }
+
+    /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
+    public static void assign(ConfigValue<Integer> target, String key, int raw) {
+        target.set(raw);
+        if (target.get() != raw) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' value {} is out of range; using {}", key, raw, target.get());
+        }
+    }
+
+    /** Assign {@code raw} to {@code target}, logging each entry its validator rejects. */
+    public static void assign(ConfigValue<List<String>> target, String key, List<String> raw) {
+        target.set(raw);
+        List<String> accepted = target.get();
+        if (accepted.size() == raw.size()) {
+            return;
+        }
+        for (String entry : raw) {
+            if (!accepted.contains(entry)) {
+                SomeGooglyCommon.LOGGER.warn("Config key '{}' has an invalid entry '{}'; ignoring it", key, entry);
+            }
+        }
     }
 
     private static void warnMismatch(String key, String expected, Object value, Object fallback) {

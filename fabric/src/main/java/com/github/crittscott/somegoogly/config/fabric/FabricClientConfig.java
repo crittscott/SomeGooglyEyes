@@ -38,9 +38,9 @@ public final class FabricClientConfig {
             Map<String, Object> values = TomlConfig.readOrCreate(path, DEFAULTS);
             ClientConfig.DISABLE_GOOGLY_EYES.set(TomlConfig.bool(values,
                     ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT));
-            ClientConfig.DISABLED_ENTITIES.set(TomlConfig.strings(values,
+            TomlConfig.assign(ClientConfig.DISABLED_ENTITIES, ClientConfig.DISABLED_ENTITIES_KEY, TomlConfig.strings(values,
                     ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT));
-            ClientConfig.DISABLED_MODS.set(TomlConfig.strings(values,
+            TomlConfig.assign(ClientConfig.DISABLED_MODS, ClientConfig.DISABLED_MODS_KEY, TomlConfig.strings(values,
                     ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT));
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}", path, e);

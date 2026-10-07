@@ -113,13 +113,13 @@ public final class FabricServerConfig {
     private static Entry integer(String section, String key, String comment,
                                  int defaultValue, ConfigValue<Integer> target) {
         return new Entry(section, key, comment, () -> String.valueOf(defaultValue),
-                values -> target.set(TomlConfig.integer(values, key, defaultValue)));
+                values -> TomlConfig.assign(target, key, TomlConfig.integer(values, key, defaultValue)));
     }
 
     private static Entry strings(String section, String key, String comment,
                                  List<String> defaultValue, ConfigValue<List<String>> target) {
         return new Entry(section, key, comment, () -> TomlConfig.stringList(defaultValue),
-                values -> target.set(TomlConfig.strings(values, key, defaultValue)));
+                values -> TomlConfig.assign(target, key, TomlConfig.strings(values, key, defaultValue)));
     }
 
     /** One config key: where it lives in the file, how its default renders, and how a load applies it. */

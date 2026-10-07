@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
@@ -71,6 +72,8 @@ public final class FabricServerEvents {
         // Refuse a client without this network version before it joins the world.
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             if (!ServerConfigurationNetworking.canSend(handler, FabricNetworkTransport.Handshake.TYPE)) {
+                SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
+                        handler.getOwner().getName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
                 handler.disconnect(Component.translatable("somegoogly.network.required_client"));
             }
         });

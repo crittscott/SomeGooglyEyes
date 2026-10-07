@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -134,7 +135,8 @@ public final class PickerFreezeService {
                 return;
             }
         }
-        SomeGooglyCommon.LOGGER.debug("Restoring stranded picker freeze marker on {}", mob.getUUID());
+        SomeGooglyCommon.LOGGER.info("Restoring AI state of {} {} left frozen by the picker",
+                BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()), mobId);
         mob.setNoAi(data.getBoolean(PREV_NO_AI_TAG));
         data.remove(PREV_NO_AI_TAG);
     }

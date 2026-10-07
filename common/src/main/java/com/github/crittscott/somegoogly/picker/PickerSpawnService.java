@@ -220,7 +220,7 @@ public final class PickerSpawnService {
             try {
                 entity = type.create(level, EntitySpawnReason.COMMAND);
             } catch (Exception e) {
-                SomeGooglyCommon.LOGGER.debug("Skipping {} in /sg spawnall: entity factory threw", id, e);
+                SomeGooglyCommon.LOGGER.warn("Skipping {} in /sg spawnall: entity factory threw", id, e);
                 if (filtering) {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_create_threw",
@@ -307,7 +307,7 @@ public final class PickerSpawnService {
                 finalized = prepareForCommandSpawn(level, entity, x, y, z, yaw);
             } catch (Exception e) {
                 skipped++;
-                SomeGooglyCommon.LOGGER.debug(
+                SomeGooglyCommon.LOGGER.warn(
                         "Skipping {} in /sg spawnall: finalizeSpawn() threw", candidate.id, e);
                 if (filtering) {
                     dropped.add(Component.translatable(
@@ -389,7 +389,7 @@ public final class PickerSpawnService {
         try {
             entity = type.create(level, EntitySpawnReason.COMMAND);
         } catch (Exception e) {
-            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: entity factory threw", id, e);
+            SomeGooglyCommon.LOGGER.warn("/sg spawn {}: entity factory threw", id, e);
             tell(player, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
             return;
         }
@@ -412,7 +412,7 @@ public final class PickerSpawnService {
         try {
             finalized = prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
         } catch (Exception e) {
-            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: finalizeSpawn() threw", id, e);
+            SomeGooglyCommon.LOGGER.warn("/sg spawn {}: finalizeSpawn() threw", id, e);
             tell(player, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
             return;
         }
