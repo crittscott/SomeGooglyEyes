@@ -52,6 +52,15 @@ import javax.annotation.Nullable;
  */
 public final class GooglyServerCommands {
 
+    /** The {@code /sg} root literal, shared by the server tree, the client tree, and Fabric's routing. */
+    public static final String ROOT = "sg";
+
+    /**
+     * {@code /sg mob rot} azimuth is measured from +X toward +Z; vanilla yaw 0 faces +Z, so
+     * yaw = azimuth - this offset.
+     */
+    private static final float AZIMUTH_TO_YAW_OFFSET = 90.0F;
+
     private static final float MAX_MOB_MOVE = 20.0F;
     private static final double MAX_MOB_MOVE_SQUARED = (double) MAX_MOB_MOVE * MAX_MOB_MOVE;
 
@@ -73,7 +82,7 @@ public final class GooglyServerCommands {
     /** The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}. */
     private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
         return Commands.literal("admin")
-                .requires(src -> src.hasPermission(2))
+                .requires(src -> src.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("eyes")
                         .then(Commands.argument("value", BoolArgumentType.bool())
                                 .executes(ctx -> {
@@ -146,15 +155,16 @@ public final class GooglyServerCommands {
             throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_disabled"));
+            tell(player, "somegoogly.command.picker.spawnall_disabled");
             return 0;
         }
         if (modFilter != null && !ServerConfig.validateNamespace(modFilter)) {
-            ctx.getSource().sendFailure(Component.translatable("somegoogly.command.picker.spawnall_invalid_mod", modFilter));
+            ctx.getSource().sendFailure(Component.translatable("somegoogly.command.picker.feedback",
+                    Component.translatable("somegoogly.command.picker.spawnall_invalid_mod", modFilter)));
             return 0;
         }
         if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.spawnall_cooldown"));
+            tell(player, "somegoogly.command.picker.spawnall_cooldown");
             return 0;
         }
         player.sendSystemMessage(modFilter == null
@@ -170,8 +180,7 @@ public final class GooglyServerCommands {
         double dy = FloatArgumentType.getFloat(ctx, "dy");
         double dz = FloatArgumentType.getFloat(ctx, "dz");
         if (dx * dx + dy * dy + dz * dz > MAX_MOB_MOVE_SQUARED) {
-            player.sendSystemMessage(Component.translatable(
-                    "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE));
+            tell(player, "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE);
             return 0;
         }
         LivingEntity living = frozenMob(player);
@@ -179,9 +188,9 @@ public final class GooglyServerCommands {
             return 0;
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
-        player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_moved",
+        tell(player, "somegoogly.command.picker.mob_moved",
                 String.format("%.2f", living.getX()), String.format("%.2f", living.getY()),
-                String.format("%.2f", living.getZ())));
+                String.format("%.2f", living.getZ()));
         return 1;
     }
 
@@ -192,12 +201,11 @@ public final class GooglyServerCommands {
             return 0;
         }
         float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
-        float yaw = Mth.wrapDegrees(azimuth - 90.0F);
+        float yaw = Mth.wrapDegrees(azimuth - AZIMUTH_TO_YAW_OFFSET);
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        player.sendSystemMessage(Component.translatable(
-                "somegoogly.command.picker.mob_rotated", String.format("%.0f", azimuth)));
+        tell(player, "somegoogly.command.picker.mob_rotated", String.format("%.0f", azimuth));
         return 1;
     }
 
@@ -205,12 +213,12 @@ public final class GooglyServerCommands {
     private static LivingEntity frozenMob(ServerPlayer player) {
         var mobId = PickerFreezeService.frozenMobId(player.getUUID());
         if (mobId == null) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_chosen"));
+            tell(player, "somegoogly.command.picker.mob_not_chosen");
             return null;
         }
         Entity entity = player.serverLevel().getEntity(mobId);
         if (!(entity instanceof LivingEntity living)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.picker.mob_not_found"));
+            tell(player, "somegoogly.command.picker.mob_not_found");
             return null;
         }
         return living;
@@ -239,7 +247,7 @@ public final class GooglyServerCommands {
             behavior = key == null ? null : EyeBehavior.byId(key);
         }
         if (behavior == null) {
-            ctx.getSource().sendFailure(Component.translatable("somegoogly.command.admin.unknown_behavior", id));
+            adminFailure(ctx.getSource(), Component.translatable("somegoogly.command.admin.unknown_behavior", id));
             return 0;
         }
 
@@ -280,6 +288,16 @@ public final class GooglyServerCommands {
         return 1;
     }
 
+    private static void adminFailure(CommandSourceStack source, Component message) {
+        source.sendFailure(Component.translatable("somegoogly.command.admin.feedback", message));
+    }
+
+    /** Picker feedback to {@code player}, under the shared picker prefix. */
+    private static void tell(ServerPlayer player, String key, Object... args) {
+        player.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                Component.translatable(key, args)));
+    }
+
     private static int glow(CommandContext<CommandSourceStack> ctx, @Nullable Boolean value)
             throws CommandSyntaxException {
         LivingEntity target = requireTarget(ctx);
@@ -296,7 +314,7 @@ public final class GooglyServerCommands {
 
     /** Register the server-owned world-mutation branches of {@code /sg}. */
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-        dispatcher.register(Commands.literal("sg")
+        dispatcher.register(Commands.literal(ROOT)
                 .then(adminTree())
                 .then(spawnTree(buildContext))
                 .then(spawnAllTree())
@@ -314,13 +332,13 @@ public final class GooglyServerCommands {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayerOrException();
         if (!player.isCreative()) {
-            source.sendFailure(Component.translatable("somegoogly.command.admin.requires_creative"));
+            adminFailure(source, Component.translatable("somegoogly.command.admin.requires_creative"));
             return null;
         }
 
         LivingEntity target = LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH);
         if (target == null) {
-            source.sendFailure(Component.translatable("somegoogly.command.admin.no_target"));
+            adminFailure(source, Component.translatable("somegoogly.command.admin.no_target"));
         }
         return target;
     }

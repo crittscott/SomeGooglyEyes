@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -38,8 +39,8 @@ public enum EyeBehavior {
             float t = (float) i.age / i.duration;
             out.anchorX = 0f;
             out.anchorY = 0f;
-            // Ease in over the first 25%, hold centered, ease back out over the last 25%.
-            out.stiffness = PUPIL_STIFFNESS * trapezoid(t, 0.25f, 0.25f);
+            // Ease in, hold centered, ease back out.
+            out.stiffness = PUPIL_STIFFNESS * trapezoid(t, STARE_RAMP_FRAC, STARE_RAMP_FRAC);
         }
     },
 
@@ -107,18 +108,14 @@ public enum EyeBehavior {
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             out.corneaTint = i.tintColor;
             // Ease in, hold the color, ease out.
-            out.tintAmount = trapezoid((float) i.age / i.duration, 0.2f, 0.2f);
+            out.tintAmount = trapezoid((float) i.age / i.duration, COLOR_CHANGE_RAMP_FRAC, COLOR_CHANGE_RAMP_FRAC);
         }
 
         @Override
         public void onStart(BehaviorInstance i) {
             // A vivid random hue (full saturation/value) so the change reads clearly.
             int rgb = Mth.hsvToRgb(i.rand.nextFloat(), 1f, 1f);
-            i.tintColor = new float[]{
-                    ((rgb >> 16) & 0xFF) / 255f,
-                    ((rgb >> 8) & 0xFF) / 255f,
-                    (rgb & 0xFF) / 255f
-            };
+            i.tintColor = EyeColor.fromRgb24(rgb).toArray();
         }
     },
 
@@ -211,6 +208,10 @@ public enum EyeBehavior {
     private static final float GLANCE_CENTER_FRAC = 0.1f;
     /** Fraction of a side-eye or cross-eye held at the target at the end. */
     private static final float GLANCE_HOLD_FRAC = 0.1f;
+    /** Fraction of a stare spent easing in, and again easing out. */
+    private static final float STARE_RAMP_FRAC = 0.25f;
+    /** Fraction of a color change spent blending in, and again blending out. */
+    private static final float COLOR_CHANGE_RAMP_FRAC = 0.2f;
 
     private static final Map<ResourceLocation, EyeBehavior> BY_ID = new HashMap<>();
 

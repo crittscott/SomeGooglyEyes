@@ -11,6 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nullable;
 import java.util.Map;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 /** Shared semantic and work-budget validation for authored and synchronized eye geometry. */
 public final class EyeConfigLimits {
 
@@ -56,15 +60,15 @@ public final class EyeConfigLimits {
         if (set == null || !set.hasAnyConfig()) {
             return "config set has no age configuration";
         }
-        String error = validateOptional("adult", set.adult, budget);
+        String error = validateOptional(AGE_ADULT, set.adult, budget);
         if (error != null) {
             return error;
         }
-        error = validateOptional("baby", set.baby, budget);
+        error = validateOptional(AGE_BABY, set.baby, budget);
         if (error != null) {
             return error;
         }
-        return validateOptional("any", set.any, budget);
+        return validateOptional(AGE_ANY, set.any, budget);
     }
 
     private static String validateOptional(String age, @Nullable RuntimeConfig config, Budget budget) {

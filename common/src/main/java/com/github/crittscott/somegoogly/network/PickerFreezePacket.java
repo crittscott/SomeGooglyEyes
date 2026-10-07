@@ -36,8 +36,9 @@ public class PickerFreezePacket implements CustomPacketPayload {
      * the mob's box and the mob's position the server measures to. Keeps a creative client from
      * freezing an arbitrary mob in any loaded chunk by UUID.
      */
-    private static final double MAX_FREEZE_DISTANCE_SQ =
-            (LookTarget.DEFAULT_REACH + 4.0) * (LookTarget.DEFAULT_REACH + 4.0);
+    private static final double FREEZE_DISTANCE_SLACK = 4.0;
+    private static final double MAX_FREEZE_DISTANCE_SQ = (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK)
+            * (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK);
 
     private final boolean freeze;
     @Nullable

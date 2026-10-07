@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,11 +51,11 @@ public final class PickerHud {
     private static void appendEye(List<List<Line>> out, String label, String part, EyeDraft e, int colorA, int colorB) {
         out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
                 String.format("%.2f", e.position[0]), String.format("%.2f", e.position[1]), String.format("%.2f", e.position[2])), colorA)));
-        String cross = e.crossTarget >= 0 ? "  X→" + (e.crossTarget + 1) : "";
+        String cross = e.crossTarget >= 0 ? I18n.get("somegoogly.picker.cross_target_mark", e.crossTarget + 1) : "";
         out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
                 String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth),
                 String.format("%.2f", e.eyeScale), String.format("%.2f", e.irisScale), String.format("%.2f", e.depth),
-                e.glows ? "+" : "-",
+                I18n.get(e.glows ? "somegoogly.picker.hud.glow_on" : "somegoogly.picker.hud.glow_off"),
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB)));
     }
 
@@ -67,7 +68,7 @@ public final class PickerHud {
         List<List<Line>> out = new ArrayList<>();
 
         if (PickerState.target() == null) {
-            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target"), GRAY)));
+            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerKeys.LOCK)), GRAY)));
             return out;
         }
 
@@ -87,7 +88,8 @@ public final class PickerHud {
         int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex(), n) + 1);
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.part_label"), GREEN),
-                new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n), WHITE)));
+                new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n,
+                        keyName(PickerKeys.PART_PREV), keyName(PickerKeys.PART_NEXT)), WHITE)));
 
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.eyes_header_label"), GREEN),
@@ -111,6 +113,11 @@ public final class PickerHud {
         }
 
         return out;
+    }
+
+    /** The key currently bound to {@code key}, as the Controls screen shows it. */
+    private static String keyName(KeyMapping key) {
+        return key.getTranslatedKeyMessage().getString();
     }
 
     private static String partOrNone(String part) {

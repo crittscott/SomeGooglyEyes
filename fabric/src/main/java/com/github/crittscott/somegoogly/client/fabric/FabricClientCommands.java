@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -34,7 +35,7 @@ public final class FabricClientCommands {
         node.then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument(
                         "arguments", StringArgumentType.greedyString())
                 .executes(FabricClientCommands::fallThroughToServer));
-        dispatcher.getRoot().getChild("sg").addChild(node.build());
+        dispatcher.getRoot().getChild(GooglyServerCommands.ROOT).addChild(node.build());
     }
 
     private static int fallThroughToServer(CommandContext<FabricClientCommandSource> context)

@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -56,8 +58,14 @@ public class ServerConfig {
     public static final boolean SWIRL_ON_HEAL_DEFAULT = true;
     public static final String SWIRL_ON_TRADE_KEY = "swirlOnTrade";
     public static final boolean SWIRL_ON_TRADE_DEFAULT = true;
-    public static final int TICKS_MAX = 24000;
+    public static final int TICKS_MAX = SharedConstants.TICKS_PER_GAME_DAY;
     public static final int TICKS_MIN = 1;
+
+    // TOML file and section names, shared by every loader's server config.
+    public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
+    public static final String SECTION_SERVER = "server";
+    public static final String SECTION_BEHAVIORS = "behaviors";
+    public static final String SECTION_PICKER = "picker";
 
     // Config-file comments, one line per comment line, shared by every loader's server config schema.
     public static final String GOOGLY_EYES_ENABLED_COMMENT = """

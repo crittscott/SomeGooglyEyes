@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -8,6 +9,10 @@ import java.util.stream.Collectors;
 
 /** Client-local rendering preferences shared across loaders. */
 public final class ClientConfig {
+
+    // TOML file and section names, shared by every loader's client config.
+    public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-client.toml";
+    public static final String SECTION = "client";
 
     public static final String DISABLE_GOOGLY_EYES_KEY = "disableGooglyEyes";
     public static final boolean DISABLE_GOOGLY_EYES_DEFAULT = false;

@@ -58,7 +58,7 @@ public class GooglyTracker {
     public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
         this.parent = parent;
         this.helper = helper;
-        this.rand = RandomSource.create(Math.abs(parent.getUUID().hashCode()) * 8134L);
+        this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
         this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
 

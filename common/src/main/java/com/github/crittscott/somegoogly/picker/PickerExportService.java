@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
+import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -115,8 +116,7 @@ public final class PickerExportService {
         String versionDeclaration = version.get();
 
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
-        Path target = packDir.resolve("data").resolve(typeId.getNamespace())
-                .resolve("eyes").resolve(typeId.getPath() + ".json");
+        Path target = EyeConfigReloadListener.eyeFile(packDir, typeId);
 
         // Seed from the currently resolved config (whichever pack currently wins data/<ns>/eyes/<path>.json
         // — shipped or a prior picker export alike), not from this file on disk: Minecraft resolves that

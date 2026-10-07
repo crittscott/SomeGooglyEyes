@@ -12,7 +12,7 @@ import java.util.Map;
 public final class FabricClientConfig {
 
     private static final String DEFAULTS = """
-            [client]
+            [%s]
             # %s
             %s = %s
             # %s
@@ -20,6 +20,7 @@ public final class FabricClientConfig {
             # %s
             %s = %s
             """.formatted(
+            ClientConfig.SECTION,
             ClientConfig.DISABLE_GOOGLY_EYES_COMMENT,
             ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT,
             ClientConfig.DISABLED_ENTITIES_COMMENT,
@@ -32,7 +33,7 @@ public final class FabricClientConfig {
 
     public static void load() {
         ClientConfig.resetDefaults();
-        Path path = FabricLoader.getInstance().getConfigDir().resolve("somegoogly-client.toml");
+        Path path = FabricLoader.getInstance().getConfigDir().resolve(ClientConfig.FILE_NAME);
         try {
             Map<String, Object> values = TomlConfig.readOrCreate(path, DEFAULTS);
             ClientConfig.DISABLE_GOOGLY_EYES.set(TomlConfig.bool(values,

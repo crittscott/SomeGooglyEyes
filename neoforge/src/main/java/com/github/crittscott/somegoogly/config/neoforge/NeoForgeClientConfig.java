@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.config.neoforge;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.neoforged.bus.api.IEventBus;
@@ -22,7 +21,7 @@ public final class NeoForgeClientConfig {
     private static final ModConfigSpec SPEC;
 
     static {
-        BUILDER.push("Client Settings");
+        BUILDER.push(ClientConfig.SECTION);
         DISABLE_GOOGLY_EYES = BUILDER.comment(ClientConfig.DISABLE_GOOGLY_EYES_COMMENT)
                 .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
         DISABLED_ENTITIES = BUILDER.comment(ClientConfig.DISABLED_ENTITIES_COMMENT)
@@ -39,8 +38,7 @@ public final class NeoForgeClientConfig {
     }
 
     public static void register(IEventBus modBus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.CLIENT, SPEC,
-                SomeGooglyCommon.MOD_ID + "-client.toml");
+        modContainer.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         modBus.addListener(NeoForgeClientConfig::onConfigChanged);
     }
 

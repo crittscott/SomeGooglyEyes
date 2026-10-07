@@ -60,7 +60,7 @@ public final class PickerInput {
                     return;
                 }
                 PickerState.activate();
-                message("somegoogly.command.picker.toggle_on");
+                message("somegoogly.command.picker.toggle_on", PickerKeys.LOCK.getTranslatedKeyMessage());
             } else {
                 PickerState.deactivate(); // also releases the frozen mob on exit
                 message("somegoogly.command.picker.toggle_off");

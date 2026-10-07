@@ -1,8 +1,10 @@
 package com.github.crittscott.somegoogly.picker;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -80,7 +82,7 @@ public final class PickerGate {
         LAST_EXPORT_ATTEMPT_TICK.put(playerId, now);
         Integer last = LAST_EXPORT_TICK.get(playerId);
         if (last != null && now - last < EXPORT_COOLDOWN_TICKS) {
-            int seconds = (EXPORT_COOLDOWN_TICKS - (now - last) + 19) / 20;
+            int seconds = Mth.positiveCeilDiv(EXPORT_COOLDOWN_TICKS - (now - last), SharedConstants.TICKS_PER_SECOND);
             return Component.translatable(seconds == 1
                     ? "somegoogly.command.picker.export_cooldown_one_second"
                     : "somegoogly.command.picker.export_cooldown_many_seconds", seconds);

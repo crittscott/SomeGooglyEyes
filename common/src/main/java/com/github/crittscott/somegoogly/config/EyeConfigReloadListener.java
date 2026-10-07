@@ -12,11 +12,13 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +44,21 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     /** The listener's identity for loaders that key reload listeners by id. */
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
 
+    /** Where eye definitions live inside a data pack: {@code data/<namespace>/eyes/<path>.json}. */
+    public static final FileToIdConverter EYE_FILES = FileToIdConverter.json("eyes");
+
     /**
      * Files arrive as raw JSON and are decoded here rather than by the base class, so each file's
      * parse failure is reported and counted in the reload summary.
      */
     public EyeConfigReloadListener() {
-        super(ExtraCodecs.JSON, FileToIdConverter.json("eyes"));
+        super(ExtraCodecs.JSON, EYE_FILES);
+    }
+
+    /** The file under data-pack root {@code packRoot} that holds {@code typeId}'s eye definition. */
+    public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
+        ResourceLocation file = EYE_FILES.idToFile(typeId);
+        return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());
     }
 
     @Override

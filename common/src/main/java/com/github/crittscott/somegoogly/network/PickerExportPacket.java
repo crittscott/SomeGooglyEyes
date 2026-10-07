@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
@@ -30,6 +31,9 @@ import java.util.UUID;
  */
 public class PickerExportPacket implements CustomPacketPayload {
 
+    /** Wire bound on the age string; comfortably above the longest age name. */
+    private static final int MAX_AGE_LENGTH = 16;
+
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_EXPORT);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
@@ -48,7 +52,7 @@ public class PickerExportPacket implements CustomPacketPayload {
 
     private PickerExportPacket(FriendlyByteBuf buffer) {
         this.typeId = buffer.readResourceLocation();
-        this.age = buffer.readUtf(16);
+        this.age = buffer.readUtf(MAX_AGE_LENGTH);
         CompoundTag configNbt;
         try {
             Tag tag = buffer.readNbt(NbtAccounter.create(PickerExportService.MAX_CONFIG_BYTES));
@@ -64,7 +68,7 @@ public class PickerExportPacket implements CustomPacketPayload {
 
     private void write(FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(typeId);
-        buffer.writeUtf(age, 16);
+        buffer.writeUtf(age, MAX_AGE_LENGTH);
         buffer.writeNbt(configNbt);
     }
 
@@ -72,7 +76,7 @@ public class PickerExportPacket implements CustomPacketPayload {
         if (!PickerGate.creative(sender)) {
             return;
         }
-        if (!sender.hasPermissions(2)) {
+        if (!sender.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
             sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
                     Component.translatable("somegoogly.command.picker.export_rejected_not_operator")));
             return;

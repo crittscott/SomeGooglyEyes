@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
@@ -121,8 +122,7 @@ public final class PickerExporter {
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }
-                file.writeJson(root.resolve("data").resolve(id.getNamespace()).resolve("eyes")
-                        .resolve(id.getPath() + ".json"));
+                file.writeJson(EyeConfigReloadListener.eyeFile(root, id));
                 files++;
             }
         } catch (IOException e) {

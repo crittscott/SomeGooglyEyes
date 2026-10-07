@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -34,7 +35,7 @@ public final class ServerEyeConfigs {
      * datapack configs for it and {@code /sg spawnall} skips it.
      */
     public static final ResourceLocation ENDER_DRAGON =
-            ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon");
+            EntityType.getKey(EntityType.ENDER_DRAGON);
 
     private record Installed(Map<ResourceLocation, RuntimeConfigSet> configs,
                              Map<ResourceLocation, CompoundTag> encoded) {

@@ -22,42 +22,39 @@ import java.util.function.Supplier;
  */
 public final class FabricServerConfig {
 
-    private static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
-
-    private static final String SERVER_SETTINGS = "server";
-    private static final String BEHAVIORS = "behaviors";
-    private static final String PICKER = "picker";
+    /** The per-world directory Forge and NeoForge keep server configs in, mirrored here. */
+    private static final String SERVER_CONFIG_DIR = "serverconfig";
 
     private static final List<Entry> SCHEMA = List.of(
-            bool(SERVER_SETTINGS, ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_COMMENT,
+            bool(ServerConfig.SECTION_SERVER, ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_COMMENT,
                     ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT, ServerConfig.GOOGLY_EYES_ENABLED),
-            integer(SERVER_SETTINGS, ServerConfig.GLOBAL_PERCENT_KEY, null,
+            integer(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT_KEY, null,
                     ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.GLOBAL_PERCENT),
-            integer(SERVER_SETTINGS, ServerConfig.HARVEST_ON_KILL_PERCENT_KEY, null,
+            integer(ServerConfig.SECTION_SERVER, ServerConfig.HARVEST_ON_KILL_PERCENT_KEY, null,
                     ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.HARVEST_ON_KILL_PERCENT),
-            strings(SERVER_SETTINGS, ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_COMMENT,
+            strings(ServerConfig.SECTION_SERVER, ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_COMMENT,
                     ServerConfig.ENTITY_OVERRIDES_DEFAULT, ServerConfig.ENTITY_OVERRIDES),
-            bool(BEHAVIORS, ServerConfig.AMBIENT_BEHAVIORS_KEY, null,
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.AMBIENT_BEHAVIORS_KEY, null,
                     ServerConfig.AMBIENT_BEHAVIORS_DEFAULT, ServerConfig.AMBIENT_BEHAVIORS),
-            integer(BEHAVIORS, ServerConfig.AMBIENT_MIN_TICKS_KEY, null,
+            integer(ServerConfig.SECTION_BEHAVIORS, ServerConfig.AMBIENT_MIN_TICKS_KEY, null,
                     ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.AMBIENT_MIN_TICKS),
-            integer(BEHAVIORS, ServerConfig.AMBIENT_MAX_TICKS_KEY, null,
+            integer(ServerConfig.SECTION_BEHAVIORS, ServerConfig.AMBIENT_MAX_TICKS_KEY, null,
                     ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.AMBIENT_MAX_TICKS),
-            strings(BEHAVIORS, ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, null,
+            strings(ServerConfig.SECTION_BEHAVIORS, ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, null,
                     ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig.AMBIENT_BEHAVIOR_POOL),
-            integer(BEHAVIORS, ServerConfig.GROW_ON_HIT_PERCENT_KEY, null,
+            integer(ServerConfig.SECTION_BEHAVIORS, ServerConfig.GROW_ON_HIT_PERCENT_KEY, null,
                     ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.GROW_ON_HIT_PERCENT),
-            bool(BEHAVIORS, ServerConfig.SWIRL_ON_TRADE_KEY, null,
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SWIRL_ON_TRADE_KEY, null,
                     ServerConfig.SWIRL_ON_TRADE_DEFAULT, ServerConfig.SWIRL_ON_TRADE),
-            bool(BEHAVIORS, ServerConfig.SWIRL_ON_HEAL_KEY, null,
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SWIRL_ON_HEAL_KEY, null,
                     ServerConfig.SWIRL_ON_HEAL_DEFAULT, ServerConfig.SWIRL_ON_HEAL),
-            integer(BEHAVIORS, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY, null,
+            integer(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY, null,
                     ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS),
-            bool(PICKER, ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_COMMENT,
+            bool(ServerConfig.SECTION_PICKER, ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_COMMENT,
                     ServerConfig.ALLOW_SPAWN_ALL_DEFAULT, ServerConfig.ALLOW_SPAWN_ALL),
-            strings(PICKER, ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_COMMENT,
+            strings(ServerConfig.SECTION_PICKER, ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_COMMENT,
                     ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig.SPAWN_EXCLUDED_MODS),
-            strings(PICKER, ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT,
+            strings(ServerConfig.SECTION_PICKER, ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT,
                     ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig.SPAWN_EXCLUDED_ENTITIES));
 
     private static final String DEFAULTS = render();
@@ -75,7 +72,7 @@ public final class FabricServerConfig {
     private static void load(MinecraftServer server) {
         ServerConfig.resetDefaults();
         Path path = server.getWorldPath(LevelResource.ROOT)
-                .resolve("serverconfig").resolve(FILE_NAME);
+                .resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME);
         try {
             Map<String, Object> values = TomlConfig.readOrCreate(path, DEFAULTS);
             for (Entry entry : SCHEMA) {

@@ -24,7 +24,7 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main imports no loader type; only `client.compat.gecko` imports GeckoLib; differences pass through adapters or six `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
+Common main imports no loader type; only `client.compat.gecko` uses GeckoLib; differences pass through adapters or six `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
 The server owns eligibility, eye state, item actions, behaviors, definitions, picker authorization, and world mutation; the client owns rendering, attachment, pupil motion, inspection, and picker UI.
 
@@ -34,7 +34,7 @@ Registered content is declared once in `ModContent` and bound through the loader
 
 `ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge and NeoForge use native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric's own `TomlConfig` reads both files, the server file at start and each `/reload`, resetting on stop.
 
-Server-config section names and key order must stay aligned across `FabricServerConfig`, `ForgeServerConfig`, and `NeoForgeServerConfig`.
+File names, section names, and comments are `ServerConfig`/`ClientConfig` constants; server key order must match across the three loaders' server configs.
 
 Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates one version per entity type, encodes the set to NBT, and atomically swaps `ServerEyeConfigs` only if that encoding differs; failure keeps the previous set. The stored encoding is the sync payload. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode; reload also refuses a set whose sync payload exceeds the byte limit. `EyeColor` codecs reject out-of-range channels on decode.
 
@@ -109,4 +109,4 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 ## Operational boundaries
 
 - Optional renderer integrations log recoverable failures once and omit eyes lacking attachment geometry.
-- `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror every edit to them there.
+- `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror edits there.

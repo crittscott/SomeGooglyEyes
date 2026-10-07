@@ -60,6 +60,9 @@ public class GooglyClientCommands {
     /** The {@code /sg part} token that clears the current attachment instead of selecting one. */
     private static final String CLEAR_PART_TOKEN = "none";
 
+    /** Appended to the selected eye or variant in {@code /sg list} output. */
+    private static final Component SELECTED_MARK = Component.translatable("somegoogly.picker.selected_mark");
+
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
         requireCreative();
         PickerState.activate(); // turn the picker on so the preview/gizmo render
@@ -130,8 +133,10 @@ public class GooglyClientCommands {
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
-            String mark = i == PickerState.selectedIndex() ? " *" : "";
-            String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
+            Component mark = i == PickerState.selectedIndex() ? SELECTED_MARK : Component.empty();
+            Component cross = e.crossTarget >= 0
+                    ? Component.translatable("somegoogly.picker.cross_target_mark", e.crossTarget + 1)
+                    : Component.empty();
             feedback(ctx, "somegoogly.command.picker.eye_entry", i + 1, le.part,
                     String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
                     String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth), cross, mark);
@@ -155,7 +160,7 @@ public class GooglyClientCommands {
         feedback(ctx, "somegoogly.command.picker.variants_header", PickerState.variantCount());
         for (int i = 0; i < PickerState.variantCount(); i++) {
             PickerState.DraftVariant v = PickerState.variants().get(i);
-            String mark = i == PickerState.variantIndex() ? " *" : "";
+            Component mark = i == PickerState.variantIndex() ? SELECTED_MARK : Component.empty();
             feedback(ctx, "somegoogly.command.picker.variant_entry", i + 1, String.format("%.2f", v.weight), v.eyes.size(), mark);
         }
         return 1;
@@ -299,7 +304,7 @@ public class GooglyClientCommands {
 
     /** Build the {@code /sg} picker command tree into the given dispatcher. */
     public static <S> void register(CommandDispatcher<S> dispatcher) {
-        LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal("sg");
+        LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal(GooglyServerCommands.ROOT);
 
         verb(sg, "choose", b -> b.executes(GooglyClientCommands::choose));
         verb(sg, "unchoose", b -> b.executes(GooglyClientCommands::unchoose));

@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.config.forge;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.MinecraftServer;
@@ -35,7 +34,7 @@ public final class ForgeServerConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.push("server");
+        builder.push(ServerConfig.SECTION_SERVER);
         GOOGLY_EYES_ENABLED = builder.comment(ServerConfig.GOOGLY_EYES_ENABLED_COMMENT.split("\n"))
                 .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
         GLOBAL_PERCENT = builder.defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
@@ -45,7 +44,7 @@ public final class ForgeServerConfig {
         ENTITY_OVERRIDES = builder.comment(ServerConfig.ENTITY_OVERRIDES_COMMENT.split("\n"))
                 .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateOverride(string));
-        builder.pop().push("behaviors");
+        builder.pop().push(ServerConfig.SECTION_BEHAVIORS);
         AMBIENT_BEHAVIORS = builder.define(ServerConfig.AMBIENT_BEHAVIORS_KEY,
                 ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
         AMBIENT_MIN_TICKS = builder.defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
@@ -61,7 +60,7 @@ public final class ForgeServerConfig {
         SWIRL_ON_HEAL = builder.define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
         SWIRL_HEAL_COOLDOWN_TICKS = builder.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        builder.pop().push("picker");
+        builder.pop().push(ServerConfig.SECTION_PICKER);
         ALLOW_SPAWN_ALL = builder.comment(ServerConfig.ALLOW_SPAWN_ALL_COMMENT.split("\n"))
                 .define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
         SPAWN_EXCLUDED_MODS = builder.comment(ServerConfig.SPAWN_EXCLUDED_MODS_COMMENT.split("\n"))
@@ -78,7 +77,7 @@ public final class ForgeServerConfig {
     }
 
     public static void register(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.SERVER, SPEC, SomeGooglyCommon.MOD_ID + "-server.toml");
+        context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
     }
 
