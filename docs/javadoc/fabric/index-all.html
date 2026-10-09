@@ -186,7 +186,9 @@ loadScripts(document, 'script');</script>
 <h2 class="title" id="I:L">L</h2>
 <dl class="index">
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/FabricClientConfig.html#load()" class="member-name-link">load()</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/FabricClientConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricClientConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Read <code>config/somegoogly-client.toml</code>, writing it with defaults if absent, into <code>ClientConfig</code>.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -226,11 +228,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Parse the file at <code>path</code> into key/value pairs, first writing <code>defaults</code> there if it is missing.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/fabric/FabricClientEvents.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.client.fabric.<a href="com/github/crittscott/somegoogly/client/fabric/FabricClientEvents.html" title="class in com.github.crittscott.somegoogly.client.fabric">FabricClientEvents</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the client's Fabric event callbacks.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Load the server config at server start and each <code>/reload</code>, and reset it at server stop.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricClientNetworkTransport.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricClientNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricClientNetworkTransport</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the client's receivers for every clientbound payload.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a></dt>
 <dd>
 <div class="block">Register every payload type and the serverbound receivers; called once from the mod initializer.</div>
@@ -244,7 +252,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Subscribe the server listeners; called once from the mod initializer.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/fabric/FabricClientCommands.html#register(com.mojang.brigadier.CommandDispatcher)" class="member-name-link">register(CommandDispatcher&lt;FabricClientCommandSource&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.fabric.<a href="com/github/crittscott/somegoogly/client/fabric/FabricClientCommands.html" title="class in com.github.crittscott.somegoogly.client.fabric">FabricClientCommands</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the client <code>/sg</code> tree and forward its server-owned branches to the server.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html#registerCreativeTab(java.lang.String,net.minecraft.network.chat.Component,java.util.function.Supplier,net.minecraft.world.item.CreativeModeTab.DisplayItemsGenerator)" class="member-name-link">registerCreativeTab(String, Component, Supplier&lt;ItemStack&gt;, CreativeModeTab.DisplayItemsGenerator)</a> - Method in class com.github.crittscott.somegoogly.registry.fabric.<a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.fabric">FabricContentRegistrar</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html#registerDataComponent(java.lang.String,java.util.function.Supplier)" class="member-name-link">registerDataComponent(String, Supplier&lt;DataComponentType&lt;T&gt;&gt;)</a> - Method in class com.github.crittscott.somegoogly.registry.fabric.<a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.fabric">FabricContentRegistrar</a></dt>

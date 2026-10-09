@@ -146,17 +146,23 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freeze(java.util.UUID)" class="member-name-link">freeze</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;mobId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A request to freeze the mob with <code>mobId</code> for the sender's picker.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handle(com.github.crittscott.somegoogly.network.PickerFreezePacket,net.minecraft.server.level.ServerPlayer)" class="member-name-link">handle</a><wbr>(<a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a>&nbsp;packet,
  net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Freeze the requested mob for an authorized sender in range, or release the sender's frozen mob.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unfreeze()" class="member-name-link">unfreeze</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A request to release the sender's frozen mob.</div>
+</div>
 </div>
 </div>
 </div>
@@ -198,12 +204,14 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <section class="detail" id="freeze(java.util.UUID)">
 <h3>freeze</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></span>&nbsp;<span class="element-name">freeze</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;mobId)</span></div>
+<div class="block">A request to freeze the mob with <code>mobId</code> for the sender's picker.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="unfreeze()">
 <h3>unfreeze</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></span>&nbsp;<span class="element-name">unfreeze</span>()</div>
+<div class="block">A request to release the sender's frozen mob.</div>
 </section>
 </li>
 <li>
@@ -211,6 +219,7 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h3>handle</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(<a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a>&nbsp;packet,
  net.minecraft.server.level.ServerPlayer&nbsp;sender)</span></div>
+<div class="block">Freeze the requested mob for an authorized sender in range, or release the sender's frozen mob.</div>
 </section>
 </li>
 <li>

@@ -141,17 +141,25 @@ loadScripts(document, 'script');</script>
 <div class="block">Build the channel and register every payload; called once from the mod constructor, before any send.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html#register(net.minecraftforge.eventbus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Method in class com.github.crittscott.somegoogly.registry.forge.<a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Attach every deferred register to the mod bus.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html#register(net.minecraftforge.eventbus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Static method in class com.github.crittscott.somegoogly.server.forge.<a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html" title="class in com.github.crittscott.somegoogly.server.forge">ForgeServerEvents</a></dt>
 <dd>
 <div class="block">Subscribe the server listeners to the game bus; called once from the mod constructor.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html#register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext)" class="member-name-link">register(FMLJavaModLoadingContext)</a> - Static method in class com.github.crittscott.somegoogly.client.forge.<a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html" title="class in com.github.crittscott.somegoogly.client.forge">ForgeClientBootstrap</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the client config and every client-side Forge listener.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/forge/ForgeClientConfig.html#register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext)" class="member-name-link">register(FMLJavaModLoadingContext)</a> - Static method in class com.github.crittscott.somegoogly.config.forge.<a href="com/github/crittscott/somegoogly/config/forge/ForgeClientConfig.html" title="class in com.github.crittscott.somegoogly.config.forge">ForgeClientConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the CLIENT config spec and copy its values into <code>ClientConfig</code> on load and reload.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/forge/ForgeServerConfig.html#register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext)" class="member-name-link">register(FMLJavaModLoadingContext)</a> - Static method in class com.github.crittscott.somegoogly.config.forge.<a href="com/github/crittscott/somegoogly/config/forge/ForgeServerConfig.html" title="class in com.github.crittscott.somegoogly.config.forge">ForgeServerConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the SERVER config spec and copy its values into <code>ServerConfig</code> on load and reload.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html#registerCreativeTab(java.lang.String,net.minecraft.network.chat.Component,java.util.function.Supplier,net.minecraft.world.item.CreativeModeTab.DisplayItemsGenerator)" class="member-name-link">registerCreativeTab(String, Component, Supplier&lt;ItemStack&gt;, CreativeModeTab.DisplayItemsGenerator)</a> - Method in class com.github.crittscott.somegoogly.registry.forge.<a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html#registerDataComponent(java.lang.String,java.util.function.Supplier)" class="member-name-link">registerDataComponent(String, Supplier&lt;DataComponentType&lt;T&gt;&gt;)</a> - Method in class com.github.crittscott.somegoogly.registry.forge.<a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></dt>

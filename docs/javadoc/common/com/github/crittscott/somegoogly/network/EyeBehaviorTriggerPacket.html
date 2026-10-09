@@ -98,7 +98,8 @@ loadScripts(document, 'script');</script>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
 <div class="block">Server → client: "play behavior <code>behaviorId</code> on entity <code>entityId</code> for <code>duration</code>
  ticks, seeded with <code>seed</code>." Sent to a mob's trackers when the server scheduler starts a behavior
- (and to a newly-tracking player mid-effect, with the remaining duration), so every viewer animates the
+ (and to a newly-tracking player mid-effect, with the full duration and the ticks already <code>elapsed</code>),
+ so every viewer animates the
  same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
  animation locally.
 
@@ -164,19 +165,29 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviorId()" class="member-name-link">behaviorId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The behavior to play.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#duration()" class="member-name-link">duration</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The behavior's total length in ticks.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#elapsed()" class="member-name-link">elapsed</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Ticks already played before this viewer started tracking; <code>0</code> for a fresh start.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#entityId()" class="member-name-link">entityId</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The network id of the entity to play on.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#seed()" class="member-name-link">seed</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The seed that makes the behavior's randomness identical on every viewer.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -239,30 +250,35 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <section class="detail" id="behaviorId()">
 <h3>behaviorId</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">behaviorId</span>()</div>
+<div class="block">The behavior to play.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="duration()">
 <h3>duration</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">duration</span>()</div>
+<div class="block">The behavior's total length in ticks.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="elapsed()">
 <h3>elapsed</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">elapsed</span>()</div>
+<div class="block">Ticks already played before this viewer started tracking; <code>0</code> for a fresh start.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="entityId()">
 <h3>entityId</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">entityId</span>()</div>
+<div class="block">The network id of the entity to play on.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="seed()">
 <h3>seed</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">seed</span>()</div>
+<div class="block">The seed that makes the behavior's randomness identical on every viewer.</div>
 </section>
 </li>
 <li>

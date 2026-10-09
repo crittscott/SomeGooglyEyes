@@ -181,9 +181,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="exportRejectsEnderDragon(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsEnderDragon</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Export refuses the ender dragon. In game: as a creative operator, summon an ender dragon, choose it in the
- picker with <code>V</code>, create an eye with <code>/sg create 0 0 0</code>, and run <code>/sg export</code>; the export
- is refused with a message and nothing is written.</div>
+<div class="block">Export refuses the ender dragon. No in-game form with an unmodified client, which cannot choose the
+ dragon in the picker; guards the server against a forged export packet.</div>
 </section>
 </li>
 <li>

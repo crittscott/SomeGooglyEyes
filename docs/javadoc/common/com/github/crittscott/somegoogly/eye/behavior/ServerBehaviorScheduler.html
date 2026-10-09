@@ -105,9 +105,7 @@ loadScripts(document, 'script');</script>
  spawn chance is 5% — costs one map entry and nothing per tick. <a href="#onEyesGained(net.minecraft.world.entity.LivingEntity)"><code>onEyesGained(net.minecraft.world.entity.LivingEntity)</code></a> promotes a mob
  into <code>ACTIVE</code> the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  eye / admin toggle), called from <a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>. Once promoted, a mob stays in <code>ACTIVE</code> for
- the rest of its tracked lifetime even if it later loses its eyes again (shears) — simpler and safe
- (no risk of evicting a mob whose behavior still needs retiring), at the cost of walking a mob that
- transiently had eyes and lost them again while still tracked, which is rare enough not to matter.
+ the rest of its tracked lifetime, even if it loses its eyes.
 
  <p>State is per (integrated-or-dedicated) server lifetime; <a href="#clear()"><code>clear()</code></a> is called on server stop so
  a single-player JVM doesn't carry one world's mobs into the next.</div>

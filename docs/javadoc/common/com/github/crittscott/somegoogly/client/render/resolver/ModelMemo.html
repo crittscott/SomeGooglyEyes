@@ -96,27 +96,12 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ModelMemo&lt;K,<wbr>V&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Memoizes a value per (model instance, attach token). Both halves of the key are immutable for as long as
- the model lives — a model is a singleton held by its renderer, and a token always names the same part
- within it — so an entry can never go stale. In particular a datapack reload changes <i>which</i> token is
- asked for, never what a token resolves to, and so must not clear anything here. The one thing that does
- end an entry's life is the model being replaced, which is what <a href="#clear()"><code>clear()</code></a> is for.
+<div class="block">Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as long
+ as its model lives, so a datapack reload never clears anything here; <a href="#clear()"><code>clear()</code></a> drops every entry
+ when models are replaced. Keys are weak, but an entry whose value refers back to its own model (Citadel
+ and LLibrary boxes) is reclaimed only by <a href="#clear()"><code>clear()</code></a>.
 
- <p>Keys are weak, which reclaims an entry once its model dies — <i>provided</i> no cached value can
- reach that model. A vanilla <code>ModelPart</code> chain cannot (parts hold children, never a parent or the
- model), and neither can a GeckoLib <code>GeoBone</code> (its parent chain stops at a top-level bone). But
- Citadel's <code>AdvancedModelBox</code> and LLibrary's <code>AdvancedModelRenderer</code> each hold a <code>model</code>
- field pointing back at the very object keying the entry, so those entries pin themselves — the weak key
- is strongly reachable from the map's own value — and would hold a whole model's box tree for the life of
- the process. Weak keys therefore cover the safe families only; <a href="#clear()"><code>clear()</code></a> covers the rest.
-
- <p><b>Misses are cached.</b> A token naming no part is the expensive case, not the cheap one: a lookup
- that fails has walked the model's whole part tree, having found no match to stop at. So a <code>null</code>
- from the resolver is stored as a <code>null</code> value, and <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html#containsKey(java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Map.containsKey(java.lang.Object)</code></a> — not the value —
- decides whether the resolver runs.
-
- <p>Single-threaded: the client's main thread both ticks and renders, and every caller (render layers,
- picker) lives on it. Hence the plain inner <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a>.</div>
+ <p>Client main thread only.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

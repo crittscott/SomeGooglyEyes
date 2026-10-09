@@ -141,17 +141,25 @@ loadScripts(document, 'script');</script>
 <div class="block">Register the payloads when the mod bus fires its payload event; called once from the mod constructor.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html#register(net.neoforged.bus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Method in class com.github.crittscott.somegoogly.registry.neoforge.<a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.neoforge">NeoForgeContentRegistrar</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Attach every deferred register to the mod bus.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/neoforge/NeoForgeServerEvents.html#register(net.neoforged.bus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Static method in class com.github.crittscott.somegoogly.server.neoforge.<a href="com/github/crittscott/somegoogly/server/neoforge/NeoForgeServerEvents.html" title="class in com.github.crittscott.somegoogly.server.neoforge">NeoForgeServerEvents</a></dt>
 <dd>
 <div class="block">Subscribe the server listeners to the game bus; called once from the mod constructor.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/neoforge/NeoForgeClient.html#register(net.neoforged.bus.api.IEventBus,net.neoforged.bus.api.IEventBus,net.neoforged.fml.ModContainer)" class="member-name-link">register(IEventBus, IEventBus, ModContainer)</a> - Static method in class com.github.crittscott.somegoogly.client.neoforge.<a href="com/github/crittscott/somegoogly/client/neoforge/NeoForgeClient.html" title="class in com.github.crittscott.somegoogly.client.neoforge">NeoForgeClient</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the client config and every client-side NeoForge listener.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/neoforge/NeoForgeClientConfig.html#register(net.neoforged.bus.api.IEventBus,net.neoforged.fml.ModContainer)" class="member-name-link">register(IEventBus, ModContainer)</a> - Static method in class com.github.crittscott.somegoogly.config.neoforge.<a href="com/github/crittscott/somegoogly/config/neoforge/NeoForgeClientConfig.html" title="class in com.github.crittscott.somegoogly.config.neoforge">NeoForgeClientConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the CLIENT config spec and copy its values into <code>ClientConfig</code> on load and reload.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/neoforge/NeoForgeServerConfig.html#register(net.neoforged.bus.api.IEventBus,net.neoforged.fml.ModContainer)" class="member-name-link">register(IEventBus, ModContainer)</a> - Static method in class com.github.crittscott.somegoogly.config.neoforge.<a href="com/github/crittscott/somegoogly/config/neoforge/NeoForgeServerConfig.html" title="class in com.github.crittscott.somegoogly.config.neoforge">NeoForgeServerConfig</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register the SERVER config spec and copy its values into <code>ServerConfig</code> on load and reload.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html#registerCreativeTab(java.lang.String,net.minecraft.network.chat.Component,java.util.function.Supplier,net.minecraft.world.item.CreativeModeTab.DisplayItemsGenerator)" class="member-name-link">registerCreativeTab(String, Component, Supplier&lt;ItemStack&gt;, CreativeModeTab.DisplayItemsGenerator)</a> - Method in class com.github.crittscott.somegoogly.registry.neoforge.<a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.neoforge">NeoForgeContentRegistrar</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html#registerDataComponent(java.lang.String,java.util.function.Supplier)" class="member-name-link">registerDataComponent(String, Supplier&lt;DataComponentType&lt;T&gt;&gt;)</a> - Method in class com.github.crittscott.somegoogly.registry.neoforge.<a href="com/github/crittscott/somegoogly/registry/neoforge/NeoForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.neoforge">NeoForgeContentRegistrar</a></dt>

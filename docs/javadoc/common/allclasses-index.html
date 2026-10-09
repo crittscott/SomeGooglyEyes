@@ -146,7 +146,8 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server → client: "play behavior <code>behaviorId</code> on entity <code>entityId</code> for <code>duration</code>
  ticks, seeded with <code>seed</code>." Sent to a mob's trackers when the server scheduler starts a behavior
- (and to a newly-tracking player mid-effect, with the remaining duration), so every viewer animates the
+ (and to a newly-tracking player mid-effect, with the full duration and the ticks already <code>elapsed</code>),
+ so every viewer animates the
  same thing in lock-step.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></div>
@@ -354,7 +355,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo&lt;K,<wbr>V&gt;</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Memoizes a value per (model instance, attach token).</div>
+<div class="block">Memoizes a value per (model instance, attach token), misses included.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver&lt;K,<wbr>V&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">

@@ -289,9 +289,9 @@ loadScripts(document, 'script');</script>
 <h3>isEligible</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEligible</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
 <div class="block">Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
- config that is enabled and has at least one head. Used by the slimy eye (<code>SlimyEyeItem</code>),
- which should only apply to targets the eyes would visibly appear on immediately. Players have a
- definition (<code>player.json</code>) and so are eligible; only an unconfigured entity is not.</div>
+ config that is enabled and has at least one head. Used by Slimy Eye application
+ (<code>EyeItemService.applySlimyEye</code>), which should only apply to targets the eyes would visibly
+ appear on immediately. Players have a definition (<code>player.json</code>) and so are eligible.</div>
 </section>
 </li>
 <li>

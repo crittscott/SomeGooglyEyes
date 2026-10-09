@@ -112,61 +112,102 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#deltaX" class="member-name-link">deltaX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Pupil position in the unit disk (<code>|p| &lt;= 1</code>), mapped onto the full cornea circle.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#deltaY" class="member-name-link">deltaY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#deltaX"><code>deltaX</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#gravX" class="member-name-link">gravX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">World-down projected into this eye's pupil plane, in the (<code>deltaX</code>, <code>deltaY</code>)
+ convention.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#gravY" class="member-name-link">gravY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#gravX"><code>gravX</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#momentumX" class="member-name-link">momentumX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Pupil velocity per tick.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#momentumY" class="member-name-link">momentumY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#momentumX"><code>momentumX</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevDeltaX" class="member-name-link">prevDeltaX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Pupil position at the previous tick, for render interpolation.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevDeltaY" class="member-name-link">prevDeltaY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#prevDeltaX"><code>prevDeltaX</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevRotationPitch" class="member-name-link">prevRotationPitch</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and acceleration.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevRotationYaw" class="member-name-link">prevRotationYaw</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevScaleMul" class="member-name-link">prevScaleMul</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+ and interpolated at render.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevSquashY" class="member-name-link">prevSquashY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Blink squash; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevTintAmount" class="member-name-link">prevTintAmount</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#rotationPitch" class="member-name-link">rotationPitch</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#rotationYaw" class="member-name-link">rotationYaw</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#scaleMul" class="member-name-link">scaleMul</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+ and interpolated at render.</div>
+</div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Blink squash; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#tintAmount" class="member-name-link">tintAmount</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>float[]</code></div>
 <div class="col-second even-row-color"><code><a href="#tintColor" class="member-name-link">tintColor</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Color-change target color; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
 </div>
 </section>
 </li>
@@ -228,114 +269,142 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="prevRotationPitch">
 <h3>prevRotationPitch</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevRotationPitch</span></div>
+<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and acceleration.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevRotationYaw">
 <h3>prevRotationYaw</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevRotationYaw</span></div>
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="rotationPitch">
 <h3>rotationPitch</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">rotationPitch</span></div>
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="rotationYaw">
 <h3>rotationYaw</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">rotationYaw</span></div>
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="deltaX">
 <h3>deltaX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">deltaX</span></div>
+<div class="block">Pupil position in the unit disk (<code>|p| &lt;= 1</code>), mapped onto the full cornea circle.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="deltaY">
 <h3>deltaY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">deltaY</span></div>
+<div class="block">See <a href="#deltaX"><code>deltaX</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevDeltaX">
 <h3>prevDeltaX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevDeltaX</span></div>
+<div class="block">Pupil position at the previous tick, for render interpolation.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevDeltaY">
 <h3>prevDeltaY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevDeltaY</span></div>
+<div class="block">See <a href="#prevDeltaX"><code>prevDeltaX</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="momentumX">
 <h3>momentumX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">momentumX</span></div>
+<div class="block">Pupil velocity per tick.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="momentumY">
 <h3>momentumY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">momentumY</span></div>
+<div class="block">See <a href="#momentumX"><code>momentumX</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="gravX">
 <h3>gravX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">gravX</span></div>
+<div class="block">World-down projected into this eye's pupil plane, in the (<code>deltaX</code>, <code>deltaY</code>)
+ convention. Refreshed each render by <code>GooglyEyeRenderer</code> from the eye's animated world
+ orientation, so the pupil sags toward true down; <code>(0, -1)</code>, eye-local down, until the
+ first render.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="gravY">
 <h3>gravY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">gravY</span></div>
+<div class="block">See <a href="#gravX"><code>gravX</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="scaleMul">
 <h3>scaleMul</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">scaleMul</span></div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+ and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
+ grow scale; <a href="#squashY"><code>squashY</code></a> is the blink, <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and
+ <a href="#tintColor"><code>tintColor</code></a> the color-change target (set instantly, not interpolated).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevScaleMul">
 <h3>prevScaleMul</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevScaleMul</span></div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+ and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
+ grow scale; <a href="#squashY"><code>squashY</code></a> is the blink, <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and
+ <a href="#tintColor"><code>tintColor</code></a> the color-change target (set instantly, not interpolated).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="squashY">
 <h3>squashY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">squashY</span></div>
+<div class="block">Blink squash; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevSquashY">
 <h3>prevSquashY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevSquashY</span></div>
+<div class="block">Blink squash; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="tintAmount">
 <h3>tintAmount</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">tintAmount</span></div>
+<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevTintAmount">
 <h3>prevTintAmount</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevTintAmount</span></div>
+<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="tintColor">
 <h3>tintColor</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float[]</span>&nbsp;<span class="element-name">tintColor</span></div>
+<div class="block">Color-change target color; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </section>
 </li>
 </ul>

@@ -110,10 +110,15 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalize(java.lang.String)" class="member-name-link">canonicalize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The canonical attach token for <code>token</code>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#forEntity(net.minecraft.world.entity.LivingEntity)" class="member-name-link">forEntity</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The attachable part vocabulary of <code>living</code>'s current model, from its vanilla-style model parts
+ or else its GeckoLib bones, or <code>null</code> when neither yields any.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#forType(net.minecraft.resources.ResourceLocation)" class="member-name-link">forType</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -121,7 +126,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tokens()" class="member-name-link">tokens</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The model's attachable part tokens, in selection order.</div>
+</div>
 </div>
 </div>
 </div>
@@ -144,6 +151,8 @@ loadScripts(document, 'script');</script>
 <h3>forEntity</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></span>&nbsp;<span class="element-name">forEntity</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
+<div class="block">The attachable part vocabulary of <code>living</code>'s current model, from its vanilla-style model parts
+ or else its GeckoLib bones, or <code>null</code> when neither yields any.</div>
 </section>
 </li>
 <li>
@@ -158,12 +167,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="canonicalize(java.lang.String)">
 <h3>canonicalize</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">canonicalize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</span></div>
+<div class="block">The canonical attach token for <code>token</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="tokens()">
 <h3>tokens</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">tokens</span>()</div>
+<div class="block">The model's attachable part tokens, in selection order.</div>
 </section>
 </li>
 </ul>

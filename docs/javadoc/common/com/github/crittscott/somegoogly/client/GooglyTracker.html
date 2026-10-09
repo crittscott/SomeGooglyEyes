@@ -131,34 +131,55 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></code></div>
 <div class="col-second even-row-color"><code><a href="#active" class="member-name-link">active</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The behavior playing on this entity, or <code>null</code>.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>[][]</code></div>
 <div class="col-second odd-row-color"><code><a href="#eyes" class="member-name-link">eyes</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Pupil simulators, indexed by head then eye, shaped by this tracker's placement.</div>
+</div>
 <div class="col-first even-row-color"><code>final <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second even-row-color"><code><a href="#helper" class="member-name-link">helper</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The placement this tracker's eyes were built for.</div>
+</div>
 <div class="col-first odd-row-color"><code>int</code></div>
 <div class="col-second odd-row-color"><code><a href="#lastRenderTick" class="member-name-link">lastRenderTick</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The client tick during which this tracker was last rendered.</div>
+</div>
 <div class="col-first even-row-color"><code>double</code></div>
 <div class="col-second even-row-color"><code><a href="#motionX" class="member-name-link">motionX</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color"><code>double</code></div>
 <div class="col-second odd-row-color"><code><a href="#motionY" class="member-name-link">motionY</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>double</code></div>
 <div class="col-second even-row-color"><code><a href="#motionZ" class="member-name-link">motionZ</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#overrides" class="member-name-link">overrides</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render layers
+ don't re-read it from NBT every frame.</div>
+</div>
 <div class="col-first even-row-color"><code>final net.minecraft.world.entity.LivingEntity</code></div>
 <div class="col-second even-row-color"><code><a href="#parent" class="member-name-link">parent</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The entity whose eyes this tracker simulates.</div>
+</div>
 <div class="col-first odd-row-color"><code>final net.minecraft.util.RandomSource</code></div>
 <div class="col-second odd-row-color"><code><a href="#rand" class="member-name-link">rand</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Per-entity randomness for pupil jitter, seeded from the entity's UUID.</div>
+</div>
 </div>
 </section>
 </li>
@@ -190,11 +211,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#markRendered(int)" class="member-name-link">markRendered</a><wbr>(int&nbsp;currentClientTick)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stamp this tracker as rendered this client tick (drives eviction + whether to simulate).</div>
+<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
+ <a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">matches</a><wbr>(<a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Whether this tracker was built for the same placement variant as <code>helper</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" class="member-name-link">startBehavior</a><wbr>(<a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
  int&nbsp;duration,
@@ -206,7 +230,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye.</div>
+</div>
 </div>
 </div>
 </div>
@@ -228,54 +254,67 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="helper">
 <h3>helper</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">helper</span></div>
+<div class="block">The placement this tracker's eyes were built for.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="parent">
 <h3>parent</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">net.minecraft.world.entity.LivingEntity</span>&nbsp;<span class="element-name">parent</span></div>
+<div class="block">The entity whose eyes this tracker simulates.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="rand">
 <h3>rand</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">net.minecraft.util.RandomSource</span>&nbsp;<span class="element-name">rand</span></div>
+<div class="block">Per-entity randomness for pupil jitter, seeded from the entity's UUID.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="lastRenderTick">
 <h3>lastRenderTick</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">lastRenderTick</span></div>
+<div class="block">The client tick during which this tracker was last rendered. <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a> evicts the
+ tracker once this goes stale and simulates it only while it is being rendered, so off-screen eyes
+ freeze instead of wobbling unseen.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="motionX">
 <h3>motionX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionX</span></div>
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="motionY">
 <h3>motionY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionY</span></div>
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="motionZ">
 <h3>motionZ</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionZ</span></div>
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="eyes">
 <h3>eyes</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>[][]</span>&nbsp;<span class="element-name">eyes</span></div>
+<div class="block">Pupil simulators, indexed by head then eye, shaped by this tracker's placement.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="overrides">
 <h3>overrides</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">overrides</span></div>
+<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render layers
+ don't re-read it from NBT every frame. Seeded from NBT at construction and kept current by
+ <a href="ClientNetworkHandler.html#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)"><code>ClientNetworkHandler.handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -283,6 +322,8 @@ loadScripts(document, 'script');</script>
 <h3>active</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></span>&nbsp;<span class="element-name">active</span></div>
+<div class="block">The behavior playing on this entity, or <code>null</code>. Advanced each tick and interpolated at render;
+ client-only, since the server sends only the trigger.</div>
 </section>
 </li>
 </ul>
@@ -314,15 +355,15 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="matches(com.github.crittscott.somegoogly.eye.HeadInfo)">
 <h3>matches</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(<a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
+<div class="block">Whether this tracker was built for the same placement variant as <code>helper</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="markRendered(int)">
 <h3>markRendered</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">markRendered</span><wbr><span class="parameters">(int&nbsp;currentClientTick)</span></div>
-<div class="block">Stamp this tracker as rendered this client tick (drives eviction + whether to simulate).
- <code>currentClientTick</code> is read by the caller so this class stays free of the platform-specific
- client tick counter.</div>
+<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
+ <a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
 </section>
 </li>
 <li>
@@ -337,16 +378,16 @@ loadScripts(document, 'script');</script>
  rule. Returns whether it started (a dropped trigger returns <code>false</code>). Called from the
  trigger packet on the client.
 
- <p><code>elapsed</code> fast-forwards the behavior by that many ticks before it's shown, so a player
- who starts watching a mob mid-effect picks it up in sync with everyone else (the server sends how
- far in the effect already is). It's deterministic — the seeded <code>onStart</code> plus replaying
- <code>tick</code> reproduces the exact same state other viewers are at.</div>
+ <p><code>elapsed</code> starts the behavior that many ticks in, so a player who starts watching a mob
+ mid-effect sees the same state as everyone else: the seeded <code>onStart</code> plus the age fully
+ determine each behavior's influence.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="update()">
 <h3>update</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
+<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye.</div>
 </section>
 </li>
 </ul>

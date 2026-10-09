@@ -149,7 +149,9 @@ loadScripts(document, 'script');</script>
 <h3>spawnAlwaysAssignsAVariantRoll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAlwaysAssignsAVariantRoll</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Every spawned mob stores a placement roll, with or without eyes. In game: set <code>globalPercent = 0</code>,
- spawn a pig, and give it eyes with a Slimy Eye; it gets the placement its own stored roll selects.</div>
+ spawn a pig, and on NeoForge or Forge <code>/data get entity &lt;pig&gt;</code> shows a
+ <code>somegoogly:eyeVariantRoll</code> key in <code>NeoForgeData</code> or <code>ForgeData</code>. Aiming at it and running
+ <code>/sg admin eyes true</code> gives it the placement that stored roll selects.</div>
 </section>
 </li>
 </ul>

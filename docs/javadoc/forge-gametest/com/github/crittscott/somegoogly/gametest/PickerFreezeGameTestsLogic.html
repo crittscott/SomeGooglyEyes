@@ -195,8 +195,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="staleMarkerIsRestoredOnJoin(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>staleMarkerIsRestoredOnJoin</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">staleMarkerIsRestoredOnJoin</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A mob left frozen by a crash recovers when it next loads. In game: choose a cow with <code>V</code>, then end
- the server process without a clean stop; after restarting and returning, the cow wanders again.</div>
+<div class="block">A mob left frozen by a crash recovers when it next loads. In game: choose a cow with <code>V</code>, run
+ <code>/save-all</code>, then end the server process without a clean stop; after restarting and returning, the cow
+ wanders again.</div>
 </section>
 </li>
 <li>

@@ -263,7 +263,9 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <section class="detail" id="serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>serverTomlRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.</div>
+<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.
+ In game: open a new world and <code>serverconfig/somegoogly-server.toml</code> appears with every key at its
+ default; set <code>globalPercent = 17</code>, run <code>/reload</code>, and the file still says 17.</div>
 </section>
 </li>
 <li>

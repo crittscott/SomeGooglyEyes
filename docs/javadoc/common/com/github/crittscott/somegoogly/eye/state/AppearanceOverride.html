@@ -97,8 +97,7 @@ loadScripts(document, 'script');</script>
  falls back to the underlying value (a mob's datapack appearance, via <a href="EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)</code></a>).
 
  <p>This is the one portable appearance payload. Persistent forms use <a href="#CODEC"><code>CODEC</code></a>; the bounded
- network packet (<code>EyeStatePacket</code>) uses <a href="#STREAM_CODEC"><code>STREAM_CODEC</code></a>. Both cover the same three
- optional fields:
+ network packet (<code>EyeStatePacket</code>) uses <a href="#STREAM_CODEC"><code>STREAM_CODEC</code></a>. It serves three uses:
  <ul>
    <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
    <li>a mob's per-entity override (see <a href="EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>),</li>
@@ -132,7 +131,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final net.minecraft.network.codec.StreamCodec<wbr>&lt;io.netty.buffer.ByteBuf,<wbr><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Each field is length-prefixed with a presence boolean; colors ride <a href="EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
+<div class="block">Each field is prefixed with a presence boolean; colors ride <a href="EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
 </div>
 </div>
 </section>
@@ -258,7 +257,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="STREAM_CODEC">
 <h3>STREAM_CODEC</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.network.codec.StreamCodec&lt;io.netty.buffer.ByteBuf,<wbr><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;</span>&nbsp;<span class="element-name">STREAM_CODEC</span></div>
-<div class="block">Each field is length-prefixed with a presence boolean; colors ride <a href="EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
+<div class="block">Each field is prefixed with a presence boolean; colors ride <a href="EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
 </section>
 </li>
 <li>

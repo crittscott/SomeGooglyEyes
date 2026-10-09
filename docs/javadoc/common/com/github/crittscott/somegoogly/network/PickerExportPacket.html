@@ -100,7 +100,7 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
  and reload" — the wire half of <code>/sg export</code>. The config travels as codec-encoded NBT (the
  same <code>RuntimeConfig.CODEC</code> the sync packet uses in the other direction); all validation,
  path construction, the 10-second cooldown, the file write, and the <code>/reload</code> live in
- <a href="../picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker"><code>PickerExportService</code></a>. Like every picker verb it requires <a href="../picker/PickerGate.html#authorized(net.minecraft.server.level.ServerPlayer)"><code>PickerGate.authorized(net.minecraft.server.level.ServerPlayer)</code></a>.
+ <a href="../picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker"><code>PickerExportService</code></a>. It requires <a href="../picker/PickerGate.html#authorized(net.minecraft.server.level.ServerPlayer)"><code>PickerGate.authorized(net.minecraft.server.level.ServerPlayer)</code></a>.
 
  <p>The client refuses to send a packet that fails <a href="#fitsServerbound()"><code>fitsServerbound()</code></a>, so a malformed or
  oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.</div>
@@ -173,7 +173,9 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handle(com.github.crittscott.somegoogly.network.PickerExportPacket,net.minecraft.server.level.ServerPlayer)" class="member-name-link">handle</a><wbr>(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
  net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Export the packet's definition for an authorized sender and report the result to them.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -257,6 +259,7 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h3>handle</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(<a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a>&nbsp;packet,
  net.minecraft.server.level.ServerPlayer&nbsp;sender)</span></div>
+<div class="block">Export the packet's definition for an authorized sender and report the result to them.</div>
 </section>
 </li>
 <li>

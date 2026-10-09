@@ -110,11 +110,8 @@ loadScripts(document, 'script');</script>
  pupil toward during the cross-eye behavior (see <code>EyeBehavior#CROSS_EYE</code>); <a href="#NO_CROSS_TARGET"><code>NO_CROSS_TARGET</code></a>
  means this eye doesn't cross. It's a within-head index into that head's <code>eyes</code> list.
 
- <p>Everything is <code>float</code>: these are authored through <code>/sg</code> commands whose args parse as
- float, and the renderer consumes them as float. Holding them as <code>double</code> would only widen
- <code>0.22</code> into <code>0.2199999988079071</code> on its way back out to the (human-edited) datapack.
- <code>position</code> keeps <code>Vec3</code> for the vector arithmetic, but serializes at float precision
- for the same reason.</div>
+ <p>Sizes and angles are <code>float</code>, and <code>position</code> serializes at float precision, so authored
+ values such as <code>0.22</code> are written back to a datapack unchanged.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

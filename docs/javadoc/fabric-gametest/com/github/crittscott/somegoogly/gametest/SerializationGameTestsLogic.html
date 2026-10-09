@@ -204,8 +204,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="appearanceOverrideSparseNbtRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>appearanceOverrideSparseNbtRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">appearanceOverrideSparseNbtRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Appearance overrides save only the fields that are set, and reject invalid colors. No in-game form; guards
- that a mob or item keeps exactly the colors and glow it was given across save and load.</div>
+<div class="block">Appearance overrides save only the fields that are set, and reject invalid colors. In game: aim at an
+ eyed cow and run <code>/sg admin tint iris 1 0 0</code>; on NeoForge or Forge, <code>/data get entity &lt;cow&gt;</code>
+ shows <code>somegoogly:eyeOverrides</code> in <code>NeoForgeData</code> or <code>ForgeData</code> holding only
+ <code>irisColor</code>, and after save and reload the cow still has red irises.</div>
 </section>
 </li>
 <li>
