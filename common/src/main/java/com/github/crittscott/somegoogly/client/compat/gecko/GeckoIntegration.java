@@ -23,6 +23,10 @@ public final class GeckoIntegration {
     private GeckoIntegration() {
     }
 
+    /**
+     * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
+     * model.
+     */
     @SuppressWarnings({"rawtypes", "unchecked", "removal"})
     public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {

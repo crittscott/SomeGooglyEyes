@@ -47,10 +47,12 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         integrationFailed = false;
     }
 
+    /** Whether this resolver has disabled itself after an integration failure. */
     protected final boolean integrationFailed() {
         return integrationFailed;
     }
 
+    /** Disable this resolver until the next reset and log the failure once. */
     protected final void disableIntegration(String operation, Object subject, Throwable failure) {
         integrationFailed = true;
         ClientIntegrationFailures.warnOnce(familyLabel(), operation,

@@ -64,7 +64,11 @@ public final class ConfigGameTests implements FabricGameTest {
         ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 
-    /** {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it. */
+    /**
+     * {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it.
+     * In game: open a new world and {@code serverconfig/somegoogly-server.toml} appears with every key at its
+     * default; set {@code globalPercent = 17}, run {@code /reload}, and the file still says 17.
+     */
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void serverTomlRoundTrips(GameTestHelper helper) {
         String defaults = """

@@ -59,6 +59,7 @@ public class EyeDraft {
         glows = a.glow();
     }
 
+    /** An independent copy of this draft. */
     public EyeDraft copy() {
         EyeDraft d = new EyeDraft();
         d.position = position.clone();

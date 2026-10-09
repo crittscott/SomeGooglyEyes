@@ -34,6 +34,7 @@ public final class FabricClientEvents {
     private FabricClientEvents() {
     }
 
+    /** Register the client's Fabric event callbacks. */
     public static void register() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->

@@ -51,10 +51,12 @@ public record EyeColor(float r, float g, float b) {
         return i < 0 ? 0 : Math.min(i, 255);
     }
 
+    /** A color from a three-element {@code [r, g, b]} array. */
     public static EyeColor of(float[] rgb) {
         return new EyeColor(rgb[0], rgb[1], rgb[2]);
     }
 
+    /** A color from a packed {@code 0xRRGGBB} integer. */
     public static EyeColor fromRgb24(int rgb) {
         return new EyeColor(
                 ARGB.red(rgb) / 255.0F,
@@ -62,6 +64,7 @@ public record EyeColor(float r, float g, float b) {
                 ARGB.blue(rgb) / 255.0F);
     }
 
+    /** Whether every channel is within {@code [0, 1]}. */
     public boolean isValid() {
         return channelInRange(r) && channelInRange(g) && channelInRange(b);
     }

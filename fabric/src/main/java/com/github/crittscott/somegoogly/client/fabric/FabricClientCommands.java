@@ -16,6 +16,7 @@ public final class FabricClientCommands {
     private FabricClientCommands() {
     }
 
+    /** Register the client {@code /sg} tree and forward its server-owned branches to the server. */
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         GooglyClientCommands.register(dispatcher);
 

@@ -37,29 +37,39 @@ public final class ForgeServerConfig {
         builder.push(ServerConfig.SECTION_SERVER);
         GOOGLY_EYES_ENABLED = builder.comment(ServerConfig.GOOGLY_EYES_ENABLED_COMMENT.split("\n"))
                 .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
-        GLOBAL_PERCENT = builder.defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
-                ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        HARVEST_ON_KILL_PERCENT = builder.defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
-                ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        GLOBAL_PERCENT = builder.comment(ServerConfig.GLOBAL_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
+                        ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        HARVEST_ON_KILL_PERCENT = builder.comment(ServerConfig.HARVEST_ON_KILL_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
+                        ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         ENTITY_OVERRIDES = builder.comment(ServerConfig.ENTITY_OVERRIDES_COMMENT.split("\n"))
                 .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateOverride(string));
         builder.pop().push(ServerConfig.SECTION_BEHAVIORS);
-        AMBIENT_BEHAVIORS = builder.define(ServerConfig.AMBIENT_BEHAVIORS_KEY,
-                ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
-        AMBIENT_MIN_TICKS = builder.defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
-                ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        AMBIENT_MAX_TICKS = builder.defineInRange(ServerConfig.AMBIENT_MAX_TICKS_KEY,
-                ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        AMBIENT_BEHAVIOR_POOL = builder.defineList(
-                ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
-                value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
-        GROW_ON_HIT_PERCENT = builder.defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
-                ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        SWIRL_ON_TRADE = builder.define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
-        SWIRL_ON_HEAL = builder.define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
-        SWIRL_HEAL_COOLDOWN_TICKS = builder.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
-                ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_BEHAVIORS = builder.comment(ServerConfig.AMBIENT_BEHAVIORS_COMMENT.split("\n"))
+                .define(ServerConfig.AMBIENT_BEHAVIORS_KEY,
+                        ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
+        AMBIENT_MIN_TICKS = builder.comment(ServerConfig.AMBIENT_MIN_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
+                        ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_MAX_TICKS = builder.comment(ServerConfig.AMBIENT_MAX_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.AMBIENT_MAX_TICKS_KEY,
+                        ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_BEHAVIOR_POOL = builder.comment(ServerConfig.AMBIENT_BEHAVIOR_POOL_COMMENT.split("\n"))
+                .defineList(
+                        ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
+                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
+        GROW_ON_HIT_PERCENT = builder.comment(ServerConfig.GROW_ON_HIT_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
+                        ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        SWIRL_ON_TRADE = builder.comment(ServerConfig.SWIRL_ON_TRADE_COMMENT.split("\n"))
+                .define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
+        SWIRL_ON_HEAL = builder.comment(ServerConfig.SWIRL_ON_HEAL_COMMENT.split("\n"))
+                .define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
+        SWIRL_HEAL_COOLDOWN_TICKS = builder.comment(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
+                        ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
         builder.pop().push(ServerConfig.SECTION_PICKER);
         ALLOW_SPAWN_ALL = builder.comment(ServerConfig.ALLOW_SPAWN_ALL_COMMENT.split("\n"))
                 .define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
@@ -76,6 +86,7 @@ public final class ForgeServerConfig {
     private ForgeServerConfig() {
     }
 
+    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);

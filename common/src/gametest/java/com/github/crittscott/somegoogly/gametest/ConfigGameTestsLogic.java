@@ -198,8 +198,7 @@ public final class ConfigGameTestsLogic {
     /**
      * No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
      * datapack with {@code data/minecraft/eyes/ender_dragon.json} and run {@code /reload}; the server log
-     * reports the dragon file refused, and sneaking with a Googly Eye at an ender dragon still reports no
-     * configuration.
+     * reports the dragon file refused.
      */
     public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");

@@ -29,11 +29,8 @@ import java.util.List;
  * pupil toward during the cross-eye behavior (see {@code EyeBehavior#CROSS_EYE}); {@link #NO_CROSS_TARGET}
  * means this eye doesn't cross. It's a within-head index into that head's {@code eyes} list.
  *
- * <p>Everything is {@code float}: these are authored through {@code /sg} commands whose args parse as
- * float, and the renderer consumes them as float. Holding them as {@code double} would only widen
- * {@code 0.22} into {@code 0.2199999988079071} on its way back out to the (human-edited) datapack.
- * {@code position} keeps {@link Vec3} for the vector arithmetic, but serializes at float precision
- * for the same reason.
+ * <p>Sizes and angles are {@code float}, and {@code position} serializes at float precision, so authored
+ * values such as {@code 0.22} are written back to a datapack unchanged.
  */
 public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float depth,
                            float inclination, float azimuth, int crossTarget) {

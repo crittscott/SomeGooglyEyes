@@ -30,6 +30,7 @@ public final class NeoForgeClient {
     private NeoForgeClient() {
     }
 
+    /** Register the client config and every client-side NeoForge listener. */
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
         NeoForgeClientConfig.register(modBus, modContainer);
 

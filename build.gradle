@@ -26,8 +26,8 @@ ext.configureGameTests = { Project loaderProject ->
         classpath = gametest.compileClasspath
         destinationDir = loaderProject.layout.buildDirectory.dir('docs/gametestJavadoc').get().asFile
 
-        // Shared scenarios and helpers are deliberately package-private; they contain the
-        // authoritative manual and automation-only procedures linked by the public test wrappers.
+        // Include package-private scenario helpers alongside the public shared scenarios, whose Javadoc
+        // holds the manual and automation-only procedures the loader test wrappers link to.
         options.addBooleanOption('package', true)
     }
 }

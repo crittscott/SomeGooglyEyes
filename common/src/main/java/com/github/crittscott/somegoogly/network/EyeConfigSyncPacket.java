@@ -111,10 +111,12 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         }
     }
 
+    /** The resolved eye definitions, by entity type. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
     }
 
+    /** The server's {@code googlyEyesEnabled} switch. */
     public boolean googlyEyesEnabled() {
         return googlyEyesEnabled;
     }

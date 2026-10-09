@@ -57,9 +57,8 @@ public final class PickerExportGameTestsLogic {
     }
 
     /**
-     * Export refuses the ender dragon. In game: as a creative operator, summon an ender dragon, choose it in the
-     * picker with {@code V}, create an eye with {@code /sg create 0 0 0}, and run {@code /sg export}; the export
-     * is refused with a message and nothing is written.
+     * Export refuses the ender dragon. No in-game form with an unmodified client, which cannot choose the
+     * dragon in the picker; guards the server against a forged export packet.
      */
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),

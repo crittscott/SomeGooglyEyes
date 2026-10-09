@@ -13,6 +13,7 @@ public final class FabricClientNetworkTransport {
     private FabricClientNetworkTransport() {
     }
 
+    /** Register the client's receivers for every clientbound payload. */
     public static void register() {
         ClientConfigurationNetworking.registerGlobalReceiver(FabricNetworkTransport.Handshake.TYPE,
                 (payload, context) -> {

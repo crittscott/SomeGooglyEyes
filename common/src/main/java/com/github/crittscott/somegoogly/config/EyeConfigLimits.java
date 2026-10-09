@@ -18,12 +18,19 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 /** Shared semantic and work-budget validation for authored and synchronized eye geometry. */
 public final class EyeConfigLimits {
 
+    /** Most entity types one eye-definition sync may carry. */
     public static final int MAX_CONFIGS_PER_SYNC = 2_048;
+    /** Most placement variants one definition may declare. */
     public static final int MAX_VARIANTS_PER_CONFIG = 16;
+    /** Most heads one variant may declare. */
     public static final int MAX_HEADS_PER_VARIANT = 32;
+    /** Most eyes one head may declare. */
     public static final int MAX_EYES_PER_HEAD = 16;
+    /** Most eyes one variant may declare across all its heads. */
     public static final int MAX_EYES_PER_VARIANT = 128;
+    /** Most eyes one eye-definition sync may carry in total. */
     public static final int MAX_TOTAL_EYES_PER_SYNC = 4_096;
+    /** Longest attach-point token a head may name. */
     public static final int MAX_ATTACH_TOKEN_LENGTH = 128;
 
     private static final double MAX_VARIANT_WEIGHT = 1_000_000.0;

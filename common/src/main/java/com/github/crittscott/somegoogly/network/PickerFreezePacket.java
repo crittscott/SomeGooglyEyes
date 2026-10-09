@@ -49,10 +49,12 @@ public class PickerFreezePacket implements CustomPacketPayload {
         this.mobId = mobId;
     }
 
+    /** A request to freeze the mob with {@code mobId} for the sender's picker. */
     public static PickerFreezePacket freeze(UUID mobId) {
         return new PickerFreezePacket(true, mobId);
     }
 
+    /** A request to release the sender's frozen mob. */
     public static PickerFreezePacket unfreeze() {
         return new PickerFreezePacket(false, null);
     }
@@ -69,6 +71,7 @@ public class PickerFreezePacket implements CustomPacketPayload {
         }
     }
 
+    /** Freeze the requested mob for an authorized sender in range, or release the sender's frozen mob. */
     public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
         if (packet.freeze) {
             if (!PickerGate.authorized(sender)) {

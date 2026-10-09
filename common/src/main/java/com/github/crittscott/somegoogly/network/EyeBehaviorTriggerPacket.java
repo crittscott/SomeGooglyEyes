@@ -11,7 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Server → client: "play behavior {@code behaviorId} on entity {@code entityId} for {@code duration}
  * ticks, seeded with {@code seed}." Sent to a mob's trackers when the server scheduler starts a behavior
- * (and to a newly-tracking player mid-effect, with the remaining duration), so every viewer animates the
+ * (and to a newly-tracking player mid-effect, with the full duration and the ticks already {@code elapsed}),
+ * so every viewer animates the
  * same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
  * animation locally.
  *
@@ -63,22 +64,27 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
         buffer.writeVarInt(elapsed);
     }
 
+    /** The behavior to play. */
     public ResourceLocation behaviorId() {
         return behaviorId;
     }
 
+    /** The behavior's total length in ticks. */
     public int duration() {
         return duration;
     }
 
+    /** Ticks already played before this viewer started tracking; {@code 0} for a fresh start. */
     public int elapsed() {
         return elapsed;
     }
 
+    /** The network id of the entity to play on. */
     public int entityId() {
         return entityId;
     }
 
+    /** The seed that makes the behavior's randomness identical on every viewer. */
     public long seed() {
         return seed;
     }

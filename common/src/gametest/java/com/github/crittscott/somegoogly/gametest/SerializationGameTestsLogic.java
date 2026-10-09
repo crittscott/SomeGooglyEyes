@@ -112,8 +112,10 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * Appearance overrides save only the fields that are set, and reject invalid colors. No in-game form; guards
-     * that a mob or item keeps exactly the colors and glow it was given across save and load.
+     * Appearance overrides save only the fields that are set, and reject invalid colors. In game: aim at an
+     * eyed cow and run {@code /sg admin tint iris 1 0 0}; on NeoForge or Forge, {@code /data get entity <cow>}
+     * shows {@code somegoogly:eyeOverrides} in {@code NeoForgeData} or {@code ForgeData} holding only
+     * {@code irisColor}, and after save and reload the cow still has red irises.
      */
     public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
         helper.assertTrue(AppearanceOverride.fromNbt(null).equals(AppearanceOverride.EMPTY),

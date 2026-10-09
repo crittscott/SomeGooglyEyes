@@ -42,6 +42,7 @@ public final class PickerInput {
         }
     }
 
+    /** Act on one picker key press, unless a screen is open. */
     public static void handle(KeyMapping key) {
         // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
         // /sg CLI in chat) so picker bindings don't fire while the player is interacting with a GUI.

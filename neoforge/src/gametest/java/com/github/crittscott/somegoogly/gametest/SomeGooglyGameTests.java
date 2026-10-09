@@ -29,7 +29,10 @@ public final class SomeGooglyGameTests {
         PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
     }
 
-    /** Exercises NeoForge's native entity persistent compound through an entity save/load cycle. */
+    /**
+     * Exercises NeoForge's native entity persistent compound through an entity save/load cycle. In game: see
+     * {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
+     */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void neoForgeEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "NeoForge");

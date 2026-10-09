@@ -82,6 +82,7 @@ public final class ModelGooglyEye {
         irisOffsetY = -normY * preScale;
     }
 
+    /** Draw the cornea cylinder in the given color. */
     public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                               float red, float green, float blue, float alpha) {
         renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
@@ -139,6 +140,7 @@ public final class ModelGooglyEye {
                 normalX, normalY, normalZ, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
+    /** Draw the iris cylinder in the given color, offset by the current pupil position. */
     public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                             float red, float green, float blue, float alpha) {
         renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,

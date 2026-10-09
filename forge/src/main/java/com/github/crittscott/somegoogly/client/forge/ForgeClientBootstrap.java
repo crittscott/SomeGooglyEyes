@@ -33,6 +33,7 @@ public final class ForgeClientBootstrap {
     private ForgeClientBootstrap() {
     }
 
+    /** Register the client config and every client-side Forge listener. */
     public static void register(FMLJavaModLoadingContext context) {
         IEventBus modBus = context.getModEventBus();
         IEventBus gameBus = MinecraftForge.EVENT_BUS;

@@ -39,7 +39,10 @@ public final class SomeGooglyGameTests {
         PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
     }
 
-    /** Exercises Forge's native entity persistent compound through an entity save/load cycle. */
+    /**
+     * Exercises Forge's native entity persistent compound through an entity save/load cycle. In game: see
+     * {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
+     */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void forgeEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "Forge");

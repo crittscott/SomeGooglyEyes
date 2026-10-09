@@ -18,8 +18,7 @@ import java.util.Optional;
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
  * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
- * network packet ({@code EyeStatePacket}) uses {@link #STREAM_CODEC}. Both cover the same three
- * optional fields:
+ * network packet ({@code EyeStatePacket}) uses {@link #STREAM_CODEC}. It serves three uses:
  * <ul>
  *   <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -41,7 +40,7 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
             Codec.BOOL.optionalFieldOf("glow").forGetter(AppearanceOverride::glow)
     ).apply(inst, AppearanceOverride::new));
 
-    /** Each field is length-prefixed with a presence boolean; colors ride {@link EyeColor#STREAM_CODEC}. */
+    /** Each field is prefixed with a presence boolean; colors ride {@link EyeColor#STREAM_CODEC}. */
     public static final StreamCodec<ByteBuf, AppearanceOverride> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::cornea,
             ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::iris,

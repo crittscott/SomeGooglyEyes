@@ -37,6 +37,7 @@ public final class NeoForgeClientConfig {
     private NeoForgeClientConfig() {
     }
 
+    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
     public static void register(IEventBus modBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         modBus.addListener(NeoForgeClientConfig::onConfigChanged);

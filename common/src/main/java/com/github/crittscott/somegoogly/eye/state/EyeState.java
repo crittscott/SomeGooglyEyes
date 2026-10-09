@@ -114,11 +114,9 @@ public final class EyeState {
     }
 
     /**
-     * Store the one-time natural-eye decision and placement roll. Broadcasts only when the decision
-     * turned eyes on: an eyeless outcome already equals every client's implicit default, so the
-     * eyeless spawn — the overwhelming majority — costs no packet. The eyed broadcast is kept so a
-     * player who is already tracking when this runs is corrected; later trackers get it from the
-     * start-tracking sync.
+     * Store the one-time natural-eye decision and placement roll. Broadcasts to current trackers only when
+     * the decision turned eyes on, since an eyeless entity already matches every client's default; later
+     * trackers get the state from the start-tracking sync.
      */
     public static void initialize(LivingEntity entity, boolean hasEyes, float variantRoll) {
         CompoundTag data = EntityPersistentData.get(entity);

@@ -31,6 +31,7 @@ public final class FabricClientConfig {
     private FabricClientConfig() {
     }
 
+    /** Read {@code config/somegoogly-client.toml}, writing it with defaults if absent, into {@code ClientConfig}. */
     public static void load() {
         ClientConfig.resetDefaults();
         Path path = FabricLoader.getInstance().getConfigDir().resolve(ClientConfig.FILE_NAME);

@@ -38,6 +38,7 @@ public final class Gizmo {
         ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
     }
 
+    /** Draw the axis gizmo at the current pose origin. */
     public static void draw(PoseStack poseStack, MultiBufferSource buffers) {
         VertexConsumer vc = buffers.getBuffer(LinesNoDepth.GIZMO_LINES);
 

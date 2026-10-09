@@ -36,6 +36,7 @@ public final class ForgeClientConfig {
     private ForgeClientConfig() {
     }
 
+    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);

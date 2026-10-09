@@ -29,9 +29,7 @@ import java.util.Map;
  * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  * eye / admin toggle), called from {@link EyeState}. Once promoted, a mob stays in {@link #ACTIVE} for
- * the rest of its tracked lifetime even if it later loses its eyes again (shears) — simpler and safe
- * (no risk of evicting a mob whose behavior still needs retiring), at the cost of walking a mob that
- * transiently had eyes and lost them again while still tracked, which is rare enough not to matter.
+ * the rest of its tracked lifetime, even if it loses its eyes.
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
@@ -40,6 +38,8 @@ public final class ServerBehaviorScheduler {
 
     private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
+    // Never demoted while tracked, so a mob whose behavior still needs retiring is never evicted; a mob
+    // that loses its eyes while watched is rare enough that walking it costs nothing noticeable.
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick

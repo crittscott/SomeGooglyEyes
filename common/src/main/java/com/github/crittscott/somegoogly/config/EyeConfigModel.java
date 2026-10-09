@@ -92,6 +92,7 @@ public final class EyeConfigModel {
             Files.writeString(path, GSON.toJson(json) + "\n");
         }
 
+        /** A file holding one entry for {@code config}. */
         public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
             ConfigFile file = new ConfigFile();
             file.entries = List.of(VersionedEntry.of(versionRange, age, config));
@@ -285,6 +286,7 @@ public final class EyeConfigModel {
         /** Required version or version-range selector interpreted by {@link VersionRangeMatcher}. */
         public String version = "";
 
+        /** An entry carrying {@code config}'s enabled flag and variants under the given version and age. */
         public static VersionedEntry of(String versionRange, String age, RuntimeConfig config) {
             VersionedEntry entry = new VersionedEntry();
             entry.version = versionRange;

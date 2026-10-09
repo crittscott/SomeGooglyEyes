@@ -48,6 +48,7 @@ public final class GeoBones {
         }
     }
 
+    /** Every bone name in {@code model}, depth first. */
     public static List<String> enumerate(BakedGeoModel model) {
         List<String> names = new ArrayList<>();
         for (GeoBone bone : model.topLevelBones()) {

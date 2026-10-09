@@ -36,6 +36,7 @@ public interface ContentRegistrar {
     final class Handle<T> implements Supplier<T> {
         private Supplier<? extends T> delegate;
 
+        /** Bind this handle to the loader's supplier; a handle binds only once. */
         public void bind(Supplier<? extends T> supplier) {
             if (delegate != null) {
                 throw new IllegalStateException("Registry handle is already bound");

@@ -35,10 +35,6 @@ import javax.annotation.Nullable;
  * {@code assets/somegoogly/items/googly_eye.json}; each loader puts {@link Unbaked#MAP_CODEC} under
  * {@link #ID}.
  *
- * <p>Tuning knobs if the eye sits wrong in the slot/hand: {@link #GUI_SCALE} and {@link #MODEL_SCALE}
- * (size) and the {@code XP.rotationDegrees(180)} (which faces the pupil at the viewer and lets it hang
- * down).
- *
  * <p>Draws through {@link GooglyEyeRenderer#drawEye}, so the item and the mob eyes share one drawing
  * path, texture, and pair of render types.
  */

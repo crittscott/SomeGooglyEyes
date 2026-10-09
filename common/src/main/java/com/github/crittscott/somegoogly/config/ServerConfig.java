@@ -71,8 +71,30 @@ public class ServerConfig {
     public static final String GOOGLY_EYES_ENABLED_COMMENT = """
             Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every
             client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched
-            and reappears when this is turned back on. Clients already connected when the server picks up a
-            change see it only after /reload or reconnecting.""";
+            and reappears when this is turned back on. Connected clients see a change as soon as the server
+            applies it: on NeoForge and Forge when the edited file is reloaded, on Fabric at the next /reload.""";
+    public static final String GLOBAL_PERCENT_COMMENT = """
+            Chance (0-100) that a newly spawned eligible mob gets eyes, for entities not matched by
+            entityOverrides. Changing it affects only mobs spawned afterwards.""";
+    public static final String HARVEST_ON_KILL_PERCENT_COMMENT = """
+            Chance (0-100) that killing an eyed mob with a direct melee blow from shears drops a Googly Eye.""";
+    public static final String AMBIENT_BEHAVIORS_COMMENT = """
+            Whether eyed mobs play idle expressions (chosen from ambientBehaviorPool) on their own.""";
+    public static final String AMBIENT_MIN_TICKS_COMMENT = """
+            Shortest wait, in ticks, between one mob's idle expressions.""";
+    public static final String AMBIENT_MAX_TICKS_COMMENT = """
+            Longest wait, in ticks, between one mob's idle expressions.""";
+    public static final String AMBIENT_BEHAVIOR_POOL_COMMENT = """
+            Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
+            side_eye, stare, grow, swirl, color_change. Unknown ids are ignored.""";
+    public static final String GROW_ON_HIT_PERCENT_COMMENT = """
+            Chance (0-100) that an eyed mob's eyes bulge when a player damages it.""";
+    public static final String SWIRL_ON_TRADE_COMMENT = """
+            Whether a villager's or wandering trader's eyes swirl when a trade completes.""";
+    public static final String SWIRL_ON_HEAL_COMMENT = """
+            Whether an eyed mob's eyes swirl when it is healed.""";
+    public static final String SWIRL_HEAL_COOLDOWN_TICKS_COMMENT = """
+            Minimum ticks between one mob's healing swirls.""";
     public static final String ENTITY_OVERRIDES_COMMENT = """
             Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
             '*' wildcards the entity id, e.g. "minecraft:zombie,100", "*:*_horse,50", "alexsmobs:*,0".
@@ -95,30 +117,45 @@ public class ServerConfig {
             Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
             "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
 
+    /** Whether {@code /sg spawnall} may run. */
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
+    /** Behavior ids idle mobs choose from, parsed to the registered behaviors they name. */
     public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
             AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool);
+    /** Whether eyed mobs play idle expressions. */
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
+    /** Longest wait in ticks between one mob's idle expressions. */
     public static final ConfigValue<Integer> AMBIENT_MAX_TICKS =
             ConfigValue.integer(AMBIENT_MAX_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    /** Shortest wait in ticks between one mob's idle expressions. */
     public static final ConfigValue<Integer> AMBIENT_MIN_TICKS =
             ConfigValue.integer(AMBIENT_MIN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    /** Per-entity spawn chances as {@code "entity-pattern,percent"} lines; read through {@link #percentFor}. */
     public static final ConfigValue.Parsed<List<SpawnOverride>> ENTITY_OVERRIDES = ConfigValue.parsedStrings(
             ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride, ServerConfig::parseOverrides);
+    /** Spawn chance (0–100) for entities no override matches. */
     public static final ConfigValue<Integer> GLOBAL_PERCENT =
             ConfigValue.integer(GLOBAL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Master switch for spawning, rendering, applying, and harvesting eyes. */
     public static final ConfigValue<Boolean> GOOGLY_EYES_ENABLED = ConfigValue.bool(GOOGLY_EYES_ENABLED_DEFAULT);
+    /** Chance (0–100) that player damage makes an eyed mob's eyes bulge. */
     public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT =
             ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Chance (0–100) that a shears kill of an eyed mob drops a Googly Eye. */
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
+    /** Namespaces the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
+    /** Minimum ticks between one mob's healing swirls. */
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
             ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    /** Whether healing makes an eyed mob's eyes swirl. */
     public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
+    /** Whether a completed trade makes the trader's eyes swirl. */
     public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(SWIRL_ON_TRADE_DEFAULT);
 
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */

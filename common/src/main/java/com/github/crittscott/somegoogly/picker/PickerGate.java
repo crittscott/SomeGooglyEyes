@@ -33,6 +33,7 @@ import java.util.UUID;
  */
 public final class PickerGate {
 
+    /** Ticks between {@code /sg spawnall} runs per player. */
     public static final int SPAWN_ALL_COOLDOWN_TICKS = 200;
 
     /** Ticks between successful exports per player (10 seconds; failed validation doesn't arm it). */

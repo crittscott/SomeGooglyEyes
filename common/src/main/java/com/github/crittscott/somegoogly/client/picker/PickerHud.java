@@ -124,6 +124,7 @@ public final class PickerHud {
         return part != null ? part : I18n.get("somegoogly.picker.hud.none");
     }
 
+    /** Draw the picker HUD while the picker is active. */
     public static void render(GuiGraphics graphics, int width, int height) {
         if (!PickerState.isActive()) {
             return;

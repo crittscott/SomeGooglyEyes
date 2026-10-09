@@ -34,7 +34,10 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
     }
 
-    /** Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary. */
+    /**
+     * Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary.
+     * In game: see {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
+     */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void fabricEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "Fabric");

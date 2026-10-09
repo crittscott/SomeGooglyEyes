@@ -121,8 +121,9 @@ public final class PickerFreezeGameTestsLogic {
     }
 
     /**
-     * A mob left frozen by a crash recovers when it next loads. In game: choose a cow with {@code V}, then end
-     * the server process without a clean stop; after restarting and returning, the cow wanders again.
+     * A mob left frozen by a crash recovers when it next loads. In game: choose a cow with {@code V}, run
+     * {@code /save-all}, then end the server process without a clean stop; after restarting and returning, the cow
+     * wanders again.
      */
     public static void staleMarkerIsRestoredOnJoin(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
