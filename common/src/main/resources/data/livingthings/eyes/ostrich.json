@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/Body/Neck/NeckTop/Head",
+              "attachPoint": "root/Body/Neck/NeckTop/Head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -74,7 +74,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/Body/Neck/NeckTop/Head",
+              "attachPoint": "root/Body/Neck/NeckTop/Head",
               "eyes": [
                 {
                   "depth": 1.0,
