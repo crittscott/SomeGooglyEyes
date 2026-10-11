@@ -2,7 +2,7 @@
 
 The picker is a creative-mode tool for placing eyes on a live, animated mob and exporting the result as [datapack JSON](datapack-format.md).
 
-Requirements: **creative mode**, checked on the server. The whole picker, including exporting, spawning, and the `mob` verbs, works from a remote client on any server running the mod.
+Requirements: **creative mode** and **operator permission level 2** (the level `/summon` needs), checked on the server, because picker edits change the world without firing protection events. The whole picker, including exporting, spawning, and the `mob` verbs, works from a remote client on any server running the mod.
 
 ## Keys
 
@@ -59,7 +59,7 @@ Both act on the live server mob (feedback comes back as a server message). Not t
 
 ### The (dangerous) spawn grid
 
-`/sg spawnall [mod]` (creative) **spawns one of every summonable living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). **Only run this on a test or throwaway world.** It freely overwrites blocks, and forcing a mob to spawn outside its mod's normal context — MineColonies' and Create's mobs are known cases — can corrupt or destabilize the world. Never run it on a shared or otherwise valuable server.
+`/sg spawnall [mod]` **spawns one of every summonable living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). **Only run this on a test or throwaway world.** It freely overwrites blocks, and forcing a mob to spawn outside its mod's normal context — MineColonies' and Create's mobs are known cases — can corrupt or destabilize the world. Never run it on a shared or otherwise valuable server.
 
 Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAll = true` in the server config (`<world>/serverconfig/somegoogly-server.toml`, `picker` section) to enable it. The check is server-side, so a modified client can't bypass it. Set it back to `false` (or restart without it) once you're done auditing.
 

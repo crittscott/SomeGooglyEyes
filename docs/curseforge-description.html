@@ -27,106 +27,61 @@
 </head>
 <body>
 
-<h1>Some Googly Eyes</h1>
-
+<h1 id="some-googly-eyes">Some Googly Eyes</h1>
 <p>A complete rewrite and expansion of <a href="https://www.curseforge.com/minecraft/mc-mods/googlyeyes">iChun's Googly Eyes</a>. (Also look to <a href="https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes">Regoogly Eyes</a> by EmeryTheModder if you want a pure port of the original.)</p>
-
 <p>Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.</p>
-
 <p>Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.</p>
-
-<p>Includes attachment support for GeckoLib- and Citadel-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.</p>
-
-<p><img src="https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png" alt="A field of mobs wearing googly eyes"></p>
-
-<p><img src="https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge" alt="Loaders: Fabric + NeoForge + Forge"> <img src="https://img.shields.io/badge/Minecraft-1.20.1%20and%201.21.1-8A5A9B?style=for-the-badge" alt="Minecraft: 1.20.1, 1.21.1"></p>
-
-<h2>Getting eyes</h2>
-
+<p>Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.</p>
+<p><img src="https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.4/docs/googlyeyes-splash-0.8.2.png" alt="A field of mobs wearing googly eyes" /></p>
+<p><img src="https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge" alt="Loaders: Fabric + NeoForge + Forge" /> <img src="https://img.shields.io/badge/Minecraft-1.20.1%2C%201.21.1%2C%201.21.4-8A5A9B?style=for-the-badge" alt="Minecraft: 1.20.1, 1.21.1, 1.21.4" /></p>
+<h2 id="getting-eyes">Getting eyes</h2>
 <p><strong>Dispatch the mob with a direct shears blow</strong>: there's a chance to drop a googly eye.</p>
-
 <p><strong>Find the Optometrist enchantment</strong>: put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.</p>
-
 <p><strong>Customize it in a crafting grid</strong>: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.</p>
-
-<p><strong>Set it in slime</strong>: googly eye + slimeball &rarr; a <strong>Slimy Eye</strong>, which inherits the eye's colors.</p>
-
-<p><strong>Apply it</strong>: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it &mdash; pluck them off first to restyle.</p>
-
-<h2>Eye potential</h2>
-
-<p>Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all &mdash; before you walk up to it.</p>
-
-<h2>Configuration</h2>
-
+<p><strong>Set it in slime</strong>: googly eye + slimeball → a <strong>Slimy Eye</strong>, which inherits the eye's colors.</p>
+<p><strong>Apply it</strong>: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.</p>
+<h2 id="eye-potential">Eye potential</h2>
+<p>Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.</p>
+<h2 id="configuration">Configuration</h2>
 <ul>
-  <li><strong>Server settings</strong> (<code>&lt;world&gt;/serverconfig/somegoogly-server.toml</code>): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.</li>
-  <li><strong>Client settings</strong> (<code>config/somegoogly-client.toml</code>): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.</li>
+<li><strong>Server settings</strong> (<code>&lt;world&gt;/serverconfig/somegoogly-server.toml</code>): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.</li>
+<li><strong>Client settings</strong> (<code>config/somegoogly-client.toml</code>): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.</li>
 </ul>
-
-<p>See <a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/configuration.md">the configuration reference</a> for the full list.</p>
-
-<h2>Pack and mod authors</h2>
-
-<p>Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob in creative mode and export the result as datapack files.</p>
-
+<p>See <a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/configuration.md">the configuration reference</a> for the full list.</p>
+<h2 id="pack-and-mod-authors">Pack and mod authors</h2>
+<p>Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob (operators in creative mode) and export the result as datapack files.</p>
 <ul>
-  <li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/datapack-format.md">The eye definition format</a></li>
-  <li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/picker.md">The in-game authoring workflow and <code>/sg</code> commands</a></li>
+<li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/datapack-format.md">The eye definition format</a></li>
+<li><a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/picker.md">The in-game authoring workflow and <code>/sg</code> commands</a></li>
 </ul>
-
-<h2>Compatibility</h2>
-
-<p>The eye placing system supports vanilla models as well as GeckoLib- and Citadel-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.20.1 and 1.21.1; model changes may require adjusted placements.</p>
-
+<h2 id="compatibility">Compatibility</h2>
+<p>The eye placing system supports vanilla models as well as GeckoLib-, Citadel-, and Uranus-based models, including those that use legacy LLibrary code.</p>
 <p>Ships with predefined eye configs for:</p>
-
-<ul>
-  <li>Minecraft</li>
-  <li>Ad Astra</li>
-  <li>Adorable Hamster Pets</li>
-  <li>Alex's Mobs</li>
-  <li>Ars Elemental</li>
-  <li>Ars Nouveau</li>
-  <li>Artifacts</li>
-  <li>Autumnity</li>
-  <li>EvilCraft</li>
-  <li>Exotic Birds</li>
-  <li>Farming for Blockheads</li>
-  <li>Forbidden Arcanus</li>
-  <li>Hamsters Plus Lite</li>
-  <li>Ice and Fire</li>
-  <li>Illager Invasion</li>
-  <li>Immersive Engineering</li>
-  <li>Living Things</li>
-  <li>MmmMmmMmmMmm</li>
-  <li>Mowzie's Mobs</li>
-  <li>Occultism</li>
-  <li>Oh The Biomes We've Gone</li>
-  <li>Productive Bees</li>
-  <li>Regions Unexplored</li>
-  <li>Rotten Creatures</li>
-  <li>Shiny</li>
-  <li>Simply Cats</li>
-  <li>Supplementaries</li>
-  <li>Sushi Go Crafting</li>
-  <li>The Aether</li>
-  <li>The Bumblezone</li>
-  <li>Tiny Skeletons</li>
-  <li>Twilight Forest</li>
-  <li>Variants &amp; Ventures</li>
-  <li>WilderNature</li>
-</ul>
-
+<table>
+<tbody>
+<tr><td>Minecraft</td><td>Farming for Blockheads</td><td>Occultism</td></tr>
+<tr><td>Abnormals Autumnity</td><td>Forbidden Arcanus</td><td>Oh The Biomes We've Gone</td></tr>
+<tr><td>Abnormals Caverns &amp; Chasms</td><td>Friends &amp; Foes</td><td>Productive Bees</td></tr>
+<tr><td>Abnormals Environmental</td><td>Hamsters Plus Lite</td><td>Regions Unexplored</td></tr>
+<tr><td>Abnormals Upgrade Aquatic</td><td>Ice and Fire Community Edition</td><td>Rotten Creatures</td></tr>
+<tr><td>Ad Astra</td><td>Illager Invasion</td><td>Shiny</td></tr>
+<tr><td>Adorable Hamster Pets</td><td>Immersive Engineering</td><td>Simply Cats</td></tr>
+<tr><td>AdventureZ</td><td>Let's Do Alpine Whispers</td><td>Supplementaries</td></tr>
+<tr><td>Alex's Mobs</td><td>Let's Do Brewery</td><td>Sushi Go Crafting</td></tr>
+<tr><td>Ars Elemental</td><td>Let's Do Furniture</td><td>The Aether</td></tr>
+<tr><td>Ars Nouveau</td><td>Let's Do Meadow</td><td>The Bumblezone</td></tr>
+<tr><td>Artifacts</td><td>Let's Do Vinery</td><td>Tiny Skeletons</td></tr>
+<tr><td>Critters and Companions</td><td>Living Things</td><td>Twilight Forest</td></tr>
+<tr><td>Ecologics</td><td>MmmMmmMmmMmm</td><td>Variants &amp; Ventures</td></tr>
+<tr><td>EvilCraft</td><td>Mowzie's Mobs</td><td>WilderNature</td></tr>
+<tr><td>Exotic Birds</td><td>Naturalist</td><td></td></tr>
+</tbody>
+</table>
 <p>Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? <a href="https://github.com/crittscott/SomeGooglyEyes/issues">Open an issue</a>.</p>
-
-<p>Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1, and for Fabric and Forge on Minecraft 1.20.1. Fabric and NeoForge require <a href="https://www.curseforge.com/minecraft/mc-mods/architectury-api">Architectury API</a>; Forge does not.</p>
-
-<h2>Credits and license</h2>
-
-<p>A port of iChun's <strong>Googly Eyes</strong>, rebuilt for 1.20.1 and 1.21.1 with new physics, behaviors, and more.</p>
-
-<p>License: <a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/LICENSE"><strong>GPL-3.0</strong></a>.</p>
+<p>Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4, 1.21.1, and 1.20.1.</p>
+<h2 id="credits-and-license">Credits and license</h2>
+<p>A port of iChun's <strong>Googly Eyes</strong>, rebuilt for 1.20.1, 1.21.1, and 1.21.4 with new physics, behaviors, and more.</p>
+<p>License: <a href="https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/LICENSE"><strong>GPL-3.0</strong></a>.</p>
 
 </body>
 </html>
