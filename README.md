@@ -36,7 +36,7 @@ See [docs/configuration.md](docs/configuration.md) for the full reference.
 
 ## Pack and mod authors
 
-Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob in creative mode and export the result as datapack files.
+Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob (operators in creative mode) and export the result as datapack files.
 
 - [docs/datapack-format.md](docs/datapack-format.md) — the eye definition format
 - [docs/picker.md](docs/picker.md) — the in-game authoring workflow and `/sg` commands
@@ -47,53 +47,24 @@ The eye placing system supports vanilla models as well as GeckoLib-, Citadel-, a
 
 Ships with predefined eye configs for:
 
-- Minecraft
-- Abnormals Autumnity
-- Abnormals Caverns & Chasms
-- Abnormals Environmental
-- Abnormals Upgrade Aquatic
-- Ad Astra
-- Adorable Hamster Pets
-- AdventureZ
-- Alex's Mobs
-- Ars Elemental
-- Ars Nouveau
-- Artifacts
-- Critters and Companions
-- Ecologics
-- EvilCraft
-- Exotic Birds
-- Farming for Blockheads
-- Forbidden Arcanus
-- Friends & Foes
-- Hamsters Plus Lite
-- Ice and Fire Community Edition
-- Illager Invasion
-- Immersive Engineering
-- Let's Do Alpine Whispers
-- Let's Do Brewery
-- Let's Do Furniture
-- Let's Do Meadow
-- Let's Do Vinery
-- Living Things
-- MmmMmmMmmMmm
-- Mowzie's Mobs
-- Naturalist
-- Occultism
-- Oh The Biomes We've Gone
-- Productive Bees
-- Regions Unexplored
-- Rotten Creatures
-- Shiny
-- Simply Cats
-- Supplementaries
-- Sushi Go Crafting
-- The Aether
-- The Bumblezone
-- Tiny Skeletons
-- Twilight Forest
-- Variants & Ventures
-- WilderNature
+| | | |
+|---|---|---|
+| Minecraft | Farming for Blockheads | Occultism |
+| Abnormals Autumnity | Forbidden Arcanus | Oh The Biomes We've Gone |
+| Abnormals Caverns & Chasms | Friends & Foes | Productive Bees |
+| Abnormals Environmental | Hamsters Plus Lite | Regions Unexplored |
+| Abnormals Upgrade Aquatic | Ice and Fire Community Edition | Rotten Creatures |
+| Ad Astra | Illager Invasion | Shiny |
+| Adorable Hamster Pets | Immersive Engineering | Simply Cats |
+| AdventureZ | Let's Do Alpine Whispers | Supplementaries |
+| Alex's Mobs | Let's Do Brewery | Sushi Go Crafting |
+| Ars Elemental | Let's Do Furniture | The Aether |
+| Ars Nouveau | Let's Do Meadow | The Bumblezone |
+| Artifacts | Let's Do Vinery | Tiny Skeletons |
+| Critters and Companions | Living Things | Twilight Forest |
+| Ecologics | MmmMmmMmmMmm | Variants & Ventures |
+| EvilCraft | Mowzie's Mobs | WilderNature |
+| Exotic Birds | Naturalist |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
