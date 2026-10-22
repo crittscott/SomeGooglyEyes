@@ -1,6 +1,11 @@
-# Some Googly Eyes As-Built Orientation
+<!-- FIXED HEADER: not content. Do not edit, trim, or count toward the size limit. -->
+> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
+<!-- END FIXED HEADER -->
 
-Repository orientation to subsystem ownership and cross-module invariants; `player-view.md` covers observable behavior. The code wins when they disagree.
+
+# Some Googly Eyes — code orientation
+
+Repository orientation to subsystem ownership and cross-module invariants; `orientation-player.md` covers observable behavior. The code wins when they disagree.
 
 Keep this current, under 150 lines and 12k characters, and limited to sentences that name either the file/class to change or an invariant not visible from one file. This is neither history nor a specification.
 
@@ -19,7 +24,7 @@ The Gradle project has four modules; `common` is transformed into all three load
 | `fabric/src/gametest` | Fabric wrappers and discovery metadata |
 | `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, Access Transformer |
 | `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
-| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata, Access Transformer |
+| `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, GeckoLib bridge, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
 Common main imports no loader or GeckoLib type; differences pass through project-owned adapters or six Architectury `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
@@ -72,7 +77,7 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
 
-Fabric uses the common 1.21.1 Access Widener; Forge and NeoForge copy `gradle/accesstransformer.cfg` into their resources. These two 36-rule access representations must stay aligned.
+The common `somegoogly.accesswidener` serves common compilation, Fabric, and NeoForge, which converts it to an access transformer at remap. Forge carries its own `META-INF/accesstransformer.cfg`; `verifyCommonAccessMirror`, wired into `check`, fails when it lacks any widener entry.
 
 GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
 
@@ -110,4 +115,4 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 - Optional renderer integrations log recoverable linkage, reflection, construction, and invocation failures once per affected operation and omit eyes when reliable attachment geometry cannot be produced; third-party model changes can still silently invalidate bundled tokens or placement geometry without throwing.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- `build-env/` is not a build input; it copies the root and module build scripts verbatim, and every edit to a build script must be mirrored there.
+- `build-env/` is not a build input; it is a snapshot of the build environment described in `orientation-build.md`, and every edit to a file it covers must be mirrored there.

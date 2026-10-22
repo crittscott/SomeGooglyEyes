@@ -1,4 +1,9 @@
-# Some Googly Eyes
+<!-- FIXED HEADER: not content. Do not edit, trim, or count toward the size limit. -->
+> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
+<!-- END FIXED HEADER -->
+
+
+# Some Googly Eyes — player-facing behavior
 
 Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear with eyes, react with
 expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and

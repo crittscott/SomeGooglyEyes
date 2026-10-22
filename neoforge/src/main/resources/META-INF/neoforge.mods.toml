@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="${neoforge_loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/crittscott/SomeGooglyEyes/issues"
+issueTrackerURL="${mod_issues}"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
-displayURL="https://github.com/crittscott/SomeGooglyEyes/tree/1.21.1"
+displayURL="${mod_homepage}"
 logoFile="somegoogly-sm.png"
 description='''${mod_description}'''
 
