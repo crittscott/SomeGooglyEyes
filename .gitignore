@@ -1,18 +1,29 @@
-# idea
-out
+# IntelliJ
+/out/
 *.ipr
 *.iws
 *.iml
-.idea
+/.idea/
 
-# gradle
-build/
-.gradle/
+# VS Code / Eclipse Java tooling
+/.vscode/
+**/bin/
+**/.eclipse/
+
+# Gradle
+**/build/
+**/.gradle/
+**/src/generated/resources/.cache/
+/.architectury-transformer/
+
+# Forge/Minecraft runtime
+**/run/
+**/run-data/
+**/logs/
+**/crash-reports/
 
 # other
-run/
-run-data/
-othersourcecode/
-.vscode/
-tmp/
-review-*.md
+/review-*.md
+/othersource/
+/othersourcecode/
+/tmp/

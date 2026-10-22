@@ -112,4 +112,4 @@ NeoForge and Forge both isolate physical-client bootstrap from dedicated-server 
 
 - Optional renderer integrations log recoverable failures once per operation and omit eyes when attachment geometry cannot be produced; third-party model changes can silently invalidate bundled tokens or geometry.
 - Wire compatibility is the protocol-version number, not the display version, and pre-release data and protocol formats have no compatibility layer.
-- `build-env/` is not a build input; it is a byte-for-byte snapshot of the Gradle scripts, properties, and wrapper described in `build-env.md`, and every edit to one of those files must be mirrored there.
+- `build-env/` is not a build input; it is a snapshot of the build environment described in `orientation-build.md`, and every edit to a file it covers must be mirrored there.

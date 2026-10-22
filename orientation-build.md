@@ -1,35 +1,33 @@
-# Some Googly Eyes Build Environment
+<!-- FIXED HEADER: not content. Do not edit, trim, or count toward the size limit. -->
+> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
+<!-- END FIXED HEADER -->
+
+# Some Googly Eyes — build orientation
 
 This document is an orientation to the repository's build environment: its entry points, module layout, version authorities, dependency baselines, and packaging flow. It describes the setup as it exists. It is not build history, a troubleshooting log, release documentation, or a conversation.
 
-`build-env/` is a reference snapshot of every checked-in Gradle build input, including the wrapper. It preserves repository-relative paths so that files can be compared or restored without guessing where they belong. The active files at the repository root and under `common/`, `fabric/`, `forge/`, `neoforge/`, and `gradle/` remain authoritative; Gradle does not read the copies. Keep the snapshot and this description synchronized whenever an active build file changes.
+`build-env/` is a reference snapshot of the repository's build environment: every checked-in Gradle build input including the wrapper, plus the agent instructions, the build-runner script, the Git settings, and outlines of the three orientation files. It preserves repository-relative paths so that files can be compared or restored without guessing where they belong. The active files at the repository root and under `common/`, `fabric/`, `forge/`, `neoforge/`, and `gradle/` remain authoritative; Gradle does not read the copies. Keep the snapshot and this description synchronized whenever an active file it covers changes.
 
-The snapshot should contain only manually maintained files that define or launch this Gradle build: Gradle scripts, Gradle properties, wrapper launchers, and wrapper files. It should not contain caches, generated output, IDE state, run directories, resolved dependency JARs, mod source or resources (including the access widener and access transformer), loader manifests, release notes, or personal convenience scripts such as `gradlews.ps1`. The wrapper JAR is the sole binary because it is itself a checked-in build launcher.
+The snapshot holds verbatim copies of the manually maintained files that define or launch this Gradle build (Gradle scripts, Gradle properties, wrapper launchers, and wrapper files), the agent instructions (`CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`), `gradlews.ps1`, which runs the standard Gradle task sequence and reports each step's result, and the Git settings (`.gitignore`, `.gitattributes`). The orientation entries are outlines, not copies: each holds its file's fixed header followed by every heading in order, with no body text, so it records the files' format without duplicating content that changes with the code. It should not contain caches, generated output, IDE state, run directories, resolved dependency JARs, mod source or resources, GameTest fixtures, loader manifests, or release notes. The wrapper JAR is the sole binary because it is itself a checked-in build launcher.
 
 ## Snapshot contents
 
-| Active path | Reference copy |
+Each copy sits at `build-env/` followed by its active path.
+
+| Kind | Active paths |
 | --- | --- |
-| `settings.gradle` | `build-env/settings.gradle` |
-| `build.gradle` | `build-env/build.gradle` |
-| `gradle.properties` | `build-env/gradle.properties` |
-| `common/build.gradle` | `build-env/common/build.gradle` |
-| `fabric/build.gradle` | `build-env/fabric/build.gradle` |
-| `fabric/gradle.properties` | `build-env/fabric/gradle.properties` |
-| `forge/build.gradle` | `build-env/forge/build.gradle` |
-| `forge/gradle.properties` | `build-env/forge/gradle.properties` |
-| `neoforge/build.gradle` | `build-env/neoforge/build.gradle` |
-| `neoforge/gradle.properties` | `build-env/neoforge/gradle.properties` |
-| `gradlew` | `build-env/gradlew` |
-| `gradlew.bat` | `build-env/gradlew.bat` |
-| `gradle/wrapper/gradle-wrapper.properties` | `build-env/gradle/wrapper/gradle-wrapper.properties` |
-| `gradle/wrapper/gradle-wrapper.jar` | `build-env/gradle/wrapper/gradle-wrapper.jar` |
+| Gradle build | `settings.gradle`, `build.gradle`, `gradle.properties`, `common/build.gradle`, `fabric/build.gradle`, `fabric/gradle.properties`, `forge/build.gradle`, `forge/gradle.properties`, `neoforge/build.gradle`, `neoforge/gradle.properties` |
+| Gradle wrapper | `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle/wrapper/gradle-wrapper.jar` |
+| Agent instructions | `CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md` |
+| Build runner | `gradlews.ps1` |
+| Git settings | `.gitignore`, `.gitattributes` |
+| Orientation outlines | `orientation-player.md`, `orientation-code.md`, `orientation-build.md` |
 
 ## Build shape
 
 The project is a Groovy-DSL Gradle build with `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root build applies Architectury Loom and the Architectury plugin to each subproject and establishes shared Minecraft mappings and Java settings. The build declares no Maven publication; the modules expose no stable public API and nothing consumes them through Maven. `common` is transformed for Fabric, Forge, and NeoForge; each loader module bundles its transformed common output with Shadow and then remaps the resulting production JAR. Architectury is build-time only: the plugin supplies `@ExpectPlatform` and its transformation, and no loader requires Architectury API at runtime.
 
-`common` depends on Fabric Loader only for its cross-remapped annotations. Every loader also compiles the shared GeckoLib render bridge from `gecko/src/main/java` against its own compile-only GeckoLib artifact from GeckoLib's Cloudsmith Maven; GeckoLib is optional at runtime and is not bundled.
+`common` depends on Fabric Loader only for the Mixin annotations of its common Mixins. Every loader also compiles the shared GeckoLib render bridge from `gecko/src/main/java` against its own compile-only GeckoLib artifact from GeckoLib's Cloudsmith Maven; GeckoLib is optional at runtime and is not bundled.
 
 `common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; Fabric and NeoForge point their own `loom.accessWidenerPath` at common's; NeoForge, which reads access transformers rather than wideners, also names that widener in `atAccessWideners` so its production JAR carries the converted rules. Forge keeps its own `forge/src/main/resources/META-INF/accesstransformer.cfg` because Loom cannot convert into a JAR that already contains an access transformer; `verifyCommonAccessMirror`, wired into `check`, translates each widener entry to access-transformer syntax and fails when the Forge file lacks one.
 
@@ -40,6 +38,8 @@ Each loader module compiles against common through the `common` configuration. F
 On Windows, `gradlew.bat` is the normal entry point; `gradlew` is the POSIX launcher. The wrapper selects the Gradle distribution, while the launcher selects its host JVM from the machine's Java configuration. The root build declares a Java 21 toolchain, which Gradle applies by convention to compilation, Javadoc, and Gradle-launched Java executions. Every module also produces a sources JAR.
 
 Each subproject has the Java plugin's standard production-source `javadoc` task. Each loader also has a `gametestJavadoc` task over its complete GameTest source set, including the shared package-private assertions under `common/src/gametest/java`. The root `generateDocs` task derives its loader list from `enabled_platforms`, depends on every module's `javadoc` and each loader's `gametestJavadoc`, and synchronizes their HTML output into the committed `docs/javadoc/<module>/` and `docs/javadoc/<loader>-gametest/` trees; separate sections are required because loader modules contain classes with overlapping fully qualified names. `docs/index.html` is the hand-maintained landing page and `docs/.nojekyll` makes GitHub Pages serve the generated files unchanged. Neither file is a Gradle build input, and generated documentation is intentionally excluded from `build-env/`. The build does not produce Javadoc JARs.
+
+The root `collectJars` task copies each enabled loader's already-built production jar (`<archivesName>-<version>.jar` in its `build/libs`, not the dev, dev-shadow, or sources jars) into `../jars`, the directory shared by all version checkouts, for installing into a local launcher. It builds nothing and skips jars that have not been built; it overwrites same-named jars and leaves other versions' jars alone. `gradlews.ps1` runs `clean build`, `runGameTestServer`, `generateDocs`, and `collectJars` in sequence and reports each step's exit code.
 
 ## Exact build versions
 
@@ -65,6 +65,8 @@ The Java setting is exact only at the language/toolchain-major level. The reposi
 ## Artifact and runtime version declarations
 
 These values do not select build tools, but they are versioned inputs consumed by resource expansion and are relevant when reproducing the produced artifacts.
+
+Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META-INF/neoforge.mods.toml`) from the root `sharedModProperties`, which include `mod_homepage` and the source (`<homepage>/tree/<minecraft_version>`) and issue-tracker (`<homepage>/issues`) URLs derived from it.
 
 | Subject | Declaration |
 | --- | --- |

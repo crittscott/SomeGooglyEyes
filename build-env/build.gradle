@@ -26,8 +26,8 @@ ext.configureGameTests = { Project loaderProject ->
         classpath = gametest.compileClasspath
         destinationDir = loaderProject.layout.buildDirectory.dir('docs/gametestJavadoc').get().asFile
 
-        // Shared scenarios and helpers are deliberately package-private; they contain the
-        // authoritative manual and automation-only procedures linked by the public test wrappers.
+        // Shared scenarios and helpers are package-private; document them alongside the public loader
+        // test holders.
         options.addBooleanOption('package', true)
     }
 }
@@ -42,6 +42,9 @@ ext.sharedModProperties = [
         mod_authors      : mod_authors,
         mod_description  : mod_description,
         minecraft_version: minecraft_version,
+        mod_homepage     : mod_homepage,
+        mod_sources      : "${mod_homepage}/tree/${minecraft_version}",
+        mod_issues       : "${mod_homepage}/issues",
         geckolib_version : geckolib_version,
 ]
 
@@ -74,8 +77,8 @@ subprojects {
             parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
         }
 
-        // common and every loader's source uses javax.annotation.Nullable. Neither Loom nor the
-        // loader dependencies reliably provide it, so declare it for all modules here.
+        // Every module's source uses javax.annotation.Nullable. Minecraft ships JSR 305 at runtime, but
+        // Loom does not put it on common's compile classpath, so declare it for all modules here.
         compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     }
 
@@ -114,6 +117,23 @@ tasks.register('generateDocs', Sync) {
 
         from(gametestJavadoc.map { it.destinationDir }) {
             into "${documentedProject.name}-gametest"
+        }
+    }
+}
+
+// Copies every loader's already-built production jar into the jars directory shared by all version
+// checkouts, for installing into a local launcher. It builds nothing, skips jars that have not been
+// built, and leaves other versions' jars there alone.
+tasks.register('collectJars', Copy) {
+    group = 'build'
+    description = "Copies the loaders' already-built production jars into ../jars."
+
+    into rootProject.file('../jars')
+
+    enabled_platforms.split(',').each { platform ->
+        def loader = project(":$platform")
+        from(loader.layout.buildDirectory.dir('libs')) {
+            include "${loader.base.archivesName.get()}-${loader.version}.jar"
         }
     }
 }
