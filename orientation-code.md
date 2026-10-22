@@ -107,4 +107,4 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 ## Operational boundaries
 
 - Optional renderer integrations log failures once.
-- `build-env/` is a byte-for-byte, non-input snapshot of the build files listed in `build-env.md`; mirror edits there.
+- `build-env/` is not a build input; it is a snapshot of the build environment described in `orientation-build.md`, and every edit to a file it covers must be mirrored there.
