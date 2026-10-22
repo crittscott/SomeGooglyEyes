@@ -2,28 +2,15 @@ plugins {
     id 'com.gradleup.shadow'
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 architectury {
     platformSetupLoomIde()
     fabric()
 }
 
-sourceSets {
-    gametest {
-        java {
-            srcDir project(':common').file('src/gametest/java')
-            srcDir file('src/gametest/java')
-        }
-        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
-        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
-    }
-}
+rootProject.configureGameTests(project)
 
 loom {
-    accessWidenerPath = project(':common').file('src/main/resources/somegoogly.accesswidener')
+    accessWidenerPath = project(':common').loom.accessWidenerPath
 
     mods {
         main {
@@ -39,8 +26,18 @@ loom {
             server()
             name 'Game Test Server'
             vmArg '-Dfabric-api.gametest'
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.get().asFile}/gametest-report.xml"
             source sourceSets.gametest
         }
+    }
+}
+
+// The GameTest server reuses run/world between launches; clear it so entities and eye state left by
+// one GameTest run cannot leak into the next.
+def gameTestWorldDirectory = layout.projectDirectory.dir('run/world')
+tasks.named('runGameTestServer').configure {
+    doFirst {
+        project.delete(gameTestWorldDirectory)
     }
 }
 
@@ -61,51 +58,47 @@ configurations {
     }
 }
 
+repositories {
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
+
+    // Optional at runtime; needed at compile time by the GeckoLib render bridge.
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
-
-    modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
-
-    // Optional at runtime; needed at compile time by Fabric's GeckoLib render adapter.
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-1.20.1:4.7.4"
-
-    // common's source uses javax.annotation.Nullable. Forge gets this transitively through its own
-    // dependency chain; Fabric Loom's does not provide it, so it must be redeclared here even though
-    // common itself already depends on it.
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 // Expands ${...} placeholders in fabric.mod.json (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            minecraft_version: minecraft_version, fabric_loader_version: fabric_loader_version,
-            fabric_api_version: fabric_api_version, architectury_api_version: architectury_api_version,
-            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors: mod_authors, mod_description: mod_description,
+    var replaceProperties = rootProject.sharedModProperties + [
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version: fabric_api_version,
     ]
     inputs.properties replaceProperties
 
     filesMatching('fabric.mod.json') {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
-
-    from(project(':common').file('src/main/resources/somegoogly.accesswidener'))
 }
 
-// Expands ${...} placeholders in the gametest dev-mod's own fabric.mod.json.
+// Expands ${...} placeholders in the gametest fabric.mod.json (this module's own resource).
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
-            fabric_loader_version: fabric_loader_version, fabric_api_version: fabric_api_version,
-            mod_version: mod_version,
+            mod_version          : mod_version,
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version   : fabric_api_version,
     ]
     inputs.properties replaceProperties
 
     filesMatching('fabric.mod.json') {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 

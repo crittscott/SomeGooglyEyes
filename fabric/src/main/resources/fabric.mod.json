@@ -8,6 +8,11 @@
     "${mod_authors}"
   ],
   "license": "${mod_license}",
+  "contact": {
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_sources}",
+    "issues": "${mod_issues}"
+  },
   "environment": "*",
   "accessWidener": "somegoogly.accesswidener",
   "mixins": [

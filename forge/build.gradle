@@ -7,16 +7,7 @@ architectury {
     forge()
 }
 
-sourceSets {
-    gametest {
-        java {
-            srcDir project(':common').file('src/gametest/java')
-            srcDir file('src/gametest/java')
-        }
-        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
-        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
-    }
-}
+rootProject.configureGameTests(project)
 
 loom {
     mods {
@@ -40,18 +31,15 @@ loom {
     }
 }
 
-repositories {
-    // GeckoLib (soft dependency — compile against its API; present at runtime via the modpack).
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 configurations {
     common {
         canBeResolved = true
         canBeConsumed = false
     }
+    // Runs receive common only through developmentForge, which Architectury's runtime transformer rewrites
+    // (@ExpectPlatform); listing it in loom.mods as well would load it untransformed and put its
+    // packages in two modules.
     compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
     developmentForge.extendsFrom common
 
     // Files in this configuration will be bundled into your mod using the Shadow plugin.
@@ -62,63 +50,55 @@ configurations {
     }
 }
 
+repositories {
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+}
+
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
+    modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
+
+    // Optional at runtime; needed at compile time by the GeckoLib render bridge. Not remapped:
+    // GeckoLib's Forge artifacts are already usable as-is.
+    compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
-
-    modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
-
-    // GeckoLib — soft dependency. compileOnly so the mod still runs without it (gated at runtime by
-    // a loaded-mod check). Not remapped: GeckoLib's own Forge artifacts are already usable as-is.
-    compileOnly "software.bernie.geckolib:geckolib-forge-1.20.1:4.7.4"
 }
 
 // Expands ${...} placeholders in mods.toml (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
-            forge_version_range: forge_version_range, loader_version_range: loader_version_range,
-            architectury_api_version: architectury_api_version,
-            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors: mod_authors, mod_description: mod_description,
+    var replaceProperties = rootProject.sharedModProperties + [
+            minecraft_version_range: minecraft_version_range,
+            forge_version_range: forge_version_range,
+            forge_loader_version_range: forge_loader_version_range,
     ]
     inputs.properties replaceProperties
 
     filesMatching('META-INF/mods.toml') {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 
-// Expands ${...} placeholders in the gametest dev-mod's own mods.toml.
+// Expands ${...} placeholders in the gametest mods.toml (this module's own resource).
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
-            minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
-            loader_version_range: loader_version_range, mod_license: mod_license, mod_version: mod_version,
+            mod_license               : mod_license,
+            mod_version               : mod_version,
+            forge_version_range       : forge_version_range,
+            forge_loader_version_range: forge_loader_version_range,
+            minecraft_version_range   : minecraft_version_range,
     ]
     inputs.properties replaceProperties
 
     filesMatching('META-INF/mods.toml') {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
-
-    manifest {
-        attributes([
-                'Specification-Title'     : mod_id,
-                'Specification-Vendor'    : mod_authors,
-                'Specification-Version'   : '1',
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.version,
-                'Implementation-Vendor'   : mod_authors,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
 }
 
 remapJar {

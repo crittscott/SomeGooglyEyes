@@ -1,0 +1,13 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+
+}
+
+dependencies {
+    // Common code uses Architectury API registries and networking; each loader supplies it at runtime.
+    modCompileOnly "dev.architectury:architectury:$rootProject.architectury_api_version"
+}
