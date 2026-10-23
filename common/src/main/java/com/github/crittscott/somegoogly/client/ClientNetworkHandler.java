@@ -7,10 +7,8 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -19,7 +17,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/** Applies the three server-to-client payloads on the client game thread. */
+/**
+ * Applies the three server-to-client payloads on the client game thread. Loader payload registration runs on
+ * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
+ * payload arrives rather than when the handler is registered.
+ */
 public final class ClientNetworkHandler {
 
     private static final int MAX_PENDING_EYE_STATES = 1_024;
@@ -28,24 +30,14 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
-    public static void register() {
-        NetworkTransport.installClientReceiver(ClientNetworkHandler::handle);
+    /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
+    public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
+        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled());
+        ClientEyeRuntime.clear();
     }
 
-    public static void handle(CustomPacketPayload payload) {
-        if (payload instanceof EyeConfigSyncPacket packet) {
-            ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled());
-            ClientEyeRuntime.clear();
-        } else if (payload instanceof EyeStatePacket packet) {
-            handleEyeState(packet);
-        } else if (payload instanceof EyeBehaviorTriggerPacket packet) {
-            handleBehavior(packet);
-        } else {
-            throw new IllegalArgumentException("Unknown Some Googly Eyes payload " + payload.type().id());
-        }
-    }
-
-    private static void handleEyeState(EyeStatePacket packet) {
+    /** Apply a full eye-state snapshot, or hold it until its entity is created on this client. */
+    public static void handleEyeState(EyeStatePacket packet) {
         LivingEntity living = living(packet.entityId());
         if (living == null || !living.getUUID().equals(packet.entityUuid())) {
             queueEyeState(packet);
@@ -54,7 +46,8 @@ public final class ClientNetworkHandler {
         applyEyeState(living, packet);
     }
 
-    private static void handleBehavior(EyeBehaviorTriggerPacket packet) {
+    /** Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored. */
+    public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId());
         LivingEntity living = living(packet.entityId());
         if (behavior == null || living == null) {

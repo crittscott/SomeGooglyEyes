@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.network.neoforge.NeoForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -31,9 +30,6 @@ public final class NeoForgeClient {
     }
 
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
-        // Install the common client receive handoff before registered payload handlers can invoke it.
-        ClientNetworkHandler.register();
-        NeoForgeClientNetworkTransport.register();
         NeoForgeClientConfig.register(modBus, modContainer);
 
         modBus.addListener(NeoForgeClient::addRendererLayers);

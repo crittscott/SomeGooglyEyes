@@ -4,5 +4,9 @@ architectury {
 
 loom {
     accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+}
 
+dependencies {
+    // Optional at runtime; needed at compile time by the GeckoLib render integration.
+    modCompileOnly "software.bernie.geckolib:geckolib-common-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 }

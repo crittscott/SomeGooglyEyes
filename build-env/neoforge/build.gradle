@@ -9,13 +9,9 @@ architectury {
 
 repositories {
     maven { url = 'https://maven.neoforged.net/releases/' }
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 rootProject.configureGameTests(project)
-// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
-// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
-sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
 
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
@@ -62,9 +58,6 @@ configurations {
 
 dependencies {
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_compile_version"
-
-    // Optional at runtime; needed at compile time by the GeckoLib render bridge.
-    modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')

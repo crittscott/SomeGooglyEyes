@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -18,11 +18,11 @@ public final class EyeStateSync {
         if (EyeState.isDefaultState(entity)) {
             return;
         }
-        NetworkHandler.sendEyeState(player, packet(entity, EyeState.snapshot(entity)));
+        Networking.sendToPlayer(player, packet(entity, EyeState.snapshot(entity)));
     }
 
     public static void sync(LivingEntity entity, EyeState.Snapshot snapshot) {
-        NetworkHandler.sendEyeStateTrackingAndSelf(entity, packet(entity, snapshot));
+        Networking.sendTrackingAndSelf(entity, packet(entity, snapshot));
     }
 
     private static EyeStatePacket packet(LivingEntity entity, EyeState.Snapshot snapshot) {

@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.network.forge.ForgeClientNetworkTransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -35,8 +34,6 @@ public final class ForgeClientBootstrap {
         IEventBus modBus = context.getModEventBus();
         IEventBus gameBus = MinecraftForge.EVENT_BUS;
 
-        ClientNetworkHandler.register();
-        ForgeClientNetworkTransport.register();
         ForgeClientConfig.register(context);
 
         modBus.addListener(ForgeClientBootstrap::addRendererLayers);

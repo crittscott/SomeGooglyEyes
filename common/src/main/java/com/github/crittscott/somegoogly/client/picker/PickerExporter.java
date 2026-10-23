@@ -6,8 +6,8 @@ import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -72,7 +72,7 @@ public final class PickerExporter {
         if (!(encoded instanceof CompoundTag tag)) {
             return Component.translatable("somegoogly.command.picker.export_encode_failed");
         }
-        NetworkHandler.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
+        ClientNetworking.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
         return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
 

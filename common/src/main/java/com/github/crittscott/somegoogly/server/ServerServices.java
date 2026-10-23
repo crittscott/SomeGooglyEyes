@@ -5,10 +5,11 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.EyeStateSync;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -74,7 +75,8 @@ public final class ServerServices {
 
     /** Send current resolved eye definitions after login or reload. */
     public static void syncEyeConfigs(ServerPlayer player) {
-        NetworkHandler.sendConfig(player);
+        Networking.sendToPlayer(player,
+                new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerConfig.GOOGLY_EYES_ENABLED.get()));
     }
 
     private static void applyGooglyDecision(LivingEntity living) {

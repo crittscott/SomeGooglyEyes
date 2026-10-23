@@ -77,17 +77,17 @@ Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every 
 
 Attachment resolvers (definition token to model part or bone) cache by model identity and clear on renderer or runtime reset.
 
-The common `somegoogly.accesswidener` serves common compilation, Fabric, and NeoForge, which converts it to an access transformer at remap. Forge carries its own `META-INF/accesstransformer.cfg`; `verifyCommonAccessMirror`, wired into `check`, fails when it lacks any widener entry.
+The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code is one shared source tree at `gecko/src/main/java`, `srcDir`-ed into every loader's main sourceSet; only `GeckoCompatImpl` stays per-loader.
+GeckoLib is optional: common code goes through the `GeckoCompat` bridge, which probes for GeckoLib before touching typed code, and a failed layer attach must not block mod load. The typed GeckoLib layer and bone code lives in common under `client.compat.gecko`, compiled against compile-only `geckolib-common`; `GeckoCompat` probes for GeckoLib through `ModVersionLookup`.
 
 `GooglyEyeItemRenderer` draws the 3D Googly Eye; `EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
 
 ## Networking
 
-Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids embed network version `12`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel/version, while Fabric checks at play join that each endpoint declared the expected versioned payload and disconnects an absent or incompatible peer.
+Five packet classes implement Minecraft's typed `CustomPacketPayload` contract directly: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `13`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel version; Fabric disconnects, during configuration, a client that cannot receive its never-sent `Handshake` payload.
 
-`NetworkTransport` contains only sends and client receive handoff; `NetworkTracking` abstracts loader-specific tracking-player fanout. Serverbound handlers receive the authenticated `ServerPlayer` and re-check authorization. Eye-state packets include entity id and UUID; packets that precede entity creation wait in a bounded UUID-keyed map cleared on disconnect, preventing numeric-id reuse from applying stale state.
+Sends go through the `@ExpectPlatform` bridges `Networking` (to one player, or to an entity's trackers and itself) and `ClientNetworking` (to the server); loader receivers call `ClientNetworkHandler` from lambda bodies so dedicated servers never link it. Serverbound handlers receive the authenticated `ServerPlayer` and re-check authorization. Eye-state packets include entity id and UUID; packets that precede entity creation wait in a bounded UUID-keyed map cleared on disconnect, preventing numeric-id reuse from applying stale state.
 
 ## Picker and commands
 

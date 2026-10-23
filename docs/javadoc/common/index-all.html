@@ -430,6 +430,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Applies the three server-to-client payloads on the client game thread.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/ClientNetworking.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">ClientNetworking</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
+<dd>
+<div class="block">Physical-client loader bridge for native serverbound payload sends.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">ClientRenderLayers</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
 <dd>
 <div class="block">Installs vanilla-model, picker, and optional GeckoLib eye layers after renderer rebuilds.</div>
@@ -471,6 +475,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a> - package com.github.crittscott.somegoogly.client</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a> - package com.github.crittscott.somegoogly.client.compat</dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a> - package com.github.crittscott.somegoogly.client.compat.gecko</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/package-summary.html">com.github.crittscott.somegoogly.client.picker</a> - package com.github.crittscott.somegoogly.client.picker</dt>
 <dd>&nbsp;</dd>
@@ -778,10 +784,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Required ordered entries; version selection keeps the first match for each age bucket.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate(EntityRenderer&lt;?&gt;, LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate(EntityRenderer&lt;?&gt;, LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">GeckoCompat</a></dt>
 <dd>
 <div class="block">Bone names for a GeckoLib mob, or an empty list when GeckoLib is unavailable.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html#enumerate(software.bernie.geckolib.cache.object.BakedGeoModel)" class="member-name-link">enumerate(BakedGeoModel)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#enumerateParts(net.minecraft.client.model.EntityModel)" class="member-name-link">enumerateParts(EntityModel&lt;?&gt;)</a> - Method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></dt>
 <dd>
 <div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).</div>
@@ -1112,6 +1122,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The first modifier that handles <code>stack</code>, or <code>null</code> if none does.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html#findBone(software.bernie.geckolib.cache.object.BakedGeoModel,java.lang.String)" class="member-name-link">findBone(BakedGeoModel, String)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a></dt>
+<dd>
+<div class="block">First bone (depth-first, so a stable order) whose root→bone name path suffix-matches
+ <code>token</code> per <a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#pathMatches(java.lang.String,java.lang.String)"><code>EyeAttachmentResolver.pathMatches(java.lang.String, java.lang.String)</code></a>, or <code>null</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#forEntity(net.minecraft.world.entity.LivingEntity)" class="member-name-link">forEntity(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html#forModel(net.minecraft.client.model.EntityModel)" class="member-name-link">forModel(EntityModel&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></dt>
@@ -1151,11 +1166,20 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat">GeckoCompat</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a></dt>
 <dd>
-<div class="block">Loader bridge for the optional GeckoLib renderer integration.</div>
+<div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/gecko/package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></dt>
+<dd>
+<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> (so this class — and the
+ GeckoLib classes it touches — load only when GeckoLib is present).</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#generation()" class="member-name-link">generation()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
 <div class="block">Monotonic identity of the currently installed config map, used by network payload caching.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/gecko/package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></dt>
+<dd>
+<div class="block">GeckoLib bone access — the GeckoLib analog of vanilla part resolution.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#get()" class="member-name-link">get()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
 <dd>
@@ -1296,6 +1320,13 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#googlyEyesEnabled()" class="member-name-link">googlyEyesEnabled()</a> - Method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T&gt;</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/gecko/package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></dt>
+<dd>
+<div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
+ <code>LayerGooglyEyes</code> + <code>PickerLayer</code>).</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#%3Cinit%3E(software.bernie.geckolib.renderer.GeoRenderer)" class="member-name-link">GooglyGeoLayer(GeoRenderer&lt;T&gt;)</a> - Constructor for class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a> - Class in <a href="com/github/crittscott/somegoogly/command/package-summary.html">com.github.crittscott.somegoogly.command</a></dt>
 <dd>
 <div class="block">Server-owned <code>/sg</code> commands.</div>
@@ -1334,10 +1365,20 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerInput.html#handle(net.minecraft.client.KeyMapping)" class="member-name-link">handle(KeyMapping)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerInput.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerInput</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handle(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">handle(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.Handle.html#%3Cinit%3E()" class="member-name-link">Handle()</a> - Constructor for class com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior(EyeBehaviorTriggerPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
+<dd>
+<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync(EyeConfigSyncPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
+<dd>
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState(EyeStatePacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
+<dd>
+<div class="block">Apply a full eye-state snapshot, or hold it until its entity is created on this client.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles(EntityModel&lt;?&gt;)</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AgeableListResolver.html#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles(EntityModel&lt;?&gt;)</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AgeableListResolver</a></dt>
@@ -1506,16 +1547,10 @@ loadScripts(document, 'script');</script>
  player skin map and the per-type renderer map, adding the vanilla-model layers to living renderers
  and the optional GeckoLib layer to the rest.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#installClientReceiver(java.util.function.Consumer)" class="member-name-link">installClientReceiver(Consumer&lt;CustomPacketPayload&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#installClientSender(java.util.function.Consumer)" class="member-name-link">installClientSender(Consumer&lt;CustomPacketPayload&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html#installLiving(net.minecraft.world.entity.EntityType,net.minecraft.client.renderer.entity.LivingEntityRenderer)" class="member-name-link">installLiving(EntityType&lt;? extends LivingEntity&gt;, LivingEntityRenderer&lt;?, ?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html" title="class in com.github.crittscott.somegoogly.client">ClientRenderLayers</a></dt>
 <dd>
 <div class="block">Add the shared vanilla-model layers through a loader's native renderer-registration event.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#installServerSender(java.util.function.BiConsumer)" class="member-name-link">installServerSender(BiConsumer&lt;ServerPlayer, CustomPacketPayload&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#integer(int,int,int)" class="member-name-link">integer(int, int, int)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
 <dd>
 <div class="block">Create an integer value whose default and every subsequently assigned value are clamped to
@@ -1799,15 +1834,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a> - Class in <a href="com/github/crittscott/somegoogly/network/package-summary.html">com.github.crittscott.somegoogly.network</a></dt>
 <dd>
-<div class="block">The mod's five payload ids and small loader-neutral send surface.</div>
+<div class="block">The mod's network version and its five payload ids.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/platform/NetworkTracking.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">NetworkTracking</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/platform/Networking.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">Networking</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
 <dd>
-<div class="block">Loader bridge for Minecraft's exact entity-tracking recipient set.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a> - Class in <a href="com/github/crittscott/somegoogly/network/package-summary.html">com.github.crittscott.somegoogly.network</a></dt>
-<dd>
-<div class="block">Loader-installed native send operations and the physical-client receive handoff.</div>
+<div class="block">Loader bridge for native clientbound payload sends.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#newVariant()" class="member-name-link">newVariant()</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
@@ -2088,6 +2119,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The offset as the <code>float[3]</code> the renderer/model APIs expect.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int)" class="member-name-link">preRender(PoseStack, T, BakedGeoModel, RenderType, MultiBufferSource, VertexConsumer, float, int, int)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html#preTransform(net.minecraft.client.model.EntityModel,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform(EntityModel&lt;?&gt;, PoseStack)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></dt>
 <dd>
 <div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
@@ -2161,14 +2194,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Read the mob's appearance override as <a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a>
  when none).</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#receiveClientbound(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">receiveClientbound(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html#refreshNonLiving(net.minecraft.client.renderer.entity.EntityRenderDispatcher)" class="member-name-link">refreshNonLiving(EntityRenderDispatcher)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html" title="class in com.github.crittscott.somegoogly.client">ClientRenderLayers</a></dt>
 <dd>
 <div class="block">Refresh attachment caches and install optional layers on non-vanilla renderer families.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/item/ModCreativeTabs.html#register(com.github.crittscott.somegoogly.registry.ContentRegistrar)" class="member-name-link">register(ContentRegistrar)</a> - Static method in class com.github.crittscott.somegoogly.item.<a href="com/github/crittscott/somegoogly/item/ModCreativeTabs.html" title="class in com.github.crittscott.somegoogly.item">ModCreativeTabs</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/item/ModDataComponents.html#register(com.github.crittscott.somegoogly.registry.ContentRegistrar)" class="member-name-link">register(ContentRegistrar)</a> - Static method in class com.github.crittscott.somegoogly.item.<a href="com/github/crittscott/somegoogly/item/ModDataComponents.html" title="class in com.github.crittscott.somegoogly.item">ModDataComponents</a></dt>
@@ -2199,6 +2228,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,T,float,float,float,float,float,float)" class="member-name-link">render(PoseStack, MultiBufferSource, int, T, float, float, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int)" class="member-name-link">render(PoseStack, T, BakedGeoModel, RenderType, MultiBufferSource, VertexConsumer, float, int, int)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html#render(net.minecraft.client.gui.GuiGraphics,int,int)" class="member-name-link">render(GuiGraphics, int, int)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerHud</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#RENDER_TYPE" class="member-name-link">RENDER_TYPE</a> - Static variable in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
@@ -2213,6 +2244,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Draw a single eye, applying both the per-mob <code>overrides</code> and the mob's active behavior.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int)" class="member-name-link">renderForBone(PoseStack, T, GeoBone, RenderType, MultiBufferSource, VertexConsumer, float, int, int)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderIris(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderIris(PoseStack, VertexConsumer, int, int, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerLayer.html#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, EyeDraft)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerLayer.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerLayer</a></dt>
@@ -2341,30 +2374,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
  another player having applied a Slimy Eye to you.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/platform/NetworkTracking.html#send(net.minecraft.world.entity.Entity,boolean,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">send(Entity, boolean, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/NetworkTracking.html" title="class in com.github.crittscott.somegoogly.platform">NetworkTracking</a></dt>
-<dd>
-<div class="block">Send a clientbound payload to every player tracking <code>entity</code>.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendBehavior(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">sendBehavior(ServerPlayer, EyeBehaviorTriggerPacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendBehaviorTracking(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">sendBehaviorTracking(Entity, EyeBehaviorTriggerPacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendConfig(net.minecraft.server.level.ServerPlayer)" class="member-name-link">sendConfig(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendEyeState(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">sendEyeState(ServerPlayer, EyeStatePacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendEyeStateTrackingAndSelf(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">sendEyeStateTrackingAndSelf(Entity, EyeStatePacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeStateSync.html#sendTo(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sendTo(LivingEntity, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeStateSync.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeStateSync</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer(ServerPlayer, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/platform/Networking.html#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer(ServerPlayer, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform">Networking</a></dt>
+<dd>
+<div class="block">Send a clientbound payload to one player.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/ClientNetworking.html#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.platform">ClientNetworking</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendToServer(com.github.crittscott.somegoogly.network.PickerExportPacket)" class="member-name-link">sendToServer(PickerExportPacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#sendToServer(com.github.crittscott.somegoogly.network.PickerFreezePacket)" class="member-name-link">sendToServer(PickerFreezePacket)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/Networking.html#sendTrackingAndSelf(net.minecraft.world.entity.Entity,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendTrackingAndSelf(Entity, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform">Networking</a></dt>
+<dd>
+<div class="block">Send a clientbound payload to every player tracking <code>entity</code> and, when the entity is itself
+ a server player, to that player too.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.Serializer.html#%3Cinit%3E()" class="member-name-link">Serializer()</a> - Constructor for class com.github.crittscott.somegoogly.recipe.<a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a> - Class in <a href="com/github/crittscott/somegoogly/eye/behavior/package-summary.html">com.github.crittscott.somegoogly.eye.behavior</a></dt>
@@ -2749,6 +2771,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Try to start <code>behavior</code> on <code>mob</code> now, honoring "one at a time, non-interruptable":
  dropped (returns <code>false</code>) if the mob is already mid-behavior.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html#tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">tryAddLayer(EntityRenderer&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html#tryAddLayer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">tryAddLayer(EntityRenderer&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">GeckoCompat</a></dt>
 <dd>
 <div class="block">Attach the googly-eye layer when this is a supported GeckoLib renderer.</div>
@@ -2885,6 +2909,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html#version" class="member-name-link">version</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.VersionedEntry</a></dt>
 <dd>
 <div class="block">Required version or version-range selector interpreted by <a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config"><code>VersionRangeMatcher</code></a>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#versioned(java.lang.String)" class="member-name-link">versioned(String)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
+<dd>
+<div class="block">A mod-namespaced id under the current network version.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html#%3Cinit%3E()" class="member-name-link">VersionedEntry()</a> - Constructor for class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.VersionedEntry.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.VersionedEntry</a></dt>
 <dd>&nbsp;</dd>
