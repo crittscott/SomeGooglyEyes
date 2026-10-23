@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when GeckoLib
- * is present</b> (reached through {@code GeckoCompatImpl}); it references GeckoLib types directly.
+ * is present</b> (reached through {@code GeckoCompat}); it references GeckoLib types directly.
  *
  * <p>Bones are named in the {@code .geo.json}, so enumeration yields real names (better than the
  * vanilla reflection family's {@code #N}). There is deliberately no "move the pose to a bone" here:

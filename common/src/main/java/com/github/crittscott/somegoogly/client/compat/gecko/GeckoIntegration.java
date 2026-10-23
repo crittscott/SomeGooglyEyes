@@ -11,7 +11,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import java.util.List;
 
 /**
- * GeckoLib-referencing entry points, reached only via {@code GeckoCompatImpl} (so this class — and the
+ * GeckoLib-referencing entry points, reached only via {@code GeckoCompat} (so this class — and the
  * GeckoLib classes it touches — load only when GeckoLib is present).
  */
 public final class GeckoIntegration {

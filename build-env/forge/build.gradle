@@ -8,11 +8,10 @@ architectury {
 }
 
 rootProject.configureGameTests(project)
-// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
-// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
-sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
 
 loom {
+    accessWidenerPath = project(':common').loom.accessWidenerPath
+
     forge {
         mixinConfig 'somegoogly-common.mixins.json'
     }
@@ -57,61 +56,11 @@ configurations {
     }
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render bridge. Not remapped:
-    // GeckoLib's Forge artifacts are already usable as-is.
-    compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
-
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
-}
-
-// Loom cannot convert the common access widener into a jar that already contains an access
-// transformer, so Forge carries its own and this check keeps it a superset of the widener.
-def commonAccessWidener = rootProject.file('common/src/main/resources/somegoogly.accesswidener')
-def forgeAccessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-tasks.register('verifyCommonAccessMirror') {
-    inputs.files(commonAccessWidener, forgeAccessTransformer)
-
-    doLast {
-        def expectedEntries = commonAccessWidener.readLines('UTF-8')
-                .collect { it.trim() }
-                .findAll { it && !it.startsWith('#') && !it.startsWith('accessWidener') }
-                .collect { line ->
-                    def parts = line.split(/\s+/)
-                    def owner = parts[2].replace('/', '.')
-                    if (parts[0] == 'accessible' && parts[1] == 'class' && parts.length == 3) {
-                        return "public $owner".toString()
-                    }
-                    if (parts[0] == 'accessible' && parts[1] == 'field' && parts.length == 5) {
-                        return "public $owner ${parts[3]}".toString()
-                    }
-                    if (parts[0] == 'accessible' && parts[1] == 'method' && parts.length == 5) {
-                        return "public $owner ${parts[3]}${parts[4]}".toString()
-                    }
-                    throw new GradleException("verifyCommonAccessMirror cannot translate access widener entry: $line")
-                }
-
-        def forgeEntries = forgeAccessTransformer.readLines('UTF-8')
-                .collect { it.trim() }
-                .findAll { it && !it.startsWith('#') }
-                .toSet()
-        def missing = expectedEntries.findAll { !forgeEntries.contains(it) }
-        if (!missing.isEmpty()) {
-            throw new GradleException("Forge access transformer is missing common entries: $missing")
-        }
-    }
-}
-
-tasks.named('check').configure {
-    dependsOn tasks.named('verifyCommonAccessMirror')
 }
 
 // Expands ${...} placeholders in mods.toml (this module's own resource).
@@ -154,4 +103,6 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
+    // Forge reads access transformers, not wideners; dev runs apply the widener directly.
+    atAccessWideners.add loom.accessWidenerPath.get().asFile.name
 }

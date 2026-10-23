@@ -34,7 +34,7 @@ import java.util.List;
  * bone lookup happen once in {@link #preRender}; {@link #renderForBone} draws on the matching bones;
  * {@link #render} (which GeckoLib calls last) just clears the per-render state.
  *
- * <p>Only loaded when GeckoLib is present (referenced via {@code GeckoCompatImpl}).
+ * <p>Only loaded when GeckoLib is present (referenced via {@code GeckoCompat}).
  */
 public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
 

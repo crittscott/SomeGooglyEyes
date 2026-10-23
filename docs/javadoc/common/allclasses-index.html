@@ -287,7 +287,16 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/GeckoCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">GeckoCompat</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Loader bridge for the optional GeckoLib renderer integration.</div>
+<div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> (so this class — and the
+ GeckoLib classes it touches — load only when GeckoLib is present).</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">GeckoLib bone access — the GeckoLib analog of vanilla part resolution.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/Gizmo.html" title="class in com.github.crittscott.somegoogly.client.picker">Gizmo</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -316,225 +325,230 @@ loadScripts(document, 'script');</script>
 <div class="block">Shared eye drawing used by both render layers — the vanilla <a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a> and the
  GeckoLib <code>GooglyGeoLayer</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T&gt;</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
+ <code>LayerGooglyEyes</code> + <code>PickerLayer</code>).</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-owned <code>/sg</code> commands.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Per-entity client-side eye state: the <a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil-physics simulator for every configured
  eye, plus which <a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a> (if any) is currently playing on that entity.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Physics state for one pupil: its position and velocity in the eye's unit disk, the head
  orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
  an active behavior writes each tick.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Resolved view of one entity eye configuration after age and weighted placement-variant selection.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes&lt;S,<wbr>M&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes&lt;S,<wbr>M&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Eye layer for vanilla-style <code>LivingEntityRenderer</code>s.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">LLibraryResolver</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">LLibraryResolver</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Resolver for LLibrary-style models.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/util/LookTarget.html" title="class in com.github.crittscott.somegoogly.util">LookTarget</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/util/LookTarget.html" title="class in com.github.crittscott.somegoogly.util">LookTarget</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Ray-picks the living entity a player is aiming at, out to <code>reach</code> blocks.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html" title="class in com.github.crittscott.somegoogly.command">MaybeFloatArgumentType</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html" title="class in com.github.crittscott.somegoogly.command">MaybeFloatArgumentType</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A Brigadier argument that parses either a number or the literal <code>~</code> — the "leave this axis/angle
  unchanged" no-op.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModCreativeTabs.html" title="class in com.github.crittscott.somegoogly.item">ModCreativeTabs</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModCreativeTabs.html" title="class in com.github.crittscott.somegoogly.item">ModCreativeTabs</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The mod's own creative tab, icon'd with the <a href="com/github/crittscott/somegoogly/item/ModItems.html#GOOGLY_EYE"><code>googly eye</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModDataComponents.html" title="class in com.github.crittscott.somegoogly.item">ModDataComponents</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModDataComponents.html" title="class in com.github.crittscott.somegoogly.item">ModDataComponents</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Data components shared by the Googly Eye and Slimy Eye item stacks.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo&lt;K,<wbr>V&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo&lt;K,<wbr>V&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Memoizes a value per (model instance, attach token).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver&lt;K,<wbr>V&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver&lt;K,<wbr>V&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">Computes the value for a (model, token) pair.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The picker's single view of a living model's attachment vocabulary.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/enchant/ModEnchantments.html" title="class in com.github.crittscott.somegoogly.enchant">ModEnchantments</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/enchant/ModEnchantments.html" title="class in com.github.crittscott.somegoogly.enchant">ModEnchantments</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Resource keys for the mod's data-driven enchantments.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModItems.html" title="class in com.github.crittscott.somegoogly.item">ModItems</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/ModItems.html" title="class in com.github.crittscott.somegoogly.item">ModItems</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Item registry for the mod: the <a href="com/github/crittscott/somegoogly/item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>GooglyEyeItem</code></a> (the eye itself, an ingredient) and the
  <a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a> it crafts into (the applicator).</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/ModRecipes.html" title="class in com.github.crittscott.somegoogly.recipe">ModRecipes</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/ModRecipes.html" title="class in com.github.crittscott.somegoogly.recipe">ModRecipes</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Recipe serializer registry: the special <a href="com/github/crittscott/somegoogly/recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe"><code>EyeModifierRecipe</code></a> and the <a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.html" title="class in com.github.crittscott.somegoogly.recipe"><code>SlimyEyeRecipe</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ModVersionLookup.html" title="class in com.github.crittscott.somegoogly.config">ModVersionLookup</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ModVersionLookup.html" title="class in com.github.crittscott.somegoogly.config">ModVersionLookup</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Resolves the loaded version string for a config namespace.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The mod's five payload ids and small loader-neutral send surface.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/NetworkTracking.html" title="class in com.github.crittscott.somegoogly.platform">NetworkTracking</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/NetworkTracking.html" title="class in com.github.crittscott.somegoogly.platform">NetworkTracking</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Loader bridge for Minecraft's exact entity-tracking recipient set.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/NetworkTransport.html" title="class in com.github.crittscott.somegoogly.network">NetworkTransport</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Loader-installed native send operations and the physical-client receive handoff.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerExporter.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerExporter</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerExporter.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerExporter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Turns picker drafts into datapack JSON.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Client → server: "write this authored eye config for <code>entityTypeId</code> into the world datapack
  and reload" — the wire half of <code>/sg export</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker">PickerExportService</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker">PickerExportService</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-side half of <code>/sg export</code> (reached via <code>PickerExportPacket</code>): validates a
  client-authored eye config, writes it as canonical datapack JSON into the world's
  <code>somegoogly-picker</code> pack, and <code>/reload</code>s so it persists and re-syncs through the normal
  path.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Client → server: "freeze the mob I'm editing" (or release it).</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-owned picker mob freezing: a picker-targeted mob is held <code>NoAi=true</code> while edited and
  restored to its pre-picker value when released.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of the
  same gate, always checked together by the packet handlers.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerHud</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerHud</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Text HUD for the part picker: a live, read-only view of the locked mob, the selected part, and the
  saved eye list (two lines per eye), with the eye currently being edited via <code>/sg</code> highlighted.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerInput.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerInput</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerInput.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerInput</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Routes key presses to <a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> while the picker is active.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerKeys</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerKeys</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Keybindings for the in-world part picker.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerLayer.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerLayer&lt;S,<wbr>M&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerLayer.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerLayer&lt;S,<wbr>M&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Picker preview layer: renders the committed eyes plus the live draft eye and the selection gizmo,
  but <b>only</b> for the entity the picker is locked onto.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.html" title="class in com.github.crittscott.somegoogly.picker">PickerSpawnService</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.html" title="class in com.github.crittscott.somegoogly.picker">PickerSpawnService</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear
  googly eyes — every summonable living entity, whether or not it has an eye config yet — so the
  picker can be used on any of them without hunting each one down in survival.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">In-world eye-placement authoring state, driven by the <code>/sg</code> CLI and the keyboard picker,
  which share this state.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.AuthoredExport.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.AuthoredExport</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.AuthoredExport.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.AuthoredExport</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">One authored entity's export payload: its config plus the age it was authored under.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">One weighted placement arrangement being authored: its relative weight plus its own eye list.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">One saved eye plus the part token it attaches to.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Picks the first <a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> that handles a given model.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">RootModelResolver</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">RootModelResolver</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Resolver for every model whose geometry hangs off <code>Model.root()</code> — all vanilla models and
  any third-party model built the vanilla way.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/behavior/ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior">ServerBehaviorScheduler</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The single authority for which eye behavior a mob is playing, and when.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-authoritative spawn settings.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerConfigFile.html" title="class in com.github.crittscott.somegoogly.config">ServerConfigFile</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerConfigFile.html" title="class in com.github.crittscott.somegoogly.config">ServerConfigFile</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates and loads Fabric and NeoForge's active-world server configuration.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Server-authoritative store of eye geometry configs, loaded from datapacks by
  <a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigReloadListener</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Loader-neutral implementation behind each loader's server lifecycle hooks.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A googly eye bedded in a slimeball: the applicator.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Googly eye + slimeball → slimy eye, carrying the eye's appearance onto the result so the applied
  mob ends up with the eye you actually dyed or harvested.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Parses the ordinary shapeless recipe shape.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/SomeGooglyCommon.html" title="class in com.github.crittscott.somegoogly">SomeGooglyCommon</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/SomeGooglyCommon.html" title="class in com.github.crittscott.somegoogly">SomeGooglyCommon</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Mod identity shared by every platform.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Compensates for whole-model render transforms that supported third-party mob models apply <i>outside</i>
  their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
  own <code>renderToBuffer</code>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config">TomlConfig</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config">TomlConfig</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Narrow TOML reader for the boolean, integer, and string-list schemas used by loader-owned storage.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config">VersionRangeMatcher</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config">VersionRangeMatcher</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
  nearest-generation fallback pick (<a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html#nearestVersion(java.util.Collection,java.lang.String)"><code>nearestVersion(java.util.Collection&lt;java.lang.String&gt;, java.lang.String)</code></a>) used when no entry matches at all and
  the range synthesis (<a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html#rangeFor(java.lang.String)"><code>rangeFor(java.lang.String)</code></a>) used when exporting definitions for optional mods.</div>
