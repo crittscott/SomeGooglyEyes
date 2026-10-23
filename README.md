@@ -10,7 +10,7 @@ Also compatible with GeckoLib- and Citadel-based mobs, as well as those using le
 
 ![Googly Eyes splash](docs/googlyeyes-splash.png)
 
-![Loaders: Fabric + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Requires: Architectury API](https://img.shields.io/badge/Requires-Architectury%20API-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20Forge-5C7C8A?style=for-the-badge)
 
 ## Getting eyes
 
@@ -97,7 +97,7 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
-Available for Forge and Fabric, 1.20.1. Requires [Architectury API](https://www.curseforge.com/minecraft/mc-mods/architectury-api).
+Available for Forge and Fabric, 1.20.1.
 
 ## Credits and license
 

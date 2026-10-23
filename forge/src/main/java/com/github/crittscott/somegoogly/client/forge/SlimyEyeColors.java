@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.client.forge;
 
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 /**
@@ -23,6 +23,6 @@ public final class SlimyEyeColors {
         event.register((stack, tintIndex) -> tintIndex == 2
                         ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
                         : -1,
-                ModItems.SLIMY_EYE.get());
+                ModContent.SLIMY_EYE.get());
     }
 }

@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -79,9 +78,9 @@ public class PickerMobPosePacket {
         }
     }
 
-    public static void handle(PickerMobPosePacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> {
-            ServerPlayer sender = context.getPlayer() instanceof ServerPlayer player ? player : null;
+    /** Apply a decoded request on the server thread on behalf of its authenticated {@code sender}. */
+    public static void handle(PickerMobPosePacket packet, ServerPlayer sender) {
+        sender.serverLevel().getServer().execute(() -> {
             if (!PickerPermissions.creative(sender)) {
                 return;
             }

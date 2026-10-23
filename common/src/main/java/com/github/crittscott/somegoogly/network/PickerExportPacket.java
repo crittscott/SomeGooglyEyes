@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerPermissions;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
@@ -58,9 +57,9 @@ public class PickerExportPacket {
         buffer.writeNbt(packet.configNbt);
     }
 
-    public static void handle(PickerExportPacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> {
-            ServerPlayer sender = context.getPlayer() instanceof ServerPlayer player ? player : null;
+    /** Apply a decoded request on the server thread on behalf of its authenticated {@code sender}. */
+    public static void handle(PickerExportPacket packet, ServerPlayer sender) {
+        sender.serverLevel().getServer().execute(() -> {
             if (!PickerPermissions.creative(sender)) {
                 return;
             }

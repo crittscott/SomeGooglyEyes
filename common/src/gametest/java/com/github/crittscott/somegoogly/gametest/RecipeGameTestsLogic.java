@@ -5,9 +5,9 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -117,7 +117,7 @@ public final class RecipeGameTestsLogic {
         helper.assertTrue(recipe.matches(grid, helper.getLevel()), "an eye and a slimeball should match");
 
         ItemStack result = recipe.assemble(grid, registries);
-        helper.assertTrue(result.is(ModItems.SLIMY_EYE.get()), "the result should be a slimy eye");
+        helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), "the result should be a slimy eye");
 
         AppearanceOverride carried = EyeItemProperties.get(result);
         helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
@@ -127,8 +127,8 @@ public final class RecipeGameTestsLogic {
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
         NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
-                Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
+                Ingredient.of(ModContent.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe(new ResourceLocation(SomeGooglyCommon.MOD_ID, "test_slimy_eye"), "",
-                CraftingBookCategory.MISC, new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
+                CraftingBookCategory.MISC, new ItemStack(ModContent.SLIMY_EYE.get()), ingredients);
     }
 }

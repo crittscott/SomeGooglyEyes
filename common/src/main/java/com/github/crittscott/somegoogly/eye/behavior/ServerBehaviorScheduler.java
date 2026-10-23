@@ -211,7 +211,7 @@ public final class ServerBehaviorScheduler {
         state.activeSeed = seed;
         state.busyUntil = now + duration;
         state.startedAt = now;
-        NetworkHandler.sendBehaviorTracking(mob,
+        NetworkHandler.sendBehaviorTrackingAndSelf(mob,
                 new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
         return true;
     }

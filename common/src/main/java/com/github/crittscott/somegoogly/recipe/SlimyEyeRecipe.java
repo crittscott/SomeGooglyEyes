@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -34,7 +34,7 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
         ItemStack result = super.assemble(container, registryAccess);
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
-            if (stack.is(ModItems.GOOGLY_EYE.get())) {
+            if (stack.is(ModContent.GOOGLY_EYE.get())) {
                 EyeItemProperties.set(result, EyeItemProperties.get(stack));
                 break;
             }
@@ -44,7 +44,7 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.SLIMY_EYE.get();
+        return ModContent.SLIMY_EYE_RECIPE.get();
     }
 
     /**

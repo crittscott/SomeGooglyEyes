@@ -12,9 +12,15 @@ rootProject.configureGameTests(project)
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = 'somegoogly.refmap.json'
+    }
+
     mods {
         main {
             sourceSet sourceSets.main
+            sourceSet project(':common').sourceSets.main
         }
         somegoogly_gametest {
             sourceSet sourceSets.gametest
@@ -58,17 +64,12 @@ configurations {
     }
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
-    modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render bridge.
+    // Optional at runtime; needed at compile time by the GeckoLib render integration.
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }

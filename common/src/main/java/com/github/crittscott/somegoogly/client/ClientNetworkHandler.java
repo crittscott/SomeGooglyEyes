@@ -9,7 +9,7 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
-import dev.architectury.networking.NetworkManager;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -31,7 +31,6 @@ public final class ClientNetworkHandler {
     private static final int MIN_CONFIG_SYNC_INTERVAL_TICKS = 20;
     private static final long MIN_CONFIG_DECODE_NANOS = 250_000_000L;
     private static final Map<Integer, PendingEyeState> PENDING_EYE_STATES = new LinkedHashMap<>();
-    private static boolean registered;
     private static boolean protocolAccepted;
     private static int networkTicks;
     private static int lastConfigSyncTick = Integer.MIN_VALUE;
@@ -47,25 +46,13 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
-    public static synchronized void register() {
-        if (registered) {
-            return;
-        }
-        registered = true;
-        SomeGooglyCommon.LOGGER.debug("Client network debug: registering Some Googly Eyes S2C receivers");
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.PROTOCOL_HELLO,
-                ClientNetworkHandler::handleHello);
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_STATE,
-                (buffer, context) -> handle(EyeStatePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_CONFIG,
-                ClientNetworkHandler::handleConfigPayload);
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, NetworkHandler.EYE_BEHAVIOR,
-                (buffer, context) -> handle(EyeBehaviorTriggerPacket.decode(buffer), context));
-    }
+    // Loader receivers call the receive* entry points on the network thread, from lambda bodies so that a
+    // dedicated server never links this class. Each decodes at once and applies on the client thread.
 
-    private static void handleHello(FriendlyByteBuf buffer, NetworkManager.PacketContext context) {
+    /** Answer the server's protocol hello, or disconnect on a version mismatch. */
+    public static void receiveHello(FriendlyByteBuf buffer) {
         String version = buffer.readUtf(NetworkHandler.MAX_PROTOCOL_VERSION_LENGTH);
-        context.queue(() -> {
+        Minecraft.getInstance().execute(() -> {
             SomeGooglyCommon.LOGGER.debug(
                     "Client network debug: received protocol hello version={} expected={}",
                     version, NetworkHandler.PROTOCOL_VERSION);
@@ -81,13 +68,17 @@ public final class ClientNetworkHandler {
             protocolAccepted = true;
             FriendlyByteBuf reply = NetworkHandler.newBuffer();
             reply.writeUtf(NetworkHandler.PROTOCOL_VERSION);
-            NetworkManager.sendToServer(NetworkHandler.PROTOCOL_ACK, reply);
+            ClientNetworking.sendToServer(NetworkHandler.PROTOCOL_ACK, reply);
             SomeGooglyCommon.LOGGER.debug("Client network debug: sent protocol acknowledgement");
         });
     }
 
-    private static void handle(EyeStatePacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> {
+    public static void receiveEyeState(FriendlyByteBuf buffer) {
+        handle(EyeStatePacket.decode(buffer));
+    }
+
+    private static void handle(EyeStatePacket packet) {
+        Minecraft.getInstance().execute(() -> {
             LivingEntity living = living(packet.entityId());
             int ordinal = ++eyeStatePackets;
             if (ordinal <= EYE_STATE_LOG_LIMIT) {
@@ -144,8 +135,8 @@ public final class ClientNetworkHandler {
         }
     }
 
-    private static synchronized void handleConfigPayload(
-            FriendlyByteBuf buffer, NetworkManager.PacketContext context) {
+    /** Decode an eye-config payload, refusing malformed, stale, or too-frequent ones. */
+    public static synchronized void receiveEyeConfig(FriendlyByteBuf buffer) {
         try {
             long generation = buffer.getLong(buffer.readerIndex());
             if (generation == lastWireConfigGeneration) {
@@ -153,20 +144,20 @@ public final class ClientNetworkHandler {
             }
             long now = System.nanoTime();
             if (lastConfigDecodeNanos != 0L && now - lastConfigDecodeNanos < MIN_CONFIG_DECODE_NANOS) {
-                context.queue(() -> disconnect(Component.translatable(
+                Minecraft.getInstance().execute(() -> disconnect(Component.translatable(
                         "somegoogly.network.config_sync_too_frequent")));
                 return;
             }
             lastWireConfigGeneration = generation;
             lastConfigDecodeNanos = now;
-            handle(EyeConfigSyncPacket.decode(buffer), context);
+            handle(EyeConfigSyncPacket.decode(buffer));
         } catch (RuntimeException invalid) {
-            context.queue(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
+            Minecraft.getInstance().execute(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
         }
     }
 
-    private static void handle(EyeConfigSyncPacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> {
+    private static void handle(EyeConfigSyncPacket packet) {
+        Minecraft.getInstance().execute(() -> {
             if (!protocolAccepted) {
                 disconnect(Component.translatable("somegoogly.network.config_before_handshake"));
                 return;
@@ -189,8 +180,12 @@ public final class ClientNetworkHandler {
         });
     }
 
-    private static void handle(EyeBehaviorTriggerPacket packet, NetworkManager.PacketContext context) {
-        context.queue(() -> {
+    public static void receiveBehavior(FriendlyByteBuf buffer) {
+        handle(EyeBehaviorTriggerPacket.decode(buffer));
+    }
+
+    private static void handle(EyeBehaviorTriggerPacket packet) {
+        Minecraft.getInstance().execute(() -> {
             EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId());
             LivingEntity living = living(packet.entityId());
             if (behavior == null || living == null) {

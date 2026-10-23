@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ public class GooglyEyeItem extends Item {
 
     /** A new eye-item stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
-        ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
+        ItemStack stack = new ItemStack(ModContent.GOOGLY_EYE.get(), count);
         EyeItemProperties.set(stack, properties);
         return stack;
     }

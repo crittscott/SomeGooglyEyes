@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.platform.NetworkTracking;
-import dev.architectury.networking.NetworkManager;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.platform.Networking;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -20,10 +20,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-/** Cross-loader packet registration, protocol negotiation, and send helpers. */
+/**
+ * Packet ids, protocol negotiation, and send helpers. Sends go through the loader bridges {@link Networking}
+ * and {@link ClientNetworking}; each loader's transport registers the receivers.
+ */
 public final class NetworkHandler {
 
-    public static final String PROTOCOL_VERSION = "9";
+    public static final String PROTOCOL_VERSION = "10";
     public static final int MAX_PROTOCOL_VERSION_LENGTH = 32;
     public static final ResourceLocation PROTOCOL_HELLO = id("protocol_hello");
     public static final ResourceLocation PROTOCOL_ACK = id("protocol_ack");
@@ -43,31 +46,8 @@ public final class NetworkHandler {
     private static long cachedConfigGeneration = -1L;
     private static long failedConfigGeneration = -1L;
     private static byte[] cachedConfigPayload;
-    private static boolean registered;
 
     private NetworkHandler() {
-    }
-
-    /** Register only server-received payloads; safe on physical clients and dedicated servers. */
-    public static synchronized void registerCommon() {
-        if (registered) {
-            return;
-        }
-        registered = true;
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PROTOCOL_ACK, (buffer, context) -> {
-            String version = buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH);
-            context.queue(() -> acknowledge(context, version));
-        });
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_FREEZE,
-                (buffer, context) -> PickerFreezePacket.handle(PickerFreezePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_SPAWN,
-                (buffer, context) -> PickerSpawnPacket.handle(PickerSpawnPacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_SPAWN_ALL,
-                (buffer, context) -> PickerSpawnAllPacket.handle(PickerSpawnAllPacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_MOB_POSE,
-                (buffer, context) -> PickerMobPosePacket.handle(PickerMobPosePacket.decode(buffer), context));
-        NetworkManager.registerReceiver(NetworkManager.Side.C2S, PICKER_EXPORT,
-                (buffer, context) -> PickerExportPacket.handle(PickerExportPacket.decode(buffer), context));
     }
 
     /** Start the stable-channel negotiation. Gameplay payloads use versioned IDs and cannot collide. */
@@ -78,7 +58,7 @@ public final class NetworkHandler {
         PENDING.put(playerId, HANDSHAKE_TIMEOUT_TICKS);
         FriendlyByteBuf buffer = newBuffer();
         buffer.writeUtf(PROTOCOL_VERSION);
-        NetworkManager.sendToPlayer(player, PROTOCOL_HELLO, buffer);
+        Networking.sendToPlayer(player, PROTOCOL_HELLO, buffer);
         SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sent protocol hello version={} to {}",
                 PROTOCOL_VERSION, player.getGameProfile().getName());
@@ -144,7 +124,7 @@ public final class NetworkHandler {
         SomeGooglyCommon.LOGGER.debug(
                 "Server network debug: sending {} selected eye configs to {}",
                 ServerEyeConfigs.all().size(), player.getGameProfile().getName());
-        NetworkManager.sendToPlayer(player, EYE_CONFIG,
+        Networking.sendToPlayer(player, EYE_CONFIG,
                 new FriendlyByteBuf(Unpooled.wrappedBuffer(payload)));
         LAST_CONFIG_GENERATION.put(player.getUUID(), generation);
     }
@@ -154,15 +134,15 @@ public final class NetworkHandler {
     }
 
     public static void sendEyeStateTrackingAndSelf(Entity entity, EyeStatePacket packet) {
-        NetworkTracking.send(entity, true, EYE_STATE, encode(packet, EyeStatePacket::encode));
+        Networking.sendTrackingAndSelf(entity, EYE_STATE, encode(packet, EyeStatePacket::encode));
     }
 
     public static void sendBehavior(ServerPlayer player, EyeBehaviorTriggerPacket packet) {
         sendToPlayer(player, EYE_BEHAVIOR, packet, EyeBehaviorTriggerPacket::encode);
     }
 
-    public static void sendBehaviorTracking(Entity entity, EyeBehaviorTriggerPacket packet) {
-        NetworkTracking.send(entity, false, EYE_BEHAVIOR, encode(packet, EyeBehaviorTriggerPacket::encode));
+    public static void sendBehaviorTrackingAndSelf(Entity entity, EyeBehaviorTriggerPacket packet) {
+        Networking.sendTrackingAndSelf(entity, EYE_BEHAVIOR, encode(packet, EyeBehaviorTriggerPacket::encode));
     }
 
     public static void sendToServer(PickerFreezePacket packet) {
@@ -185,10 +165,13 @@ public final class NetworkHandler {
         sendToServer(PICKER_EXPORT, packet, PickerExportPacket::encode);
     }
 
-    private static void acknowledge(NetworkManager.PacketContext context, String version) {
-        if (!(context.getPlayer() instanceof ServerPlayer player)) {
-            return;
-        }
+    /** Read a client's protocol acknowledgement and apply it on the server thread. */
+    public static void receiveAcknowledgement(FriendlyByteBuf buffer, ServerPlayer player) {
+        String version = buffer.readUtf(MAX_PROTOCOL_VERSION_LENGTH);
+        player.serverLevel().getServer().execute(() -> acknowledge(player, version));
+    }
+
+    private static void acknowledge(ServerPlayer player, String version) {
         UUID playerId = player.getUUID();
         if (PENDING.remove(playerId) == null) {
             return;
@@ -229,15 +212,15 @@ public final class NetworkHandler {
 
     private static <T> void sendToPlayer(ServerPlayer player, ResourceLocation id, T packet,
                                          BiConsumer<T, FriendlyByteBuf> encoder) {
-        NetworkManager.sendToPlayer(player, id, encode(packet, encoder));
+        Networking.sendToPlayer(player, id, encode(packet, encoder));
     }
 
     private static <T> void sendToServer(ResourceLocation id, T packet,
                                          BiConsumer<T, FriendlyByteBuf> encoder) {
-        if (!NetworkManager.canServerReceive(id)) {
+        if (!ClientNetworking.canSendToServer(id)) {
             return;
         }
-        NetworkManager.sendToServer(id, encode(packet, encoder));
+        ClientNetworking.sendToServer(id, encode(packet, encoder));
     }
 
     public static Component protocolMismatch(Component receiver, String expected, String received) {

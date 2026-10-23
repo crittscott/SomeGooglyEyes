@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public final class EyeInspector {
     }
 
     private static boolean isEye(ItemStack stack) {
-        return stack.is(ModItems.GOOGLY_EYE.get()) || stack.is(ModItems.SLIMY_EYE.get());
+        return stack.is(ModContent.GOOGLY_EYE.get()) || stack.is(ModContent.SLIMY_EYE.get());
     }
 
     private static Component verdict(LivingEntity target) {

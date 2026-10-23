@@ -13,7 +13,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -87,10 +87,10 @@ public final class FabricClientEvents {
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 2
                         ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
                         : -1,
-                ModItems.SLIMY_EYE.get());
+                ModContent.SLIMY_EYE.get());
 
         GooglyEyeItemRenderer renderer = new GooglyEyeItemRenderer();
-        BuiltinItemRendererRegistry.INSTANCE.register(ModItems.GOOGLY_EYE.get(), renderer::renderByItem);
+        BuiltinItemRendererRegistry.INSTANCE.register(ModContent.GOOGLY_EYE.get(), renderer::renderByItem);
     }
 
     public static void logRendererReload(int nonLivingInstalls) {

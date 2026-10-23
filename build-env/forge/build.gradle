@@ -10,6 +10,8 @@ architectury {
 rootProject.configureGameTests(project)
 
 loom {
+    accessWidenerPath = project(':common').loom.accessWidenerPath
+
     mods {
         main {
             sourceSet sourceSets.main
@@ -50,15 +52,10 @@ configurations {
     }
 }
 
-repositories {
-    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-}
-
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
-    modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render bridge. Not remapped:
+    // Optional at runtime; needed at compile time by the GeckoLib render integration. Not remapped:
     // GeckoLib's Forge artifacts are already usable as-is.
     compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
 
@@ -103,4 +100,6 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
+    // Forge reads access transformers, not wideners; dev runs apply the widener directly.
+    atAccessWideners.add loom.accessWidenerPath.get().asFile.name
 }

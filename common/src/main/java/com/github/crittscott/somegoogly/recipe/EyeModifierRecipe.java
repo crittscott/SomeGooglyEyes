@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -61,7 +61,7 @@ public class EyeModifierRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.is(ModItems.GOOGLY_EYE.get())) {
+            if (stack.is(ModContent.GOOGLY_EYE.get())) {
                 if (!eye.isEmpty()) {
                     return null; // more than one eye
                 }
@@ -88,12 +88,12 @@ public class EyeModifierRecipe extends CustomRecipe {
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         // Representative stack for recipe-book display; the real output is computed in assemble().
-        return new ItemStack(ModItems.GOOGLY_EYE.get());
+        return new ItemStack(ModContent.GOOGLY_EYE.get());
     }
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.EYE_MODIFIER.get();
+        return ModContent.EYE_MODIFIER_RECIPE.get();
     }
 
     @Override

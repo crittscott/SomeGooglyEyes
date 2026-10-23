@@ -16,8 +16,8 @@ It describes what exists, not necessarily what should exist, and is not a design
 
 ## Project shape
 
-Some Googly Eyes is a Java 17 Minecraft 1.20.1 mod for Forge 47.4.0 and Fabric Loader 0.19.3/Fabric
-API 0.92.11, using Architectury API 9.2.14. Its mod id is `somegoogly`, its root package is
+Some Googly Eyes is a Java 17 Minecraft 1.20.1 mod for Forge 47.4.0 and Fabric Loader 0.16.14/Fabric
+API 0.92.11. Its mod id is `somegoogly`, its root package is
 `com.github.crittscott.somegoogly`, and its version is `0.8.1`.
 
 The active modules are `common`, `forge`, and `fabric`:
@@ -122,7 +122,7 @@ and ageable models, special vanilla and Twilight Forest shapes, Citadel/LLibrary
 GeckoLib bones. Results are cached by model identity and cleared with renderer or runtime resets.
 
 Shared access to vanilla rendering members is declared in the common access widener. Fabric applies
-it directly; Forge carries an SRG-named `META-INF/accesstransformer.cfg` that must be kept aligned with it by hand.
+it directly; Forge receives it converted to an SRG-named access transformer at remap.
 
 GeckoLib is optional. Common code calls the loader-specific `GeckoCompat` bridge, which checks for
 GeckoLib before using typed integration code. Failure to attach a GeckoLib layer does not prevent the
@@ -133,16 +133,17 @@ model, with tint index 2 derived from its appearance payload.
 
 ## Networking
 
-`NetworkHandler` uses Architectury `NetworkManager`. Gameplay payload ids contain protocol version
-`9`; stable hello and acknowledgment ids negotiate compatibility during login. A mismatch or timeout
+`NetworkHandler` owns the payload ids and sends through the `@ExpectPlatform` bridges `Networking` and
+`ClientNetworking`; Fabric uses Fabric API play networking, and Forge carries every payload, tagged by
+id, on one required `SimpleChannel`. Gameplay payload ids contain protocol version `10`; stable hello and acknowledgment ids negotiate compatibility during login. A mismatch or timeout
 disconnects the client before resolved eye definitions are sent.
 
 Server-to-client payloads carry eye state, resolved definitions, and behavior triggers. Client-to-
-server payloads request picker freeze, spawn, pose, and export operations. Receivers are registered for
-one direction, and every picker request derives its player from the server packet context and repeats
-authorization on the server.
+server payloads request picker freeze, spawn, pose, and export operations. Each loader's transport registers
+the receivers; they decode on the network thread, every picker request takes the authenticated sender,
+and handlers apply on the game thread and repeat authorization on the server.
 
-`NetworkTracking` abstracts loader-specific tracking-player lookup. Eye-state packets that arrive
+`Networking.sendTrackingAndSelf` uses each loader's tracking-player lookup. Eye-state packets that arrive
 before their client entity are retained in a bounded, expiring pending set and applied when the entity
 loads. Pending state is cleared on disconnect.
 
