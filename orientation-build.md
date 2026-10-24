@@ -27,7 +27,7 @@ Each copy sits at `build-env/` followed by its active path.
 
 The project is a Groovy-DSL Gradle build with `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root build applies Architectury Loom and the Architectury plugin to each subproject and establishes shared Minecraft mappings and Java settings. The build declares no Maven publication; the modules expose no stable public API and nothing consumes them through Maven. `common` is transformed for Fabric, Forge, and NeoForge; each loader module bundles its transformed common output with Shadow and then remaps the resulting production JAR. Architectury is build-time only: the plugin supplies `@ExpectPlatform` and its transformation, and no loader requires Architectury API at runtime.
 
-`common` depends on Fabric Loader only for the Mixin annotations of its common Mixins. It also compiles the GeckoLib render integration against the compile-only `geckolib-common` artifact from GeckoLib's Cloudsmith Maven; the loader modules have no GeckoLib dependency of their own. GeckoLib is optional at runtime and is not bundled.
+`common` depends on Fabric Loader only for the Mixin annotations of its common Mixins. It also compiles the GeckoLib render integration against the compile-only `geckolib-common` artifact from GeckoLib's Cloudsmith Maven, and each loader module compiles its GeckoLib render-layer listener against that loader's compile-only GeckoLib artifact. Forge and NeoForge use GeckoLib's own `4.7.3` artifacts; Fabric uses GeckoLib 4.7.1 from Modrinth Maven (`maven.modrinth:geckolib`, version id `geckolib_fabric_compile_version`), because GeckoLib's published Fabric 4.7.3 jar for 1.21.3 is empty. GeckoLib is optional at runtime and is not bundled.
 
 `common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; every loader points its own `loom.accessWidenerPath` at common's. Forge and NeoForge, which read access transformers rather than wideners, also name that widener in `atAccessWideners` so their production JARs carry the converted rules.
 
@@ -57,7 +57,8 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | NeoForge | `net.neoforged:neoforge:21.3.97` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency; also supplies the common annotation dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.114.1+1.21.3` | Fabric runtime and development API |
-| GeckoLib | `software.bernie.geckolib:geckolib-common-1.21.3:4.7.3` | Compile-only optional render integration in common |
+| GeckoLib | `software.bernie.geckolib:geckolib-{common,forge,neoforge}-1.21.3:4.7.3` | Compile-only optional render integration in common, Forge, and NeoForge |
+| GeckoLib for Fabric | `maven.modrinth:geckolib:7fKNdJBM` (GeckoLib 4.7.1) | Compile-only Fabric render-layer listener |
 | JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module because Loom does not expose Minecraft's copy to common |
 
 The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
@@ -70,8 +71,8 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 
 | Subject | Declaration |
 | --- | --- |
-| Some Googly Eyes artifact | `0.8.2` |
-| Fabric, Forge, and NeoForge GameTest support mods | `0.8.2` |
+| Some Googly Eyes artifact | `0.8.3` |
+| Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
 | Minecraft compatibility | exactly `1.21.3`; Forge and NeoForge syntax `[1.21.3]`, Fabric syntax `=1.21.3` |
 | Forge compatibility | `[53.1.12,54)` |
 | Forge JavaFML loader compatibility | `[53,54)` |
@@ -86,4 +87,4 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 
 `gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, and mod versions. The root `build.gradle` pins the three external Gradle plugins and JSR 305, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle itself. The loader scripts consume the root properties rather than restating dependency versions.
 
-Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Parchment Maven and GeckoLib's Cloudsmith Maven, and the NeoForge module also declares NeoForge Maven; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.
+Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Parchment Maven and GeckoLib's Cloudsmith Maven, the NeoForge module also declares NeoForge Maven, and the Fabric module declares Modrinth Maven exclusively for the `maven.modrinth` group; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.
