@@ -8,7 +8,7 @@ Structure, ownership, state, loader seams, and invariants; `orientation-player.m
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.2`, Java 21, Minecraft 1.21.4.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.4.
 
 The Gradle project has four modules; `common` is transformed into all three loader artifacts.
 
