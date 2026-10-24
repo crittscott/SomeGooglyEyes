@@ -70,8 +70,8 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 
 | Subject | Declaration |
 | --- | --- |
-| Some Googly Eyes artifact | `0.8.2` |
-| Fabric, Forge, and NeoForge GameTest support mods | `0.8.2` |
+| Some Googly Eyes artifact | `0.8.3` |
+| Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
 | Minecraft compatibility | exactly `1.21.4`; Forge and NeoForge syntax `[1.21.4]`, Fabric syntax `=1.21.4` |
 | Forge compatibility | `[54.1.18,55)` |
 | Forge JavaFML loader compatibility | `[54,55)` |
