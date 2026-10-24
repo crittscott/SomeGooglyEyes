@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -10,7 +10,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
  * Forge GameTest entry points for {@link ConfigGameTestsLogic}; see that class for the actual
  * assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class ConfigGameTests {
 
@@ -30,13 +30,8 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedConfigsLoadForKnownEntities(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {
-        ConfigGameTestsLogic.everyShippedConfigHasNonBlankAttachTokens(helper);
+    public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
+        ConfigGameTestsLogic.everyShippedMinecraftDefinitionLoads(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -45,7 +40,27 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedPigHasTwoVariants(helper);
+    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 }

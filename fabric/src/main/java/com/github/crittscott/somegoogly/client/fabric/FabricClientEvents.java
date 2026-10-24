@@ -1,58 +1,58 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.EyeInspector;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
-import com.github.crittscott.somegoogly.client.picker.PickerState;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 
-import java.util.stream.Collectors;
-
-/** Fabric registration for client ticks, picker UI/input, colors, and the 3D eye item renderer. */
+/**
+ * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, the Slimy
+ * Eye color, and the 3D Googly Eye item renderer.
+ */
 public final class FabricClientEvents {
-
-    private static int commandTreeDebugTicks = -1;
-    private static boolean loggedFirstRendererCallback;
-    private static int rendererCallbacks;
-    private static int rendererInstalls;
 
     private FabricClientEvents() {
     }
 
+    /** Register the client's Fabric event callbacks. */
     public static void register() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
-                (entityType, renderer, helper, context) -> {
-                    rendererCallbacks++;
-                    boolean installed = ClientRenderLayers.installLiving(entityType, renderer);
-                    if (installed) {
-                        rendererInstalls++;
+                (entityType, renderer, helper, context) ->
+                        ClientRenderLayers.install(renderer));
+        if (GeckoCompat.isLoaded()) {
+            FabricGeckoLayers.register();
+        }
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                new SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public ResourceLocation getFabricId() {
+                        return new ResourceLocation(SomeGooglyCommon.MOD_ID, "attachment_caches");
                     }
-                    if (!loggedFirstRendererCallback) {
-                        loggedFirstRendererCallback = true;
-                        SomeGooglyCommon.LOGGER.debug(
-                                "Fabric render debug: first living-renderer callback type={}, renderer={}, installed={}",
-                                BuiltInRegistries.ENTITY_TYPE.getKey(entityType),
-                                renderer.getClass().getName(), installed);
+
+                    @Override
+                    public void onResourceManagerReload(ResourceManager manager) {
+                        ClientRenderLayers.clearCaches();
                     }
                 });
 
@@ -61,87 +61,25 @@ public final class FabricClientEvents {
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_PREV);
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            logMergedCommandTree(client);
-            ClientNetworkHandler.tick();
-            ClientEyeRuntime.tick();
-            EyeInspector.tick();
-            consumePickerKeys();
+        ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (!ClientPlayNetworking.canSend(PickerFreezePacket.ID) && client.getConnection() != null) {
+                client.getConnection().getConnection()
+                        .disconnect(Component.translatable("somegoogly.network.required_server"));
+            }
         });
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> commandTreeDebugTicks = 0);
-        ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
-                ClientNetworkHandler.onEntityLoaded(entity));
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            commandTreeDebugTicks = -1;
-            ClientNetworkHandler.clearPendingEyeStates();
-            ClientEyeConfigs.clear();
-            ClientEyeRuntime.clear();
-            PickerState.resetOnDisconnect();
-        });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudRenderCallback.EVENT.register((graphics, partialTick) -> {
             Minecraft minecraft = Minecraft.getInstance();
             PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
                     minecraft.getWindow().getGuiScaledHeight());
         });
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 2
-                        ? EyeItemProperties.get(stack).iris().orElse(EyeColor.BLACK).toRgb24()
-                        : -1,
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
                 ModContent.SLIMY_EYE.get());
 
         GooglyEyeItemRenderer renderer = new GooglyEyeItemRenderer();
         BuiltinItemRendererRegistry.INSTANCE.register(ModContent.GOOGLY_EYE.get(), renderer::renderByItem);
-    }
-
-    public static void logRendererReload(int nonLivingInstalls) {
-        SomeGooglyCommon.LOGGER.debug(
-                "Fabric render debug: renderer reload completed; living callbacks={}, new living layers={}, new non-living layers={}",
-                rendererCallbacks, rendererInstalls, nonLivingInstalls);
-        rendererCallbacks = 0;
-        rendererInstalls = 0;
-    }
-
-    private static void logMergedCommandTree(Minecraft client) {
-        if (commandTreeDebugTicks < 0) {
-            return;
-        }
-        commandTreeDebugTicks++;
-        if (client.getConnection() == null) {
-            return;
-        }
-        CommandNode<?> sg = client.getConnection().getCommands().getRoot().getChild("sg");
-        if (sg == null && commandTreeDebugTicks < 100) {
-            return;
-        }
-        String before = children(sg);
-        FabricClientCommands.mergeSuggestions(client.getConnection().getCommands());
-        sg = client.getConnection().getCommands().getRoot().getChild("sg");
-        String after = children(sg);
-        SomeGooglyCommon.LOGGER.debug(
-                "Fabric client debug: merged /sg tree before repair [{}], after repair [{}]",
-                before, after);
-        commandTreeDebugTicks = -1;
-    }
-
-    private static String children(CommandNode<?> node) {
-        return node == null ? "missing" : node.getChildren().stream()
-                .map(CommandNode::getName)
-                .sorted()
-                .collect(Collectors.joining(", "));
-    }
-
-    private static void consumePickerKeys() {
-        while (PickerKeys.TOGGLE.consumeClick()) {
-            PickerInput.handle(PickerKeys.TOGGLE);
-        }
-        while (PickerKeys.LOCK.consumeClick()) {
-            PickerInput.handle(PickerKeys.LOCK);
-        }
-        while (PickerKeys.PART_PREV.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_PREV);
-        }
-        while (PickerKeys.PART_NEXT.consumeClick()) {
-            PickerInput.handle(PickerKeys.PART_NEXT);
-        }
     }
 }

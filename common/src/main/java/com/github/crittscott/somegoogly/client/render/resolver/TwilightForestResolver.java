@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,19 +74,9 @@ public class TwilightForestResolver extends ModelPartTreeResolver {
         return roots;
     }
 
-    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
-    private static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
-                              Consumer<PoseStack> preTransform) {
-        int i = 0;
-        for (ModelPart part : parts) {
-            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
-            i++;
-        }
-    }
-
     /**
      * A young-gated uniform-axis scale followed by a translate. {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches the
+     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
      * resolved chain per (model, token) and the same model instance renders every baby and adult of its
      * type.
      */

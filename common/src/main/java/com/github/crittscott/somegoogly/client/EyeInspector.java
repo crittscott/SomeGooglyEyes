@@ -22,6 +22,10 @@ public final class EyeInspector {
     private EyeInspector() {
     }
 
+    /**
+     * Each client tick, while the player sneaks holding an eye item, show the aimed entity's verdict on the action
+     * bar.
+     */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;

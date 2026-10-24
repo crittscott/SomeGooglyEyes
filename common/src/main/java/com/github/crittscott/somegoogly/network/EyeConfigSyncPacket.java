@@ -2,12 +2,11 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.mojang.serialization.DataResult;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,39 +14,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Server → client sync of the version/age-selected eye geometry configs. Sent on player login and
- * on {@code /reload} (see {@code ServerEventHandler#onDatapackSync}). Custom datapack data isn't
- * auto-synced, so we carry it ourselves; each entity's selected config set travels as binary NBT
- * (the codec output via {@link NbtOps}), roughly half the size of a JSON-string encoding — this
- * packet goes to every player at login, so wire size matters.
- *
- * <p>The whole packet must fit vanilla's 1 MiB clientbound custom-payload cap or every client is
- * disconnected at login; {@link #encode} refuses an authored config set before it reaches that ceiling.
+ * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
+ * {@code googlyEyesEnabled} master switch. The server builds it from the installed set and that set's
+ * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
+ * validated when installed, so writing it to each connection only copies tags. The client decodes and
+ * re-validates everything it receives.
  */
-public class EyeConfigSyncPacket {
+public class EyeConfigSyncPacket implements Payload {
 
-    // Refuse the payload while there is still headroom under the 1 MiB clientbound payload cap.
-    private static final int MAX_PAYLOAD_BYTES = 900 * 1024;
+    public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
+    public static final ResourceLocation ID = NetworkHandler.EYE_CONFIG;
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
-    private final long generation;
+    private final Map<ResourceLocation, CompoundTag> encoded;
+    private final boolean googlyEyesEnabled;
 
-    public EyeConfigSyncPacket(long generation, Map<ResourceLocation, RuntimeConfigSet> configs) {
-        this.generation = generation;
+    /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
+    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
+                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled) {
         this.configs = configs;
+        this.encoded = encoded;
+        this.googlyEyesEnabled = googlyEyesEnabled;
     }
 
-    public static EyeConfigSyncPacket decode(FriendlyByteBuf buffer) {
-        long generation = buffer.readLong();
-        if (generation < 0) {
-            throw new DecoderException("Negative eye config generation");
+    /** Decode and validate a received payload. */
+    public static EyeConfigSyncPacket read(FriendlyByteBuf buffer) {
+        return new EyeConfigSyncPacket(buffer);
+    }
+
+    private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
+        if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
+            throw new DecoderException("Eye config sync payload exceeds network limit");
         }
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
-            throw new DecoderException("Eye config count exceeds protocol limit: " + size);
+            throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
         Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
-        int wireEyes = 0;
+        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation id = buffer.readResourceLocation();
             if (configs.containsKey(id)) {
@@ -57,15 +61,6 @@ public class EyeConfigSyncPacket {
             if (tag == null) {
                 throw new DecoderException("Missing synced eye config for " + id);
             }
-            EyeConfigLimits.WireValidation wireValidation = EyeConfigLimits.validateWireConfigSet(tag);
-            if (wireValidation.error() != null) {
-                throw new DecoderException("Unsafe synced eye config for " + id + ": "
-                        + wireValidation.error());
-            }
-            wireEyes += wireValidation.eyes();
-            if (wireEyes > EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC) {
-                throw new DecoderException("Synced eye config total exceeds protocol limit");
-            }
             RuntimeConfigSet decoded;
             try {
                 decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow();
@@ -73,32 +68,42 @@ public class EyeConfigSyncPacket {
                 throw new DecoderException("Malformed synced eye config for " + id, e);
             }
             configs.put(id, decoded);
+            encoded.put(id, tag);
         }
         String error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error);
         }
-        return new EyeConfigSyncPacket(generation, configs);
+        this.configs = configs;
+        this.encoded = encoded;
+        this.googlyEyesEnabled = buffer.readBoolean();
     }
 
-    public static void encode(EyeConfigSyncPacket packet, FriendlyByteBuf buffer) {
-        String error = EyeConfigLimits.validateSync(packet.configs);
-        if (error != null) {
-            throw new EncoderException("Unsafe eye config sync: " + error);
+    /** The number of bytes a packet carrying {@code encoded} occupies on the wire. */
+    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            writeBody(buffer, encoded, false);
+            return buffer.writerIndex();
+        } finally {
+            buffer.release();
         }
-        int start = buffer.writerIndex();
-        buffer.writeLong(packet.generation);
-        buffer.writeVarInt(packet.configs.size());
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : packet.configs.entrySet()) {
+    }
+
+    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
+                                  boolean googlyEyesEnabled) {
+        buffer.writeVarInt(encoded.size());
+        for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
-            DataResult<Tag> encoded = RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue());
-            Tag tag = encoded.result().orElseThrow(() -> new EncoderException(
-                    "Could not encode synced eye config for " + entry.getKey()));
-            if (!(tag instanceof CompoundTag compound)) {
-                throw new EncoderException("Synced eye config did not encode as a compound for " + entry.getKey());
-            }
-            buffer.writeNbt(compound);
+            buffer.writeNbt(entry.getValue());
         }
+        buffer.writeBoolean(googlyEyesEnabled);
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        int start = buffer.writerIndex();
+        writeBody(buffer, encoded, googlyEyesEnabled);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written
@@ -106,11 +111,18 @@ public class EyeConfigSyncPacket {
         }
     }
 
+    /** The resolved eye definitions, by entity type. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
     }
 
-    public long generation() {
-        return generation;
+    /** The server's {@code googlyEyesEnabled} switch. */
+    public boolean googlyEyesEnabled() {
+        return googlyEyesEnabled;
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

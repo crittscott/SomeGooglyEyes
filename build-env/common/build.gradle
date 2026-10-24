@@ -5,3 +5,9 @@ architectury {
 loom {
     accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
 }
+
+dependencies {
+    // Supplies Fabric's @Environment annotation types, which the common Minecraft jar references.
+    // Do NOT use Fabric Loader API from common.
+    modCompileOnly "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+}

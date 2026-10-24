@@ -1,0 +1,66 @@
+package com.github.crittscott.somegoogly.gametest;
+
+import com.github.crittscott.somegoogly.picker.PickerGate;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+
+/**
+ * The server-side authorization and rate limits behind the client-driven picker verbs:
+ * {@link PickerGate#mayUsePicker} (creative plus permission level 2, verified manually: in-game, a
+ * creative player without op cannot toggle the picker, run {@code /sg spawn}, {@code /sg spawnall},
+ * or {@code /sg mob}, and an op in creative can) and the {@link PickerGate} rate limits (one request
+ * per player per tick, plus a server-wide cooldown on the destructive bulk spawn).
+ * {@code ConfigGameTestsLogic.spawnAllDefaultsOff} pins the opt-in config default; these pin the
+ * silent-rejection gates that keep unauthorized custom-payload spam from amplifying into server work.
+ */
+public final class PickerAuthGameTestsLogic {
+
+    private PickerAuthGameTestsLogic() {
+    }
+
+    /**
+     * A sender gets at most one picker request per tick, and clearing its record resets the limit. No
+     * in-game form, since a player at the keyboard cannot send two picker requests in one tick; guards the
+     * server against custom-payload spam from a modified client.
+     */
+    public static void pickerRequestsThrottlePerTick(GameTestHelper helper, ServerPlayer player) {
+        PickerGate.onPlayerLeft(player.getUUID());
+        try {
+            helper.assertTrue(PickerGate.allowRequest(player),
+                    "the first request in a tick is allowed");
+            helper.assertTrue(!PickerGate.allowRequest(player),
+                    "a second request in the same tick is refused");
+
+            PickerGate.onPlayerLeft(player.getUUID());
+            helper.assertTrue(PickerGate.allowRequest(player),
+                    "clearing the player's record lets the next request through");
+        } finally {
+            PickerGate.onPlayerLeft(player.getUUID());
+        }
+        helper.succeed();
+    }
+
+    /**
+     * {@code allowSpawnAll} arms a server-wide cooldown; a second call inside the window is refused. In
+     * game, on a disposable world with {@code allowSpawnAll = true}: as a creative operator, run
+     * {@code /sg spawnall minecraft} twice within 10 seconds; the second is refused. After the cooldown it
+     * runs again.
+     */
+    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        PickerGate.onServerStopping();
+        try {
+            helper.assertTrue(PickerGate.allowSpawnAll(server), "the first spawn-all is allowed");
+            helper.assertTrue(!PickerGate.allowSpawnAll(server),
+                    "a second spawn-all inside the cooldown is refused");
+
+            PickerGate.onServerStopping();
+            helper.assertTrue(PickerGate.allowSpawnAll(server),
+                    "the cooldown resets when picker state is cleared");
+        } finally {
+            PickerGate.onServerStopping();
+        }
+        helper.succeed();
+    }
+}

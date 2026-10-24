@@ -1,11 +1,12 @@
 package com.github.crittscott.somegoogly.eye.state;
 
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -15,7 +16,7 @@ import java.util.Optional;
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
  * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
- * network packet writes the same three optional fields directly:
+ * network packet ({@code EyeStatePacket}) uses {@link #write} and {@link #read}. It serves three uses:
  * <ul>
  *   <li>an eye <b>item</b>'s stack NBT (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -27,7 +28,7 @@ import java.util.Optional;
  * eye item carries "what the eye looks like", and attaching it reuses that mob's configured placement.
  *
  * <p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have no
- * presence here (see {@link EyeBehaviors}).
+ * presence here (see {@link EyeBehavior}).
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 
@@ -45,25 +46,37 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
      * decoded by {@link #CODEC}.
      */
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
-        AppearanceOverride decoded = tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
-        return decoded.isValid() ? decoded : EMPTY;
+        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
     }
 
+    /** Read the network form written by {@link #write}; an out-of-range color fails the decode. */
+    public static AppearanceOverride read(FriendlyByteBuf buffer) {
+        return new AppearanceOverride(
+                buffer.readOptional(EyeColor::read),
+                buffer.readOptional(EyeColor::read),
+                buffer.readOptional(FriendlyByteBuf::readBoolean));
+    }
+
+    /** Write the network form: each field prefixed with a presence boolean. */
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeOptional(cornea, (out, color) -> color.write(out));
+        buffer.writeOptional(iris, (out, color) -> color.write(out));
+        buffer.writeOptional(glow, FriendlyByteBuf::writeBoolean);
+    }
+
+    /** Whether no field is set, so this override contributes nothing on {@link EyeAppearance#overlay}. */
     public boolean isEmpty() {
         return cornea.isEmpty() && iris.isEmpty() && glow.isEmpty();
     }
 
+    /** Whether every set color channel is in range; an unset channel is always valid. */
     public boolean isValid() {
         return cornea.map(EyeColor::isValid).orElse(true) && iris.map(EyeColor::isValid).orElse(true);
     }
 
-    /**
-     * Encode this override as a compound, returning an empty compound if encoding fails or produces a
-     * different NBT tag type.
-     */
+    /** Encode this override as a compound. */
     public CompoundTag toNbt() {
-        Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
-        return tag instanceof CompoundTag compound ? compound : new CompoundTag();
+        return (CompoundTag) CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow(false, error -> { });
     }
 
     /** {@code null} clears the field. */

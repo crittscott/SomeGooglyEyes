@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import java.util.List;
 
 /**
- * Pure-logic coverage of {@link EyeConfigModel#chooseVariantIndex} and {@link Variant#weight()} — the
+ * Pure-logic coverage of {@link EyeConfigModel#chooseVariantIndex} — the
  * deterministic weighted pick that lets the client and server agree on a mob's arrangement from its
  * stored roll without sending an index. World-less: builds configs in memory and asserts. The
  * cumulative-weight boundary cases are the load-bearing part (a drift here desyncs viewers).
@@ -41,6 +41,10 @@ public final class VariantSelectionGameTestsLogic {
         return variant;
     }
 
+    /**
+     * A stored roll picks the variant whose share of the cumulative weight contains it. No in-game form;
+     * guards that every client places a mob's eyes in the same arrangement the server chose.
+     */
     public static void cumulativeWeightBoundariesPickExpectedVariant(GameTestHelper helper) {
         // Weights 1 and 3 → total 4. Variant 0 owns roll in [0, 0.25), variant 1 owns [0.25, 1).
         RuntimeConfig config = configOf(1.0, 3.0);
@@ -51,6 +55,10 @@ public final class VariantSelectionGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A missing, empty, or zero-weight definition picks the first variant. No in-game form; guards that such
+     * a definition never breaks the pick.
+     */
     public static void degenerateConfigsFallToFirstVariant(GameTestHelper helper) {
         helper.assertTrue(EyeConfigModel.chooseVariantIndex(null, 0.5F) == 0, "null config → index 0");
 
@@ -61,27 +69,6 @@ public final class VariantSelectionGameTestsLogic {
 
         // All-zero weights (here a single zero-weight variant) leave nothing to pick → index 0.
         helper.assertTrue(EyeConfigModel.chooseVariantIndex(configOf(0.0), 0.5F) == 0, "zero total weight → index 0");
-        helper.succeed();
-    }
-
-    public static void rollIsDeterministicForAConfig(GameTestHelper helper) {
-        RuntimeConfig config = configOf(2.0, 1.0, 1.0);
-        for (float roll = 0F; roll < 1F; roll += 0.05F) {
-            int first = EyeConfigModel.chooseVariantIndex(config, roll);
-            int second = EyeConfigModel.chooseVariantIndex(config, roll);
-            helper.assertTrue(first == second, "same roll must always pick the same variant (roll " + roll + ")");
-        }
-        helper.succeed();
-    }
-
-    public static void weightDefaultsAndClamping(GameTestHelper helper) {
-        // weight is a required field on disk, so a fresh Variant carries the in-memory default rather
-        // than an "absent" marker; only the negative clamp is a runtime concern.
-        helper.assertTrue(new Variant().weight() == 1.0, "a fresh variant weighs 1.0");
-
-        Variant negative = new Variant();
-        negative.weight = -5.0;
-        helper.assertTrue(negative.weight() == 0.0, "negative weight clamps to 0.0");
         helper.succeed();
     }
 }

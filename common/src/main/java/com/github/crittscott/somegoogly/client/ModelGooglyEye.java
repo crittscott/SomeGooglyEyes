@@ -2,15 +2,14 @@ package com.github.crittscott.somegoogly.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 /**
  * Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
  *
- * <p>The cornea and iris are two complete shallow cylinders, each with front and rear caps. The
- * iris stays physically in front of the cornea, so their surfaces never overlap or need z-fighting
- * offsets. The 16-sided rim reads as round at item scale while remaining inexpensive.
+ * <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
+ * so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
+ * front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
+ * inexpensive, and each cap is drawn as a fan of quads over its ring.
  */
 public final class ModelGooglyEye {
 
@@ -49,16 +48,16 @@ public final class ModelGooglyEye {
         }
     }
 
-    private static void emit(VertexConsumer buffer, Matrix4f matrix, Matrix3f normalMatrix,
+    private static void emit(VertexConsumer buffer, PoseStack.Pose pose,
                              float x, float y, float z, float normalX, float normalY, float normalZ,
                              int packedLight, int packedOverlay, float red, float green, float blue,
                              float alpha) {
-        buffer.vertex(matrix, x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
+        buffer.vertex(pose.pose(), x * MODEL_UNIT, y * MODEL_UNIT, z * MODEL_UNIT)
                 .color(red, green, blue, alpha)
                 .uv(0.5F, 0.5F)
                 .overlayCoords(packedOverlay)
                 .uv2(packedLight)
-                .normal(normalMatrix, normalX, normalY, normalZ)
+                .normal(pose.normal(), normalX, normalY, normalZ)
                 .endVertex();
     }
 
@@ -84,61 +83,68 @@ public final class ModelGooglyEye {
         irisOffsetY = -normY * preScale;
     }
 
+    /** Draw the cornea cylinder in the given color. */
     public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                               float red, float green, float blue, float alpha) {
         renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z);
+                0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z, true);
     }
 
     private static void renderCylinder(PoseStack poseStack, VertexConsumer buffer, int packedLight,
                                        int packedOverlay, float red, float green, float blue, float alpha,
-                                       float centerX, float centerY, float radius, float frontZ, float backZ) {
+                                       float centerX, float centerY, float radius, float frontZ, float backZ,
+                                       boolean backCap) {
         PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix = pose.pose();
-        Matrix3f normalMatrix = pose.normal();
 
+        // Entity-cutout buffers draw quads; ring points 0, i, i+1, i+2 span two fan triangles of the cap,
+        // so SIDES - 2 triangles take (SIDES - 2) / 2 quads. The front cap faces -Z, so it winds backward.
+        for (int i = 1; i < SIDES - 1; i += 2) {
+            emitRing(buffer, pose, centerX, centerY, radius, 0, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emitRing(buffer, pose, centerX, centerY, radius, i + 2, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emitRing(buffer, pose, centerX, centerY, radius, i + 1, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emitRing(buffer, pose, centerX, centerY, radius, i, frontZ, 0F, 0F, -1F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            if (backCap) {
+                emitRing(buffer, pose, centerX, centerY, radius, 0, backZ, 0F, 0F, 1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emitRing(buffer, pose, centerX, centerY, radius, i, backZ, 0F, 0F, 1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emitRing(buffer, pose, centerX, centerY, radius, i + 1, backZ, 0F, 0F, 1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emitRing(buffer, pose, centerX, centerY, radius, i + 2, backZ, 0F, 0F, 1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+            }
+        }
+
+        // Per-vertex radial normals make the rim shade smoothly.
         for (int i = 0; i < SIDES; i++) {
             int next = (i + 1) % SIDES;
-
-            float x0 = centerX + RING_X[i] * radius;
-            float y0 = centerY + RING_Y[i] * radius;
-            float x1 = centerX + RING_X[next] * radius;
-            float y1 = centerY + RING_Y[next] * radius;
-
-            // Entity-cutout buffers draw quads, so each cap triangle is a degenerate quad.
-            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
+            emitRing(buffer, pose, centerX, centerY, radius, i, frontZ, RING_X[i], RING_Y[i], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, 0F, 0F, -1F,
+            emitRing(buffer, pose, centerX, centerY, radius, next, frontZ, RING_X[next], RING_Y[next], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, 0F, 0F, -1F,
+            emitRing(buffer, pose, centerX, centerY, radius, next, backZ, RING_X[next], RING_Y[next], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, centerX, centerY, frontZ, 0F, 0F, -1F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-
-            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, backZ, 0F, 0F, 1F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, backZ, 0F, 0F, 1F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, centerX, centerY, backZ, 0F, 0F, 1F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-
-            // Per-vertex radial normals make the rim shade smoothly.
-            emit(buffer, matrix, normalMatrix, x0, y0, frontZ, RING_X[i], RING_Y[i], 0F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, frontZ, RING_X[next], RING_Y[next], 0F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x1, y1, backZ, RING_X[next], RING_Y[next], 0F,
-                    packedLight, packedOverlay, red, green, blue, alpha);
-            emit(buffer, matrix, normalMatrix, x0, y0, backZ, RING_X[i], RING_Y[i], 0F,
+            emitRing(buffer, pose, centerX, centerY, radius, i, backZ, RING_X[i], RING_Y[i], 0F,
                     packedLight, packedOverlay, red, green, blue, alpha);
         }
     }
 
+    private static void emitRing(VertexConsumer buffer, PoseStack.Pose pose, float centerX, float centerY,
+                                 float radius, int index, float z, float normalX, float normalY, float normalZ,
+                                 int packedLight, int packedOverlay, float red, float green, float blue,
+                                 float alpha) {
+        emit(buffer, pose, centerX + RING_X[index] * radius, centerY + RING_Y[index] * radius, z,
+                normalX, normalY, normalZ, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    /** Draw the iris cylinder in the given color, offset by the current pupil position. */
     public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                             float red, float green, float blue, float alpha) {
         renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z);
+                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z, false);
     }
 }

@@ -1,10 +1,10 @@
 package com.github.crittscott.somegoogly.recipe;
 
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -15,12 +15,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 /**
- * Googly eye + slimeball → slimy eye, carrying the eye's appearance onto the result so the applied
- * mob ends up with the eye you actually dyed or harvested.
+ * Googly eye + slimeball → slimy eye, carrying all of the eye's NBT (its appearance, name, and the rest)
+ * onto the result, as a vanilla transmute does, so the applied mob ends up with the eye you actually dyed
+ * or harvested.
  *
  * <p>A {@link ShapelessRecipe} subclass rather than a {@code CustomRecipe} (as {@link EyeModifierRecipe}
  * is): the ingredients are fixed and declared, so the recipe book and JEI can show it without any
- * plugin of ours. Only the result's NBT is dynamic, which is exactly what {@link #assemble} adds.
+ * plugin of ours. Only the result's NBT is dynamic, which is what {@link #assemble} copies.
  */
 public class SlimyEyeRecipe extends ShapelessRecipe {
 
@@ -35,7 +36,8 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
             if (stack.is(ModContent.GOOGLY_EYE.get())) {
-                EyeItemProperties.set(result, EyeItemProperties.get(stack));
+                CompoundTag tag = stack.getTag();
+                result.setTag(tag == null ? null : tag.copy());
                 break;
             }
         }
@@ -43,7 +45,7 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<SlimyEyeRecipe> getSerializer() {
         return ModContent.SLIMY_EYE_RECIPE.get();
     }
 

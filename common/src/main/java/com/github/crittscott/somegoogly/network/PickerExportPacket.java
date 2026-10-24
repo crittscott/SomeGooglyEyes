@@ -1,15 +1,15 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerExportService;
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerGate;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -17,56 +17,77 @@ import java.util.UUID;
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
  * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); all validation,
  * path construction, the 10-second cooldown, the file write, and the {@code /reload} live in
- * {@link PickerExportService}, creative-gated ({@link PickerPermissions}).
+ * {@link PickerExportService}. It requires {@link PickerGate#authorized}.
  *
- * <p>The NBT is read under a {@link PickerExportService#MAX_CONFIG_BYTES} quota — a legitimate config
- * is a few KiB — so an oversized payload decodes to {@code null} (the service rejects it with
- * feedback) instead of allocating unbounded memory.
+ * <p>The client refuses to send a packet that fails {@link #fitsServerbound()}, so a malformed or
+ * oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.
  */
-public class PickerExportPacket {
+public class PickerExportPacket implements Payload {
 
-    @Nullable
+    /** Wire bound on the age string; comfortably above the longest age name. */
+    private static final int MAX_AGE_LENGTH = 16;
+
+    /** Vanilla's cap on a serverbound custom payload's encoded data. */
+    public static final int MAX_SERVERBOUND_BYTES = 32767;
+
+    public static final ResourceLocation ID = NetworkHandler.PICKER_EXPORT;
+
     private final CompoundTag configNbt;
     private final ResourceLocation typeId;
     private final String age;
 
-    public PickerExportPacket(ResourceLocation typeId, String age, @Nullable CompoundTag configNbt) {
+    public PickerExportPacket(ResourceLocation typeId, String age, CompoundTag configNbt) {
         this.typeId = typeId;
         this.age = age;
         this.configNbt = configNbt;
     }
 
-    public static PickerExportPacket decode(FriendlyByteBuf buffer) {
-        ResourceLocation typeId = buffer.readResourceLocation();
-        String age = buffer.readUtf(16);
-        CompoundTag configNbt;
-        try {
-            configNbt = buffer.readNbt(new NbtAccounter(PickerExportService.MAX_CONFIG_BYTES));
-        } catch (RuntimeException oversized) {
-            // Quota exceeded mid-read: consume the rest (nothing follows the tag) and let the
-            // service reject the null payload with feedback instead of the decode killing the connection.
-            buffer.readerIndex(buffer.writerIndex());
-            configNbt = null;
+    /** Decode and validate a received payload. */
+    public static PickerExportPacket read(FriendlyByteBuf buffer) {
+        return new PickerExportPacket(buffer);
+    }
+
+    private PickerExportPacket(FriendlyByteBuf buffer) {
+        this.typeId = buffer.readResourceLocation();
+        this.age = buffer.readUtf(MAX_AGE_LENGTH);
+        CompoundTag configNbt = buffer.readNbt();
+        if (configNbt == null) {
+            throw new DecoderException("Picker export packet has no config");
         }
-        return new PickerExportPacket(typeId, age, configNbt);
+        this.configNbt = configNbt;
     }
 
-    public static void encode(PickerExportPacket packet, FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(packet.typeId);
-        buffer.writeUtf(packet.age, 16);
-        buffer.writeNbt(packet.configNbt);
+    /** Whether this packet's encoded data fits under {@link #MAX_SERVERBOUND_BYTES}. */
+    public boolean fitsServerbound() {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            write(buffer);
+            return buffer.readableBytes() <= MAX_SERVERBOUND_BYTES;
+        } finally {
+            buffer.release();
+        }
     }
 
-    /** Apply a decoded request on the server thread on behalf of its authenticated {@code sender}. */
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeResourceLocation(typeId);
+        buffer.writeUtf(age, MAX_AGE_LENGTH);
+        buffer.writeNbt(configNbt);
+    }
+
+    /** Export the packet's definition for an authorized sender and report the result to them. */
     public static void handle(PickerExportPacket packet, ServerPlayer sender) {
-        sender.serverLevel().getServer().execute(() -> {
-            if (!PickerPermissions.creative(sender)) {
-                return;
-            }
-            UUID playerId = sender.getUUID();
-            Component result = PickerExportService.export(
-                    sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
-            sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
-        });
+        if (!PickerGate.authorized(sender)) {
+            return;
+        }
+        UUID playerId = sender.getUUID();
+        Component result = PickerExportService.export(
+                sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
+        sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

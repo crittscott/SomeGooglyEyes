@@ -3,35 +3,30 @@ package com.github.crittscott.somegoogly.network.fabric;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.resources.ResourceLocation;
 
-/** Fabric server receivers; each decodes on the network thread and the handler applies on the server thread. */
+/** Fabric server receivers; each decodes on the network thread and handles on the server thread. */
 public final class FabricNetworkTransport {
+
+    /**
+     * Login-query channel the server asks about before the player joins. A client that answers it declares
+     * that it runs this network version; one that does not understand it is refused.
+     */
+    public static final ResourceLocation HANDSHAKE = NetworkHandler.versioned("handshake");
 
     private FabricNetworkTransport() {
     }
 
     /** Register the serverbound receivers; called once from the mod initializer. */
     public static void register() {
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PROTOCOL_ACK,
-                (server, player, handler, buffer, sender) -> NetworkHandler.receiveAcknowledgement(buffer, player));
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PICKER_FREEZE,
-                (server, player, handler, buffer, sender) ->
-                        PickerFreezePacket.handle(PickerFreezePacket.decode(buffer), player));
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PICKER_SPAWN,
-                (server, player, handler, buffer, sender) ->
-                        PickerSpawnPacket.handle(PickerSpawnPacket.decode(buffer), player));
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PICKER_SPAWN_ALL,
-                (server, player, handler, buffer, sender) ->
-                        PickerSpawnAllPacket.handle(PickerSpawnAllPacket.decode(buffer), player));
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PICKER_MOB_POSE,
-                (server, player, handler, buffer, sender) ->
-                        PickerMobPosePacket.handle(PickerMobPosePacket.decode(buffer), player));
-        ServerPlayNetworking.registerGlobalReceiver(NetworkHandler.PICKER_EXPORT,
-                (server, player, handler, buffer, sender) ->
-                        PickerExportPacket.handle(PickerExportPacket.decode(buffer), player));
+        ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.ID, (server, player, handler, buffer, sender) -> {
+            PickerFreezePacket packet = PickerFreezePacket.read(buffer);
+            server.execute(() -> PickerFreezePacket.handle(packet, player));
+        });
+        ServerPlayNetworking.registerGlobalReceiver(PickerExportPacket.ID, (server, player, handler, buffer, sender) -> {
+            PickerExportPacket packet = PickerExportPacket.read(buffer);
+            server.execute(() -> PickerExportPacket.handle(packet, player));
+        });
     }
 }

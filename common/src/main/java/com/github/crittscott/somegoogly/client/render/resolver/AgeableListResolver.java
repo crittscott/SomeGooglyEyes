@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,8 @@ import java.util.function.Consumer;
  *
  * <p>This is what gives a cow or a player the stable token {@code head} instead of a positional {@code #0}
  * — the head is a root field whose own name is SRG-mangled in production, so only this group accessor
- * recovers it reliably. Tried after {@link HierarchicalResolver} (named-root models keep their cleaner
- * path) and before {@link ChildMapResolver} (the positional catch-all).
+ * recovers it reliably. It must follow {@link HierarchicalResolver} (named-root models keep their cleaner
+ * path) and precede {@link ChildMapResolver} (the positional catch-all).
  *
  * <p>For a young entity, {@link AgeableListModel#renderToBuffer} wraps {@code headParts()} and
  * {@code bodyParts()} each in their own baby-only scale/offset, applied and popped entirely inside that
@@ -43,20 +42,10 @@ public class AgeableListResolver extends ModelPartTreeResolver {
         return roots;
     }
 
-    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
-    private static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
-                              Consumer<PoseStack> preTransform) {
-        int i = 0;
-        for (ModelPart part : parts) {
-            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
-            i++;
-        }
-    }
-
     /**
      * The scale/offset {@link AgeableListModel#renderToBuffer} applies around {@code headParts()} for a
      * young entity. {@code young} is re-checked on every call rather than baked in when this closure is
-     * built, because {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the
+     * built, because {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the
      * same model instance renders both baby and adult entities of its type.
      */
     private static Consumer<PoseStack> headWrap(AgeableListModel<?> ageable) {

@@ -41,6 +41,7 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
         return builder.buildFuture();
     }
 
+    /** A float argument that also accepts {@code ~} for "leave unchanged". */
     public static MaybeFloatArgumentType maybeFloat() {
         return new MaybeFloatArgumentType();
     }

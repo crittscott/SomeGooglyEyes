@@ -4,12 +4,11 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
-    "EntityPersistentDataMixin",
+    "EntityPersistentDataMigrationMixin",
+    "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
-    "MerchantResultSlotMixin"
-  ],
-  "client": [
-    "client.EntityRenderDispatcherMixin"
+    "MerchantResultSlotMixin",
+    "MushroomCowShearMixin"
   ],
   "injectors": {
     "defaultRequire": 1

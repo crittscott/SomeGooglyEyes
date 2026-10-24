@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -9,12 +10,17 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +39,7 @@ import java.util.Map;
  *
  * <p>{@link #slimyEyeAppliesOnlyToEligibleTargets}, {@link #slimyEyeRefusesAnAlreadyEyedTarget}, and
  * {@link #slimyEyeRerollsThePlacementVariant} then pin the apply verb
- * ({@link SlimyEyeItem#applyToTarget}): an eyeless, configured mob gains eyes carrying the stack's
+ * ({@link EyeItemService#applySlimyEye}): an eyeless, configured mob gains eyes carrying the stack's
  * appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or already-eyed
  * mob is refused with nothing consumed and nothing touched.
  */
@@ -53,6 +59,11 @@ public final class EligibilityGameTestsLogic {
         return config;
     }
 
+    /**
+     * A definition is usable only when present, enabled, and holding a variant. In game: add a datapack whose
+     * {@code data/minecraft/eyes/cow.json} entry has {@code "enabled": false} and run {@code /reload}; sneaking
+     * with a Googly Eye at an eyeless cow reports no configuration, and a Slimy Eye no longer applies to cows.
+     */
     public static void usablePredicateEndpoints(GameTestHelper helper) {
         helper.assertTrue(!RuntimeConfig.isUsable(null), "a missing config should not be usable");
 
@@ -68,6 +79,11 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Server eligibility follows that same predicate. In game: with the {@code "enabled": false} cow datapack
+     * from {@link #usablePredicateEndpoints}, no new cow spawns with eyes even at
+     * {@code entityOverrides = ["minecraft:cow,100"]}; remove the datapack and {@code /reload}, and they do.
+     */
     public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
@@ -87,29 +103,44 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
-    public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
+    /**
+     * A Slimy Eye applies only to an eligible, eyeless mob, and only while the mod is enabled. In game, in
+     * survival, craft a red-iris Slimy Eye (Googly Eye plus red dye, then plus a slimeball) and right-click:
+     * a cow disabled by the {@code "enabled": false} datapack from {@link #usablePredicateEndpoints} (refused,
+     * item kept); an eyeless cow with {@code googlyEyesEnabled = false} (refused, item kept); and an eyeless
+     * cow with it {@code true} (the cow gains red-iris eyes and one Slimy Eye is used).
+     */
+    public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         EyeColor red = new EyeColor(1F, 0F, 0F);
         // The spawn itself may have naturally rolled eyes under whatever configs were live at the time;
         // force the deterministic eyeless starting point this test assumes.
         EyeState.setHasEyes(cow, false);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             // Unconfigured: refused outright, and the eye stays in hand.
             ServerEyeConfigs.replaceAll(Map.of());
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
 
-            // Configured: eyes on, the stack's appearance carried across, exactly one eye spent.
+            // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
+            helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
+            helper.assertTrue(!EyeState.hasEyes(cow), "a disabled apply should not gain eyes");
+            helper.assertTrue(stack.getCount() == 2, "a disabled apply should not consume the eye");
+
+            // Configured and enabled: eyes on, the stack's appearance carried across, exactly one eye spent.
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
             helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
@@ -117,13 +148,17 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(stack.getCount() == 1, "applying should consume exactly one eye");
         } finally {
             ServerEyeConfigs.replaceAll(original);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
         helper.succeed();
     }
 
-    public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper) {
+    /**
+     * An already-eyed mob refuses a Slimy Eye and keeps its look. In game: right-click a cow with red-iris eyes
+     * using a blue-iris Slimy Eye; nothing happens, the item is kept, and the cow's eyes stay red and in place.
+     */
+    public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
         EyeColor red = new EyeColor(1F, 0F, 0F);
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -137,7 +172,7 @@ public final class EligibilityGameTestsLogic {
             float roll = EyeState.getVariantRoll(cow);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
-            InteractionResult refused = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
             helper.assertTrue(stack.getCount() == 1, "a refused apply should not consume the eye");
@@ -151,9 +186,13 @@ public final class EligibilityGameTestsLogic {
         helper.succeed();
     }
 
-    public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper) {
+    /**
+     * Each application draws a fresh placement. In game: take a pig's eyes off with Optometrist shears and put
+     * them back with a Slimy Eye, over and over; usually the eyes land on its head, but now and then on its
+     * rear.
+     */
+    public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Player player = helper.makeMockSurvivalPlayer();
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -166,12 +205,153 @@ public final class EligibilityGameTestsLogic {
             EntityPersistentData.get(cow).putFloat(EyeState.VARIANT_ROLL, 2F);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
-            InteractionResult applied = SlimyEyeItem.applyToTarget(stack, player, cow);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
             float roll = EyeState.getVariantRoll(cow);
             helper.assertTrue(roll >= 0F && roll < 1F, "an application should draw a fresh variant roll");
         } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * {@link ServerEyeConfigs#canEverWearEyes} consults <b>both</b> age buckets, so the at-spawn roll is
+     * offered to a mob that only has a config for the life stage it is not currently in — otherwise it
+     * would store {@code hasGooglyEyes=false} for life and never gain eyes on aging. In game: add a
+     * datapack whose {@code data/minecraft/eyes/cow.json} has only an {@code "adult"} entry, run
+     * {@code /reload}, set {@code entityOverrides = ["minecraft:cow,100"]}, and use a cow spawn egg on an
+     * adult cow; the calf has no eyes, and once it grows up it does.
+     */
+    public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet adultOnly = new RuntimeConfigSet();
+            adultOnly.adult = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, adultOnly));
+            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
+                    "an adult-only config still lets the entity roll at spawn");
+
+            RuntimeConfigSet babyOnly = new RuntimeConfigSet();
+            babyOnly.baby = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, babyOnly));
+            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
+                    "a baby-only config also lets an adult roll, so both buckets are consulted");
+
+            ServerEyeConfigs.replaceAll(Map.of());
+            helper.assertTrue(!ServerEyeConfigs.canEverWearEyes(cow),
+                    "an unconfigured entity can never wear eyes");
+        } finally {
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * The natural-eye decision in {@link ServerServices#onLivingEntityLoaded}: {@code googlyEyesEnabled}
+     * suppresses the roll but the entity is still marked initialized, and a later load never revisits an
+     * entity that already has a decision and a variant roll. In game: set {@code googlyEyesEnabled = false}
+     * and {@code entityOverrides = ["minecraft:cow,100"]} and spawn cows; none has eyes, and they still have
+     * none after {@code googlyEyesEnabled} is turned back on, while newly spawned cows do. Then set
+     * {@code entityOverrides = ["minecraft:cow,0"]} and rejoin the world; the eyed cows keep their eyes in
+     * the same places.
+     */
+    public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<ResourceLocation, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        int originalPercent = ServerConfig.GLOBAL_PERCENT.get();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(cowId, set));
+            ServerConfig.GLOBAL_PERCENT.set(100);
+
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            Cow suppressed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            helper.assertTrue(EyeState.isInitialized(suppressed),
+                    "the decision is still recorded so it is never re-rolled");
+            helper.assertTrue(!EyeState.hasEyes(suppressed), "googlyEyesEnabled=false suppresses the spawn roll");
+
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            Cow eyed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2));
+            helper.assertTrue(EyeState.hasEyes(eyed), "an eligible entity at globalPercent=100 rolls eyes");
+
+            float roll = EyeState.getVariantRoll(eyed);
+            ServerConfig.GLOBAL_PERCENT.set(0);
+            ServerServices.onLivingEntityLoaded(eyed);
+            helper.assertTrue(EyeState.hasEyes(eyed) && EyeState.getVariantRoll(eyed) == roll,
+                    "a later load never revisits an already-initialized entity");
+        } finally {
+            ServerEyeConfigs.replaceAll(originalConfigs);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+            ServerConfig.GLOBAL_PERCENT.set(originalPercent);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from the
+     * stack. In game: in creative, right-click an eyeless cow with a Slimy Eye; the cow gains eyes and the
+     * stack count does not change.
+     */
+    public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper, Player player) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        EyeState.setHasEyes(cow, false);
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        boolean instabuild = player.getAbilities().instabuild;
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+
+            player.getAbilities().instabuild = true;
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
+            InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
+
+            helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
+            helper.assertTrue(EyeState.hasEyes(cow), "the target gains eyes");
+            helper.assertTrue(stack.getCount() == 3, "a creative application consumes no eye");
+        } finally {
+            player.getAbilities().instabuild = instabuild;
+            ServerEyeConfigs.replaceAll(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * {@link SlimyEyeItem#use}: only a sneaking use applies the eye to the player; a plain right-click
+     * passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak and right-click
+     * the air, and you have eyes (visible in third person) and the Slimy Eye is used.
+     */
+    public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper, Player player) {
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = usableConfig();
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
+            EyeState.setHasEyes(player, false);
+
+            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            SlimyEyeItem item = (SlimyEyeItem) stack.getItem();
+
+            player.setShiftKeyDown(false);
+            InteractionResultHolder<ItemStack> passed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(passed.getResult() == InteractionResult.PASS,
+                    "a non-sneaking use passes so a stray right-click does not eye the player");
+            helper.assertTrue(!EyeState.hasEyes(player), "nothing was applied");
+
+            player.setShiftKeyDown(true);
+            InteractionResultHolder<ItemStack> consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(consumed.getResult().consumesAction(), "sneak + use applies the eye to the player");
+            helper.assertTrue(EyeState.hasEyes(player), "the player now has eyes");
+        } finally {
+            player.setShiftKeyDown(false);
+            EyeState.disableAndClearProperties(player);
             ServerEyeConfigs.replaceAll(original);
         }
         helper.succeed();

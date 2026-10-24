@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -10,7 +10,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
  * Forge GameTest entry points for {@link EligibilityGameTestsLogic}; see that class for the actual
  * assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class EligibilityGameTests {
 
@@ -31,16 +31,41 @@ public final class EligibilityGameTests {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(helper);
+        EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeRefusesAnAlreadyEyedTarget(helper);
+        EligibilityGameTestsLogic.slimyEyeRefusesAnAlreadyEyedTarget(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper) {
-        EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(helper);
+        EligibilityGameTestsLogic.slimyEyeRerollsThePlacementVariant(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
+        EligibilityGameTestsLogic.canEverWearEyesSpansBothAgeBuckets(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        EligibilityGameTestsLogic.naturalDecisionRespectsMasterToggleAndIsOneShot(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeCreativeApplicationDoesNotConsume(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper) {
+        EligibilityGameTestsLogic.slimyEyeSelfApplyRequiresSneak(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

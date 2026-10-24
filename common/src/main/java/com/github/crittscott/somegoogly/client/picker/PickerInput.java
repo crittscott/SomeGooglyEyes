@@ -1,12 +1,14 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 
 /**
- * Routes key presses to {@link PickerState} while the picker is active. Registered on the Forge
- * client bus; only the toggle key works when the picker is off.
+ * Routes key presses to {@link PickerState} while the picker is active. Driven from each loader's
+ * client key-mapping and tick hooks; only the toggle key works when the picker is off.
  *
  * <p>The keyboard is navigation + a live view only: toggle the picker, lock onto a mob, and cycle
  * parts. All eye editing (position, rotation, properties, save/delete, export) is done through the
@@ -17,11 +19,6 @@ public final class PickerInput {
     private PickerInput() {
     }
 
-    private static boolean inCreative() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.player.isCreative();
-    }
-
     private static void message(String key, Object... args) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
@@ -29,6 +26,23 @@ public final class PickerInput {
         }
     }
 
+    /** Drain each picker key's click queue, routing presses to {@link #handle}. Call once per client tick. */
+    public static void consumePendingKeys() {
+        while (PickerKeys.TOGGLE.consumeClick()) {
+            handle(PickerKeys.TOGGLE);
+        }
+        while (PickerKeys.LOCK.consumeClick()) {
+            handle(PickerKeys.LOCK);
+        }
+        while (PickerKeys.PART_PREV.consumeClick()) {
+            handle(PickerKeys.PART_PREV);
+        }
+        while (PickerKeys.PART_NEXT.consumeClick()) {
+            handle(PickerKeys.PART_NEXT);
+        }
+    }
+
+    /** Act on one picker key press, unless a screen is open. */
     public static void handle(KeyMapping key) {
         // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
         // /sg CLI in chat) so picker bindings don't fire while the player is interacting with a GUI.
@@ -38,13 +52,14 @@ public final class PickerInput {
 
         if (key == PickerKeys.TOGGLE) {
             if (!PickerState.isActive()) {
-                // The picker is a creative-mode authoring tool; don't let it turn on otherwise.
-                if (!inCreative()) {
-                    message("somegoogly.command.picker.toggle_requires_creative");
+                // The server refuses picker requests from anyone else, so don't let the picker turn on.
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player == null || !PickerGate.mayUsePicker(player)) {
+                    message("somegoogly.command.picker.not_authorized");
                     return;
                 }
                 PickerState.activate();
-                message("somegoogly.command.picker.toggle_on");
+                message("somegoogly.command.picker.toggle_on", PickerKeys.LOCK.getTranslatedKeyMessage());
             } else {
                 PickerState.deactivate(); // also releases the frozen mob on exit
                 message("somegoogly.command.picker.toggle_off");

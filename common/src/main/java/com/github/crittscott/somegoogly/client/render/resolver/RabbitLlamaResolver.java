@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * around groups of their top-level parts inside {@code renderToBuffer}, applied and popped entirely
  * outside the part tree — invisible to a render layer's {@link PoseStack} otherwise, the same bug class
  * {@link AgeableListResolver} fixes for its own family, but with a model-specific part grouping instead of
- * a uniform head/body split. Tried before {@link ChildMapResolver}, whose positional fallback has no
+ * a uniform head/body split. It must precede {@link ChildMapResolver}, whose positional fallback has no
  * concept of either wrap.
  *
  * <p>Rabbit's wrap is unusual among this bug family: its <b>adult</b> render also lives inside its own
@@ -62,7 +62,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
      * {@code head}, {@code rightEar}, {@code leftEar}, {@code nose}: {@code RabbitModel.renderToBuffer}'s
      * head-group wrap when young, its separate (but equally outside-the-tree) adult wrap otherwise.
      * {@code young} is re-checked on every call rather than baked in when this closure is built, because
-     * {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
+     * {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
      * instance renders both baby and adult rabbits.
      */
     private static Consumer<PoseStack> rabbitHeadWrap(RabbitModel<?> rabbit) {

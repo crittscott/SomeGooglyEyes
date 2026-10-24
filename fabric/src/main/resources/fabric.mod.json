@@ -7,12 +7,13 @@
   "authors": [
     "${mod_authors}"
   ],
-  "license": "${mod_license}",
   "contact": {
     "homepage": "${mod_homepage}",
     "sources": "${mod_sources}",
     "issues": "${mod_issues}"
   },
+  "license": "${mod_license}",
+  "icon": "somegoogly-sm.png",
   "environment": "*",
   "accessWidener": "somegoogly.accesswidener",
   "mixins": [
@@ -32,7 +33,10 @@
     "java": ">=17",
     "fabric-api": ">=${fabric_api_version}"
   },
+  "breaks": {
+    "geckolib": "<${geckolib_version}"
+  },
   "suggests": {
-    "geckolib": "*"
+    "geckolib": ">=${geckolib_version}"
   }
 }

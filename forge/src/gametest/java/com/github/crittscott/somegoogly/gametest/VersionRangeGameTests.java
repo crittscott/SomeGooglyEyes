@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -10,7 +10,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
  * Forge GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the actual
  * assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class VersionRangeGameTests {
 
@@ -62,5 +62,10 @@ public final class VersionRangeGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
     }
 }

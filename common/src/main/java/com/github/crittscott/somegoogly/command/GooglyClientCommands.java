@@ -4,11 +4,7 @@ import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.network.PickerMobPosePacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnAllPacket;
-import com.github.crittscott.somegoogly.network.PickerSpawnPacket;
-import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -24,13 +20,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,18 +29,14 @@ import java.util.function.Consumer;
 /**
  * The {@code /sg} command tree — the in-game eye-placement CLI. Each loader registers the same
  * source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives entirely
- * in the client-side {@link PickerState}. Like the keyboard picker, they require <b>creative mode</b>.
+ * in the client-side {@link PickerState}. Like the keyboard picker, they require creative mode and
+ * permission level 2 ({@link PickerGate#mayUsePicker}).
  *
  * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
  * call the same {@link PickerState} methods, so they stay in lock-step.
  *
- * <p>The verbs that touch server state ({@code spawn}, {@code spawnall}, {@code mob move}/{@code rot},
- * and {@code export}) send C2S picker packets; the server-side handlers re-authorize (creative mode)
- * and do the work on the server thread, so these verbs work from a remote client as well as in
- * single-player. Their result feedback arrives as server chat messages. The {@code mob} verbs are
- * deliberately <b>not</b> under {@code admin}: that literal belongs to the server-side tree
- * ({@link GooglyAdminCommand}), and reusing it client-side would break the disjoint-path contract
- * that lets command fall-through route each side's input correctly.
+ * <p>{@code export} sends the client-authored draft to the server. World-mutating commands such as
+ * {@code spawn}, {@code spawnall}, and {@code mob} live directly in the server command tree.
  */
 public class GooglyClientCommands {
 
@@ -70,18 +56,24 @@ public class GooglyClientCommands {
             new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.no_part"));
     private static final SimpleCommandExceptionType NOT_CHOSEN =
             new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_chosen"));
-    private static final SimpleCommandExceptionType NOT_CREATIVE =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_creative"));
+    private static final SimpleCommandExceptionType NOT_AUTHORIZED =
+            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_authorized"));
+
+    /** The {@code /sg part} token that clears the current attachment instead of selecting one. */
+    private static final String CLEAR_PART_TOKEN = "none";
+
+    /** Appended to the selected eye or variant in {@code /sg list} output. */
+    private static final Component SELECTED_MARK = Component.translatable("somegoogly.picker.selected_mark");
 
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         PickerState.activate(); // turn the picker on so the preview/gizmo render
         feedback(ctx, "somegoogly.command.picker.feedback", PickerState.lockOn());
         return 1;
     }
 
     private static int create(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         float x = FloatArgumentType.getFloat(ctx, "x");
         float y = FloatArgumentType.getFloat(ctx, "y");
@@ -93,7 +85,7 @@ public class GooglyClientCommands {
     }
 
     private static int delete(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.delete(n)) {
@@ -104,7 +96,7 @@ public class GooglyClientCommands {
     }
 
     private static int dupe(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.dupe(n)) {
@@ -116,14 +108,14 @@ public class GooglyClientCommands {
 
     /** Exports the chosen mob's draft; {@code requireChosen} keeps it from firing at a stale target. */
     private static int export(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.export());
         return 1;
     }
 
     private static int exportAll(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.exportAll());
         return 1;
     }
@@ -136,15 +128,17 @@ public class GooglyClientCommands {
     }
 
     private static int listEyes(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         List<ListedEye> list = PickerState.currentEyes();
         feedback(ctx, "somegoogly.command.picker.eyes_header", PickerState.variantIndex() + 1, list.size());
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
-            String mark = i == PickerState.selectedIndex() ? " *" : "";
-            String cross = e.crossTarget >= 0 ? " X→" + (e.crossTarget + 1) : "";
+            Component mark = i == PickerState.selectedIndex() ? SELECTED_MARK : Component.empty();
+            Component cross = e.crossTarget >= 0
+                    ? Component.translatable("somegoogly.picker.cross_target_mark", e.crossTarget + 1)
+                    : Component.empty();
             feedback(ctx, "somegoogly.command.picker.eye_entry", i + 1, le.part,
                     String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
                     String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth), cross, mark);
@@ -153,7 +147,7 @@ public class GooglyClientCommands {
     }
 
     private static int listParts(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.parts_header", PickerState.parts().size());
         for (int i = 0; i < PickerState.parts().size(); i++) {
@@ -163,53 +157,19 @@ public class GooglyClientCommands {
     }
 
     private static int listVariants(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         feedback(ctx, "somegoogly.command.picker.variants_header", PickerState.variantCount());
         for (int i = 0; i < PickerState.variantCount(); i++) {
             PickerState.DraftVariant v = PickerState.variants().get(i);
-            String mark = i == PickerState.variantIndex() ? " *" : "";
+            Component mark = i == PickerState.variantIndex() ? SELECTED_MARK : Component.empty();
             feedback(ctx, "somegoogly.command.picker.variant_entry", i + 1, String.format("%.2f", v.weight), v.eyes.size(), mark);
         }
         return 1;
     }
 
-    /**
-     * The CLI {@code mob move <dx> <dy> <dz>} op: nudge the chosen mob by world-axis offsets
-     * (0 leaves that axis unchanged) — unlike the eye {@code move} verb, which sets absolutes.
-     * Sent to the server as a {@link PickerMobPosePacket}, whose handler resolves the offsets
-     * against the authoritative entity, applies the move, and reports the resulting position;
-     * the change syncs to viewers through vanilla entity tracking.
-     */
-    private static int mobMove(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        LivingEntity target = PickerState.target();
-
-        double dx = FloatArgumentType.getFloat(ctx, "dx");
-        double dy = FloatArgumentType.getFloat(ctx, "dy");
-        double dz = FloatArgumentType.getFloat(ctx, "dz");
-
-        NetworkHandler.sendToServer(PickerMobPosePacket.move(target.getUUID(), dx, dy, dz));
-        return 1;
-    }
-
-    /**
-     * The CLI {@code mob rot <azimuth>} op: turn the chosen mob in the XZ plane, via
-     * {@link PickerMobPosePacket}. {@code azimuth} uses the <b>eye</b> convention (degrees from +X;
-     * 270 = facing -Z) so its numbers mean the same direction as {@code /sg rot}; the server handler
-     * converts to Minecraft yaw and reports back.
-     */
-    private static int mobRot(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
-        requireChosen();
-        float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
-        NetworkHandler.sendToServer(PickerMobPosePacket.rot(PickerState.target().getUUID(), azimuth));
-        return 1;
-    }
-
     private static int move(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
@@ -222,10 +182,10 @@ public class GooglyClientCommands {
     }
 
     private static int part(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         String target = StringArgumentType.getString(ctx, "target");
-        if (target.equalsIgnoreCase("none")) {
+        if (target.equalsIgnoreCase(CLEAR_PART_TOKEN)) {
             PickerState.clearPart();
             feedback(ctx, "somegoogly.command.picker.part_cleared");
             return 1;
@@ -244,7 +204,7 @@ public class GooglyClientCommands {
     }
 
     private static int posrot(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
@@ -267,7 +227,7 @@ public class GooglyClientCommands {
     }
 
     private static int propCrossTarget(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         int n = IntegerArgumentType.getInteger(ctx, "v");
@@ -284,7 +244,7 @@ public class GooglyClientCommands {
     }
 
     private static int propCorneaColor(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
@@ -294,7 +254,7 @@ public class GooglyClientCommands {
     }
 
     private static int propDepth(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -304,7 +264,7 @@ public class GooglyClientCommands {
     }
 
     private static int propEyeScale(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -314,7 +274,7 @@ public class GooglyClientCommands {
     }
 
     private static int propGlow(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
@@ -325,7 +285,7 @@ public class GooglyClientCommands {
     }
 
     private static int propIrisColor(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
@@ -335,7 +295,7 @@ public class GooglyClientCommands {
     }
 
     private static int propIrisScale(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
@@ -344,13 +304,9 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    public static <S> void register(CommandDispatcher<S> dispatcher, CommandBuildContext context) {
-        register(dispatcher);
-    }
-
-    /** Build the same tree into a dispatcher that does not expose a dynamic command-build context. */
+    /** Build the {@code /sg} picker command tree into the given dispatcher. */
     public static <S> void register(CommandDispatcher<S> dispatcher) {
-        LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal("sg");
+        LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal(GooglyServerCommands.ROOT);
 
         verb(sg, "choose", b -> b.executes(GooglyClientCommands::choose));
         verb(sg, "unchoose", b -> b.executes(GooglyClientCommands::unchoose));
@@ -399,27 +355,6 @@ public class GooglyClientCommands {
                                     .then(RequiredArgumentBuilder.<S, Optional<Float>>argument(
                                                     "inclination", MaybeFloatArgumentType.maybeFloat())
                                             .then(azimuth)))));
-        });
-
-        // mob move/rot: reposition or turn the chosen mob itself — distinct from the eye move/rot
-        // verbs above (mob move takes offsets, not absolutes). Lives under its own 'mob' literal
-        // (not the server-side 'admin' subtree) so the client and server /sg trees keep disjoint
-        // paths and command fall-through keeps working.
-        verb(sg, "mob", b -> {
-            verb(b, "move", x -> {
-                RequiredArgumentBuilder<S, Float> dz =
-                        RequiredArgumentBuilder.argument("dz", FloatArgumentType.floatArg());
-                dz.executes(GooglyClientCommands::mobMove);
-                x.then(RequiredArgumentBuilder.<S, Float>argument("dx", FloatArgumentType.floatArg())
-                        .then(RequiredArgumentBuilder.<S, Float>argument(
-                                "dy", FloatArgumentType.floatArg()).then(dz)));
-            });
-            verb(b, "rot", x -> {
-                RequiredArgumentBuilder<S, Float> azimuth =
-                        RequiredArgumentBuilder.argument("azimuth", FloatArgumentType.floatArg());
-                azimuth.executes(GooglyClientCommands::mobRot);
-                x.then(azimuth);
-            });
         });
 
         verb(sg, "save", b -> b.executes(GooglyClientCommands::save));
@@ -490,28 +425,6 @@ public class GooglyClientCommands {
 
         // Behavior testing lives in the server-side /sg admin command (the schedule is server-owned).
 
-        // spawn <type> — one mob at the block the player is targeting; the single-mob sibling of
-        // spawnall. The registry argument gives validation + tab completion of summonable types.
-        verb(sg, "spawn", b -> {
-            RequiredArgumentBuilder<S, ?> type =
-                    RequiredArgumentBuilder.<S, ResourceLocation>argument("type", ResourceLocationArgument.id())
-                            .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
-                                    BuiltInRegistries.ENTITY_TYPE.keySet().stream()
-                                            .filter(id -> BuiltInRegistries.ENTITY_TYPE.get(id).canSummon()),
-                                    builder));
-            type.executes(GooglyClientCommands::spawn);
-            b.then(type);
-        });
-
-        // spawnall [mod] — bare spawns every mod; an optional namespace narrows it (a debugging aid).
-        verb(sg, "spawnall", b -> {
-            b.executes(GooglyClientCommands::spawnAll);
-            RequiredArgumentBuilder<S, String> mod =
-                    RequiredArgumentBuilder.argument("mod", StringArgumentType.word());
-            mod.executes(GooglyClientCommands::spawnAll);
-            b.then(mod);
-        });
-
         dispatcher.register(sg);
     }
 
@@ -528,10 +441,10 @@ public class GooglyClientCommands {
         }
     }
 
-    private static void requireCreative() throws CommandSyntaxException {
+    private static void requireAuthorized() throws CommandSyntaxException {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !player.isCreative()) {
-            throw NOT_CREATIVE.create();
+        if (player == null || !PickerGate.mayUsePicker(player)) {
+            throw NOT_AUTHORIZED.create();
         }
     }
 
@@ -543,7 +456,7 @@ public class GooglyClientCommands {
     }
 
     private static int rot(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
@@ -555,7 +468,7 @@ public class GooglyClientCommands {
     }
 
     private static int save(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         requireDraft();
         if (!PickerState.save()) {
@@ -567,7 +480,7 @@ public class GooglyClientCommands {
     }
 
     private static int select(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.select(n)) {
@@ -577,47 +490,15 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    /**
-     * The CLI {@code spawn <type>} op: spawn one mob at the block the player is targeting (NoAi +
-     * persistent, like {@code spawnall}). Validation/suggestions are vanilla's summonable set;
-     * placement, fit-checking, and feedback are the server-side half ({@link PickerSpawnService#spawnOne},
-     * reached via {@code PickerSpawnPacket}).
-     */
-    private static int spawn(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
-        ResourceLocation type = ctx.getArgument("type", ResourceLocation.class);
-        NetworkHandler.sendToServer(new PickerSpawnPacket(type));
-        return 1;
-    }
-
-    private static int spawnAll(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
-        // The mod-namespace filter is optional; absent when the bare `spawnall` node executes.
-        String mod;
-        try {
-            mod = StringArgumentType.getString(ctx, "mod");
-        } catch (IllegalArgumentException noArg) {
-            mod = null;
-        }
-        // Spawning is server-side work ({@link PickerSpawnService#spawn}, reached via PickerSpawnAllPacket).
-        NetworkHandler.sendToServer(new PickerSpawnAllPacket(mod));
-        if (mod == null) {
-            feedback(ctx, "somegoogly.command.picker.spawning_all");
-        } else {
-            feedback(ctx, "somegoogly.command.picker.spawning_mod", mod);
-        }
-        return 1;
-    }
-
     private static int unchoose(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         PickerState.unlock();
         feedback(ctx, "somegoogly.command.picker.selection_cleared");
         return 1;
     }
 
     private static int variantDelete(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (n > PickerState.variantCount()) {
@@ -631,7 +512,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantNew(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = PickerState.newVariant();
         feedback(ctx, "somegoogly.command.picker.added_variant", n, PickerState.variantCount());
@@ -639,7 +520,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantSelect(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         int n = IntegerArgumentType.getInteger(ctx, "n");
         if (!PickerState.selectVariant(n)) {
@@ -650,7 +531,7 @@ public class GooglyClientCommands {
     }
 
     private static int variantWeight(CommandContext<?> ctx) throws CommandSyntaxException {
-        requireCreative();
+        requireAuthorized();
         requireChosen();
         float w = FloatArgumentType.getFloat(ctx, "w");
         PickerState.setVariantWeight(w);

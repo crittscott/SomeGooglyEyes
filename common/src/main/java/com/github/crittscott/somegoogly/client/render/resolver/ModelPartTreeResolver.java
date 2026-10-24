@@ -54,6 +54,16 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
     /** The subtrees to walk for this model, in a stable order. Only called when {@link #handles} is true. */
     protected abstract List<NamedRoot> roots(EntityModel<?> model);
 
+    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
+    protected static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
+                                Consumer<PoseStack> preTransform) {
+        int i = 0;
+        for (ModelPart part : parts) {
+            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
+            i++;
+        }
+    }
+
     @Override
     public List<String> enumerateParts(EntityModel<?> model) {
         if (!handles(model)) {

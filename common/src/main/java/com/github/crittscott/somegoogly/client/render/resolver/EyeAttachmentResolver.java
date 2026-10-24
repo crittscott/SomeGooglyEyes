@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  * attachment part, so eyes can be drawn relative to it.
  *
  * <p>Different model frameworks expose their part trees differently (see {@link HierarchicalResolver},
- * {@link AgeableListResolver}, {@link CitadelResolver}, and {@link ChildMapResolver}); each converges on
+ * {@link AgeableListResolver}, {@link AdvancedModelBoxResolver}, and {@link ChildMapResolver}); each converges on
  * the same contract here. Implementations must use <b>obfuscation-safe</b> handles only — string part
  * names walked from a stable entry point / positional root indices, never obfuscated field names.
  *
@@ -124,15 +125,21 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
     Attachment resolve(EntityModel<?> model, String partToken);
 
     /**
-     * Move {@code poseStack} into the named part's current (this-frame, post-animation) space.
-     * The caller is responsible for {@code pushPose()}/{@code popPose()} around this call.
+     * Move {@code poseStack} into the named part's current (this-frame, post-animation) space, first
+     * reproducing any whole-model transform the model applies outside its part tree
+     * ({@link ThirdPartyModelWraps}). The caller is responsible for {@code pushPose()}/{@code popPose()}
+     * around this call.
      *
      * @param partToken the configured attachment token (a string part name, possibly camelCase)
      * @return {@code true} if the part was found and the pose moved; {@code false} otherwise (caller
      *         should skip drawing for this head)
      */
     default boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken) {
-        Attachment attachment = AttachmentCache.ATTACHMENTS.get(model, partToken, this);
-        return attachment != null && attachment.apply(poseStack);
+        Attachment attachment = Resolvers.ATTACHMENTS.get(model, partToken, this);
+        if (attachment == null) {
+            return false;
+        }
+        ThirdPartyModelWraps.preTransform(model, poseStack);
+        return attachment.apply(poseStack);
     }
 }

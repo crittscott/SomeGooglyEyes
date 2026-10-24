@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.platform;
 
+import com.github.crittscott.somegoogly.network.Payload;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -14,7 +13,7 @@ public final class Networking {
 
     /** Send a clientbound payload to one player. */
     @ExpectPlatform
-    public static void sendToPlayer(ServerPlayer player, ResourceLocation id, FriendlyByteBuf buffer) {
+    public static void sendToPlayer(ServerPlayer player, Payload payload) {
         throw new AssertionError();
     }
 
@@ -23,7 +22,7 @@ public final class Networking {
      * a server player, to that player too.
      */
     @ExpectPlatform
-    public static void sendTrackingAndSelf(Entity entity, ResourceLocation id, FriendlyByteBuf buffer) {
+    public static void sendTrackingAndSelf(Entity entity, Payload payload) {
         throw new AssertionError();
     }
 }

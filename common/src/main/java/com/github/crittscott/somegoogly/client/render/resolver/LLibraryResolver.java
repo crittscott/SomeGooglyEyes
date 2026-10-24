@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -47,7 +48,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
                 Method getParent = advancedBoxClass.getMethod("getParent");
                 Method translateRotate = boxClass.getMethod("translateRotate", PoseStack.class);
                 return new Handles(modelClass, boxClass, advancedBoxClass, boxList, getParent, translateRotate);
-            } catch (Throwable ignored) {
+            } catch (ClassNotFoundException absent) {
+                return new Handles(null, null, null, null,
+                        null, null);
+            } catch (Throwable failure) {
+                ClientIntegrationFailures.warnOnce(
+                        "LLibraryResolver", "API discovery", BASIC_MODEL_BASE, failure);
                 return new Handles(null, null, null, null,
                         null, null);
             }
@@ -56,7 +62,7 @@ public class LLibraryResolver extends ReflectedBoxResolver {
 
     @Override
     protected boolean available() {
-        return HANDLES.available();
+        return HANDLES.available() && !integrationFailed();
     }
 
     @Override
@@ -66,12 +72,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
 
     @Override
     public boolean handles(EntityModel<?> model) {
-        return HANDLES.available() && HANDLES.modelClass().isInstance(model);
+        return available() && HANDLES.modelClass().isInstance(model);
     }
 
     @Override
     protected List<Object> collectParts(EntityModel<?> model) {
-        if (!HANDLES.available()) {
+        if (!available()) {
             return List.of();
         }
         try {
@@ -86,7 +92,8 @@ public class LLibraryResolver extends ReflectedBoxResolver {
                 }
             }
             return parts;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("part collection", model, failure);
             return List.of();
         }
     }
@@ -104,17 +111,22 @@ public class LLibraryResolver extends ReflectedBoxResolver {
         try {
             Object parent = HANDLES.getParent().invoke(part);
             return HANDLES.boxClass().isInstance(parent) ? parent : null;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("parent lookup", part, failure);
             return null;
         }
     }
 
     @Override
     protected boolean applyTransform(Object part, PoseStack poseStack) {
+        if (integrationFailed()) {
+            return false;
+        }
         try {
             HANDLES.translateRotate().invoke(part, poseStack);
             return true;
-        } catch (Throwable ignored) {
+        } catch (Throwable failure) {
+            disableIntegration("pose transform", part, failure);
             return false;
         }
     }

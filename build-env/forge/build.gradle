@@ -9,8 +9,22 @@ architectury {
 
 rootProject.configureGameTests(project)
 
+// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
+// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
+sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
+
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
+
+    forge {
+        mixinConfig 'somegoogly-forge.mixins.json'
+    }
+
+    // Forge runs on SRG names, so its Mixins need a refmap written in this module.
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = 'somegoogly-forge.refmap.json'
+    }
 
     mods {
         main {

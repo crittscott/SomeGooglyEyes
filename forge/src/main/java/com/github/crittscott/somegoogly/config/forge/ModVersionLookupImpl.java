@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.config.forge;
 
-import net.minecraft.SharedConstants;
 import net.minecraftforge.fml.ModList;
 
 import java.util.Optional;
@@ -11,12 +10,9 @@ public final class ModVersionLookupImpl {
     private ModVersionLookupImpl() {
     }
 
-    public static Optional<String> versionForNamespace(String namespace) {
-        if ("minecraft".equals(namespace)) {
-            return Optional.of(SharedConstants.getCurrentVersion().getName());
-        }
+    public static Optional<String> modVersion(String modId) {
         return ModList.get()
-                .getModContainerById(namespace)
+                .getModContainerById(modId)
                 .map(container -> container.getModInfo().getVersion().toString());
     }
 }

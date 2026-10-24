@@ -16,9 +16,16 @@ import javax.annotation.Nullable;
  */
 public final class LookTarget {
 
+    /** Aim-pick range (blocks) for the {@code /sg admin} and {@code /sg spawn} verbs. */
+    public static final double DEFAULT_REACH = 20.0;
+
     private LookTarget() {
     }
 
+    /**
+     * The pickable, non-spectator living entity under {@code player}'s crosshair within {@code reach} blocks, or
+     * {@code null}.
+     */
     @Nullable
     public static LivingEntity livingInCrosshair(Player player, double reach) {
         Vec3 eye = player.getEyePosition(1.0F);

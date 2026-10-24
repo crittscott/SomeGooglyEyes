@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.crittscott.somegoogly.mixin.forge",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "somegoogly-forge.refmap.json",
+  "mixins": [
+    "MushroomCowShearMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

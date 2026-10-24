@@ -1,10 +1,18 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +22,17 @@ import java.util.function.UnaryOperator;
  * The complete eye-definition data model shared by datapack loading, runtime selection, network
  * synchronization, and picker export. All serialized shapes live together here; resolved rendering
  * views and side-specific storage live elsewhere.
+ *
+ * <p>Every codec field is required on serialized input; the Java initializers are construction defaults,
+ * not decoding defaults. Instances and their lists are mutable while a loader or picker assembles them,
+ * but a validated config graph is treated as read-only after installation in a side-specific store.
  */
 public final class EyeConfigModel {
 
     public static final String AGE_ADULT = "adult";
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
+
 
     private EyeConfigModel() {
     }
@@ -31,7 +44,7 @@ public final class EyeConfigModel {
         }
         double total = 0;
         for (Variant variant : config.variants) {
-            total += variant.weight();
+            total += variant.weight;
         }
         if (total <= 0) {
             return 0;
@@ -39,7 +52,7 @@ public final class EyeConfigModel {
         double target = roll * total;
         double accumulated = 0;
         for (int i = 0; i < config.variants.size(); i++) {
-            accumulated += config.variants.get(i).weight();
+            accumulated += config.variants.get(i).weight;
             if (target < accumulated) {
                 return i;
             }
@@ -57,8 +70,29 @@ public final class EyeConfigModel {
             return file;
         }));
 
+        private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+        /** Required ordered entries; version selection keeps the first match for each age bucket. */
         public List<VersionedEntry> entries = List.of();
 
+        /**
+         * The version declaration an export writes for {@code namespace}, from its loaded version: the
+         * exact game version for Minecraft, the current minor-release range
+         * ({@link VersionRangeMatcher#rangeFor}) for any other mod. Empty when nothing owns the namespace.
+         */
+        public static Optional<String> exportVersion(String namespace) {
+            return ModVersionLookup.versionForNamespace(namespace)
+                    .map(version -> ResourceLocation.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
+        }
+
+        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
+        public void writeJson(Path path) throws IOException {
+            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow(false, error -> { });
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, GSON.toJson(json) + "\n");
+        }
+
+        /** A file holding one entry for {@code config}. */
         public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
             ConfigFile file = new ConfigFile();
             file.entries = List.of(VersionedEntry.of(versionRange, age, config));
@@ -101,7 +135,9 @@ public final class EyeConfigModel {
             return head;
         }));
 
+        /** Nonblank attachment token, canonicalized when produced by the picker. */
         public String attachPoint;
+        /** Required eye list; installed heads contain at least one eye. */
         public List<EyeDefinition> eyes = List.of();
     }
 
@@ -117,14 +153,21 @@ public final class EyeConfigModel {
             return config;
         }));
 
+        /** Whether this selected age config may be used for rendering and application. */
         public boolean enabled = true;
+        /** Required variants; an enabled installed config has at least one with positive total weight. */
         public List<Variant> variants = List.of();
 
+        /** Whether a config is present, enabled, and has at least one variant. */
         public static boolean isUsable(@Nullable RuntimeConfig config) {
             return config != null && config.enabled && !config.variants.isEmpty();
         }
 
-        /** Drop empty heads and variants while canonicalizing attachment tokens. */
+        /**
+         * Drop heads with no eyes and variants with no heads, canonicalizing each surviving head's
+         * attach token through {@code canon}. Returns {@code null} when {@code config} is {@code null}
+         * or nothing survives pruning.
+         */
         @Nullable
         public static RuntimeConfig pruned(@Nullable RuntimeConfig config, UnaryOperator<String> canon) {
             if (config == null) {
@@ -146,7 +189,7 @@ public final class EyeConfigModel {
                     continue;
                 }
                 Variant variant = new Variant();
-                variant.weight = sourceVariant.weight();
+                variant.weight = sourceVariant.weight;
                 variant.heads = heads;
                 variants.add(variant);
             }
@@ -174,15 +217,27 @@ public final class EyeConfigModel {
             return set;
         }));
 
+        /** Adult-specific config, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig adult;
+        /** Age-independent fallback, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig any;
+        /** Baby-specific config, or {@code null} when this set does not define one. */
+        @Nullable
         public RuntimeConfig baby;
 
+        /**
+         * The runtime config for this age, falling back to the age-independent {@code any} config when
+         * the requested age has none of its own; {@code null} when neither exists.
+         */
+        @Nullable
         public RuntimeConfig get(boolean isBaby) {
             RuntimeConfig ageConfig = isBaby ? baby : adult;
             return ageConfig != null ? ageConfig : any;
         }
 
+        /** Whether any of the three age slots is populated. */
         public boolean hasAnyConfig() {
             return adult != null || baby != null || any != null;
         }
@@ -200,12 +255,10 @@ public final class EyeConfigModel {
             return variant;
         }));
 
+        /** Required attachment groups; an installed variant contains at least one nonempty head. */
         public List<HeadConfig> heads = List.of();
+        /** Authored relative selection weight; validated installed values are finite and nonnegative. */
         public double weight = 1.0;
-
-        public double weight() {
-            return Math.max(0.0, weight);
-        }
     }
 
     /** One version- and age-selectable entry in a datapack file. */
@@ -224,11 +277,16 @@ public final class EyeConfigModel {
             return entry;
         }));
 
+        /** Authored age selector; reload accepts {@code adult}, {@code baby}, or {@code any}. */
         public String age = AGE_ANY;
+        /** Whether the selected runtime config is enabled. */
         public boolean enabled = true;
+        /** Required authored placement variants. */
         public List<Variant> variants = List.of();
+        /** Required version or version-range selector interpreted by {@link VersionRangeMatcher}. */
         public String version = "";
 
+        /** An entry carrying {@code config}'s enabled flag and variants under the given version and age. */
         public static VersionedEntry of(String versionRange, String age, RuntimeConfig config) {
             VersionedEntry entry = new VersionedEntry();
             entry.version = versionRange;

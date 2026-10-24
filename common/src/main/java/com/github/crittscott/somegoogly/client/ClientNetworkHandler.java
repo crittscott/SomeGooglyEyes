@@ -1,201 +1,56 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-/** Physical-client-only registration and application of server-to-client payloads. */
+/**
+ * Applies the three server-to-client payloads on the client game thread. Loader payload registration runs on
+ * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
+ * payload arrives rather than when the handler is registered.
+ */
 public final class ClientNetworkHandler {
-
-    private static final int EYE_STATE_LOG_LIMIT = 20;
-    private static final int MAX_PENDING_EYE_STATES = 1_024;
-    private static final int PENDING_EYE_STATE_TTL_TICKS = 100;
-    private static final int MIN_CONFIG_SYNC_INTERVAL_TICKS = 20;
-    private static final long MIN_CONFIG_DECODE_NANOS = 250_000_000L;
-    private static final Map<Integer, PendingEyeState> PENDING_EYE_STATES = new LinkedHashMap<>();
-    private static boolean protocolAccepted;
-    private static int networkTicks;
-    private static int lastConfigSyncTick = Integer.MIN_VALUE;
-    private static long lastConfigGeneration = -1L;
-    private static long lastWireConfigGeneration = -1L;
-    private static long lastConfigDecodeNanos;
-    private static int eyeStatePackets;
-    private static int appliedQueuedEyeStates;
-
-    private record PendingEyeState(EyeStatePacket packet, int expiresAt) {
-    }
 
     private ClientNetworkHandler() {
     }
 
-    // Loader receivers call the receive* entry points on the network thread, from lambda bodies so that a
-    // dedicated server never links this class. Each decodes at once and applies on the client thread.
-
-    /** Answer the server's protocol hello, or disconnect on a version mismatch. */
-    public static void receiveHello(FriendlyByteBuf buffer) {
-        String version = buffer.readUtf(NetworkHandler.MAX_PROTOCOL_VERSION_LENGTH);
-        Minecraft.getInstance().execute(() -> {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Client network debug: received protocol hello version={} expected={}",
-                    version, NetworkHandler.PROTOCOL_VERSION);
-            if (protocolAccepted) {
-                return;
-            }
-            if (!NetworkHandler.PROTOCOL_VERSION.equals(version)) {
-                disconnect(NetworkHandler.protocolMismatch(
-                        Component.translatable("somegoogly.network.side.client"),
-                        NetworkHandler.PROTOCOL_VERSION, version));
-                return;
-            }
-            protocolAccepted = true;
-            FriendlyByteBuf reply = NetworkHandler.newBuffer();
-            reply.writeUtf(NetworkHandler.PROTOCOL_VERSION);
-            ClientNetworking.sendToServer(NetworkHandler.PROTOCOL_ACK, reply);
-            SomeGooglyCommon.LOGGER.debug("Client network debug: sent protocol acknowledgement");
-        });
+    /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
+    public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
+        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled());
+        ClientEyeRuntime.clear();
     }
 
-    public static void receiveEyeState(FriendlyByteBuf buffer) {
-        handle(EyeStatePacket.decode(buffer));
-    }
-
-    private static void handle(EyeStatePacket packet) {
-        Minecraft.getInstance().execute(() -> {
-            LivingEntity living = living(packet.entityId());
-            int ordinal = ++eyeStatePackets;
-            if (ordinal <= EYE_STATE_LOG_LIMIT) {
-                SomeGooglyCommon.LOGGER.debug(
-                        "Client eye-state debug: packet #{} entityId={} hasEyes={} resolvedEntity={}",
-                        ordinal, packet.entityId(), packet.hasGooglyEyes(),
-                        living == null ? "missing"
-                                : BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()));
-            }
-            if (living == null) {
-                queueEyeState(packet);
-                return;
-            }
-            applyEyeState(living, packet);
-        });
-    }
-
-    /** Apply an eye-state packet that arrived before Fabric created the corresponding client entity. */
-    public static void onEntityLoaded(Entity entity) {
-        PendingEyeState pending = PENDING_EYE_STATES.remove(entity.getId());
-        if (pending == null || pending.expiresAt() < networkTicks || !(entity instanceof LivingEntity living)) {
+    /** Apply a full eye-state snapshot to a known living entity; an unknown id is ignored. */
+    public static void handleEyeState(EyeStatePacket packet) {
+        LivingEntity living = living(packet.entityId());
+        if (living == null) {
             return;
         }
-        EyeStatePacket packet = pending.packet();
-        if (++appliedQueuedEyeStates <= EYE_STATE_LOG_LIMIT) {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Client eye-state debug: applying queued state #{} to entityId={} type={} hasEyes={}",
-                    appliedQueuedEyeStates, entity.getId(),
-                    BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()), packet.hasGooglyEyes());
-        }
-        applyEyeState(living, packet);
-    }
-
-    public static void clearPendingEyeStates() {
-        PENDING_EYE_STATES.clear();
-        protocolAccepted = false;
-        networkTicks = 0;
-        lastConfigSyncTick = Integer.MIN_VALUE;
-        lastConfigGeneration = -1L;
-        lastWireConfigGeneration = -1L;
-        lastConfigDecodeNanos = 0L;
-        eyeStatePackets = 0;
-        appliedQueuedEyeStates = 0;
-    }
-
-    /** Advance bounded pending-state expiry from each loader's end-client-tick hook. */
-    public static void tick() {
-        networkTicks++;
-        Iterator<PendingEyeState> iterator = PENDING_EYE_STATES.values().iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().expiresAt() < networkTicks) {
-                iterator.remove();
-            }
+        EyeState.applySnapshot(living, packet.snapshot());
+        GooglyTracker tracker = ClientEyeRuntime.peek(living);
+        if (tracker != null) {
+            tracker.overrides = packet.snapshot().properties();
         }
     }
 
-    /** Decode an eye-config payload, refusing malformed, stale, or too-frequent ones. */
-    public static synchronized void receiveEyeConfig(FriendlyByteBuf buffer) {
-        try {
-            long generation = buffer.getLong(buffer.readerIndex());
-            if (generation == lastWireConfigGeneration) {
-                return;
-            }
-            long now = System.nanoTime();
-            if (lastConfigDecodeNanos != 0L && now - lastConfigDecodeNanos < MIN_CONFIG_DECODE_NANOS) {
-                Minecraft.getInstance().execute(() -> disconnect(Component.translatable(
-                        "somegoogly.network.config_sync_too_frequent")));
-                return;
-            }
-            lastWireConfigGeneration = generation;
-            lastConfigDecodeNanos = now;
-            handle(EyeConfigSyncPacket.decode(buffer));
-        } catch (RuntimeException invalid) {
-            Minecraft.getInstance().execute(() -> disconnect(Component.translatable("somegoogly.network.invalid_eye_config")));
+    /** Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored. */
+    public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
+        EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
+        LivingEntity living = living(packet.entityId());
+        if (behavior == null || living == null) {
+            return;
         }
-    }
-
-    private static void handle(EyeConfigSyncPacket packet) {
-        Minecraft.getInstance().execute(() -> {
-            if (!protocolAccepted) {
-                disconnect(Component.translatable("somegoogly.network.config_before_handshake"));
-                return;
-            }
-            if (packet.generation() == lastConfigGeneration) {
-                return;
-            }
-            if (packet.generation() < lastConfigGeneration
-                    || (lastConfigSyncTick != Integer.MIN_VALUE
-                    && networkTicks - lastConfigSyncTick < MIN_CONFIG_SYNC_INTERVAL_TICKS)) {
-                disconnect(Component.translatable("somegoogly.network.config_sync_too_frequent"));
-                return;
-            }
-            lastConfigGeneration = packet.generation();
-            lastConfigSyncTick = networkTicks;
-            SomeGooglyCommon.LOGGER.debug(
-                    "Client eye-config debug: received {} selected entity configs", packet.configs().size());
-            ClientEyeConfigs.replaceAll(packet.configs());
-            ClientEyeRuntime.clear();
-        });
-    }
-
-    public static void receiveBehavior(FriendlyByteBuf buffer) {
-        handle(EyeBehaviorTriggerPacket.decode(buffer));
-    }
-
-    private static void handle(EyeBehaviorTriggerPacket packet) {
-        Minecraft.getInstance().execute(() -> {
-            EyeBehavior behavior = EyeBehaviors.byId(packet.behaviorId());
-            LivingEntity living = living(packet.entityId());
-            if (behavior == null || living == null) {
-                return;
-            }
-            GooglyTracker tracker = ClientEyeRuntime.peek(living);
-            if (tracker != null) {
-                tracker.startBehavior(behavior, packet.duration(), packet.seed(), packet.elapsed());
-            }
-        });
+        GooglyTracker tracker = ClientEyeRuntime.peek(living);
+        if (tracker != null) {
+            tracker.startBehavior(behavior, packet.duration(), packet.seed(), packet.elapsed());
+        }
     }
 
     private static LivingEntity living(int entityId) {
@@ -205,26 +60,5 @@ public final class ClientNetworkHandler {
         }
         Entity entity = level.getEntity(entityId);
         return entity instanceof LivingEntity living ? living : null;
-    }
-
-    private static void applyEyeState(LivingEntity living, EyeStatePacket packet) {
-        EyeState.applySnapshot(living, packet.snapshot());
-    }
-
-    private static void queueEyeState(EyeStatePacket packet) {
-        PENDING_EYE_STATES.remove(packet.entityId());
-        while (PENDING_EYE_STATES.size() >= MAX_PENDING_EYE_STATES) {
-            Iterator<Integer> iterator = PENDING_EYE_STATES.keySet().iterator();
-            iterator.next();
-            iterator.remove();
-        }
-        PENDING_EYE_STATES.put(packet.entityId(),
-                new PendingEyeState(packet, networkTicks + PENDING_EYE_STATE_TTL_TICKS));
-    }
-
-    private static void disconnect(net.minecraft.network.chat.Component reason) {
-        if (Minecraft.getInstance().getConnection() != null) {
-            Minecraft.getInstance().getConnection().getConnection().disconnect(reason);
-        }
     }
 }

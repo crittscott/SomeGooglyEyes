@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -32,20 +33,25 @@ public final class HeadInfo {
         return entityConfig != null && entityConfig.enabled && heads != null && !heads.isEmpty();
     }
 
+    /** This head's model attachment token, or {@code null} when the head index is out of range. */
+    @Nullable
     public String getAttachToken(int headIndex) {
         HeadConfig head = headAt(headIndex);
         return head != null ? head.attachPoint : null;
     }
 
+    /** How many eyes this head carries; 0 for an out-of-range head. */
     public int getEyeCount(int headIndex) {
         HeadConfig head = headAt(headIndex);
         return head != null ? head.eyes.size() : 0;
     }
 
+    /** The eye's placement scale, or the default scale when the requested eye is absent. */
     public float getEyeScale(int headIndex, int eyeIndex) {
         return placementAt(headIndex, eyeIndex).eyeScale();
     }
 
+    /** How many heads the selected variant places eyes on; 0 when {@link #hasConfig()} is false. */
     public int getHeadCount() {
         return hasConfig() ? heads.size() : 0;
     }

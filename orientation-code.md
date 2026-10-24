@@ -2,198 +2,106 @@
 > **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
 <!-- END FIXED HEADER -->
 
-
 # Some Googly Eyes — code orientation
 
-This selective guide identifies the code boundaries and invariants a maintainer should understand
-before changing Some Googly Eyes. `orientation-player.md` describes observable behavior; the code is
-authoritative when either document is wrong.
-
-This is an orientation to the current code, not a history, conversation, or prose rendering of the
-implementation.
-
-It describes what exists, not necessarily what should exist, and is not a design specification.
+Structure, ownership, state, loader seams, and invariants; `orientation-player.md` covers behavior.
 
 ## Project shape
 
-Some Googly Eyes is a Java 17 Minecraft 1.20.1 mod for Forge 47.4.0 and Fabric Loader 0.16.14/Fabric
-API 0.92.11. Its mod id is `somegoogly`, its root package is
-`com.github.crittscott.somegoogly`, and its version is `0.8.1`.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 17, Minecraft 1.20.1.
 
-The active modules are `common`, `forge`, and `fabric`:
+The Gradle project has three modules; `common` is transformed into both loader artifacts, and the shared `gecko/src/main/java` folder is compiled into each.
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, and picker code |
-| `common/src/main/resources` | Assets, recipes, eye definitions, language, and the structure fixture |
-| `common/src/gametest/java` | Shared GameTest assertions |
-| `forge/src/main` | Forge entry points, events, configuration, platform adapters, and metadata |
-| `fabric/src/main` | Fabric entry points, callbacks, configuration, platform adapters, Mixins, and metadata |
-| Loader `src/gametest` trees | Thin wrappers around shared GameTest assertions |
+| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib gate |
+| `gecko/src/main/java` | GeckoLib-typed layer and bone code, compiled by each loader |
+| `common/src/main/resources` | Assets, recipes, eye definitions, language |
+| `common/src/gametest` | Shared GameTest assertions and the structure fixture |
+| `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
+| `fabric/src/gametest` | Fabric wrappers and discovery metadata |
+| `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, metadata |
+| `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common main does not import Forge, Fabric API, or GeckoLib. Loader differences and optional-library
-boundaries pass through adapters or Architectury `@ExpectPlatform` methods. Loader packages remain
-separate from common packages to avoid split packages under Forge's module layer.
+Common main imports no loader type; differences pass through adapters or `@ExpectPlatform` methods. Loader packages stay disjoint from common packages so Forge sees no split package.
 
-The server owns eligibility, persistent eye state, item actions, behaviors, datapack definitions,
-picker authorization, and world mutation. The client owns rendering, model attachment, pupil motion,
-inspection, and picker UI and editing state.
+The server owns eligibility, eye state, item actions, behaviors, definitions, picker authorization, and world mutation; the client owns rendering, attachment, pupil motion, inspection, and picker UI.
 
-The mod registers two items, one enchantment, one creative tab, and two recipe serializers. It does
-not register blocks, entities, menus, particles, or sounds.
+`ModContent` declares registered content, bound via each loader's `ContentRegistrar`: two items, the Optometrist enchantment, a creative tab, and the modifier and Slimy Eye recipe serializers; `SlimyEyeRecipe` is a shapeless recipe that copies all of the eye's NBT onto its result. `self_shear` is a data-driven damage type from the common data pack.
 
 ## Configuration and eye definitions
 
-`ServerConfig` and `ClientConfig` define the configuration schema and expose validated runtime values
-through `ConfigValue<T>`. Forge connects these values to `ForgeConfigSpec`; Fabric reads its client
-and per-world server TOML files directly.
+`ServerConfig` and `ClientConfig` hold keys, defaults, ranges, validators, and comments, exposing validated `ConfigValue<T>`s; `ConfigValue.Parsed` lists rebuild a parsed view on assignment. Forge uses native CLIENT and SERVER specs copied in on load and reload; SERVER unload restores defaults so values cannot escape their world. Fabric's own `TomlConfig` reads both files, the server file at start and each `/reload`, resetting on stop.
 
-Server configuration controls spawn and harvest chances, entity overrides, behaviors, and the
-picker's destructive spawn-all gate. Client configuration controls local eye visibility.
+Server key order must match across the two loaders' server configs.
 
-Eye definitions are server datapack resources at `data/<namespace>/eyes/*.json`. `EyeConfigModel`
-defines their serialized and runtime forms, including version entries, age selectors, placement
-variants, heads, eyes, and appearance. Reload processing selects and validates one version for each
-entity type, then atomically replaces `ServerEyeConfigs`. The resolved set is sent to clients, so
-clients do not select versions independently.
-
-Definition size and geometry limits apply at datapack reload, picker export, and network decoding.
-Minecraft definitions target exactly `1.20.1`; definitions for optional mods may cover ranges of
-their Minecraft 1.20.1 releases.
-
-Player-visible text uses translatable `Component` values backed by
-`assets/somegoogly/lang/en_us.json`. Translation arguments carry names, identifiers, paths, counts,
-and diagnostic details across command and packet boundaries. Logs, command tokens, config comments,
-and schema identifiers are ordinary strings.
+Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves and validates one version per entity type, encodes the set to NBT, and atomically swaps `ServerEyeConfigs` only if that encoding differs; failure keeps the previous set. The stored encoding is the sync payload. The resolved set is pushed to clients, so `ClientEyeConfigs` never selects a version itself. Size and geometry limits are enforced at three points that must stay aligned: datapack reload, picker export, and network decode; reload also refuses a set whose sync payload exceeds the byte limit. `EyeColor` codecs reject out-of-range channels on decode.
 
 ## Entity and item state
 
-`EyeState` is the gameplay boundary for entity eye state. Its `Snapshot` is the complete unit used by
-server transitions, tracking synchronization, and client packet application. Entity NBT access goes
-through `EntityPersistentData`: Forge uses its persistent compound, while Fabric supplies the same
-boundary with `EntityPersistentDataMixin`.
+`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: Forge's native persistent compound, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the `somegoogly:persistentData` compound the 0.8.2 Fabric release saved into it; a non-compound value is set aside there and logged.
 
-The persistent eye fields are:
+Persistent entity keys:
 
 - `somegoogly:hasGooglyEyes` — whether the entity has eyes;
-- `somegoogly:eyeVariantRoll` — its stable placement-variant roll;
+- `somegoogly:eyeVariantRoll` — stable placement-variant roll;
 - `somegoogly:eyeOverrides` — optional shared appearance overrides.
 
-Related mutations are batched into one full-snapshot synchronization. Natural eye state and the
-variant roll are initialized only when the eye-state key is absent, preserving the decision across
-entity persistence and transfers.
+Related mutations flush as one snapshot sync. A stored roll outside 0..1 reads clamped. The eye-state key and variant roll are initialized together only when absent, preserving the natural-eyes decision across persistence and transfer. `EyeState.initialize` and `EyeState.sendTo` skip an absent snapshot; mid-life mutations always send. Loader clone and conversion hooks call `EyeState.copy` on mob conversion and non-death player respawn. A player joining a level gets their own snapshot.
 
-Eye item stacks carry a fixed `AppearanceOverride` payload. Harvesting captures the effective
-appearance of the first configured eye; crafting and Slimy Eye application preserve that payload.
-Items do not carry placement geometry.
+Eye item stacks carry `AppearanceOverride` as the `EyeProperties` NBT compound (`EyeItemProperties`); harvesting copies the first configured eye's effective appearance; the modifier recipe and Slimy Eye application change only that compound, and the Slimy Eye recipe copies all of the eye's NBT. Item stacks never carry placement geometry.
 
-`EyeItemService` owns the shared application and harvesting operations. Loader events and callbacks
-only adapt platform interactions into that service. Slimy Eye use, Optometrist harvesting, and
-shears-kill harvesting therefore share the same authorization, state mutation, drops, and durability
-rules on both loaders.
+The only migration is the Fabric entity data above; item and Forge entity formats are unchanged from the 0.8.2 release.
+
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests. Loader adapters run entity interaction after protection listeners (Forge `LOWEST`, Fabric a late callback phase). Fabric's adapter refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:shears` and `#forge:shears`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type, so PvP rules cannot cancel it.
+
+Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every successful interactive, self, or kill harvest emits `GameEvent.SHEAR`. Refused operations emit neither.
 
 ## Eligibility and behaviors
 
-`ServerServices.onLivingEntityLoaded` owns natural eye initialization. It excludes players, observes
-global enablement, requires an enabled definition for some life stage, applies exact and wildcard
-entity percentages, and records independent spawn and variant rolls. Later configuration changes do
-not revisit initialized entities.
+`ServerServices.onLivingEntityLoaded` owns natural eye initialization; once an entity is initialized, later configuration changes never revisit it.
 
-`EyeBehaviors` contains blink, cross-eye, side-eye, stare, grow, swirl, and color-change definitions.
-A `BehaviorInstance` carries the behavior id, duration, seed, and elapsed time. Clients derive the
-animation from that state rather than receiving per-tick animation packets.
-
-`ServerBehaviorScheduler` considers watched entities with eyes, schedules ambient behaviors, and
-accepts damage, healing, and trade triggers from loader adapters. `ClientEyeRuntime` maintains the
-transient pupil and behavior state for rendered entities.
+The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation from it, so no per-tick animation packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed entities and takes damage, heal, and trade triggers from adapters. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs the normal and picker layers on compatible living renderers.
-`LayerGooglyEyes` renders resolved eyes, and is ordered before the slime outer layer. Installation is
-guarded against duplicate layers and reset when renderer state is replaced.
+`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each renderer rebuild through each loader's renderer hook; GeckoLib renderers get theirs from GeckoLib's entity `CompileRenderLayers` event. `LayerGooglyEyes` must precede the slime outer layer; both layers draw the picker preview for the picker's target. Each layer takes the entity's `EyeRenderData` decision when it renders the entity. `ClientEyeConfigs` caches the resolved view per age and variant. `GooglyEyeRenderer.drawEye` draws every eye (mobs, previews, item); the held item's pupil is one local-player simulation ticked by `ClientLifecycle` and drawn in first person only; `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
 
-`ClientEyeConfigs` resolves and caches the eye view for an entity's age and placement variant.
-`ServerEyeConfigs` provides uncached resolution for occasional server uses. `EyeRenderTransforms`
-owns render rotations; `EyePlacement` owns pupil-plane projection.
+Attachment resolvers cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` transforms first, choosing the age branch from `model.young`. `Resolvers` picks a family per model: `HierarchicalResolver`, `AgeableListResolver` (replaying its baby head and body transforms), `RabbitLlamaResolver`, `ChildMapResolver`, `TwilightForestResolver`, and the reflected `AdvancedModelBoxResolver` and `LLibraryResolver`.
 
-Attachment resolvers map definition tokens to model parts or bones. They cover ordinary hierarchical
-and ageable models, special vanilla and Twilight Forest shapes, Citadel/LLibrary-family boxes, and
-GeckoLib bones. Results are cached by model identity and cleared with renderer or runtime resets.
+The common `somegoogly.accesswidener` serves common compilation and both loaders; Forge converts it to an access transformer at remap.
 
-Shared access to vanilla rendering members is declared in the common access widener. Fabric applies
-it directly; Forge receives it converted to an SRG-named access transformer at remap.
+GeckoLib is optional and has no common artifact for 1.20.1: the typed code in `gecko/src/main/java` is `srcDir`-ed into each loader, which compiles it against its own compile-only GeckoLib; common reaches bone enumeration through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones`, only after `GeckoCompat` finds GeckoLib, and a failed attach must not block load.
 
-GeckoLib is optional. Common code calls the loader-specific `GeckoCompat` bridge, which checks for
-GeckoLib before using typed integration code. Failure to attach a GeckoLib layer does not prevent the
-base mod from loading.
-
-`GooglyEyeItemRenderer` renders the Googly Eye as a 3D item. The Slimy Eye uses its ordinary item
-model, with tint index 2 derived from its appearance payload.
+`GooglyEyeItemRenderer` draws the 3D Googly Eye; `SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
 
 ## Networking
 
-`NetworkHandler` owns the payload ids and sends through the `@ExpectPlatform` bridges `Networking` and
-`ClientNetworking`; Fabric uses Fabric API play networking, and Forge carries every payload, tagged by
-id, on one required `SimpleChannel`. Gameplay payload ids contain protocol version `10`; stable hello and acknowledgment ids negotiate compatibility during login. A mismatch or timeout
-disconnects the client before resolved eye definitions are sent.
+Five `Payload` classes, each an id plus a `write`/`read` body: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `14`; any incompatible wire change requires bumping it. Forge registers one typed message per payload on a `SimpleChannel` whose required version is the network version; Fabric sends a login query on its `HANDSHAKE` channel and disconnects a client that does not understand it. Fabric's receivers decode off-thread, then hand off.
 
-Server-to-client payloads carry eye state, resolved definitions, and behavior triggers. Client-to-
-server payloads request picker freeze, spawn, pose, and export operations. Each loader's transport registers
-the receivers; they decode on the network thread, every picker request takes the authenticated sender,
-and handlers apply on the game thread and repeat authorization on the server.
+The eye-definition packet also carries `googlyEyesEnabled`. Joins always receive it; after each datapack reload and Forge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set or switch changed, since it resets client trackers.
 
-`Networking.sendTrackingAndSelf` uses each loader's tracking-player lookup. Eye-state packets that arrive
-before their client entity are retained in a bounded, expiring pending set and applied when the entity
-loads. Pending state is cleared on disconnect.
+Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state and behavior packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
 
 ## Picker and commands
 
-The client `/sg` tree and picker controls maintain selection, model-part choice, drafts, previews,
-and export views. `ModelPartVocabulary` supplies consistent attachment enumeration and token handling
-for live editing and bulk export. The server owns mob freezing, spawning, movement, and world datapack
-export.
+The client owns picker drafts and previews; the server owns freezing, spawning, movement, export. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
-`PickerFreezeService` preserves a mob's previous `NoAI` value and reconciles freeze markers when mobs
-load, players leave, or the server stops. Only the owning editor may retain a lock.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks on mob load, logout, and server stop, and allows one editor. `PickerGate.mayUsePicker` (creative plus permission level 2, like `/summon`, since picker edits fire no protection events) is the one picker rule, server and client. `PickerGate` owns every picker throttle; spawn-all also requires server enablement. `PickerSpawnService` finalizes command-spawned mobs through `MobSpawning` (the loader's finalize-spawn event on Forge; a cancelled spawn is not added) before setting `NoAI`, persistence, and display rotation; its `refusal` (ender dragon, unsummonable, `ServerConfig.isSpawnExcluded`) is the one spawnability rule for both commands and spawn suggestions. World export is confined to the generated datapack; export-all stays under the game-directory export tree. Both use `ConfigFile.exportVersion`.
 
-Server handlers rate-limit picker requests. Spawn-all additionally requires creative mode, explicit
-server enablement, and a server-wide cooldown. World export is constrained to the generated datapack
-directory and triggers a datapack reload. Client export-all writes only to the game-directory export
-tree.
-
-The shared client command code builds one Brigadier tree. Loader adapters register it and reconcile
-its picker commands with the server-provided admin branch. Forge also registers the `maybe_float`
-argument type used by the command tree.
+Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric explicitly forwards those server branches because its matching client root otherwise captures them.
 
 ## Loader integration
 
-Forge adapters primarily use Forge entity, interaction, tracking, reload, lifecycle, and rendering
-events. Fabric adapters use Fabric callbacks where available and Mixins for persistent entity data,
-hurt/heal reactions, completed trades, and renderer-dispatcher reload behavior. Both sides enter the
-same common services after adapting the platform event.
+Fabric Mixins cover persistent-data migration, hurt and heal reactions, trades, shears-kill drops, and the mooshroom shear, which bypasses `convertTo` and fires no conversion event on either loader, so Forge has one too. Mixins target the pinned Minecraft version; each loader writes its own fixed refmap.
 
-Fabric configuration is loaded at client initialization or server start rather than watched for live
-file changes. Its Minecraft-facing Mixins target 1.20.1 exactly.
+Forge: common registration runs once from the `@Mod` constructor, client services must be attached to the correct bus (mod versus game), and physical-client bootstrap stays isolated from dedicated-server bootstrap. Forge GameTests use `@PrefixGameTestTemplate(false)` with the `empty` template.
 
 ## Automated verification
 
-Shared GameTest assertions live in 12 `*Logic` classes under `common/src/gametest/java`. Forge and
-Fabric provide thin annotated wrappers. The assertions cover configuration selection, eligibility,
-variants, persistence and serialization, recipes, picker operations, harvesting, behaviors, and
-network protocol identifiers.
-
-Fabric GameTest wrapper classes are listed explicitly in its test metadata. Forge discovers its
-annotated wrappers through the GameTest development mod.
+`common/src/gametest/java` holds 92 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 
-- Optional renderer integrations may omit eyes when their model family or attachment cannot be
-  resolved.
-- Changes to third-party models can invalidate bundled attachment tokens or placement geometry.
-- Entity persistence on Fabric is provided by the mod's Mixin rather than a component dependency.
-- Network wire incompatibilities require a protocol-version change; display version is not the wire
-  compatibility contract.
-- `build-env/` is not a build input; it is a snapshot of the build environment described in
-  `orientation-build.md`, and every edit to a file it covers must be mirrored there.
-- Pre-release data and protocol formats have no compatibility layer.
+- Optional renderer integrations log failures once.
+- `build-env/` is not a build input; it is a snapshot of the build environment described in `orientation-build.md`, and every edit to a file it covers must be mirrored there.

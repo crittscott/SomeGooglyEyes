@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 
@@ -65,7 +66,9 @@ public class ChildMapResolver extends ModelPartTreeResolver {
                         ordered.add(part);
                     }
                 } catch (Throwable accessDenied) {
-                    // Module/access restriction or anything else: skip this field.
+                    ClientIntegrationFailures.warnOnce("ModelPart reflection", "root field access",
+                            model.getClass().getName(), accessDenied);
+                    return List.of();
                 }
             }
         }

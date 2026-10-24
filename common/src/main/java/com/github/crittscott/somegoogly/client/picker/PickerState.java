@@ -6,8 +6,9 @@ import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
- * which share this state. Creative-mode only; works in single-player and from a remote client alike —
+ * which share this state. Creative operators only; works in single-player and from a remote client alike —
  * the operations that touch the server (mob freezing, export) go through the C2S picker packets and
  * are re-authorized server-side. Workflow: choose a mob, pick a part to use as the coordinate frame,
  * shape a <i>current eye</i> (position / rotation / properties), then save it to a flat, numbered
@@ -111,7 +112,10 @@ public final class PickerState {
         return active;
     }
 
-    /** The chosen mob's selectable part tokens, in enumeration order. Read-only. */
+    /**
+     * Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must not
+     * mutate the returned backing list.
+     */
     public static List<String> parts() {
         return parts;
     }
@@ -121,7 +125,10 @@ public final class PickerState {
         return partIndex;
     }
 
-    /** The variants being authored for the chosen mob. Read-only; mutate via the variant ops. */
+    /**
+     * Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the list
+     * or its elements; use the variant operations instead.
+     */
     public static List<DraftVariant> variants() {
         return variants;
     }
@@ -193,7 +200,10 @@ public final class PickerState {
         return currentEyes().size();
     }
 
-    /** The current variant's eye list — what save/select/delete and the preview operate on. */
+    /**
+     * Borrowed view of the current variant's eye list. Rendering and feedback callers must not mutate the
+     * returned list or its entries.
+     */
     public static List<ListedEye> currentEyes() {
         return currentVariant().eyes;
     }
@@ -285,6 +295,7 @@ public final class PickerState {
         send(PickerFreezePacket.freeze(clientEntity.getUUID()));
     }
 
+    /** Whether the picker is active and {@code entity} is the mob it currently targets. */
     public static boolean isActiveTarget(LivingEntity entity) {
         return active && entity == target.get();
     }
@@ -343,7 +354,7 @@ public final class PickerState {
         if (config != null && config.enabled) {
             for (Variant v : config.variants) {
                 DraftVariant dv = new DraftVariant();
-                dv.weight = v.weight();
+                dv.weight = v.weight;
                 for (HeadConfig head : v.heads) {
                     String part = vocabulary.canonicalize(head.attachPoint);
                     int headStart = dv.eyes.size();
@@ -535,10 +546,12 @@ public final class PickerState {
         }
     }
 
+    /** The mob currently being edited, or {@code null} when none is chosen or it has been unloaded. */
     public static LivingEntity target() {
         return target.get();
     }
 
+    /** The entity-type id of the chosen mob, or {@code null} when nothing is chosen. */
     public static ResourceLocation targetType() {
         return targetType;
     }
@@ -655,14 +668,14 @@ public final class PickerState {
     /** Send a picker request if a connection exists (guards races around disconnect). */
     private static void send(PickerFreezePacket packet) {
         if (Minecraft.getInstance().getConnection() != null) {
-            NetworkHandler.sendToServer(packet);
+            ClientNetworking.sendToServer(packet);
         }
     }
 
     /**
      * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
      * connection may already be gone, and the server's own logout handling
-     * ({@code PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
+     * ({@link PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
      *
      * <p>The authored drafts go too, along with {@link #targetType}. They were authored against — and
      * seeded from — the server we're leaving, and {@code export} would happily send them to the next
@@ -688,6 +701,7 @@ public final class PickerState {
         target = new WeakReference<>(null);
     }
 
+    /** How many placement-variant drafts the current editing session holds. */
     public static int variantCount() {
         return variants.size();
     }

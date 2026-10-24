@@ -18,13 +18,13 @@ The **ender dragon** is hard-excluded: a config for it is refused from any datap
 
 Each entry declares which **mod version** it applies to and which **age** of the mob:
 
-- `version` — either an exact version (`"1.20.1"`) or a bracket range (`"[1.20.1,1.21)"`), matched against the installed version of the file's *namespace* (for `data/minecraft/...` that's the Minecraft version; for a modded namespace, that mod's version). One file can carry placements for several model revisions of the same mob; the matching entries win. If **no** entry matches the installed version, the file still works: the **nearest generation** is used instead — the newest entry older than the installed version, or the oldest entry when the installed version predates them all — and the mismatch is logged (an error when the datapack is stale and should be re-exported, a warning when the mod was downgraded). Eyes are cosmetic, so this degrades gracefully: a placement authored for a different model revision may sit oddly, and an attach point that no longer exists simply doesn't attach.
+- `version` — either an exact version (`"1.21.4"`) or a bracket range (`"[1.21.4,1.22)"`), matched against the installed version of the file's *namespace* (for `data/minecraft/...` that's the Minecraft version; for a modded namespace, that mod's version). One file can carry placements for several model revisions of the same mob; the matching entries win. If **no** entry matches the installed version, the file still works: the **nearest generation** is used instead — the newest entry older than the installed version, or the oldest entry when the installed version predates them all — and a warning is logged once per namespace saying which entry was used. Eyes are cosmetic, so this degrades gracefully: a placement authored for a different model revision may sit oddly, and an attach point that no longer exists simply doesn't attach.
 - `age` — `adult`, `baby`, or `any`. An age-specific entry takes precedence over `any`. Babies and adults can have completely different placements.
-- `enabled` — optional, defaults to `true`. `"enabled": false` is an authoritative off-switch: the mob will never roll eyes at spawn, regardless of the server's spawn-chance config.
+- `enabled` — `true` or `false`. `"enabled": false` is an authoritative off-switch: the mob will never roll eyes at spawn, regardless of the server's spawn-chance config.
 
 ### Variants: weighted arrangements
 
-`variants` is a list of complete, alternative eye arrangements. Each mob picks **one** variant (weighted by `weight`, default 1.0, relative) — rolled at spawn, and rolled fresh each time a slimy eye gives it eyes. A mob with a single arrangement still uses a one-element `variants` list.
+`variants` is a list of complete, alternative eye arrangements. Each mob picks **one** variant (weighted by `weight`, relative) — rolled at spawn, and rolled fresh each time a slimy eye gives it eyes. A mob with a single arrangement still uses a one-element `variants` list.
 
 ### Heads: where eyes attach
 
@@ -37,9 +37,9 @@ The easiest way to discover a mob's part names is the picker (`/sg list parts` o
 
 ## Eye fields
 
-Every field is optional; defaults shown. All of placement and default appearance lives here — the eye *item* carries appearance overrides only, and reuses this placement when applied.
+Every field, here and in entries, variants, and heads, is required; a file missing one is rejected and logged. The values shown are what a new picker eye starts with. All of placement and default appearance lives here — the eye *item* carries appearance overrides only, and reuses this placement when applied.
 
-| Field | Default | Meaning |
+| Field | New eye | Meaning |
 | --- | --- | --- |
 | `position` | `[-0.13, -0.25, -0.25]` | Offset from the attach part's origin, in the part's local block units. |
 | `eyeScale` | `0.75` | Overall size of the eye. `0` hides the eye. |
@@ -62,7 +62,7 @@ Horse, with potential butt eyes:
 {
   "entries": [
     {
-      "version": "[1.20.1,1.21)",
+      "version": "1.21.4",
       "age": "any",
       "enabled": true,
       "variants": [

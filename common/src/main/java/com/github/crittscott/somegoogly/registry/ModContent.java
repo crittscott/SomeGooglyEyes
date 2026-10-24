@@ -7,9 +7,15 @@ import com.github.crittscott.somegoogly.item.GooglyEyeItemFactory;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -19,7 +25,8 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
  * Everything the mod registers, declared once and bound through each loader's {@link ContentRegistrar}:
  * the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), which carry the same
  * appearance NBT; the shears-only Optometrist enchantment; the mod's creative tab; and the serializers for
- * the eye-modifier and Slimy Eye recipes.
+ * the eye-modifier and Slimy Eye recipes. The self-shear damage type is data-driven, so only its resource
+ * key lives here.
  */
 public final class ModContent {
 
@@ -39,6 +46,22 @@ public final class ModContent {
             EYE_MODIFIER_RECIPE = new ContentRegistrar.Handle<>();
     public static final ContentRegistrar.Handle<SlimyEyeRecipe.Serializer> SLIMY_EYE_RECIPE =
             new ContentRegistrar.Handle<>();
+
+    /**
+     * The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
+     * attacker, so PvP, team, and claim rules that guard player-on-player damage do not cancel it.
+     */
+    public static final ResourceKey<DamageType> SELF_SHEAR = ResourceKey.create(
+            Registries.DAMAGE_TYPE,
+            new ResourceLocation(SomeGooglyCommon.MOD_ID, "self_shear"));
+
+    /**
+     * Items that harvest eyes as shears: vanilla shears plus the conventional {@code c:shears} and
+     * {@code forge:shears} tags, so modded shears count without extending {@code ShearsItem}.
+     */
+    public static final TagKey<Item> SHEARS = TagKey.create(
+            Registries.ITEM,
+            new ResourceLocation(SomeGooglyCommon.MOD_ID, "shears"));
 
     private ModContent() {
     }

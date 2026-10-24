@@ -16,9 +16,9 @@ import java.util.function.Consumer;
  * shared {@link ModelPartTreeResolver} machinery — so tokens are paths like {@code root/body/head} and a
  * stored {@code head} still suffix-matches.
  *
- * <p>Tried first (before {@link AgeableListResolver}/{@link ChildMapResolver}) because a hierarchical
- * model exposes its root cleanly and unambiguously. Walking the {@code children} map directly (not
- * {@code root().visit()}, which skips cube-less parts) also lets eyes attach to a cube-less pivot/group
+ * <p>This resolver must run before {@link AgeableListResolver} and {@link ChildMapResolver} because a
+ * hierarchical model exposes its root cleanly and unambiguously. Walking the {@code children} map directly
+ * (not {@code root().visit()}, which skips cube-less parts) also lets eyes attach to a cube-less pivot/group
  * joint.
  *
  * <p>{@link AgeableHierarchicalModel} and {@link CamelModel} each wrap their whole {@code root()} render in
@@ -42,7 +42,7 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
 
     /**
      * {@code null} for the common case (no wrap to replay). {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches the
+     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
      * resolved chain per (model, token) and the same model instance renders both baby and adult entities
      * of its type.
      */

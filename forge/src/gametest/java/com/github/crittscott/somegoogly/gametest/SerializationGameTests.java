@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -10,7 +10,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
  * Forge GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the actual
  * assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class SerializationGameTests {
 
@@ -50,6 +50,11 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
+        SerializationGameTestsLogic.eyeColorRejectsOutOfRangeChannels(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeDefinitionCodecRoundTripsEveryField(helper);
     }
@@ -67,21 +72,6 @@ public final class SerializationGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.pickerFreezePacketRoundTrips(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerMobPosePacketRoundTrips(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerMobPosePacketRoundTrips(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerMobPoseRejectsNonFiniteForms(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerMobPoseRejectsNonFiniteForms(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerSpawnPacketsRoundTrip(GameTestHelper helper) {
-        SerializationGameTestsLogic.pickerSpawnPacketsRoundTrip(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

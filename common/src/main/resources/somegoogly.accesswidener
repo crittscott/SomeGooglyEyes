@@ -8,11 +8,6 @@ accessWidener	v2	named
 # ModelPart.children (private Map<String, ModelPart>, the name -> child map)
 accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
 
-# EntityRenderDispatcher's renderer maps. Forge patches equivalent public accessors/members; Fabric's
-# loader adapter reads these maps after a renderer rebuild so it can install the same layers.
-accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	renderers	Ljava/util/Map;
-accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	playerRenderers	Ljava/util/Map;
-
 # AgeableListModel.headParts()/bodyParts() (protected Iterable<ModelPart>)
 accessible	method	net/minecraft/client/model/AgeableListModel	headParts	()Ljava/lang/Iterable;
 accessible	method	net/minecraft/client/model/AgeableListModel	bodyParts	()Ljava/lang/Iterable;

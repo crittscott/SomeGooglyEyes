@@ -3,16 +3,16 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
@@ -21,19 +21,26 @@ import java.util.Random;
  * ambient idle timer below plus game-event reactions (hurt → grow, trade/heal → swirl).
  *
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
- * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities), and
- * each tick only walks that small map. A tracked mob is registered regardless of whether it has eyes yet,
- * so a mob that gains eyes mid-life (a slimy eye) while already watched still schedules; whether a behavior
- * actually plays is gated on {@code hasEyes} at execution time (see {@link #eventTarget} and the ambient
- * roll in {@link #serverTick}). All state is transient — nothing is saved; a reload starts fresh.
+ * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities). A
+ * tracked mob always gets a {@link #STATES} entry (needed for the {@code trackers} count regardless of
+ * eye state), but {@link #serverTick} only walks {@link #ACTIVE}, the subset that can actually do
+ * something: mobs known to have eyes, plus any mob mid-behavior (started via {@link #start}, including
+ * the debug {@link #trigger}). A tracked-but-eyeless mob — the overwhelming majority, since the default
+ * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
+ * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
+ * eye / admin toggle), called from {@link EyeState}. Once promoted, a mob stays in {@link #ACTIVE} for
+ * the rest of its tracked lifetime, even if it loses its eyes.
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
  */
 public final class ServerBehaviorScheduler {
 
-    private static final Random RANDOM = new Random();
+    private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
+    // Never demoted while tracked, so a mob whose behavior still needs retiring is never evicted; a mob
+    // that loses its eyes while watched is rare enough that walking it costs nothing noticeable.
+    private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
 
@@ -55,7 +62,21 @@ public final class ServerBehaviorScheduler {
     /** Forget all state (server stop), so a single-player JVM doesn't bleed one world into the next. */
     public static void clear() {
         STATES.clear();
+        ACTIVE.clear();
         now = 0;
+    }
+
+    /**
+     * Promote {@code mob} into the per-tick-walked {@link #ACTIVE} set now that it's known to have eyes.
+     * A no-op if nobody is currently tracking it (no {@link MobState} to promote) — {@link
+     * #onStartTracking} independently checks {@link EyeState#hasEyes} for that case. Called from
+     * {@link EyeState} wherever the persisted has-eyes flag turns on.
+     */
+    public static void onEyesGained(LivingEntity mob) {
+        MobState state = STATES.get(mob);
+        if (state != null) {
+            ACTIVE.putIfAbsent(mob, state);
+        }
     }
 
     /**
@@ -92,25 +113,28 @@ public final class ServerBehaviorScheduler {
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong())) {
+        if (start(mob, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
     }
 
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
     public static void onPlayerHurt(LivingEntity mob) {
-        MobState state = eventTarget(mob);
-        if (state == null || RANDOM.nextInt(100) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
+        if (RANDOM.nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
             return;
         }
-        start(mob, state, EyeBehaviors.GROW, EyeBehaviors.GROW.defaultDuration(), RANDOM.nextLong());
+        MobState state = eventTarget(mob);
+        if (state == null) {
+            return;
+        }
+        start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
-     * A player started tracking {@code mob}. Registers it regardless of current eye state — so a mob that
-     * gains eyes mid-life (a slimy eye) while already watched still schedules, instead of staying silent
-     * until it is untracked and tracked again. Whether a behavior actually plays is gated on {@code hasEyes}
-     * at execution time. Also catches the player up if the mob is already mid-effect.
+     * A player started tracking {@code mob}. Always creates a {@link #STATES} entry (needed for the
+     * {@code trackers} count regardless of eye state) and promotes into {@link #ACTIVE} immediately if
+     * the mob already has eyes; a mid-life gain while already tracked comes through {@link
+     * #onEyesGained} instead. Also catches the player up if the mob is already mid-effect.
      */
     public static void onStartTracking(LivingEntity mob, ServerPlayer player) {
         MobState state = STATES.computeIfAbsent(mob, m -> {
@@ -119,12 +143,17 @@ public final class ServerBehaviorScheduler {
             return s;
         });
         state.trackers++;
+        // Already eyed when tracking begins (natural spawn, or a slimy eye applied while untracked):
+        // promote immediately. A mid-life gain while already tracked comes through onEyesGained instead.
+        if (EyeState.hasEyes(mob)) {
+            ACTIVE.putIfAbsent(mob, state);
+        }
 
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
-        if (state.busyUntil != 0 && state.activeId != null) {
-            int elapsed = (int) Math.max(0, now - state.startedAt);
-            NetworkHandler.sendBehavior(player,
+        if (state.busyUntil != 0) {
+            int elapsed = (int) (now - state.startedAt);
+            Networking.sendToPlayer(player,
                     new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
                             state.activeDuration, state.activeSeed, elapsed));
         }
@@ -138,6 +167,7 @@ public final class ServerBehaviorScheduler {
         }
         if (--state.trackers <= 0) {
             STATES.remove(mob);
+            ACTIVE.remove(mob);
         }
     }
 
@@ -150,7 +180,7 @@ public final class ServerBehaviorScheduler {
         if (state == null) {
             return;
         }
-        start(villager, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong());
+        start(villager, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong());
     }
 
     private static void rollAmbient(LivingEntity mob, MobState state) {
@@ -163,10 +193,16 @@ public final class ServerBehaviorScheduler {
         start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
     }
 
+    /**
+     * Advance the scheduler one server tick: retire finished behaviors, drop states for removed or
+     * unwatched-and-idle mobs, and roll a fresh ambient behavior when a watched eyed mob's cooldown
+     * expires. Walks only {@link #ACTIVE} — see the class doc — so an eyeless tracked mob costs nothing
+     * per tick; a mob evicted here is dropped from {@link #STATES} too, keeping the two in sync.
+     */
     public static void serverTick() {
         now++;
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
-        Iterator<Map.Entry<LivingEntity, MobState>> it = STATES.entrySet().iterator();
+        Iterator<Map.Entry<LivingEntity, MobState>> it = ACTIVE.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<LivingEntity, MobState> entry = it.next();
             LivingEntity mob = entry.getKey();
@@ -174,6 +210,7 @@ public final class ServerBehaviorScheduler {
 
             if (mob.isRemoved()) {
                 it.remove();
+                STATES.remove(mob);
                 continue;
             }
             // Retire a finished behavior back to idle.
@@ -186,12 +223,11 @@ public final class ServerBehaviorScheduler {
             // would otherwise sit in the map for the mob's whole life.
             if (state.trackers <= 0 && state.busyUntil == 0) {
                 it.remove();
+                STATES.remove(mob);
                 continue;
             }
-            // Idle + ambient enabled → count down, and only at expiry check whether the mob has eyes
-            // (an NBT read). Checking hasEyes before counting down would pay that NBT read every tick
-            // for every tracked mob — the overwhelmingly eyeless majority — whereas this way an eyeless
-            // mob just re-arms the cooldown once per expiry.
+            // Idle + ambient enabled → count down, and only at expiry check whether the mob still has
+            // eyes (a mob can be walked here after having lost them again — see the class doc).
             if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
                 if (EyeState.hasEyes(mob)) {
                     rollAmbient(mob, state);
@@ -211,7 +247,10 @@ public final class ServerBehaviorScheduler {
         state.activeSeed = seed;
         state.busyUntil = now + duration;
         state.startedAt = now;
-        NetworkHandler.sendBehaviorTrackingAndSelf(mob,
+        // A started behavior needs retiring at busyUntil regardless of eye state or tracking, which
+        // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
+        ACTIVE.putIfAbsent(mob, state);
+        Networking.sendTrackingAndSelf(mob,
                 new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
         return true;
     }

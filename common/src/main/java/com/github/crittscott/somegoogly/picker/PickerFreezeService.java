@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -37,12 +39,15 @@ import java.util.UUID;
  *       re-asserted.</li>
  * </ul>
  *
- * <p>All state is transient and single-threaded: every entry point runs on the server thread (packet
- * {@code enqueueWork} / Forge lifecycle events).
+ * <p>All state is transient and single-threaded: every entry point runs on the server thread, reached
+ * from packet handlers and server lifecycle events.
  */
 public final class PickerFreezeService {
 
-    /** Persistent marker holding a frozen mob's pre-picker NoAi value (crash/unload recovery). */
+    /**
+     * Persistent marker holding a frozen mob's pre-picker NoAi value (crash/unload recovery). The
+     * namespace is written out, not composed from the mod id: a persisted key must stay stable.
+     */
     public static final String PREV_NO_AI_TAG = "somegoogly:pickerPrevNoAi";
 
     private static final Map<UUID, FrozenRecord> FROZEN_BY_PLAYER = new HashMap<>();
@@ -130,6 +135,8 @@ public final class PickerFreezeService {
                 return;
             }
         }
+        SomeGooglyCommon.LOGGER.info("Restoring AI state of {} {} left frozen by the picker",
+                BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()), mobId);
         mob.setNoAi(data.getBoolean(PREV_NO_AI_TAG));
         data.remove(PREV_NO_AI_TAG);
     }

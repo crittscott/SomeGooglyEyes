@@ -1,16 +1,17 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.forge.SomeGoogly;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Forge GameTest entry points for {@link SomeGooglyGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for the shared core and picker-spawn assertions.
  */
-@GameTestHolder(SomeGoogly.MOD_ID)
+@GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class SomeGooglyGameTests {
 
@@ -19,19 +20,37 @@ public final class SomeGooglyGameTests {
     private SomeGooglyGameTests() {
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void configuredCowHasServerGeometry(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.configuredCowHasServerGeometry(helper);
+    /**
+     * A survival-mode server player for tests whose item and interaction paths run server-side: Forge's fake
+     * player. {@code makeMockPlayer} is not a {@code ServerPlayer}, and {@code makeMockServerPlayerInLevel}
+     * always reports creative mode.
+     */
+    static ServerPlayer survivalPlayer(GameTestHelper helper) {
+        return FakePlayerFactory.getMinecraft(helper.getLevel());
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void spawnInitializesEyePersistentData(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.spawnInitializesEyePersistentData(helper);
+    public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void eyeStateAppearanceOverridesRoundTrip(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.eyeStateAppearanceOverridesRoundTrip(helper);
+    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
+    }
+
+    /**
+     * Exercises Forge's native entity persistent compound through an entity save/load cycle. In game: see
+     * {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void forgeEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "Forge");
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void conversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper, survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
@@ -46,11 +65,13 @@ public final class SomeGooglyGameTests {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(helper);
+        SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
+                helper, survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(helper);
+        SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
+                helper, survivalPlayer(helper));
     }
 }

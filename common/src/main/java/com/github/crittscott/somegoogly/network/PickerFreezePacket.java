@@ -1,10 +1,13 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
-import com.github.crittscott.somegoogly.picker.PickerPermissions;
+import com.github.crittscott.somegoogly.picker.PickerGate;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -14,11 +17,23 @@ import java.util.UUID;
  * restore, crash-proofing — is owned by {@link PickerFreezeService} on the server, so it works from a
  * remote client and survives that client disappearing; this packet only asks.
  *
- * <p>Freezing requires creative mode ({@link PickerPermissions}). <b>Unfreezing does not</b>: it only
- * releases the sender's own frozen mob, and gating it would strand a mob frozen if the player lost
- * creative mid-edit.
+ * <p>Freezing requires picker authorization ({@link PickerGate#authorized}). <b>Unfreezing does
+ * not</b>: it only releases the sender's own frozen mob, and gating it would strand a mob frozen if the
+ * player lost creative or operator status mid-edit.
  */
-public class PickerFreezePacket {
+public class PickerFreezePacket implements Payload {
+
+    public static final ResourceLocation ID = NetworkHandler.PICKER_FREEZE;
+
+    /**
+     * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
+     * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
+     * the mob's box and the mob's position the server measures to. Keeps an authorized client from
+     * freezing an arbitrary mob in any loaded chunk by UUID.
+     */
+    private static final double FREEZE_DISTANCE_SLACK = 4.0;
+    private static final double MAX_FREEZE_DISTANCE_SQ = (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK)
+            * (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK);
 
     private final boolean freeze;
     @Nullable
@@ -29,41 +44,57 @@ public class PickerFreezePacket {
         this.mobId = mobId;
     }
 
+    /** A request to freeze the mob with {@code mobId} for the sender's picker. */
     public static PickerFreezePacket freeze(UUID mobId) {
         return new PickerFreezePacket(true, mobId);
     }
 
+    /** A request to release the sender's frozen mob. */
     public static PickerFreezePacket unfreeze() {
         return new PickerFreezePacket(false, null);
     }
 
-    public static PickerFreezePacket decode(FriendlyByteBuf buffer) {
-        boolean freeze = buffer.readBoolean();
-        UUID mobId = freeze ? buffer.readUUID() : null;
-        return new PickerFreezePacket(freeze, mobId);
+    /** Decode and validate a received payload. */
+    public static PickerFreezePacket read(FriendlyByteBuf buffer) {
+        return new PickerFreezePacket(buffer);
     }
 
-    public static void encode(PickerFreezePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBoolean(packet.freeze);
-        if (packet.freeze) {
-            buffer.writeUUID(packet.mobId);
+    private PickerFreezePacket(FriendlyByteBuf buffer) {
+        this.freeze = buffer.readBoolean();
+        this.mobId = freeze ? buffer.readUUID() : null;
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(freeze);
+        if (freeze) {
+            buffer.writeUUID(mobId);
         }
     }
 
-    /** Apply a decoded request on the server thread on behalf of its authenticated {@code sender}. */
+    /** Freeze the requested mob for an authorized sender in range, or release the sender's frozen mob. */
     public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
-        sender.serverLevel().getServer().execute(() -> {
-            if (packet.freeze) {
-                if (!PickerPermissions.creative(sender)) {
-                    return;
-                }
-                Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
-                if (error != null) {
-                    sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
-                }
-            } else {
-                PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
+        if (packet.freeze) {
+            if (!PickerGate.authorized(sender)) {
+                return;
             }
-        });
+            Entity target = sender.serverLevel().getEntity(packet.mobId);
+            if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                        Component.translatable("somegoogly.command.picker.freeze_too_far")));
+                return;
+            }
+            Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
+            if (error != null) {
+                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
+            }
+        } else {
+            PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
+        }
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

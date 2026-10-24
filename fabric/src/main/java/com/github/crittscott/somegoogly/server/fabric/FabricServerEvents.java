@@ -1,95 +1,105 @@
 package com.github.crittscott.somegoogly.server.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.command.GooglyAdminCommand;
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
 
-    private static final int ENTITY_TYPE_LOG_LIMIT = 30;
-    private static final Set<String> LOGGED_LOAD_TYPES = new HashSet<>();
-    private static final Set<String> LOGGED_TRACKING_TYPES = new HashSet<>();
+    /**
+     * Late phase for the eye-item entity interaction: Fabric protection mods register their
+     * {@link UseEntityCallback} in the default phase, so running after it lets them veto first.
+     */
+    private static final ResourceLocation LATE_PHASE =
+            new ResourceLocation(SomeGooglyCommon.MOD_ID, "after_protection");
 
     private FabricServerEvents() {
     }
 
+    /** Subscribe the server listeners; called once from the mod initializer. */
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                GooglyAdminCommand.register(dispatcher));
-        UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) ->
-                entity instanceof LivingEntity living
+                GooglyServerCommands.register(dispatcher, registryAccess));
+        UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
+        // Fabric's use callbacks fire before vanilla's spectator check, so callers must make it themselves.
+        UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
+                !player.isSpectator() && entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
-                        : net.minecraft.world.InteractionResult.PASS);
-        ServerLivingEntityEvents.AFTER_DEATH.register((mob, source) ->
-                EyeItemService.onDeath(mob, source, mob::spawnAtLocation));
+                        : InteractionResult.PASS);
+        UseItemCallback.EVENT.register((player, level, hand) -> {
+            if (player.isSpectator()
+                    || EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
+                return InteractionResultHolder.pass(player.getItemInHand(hand));
+            }
+            return InteractionResultHolder.success(player.getItemInHand(hand));
+        });
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
-                onLivingEntityLoaded(living);
+                ServerServices.onLivingEntityLoaded(living);
             }
         });
+        ServerLivingEntityEvents.MOB_CONVERSION.register((previous, converted, keepEquipment) ->
+                EyeState.copy(previous, converted));
+        // Leaving the End replaces the player; eyes applied to a player are still lost on death.
+        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
+            if (alive) {
+                EyeState.copy(oldPlayer, newPlayer);
+            }
+        });
+        // Refuse a client without this network version before it joins the world: it cannot answer the query.
+        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) ->
+                sender.sendPacket(FabricNetworkTransport.HANDSHAKE, PacketByteBufs.empty()));
+        ServerLoginNetworking.registerGlobalReceiver(FabricNetworkTransport.HANDSHAKE,
+                (server, handler, understood, buffer, synchronizer, responseSender) -> {
+                    if (!understood) {
+                        SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
+                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
+                        handler.disconnect(Component.translatable("somegoogly.network.required_client"));
+                    }
+                });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                ServerServices.onPlayerJoined(handler.player));
+                ServerServices.syncEyeConfigs(handler.player));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) ->
-                ServerServices.syncEyeConfigs(player));
+        // Once per reload, after the eye definitions and the re-read server config are both applied.
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) ->
+                ServerServices.broadcastEyeConfigsIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
-        ServerTickEvents.END_SERVER_TICK.register(ServerServices::onServerTick);
+        ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
-                logStartTracking(living, player);
                 ServerServices.onStartTracking(living, player);
             }
         });
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {
-                ServerServices.onStopTracking(living);
+                ServerBehaviorScheduler.onStopTracking(living);
             }
         });
-    }
-
-    private static void onLivingEntityLoaded(LivingEntity living) {
-        boolean previouslyInitialized = EyeState.isInitialized(living);
-        boolean eligible = ServerEyeConfigs.canEverWearEyes(living);
-        ServerServices.onLivingEntityLoaded(living);
-
-        String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
-        if (LOGGED_LOAD_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_LOAD_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Fabric entity-load debug: type={}, entityId={}, previouslyInitialized={}, configuredEligibility={}, percent={}, hasEyes={}",
-                    type, living.getId(), previouslyInitialized, eligible,
-                    ServerConfig.percentFor(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType())),
-                    EyeState.hasEyes(living));
-        }
-    }
-
-    private static void logStartTracking(LivingEntity living, ServerPlayer player) {
-        String type = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()).toString();
-        if (LOGGED_TRACKING_TYPES.size() < ENTITY_TYPE_LOG_LIMIT && LOGGED_TRACKING_TYPES.add(type)) {
-            SomeGooglyCommon.LOGGER.debug(
-                    "Fabric tracking debug: player={}, type={}, entityId={}, hasEyes={}, protocolReady={}",
-                    player.getGameProfile().getName(), type, living.getId(), EyeState.hasEyes(living),
-                    NetworkHandler.ready(player));
-        }
     }
 }

@@ -4,18 +4,20 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
  * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
  *
- * <p>One tracker is kept per tracked {@link LivingEntity} (see {@code ClientEventHandler}), matched
+ * <p>One tracker is kept per tracked {@link LivingEntity} (see {@link ClientEyeRuntime}), matched
  * against the entity's current placement via {@link #matches}. {@link #update()} advances the active
  * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
@@ -25,31 +27,47 @@ public class GooglyTracker {
     // active behavior into the simulation allocates nothing per tick.
     private static final EyeInfluence INFLUENCE = new EyeInfluence();
 
+    /** The placement this tracker's eyes were built for. */
     public final HeadInfo helper;
+    /** The entity whose eyes this tracker simulates. */
     public final LivingEntity parent;
-    public final Random rand;
+    /** Per-entity randomness for pupil jitter, seeded from the entity's UUID. */
+    public final RandomSource rand;
 
-    // The client tick during which this tracker was last rendered. Drives both the tick loop's decisions
-    // (see ClientEventHandler): evict once it's more than 10 ticks stale, and simulate only while it's
-    // being rendered — so off-screen eyes freeze instead of wobbling on unseen.
+    /**
+     * The client tick during which this tracker was last rendered. {@link ClientEyeRuntime} evicts the
+     * tracker once this goes stale and simulates it only while it is being rendered, so off-screen eyes
+     * freeze instead of wobbling unseen.
+     */
     public int lastRenderTick;
 
+    /** The entity's position change over the last {@link #update()}. */
     public double motionX, motionY, motionZ;
 
     private double prevX, prevY, prevZ;
 
+    /** Pupil simulators, indexed by head then eye, shaped by this tracker's placement. */
     public EyeInfo[][] eyes;
 
-        // Behaviors are scheduled server-side, one at a time and non-interruptable; the client just plays
-    // the active instance, advancing it each tick and interpolating it at render time. All of its state
-    // is transient and client-only (no NBT, no sync of progress — only the trigger is sent).
+    /**
+     * The entity's current appearance override, mirrored from {@code EyeStatePacket} so render layers
+     * don't re-read it from NBT every frame. Seeded from NBT at construction and kept current by
+     * {@link ClientNetworkHandler#handleEyeState}.
+     */
+    public AppearanceOverride overrides;
+
+    /**
+     * The behavior playing on this entity, or {@code null}. Advanced each tick and interpolated at render;
+     * client-only, since the server sends only the trigger.
+     */
     @Nullable
     public BehaviorInstance active;
 
     public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
         this.parent = parent;
         this.helper = helper;
-        this.rand = new Random(Math.abs(parent.getUUID().hashCode()) * 8134L);
+        this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
+        this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
 
         for (int i = 0; i < eyes.length; i++) {
@@ -79,7 +97,7 @@ public class GooglyTracker {
         private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
         private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
         private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
-        private static final float R_NOISE = 0.005f;           // tiny per-eye jitter so eyes don't lock-step
+        private static final float R_NOISE = 0.0005f;           // tiny per-eye jitter so eyes don't lock-step
         // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
         // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
         private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
@@ -87,34 +105,51 @@ public class GooglyTracker {
         private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
         private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
 
-        // Head orientation, kept across ticks to differentiate into angular velocity/acceleration.
+        /** Head orientation, kept across ticks to differentiate into angular velocity and acceleration. */
         public float prevRotationPitch;
+        /** See {@link #prevRotationPitch}. */
         public float prevRotationYaw;
+        /** See {@link #prevRotationPitch}. */
         public float rotationPitch;
+        /** See {@link #prevRotationPitch}. */
         public float rotationYaw;
 
-        // Pupil position in [-1,1], living in a unit disk (|p| <= 1) mapped onto the full cornea circle.
+        /** Pupil position in the unit disk ({@code |p| <= 1}), mapped onto the full cornea circle. */
         public float deltaX;
+        /** See {@link #deltaX}. */
         public float deltaY;
+        /** Pupil position at the previous tick, for render interpolation. */
         public float prevDeltaX;
+        /** See {@link #prevDeltaX}. */
         public float prevDeltaY;
-        // Pupil velocity.
+        /** Pupil velocity per tick. */
         public float momentumX;
+        /** See {@link #momentumX}. */
         public float momentumY;
 
-        // World-down projected into this eye's pupil plane, in the (deltaX, deltaY) convention. Refreshed
-        // each render (GooglyEyeRenderer) from the eye's actual animated world orientation, so the pupil
-        // sags toward true down rather than eye-local down. (0, -1) — straight down — until the first
-        // render, so an off-screen or not-yet-drawn eye falls toward eye-local down.
+        /**
+         * World-down projected into this eye's pupil plane, in the ({@code deltaX}, {@code deltaY})
+         * convention. Refreshed each render by {@code GooglyEyeRenderer} from the eye's animated world
+         * orientation, so the pupil sags toward true down; {@code (0, -1)}, eye-local down, until the
+         * first render.
+         */
         public float gravX = 0F;
+        /** See {@link #gravX}. */
         public float gravY = -1F;
 
-        // Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
-        // and interpolated by partialTicks at render. Kept per-eye so the blink mask varies by eye.
-        public float scaleMul = 1F, prevScaleMul = 1F;   // grow
-        public float squashY = 1F, prevSquashY = 1F;     // blink
-        public float tintAmount, prevTintAmount;         // color-change blend amount
-        public float[] tintColor;                        // color-change target (set instantly, not lerped)
+        /**
+         * Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+         * and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
+         * grow scale; {@link #squashY} is the blink, {@link #tintAmount} the color-change blend, and
+         * {@link #tintColor} the color-change target (set instantly, not interpolated).
+         */
+        public float scaleMul = 1F, prevScaleMul = 1F;
+        /** Blink squash; see {@link #scaleMul}. */
+        public float squashY = 1F, prevSquashY = 1F;
+        /** Color-change blend amount; see {@link #scaleMul}. */
+        public float tintAmount, prevTintAmount;
+        /** Color-change target color; see {@link #scaleMul}. */
+        public float[] tintColor;
 
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
         private double prevMotionX;
@@ -142,7 +177,7 @@ public class GooglyTracker {
          * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          */
-        public void update(Random rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
+        public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
@@ -250,6 +285,7 @@ public class GooglyTracker {
         }
     }
 
+    /** Whether this tracker was built for the same placement variant as {@code helper}. */
     public boolean matches(HeadInfo helper) {
         // Compare the selected variant's head list, not just the shared config: two mobs of the same
         // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
@@ -258,9 +294,8 @@ public class GooglyTracker {
     }
 
     /**
-     * Stamp this tracker as rendered this client tick (drives eviction + whether to simulate).
-     * {@code currentClientTick} is read by the caller so this class stays free of the platform-specific
-     * client tick counter.
+     * Stamp this tracker as rendered during {@code currentClientTick}, the
+     * {@link ClientEyeRuntime#clientTicks()} value (drives eviction and whether to simulate).
      */
     public void markRendered(int currentClientTick) {
         lastRenderTick = currentClientTick;
@@ -271,10 +306,9 @@ public class GooglyTracker {
      * rule. Returns whether it started (a dropped trigger returns {@code false}). Called from the
      * trigger packet on the client.
      *
-     * <p>{@code elapsed} fast-forwards the behavior by that many ticks before it's shown, so a player
-     * who starts watching a mob mid-effect picks it up in sync with everyone else (the server sends how
-     * far in the effect already is). It's deterministic — the seeded {@code onStart} plus replaying
-     * {@code tick} reproduces the exact same state other viewers are at.
+     * <p>{@code elapsed} starts the behavior that many ticks in, so a player who starts watching a mob
+     * mid-effect sees the same state as everyone else: the seeded {@code onStart} plus the age fully
+     * determine each behavior's influence.
      */
     public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
         if (active != null) {
@@ -284,7 +318,7 @@ public class GooglyTracker {
         behavior.onStart(instance);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
-        instance.age = Math.max(0, Math.min(elapsed, instance.duration));
+        instance.age = elapsed;
         if (instance.age >= instance.duration) {
             return false; // already finished by the time we'd show it (stale catch-up); nothing to play
         }
@@ -292,6 +326,7 @@ public class GooglyTracker {
         return true;
     }
 
+    /** Advance one client tick: sample the entity's motion, age the active behavior, and step every eye. */
     public void update() {
         motionX = parent.getX() - prevX;
         motionY = parent.getY() - prevY;
