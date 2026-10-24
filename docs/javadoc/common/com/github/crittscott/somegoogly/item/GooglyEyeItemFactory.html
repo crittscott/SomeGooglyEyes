@@ -93,9 +93,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Constructs the registered <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>GooglyEyeItem</code></a> instance. Its 3D held-item renderer is attached here
  rather than on <code>GooglyEyeItem</code> itself, since each loader's renderer-attachment hook differs:
- NeoForge and Forge override a method on the item instance (<code>Item#initializeClient</code>, added by
- their patched <code>Item</code>), while Fabric registers the renderer separately at client init
- (<code>BuiltinItemRendererRegistry</code>) with no change to the item class needed at all.</div>
+ Forge overrides a method on the item instance (<code>Item#initializeClient</code>, added by its patched
+ <code>Item</code>), while NeoForge (<code>RegisterClientExtensionsEvent</code>) and Fabric
+ (<code>BuiltinItemRendererRegistry</code>) register the renderer separately at client init.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
