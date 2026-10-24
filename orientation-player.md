@@ -152,7 +152,7 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 
 Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. The optional-mod definitions retain their earlier compatibility selectors. Updates to another mod's models may require its eye definitions to be adjusted.
 
-73 bundled Minecraft definitions select 1.20.1. The armadillo, bogged, and breeze definitions target later Minecraft versions, whose mobs do not exist in 1.20.1.
+74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand. The armadillo, bogged, and breeze definitions target later Minecraft versions, whose mobs do not exist in 1.20.1. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
 
