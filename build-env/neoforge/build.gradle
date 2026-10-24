@@ -26,6 +26,11 @@ loom {
     }
 
     runs {
+        // Dev runs load common's refmap, which maps to Fabric's intermediary names; this loader runs on the
+        // Mojang names the common Mixins are written against, so they must resolve without it.
+        configureEach {
+            property 'mixin.env.disableRefMap', 'true'
+        }
         gameTestServer {
             server()
             environment 'gametestserver'

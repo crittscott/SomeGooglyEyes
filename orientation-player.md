@@ -23,6 +23,8 @@ Pupils respond to gravity, movement, and head motion. They wobble, bounce, and s
 Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also react when:
 
 - damaged by a player: 20 percent default chance to bulge;
+- milked (cow, mooshroom, goat): bulge;
+- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust): pupils swell to twice their size;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, with a 200-tick default cooldown.
 
@@ -116,13 +118,15 @@ entityOverrides = [
 | `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
 | `growOnHitPercent` | `20` | Bulge chance after player damage |
+| `growOnMilk` | `true` | Bulge after milking |
+| `loveOnAffection` | `true` | Love after an affection event |
 | `swirlOnTrade` | `true` | Swirl after a trade |
 | `swirlOnHeal` | `true` | Swirl after healing |
 | `swirlHealCooldownTicks` | `200` | Delay between healing swirls |
 
-Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `swirl`, and `color_change`.
+Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
 
-`allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run. Enable it only on a test or throwaway world: `/sg spawnall` force-spawns every summonable mob, including ones, like MineColonies' and Create's, that can corrupt or destabilize a world when spawned outside their mod's normal context. `spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and `/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies` and `create` for exactly this reason — removing either from the list on a world you care about risks that world; `spawnExcludedEntities` defaults to empty. Both affect only those authoring commands.
+`allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run. Enable it only on a test or throwaway world: `/sg spawnall` force-spawns every summonable mob, including ones, like MineColonies' and Create's, that can corrupt or destabilize a world when spawned outside their mod's normal context. `spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and `/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies` and `create` for this reason; `spawnExcludedEntities` defaults to empty. Both affect only those authoring commands.
 
 ### Client display
 
@@ -150,7 +154,7 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Caverns & Chasms, Critters and Companions, Ecologics, Environmental, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Upgrade Aquatic, Variants & Ventures, and WilderNature. Optional mods are not required. Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the optional-mod definitions retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.4 releases. Updates to another mod's models may require its eye definitions to be adjusted.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Caverns & Chasms, Critters and Companions, Ecologics, Environmental, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Upgrade Aquatic, Variants & Ventures, and WilderNature. Except for Ice and Fire Community Edition, whose definitions select that mod's 1.21.1 releases, the optional-mod definitions retain their earlier compatibility selectors and have not been verified against Minecraft 1.21.4 releases.
 
 The 78 bundled Minecraft definitions all select 1.21.4 and are enabled, including the player and armor stand. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
@@ -224,5 +228,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 96 dedicated-server GameTests; NeoForge and Forge each contain 92. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 98 dedicated-server GameTests; NeoForge and Forge each contain 94. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

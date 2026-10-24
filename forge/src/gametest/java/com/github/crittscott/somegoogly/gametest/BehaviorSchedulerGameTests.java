@@ -40,4 +40,16 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
                 helper, helper.makeMockServerPlayerInLevel());
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void affectionEventsPlayLove(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
+                helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void milkingPlaysGrow(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
+                helper, helper.makeMockServerPlayerInLevel());
+    }
 }
