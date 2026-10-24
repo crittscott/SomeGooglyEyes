@@ -29,8 +29,8 @@ import java.util.Optional;
  *   <li>{@code eye_modifier} — one googly eye plus one recognized modifier transforms the eye's
  *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact RGB, so
  *       they don't pin a particular dye palette.</li>
- *   <li>{@code slimy_eye} — eye plus slimeball, a vanilla {@code crafting_transmute}, which must carry
- *       the eye's appearance onto the applicator.</li>
+ *   <li>{@code slimy_eye} — eye plus slimeball, the mod's shapeless Slimy Eye recipe, which must carry
+ *       every component of the eye onto the applicator.</li>
  * </ul>
  */
 public final class RecipeGameTestsLogic {
