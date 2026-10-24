@@ -50,6 +50,11 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
+        SerializationGameTestsLogic.eyeColorRejectsOutOfRangeChannels(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeDefinitionCodecRoundTripsEveryField(helper);
     }

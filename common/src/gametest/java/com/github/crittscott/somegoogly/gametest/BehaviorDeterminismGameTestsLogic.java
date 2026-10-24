@@ -1,12 +1,10 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -69,44 +67,20 @@ public final class BehaviorDeterminismGameTestsLogic {
         return true;
     }
 
-    public static void blinkMaskIsSeedDeterministic(GameTestHelper helper) {
-        HeadInfo headInfo = helperFor(helper);
-        EyeBehavior blink = EyeBehaviors.byId(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "blink"));
-        helper.assertTrue(blink != null, "blink behavior should be registered");
-
-        BehaviorInstance first = new BehaviorInstance(blink, headInfo, 8, 777L);
-        BehaviorInstance second = new BehaviorInstance(blink, headInfo, 8, 777L);
-        blink.onStart(first);
-        blink.onStart(second);
-        helper.assertTrue(Arrays.deepEquals(first.mask, second.mask),
-                "same seed must select the same blink participants");
-        helper.succeed();
-    }
-
+    /**
+     * Every behavior animates identically from the same seed. In game: with two players watching one eyed
+     * mob, run {@code /sg admin behavior <id>} for each of {@code blink}, {@code cross_eye}, {@code side_eye},
+     * {@code stare}, {@code grow}, {@code swirl}, and {@code color_change}; both screens show the same
+     * animation, direction, and color.
+     */
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
+        for (EyeBehavior behavior : EyeBehavior.values()) {
             BehaviorInstance a = playTo(behavior, headInfo, 8, 4242L);
             BehaviorInstance b = playTo(behavior, headInfo, 8, 4242L);
             helper.assertTrue(statesMatch(behavior, a, b, headInfo),
                     "behavior " + behavior.id() + " must reach identical state from the same seed");
         }
-        helper.succeed();
-    }
-
-    public static void fastForwardMatchesNaturalPlayback(GameTestHelper helper) {
-        // A mid-effect joiner replays elapsed ticks to catch up; that must equal natural playback to the
-        // same age (the equivalence GooglyTracker#startBehavior relies on, verified on the instance itself).
-        HeadInfo headInfo = helperFor(helper);
-        EyeBehavior swirl = EyeBehaviors.byId(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "swirl"));
-        helper.assertTrue(swirl != null, "swirl behavior should be registered");
-
-        BehaviorInstance natural = playTo(swirl, headInfo, 5, 31337L);
-        BehaviorInstance caughtUp = playTo(swirl, headInfo, 5, 31337L);
-        helper.assertTrue(statesMatch(swirl, natural, caughtUp, headInfo),
-                "catch-up by age must match natural playback at the same age");
         helper.succeed();
     }
 

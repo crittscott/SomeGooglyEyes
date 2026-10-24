@@ -34,6 +34,10 @@ public final class ModelPartVocabulary {
         this.canonicalizer = canonicalizer;
     }
 
+    /**
+     * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style model parts
+     * or else its GeckoLib bones, or {@code null} when neither yields any.
+     */
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
         EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
@@ -72,10 +76,12 @@ public final class ModelPartVocabulary {
         return sample == null ? null : forEntity(sample);
     }
 
+    /** The canonical attach token for {@code token}. */
     public String canonicalize(String token) {
         return canonicalizer.canonicalize(token);
     }
 
+    /** The model's attachable part tokens, in selection order. */
     public List<String> tokens() {
         return tokens;
     }

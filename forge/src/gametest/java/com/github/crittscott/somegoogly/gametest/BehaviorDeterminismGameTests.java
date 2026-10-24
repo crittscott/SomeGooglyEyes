@@ -18,17 +18,7 @@ public final class BehaviorDeterminismGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void blinkMaskIsSeedDeterministic(GameTestHelper helper) {
-        BehaviorDeterminismGameTestsLogic.blinkMaskIsSeedDeterministic(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         BehaviorDeterminismGameTestsLogic.everyBehaviorIsSeedDeterministicOverItsRun(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void fastForwardMatchesNaturalPlayback(GameTestHelper helper) {
-        BehaviorDeterminismGameTestsLogic.fastForwardMatchesNaturalPlayback(helper);
     }
 }

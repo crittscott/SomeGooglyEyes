@@ -1,11 +1,13 @@
 package com.github.crittscott.somegoogly.config.forge;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.server.ServerServices;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,56 +34,51 @@ public final class ForgeServerConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.push("server");
-        GOOGLY_EYES_ENABLED = builder.comment(
-                        "Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on",
-                        "every client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left",
-                        "untouched and reappears when this is turned back on. Already-connected clients only see",
-                        "the change after a config reload or server restart, since this is a server config value",
-                        "like any other.")
+        builder.push(ServerConfig.SECTION_SERVER);
+        GOOGLY_EYES_ENABLED = builder.comment(ServerConfig.GOOGLY_EYES_ENABLED_COMMENT.split("\n"))
                 .define(ServerConfig.GOOGLY_EYES_ENABLED_KEY, ServerConfig.GOOGLY_EYES_ENABLED_DEFAULT);
-        GLOBAL_PERCENT = builder.defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
-                ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        HARVEST_ON_KILL_PERCENT = builder.defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
-                ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        ENTITY_OVERRIDES = builder.comment(
-                        "Per-entity eye chances as entity-pattern,percent; exact ids beat the first matching wildcard.")
+        GLOBAL_PERCENT = builder.comment(ServerConfig.GLOBAL_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.GLOBAL_PERCENT_KEY,
+                        ServerConfig.GLOBAL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        HARVEST_ON_KILL_PERCENT = builder.comment(ServerConfig.HARVEST_ON_KILL_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.HARVEST_ON_KILL_PERCENT_KEY,
+                        ServerConfig.HARVEST_ON_KILL_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        ENTITY_OVERRIDES = builder.comment(ServerConfig.ENTITY_OVERRIDES_COMMENT.split("\n"))
                 .defineList(ServerConfig.ENTITY_OVERRIDES_KEY, ServerConfig.ENTITY_OVERRIDES_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateOverride(string));
-        builder.pop().push("behaviors");
-        AMBIENT_BEHAVIORS = builder.define(ServerConfig.AMBIENT_BEHAVIORS_KEY,
-                ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
-        AMBIENT_MIN_TICKS = builder.defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
-                ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        AMBIENT_MAX_TICKS = builder.defineInRange(ServerConfig.AMBIENT_MAX_TICKS_KEY,
-                ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        AMBIENT_BEHAVIOR_POOL = builder.defineList(
-                ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
-                value -> value instanceof String string && ServerConfig.validateBehaviorId(string));
-        GROW_ON_HIT_PERCENT = builder.defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
-                ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
-        SWIRL_ON_TRADE = builder.define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
-        SWIRL_ON_HEAL = builder.define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
-        SWIRL_HEAL_COOLDOWN_TICKS = builder.defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
-                ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
-        builder.pop().push("picker");
-        ALLOW_SPAWN_ALL = builder.comment(
-                        "Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.",
-                        "WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own",
-                        "mod's normal context, as spawnall does, can corrupt or destabilize the world; MineColonies",
-                        "and Create mobs are known cases (see spawnExcludedMods below).")
+        builder.pop().push(ServerConfig.SECTION_BEHAVIORS);
+        AMBIENT_BEHAVIORS = builder.comment(ServerConfig.AMBIENT_BEHAVIORS_COMMENT.split("\n"))
+                .define(ServerConfig.AMBIENT_BEHAVIORS_KEY,
+                        ServerConfig.AMBIENT_BEHAVIORS_DEFAULT);
+        AMBIENT_MIN_TICKS = builder.comment(ServerConfig.AMBIENT_MIN_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.AMBIENT_MIN_TICKS_KEY,
+                        ServerConfig.AMBIENT_MIN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_MAX_TICKS = builder.comment(ServerConfig.AMBIENT_MAX_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.AMBIENT_MAX_TICKS_KEY,
+                        ServerConfig.AMBIENT_MAX_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        AMBIENT_BEHAVIOR_POOL = builder.comment(ServerConfig.AMBIENT_BEHAVIOR_POOL_COMMENT.split("\n"))
+                .defineList(
+                        ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT,
+                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
+        GROW_ON_HIT_PERCENT = builder.comment(ServerConfig.GROW_ON_HIT_PERCENT_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
+                        ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
+        SWIRL_ON_TRADE = builder.comment(ServerConfig.SWIRL_ON_TRADE_COMMENT.split("\n"))
+                .define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
+        SWIRL_ON_HEAL = builder.comment(ServerConfig.SWIRL_ON_HEAL_COMMENT.split("\n"))
+                .define(ServerConfig.SWIRL_ON_HEAL_KEY, ServerConfig.SWIRL_ON_HEAL_DEFAULT);
+        SWIRL_HEAL_COOLDOWN_TICKS = builder.comment(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_COMMENT.split("\n"))
+                .defineInRange(ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_KEY,
+                        ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, ServerConfig.TICKS_MIN, ServerConfig.TICKS_MAX);
+        builder.pop().push(ServerConfig.SECTION_PICKER);
+        ALLOW_SPAWN_ALL = builder.comment(ServerConfig.ALLOW_SPAWN_ALL_COMMENT.split("\n"))
                 .define(ServerConfig.ALLOW_SPAWN_ALL_KEY, ServerConfig.ALLOW_SPAWN_ALL_DEFAULT);
-        SPAWN_EXCLUDED_MODS = builder.comment(
-                        "Namespaces that /sg spawn and /sg spawnall skip; authoring commands only.",
-                        "MineColonies and Create are excluded by default because their mobs can corrupt or",
-                        "destabilize a world if force-spawned outside their mod's normal context. Only remove",
-                        "either entry on a world you're prepared to lose.")
+        SPAWN_EXCLUDED_MODS = builder.comment(ServerConfig.SPAWN_EXCLUDED_MODS_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_MODS_KEY, ServerConfig.SPAWN_EXCLUDED_MODS_DEFAULT,
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
-        SPAWN_EXCLUDED_ENTITIES = builder.comment(
-                        "Entity ids that /sg spawn and /sg spawnall skip; authoring commands only.")
+        SPAWN_EXCLUDED_ENTITIES = builder.comment(ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT,
-                        value -> value instanceof String string && ServerConfig.validateEntityId(string));
+                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
         builder.pop();
         SPEC = builder.build();
     }
@@ -89,8 +86,9 @@ public final class ForgeServerConfig {
     private ForgeServerConfig() {
     }
 
+    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.SERVER, SPEC, SomeGooglyCommon.MOD_ID + "-server.toml");
+        context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
     }
 
@@ -117,5 +115,10 @@ public final class ForgeServerConfig {
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
         ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
         ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
+        // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (event instanceof ModConfigEvent.Reloading && server != null) {
+            server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
+        }
     }
 }

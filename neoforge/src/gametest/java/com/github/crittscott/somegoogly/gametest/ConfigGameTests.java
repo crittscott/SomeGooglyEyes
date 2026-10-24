@@ -30,23 +30,13 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedConfigsLoadForKnownEntities(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedConfigsLoadForKnownEntities(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void everyShippedConfigHasNonBlankAttachTokens(GameTestHelper helper) {
-        ConfigGameTestsLogic.everyShippedConfigHasNonBlankAttachTokens(helper);
+    public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
+        ConfigGameTestsLogic.everyShippedMinecraftDefinitionLoads(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
         ConfigGameTestsLogic.exactMinecraftGenerationIsSelected(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void shippedPigHasTwoVariants(GameTestHelper helper) {
-        ConfigGameTestsLogic.shippedPigHasTwoVariants(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -70,13 +60,8 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadBumpsGenerationOnlyOnContentChange(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadBumpsGenerationOnlyOnContentChange(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void serverTomlRoundTrips(GameTestHelper helper) {
-        ConfigGameTestsLogic.serverTomlRoundTrips(helper);
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 }
 

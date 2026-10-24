@@ -6,6 +6,8 @@
 
 `<world>/serverconfig/somegoogly-server.toml`
 
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment.
+
 ### Spawn settings
 
 | Key | Default | Meaning |
@@ -39,7 +41,7 @@ a Slimy Eye.
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `ambientBehaviors` | `true` | Whether idle eyed mobs periodically play a random expression. |
-| `ambientMinTicks` / `ambientMaxTicks` | `100` / `400` | Idle time between ambient expressions on a mob. |
+| `ambientMinTicks` / `ambientMaxTicks` | `200` / `800` | Idle time between ambient expressions on a mob. |
 | `ambientBehaviorPool` | blink, cross_eye, side_eye, stare | Which expressions the idle timer may pick, by id. Remove a line to drop it from rotation. |
 | `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it. `0` disables. |
 | `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader spins its pupils (`swirl`). |
@@ -69,8 +71,8 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only).
 | `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. |
 
 These are personal preferences: the mob still *has* eyes (other players see them, and they can still
-be harvested); you just don't render them. Config reload behavior differs by loader; if a file edit
-is not reflected immediately, reload resources or restart the client.
+be harvested); you just don't render them. NeoForge and Forge apply edits as soon as they reload the
+file; on Fabric, restart the client.
 
 The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for
 anyone regardless of these client settings, and eyes can't be applied or harvested either. The

@@ -13,6 +13,7 @@ public final class ClientIntegrationFailures {
     private ClientIntegrationFailures() {
     }
 
+    /** Log a renderer-integration failure, once per integration, operation, and subject. */
     public static void warnOnce(String integration, String operation, String subject, Throwable failure) {
         String key = integration + '\0' + operation + '\0' + subject;
         if (!WARNED.add(key)) {

@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
@@ -85,5 +86,7 @@ public final class ClientEyeConfigs {
         configs = Map.copyOf(next);
         ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
         resolved.clear();
+        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
+                configs.size(), googlyEyesEnabled);
     }
 }

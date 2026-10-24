@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.picker;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.platform.MobSpawning;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,6 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -61,9 +63,6 @@ public final class PickerSpawnService {
     /** Half-width of the 5x5 sandstone platform/basin built under each mob in platform mode. */
     private static final int PLATFORM_RADIUS = 2;
 
-    private static final ResourceLocation PLAYER =
-            ResourceLocation.fromNamespaceAndPath("minecraft", "player");
-
     /** Blocks between the platform floor and the sky-blocking roof above it (clearance for tall mobs). */
     private static final int ROOF_HEIGHT = 8;
 
@@ -75,6 +74,45 @@ public final class PickerSpawnService {
     private static final int START_OFFSET = 3;
 
     private PickerSpawnService() {
+    }
+
+    /**
+     * Why {@code /sg spawn} and {@code /sg spawnall} refuse an entity type, in the order {@link #refusal}
+     * checks them, with the feedback each command gives. Players are covered by {@link #NOT_SUMMONABLE}.
+     */
+    public enum SpawnRefusal {
+        ENDER_DRAGON("somegoogly.command.spawn.ender_dragon_excluded", "somegoogly.command.spawnall.dropped_ender_dragon"),
+        NOT_SUMMONABLE("somegoogly.command.picker.unknown_entity_type", "somegoogly.command.spawnall.dropped_not_summonable"),
+        EXCLUDED("somegoogly.command.spawn.excluded", "somegoogly.command.spawnall.dropped_excluded");
+
+        private final String spawnKey;
+        private final String spawnAllKey;
+
+        SpawnRefusal(String spawnKey, String spawnAllKey) {
+            this.spawnKey = spawnKey;
+            this.spawnAllKey = spawnAllKey;
+        }
+    }
+
+    /** Whether the authoring spawn commands may create {@code type}; the filter for their suggestions too. */
+    public static boolean isSpawnable(EntityType<?> type) {
+        return refusal(type) == null;
+    }
+
+    /** The first reason the authoring spawn commands refuse {@code type}, or {@code null} if they don't. */
+    @Nullable
+    public static SpawnRefusal refusal(EntityType<?> type) {
+        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            return SpawnRefusal.ENDER_DRAGON;
+        }
+        if (!type.canSummon()) {
+            return SpawnRefusal.NOT_SUMMONABLE;
+        }
+        if (ServerConfig.isSpawnExcluded(id)) {
+            return SpawnRefusal.EXCLUDED;
+        }
+        return null;
     }
 
     /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
@@ -163,35 +201,18 @@ public final class PickerSpawnService {
 
         // Build one instance of every summonable living entity type (the eye layer can attach to any of
         // them). We create up front so we can sort, then place; non-summonable, non-living, and
-        // uncreatable types are dropped. The canSummon gate matches /sg spawn and keeps utility entities
-        // (seats, holograms, boss parts) that happen to extend LivingEntity out of the grid.
+        // uncreatable types are dropped. The shared refusal check matches /sg spawn; its canSummon gate keeps
+        // utility entities (seats, holograms, boss parts) that happen to extend LivingEntity out of the grid.
         List<Candidate> candidates = new ArrayList<>();
         for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
             ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-            if (id == null || id.equals(PLAYER)) {
-                continue;
-            }
             if (filtering && !id.getNamespace().equals(modFilter)) {
                 continue;
             }
-            if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            SpawnRefusal refusal = refusal(type);
+            if (refusal != null) {
                 if (filtering) {
-                    dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_ender_dragon", id.toString()));
-                }
-                continue;
-            }
-            if (!type.canSummon()) {
-                if (filtering) {
-                    dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_not_summonable", id.toString()));
-                }
-                continue;
-            }
-            if (ServerConfig.isSpawnExcluded(id)) {
-                if (filtering) {
-                    dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_excluded", id.toString()));
+                    dropped.add(Component.translatable(refusal.spawnAllKey, id.toString()));
                 }
                 continue;
             }
@@ -199,7 +220,7 @@ public final class PickerSpawnService {
             try {
                 entity = type.create(level, EntitySpawnReason.COMMAND);
             } catch (Exception e) {
-                SomeGooglyCommon.LOGGER.debug("Skipping {} in /sg spawnall: entity factory threw", id, e);
+                SomeGooglyCommon.LOGGER.warn("Skipping {} in /sg spawnall: entity factory threw", id, e);
                 if (filtering) {
                     dropped.add(Component.translatable(
                             "somegoogly.command.spawnall.dropped_create_threw",
@@ -214,7 +235,7 @@ public final class PickerSpawnService {
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.no_types", modFilter));
+            tell(player, "somegoogly.command.spawnall.no_types", modFilter);
             return;
         }
         // Sort by mod (namespace) first, then by mob id within the mod.
@@ -281,11 +302,12 @@ public final class PickerSpawnService {
             double z = cellZ + 0.5;
             float yaw = yawToward(x, z, player);
 
+            boolean finalized;
             try {
-                prepareForCommandSpawn(level, entity, x, y, z, yaw);
+                finalized = prepareForCommandSpawn(level, entity, x, y, z, yaw);
             } catch (Exception e) {
                 skipped++;
-                SomeGooglyCommon.LOGGER.debug(
+                SomeGooglyCommon.LOGGER.warn(
                         "Skipping {} in /sg spawnall: finalizeSpawn() threw", candidate.id, e);
                 if (filtering) {
                     dropped.add(Component.translatable(
@@ -294,8 +316,16 @@ public final class PickerSpawnService {
                 }
                 continue;
             }
+            if (!finalized) {
+                skipped++;
+                if (filtering) {
+                    dropped.add(Component.translatable(
+                            "somegoogly.command.spawnall.dropped_cancelled", candidate.id.toString()));
+                }
+                continue;
+            }
 
-            if (level.addFreshEntity(entity)) {
+            if (level.tryAddFreshEntityWithPassengers(entity)) {
                 spawned++;
                 columnIndex++;
             } else {
@@ -318,10 +348,10 @@ public final class PickerSpawnService {
                 ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
         SomeGooglyCommon.LOGGER.info("{} ran /sg spawnall (scope={}): spawned {}, skipped {}",
                 player.getGameProfile().getName(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
-        player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.result",
-                finalSpawned, scope, platformNote, finalRows, skippedNote));
+        tell(player, "somegoogly.command.spawnall.result",
+                finalSpawned, scope, platformNote, finalRows, skippedNote);
         if (filtering && !dropped.isEmpty()) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_header", dropped.size()));
+            tell(player, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
                 player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_entry", entry));
             }
@@ -338,12 +368,9 @@ public final class PickerSpawnService {
     public static void spawnOne(ServerPlayer player, EntityType<?> type) {
         ServerLevel level = player.serverLevel();
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.ender_dragon_excluded", id.toString()));
-            return;
-        }
-        if (ServerConfig.isSpawnExcluded(id)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.excluded", id.toString()));
+        SpawnRefusal refusal = refusal(type);
+        if (refusal != null) {
+            tell(player, refusal.spawnKey, id.toString());
             return;
         }
 
@@ -354,7 +381,7 @@ public final class PickerSpawnService {
         BlockHitResult hit = level.clip(new ClipContext(eye, end,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         if (hit.getType() != HitResult.Type.BLOCK) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH));
+            tell(player, "somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH);
             return;
         }
 
@@ -362,17 +389,16 @@ public final class PickerSpawnService {
         try {
             entity = type.create(level, EntitySpawnReason.COMMAND);
         } catch (Exception e) {
-            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: entity factory threw", id, e);
-            player.sendSystemMessage(Component.translatable(
-                    "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName()));
+            SomeGooglyCommon.LOGGER.warn("/sg spawn {}: entity factory threw", id, e);
+            tell(player, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
             return;
         }
         if (entity == null) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.create_null", id.toString()));
+            tell(player, "somegoogly.command.spawn.create_null", id.toString());
             return;
         }
         if (!(entity instanceof LivingEntity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.not_living", id.toString()));
+            tell(player, "somegoogly.command.spawn.not_living", id.toString());
             return;
         }
 
@@ -382,24 +408,28 @@ public final class PickerSpawnService {
         double x = pos.getX() + 0.5;
         double z = pos.getZ() + 0.5;
         float yaw = yawToward(x, z, player);
+        boolean finalized;
         try {
-            prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
+            finalized = prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
         } catch (Exception e) {
-            SomeGooglyCommon.LOGGER.debug("/sg spawn {}: finalizeSpawn() threw", id, e);
-            player.sendSystemMessage(Component.translatable(
-                    "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName()));
+            SomeGooglyCommon.LOGGER.warn("/sg spawn {}: finalizeSpawn() threw", id, e);
+            tell(player, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
+            return;
+        }
+        if (!finalized) {
+            tell(player, "somegoogly.command.spawn.cancelled", id.toString());
             return;
         }
 
         if (!level.noCollision(entity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.doesnt_fit", id.toString()));
+            tell(player, "somegoogly.command.spawn.doesnt_fit", id.toString());
             return;
         }
 
-        if (level.addFreshEntity(entity)) {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.spawned", id.toString()));
+        if (level.tryAddFreshEntityWithPassengers(entity)) {
+            tell(player, "somegoogly.command.spawn.spawned", id.toString());
         } else {
-            player.sendSystemMessage(Component.translatable("somegoogly.command.spawn.refused", id.toString()));
+            tell(player, "somegoogly.command.spawn.refused", id.toString());
         }
     }
 
@@ -407,17 +437,26 @@ public final class PickerSpawnService {
      * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
      * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
      * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
-     * to save. Public for the shared GameTest regression check, which lives in another module.
+     * to save. Finalization goes through the loader's finalize-spawn event, as {@code /summon} does, so
+     * other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
+     * which lives in another module.
+     *
+     * @return false when a finalize-spawn listener cancelled the spawn; the entity must then not be added
      */
-    public static void prepareForCommandSpawn(
+    public static boolean prepareForCommandSpawn(
             ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
         entity.moveTo(x, y, z, yaw, 0.0F);
         if (entity instanceof Mob mob) {
-            mob.finalizeSpawn(
-                    level,
-                    level.getCurrentDifficultyAt(mob.blockPosition()),
-                    EntitySpawnReason.COMMAND,
-                    null);
+            if (!MobSpawning.finalizeSpawn(mob, level, EntitySpawnReason.COMMAND)) {
+                return false;
+            }
+            // Freeze finalize-spawned riders (spider jockeys) with their mount.
+            for (Entity rider : mob.getIndirectPassengers()) {
+                if (rider instanceof Mob riderMob) {
+                    riderMob.setNoAi(true);
+                    riderMob.setPersistenceRequired();
+                }
+            }
             mob.setNoAi(true);
             // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.
             mob.setPersistenceRequired();
@@ -425,6 +464,13 @@ public final class PickerSpawnService {
             mob.setYHeadRot(yaw);
             mob.setYBodyRot(yaw);
         }
+        return true;
+    }
+
+    /** Picker feedback to {@code player}, under the shared picker prefix. */
+    private static void tell(ServerPlayer player, String key, Object... args) {
+        player.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+                Component.translatable(key, args)));
     }
 
     /** Source-block column height that keeps a water mob of this size submerged (at least one block). */

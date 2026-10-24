@@ -22,6 +22,10 @@ public final class LookTarget {
     private LookTarget() {
     }
 
+    /**
+     * The pickable, non-spectator living entity under {@code player}'s crosshair within {@code reach} blocks, or
+     * {@code null}.
+     */
     @Nullable
     public static LivingEntity livingInCrosshair(Player player, double reach) {
         Vec3 eye = player.getEyePosition(1.0F);

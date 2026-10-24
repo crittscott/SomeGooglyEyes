@@ -1,10 +1,18 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,18 +33,6 @@ public final class EyeConfigModel {
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
 
-    /**
-     * Serialized field names, shared with the wire preflight in {@code EyeConfigLimits} so the codecs
-     * below and the validator that pivots on the same keys cannot drift apart.
-     */
-    public static final String FIELD_ENABLED = "enabled";
-    public static final String FIELD_VARIANTS = "variants";
-    public static final String FIELD_WEIGHT = "weight";
-    public static final String FIELD_HEADS = "heads";
-    public static final String FIELD_ATTACH_POINT = "attachPoint";
-    public static final String FIELD_EYES = "eyes";
-    public static final String FIELD_VERSION = "version";
-    public static final String FIELD_AGE = "age";
 
     private EyeConfigModel() {
     }
@@ -48,7 +44,7 @@ public final class EyeConfigModel {
         }
         double total = 0;
         for (Variant variant : config.variants) {
-            total += variant.weight();
+            total += variant.weight;
         }
         if (total <= 0) {
             return 0;
@@ -56,7 +52,7 @@ public final class EyeConfigModel {
         double target = roll * total;
         double accumulated = 0;
         for (int i = 0; i < config.variants.size(); i++) {
-            accumulated += config.variants.get(i).weight();
+            accumulated += config.variants.get(i).weight;
             if (target < accumulated) {
                 return i;
             }
@@ -74,9 +70,29 @@ public final class EyeConfigModel {
             return file;
         }));
 
+        private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
         /** Required ordered entries; version selection keeps the first match for each age bucket. */
         public List<VersionedEntry> entries = List.of();
 
+        /**
+         * The version declaration an export writes for {@code namespace}, from its loaded version: the
+         * exact game version for Minecraft, the current minor-release range
+         * ({@link VersionRangeMatcher#rangeFor}) for any other mod. Empty when nothing owns the namespace.
+         */
+        public static Optional<String> exportVersion(String namespace) {
+            return ModVersionLookup.versionForNamespace(namespace)
+                    .map(version -> ResourceLocation.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
+        }
+
+        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
+        public void writeJson(Path path) throws IOException {
+            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow();
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, GSON.toJson(json) + "\n");
+        }
+
+        /** A file holding one entry for {@code config}. */
         public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
             ConfigFile file = new ConfigFile();
             file.entries = List.of(VersionedEntry.of(versionRange, age, config));
@@ -110,8 +126,8 @@ public final class EyeConfigModel {
     /** One head attachment and the eyes placed on it. */
     public static class HeadConfig {
         public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf(FIELD_ATTACH_POINT).forGetter(head -> head.attachPoint),
-                EyeDefinition.CODEC.listOf().fieldOf(FIELD_EYES).forGetter(head -> head.eyes)
+                Codec.STRING.fieldOf("attachPoint").forGetter(head -> head.attachPoint),
+                EyeDefinition.CODEC.listOf().fieldOf("eyes").forGetter(head -> head.eyes)
         ).apply(inst, (attachPoint, eyes) -> {
             HeadConfig head = new HeadConfig();
             head.attachPoint = attachPoint;
@@ -128,8 +144,8 @@ public final class EyeConfigModel {
     /** Runtime structure selected by version and age, then synchronized to clients. */
     public static class RuntimeConfig {
         public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.BOOL.fieldOf(FIELD_ENABLED).forGetter(config -> config.enabled),
-                Variant.CODEC.listOf().fieldOf(FIELD_VARIANTS).forGetter(config -> config.variants)
+                Codec.BOOL.fieldOf("enabled").forGetter(config -> config.enabled),
+                Variant.CODEC.listOf().fieldOf("variants").forGetter(config -> config.variants)
         ).apply(inst, (enabled, variants) -> {
             RuntimeConfig config = new RuntimeConfig();
             config.enabled = enabled;
@@ -173,7 +189,7 @@ public final class EyeConfigModel {
                     continue;
                 }
                 Variant variant = new Variant();
-                variant.weight = sourceVariant.weight();
+                variant.weight = sourceVariant.weight;
                 variant.heads = heads;
                 variants.add(variant);
             }
@@ -230,8 +246,8 @@ public final class EyeConfigModel {
     /** One weighted placement arrangement. */
     public static class Variant {
         public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.DOUBLE.fieldOf(FIELD_WEIGHT).forGetter(variant -> variant.weight),
-                HeadConfig.CODEC.listOf().fieldOf(FIELD_HEADS).forGetter(variant -> variant.heads)
+                Codec.DOUBLE.fieldOf("weight").forGetter(variant -> variant.weight),
+                HeadConfig.CODEC.listOf().fieldOf("heads").forGetter(variant -> variant.heads)
         ).apply(inst, (weight, heads) -> {
             Variant variant = new Variant();
             variant.weight = weight;
@@ -243,20 +259,15 @@ public final class EyeConfigModel {
         public List<HeadConfig> heads = List.of();
         /** Authored relative selection weight; validated installed values are finite and nonnegative. */
         public double weight = 1.0;
-
-        /** The selection weight, clamped to be non-negative; a negative authored value reads as {@code 0}. */
-        public double weight() {
-            return Math.max(0.0, weight);
-        }
     }
 
     /** One version- and age-selectable entry in a datapack file. */
     public static class VersionedEntry {
         public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf(FIELD_VERSION).forGetter(entry -> entry.version),
-                Codec.STRING.fieldOf(FIELD_AGE).forGetter(entry -> entry.age),
-                Codec.BOOL.fieldOf(FIELD_ENABLED).forGetter(entry -> entry.enabled),
-                Variant.CODEC.listOf().fieldOf(FIELD_VARIANTS).forGetter(entry -> entry.variants)
+                Codec.STRING.fieldOf("version").forGetter(entry -> entry.version),
+                Codec.STRING.fieldOf("age").forGetter(entry -> entry.age),
+                Codec.BOOL.fieldOf("enabled").forGetter(entry -> entry.enabled),
+                Variant.CODEC.listOf().fieldOf("variants").forGetter(entry -> entry.variants)
         ).apply(inst, (version, age, enabled, variants) -> {
             VersionedEntry entry = new VersionedEntry();
             entry.version = version;
@@ -275,6 +286,7 @@ public final class EyeConfigModel {
         /** Required version or version-range selector interpreted by {@link VersionRangeMatcher}. */
         public String version = "";
 
+        /** An entry carrying {@code config}'s enabled flag and variants under the given version and age. */
         public static VersionedEntry of(String versionRange, String age, RuntimeConfig config) {
             VersionedEntry entry = new VersionedEntry();
             entry.version = versionRange;

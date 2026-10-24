@@ -59,6 +59,9 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
 
+    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
+    modCompileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
+
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 }

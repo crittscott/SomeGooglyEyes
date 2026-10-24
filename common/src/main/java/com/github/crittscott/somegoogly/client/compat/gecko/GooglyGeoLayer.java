@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
-import com.github.crittscott.somegoogly.client.picker.PickerLayer;
 import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -24,7 +23,7 @@ import java.util.List;
 
 /**
  * GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
- * {@code LayerGooglyEyes} + {@code PickerLayer}). Handles both normal rendering (from synced config,
+ * {@code LayerGooglyEyes}). Handles both normal rendering (from synced config,
  * with iris physics) and the picker preview when this entity is the picker's target.
  *
  * <p>The layer works through GeckoLib's <b>per-bone</b> hook, not the whole-model {@link #render}
@@ -167,14 +166,14 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             if (frame.savedEyeBones[i] != bone) {
                 continue;
             }
-            PickerLayer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
+            GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
                     frame.savedEyes.get(i).eye);
             drew = true;
         }
         if (frame.gizmoBone == bone) {
             Gizmo.draw(poseStack, bufferSource);
             if (PickerState.currentEye() != null) {
-                PickerLayer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
+                GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
                         PickerState.currentEye());
             }
             drew = true;

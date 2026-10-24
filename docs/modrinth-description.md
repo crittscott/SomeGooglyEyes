@@ -1,7 +1,7 @@
 <!--
   The Modrinth project description. Modrinth renders Markdown directly, but like CurseForge it
   cannot resolve repo-relative paths, so every link and the screenshot are absolute GitHub URLs
-  pointed at the 1.21.1 branch.
+  pointed at the 1.21.4 branch.
 
   To publish: copy this file's content (below the horizontal rule) into Modrinth's description
   editor.
@@ -19,11 +19,11 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using legacy LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
+Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
-![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash.png)
+![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.4/docs/googlyeyes-splash-0.8.2.png)
 
-![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1](https://img.shields.io/badge/Minecraft-1.20.1%20and%201.21.1-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1, 1.21.4](https://img.shields.io/badge/Minecraft-1.20.1%2C%201.21.1%2C%201.21.4-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
@@ -35,86 +35,57 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it — pluck them off first to restyle.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
 ## Eye potential
 
-Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all — before you walk up to it.
+Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
 
 ## Configuration
 
 - **Server settings** (`<world>/serverconfig/somegoogly-server.toml`): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
 - **Client settings** (`config/somegoogly-client.toml`): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.
 
-See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/configuration.md) for the full list.
+See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/configuration.md) for the full list.
 
 ## Pack and mod authors
 
-Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob in creative mode and export the result as datapack files.
+Eye placements are ordinary datapack JSON. There's also an in-game authoring tool that lets you place, aim, and scale eyes on a live mob (operators in creative mode) and export the result as datapack files.
 
-- [The eye definition format](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/datapack-format.md)
-- [The in-game authoring workflow and `/sg` commands](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/docs/picker.md)
+- [The eye definition format](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/datapack-format.md)
+- [The in-game authoring workflow and `/sg` commands](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/picker.md)
 
 ## Compatibility
 
-The eye placing system supports vanilla models as well as GeckoLib-, Citadel-, and Uranus-based models, including those that use legacy LLibrary code. Bundled optional-mod definitions retain their earlier version selectors and require manual verification on Minecraft 1.21.1; model changes may require adjusted placements.
+The eye placing system supports vanilla models as well as GeckoLib-, Citadel-, and Uranus-based models, including those that use legacy LLibrary code.
 
 Ships with predefined eye configs for:
 
-- Minecraft
-- Abnormals Autumnity
-- Abnormals Caverns & Chasms
-- Abnormals Environmental
-- Abnormals Upgrade Aquatic
-- Ad Astra
-- Adorable Hamster Pets
-- AdventureZ
-- Alex's Mobs
-- Ars Elemental
-- Ars Nouveau
-- Artifacts
-- Critters and Companions
-- Ecologics
-- EvilCraft
-- Exotic Birds
-- Farming for Blockheads
-- Forbidden Arcanus
-- Friends & Foes
-- Hamsters Plus Lite
-- Ice and Fire Community Edition
-- Illager Invasion
-- Immersive Engineering
-- Let's Do Alpine Whispers
-- Let's Do Brewery
-- Let's Do Furniture
-- Let's Do Meadow
-- Let's Do Vinery
-- Living Things
-- MmmMmmMmmMmm
-- Mowzie's Mobs
-- Naturalist
-- Occultism
-- Oh The Biomes We've Gone
-- Productive Bees
-- Regions Unexplored
-- Rotten Creatures
-- Shiny
-- Simply Cats
-- Supplementaries
-- Sushi Go Crafting
-- The Aether
-- The Bumblezone
-- Tiny Skeletons
-- Twilight Forest
-- Variants & Ventures
-- WilderNature
+| | | |
+|---|---|---|
+| Minecraft | Farming for Blockheads | Occultism |
+| Abnormals Autumnity | Forbidden Arcanus | Oh The Biomes We've Gone |
+| Abnormals Caverns & Chasms | Friends & Foes | Productive Bees |
+| Abnormals Environmental | Hamsters Plus Lite | Regions Unexplored |
+| Abnormals Upgrade Aquatic | Ice and Fire Community Edition | Rotten Creatures |
+| Ad Astra | Illager Invasion | Shiny |
+| Adorable Hamster Pets | Immersive Engineering | Simply Cats |
+| AdventureZ | Let's Do Alpine Whispers | Supplementaries |
+| Alex's Mobs | Let's Do Brewery | Sushi Go Crafting |
+| Ars Elemental | Let's Do Furniture | The Aether |
+| Ars Nouveau | Let's Do Meadow | The Bumblezone |
+| Artifacts | Let's Do Vinery | Tiny Skeletons |
+| Critters and Companions | Living Things | Twilight Forest |
+| Ecologics | MmmMmmMmmMmm | Variants & Ventures |
+| EvilCraft | Mowzie's Mobs | WilderNature |
+| Exotic Birds | Naturalist |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.1.
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4, 1.21.1, and 1.20.1.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.21.1 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for 1.20.1, 1.21.1, and 1.21.4 with new physics, behaviors, and more.
 
-License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.1/LICENSE).
+License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/LICENSE).

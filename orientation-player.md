@@ -14,7 +14,7 @@ Artifacts target Minecraft 1.21.3 on Fabric, NeoForge, and Forge. Fabric require
 
 ## Mobs with eyes
 
-By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn. Changing the server chance affects only new mobs. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon cannot have eyes.
+By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn. Changing the server chance affects only new mobs. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon cannot have eyes. A mob that converts into another (a cured zombie villager, a sheared mooshroom) keeps its eyes, as does a player leaving the End.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
@@ -32,7 +32,7 @@ Only one expression plays at a time, and expressions are cosmetic.
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears here and throughout mean vanilla shears or any item in the conventional `c:tools/shear` tag. A successful harvest costs one shears durability.
 
 ### Optometrist
 
@@ -42,9 +42,9 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye is a 3D item whose pupil moves while held. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye is a 3D item whose pupil moves while you hold it in first person; other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
-When a 1.20.1 world is opened, stored Googly Eyes and Slimy Eyes retain their iris color, cornea color, and glow as each inventory, container, nested container, or dropped stack loads. The conversion is automatic and is saved in the current item-component format. It can recover an already-upgraded stack only if its old `EyeProperties` custom data is still present.
+Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
@@ -57,11 +57,11 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 
 Modifiers may be applied in successive crafting operations. Googly Eyes have no creation recipe; they must be harvested or taken from the creative menu.
 
-Craft a Googly Eye with a slimeball to make a Slimy Eye. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
+Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health, even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 While holding either eye item, sneak and aim at a living entity to see whether it:
 
@@ -83,6 +83,8 @@ World settings are stored in:
 ```text
 <world>/serverconfig/somegoogly-server.toml
 ```
+
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric's reader accepts basic and literal strings, logging any value it cannot read.
 
 ### Spawn and harvest
 
@@ -110,8 +112,8 @@ entityOverrides = [
 | Key | Default | Effect |
 | --- | --- | --- |
 | `ambientBehaviors` | `true` | Enables idle expressions |
-| `ambientMinTicks` | `100` | Minimum idle interval |
-| `ambientMaxTicks` | `400` | Maximum idle interval |
+| `ambientMinTicks` | `200` | Minimum idle interval |
+| `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
 | `growOnHitPercent` | `20` | Bulge chance after player damage |
 | `swirlOnTrade` | `true` | Swirl after a trade |
@@ -136,7 +138,7 @@ config/somegoogly-client.toml
 | `disabledEntities` | empty | Hides listed entity IDs |
 | `disabledMods` | empty | Hides entities from listed namespaces |
 
-These options affect only display. Re-enabling a previously disabled entity or namespace may require a resource reload or restart. Invisibility also hides eyes.
+These options affect only display. On NeoForge and Forge they apply as soon as the loader reloads the file; on Fabric they apply at game start. Invisibility also hides eyes.
 
 ## Datapacks and compatibility
 
@@ -156,7 +158,7 @@ Resource packs can replace eye textures and item models. The mod has no JEI plug
 
 ## Creative eye picker
 
-The picker is an in-world authoring tool for creative players. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
+The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
 
 | Key | Action |
 | --- | --- |
@@ -165,7 +167,7 @@ The picker is an in-world authoring tool for creative players. Its keys are rebi
 | `[` | Select previous model part |
 | `]` | Select next model part |
 
-While the picker is active, configured mobs display eyes regardless of spawn chance. A chosen mob is frozen, and the HUD and axis gizmo show the current editing state. Releasing it or leaving the server restores its previous AI state. Only one player may edit a mob at a time.
+While the picker is active, configured mobs display eyes regardless of spawn chance. A chosen mob is frozen, and the HUD and axis gizmo show the current editing state. Preview eyes show their colors and glow, with pupils centered. Releasing it or leaving the server restores its previous AI state. Only one player may edit a mob at a time.
 
 ### Workflow
 
@@ -179,7 +181,7 @@ While the picker is active, configured mobs display eyes regardless of spawn cha
 
 Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits.
 
-`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks. It is limited to one successful export per player every 10 seconds.
+`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks. It is limited to one successful export per player every 10 seconds, and a definition too large to send is refused with a message.
 
 `/sg exportall` writes all loaded definitions and session edits to:
 
@@ -187,7 +189,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world.
+It does not change the world. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
 
 ### Test mobs
 
@@ -195,7 +197,7 @@ It does not change the world.
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable test world: force-spawning mobs like MineColonies' or Create's outside their mod's normal context can corrupt or destabilize the world, which is why both are excluded by default (see `spawnExcludedMods` above).
 
-Both spawn commands skip the ender dragon and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A namespace-restricted `/sg spawnall` reports each type it skipped and why.
+Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
@@ -219,8 +221,8 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - The ender dragon cannot receive eyes.
-- Armadillo, bogged, and breeze do not have bundled eye definitions.
+- Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.3 require manual compatibility verification.
-- Fabric, NeoForge, and Forge each contain 108 dedicated-server GameTests. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.20.1 save also requires physical verification.
+- Fabric contains 96 dedicated-server GameTests; NeoForge and Forge each contain 92. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

@@ -2,7 +2,8 @@ package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
+import com.github.crittscott.somegoogly.client.picker.Gizmo;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -15,14 +16,20 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
+import java.util.List;
+
 /**
  * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It draws from the {@link EyeRenderData}
- * taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves configured attachment tokens through
- * {@link Resolvers}, and delegates each eye's drawing to {@link GooglyEyeRenderer}. Picker previews
- * are drawn by the separate {@link com.github.crittscott.somegoogly.client.picker.PickerLayer}.
+ * taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves
+ * configured attachment tokens through {@link Resolvers}, and delegates each eye's drawing to
+ * {@link GooglyEyeRenderer}.
  *
- * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which uses the same gate and eye renderer
- * from GeckoLib's per-bone callback.
+ * <p>For the picker's target the layer draws the authoring preview instead: the edited variant's saved
+ * eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
+ * is what matters there.
+ *
+ * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which makes the same split from GeckoLib's
+ * per-bone callback.
  */
 public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
         extends RenderLayer<S, M> {
@@ -36,11 +43,8 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
     @Override
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, S state,
                        float yRot, float xRot) {
-        // The picker target and gated-off entities carry no helper (see EyeRenderData.extract).
         EyeRenderData data = EyeRenderData.of(state);
-        HeadInfo helper = data.helper();
-        GooglyTracker tracker = data.tracker();
-        if (helper == null || tracker == null) {
+        if (!data.pickerTarget() && data.helper() == null) {
             return;
         }
 
@@ -50,36 +54,71 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         if (resolver == null) {
             return;
         }
+        int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
 
+        if (data.pickerTarget()) {
+            renderPreview(poseStack, bufferSource, packedLight, overlay, state, model, resolver);
+        } else {
+            renderEyes(poseStack, bufferSource, packedLight, overlay, state, model, resolver, data);
+        }
+    }
+
+    private void renderEyes(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
+                            S state, M model, EyeAttachmentResolver resolver, EyeRenderData data) {
+        HeadInfo helper = data.helper();
+        GooglyTracker tracker = data.tracker();
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
         // shared config below. Same AppearanceOverride an eye item carries; mirrored onto the tracker by
         // ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
         AppearanceOverride overrides = tracker.overrides;
-
-        int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
         float partialTicks = data.partialTick();
 
         int headCount = helper.getHeadCount();
         for (int headIndex = 0; headIndex < headCount; headIndex++) {
             poseStack.pushPose();
-            ThirdPartyModelWraps.preTransform(model, state.isBaby, poseStack);
-
             // Move into this head's animated space, by the configured string part name.
-            if (!resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex))) {
-                poseStack.popPose();
+            if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex), state.isBaby)) {
+                int eyeCount = helper.getEyeCount(headIndex);
+                for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
+                    if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
+                        GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
+                                tracker, helper, overrides, headIndex, eyeIndex, partialTicks);
+                    }
+                }
+            }
+            poseStack.popPose();
+        }
+    }
+
+    private void renderPreview(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
+                               S state, M model, EyeAttachmentResolver resolver) {
+        // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
+        List<PickerState.ListedEye> eyes = PickerState.currentEyes();
+        for (int i = 0; i < eyes.size(); i++) {
+            PickerState.ListedEye listed = eyes.get(i);
+            if (i == PickerState.selectedIndex() || listed.part == null) {
                 continue;
             }
-
-            int eyeCount = helper.getEyeCount(headIndex);
-            for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
-                if (helper.getEyeScale(headIndex, eyeIndex) <= 0F) {
-                    continue;
-                }
-
-                GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                        tracker, helper, overrides, headIndex, eyeIndex, partialTicks);
+            poseStack.pushPose();
+            if (resolver.toAttachmentSpace(poseStack, model, listed.part, state.isBaby)) {
+                GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
+                        listed.eye);
             }
+            poseStack.popPose();
+        }
 
+        // Gizmo on the active placement part, plus the live draft eye — but only when one is being
+        // shaped. With no draft (the empty state) the mob shows just its saved eyes, or nothing at all.
+        String token = PickerState.currentPart();
+        if (token != null) {
+            poseStack.pushPose();
+            if (resolver.toAttachmentSpace(poseStack, model, token, state.isBaby)) {
+                Gizmo.draw(poseStack, bufferSource);
+                if (PickerState.currentEye() != null) {
+                    GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight,
+                            overlay, PickerState.currentEye());
+                }
+            }
             poseStack.popPose();
         }
     }

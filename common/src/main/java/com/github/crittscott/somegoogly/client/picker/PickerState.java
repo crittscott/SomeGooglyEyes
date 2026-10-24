@@ -6,8 +6,8 @@ import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +28,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
- * which share this state. Creative-mode only; works in single-player and from a remote client alike —
+ * which share this state. Creative operators only; works in single-player and from a remote client alike —
  * the operations that touch the server (mob freezing, export) go through the C2S picker packets and
  * are re-authorized server-side. Workflow: choose a mob, pick a part to use as the coordinate frame,
  * shape a <i>current eye</i> (position / rotation / properties), then save it to a flat, numbered
@@ -354,7 +354,7 @@ public final class PickerState {
         if (config != null && config.enabled) {
             for (Variant v : config.variants) {
                 DraftVariant dv = new DraftVariant();
-                dv.weight = v.weight();
+                dv.weight = v.weight;
                 for (HeadConfig head : v.heads) {
                     String part = vocabulary.canonicalize(head.attachPoint);
                     int headStart = dv.eyes.size();
@@ -668,7 +668,7 @@ public final class PickerState {
     /** Send a picker request if a connection exists (guards races around disconnect). */
     private static void send(PickerFreezePacket packet) {
         if (Minecraft.getInstance().getConnection() != null) {
-            NetworkHandler.sendToServer(packet);
+            ClientNetworking.sendToServer(packet);
         }
     }
 

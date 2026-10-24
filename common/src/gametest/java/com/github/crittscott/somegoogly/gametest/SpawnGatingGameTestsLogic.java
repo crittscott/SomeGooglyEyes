@@ -18,6 +18,11 @@ public final class SpawnGatingGameTestsLogic {
     private SpawnGatingGameTestsLogic() {
     }
 
+    /**
+     * {@code globalPercent = 100} always grants eyes and {@code 0} never does. In game: with no
+     * {@code entityOverrides}, set {@code globalPercent = 100} and every spawned cow has eyes; set it to
+     * {@code 0} and none of the new ones do.
+     */
     public static void fullPercentGrantsEyesAndZeroDeniesThem(GameTestHelper helper) {
         int original = ServerConfig.GLOBAL_PERCENT.get();
         try {
@@ -34,9 +39,15 @@ public final class SpawnGatingGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Every spawned mob stores a placement roll, with or without eyes. In game: set {@code globalPercent = 0},
+     * spawn a pig, and on NeoForge or Forge {@code /data get entity <pig>} shows a
+     * {@code somegoogly:eyeVariantRoll} key in {@code NeoForgeData} or {@code ForgeData}. Aiming at it and running
+     * {@code /sg admin eyes true} gives it the placement that stored roll selects.
+     */
     public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
-        // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later application
-        // uses this mob's own arrangement.
+        // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later
+        // /sg admin eyes true uses this mob's own arrangement.
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         float roll = EyeState.getVariantRoll(cow);
         helper.assertTrue(roll >= 0.0F && roll < 1.0F, "variant roll should be in [0, 1), got " + roll);

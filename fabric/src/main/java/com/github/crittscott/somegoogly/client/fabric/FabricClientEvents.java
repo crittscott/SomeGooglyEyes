@@ -1,16 +1,16 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -18,48 +18,57 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 
-/** Fabric registration for client ticks, picker UI/input, colors, and the 3D eye item renderer. */
+/**
+ * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, the Slimy
+ * Eye color, and the 3D Googly Eye item renderer.
+ */
 public final class FabricClientEvents {
-
-    /** Ticks-since-join countdown for the one-shot picker command-tree merge; -1 when idle or done. */
-    private static int commandTreeMergeTicks = -1;
 
     private FabricClientEvents() {
     }
 
+    /** Register the client's Fabric event callbacks. */
     public static void register() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
-                        ClientRenderLayers.installLiving(entityType, renderer));
+                        ClientRenderLayers.install(renderer));
+        if (GeckoCompat.isLoaded()) {
+            FabricGeckoLayers.register();
+        }
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                new SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public ResourceLocation getFabricId() {
+                        return ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches");
+                    }
+
+                    @Override
+                    public void onResourceManagerReload(ResourceManager manager) {
+                        ClientRenderLayers.clearCaches();
+                    }
+                });
 
         KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_PREV);
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            mergePickerCommandTree(client);
-            ClientLifecycle.tick();
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE)) {
-                if (client.getConnection() != null) {
-                    client.getConnection().getConnection()
-                            .disconnect(Component.translatable("somegoogly.network.required_server"));
-                }
-                return;
+            if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE) && client.getConnection() != null) {
+                client.getConnection().getConnection()
+                        .disconnect(Component.translatable("somegoogly.network.required_server"));
             }
-            commandTreeMergeTicks = 0;
         });
-        ClientEntityEvents.ENTITY_LOAD.register((entity, level) ->
-                ClientNetworkHandler.onEntityLoaded(entity));
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            commandTreeMergeTicks = -1;
-            ClientLifecycle.onDisconnect();
-        });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudRenderCallback.EVENT.register((graphics, partialTick) -> {
             Minecraft minecraft = Minecraft.getInstance();
             PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
@@ -68,28 +77,9 @@ public final class FabricClientEvents {
 
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
-                ModItems.SLIMY_EYE.get());
+                ModContent.SLIMY_EYE.get());
 
         GooglyEyeItemRenderer renderer = new GooglyEyeItemRenderer();
-        BuiltinItemRendererRegistry.INSTANCE.register(ModItems.GOOGLY_EYE.get(), renderer::renderByItem);
-    }
-
-    /**
-     * Graft the picker's {@code /sg} verbs onto the server-supplied command dispatcher for completion
-     * and help, once per join. Fabric executes a matching client command root before consulting the
-     * server, so the picker nodes must also exist on the server dispatcher. The server command tree
-     * arrives a few ticks after join, so this runs from the client tick until {@code /sg} appears (or a
-     * short grace window elapses), then disarms.
-     */
-    private static void mergePickerCommandTree(Minecraft client) {
-        if (commandTreeMergeTicks < 0 || client.getConnection() == null) {
-            return;
-        }
-        boolean present = client.getConnection().getCommands().getRoot().getChild("sg") != null;
-        if (!present && ++commandTreeMergeTicks < 100) {
-            return;
-        }
-        FabricClientCommands.mergeSuggestions(client.getConnection().getCommands());
-        commandTreeMergeTicks = -1;
+        BuiltinItemRendererRegistry.INSTANCE.register(ModContent.GOOGLY_EYE.get(), renderer::renderByItem);
     }
 }

@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.eye.state;
 
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -18,8 +18,7 @@ import java.util.Optional;
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
  * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
- * network packet ({@code EyeStatePacket}) uses {@link #STREAM_CODEC}. Both cover the same three
- * optional fields:
+ * network packet ({@code EyeStatePacket}) uses {@link #STREAM_CODEC}. It serves three uses:
  * <ul>
  *   <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -31,7 +30,7 @@ import java.util.Optional;
  * eye item carries "what the eye looks like", and attaching it reuses that mob's configured placement.
  *
  * <p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have no
- * presence here (see {@link EyeBehaviors}).
+ * presence here (see {@link EyeBehavior}).
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 
@@ -41,7 +40,7 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
             Codec.BOOL.optionalFieldOf("glow").forGetter(AppearanceOverride::glow)
     ).apply(inst, AppearanceOverride::new));
 
-    /** Each field is length-prefixed with a presence boolean; colors ride {@link EyeColor#STREAM_CODEC}. */
+    /** Each field is prefixed with a presence boolean; colors ride {@link EyeColor#STREAM_CODEC}. */
     public static final StreamCodec<ByteBuf, AppearanceOverride> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::cornea,
             ByteBufCodecs.optional(EyeColor.STREAM_CODEC), AppearanceOverride::iris,
@@ -56,8 +55,7 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
      * decoded by {@link #CODEC}.
      */
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
-        AppearanceOverride decoded = tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
-        return decoded.isValid() ? decoded : EMPTY;
+        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
     }
 
     /** Whether no field is set, so this override contributes nothing on {@link EyeAppearance#overlay}. */
@@ -70,13 +68,9 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
         return cornea.map(EyeColor::isValid).orElse(true) && iris.map(EyeColor::isValid).orElse(true);
     }
 
-    /**
-     * Encode this override as a compound, returning an empty compound if encoding fails or produces a
-     * different NBT tag type.
-     */
+    /** Encode this override as a compound. */
     public CompoundTag toNbt() {
-        Tag tag = CODEC.encodeStart(NbtOps.INSTANCE, this).result().orElseGet(CompoundTag::new);
-        return tag instanceof CompoundTag compound ? compound : new CompoundTag();
+        return (CompoundTag) CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow();
     }
 
     /** {@code null} clears the field. */
