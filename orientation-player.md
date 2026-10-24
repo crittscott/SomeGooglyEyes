@@ -23,6 +23,8 @@ Pupils respond to gravity, movement, and head motion. They wobble, bounce, and s
 Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also react when:
 
 - damaged by a player: 20 percent default chance to bulge;
+- milked (cow, mooshroom, goat): bulge;
+- showing affection (an animal entering love mode, villagers breeding, an iron golem offering a flower, an ocelot gaining trust): love, the pupils swelling to twice their size, capped at the eye's rim;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, with a 200-tick default cooldown.
 
@@ -116,11 +118,13 @@ entityOverrides = [
 | `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
 | `growOnHitPercent` | `20` | Bulge chance after player damage |
+| `growOnMilk` | `true` | Bulge after milking |
+| `loveOnAffection` | `true` | Love after an affection event |
 | `swirlOnTrade` | `true` | Swirl after a trade |
 | `swirlOnHeal` | `true` | Swirl after healing |
 | `swirlHealCooldownTicks` | `200` | Delay between healing swirls |
 
-Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `swirl`, and `color_change`.
+Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
 
 `allowSpawnAll` defaults to `false` and must be enabled before `/sg spawnall` can run. Enable it only on a test or throwaway world: `/sg spawnall` force-spawns every summonable mob, including ones, like MineColonies' and Create's, that can corrupt or destabilize a world when spawned outside their mod's normal context. `spawnExcludedMods` and `spawnExcludedEntities` list namespaces and entity ids that `/sg spawn` and `/sg spawnall` skip. `spawnExcludedMods` defaults to `minecolonies` and `create` for exactly this reason — removing either from the list on a world you care about risks that world; `spawnExcludedEntities` defaults to empty. Both affect only those authoring commands.
 

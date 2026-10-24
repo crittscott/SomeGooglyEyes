@@ -140,10 +140,13 @@ public class GooglyTracker {
         /**
          * Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
          * and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
-         * grow scale; {@link #squashY} is the blink, {@link #tintAmount} the color-change blend, and
-         * {@link #tintColor} the color-change target (set instantly, not interpolated).
+         * grow scale; {@link #irisScaleMul} is the love pupil size, {@link #squashY} the blink,
+         * {@link #tintAmount} the color-change blend, and {@link #tintColor} the color-change target (set
+         * instantly, not interpolated).
          */
         public float scaleMul = 1F, prevScaleMul = 1F;
+        /** Love pupil size; see {@link #scaleMul}. */
+        public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
         /** Blink squash; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
         /** Color-change blend amount; see {@link #scaleMul}. */
@@ -360,6 +363,8 @@ public class GooglyTracker {
                 // Fold the non-physical overlays into the eye's render state (prev/current for lerping).
                 info.prevScaleMul = info.scaleMul;
                 info.scaleMul = INFLUENCE.eyeScaleMul;
+                info.prevIrisScaleMul = info.irisScaleMul;
+                info.irisScaleMul = INFLUENCE.irisScaleMul;
                 info.prevSquashY = info.squashY;
                 info.squashY = INFLUENCE.squashY;
                 info.prevTintAmount = info.tintAmount;

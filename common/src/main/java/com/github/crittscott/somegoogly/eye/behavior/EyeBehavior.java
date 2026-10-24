@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The seven named eye expressions a mob can play, keyed by a {@link ResourceLocation} id. These are
+ * The eight named eye expressions a mob can play, keyed by a {@link ResourceLocation} id. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
  * behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
  * a {@link BehaviorInstance}.
@@ -20,7 +20,7 @@ import java.util.Map;
  * <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never compose.
  * They participate in the eye <b>physics simulation</b>, not the renderer: once per simulation tick the
  * simulator asks the single active behavior to fill an {@link EyeInfluence} per eye — a pupil spring
- * (anchor + stiffness) and/or the non-physical overlays (scale, squash, tint). The renderer then just
+ * (anchor + stiffness) and/or the non-physical overlays (eye scale, pupil size, squash, tint). The renderer then just
  * interpolates and draws the resulting eye state; it never touches behaviors.
  *
  * <p>This type must stay free of client-only imports: the server class-loads it to pick and schedule
@@ -96,6 +96,19 @@ public enum EyeBehavior {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             out.eyeScaleMul = 1f + GROW_AMOUNT * sinPulse((float) i.age / i.duration);
+        }
+    },
+
+    /**
+     * Pupils swell to several times their size, hold, and shrink back. Non-physical overlay: drives the
+     * pupil-size channel only — the pupil keeps wobbling underneath, though a pupil swollen to the cornea
+     * rim has no room left to move.
+     */
+    LOVE("love", 60) {
+        @Override
+        public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
+            float swell = trapezoid((float) i.age / i.duration, LOVE_RAMP_FRAC, LOVE_RAMP_FRAC);
+            out.irisScaleMul = 1f + (LOVE_PUPIL_SCALE - 1f) * swell;
         }
     },
 
@@ -197,6 +210,10 @@ public enum EyeBehavior {
     private static final float BLINK_SQUASH = 0.95f;
     /** Extra scale at the grow peak. */
     private static final float GROW_AMOUNT = 0.5f;
+    /** Pupil size at the love peak, as a multiple of the configured size. */
+    private static final float LOVE_PUPIL_SCALE = 2.0f;
+    /** Fraction of a love spent swelling, and again shrinking. */
+    private static final float LOVE_RAMP_FRAC = 0.2f;
     private static final float SWIRL_RADIUS = 0.8f;
     /** Swirl orbit speed, radians per tick. */
     private static final float SWIRL_SPEED = 0.6f;

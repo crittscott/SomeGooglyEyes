@@ -7,6 +7,8 @@ import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
@@ -18,7 +20,8 @@ import java.util.Map;
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
  * client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
  * rule holds across every viewer and so server-only game events drive the same path. Triggers are the
- * ambient idle timer below plus game-event reactions (hurt → grow, trade/heal → swirl).
+ * ambient idle timer below plus game-event reactions (hurt/milked → grow, trade/heal → swirl, vanilla
+ * affection entity events → love).
  *
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
  * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities). A
@@ -64,6 +67,30 @@ public final class ServerBehaviorScheduler {
         STATES.clear();
         ACTIVE.clear();
         now = 0;
+    }
+
+    /**
+     * The server broadcast vanilla entity event {@code eventId} for {@code entity} to its viewers. The
+     * affection events (an animal entering love mode, villagers breeding, an iron golem offering a
+     * flower, an ocelot gaining trust) play 'love' if enabled; every other event is ignored.
+     */
+    public static void onEntityEvent(Entity entity, byte eventId) {
+        if (!(entity instanceof LivingEntity mob)) {
+            return;
+        }
+        boolean affection = switch (eventId) {
+            case EntityEvent.IN_LOVE_HEARTS, EntityEvent.LOVE_HEARTS, EntityEvent.OFFER_FLOWER,
+                 EntityEvent.TRUSTING_SUCCEEDED -> true;
+            default -> false;
+        };
+        if (!affection || !ServerConfig.LOVE_ON_AFFECTION.get()) {
+            return;
+        }
+        MobState state = eventTarget(mob);
+        if (state == null) {
+            return;
+        }
+        start(mob, state, EyeBehavior.LOVE, EyeBehavior.LOVE.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -116,6 +143,18 @@ public final class ServerBehaviorScheduler {
         if (start(mob, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
+    }
+
+    /** A player milked {@code mob}: play 'grow' (if enabled). */
+    public static void onMilked(LivingEntity mob) {
+        if (!ServerConfig.GROW_ON_MILK.get()) {
+            return;
+        }
+        MobState state = eventTarget(mob);
+        if (state == null) {
+            return;
+        }
+        start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */

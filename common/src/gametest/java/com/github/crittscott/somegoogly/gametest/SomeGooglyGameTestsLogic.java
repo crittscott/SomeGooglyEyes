@@ -37,6 +37,9 @@ import java.util.Objects;
  */
 public final class SomeGooglyGameTestsLogic {
 
+    /** Blocks around the sheared mooshroom's spawn point searched for the cow it becomes. */
+    private static final double CONVERSION_SEARCH_RADIUS = 2.0;
+
     private SomeGooglyGameTestsLogic() {
     }
 
@@ -69,7 +72,8 @@ public final class SomeGooglyGameTestsLogic {
      * {@code player} shears it the way a player does, so each loader's own shearing path runs.
      */
     public static void conversionKeepsEyeState(GameTestHelper helper, Player player) {
-        MushroomCow mooshroom = helper.spawnWithNoFreeWill(EntityType.MOOSHROOM, new BlockPos(2, 2, 2));
+        BlockPos spawnPos = new BlockPos(2, 2, 2);
+        MushroomCow mooshroom = helper.spawnWithNoFreeWill(EntityType.MOOSHROOM, spawnPos);
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         EyeState.initialize(mooshroom, true, 0.375F);
         EyeState.setIrisTint(mooshroom, iris);
@@ -78,7 +82,8 @@ public final class SomeGooglyGameTestsLogic {
         player.interactOn(mooshroom, InteractionHand.MAIN_HAND);
 
         helper.succeedWhen(() -> {
-            AABB area = new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8);
+            // The cow replaces the mooshroom in place; a tight box keeps neighboring tests' cows out of the count.
+            AABB area = new AABB(helper.absolutePos(spawnPos)).inflate(CONVERSION_SEARCH_RADIUS);
             List<Cow> cows = helper.getLevel().getEntitiesOfClass(Cow.class, area,
                     cow -> cow.getType() == EntityType.COW);
             helper.assertTrue(cows.size() == 1, "Expected the sheared mooshroom to become one cow");

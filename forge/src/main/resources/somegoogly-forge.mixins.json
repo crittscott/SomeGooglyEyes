@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "somegoogly-forge.refmap.json",
   "mixins": [
-    "MushroomCowShearMixin"
+    "MilkingMixin",
+    "MushroomCowShearMixin",
+    "ServerLevelEntityEventMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -42,4 +42,16 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void affectionEventsPlayLove(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void milkingPlaysGrow(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
 }

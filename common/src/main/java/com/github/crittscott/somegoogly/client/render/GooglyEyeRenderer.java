@@ -173,7 +173,12 @@ public final class GooglyEyeRenderer {
         // keeps it inside the unit disk (the full cornea circle once mapped), so no clamp is needed here.
         float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
         float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
-        drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, placement.irisScale(),
+        // Love swells the pupil, capped where it fills the cornea; a configured size is never shrunk.
+        float baseIrisScale = placement.irisScale();
+        float irisScaleMul = lerp(eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul, partialTicks);
+        float irisScale = Math.min(baseIrisScale * irisScaleMul,
+                Math.max(baseIrisScale, ModelGooglyEye.MAX_PUPIL_SIZE));
+        drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, irisScale,
                 irisX, irisY, look.glow());
 
         pose.popPose();

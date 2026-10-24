@@ -36,4 +36,16 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
                 helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void affectionEventsPlayLove(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void milkingPlaysGrow(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
 }

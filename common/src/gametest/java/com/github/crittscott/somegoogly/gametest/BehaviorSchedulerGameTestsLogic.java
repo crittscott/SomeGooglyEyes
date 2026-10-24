@@ -7,8 +7,18 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
@@ -137,6 +147,111 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
         }
         helper.succeed();
+    }
+
+    /**
+     * The vanilla affection events play love, through the server's entity-event broadcast, and only while
+     * {@code loveOnAffection} is on; other entity events play nothing. In game: feed wheat to an eyed cow,
+     * watch an eyed iron golem offer a villager a flower, breed eyed villagers, or tame an eyed ocelot with
+     * raw fish, and the mob's pupils swell to fill its eyes and shrink back. With
+     * {@code loveOnAffection = false} none of them change the eyes.
+     */
+    public static void affectionEventsPlayLove(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onAffection = ServerConfig.LOVE_ON_AFFECTION.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(1, 2, 1));
+            IronGolem golem = eyedTrackedMob(helper, player, EntityType.IRON_GOLEM, new BlockPos(3, 2, 1));
+            Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(1, 2, 3));
+            Ocelot ocelot = eyedTrackedMob(helper, player, EntityType.OCELOT, new BlockPos(3, 2, 3));
+
+            ServerConfig.LOVE_ON_AFFECTION.set(false);
+            cow.setInLove(player);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+                    "loveOnAffection=false suppresses love");
+            advance(3);
+
+            ServerConfig.LOVE_ON_AFFECTION.set(true);
+            cow.setInLove(player);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+                    "an animal entering love mode plays love");
+            golem.offerFlower(true);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3, 3L),
+                    "an iron golem offering a flower plays love");
+            helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 4L),
+                    "villager love hearts play love");
+            helper.getLevel().broadcastEntityEvent(ocelot, EntityEvent.TRUSTING_SUCCEEDED);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 3, 5L),
+                    "an ocelot gaining trust plays love");
+
+            advance(EyeBehavior.LOVE.defaultDuration());
+            helper.getLevel().broadcastEntityEvent(cow, EntityEvent.TAMING_FAILED);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 6L),
+                    "an entity event that is not affection plays nothing");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Milking a cow, mooshroom, or goat with a bucket plays grow, and only while {@code growOnMilk} is on.
+     * In game: use an empty bucket on an eyed cow, mooshroom, or goat, and its eyes bulge as the bucket
+     * fills. With {@code growOnMilk = false} they do not.
+     */
+    public static void milkingPlaysGrow(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onMilk = ServerConfig.GROW_ON_MILK.get();
+        ItemStack held = player.getMainHandItem().copy();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(1, 2, 1));
+            MushroomCow mooshroom = eyedTrackedMob(helper, player, EntityType.MOOSHROOM, new BlockPos(3, 2, 1));
+            Goat goat = eyedTrackedMob(helper, player, EntityType.GOAT, new BlockPos(1, 2, 3));
+
+            ServerConfig.GROW_ON_MILK.set(false);
+            milk(player, cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+                    "growOnMilk=false suppresses the milking grow");
+            advance(3);
+
+            ServerConfig.GROW_ON_MILK.set(true);
+            milk(player, cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+                    "milking a cow plays grow");
+            milk(player, mooshroom);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3, 3L),
+                    "milking a mooshroom plays grow");
+            milk(player, goat);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 3, 4L),
+                    "milking a goat plays grow");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GROW_ON_MILK.set(onMilk);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        }
+        helper.succeed();
+    }
+
+    private static <T extends Mob> T eyedTrackedMob(GameTestHelper helper, ServerPlayer player,
+                                                    EntityType<T> type, BlockPos pos) {
+        T mob = helper.spawnWithNoFreeWill(type, pos);
+        EyeState.setHasEyes(mob, true);
+        ServerBehaviorScheduler.onStartTracking(mob, player);
+        return mob;
+    }
+
+    /** Use an empty bucket on {@code mob} the way a player's right-click does. */
+    private static void milk(ServerPlayer player, Mob mob) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+        mob.interact(player, InteractionHand.MAIN_HAND);
     }
 
     /**

@@ -8,7 +8,9 @@
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
     "MerchantResultSlotMixin",
-    "MushroomCowShearMixin"
+    "MilkingMixin",
+    "MushroomCowShearMixin",
+    "ServerLevelEntityEventMixin"
   ],
   "injectors": {
     "defaultRequire": 1
