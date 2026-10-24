@@ -7,11 +7,11 @@ com.github.crittscott.somegoogly.client.render
 com.github.crittscott.somegoogly.client.render.resolver
 com.github.crittscott.somegoogly.command
 com.github.crittscott.somegoogly.config
-com.github.crittscott.somegoogly.enchant
 com.github.crittscott.somegoogly.eye
 com.github.crittscott.somegoogly.eye.behavior
 com.github.crittscott.somegoogly.eye.state
 com.github.crittscott.somegoogly.item
+com.github.crittscott.somegoogly.migration
 com.github.crittscott.somegoogly.network
 com.github.crittscott.somegoogly.picker
 com.github.crittscott.somegoogly.platform

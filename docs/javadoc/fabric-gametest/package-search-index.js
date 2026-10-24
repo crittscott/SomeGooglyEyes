@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.github.crittscott.somegoogly.gametest"},{"l":"com.github.crittscott.somegoogly.picker"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.github.crittscott.somegoogly.gametest"}];updateSearchResults();
