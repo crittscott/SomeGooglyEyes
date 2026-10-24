@@ -43,4 +43,16 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void affectionEventsPlayLove(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void milkingPlaysGrow(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
 }

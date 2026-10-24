@@ -29,6 +29,11 @@ public final class ModelGooglyEye {
     private static final float IRIS_BACK_Z = -1.05F;
     private static final float IRIS_FRONT_Z = -1.50F;
     private static final float IRIS_RADIUS = 1.00F;
+    /**
+     * The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
+     * cornea rim and the pupil has no room left to travel.
+     */
+    public static final float MAX_PUPIL_SIZE = CORNEA_RADIUS / IRIS_RADIUS;
     /** ModelPart cube coordinates are pixels; custom vertices use the same conversion. */
     private static final float MODEL_UNIT = 1.0F / 16.0F;
     // SIDES precedes the RING_* tables by necessity: their initializers read it by simple name, and a

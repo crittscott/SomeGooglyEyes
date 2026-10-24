@@ -26,6 +26,11 @@ loom {
     }
 
     runs {
+        // Dev runs load common's refmap, which maps to Fabric's intermediary names; this loader runs on the
+        // Mojang names the common Mixins are written against, so they must resolve without it.
+        configureEach {
+            property 'mixin.env.disableRefMap', 'true'
+        }
         gameTestServer {
             server()
             environment 'gametestserver'
@@ -99,6 +104,9 @@ tasks.named('processGametestResources', ProcessResources).configure {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+    // The common refmap maps to Fabric's intermediary names; this loader runs on Mojang names, which the
+    // common Mixins already use, so they must apply without it.
+    exclude 'somegoogly-common.refmap.json'
 }
 
 remapJar {

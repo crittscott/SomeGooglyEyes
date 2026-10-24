@@ -13,6 +13,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
  *       doesn't drive the pupil at all (it keeps wobbling freely): grow, blink, and color leave it there.
  *       Stare anchors at center, side/cross anchor off to one side, swirl's anchor orbits.</li>
  *   <li><b>eyeScaleMul</b> — multiplies the eye's configured scale (grow). Non-physical overlay.</li>
+ *   <li><b>irisScaleMul</b> — multiplies the pupil's configured size (love). Non-physical overlay.</li>
  *   <li><b>squashY</b> — multiplies the eye's vertical scale (blink). Non-physical overlay.</li>
  *   <li><b>corneaTint / tintAmount</b> — lerp the cornea toward {@code corneaTint} by {@code tintAmount}
  *       (color-change). Non-physical overlay.</li>
@@ -31,6 +32,9 @@ public final class EyeInfluence {
 
     /** Multiplies the configured eye scale (1 = unchanged). */
     public float eyeScaleMul;
+
+    /** Multiplies the configured pupil (iris) size (1 = unchanged); the renderer caps it at the cornea. */
+    public float irisScaleMul;
 
     /** Multiplies the eye's vertical scale (1 = unchanged, &lt;1 = squashed for a blink). */
     public float squashY;
@@ -51,6 +55,7 @@ public final class EyeInfluence {
         anchorY = 0f;
         stiffness = 0f;
         eyeScaleMul = 1f;
+        irisScaleMul = 1f;
         squashY = 1f;
         corneaTint = null;
         tintAmount = 0f;

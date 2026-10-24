@@ -44,8 +44,12 @@ public class ServerConfig {
     public static final boolean GOOGLY_EYES_ENABLED_DEFAULT = true;
     public static final String GROW_ON_HIT_PERCENT_KEY = "growOnHitPercent";
     public static final int GROW_ON_HIT_PERCENT_DEFAULT = 20;
+    public static final String GROW_ON_MILK_KEY = "growOnMilk";
+    public static final boolean GROW_ON_MILK_DEFAULT = true;
     public static final String HARVEST_ON_KILL_PERCENT_KEY = "harvestOnKillPercent";
     public static final int HARVEST_ON_KILL_PERCENT_DEFAULT = 25;
+    public static final String LOVE_ON_AFFECTION_KEY = "loveOnAffection";
+    public static final boolean LOVE_ON_AFFECTION_DEFAULT = true;
     public static final int PERCENT_MAX = 100;
     public static final int PERCENT_MIN = 0;
     public static final String SPAWN_EXCLUDED_ENTITIES_KEY = "spawnExcludedEntities";
@@ -86,9 +90,14 @@ public class ServerConfig {
             Longest wait, in ticks, between one mob's idle expressions.""";
     public static final String AMBIENT_BEHAVIOR_POOL_COMMENT = """
             Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
-            side_eye, stare, grow, swirl, color_change. Unknown ids are ignored.""";
+            side_eye, stare, grow, love, swirl, color_change. Unknown ids are ignored.""";
     public static final String GROW_ON_HIT_PERCENT_COMMENT = """
             Chance (0-100) that an eyed mob's eyes bulge when a player damages it.""";
+    public static final String GROW_ON_MILK_COMMENT = """
+            Whether an eyed cow's, mooshroom's, or goat's eyes bulge when it is milked.""";
+    public static final String LOVE_ON_AFFECTION_COMMENT = """
+            Whether an eyed mob's pupils swell when it shows affection: an animal entering love mode,
+            villagers breeding, an iron golem offering a flower, or an ocelot coming to trust a player.""";
     public static final String SWIRL_ON_TRADE_COMMENT = """
             Whether a villager's or wandering trader's eyes swirl when a trade completes.""";
     public static final String SWIRL_ON_HEAL_COMMENT = """
@@ -141,9 +150,13 @@ public class ServerConfig {
     /** Chance (0–100) that player damage makes an eyed mob's eyes bulge. */
     public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT =
             ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Whether milking makes an eyed mob's eyes bulge. */
+    public static final ConfigValue<Boolean> GROW_ON_MILK = ConfigValue.bool(GROW_ON_MILK_DEFAULT);
     /** Chance (0–100) that a shears kill of an eyed mob drops a Googly Eye. */
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Whether a vanilla affection event makes an eyed mob's pupils swell. */
+    public static final ConfigValue<Boolean> LOVE_ON_AFFECTION = ConfigValue.bool(LOVE_ON_AFFECTION_DEFAULT);
     /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
@@ -273,7 +286,9 @@ public class ServerConfig {
         GLOBAL_PERCENT.reset();
         GOOGLY_EYES_ENABLED.reset();
         GROW_ON_HIT_PERCENT.reset();
+        GROW_ON_MILK.reset();
         HARVEST_ON_KILL_PERCENT.reset();
+        LOVE_ON_AFFECTION.reset();
         SPAWN_EXCLUDED_ENTITIES.reset();
         SPAWN_EXCLUDED_MODS.reset();
         SWIRL_HEAL_COOLDOWN_TICKS.reset();
