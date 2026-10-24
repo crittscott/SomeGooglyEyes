@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
 
 import java.util.Optional;
 
@@ -11,12 +10,9 @@ public final class ModVersionLookupImpl {
     private ModVersionLookupImpl() {
     }
 
-    public static Optional<String> versionForNamespace(String namespace) {
-        if ("minecraft".equals(namespace)) {
-            return Optional.of(SharedConstants.getCurrentVersion().getName());
-        }
+    public static Optional<String> modVersion(String modId) {
         return FabricLoader.getInstance()
-                .getModContainer(namespace)
+                .getModContainer(modId)
                 .map(container -> container.getMetadata().getVersion().getFriendlyString());
     }
 }

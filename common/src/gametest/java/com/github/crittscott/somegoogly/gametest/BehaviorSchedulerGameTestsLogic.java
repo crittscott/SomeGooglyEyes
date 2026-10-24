@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         }
     }
 
-    /** "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it elapses. */
+    /**
+     * "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
+     * elapses. In game: as a creative operator, look at an eyed mob and run {@code /sg admin behavior swirl},
+     * then {@code /sg admin behavior blink} while it swirls; the blink does not play. Run it again after the
+     * swirl ends and it does.
+     */
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         ServerBehaviorScheduler.clear();
@@ -40,12 +45,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.STARE, 10, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
                     "the first trigger starts");
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 10, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
                     "a second trigger is dropped while one is playing");
             advance(10);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 10, 3L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
                     "once the active behavior elapses a new trigger starts");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -54,7 +59,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob is idle. */
+    /**
+     * A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
+     * is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
+     * and heal it again within {@code swirlHealCooldownTicks} (default 200) after the first heal, and they do
+     * not.
+     */
     public static void healSwirlIsRateLimited(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
@@ -69,12 +79,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     "the first heal starts a swirl");
 
-            advance(EyeBehaviors.SWIRL.defaultDuration());
+            advance(EyeBehavior.SWIRL.defaultDuration());
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
                     "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -85,7 +95,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective triggers. */
+    /**
+     * {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective
+     * triggers. In game: set {@code swirlOnHeal = false}, {@code swirlOnTrade = false}, and
+     * {@code growOnHitPercent = 0} in the server config and apply it; healing an eyed cow, trading with an
+     * eyed villager, and hitting either never changes their eyes.
+     */
     public static void gameEventTriggersRespectConfig(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
@@ -100,19 +115,19 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.SWIRL_ON_HEAL.set(false);
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
                     "swirlOnHeal=false suppresses the heal swirl");
             advance(3);
 
             ServerConfig.SWIRL_ON_TRADE.set(false);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
                     "swirlOnTrade=false suppresses the trade swirl");
             advance(3);
 
             ServerConfig.GROW_ON_HIT_PERCENT.set(0);
             ServerBehaviorScheduler.onPlayerHurt(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 3, 3L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
                     "growOnHitPercent=0 never rolls the hurt grow");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -124,7 +139,11 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    /** A tracked mob with no eyes is not an event target: heal and trade triggers no-op. */
+    /**
+     * A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
+     * since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
+     * mobs.
+     */
     public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
@@ -140,7 +159,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehaviors.BLINK, 5, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     "an eyeless mob's game events never start a behavior even while it is tracked");
         } finally {
             ServerBehaviorScheduler.clear();

@@ -19,34 +19,26 @@ import java.util.UUID;
  * restore, crash-proofing — is owned by {@link PickerFreezeService} on the server, so it works from a
  * remote client and survives that client disappearing; this packet only asks.
  *
- * <p>Freezing requires creative mode ({@link PickerGate}). <b>Unfreezing does not</b>: it only
- * releases the sender's own frozen mob, and gating it would strand a mob frozen if the player lost
- * creative mid-edit.
+ * <p>Freezing requires picker authorization ({@link PickerGate#authorized}). <b>Unfreezing does
+ * not</b>: it only releases the sender's own frozen mob, and gating it would strand a mob frozen if the
+ * player lost creative or operator status mid-edit.
  */
 public class PickerFreezePacket implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE =
             new CustomPacketPayload.Type<>(NetworkHandler.PICKER_FREEZE);
-    public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC = new StreamCodec<>() {
-        @Override
-        public PickerFreezePacket decode(RegistryFriendlyByteBuf buffer) {
-            return PickerFreezePacket.decode(buffer);
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buffer, PickerFreezePacket packet) {
-            PickerFreezePacket.encode(packet, buffer);
-        }
-    };
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC =
+            StreamCodec.ofMember(PickerFreezePacket::write, PickerFreezePacket::new);
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
      * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
-     * the mob's box and the mob's position the server measures to. Keeps a creative client from
+     * the mob's box and the mob's position the server measures to. Keeps an authorized client from
      * freezing an arbitrary mob in any loaded chunk by UUID.
      */
-    private static final double MAX_FREEZE_DISTANCE_SQ =
-            (LookTarget.DEFAULT_REACH + 4.0) * (LookTarget.DEFAULT_REACH + 4.0);
+    private static final double FREEZE_DISTANCE_SLACK = 4.0;
+    private static final double MAX_FREEZE_DISTANCE_SQ = (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK)
+            * (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK);
 
     private final boolean freeze;
     @Nullable
@@ -57,30 +49,32 @@ public class PickerFreezePacket implements CustomPacketPayload {
         this.mobId = mobId;
     }
 
+    /** A request to freeze the mob with {@code mobId} for the sender's picker. */
     public static PickerFreezePacket freeze(UUID mobId) {
         return new PickerFreezePacket(true, mobId);
     }
 
+    /** A request to release the sender's frozen mob. */
     public static PickerFreezePacket unfreeze() {
         return new PickerFreezePacket(false, null);
     }
 
-    public static PickerFreezePacket decode(FriendlyByteBuf buffer) {
-        boolean freeze = buffer.readBoolean();
-        UUID mobId = freeze ? buffer.readUUID() : null;
-        return new PickerFreezePacket(freeze, mobId);
+    private PickerFreezePacket(FriendlyByteBuf buffer) {
+        this.freeze = buffer.readBoolean();
+        this.mobId = freeze ? buffer.readUUID() : null;
     }
 
-    public static void encode(PickerFreezePacket packet, FriendlyByteBuf buffer) {
-        buffer.writeBoolean(packet.freeze);
-        if (packet.freeze) {
-            buffer.writeUUID(packet.mobId);
+    private void write(FriendlyByteBuf buffer) {
+        buffer.writeBoolean(freeze);
+        if (freeze) {
+            buffer.writeUUID(mobId);
         }
     }
 
+    /** Freeze the requested mob for an authorized sender in range, or release the sender's frozen mob. */
     public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
         if (packet.freeze) {
-            if (!PickerGate.creative(sender)) {
+            if (!PickerGate.authorized(sender)) {
                 return;
             }
             Entity target = sender.serverLevel().getEntity(packet.mobId);

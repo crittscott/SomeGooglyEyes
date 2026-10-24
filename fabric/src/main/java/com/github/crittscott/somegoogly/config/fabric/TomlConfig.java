@@ -1,6 +1,7 @@
-package com.github.crittscott.somegoogly.config;
+package com.github.crittscott.somegoogly.config.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ConfigValue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,12 +12,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Narrow TOML reader for the boolean, integer, and string-list schemas used by loader-owned storage. */
+/**
+ * Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files. Basic
+ * ({@code "..."}) and literal ({@code '...'}) strings are understood; any other value is logged and skipped.
+ */
 public final class TomlConfig {
 
     private TomlConfig() {
     }
 
+    /** Parse the file at {@code path} into key/value pairs, first writing {@code defaults} there if it is missing. */
     public static Map<String, Object> readOrCreate(Path path, String defaults) throws IOException {
         Files.createDirectories(path.getParent());
         if (Files.notExists(path)) {
@@ -26,6 +31,7 @@ public final class TomlConfig {
         return parse(Files.readString(path, StandardCharsets.UTF_8));
     }
 
+    /** The boolean at {@code key}, or {@code fallback} when absent or, logged, of another type. */
     public static boolean bool(Map<String, Object> values, String key, boolean fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -38,6 +44,7 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /** The integer at {@code key}, or {@code fallback} when absent or, logged, of another type. */
     public static int integer(Map<String, Object> values, String key, int fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -50,6 +57,10 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /**
+     * The string array at {@code key}, or {@code fallback} when absent or, logged, not an array. Non-string
+     * entries are logged and dropped.
+     */
     public static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
         Object value = values.get(key);
         if (value == null) {
@@ -72,12 +83,35 @@ public final class TomlConfig {
         return strings;
     }
 
+    /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
+    public static void assign(ConfigValue<Integer> target, String key, int raw) {
+        target.set(raw);
+        if (target.get() != raw) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' value {} is out of range; using {}", key, raw, target.get());
+        }
+    }
+
+    /** Assign {@code raw} to {@code target}, logging each entry its validator rejects. */
+    public static void assign(ConfigValue<List<String>> target, String key, List<String> raw) {
+        target.set(raw);
+        List<String> accepted = target.get();
+        if (accepted.size() == raw.size()) {
+            return;
+        }
+        for (String entry : raw) {
+            if (!accepted.contains(entry)) {
+                SomeGooglyCommon.LOGGER.warn("Config key '{}' has an invalid entry '{}'; ignoring it", key, entry);
+            }
+        }
+    }
+
     private static void warnMismatch(String key, String expected, Object value, Object fallback) {
         SomeGooglyCommon.LOGGER.warn(
                 "Config key '{}' expected a {} but found {} ({}); using default {}",
                 key, expected, value, value.getClass().getSimpleName(), fallback);
     }
 
+    /** Render {@code values} as a TOML array of escaped basic strings, for writing default files. */
     public static String stringList(List<String> values) {
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < values.size(); i++) {
@@ -129,7 +163,9 @@ public final class TomlConfig {
         String key = statement.substring(0, equals).trim();
         String raw = statement.substring(equals + 1).trim();
         Object value = parseValue(raw);
-        if (!key.isEmpty() && value != null) {
+        if (value == null) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' has unreadable value {}; using default", key, raw);
+        } else if (!key.isEmpty()) {
             values.put(key, value);
         }
     }
@@ -154,18 +190,20 @@ public final class TomlConfig {
     private static List<String> parseStringArray(String raw) {
         List<String> values = new ArrayList<>();
         StringBuilder current = new StringBuilder();
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < raw.length(); i++) {
             char c = raw.charAt(i);
             if (escaped) {
                 current.append(c);
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (c == ',' && !quoted) {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (c == ',' && quote == 0) {
                 addArrayEntry(values, current);
             } else {
                 current.append(c);
@@ -185,19 +223,21 @@ public final class TomlConfig {
 
     private static int bracketDelta(String line) {
         int delta = 0;
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
             if (escaped) {
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (!quoted && c == '[') {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (quote == 0 && c == '[') {
                 delta++;
-            } else if (!quoted && c == ']') {
+            } else if (quote == 0 && c == ']') {
                 delta--;
             }
         }
@@ -205,17 +245,19 @@ public final class TomlConfig {
     }
 
     private static String stripComment(String line) {
-        boolean quoted = false;
+        char quote = 0;
         boolean escaped = false;
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
             if (escaped) {
                 escaped = false;
-            } else if (quoted && c == '\\') {
+            } else if (quote == '"' && c == '\\') {
                 escaped = true;
-            } else if (c == '"') {
-                quoted = !quoted;
-            } else if (c == '#' && !quoted) {
+            } else if (quote == 0 && (c == '"' || c == '\'')) {
+                quote = c;
+            } else if (c == quote) {
+                quote = 0;
+            } else if (c == '#' && quote == 0) {
                 return line.substring(0, i);
             }
         }

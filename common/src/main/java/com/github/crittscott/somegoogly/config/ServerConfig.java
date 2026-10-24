@@ -1,9 +1,11 @@
 package com.github.crittscott.somegoogly.config;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeBehaviors;
+import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,8 +16,8 @@ import java.util.regex.Pattern;
  * Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
  * datapack), so admins can tune how common eyes are — globally and per entity — without touching the
  * shipped eye-definition datapacks. Those JSONs only decide <i>where</i> eyes go and whether an entity is
- * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied in
- * {@code ServerServices}); this class decides <i>how often</i> an eligible entity actually rolls
+ * eligible at all (their {@code enabled} flag is an authoritative hard on/off, applied by
+ * {@code EyeConfigModel.RuntimeConfig.isUsable}); this class decides <i>how often</i> an eligible entity actually rolls
  * eyes. Also hosts the picker's opt-in gate for the destructive {@code /sg spawnall} grid
  * ({@link #ALLOW_SPAWN_ALL}, enforced by the server command).
  */
@@ -24,10 +26,10 @@ public class ServerConfig {
     public static final boolean ALLOW_SPAWN_ALL_DEFAULT = false;
     public static final String AMBIENT_BEHAVIOR_POOL_KEY = "ambientBehaviorPool";
     public static final List<String> AMBIENT_BEHAVIOR_POOL_DEFAULT = List.of(
-            EyeBehaviors.BLINK.id().toString(),
-            EyeBehaviors.CROSS_EYE.id().toString(),
-            EyeBehaviors.SIDE_EYE.id().toString(),
-            EyeBehaviors.STARE.id().toString());
+            EyeBehavior.BLINK.id().toString(),
+            EyeBehavior.CROSS_EYE.id().toString(),
+            EyeBehavior.SIDE_EYE.id().toString(),
+            EyeBehavior.STARE.id().toString());
     public static final String AMBIENT_BEHAVIORS_KEY = "ambientBehaviors";
     public static final boolean AMBIENT_BEHAVIORS_DEFAULT = true;
     public static final String AMBIENT_MAX_TICKS_KEY = "ambientMaxTicks";
@@ -56,74 +58,127 @@ public class ServerConfig {
     public static final boolean SWIRL_ON_HEAL_DEFAULT = true;
     public static final String SWIRL_ON_TRADE_KEY = "swirlOnTrade";
     public static final boolean SWIRL_ON_TRADE_DEFAULT = true;
-    public static final int TICKS_MAX = 24000;
+    public static final int TICKS_MAX = SharedConstants.TICKS_PER_GAME_DAY;
     public static final int TICKS_MIN = 1;
 
+    // TOML file and section names, shared by every loader's server config.
+    public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
+    public static final String SECTION_SERVER = "server";
+    public static final String SECTION_BEHAVIORS = "behaviors";
+    public static final String SECTION_PICKER = "picker";
+
+    // Config-file comments, one line per comment line, shared by every loader's server config schema.
+    public static final String GOOGLY_EYES_ENABLED_COMMENT = """
+            Master switch. false stops new mobs from rolling eyes, hides every eye (old and new) on every
+            client, and refuses hand-applying or harvesting eyes; existing NBT eye data is left untouched
+            and reappears when this is turned back on. Connected clients see a change as soon as the server
+            applies it: on NeoForge and Forge when the edited file is reloaded, on Fabric at the next /reload.""";
+    public static final String GLOBAL_PERCENT_COMMENT = """
+            Chance (0-100) that a newly spawned eligible mob gets eyes, for entities not matched by
+            entityOverrides. Changing it affects only mobs spawned afterwards.""";
+    public static final String HARVEST_ON_KILL_PERCENT_COMMENT = """
+            Chance (0-100) that killing an eyed mob with a direct melee blow from shears drops a Googly Eye.""";
+    public static final String AMBIENT_BEHAVIORS_COMMENT = """
+            Whether eyed mobs play idle expressions (chosen from ambientBehaviorPool) on their own.""";
+    public static final String AMBIENT_MIN_TICKS_COMMENT = """
+            Shortest wait, in ticks, between one mob's idle expressions.""";
+    public static final String AMBIENT_MAX_TICKS_COMMENT = """
+            Longest wait, in ticks, between one mob's idle expressions.""";
+    public static final String AMBIENT_BEHAVIOR_POOL_COMMENT = """
+            Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
+            side_eye, stare, grow, swirl, color_change. Unknown ids are ignored.""";
+    public static final String GROW_ON_HIT_PERCENT_COMMENT = """
+            Chance (0-100) that an eyed mob's eyes bulge when a player damages it.""";
+    public static final String SWIRL_ON_TRADE_COMMENT = """
+            Whether a villager's or wandering trader's eyes swirl when a trade completes.""";
+    public static final String SWIRL_ON_HEAL_COMMENT = """
+            Whether an eyed mob's eyes swirl when it is healed.""";
+    public static final String SWIRL_HEAL_COOLDOWN_TICKS_COMMENT = """
+            Minimum ticks between one mob's healing swirls.""";
+    public static final String ENTITY_OVERRIDES_COMMENT = """
+            Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
+            '*' wildcards the entity id, e.g. "minecraft:zombie,100", "*:*_horse,50", "alexsmobs:*,0".
+            An exact id always wins over a wildcard; among wildcards, the first matching line wins.
+            Entities matching nothing here use globalPercent. A percent of 0 stops NEW spawns of that
+            entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can
+            still give the entity eyes by hand with a Slimy Eye.""";
+    public static final String ALLOW_SPAWN_ALL_COMMENT = """
+            Enables /sg spawnall, which force-spawns every summonable living mob in a grid with no undo.
+            WARNING: only enable this on a test or throwaway world. Spawning a mob outside its own mod's
+            normal context, as spawnall does, can corrupt or destabilize the world; MineColonies and
+            Create mobs are known cases (see spawnExcludedMods below).""";
+    public static final String SPAWN_EXCLUDED_MODS_COMMENT = """
+            Namespaces that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g. "mekanism".
+            MineColonies and Create are excluded by default because their mobs can corrupt or
+            destabilize a world if force-spawned outside their mod's normal context. Only remove either
+            entry on a world you're prepared to lose. These are authoring commands only; nothing here
+            changes eye eligibility or natural spawning.""";
+    public static final String SPAWN_EXCLUDED_ENTITIES_COMMENT = """
+            Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
+            "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods.""";
+
+    /** Whether {@code /sg spawnall} may run. */
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
-    public static final ConfigValue<List<String>> AMBIENT_BEHAVIOR_POOL =
-            ConfigValue.strings(AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateBehaviorId);
+    /** Behavior ids idle mobs choose from, parsed to the registered behaviors they name. */
+    public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
+            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool);
+    /** Whether eyed mobs play idle expressions. */
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
+    /** Longest wait in ticks between one mob's idle expressions. */
     public static final ConfigValue<Integer> AMBIENT_MAX_TICKS =
             ConfigValue.integer(AMBIENT_MAX_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    /** Shortest wait in ticks between one mob's idle expressions. */
     public static final ConfigValue<Integer> AMBIENT_MIN_TICKS =
             ConfigValue.integer(AMBIENT_MIN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
-    public static final ConfigValue<List<String>> ENTITY_OVERRIDES =
-            ConfigValue.strings(ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride);
+    /** Per-entity spawn chances as {@code "entity-pattern,percent"} lines; read through {@link #percentFor}. */
+    public static final ConfigValue.Parsed<List<SpawnOverride>> ENTITY_OVERRIDES = ConfigValue.parsedStrings(
+            ENTITY_OVERRIDES_DEFAULT, ServerConfig::validateOverride, ServerConfig::parseOverrides);
+    /** Spawn chance (0–100) for entities no override matches. */
     public static final ConfigValue<Integer> GLOBAL_PERCENT =
             ConfigValue.integer(GLOBAL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Master switch for spawning, rendering, applying, and harvesting eyes. */
     public static final ConfigValue<Boolean> GOOGLY_EYES_ENABLED = ConfigValue.bool(GOOGLY_EYES_ENABLED_DEFAULT);
+    /** Chance (0–100) that player damage makes an eyed mob's eyes bulge. */
     public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT =
             ConfigValue.integer(GROW_ON_HIT_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
+    /** Chance (0–100) that a shears kill of an eyed mob drops a Googly Eye. */
     public static final ConfigValue<Integer> HARVEST_ON_KILL_PERCENT =
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
-    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_ENTITIES =
-            ConfigValue.strings(SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateEntityId);
-    public static final ConfigValue<List<String>> SPAWN_EXCLUDED_MODS =
-            ConfigValue.strings(SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace);
+    /** Entity ids the spawn commands skip. */
+    public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
+            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
+    /** Namespaces the spawn commands skip. */
+    public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
+            SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
+    /** Minimum ticks between one mob's healing swirls. */
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
             ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
+    /** Whether healing makes an eyed mob's eyes swirl. */
     public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
+    /** Whether a completed trade makes the trader's eyes swirl. */
     public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(SWIRL_ON_TRADE_DEFAULT);
 
-    // Compiled view of ENTITY_OVERRIDES, rebuilt whenever a loader or test replaces the immutable list.
-    private static List<String> lastParsedSource;
-    private static List<Override> overrides = List.of();
-
-    // Resolved view of AMBIENT_BEHAVIOR_POOL, rebuilt only when a loader or test replaces the immutable
-    // list (same rebuild-on-identity-change trick as ENTITY_OVERRIDES above).
-    private static List<String> lastBehaviorPoolSource;
-    private static List<EyeBehavior> enabledBehaviors = List.of();
-
-    // Deduplicated views of the /sg spawn(all) exclusion lists, rebuilt on identity change like the two above.
-    private static List<String> lastExcludedEntitySource;
-    private static Set<String> excludedSpawnEntities = Set.of();
-    private static List<String> lastExcludedModSource;
-    private static Set<String> excludedSpawnMods = Set.of();
-
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
-    private record Override(boolean exact, String literalId, Pattern pattern, int percent) {
+    private record SpawnOverride(boolean exact, String literalId, Pattern pattern, int percent) {
     }
 
     /**
      * The behaviors eligible for ambient play: every registered behavior whose id appears in
-     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored. Hit whenever a mob's
-     * ambient timer fires, so the result is cached and only rebuilt when the pool config changes.
+     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored.
      */
     public static List<EyeBehavior> enabledBehaviors() {
-        List<String> source = AMBIENT_BEHAVIOR_POOL.get();
-        if (source == lastBehaviorPoolSource) {
-            return enabledBehaviors;
-        }
-        Set<String> enabled = new LinkedHashSet<>(source);
+        return AMBIENT_BEHAVIOR_POOL.parsed();
+    }
+
+    private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
+        Set<String> enabled = new LinkedHashSet<>(pool);
         List<EyeBehavior> result = new ArrayList<>();
-        for (EyeBehavior behavior : EyeBehaviors.all()) {
+        for (EyeBehavior behavior : EyeBehavior.values()) {
             if (enabled.contains(behavior.id().toString())) {
                 result.add(behavior);
             }
         }
-        enabledBehaviors = result;
-        lastBehaviorPoolSource = source;
-        return enabledBehaviors;
+        return List.copyOf(result);
     }
 
     /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
@@ -141,28 +196,41 @@ public class ServerConfig {
         return regex.toString();
     }
 
+    private static List<SpawnOverride> parseOverrides(List<String> entries) {
+        List<SpawnOverride> built = new ArrayList<>();
+        for (String entry : entries) {
+            built.add(parse(entry));
+        }
+        return List.copyOf(built);
+    }
+
     /**
-     * Parse one 'pattern,percent' line into an {@link Override}, or null if malformed (validation
-     * already ran, but reloads can still surface bad entries, so we stay defensive).
+     * Parse one {@code "entity-pattern,percent"} line: entity-id characters plus {@code *}, and a percent
+     * within {@code [PERCENT_MIN, PERCENT_MAX]}. Returns {@code null} for a malformed line.
      */
-    private static Override parse(String entry) {
+    @Nullable
+    private static SpawnOverride parse(String entry) {
         String[] split = entry.split(",");
         if (split.length != 2) {
             return null;
         }
         String pattern = split[0].trim();
+        // Allow the chars legal in an entity id (namespace:path) plus '*' for wildcards.
+        if (pattern.isEmpty() || !pattern.matches("[a-z0-9_./:*-]+")) {
+            return null;
+        }
         int percent;
         try {
             percent = Integer.parseInt(split[1].trim());
         } catch (NumberFormatException e) {
             return null;
         }
-        if (pattern.isEmpty() || percent < PERCENT_MIN || percent > PERCENT_MAX) {
+        if (percent < PERCENT_MIN || percent > PERCENT_MAX) {
             return null;
         }
         return pattern.indexOf('*') < 0
-                ? new Override(true, pattern, null, percent)
-                : new Override(false, null, Pattern.compile(globToRegex(pattern)), percent);
+                ? new SpawnOverride(true, pattern, null, percent)
+                : new SpawnOverride(false, null, Pattern.compile(globToRegex(pattern)), percent);
     }
 
     /**
@@ -170,10 +238,9 @@ public class ServerConfig {
      * the first matching wildcard override, else {@link #GLOBAL_PERCENT}.
      */
     public static int percentFor(ResourceLocation entityType) {
-        rebuildIfChanged();
         String id = entityType.toString();
-        Override firstWildcard = null;
-        for (Override o : overrides) {
+        SpawnOverride firstWildcard = null;
+        for (SpawnOverride o : ENTITY_OVERRIDES.parsed()) {
             if (o.exact) {
                 if (o.literalId.equals(id)) {
                     return o.percent; // exact match beats any wildcard, regardless of list order
@@ -191,34 +258,8 @@ public class ServerConfig {
      * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
      */
     public static boolean isSpawnExcluded(ResourceLocation entityType) {
-        List<String> entitySource = SPAWN_EXCLUDED_ENTITIES.get();
-        if (entitySource != lastExcludedEntitySource) {
-            excludedSpawnEntities = Set.copyOf(entitySource);
-            lastExcludedEntitySource = entitySource;
-        }
-        List<String> modSource = SPAWN_EXCLUDED_MODS.get();
-        if (modSource != lastExcludedModSource) {
-            excludedSpawnMods = Set.copyOf(modSource);
-            lastExcludedModSource = modSource;
-        }
-        return excludedSpawnMods.contains(entityType.getNamespace())
-                || excludedSpawnEntities.contains(entityType.toString());
-    }
-
-    private static void rebuildIfChanged() {
-        List<String> source = ENTITY_OVERRIDES.get();
-        if (source == lastParsedSource) {
-            return;
-        }
-        List<Override> built = new ArrayList<>();
-        for (String entry : source) {
-            Override parsed = parse(entry);
-            if (parsed != null) {
-                built.add(parsed);
-            }
-        }
-        overrides = built;
-        lastParsedSource = source;
+        return SPAWN_EXCLUDED_MODS.parsed().contains(entityType.getNamespace())
+                || SPAWN_EXCLUDED_ENTITIES.parsed().contains(entityType.toString());
     }
 
     /** Restore built-in defaults before a loader applies a newly opened world's values. */
@@ -238,51 +279,26 @@ public class ServerConfig {
         SWIRL_HEAL_COOLDOWN_TICKS.reset();
         SWIRL_ON_HEAL.reset();
         SWIRL_ON_TRADE.reset();
-        lastParsedSource = null;
-        overrides = List.of();
-        lastBehaviorPoolSource = null;
-        enabledBehaviors = List.of();
-        lastExcludedEntitySource = null;
-        excludedSpawnEntities = Set.of();
-        lastExcludedModSource = null;
-        excludedSpawnMods = Set.of();
-    }
-
-    /** Whether a config string parses as a {@link ResourceLocation}; the entry guard for {@link #AMBIENT_BEHAVIOR_POOL}. */
-    public static boolean validateBehaviorId(String value) {
-        return ResourceLocation.tryParse(value) != null;
-    }
-
-    /** Whether a config string parses as an entity {@link ResourceLocation}; the entry guard for {@link #SPAWN_EXCLUDED_ENTITIES}. */
-    public static boolean validateEntityId(String value) {
-        return ResourceLocation.tryParse(value) != null;
-    }
-
-    /** Whether a config string is a bare resource-location namespace; the entry guard for {@link #SPAWN_EXCLUDED_MODS}. */
-    public static boolean validateNamespace(String value) {
-        return value.matches("[a-z0-9_.-]+");
     }
 
     /**
-     * Whether a config string is a well-formed {@code "entity-pattern,percent"} override: entity-id
-     * characters plus {@code *}, and a percent within {@code [PERCENT_MIN, PERCENT_MAX]}. The entry guard
-     * for {@link #ENTITY_OVERRIDES}.
+     * Whether a config string parses as a {@link ResourceLocation}; the entry guard for
+     * {@link #AMBIENT_BEHAVIOR_POOL}, {@link #SPAWN_EXCLUDED_ENTITIES}, and the client's {@code disabledEntities}.
      */
+    public static boolean validateResourceLocation(String value) {
+        return ResourceLocation.tryParse(value) != null;
+    }
+
+    /**
+     * Whether a config string is a bare resource-location namespace; the entry guard for
+     * {@link #SPAWN_EXCLUDED_MODS}, the client's {@code disabledMods}, and the {@code /sg spawnall} filter.
+     */
+    public static boolean validateNamespace(String value) {
+        return !value.isEmpty() && ResourceLocation.isValidNamespace(value);
+    }
+
+    /** Whether a config string is a well-formed override line ({@link #parse}); the entry guard for {@link #ENTITY_OVERRIDES}. */
     public static boolean validateOverride(String value) {
-        String[] split = value.split(",");
-        if (split.length != 2) {
-            return false;
-        }
-        String pattern = split[0].trim();
-        // Allow the chars legal in an entity id (namespace:path) plus '*' for wildcards.
-        if (pattern.isEmpty() || !pattern.matches("[a-z0-9_./:*-]+")) {
-            return false;
-        }
-        try {
-            int percent = Integer.parseInt(split[1].trim());
-            return percent >= PERCENT_MIN && percent <= PERCENT_MAX;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return parse(value) != null;
     }
 }

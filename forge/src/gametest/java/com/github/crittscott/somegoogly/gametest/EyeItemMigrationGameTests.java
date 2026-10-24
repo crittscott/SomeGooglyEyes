@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.level.GameType;
 import net.minecraftforge.gametest.GameTestHolder;
 
 /** Forge GameTest entry points for {@link EyeItemMigrationGameTestsLogic}. */
@@ -48,7 +47,7 @@ public final class EyeItemMigrationGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void migratedSlimyEyeAppliesToMob(GameTestHelper helper) {
         EyeItemMigrationGameTestsLogic.migratedSlimyEyeAppliesToMob(
-                helper, helper.makeMockPlayer(GameType.SURVIVAL));
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

@@ -119,7 +119,7 @@ public final class VersionRangeMatcher {
 
     /**
      * Whether the whole declared range sits at or below {@code version} (its upper bound does).
-     * Distinguishes the fallback log levels: a {@link #nearestVersion} pick that is entirely below the
+     * Selects the fallback log message: a {@link #nearestVersion} pick that is entirely below the
      * installed version means the datapack is stale (older than the mod); otherwise the mod was
      * downgraded below every declaration.
      */
@@ -128,6 +128,10 @@ public final class VersionRangeMatcher {
         return b != null && b.upper() != null && compare(b.upper(), version) <= 0;
     }
 
+    /**
+     * Whether {@code version} satisfies {@code range}: an exact version by string equality, or a bracketed range by
+     * zero-padded component comparison. Blank or malformed input never matches.
+     */
     public static boolean matches(String range, String version) {
         if (range == null || range.isBlank() || version == null || version.isBlank()) {
             return false;

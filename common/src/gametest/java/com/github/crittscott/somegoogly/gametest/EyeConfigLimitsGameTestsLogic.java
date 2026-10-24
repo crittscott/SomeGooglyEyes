@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.phys.Vec3;
 
@@ -15,10 +14,9 @@ import java.util.List;
 
 /**
  * Semantic-bound coverage for {@link EyeConfigLimits#validateRuntimeConfig(RuntimeConfig)} — the
- * object-graph validator that guards datapack reload and picker export. Its wire-preflight twin
- * ({@code validateWireRuntimeConfig}) is exercised by {@link SerializationGameTestsLogic} and
- * {@link PickerExportGameTestsLogic}; these tests pin the parallel checks on the decoded form so the
- * two cannot drift. Pure and world-less: only {@link GameTestHelper} assertions touch the framework.
+ * object-graph validator that guards datapack reload, picker export, and (through
+ * {@code validateSync}) network decode, which {@link SerializationGameTestsLogic} and
+ * {@link PickerExportGameTestsLogic} exercise end to end. Pure and world-less: only {@link GameTestHelper} assertions touch the framework.
  */
 public final class EyeConfigLimitsGameTestsLogic {
 
@@ -74,7 +72,23 @@ public final class EyeConfigLimitsGameTestsLogic {
                 "expected a rejection mentioning '" + fragment + "', got " + error);
     }
 
-    /** {@code crossTarget} must name a different eye in the same head, or be {@link EyePlacement#NO_CROSS_TARGET}. */
+    /**
+     * A variant weight must be finite and nonnegative. In-game, a datapack eye definition with
+     * {@code "weight": -5} is ignored on {@code /reload}, with an "invalid weight" error in the log.
+     */
+    public static void variantWeightMustBeNonnegative(GameTestHelper helper) {
+        Variant negative = variant(1, 1);
+        negative.weight = -5.0;
+        assertRejected(helper, config(negative), "invalid weight");
+        helper.succeed();
+    }
+
+    /**
+     * {@code crossTarget} must name a different eye in the same head, or be
+     * {@link EyePlacement#NO_CROSS_TARGET}. In game, a datapack eye definition whose only eye has
+     * {@code "crossTarget": 0} is ignored on {@code /reload}, with a "cross-eye target" error in the log;
+     * with a second eye in that head, it loads.
+     */
     public static void crossTargetMustReferenceAnotherEyeInTheSameHead(GameTestHelper helper) {
         EyePlacement selfTarget = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
                 EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 0);
@@ -95,7 +109,11 @@ public final class EyeConfigLimitsGameTestsLogic {
         helper.succeed();
     }
 
-    /** Position, scale/depth, and angle each have a finite hard range. */
+    /**
+     * Position, scale/depth, and angle each have a finite hard range. In game, a datapack eye definition
+     * with {@code "position": [100.0, 0.0, 0.0]}, {@code "eyeScale": 64.0}, or {@code "azimuth": 9000.0}
+     * is ignored on {@code /reload}, with an error naming the out-of-range field in the log.
+     */
     public static void numericPlacementBoundsAreEnforced(GameTestHelper helper) {
         assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
                         new Vec3(100.0, 0.0, 0.0), 1F, 1F, 1F,
@@ -112,14 +130,11 @@ public final class EyeConfigLimitsGameTestsLogic {
         helper.succeed();
     }
 
-    /** Every color channel must be finite and within {@code 0..1}. */
-    public static void colorChannelsMustBeInRange(GameTestHelper helper) {
-        EyeAppearance badIris = new EyeAppearance(EyeColor.WHITE, new EyeColor(2F, 0F, 0F), false);
-        assertRejected(helper, configWithEye(new EyeDefinition(EyePlacement.DEFAULT, badIris)), "color channel");
-        helper.succeed();
-    }
-
-    /** The per-container count caps reject before the object graph is walked. */
+    /**
+     * The per-container count caps reject before the object graph is walked. In game, a datapack eye
+     * definition with more than {@link EyeConfigLimits#MAX_EYES_PER_HEAD} eyes in one head (or too many
+     * variants, heads, or eyes per variant) is ignored on {@code /reload}, with a count error in the log.
+     */
     public static void containerCountCapsAreEnforced(GameTestHelper helper) {
         Variant[] tooManyVariants = new Variant[EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1];
         for (int i = 0; i < tooManyVariants.length; i++) {

@@ -2,12 +2,13 @@ package com.github.crittscott.somegoogly.server;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.enchant.ModEnchantments;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -23,11 +24,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /** Loader-neutral implementation of applying and harvesting googly-eye items. */
@@ -49,9 +50,9 @@ public final class EyeItemService {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() instanceof SlimyEyeItem) {
             return level.isClientSide() ? InteractionResult.SUCCESS
-                    : SlimyEyeItem.applyToTarget(stack, (ServerPlayer) player, mob);
+                    : applySlimyEye(stack, (ServerPlayer) player, mob);
         }
-        if (level.isClientSide() || !(stack.getItem() instanceof ShearsItem)
+        if (level.isClientSide() || !stack.is(ModContent.SHEARS)
                 || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess())
                 || !ServerConfig.GOOGLY_EYES_ENABLED.get()) {
             return InteractionResult.PASS;
@@ -60,12 +61,34 @@ public final class EyeItemService {
         if (!helper.hasConfig()) {
             return InteractionResult.PASS;
         }
-        mob.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(mob)));
-        EyeState.disableAndClearProperties(mob);
-        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-        playShearSound(mob);
-        mob.gameEvent(GameEvent.SHEAR, player);
+        shearEyes(mob, player, hand, buildEyeDrop(helper, EyeState.readProperties(mob)));
+        return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
+     * gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
+     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing, as does any
+     * target while {@code googlyEyesEnabled} is off — the master switch blocks hand application the same
+     * as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
+     * enabled and {@code canHarmPlayer} to hold, so it can't be used to restyle a teammate or anyone in a
+     * PvP-off world. Both the mob path ({@link #interact}) and the sneak self-apply
+     * ({@code SlimyEyeItem#use}) route through here.
+     */
+    public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, LivingEntity target) {
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || EyeState.hasEyes(target) || !ServerEyeConfigs.isEligible(target)) {
+            return InteractionResult.FAIL;
+        }
+        if (target instanceof Player victim && victim != player) {
+            if (!player.serverLevel().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
+                return InteractionResult.FAIL;
+            }
+        }
+        EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
+        stack.consume(1, player);
+        target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+                SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
+        target.gameEvent(GameEvent.ENTITY_INTERACT, player);
         return InteractionResult.SUCCESS;
     }
 
@@ -81,7 +104,7 @@ public final class EyeItemService {
             return;
         }
         ItemStack weapon = player.getMainHandItem();
-        if (!(weapon.getItem() instanceof ShearsItem)
+        if (!weapon.is(ModContent.SHEARS)
                 || mob.getRandom().nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.HARVEST_ON_KILL_PERCENT.get()) {
             return;
         }
@@ -98,14 +121,15 @@ public final class EyeItemService {
      * Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
      * another player having applied a Slimy Eye to you. One Googly Eye drops carrying your effective
      * appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
-     * additionally land one melee hit's worth of self-damage. Returns {@link InteractionResult#PASS}
+     * additionally deal one melee hit's worth of {@link ModContent#SELF_SHEAR} damage, which has no
+     * attacker so PvP and team rules don't cancel it. Returns {@link InteractionResult#PASS}
      * when it doesn't apply (not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so the
      * vanilla item use proceeds.
      */
     public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !player.isShiftKeyDown()
-                || !(stack.getItem() instanceof ShearsItem) || !EyeState.hasEyes(player)) {
+                || !stack.is(ModContent.SHEARS) || !EyeState.hasEyes(player)) {
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) {
@@ -113,19 +137,29 @@ public final class EyeItemService {
         }
         boolean clean = hasOptometrist(stack, player.level().registryAccess());
         HeadInfo helper = helperFor(player);
-        if (helper.hasConfig()) {
-            player.spawnAtLocation(buildEyeDrop(helper, EyeState.readProperties(player)));
-        }
-        EyeState.disableAndClearProperties(player);
-        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND
-                ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-        playShearSound(player);
-        player.gameEvent(GameEvent.SHEAR, player);
+        shearEyes(player, player, hand,
+                helper.hasConfig() ? buildEyeDrop(helper, EyeState.readProperties(player)) : null);
         if (!clean) {
-            player.hurt(player.damageSources().playerAttack(player),
+            player.hurt(new DamageSource(player.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE)
+                            .getOrThrow(ModContent.SELF_SHEAR)),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * The shared outcome of shearing eyes off {@code target} with the shears in {@code actor}'s {@code hand}:
+     * drop {@code drop} (if any) at the target, clear its eyes, wear the shears, play the shearing sound,
+     * and emit {@link GameEvent#SHEAR}.
+     */
+    private static void shearEyes(LivingEntity target, Player actor, InteractionHand hand, @Nullable ItemStack drop) {
+        if (drop != null) {
+            target.spawnAtLocation(drop);
+        }
+        EyeState.disableAndClearProperties(target);
+        actor.getItemInHand(hand).hurtAndBreak(1, actor, LivingEntity.getSlotForHand(hand));
+        playShearSound(target);
+        target.gameEvent(GameEvent.SHEAR, actor);
     }
 
     private static void playShearSound(LivingEntity target) {
@@ -136,7 +170,7 @@ public final class EyeItemService {
     private static boolean hasOptometrist(ItemStack stack, HolderLookup.Provider registries) {
         return EnchantmentHelper.getItemEnchantmentLevel(
                 registries.lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(ModEnchantments.OPTOMETRIST),
+                        .getOrThrow(ModContent.OPTOMETRIST),
                 stack) > 0;
     }
 

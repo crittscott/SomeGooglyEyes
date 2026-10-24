@@ -29,9 +29,7 @@ import java.util.Map;
  * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  * eye / admin toggle), called from {@link EyeState}. Once promoted, a mob stays in {@link #ACTIVE} for
- * the rest of its tracked lifetime even if it later loses its eyes again (shears) — simpler and safe
- * (no risk of evicting a mob whose behavior still needs retiring), at the cost of walking a mob that
- * transiently had eyes and lost them again while still tracked, which is rare enough not to matter.
+ * the rest of its tracked lifetime, even if it loses its eyes.
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
@@ -40,6 +38,8 @@ public final class ServerBehaviorScheduler {
 
     private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
+    // Never demoted while tracked, so a mob whose behavior still needs retiring is never evicted; a mob
+    // that loses its eyes while watched is rare enough that walking it costs nothing noticeable.
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
@@ -113,7 +113,7 @@ public final class ServerBehaviorScheduler {
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong())) {
+        if (start(mob, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
     }
@@ -127,7 +127,7 @@ public final class ServerBehaviorScheduler {
         if (state == null) {
             return;
         }
-        start(mob, state, EyeBehaviors.GROW, EyeBehaviors.GROW.defaultDuration(), RANDOM.nextLong());
+        start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -151,8 +151,8 @@ public final class ServerBehaviorScheduler {
 
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
-        if (state.busyUntil != 0 && state.activeId != null) {
-            int elapsed = (int) Math.max(0, now - state.startedAt);
+        if (state.busyUntil != 0) {
+            int elapsed = (int) (now - state.startedAt);
             Networking.sendToPlayer(player,
                     new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
                             state.activeDuration, state.activeSeed, elapsed));
@@ -180,7 +180,7 @@ public final class ServerBehaviorScheduler {
         if (state == null) {
             return;
         }
-        start(villager, state, EyeBehaviors.SWIRL, EyeBehaviors.SWIRL.defaultDuration(), RANDOM.nextLong());
+        start(villager, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong());
     }
 
     private static void rollAmbient(LivingEntity mob, MobState state) {

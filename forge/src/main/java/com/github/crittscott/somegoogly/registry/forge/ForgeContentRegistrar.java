@@ -56,6 +56,7 @@ public final class ForgeContentRegistrar implements ContentRegistrar {
                 .build());
     }
 
+    /** Attach every deferred register to the mod bus. */
     public void register(IEventBus modBus) {
         dataComponents.register(modBus);
         items.register(modBus);

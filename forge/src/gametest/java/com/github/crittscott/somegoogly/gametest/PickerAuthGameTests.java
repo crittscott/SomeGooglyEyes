@@ -18,8 +18,8 @@ public final class PickerAuthGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void pickerRequestsRequireCreativeAndThrottlePerTick(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.pickerRequestsRequireCreativeAndThrottlePerTick(
+    public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 

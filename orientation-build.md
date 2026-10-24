@@ -27,7 +27,7 @@ Each copy sits at `build-env/` followed by its active path.
 
 The project is a Groovy-DSL Gradle build with `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root build applies Architectury Loom and the Architectury plugin to each subproject and establishes shared Minecraft mappings and Java settings. The build declares no Maven publication; the modules expose no stable public API and nothing consumes them through Maven. `common` is transformed for Fabric, Forge, and NeoForge; each loader module bundles its transformed common output with Shadow and then remaps the resulting production JAR. Architectury is build-time only: the plugin supplies `@ExpectPlatform` and its transformation, and no loader requires Architectury API at runtime.
 
-`common` compiles the GeckoLib render integration against the compile-only `geckolib-common` artifact from GeckoLib's Cloudsmith Maven; the loader modules have no GeckoLib dependency of their own. GeckoLib is optional at runtime and is not bundled. Architectury's injected annotations supply `@ExpectPlatform`.
+`common` depends compile-only on Fabric Loader for the `@Environment` annotation types the common Minecraft jar references. It also compiles the GeckoLib render integration against the compile-only `geckolib-common` artifact from GeckoLib's Cloudsmith Maven, and each loader module compiles its GeckoLib render-layer listener against that loader's compile-only GeckoLib artifact; GeckoLib is optional at runtime and is not bundled. Architectury's injected annotations supply `@ExpectPlatform`.
 
 `common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; every loader points its own `loom.accessWidenerPath` at common's. Forge and NeoForge, which read access transformers rather than wideners, also name that widener in `atAccessWideners` so their production JARs carry the converted rules.
 
@@ -57,7 +57,7 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | NeoForge | `net.neoforged:neoforge:21.1.34` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1` | Fabric runtime and development API |
-| GeckoLib | `software.bernie.geckolib:geckolib-common-1.21.1:4.7.4` | Compile-only optional render integration in common |
+| GeckoLib | `software.bernie.geckolib:geckolib-{common,fabric,forge,neoforge}-1.21.1:4.7.4` | Compile-only optional render integration in common and each loader |
 | JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module because Loom does not expose Minecraft's copy to common |
 
 The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.

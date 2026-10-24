@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.recipe;
 
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModItems;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -15,13 +14,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 /**
- * Googly eye + slimeball → slimy eye, carrying the eye's appearance onto the result so the applied
- * mob ends up with the eye you actually dyed or harvested.
+ * Googly eye + slimeball → slimy eye, carrying every component of the eye (its appearance, name, and
+ * the rest) onto the result, as a vanilla transmute recipe does, so the applied mob ends up with the eye
+ * you actually dyed or harvested.
  *
  * <p>A {@link ShapelessRecipe} subclass rather than a {@code CustomRecipe} (as {@link EyeModifierRecipe}
  * is): the ingredients are fixed and declared, so the recipe book and JEI can show it without any
- * plugin of ours. Only the result's appearance component is dynamic, which is what
- * {@link #assemble} adds.
+ * plugin of ours. Only the result's components are dynamic, which is what {@link #assemble} copies.
  */
 public class SlimyEyeRecipe extends ShapelessRecipe {
 
@@ -42,17 +41,16 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
         ItemStack result = delegate.assemble(input, registries);
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
-            if (stack.is(ModItems.GOOGLY_EYE.get())) {
-                EyeItemProperties.set(result, EyeItemProperties.get(stack));
-                break;
+            if (stack.is(ModContent.GOOGLY_EYE.get())) {
+                return stack.transmuteCopy(result.getItem(), result.getCount());
             }
         }
         return result;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.SLIMY_EYE.get();
+    public RecipeSerializer<SlimyEyeRecipe> getSerializer() {
+        return ModContent.SLIMY_EYE_RECIPE.get();
     }
 
     @Override

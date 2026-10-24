@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
@@ -23,17 +24,17 @@ import net.minecraft.nbt.NbtOps;
 import io.netty.buffer.Unpooled;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
@@ -46,6 +47,10 @@ public final class SerializationGameTestsLogic {
     private SerializationGameTestsLogic() {
     }
 
+    /**
+     * Every payload id is unique and carries the network version. No in-game form; guards that a client and
+     * server with different network versions refuse each other instead of misreading packets.
+     */
     public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
         String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
         List<ResourceLocation> gameplay = List.of(
@@ -65,12 +70,30 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    private static byte[] bytes(Consumer<FriendlyByteBuf> encode) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        encode.accept(buffer);
+    private static RegistryFriendlyByteBuf buffer(GameTestHelper helper) {
+        return new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+    }
+
+    private static <T> byte[] bytes(GameTestHelper helper, StreamCodec<RegistryFriendlyByteBuf, T> codec, T packet) {
+        RegistryFriendlyByteBuf buffer = buffer(helper);
+        codec.encode(buffer, packet);
         byte[] out = new byte[buffer.readableBytes()];
         buffer.getBytes(buffer.readerIndex(), out);
         return out;
+    }
+
+    /**
+     * Byte idempotence for one packet form through its {@code STREAM_CODEC}: encode → decode → encode must
+     * reproduce the bytes. Returns the decoded packet.
+     */
+    private static <T> T roundTrip(GameTestHelper helper, StreamCodec<RegistryFriendlyByteBuf, T> codec, T packet,
+                                   String description) {
+        byte[] first = bytes(helper, codec, packet);
+        T decoded = codec.decode(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(first),
+                helper.getLevel().registryAccess()));
+        byte[] second = bytes(helper, codec, decoded);
+        helper.assertTrue(Arrays.equals(first, second), description + " should survive a wire round-trip");
+        return decoded;
     }
 
     private static RuntimeConfigSet sampleConfigSet() {
@@ -88,6 +111,12 @@ public final class SerializationGameTestsLogic {
         return set;
     }
 
+    /**
+     * Appearance overrides save only the fields that are set, and reject invalid colors. In game: aim at an
+     * eyed cow and run {@code /sg admin tint iris 1 0 0}; on NeoForge or Forge, {@code /data get entity <cow>}
+     * shows {@code somegoogly:eyeOverrides} in {@code NeoForgeData} or {@code ForgeData} holding only
+     * {@code irisColor}, and after save and reload the cow still has red irises.
+     */
     public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
         helper.assertTrue(AppearanceOverride.fromNbt(null).equals(AppearanceOverride.EMPTY),
                 "null tag → EMPTY");
@@ -112,58 +141,74 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * The behavior trigger survives the wire. No in-game form; guards that every client sees the expression
+     * the server started.
+     */
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         EyeBehaviorTriggerPacket packet =
                 new EyeBehaviorTriggerPacket(7,
                         ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
-        byte[] first = bytes(buffer -> EyeBehaviorTriggerPacket.encode(packet, buffer));
-        EyeBehaviorTriggerPacket decoded = EyeBehaviorTriggerPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> EyeBehaviorTriggerPacket.encode(decoded, buffer));
-        helper.assertTrue(Arrays.equals(first, second), "EyeBehaviorTriggerPacket should survive a wire round-trip");
+        roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC, packet, "EyeBehaviorTriggerPacket");
         helper.succeed();
     }
 
+    /**
+     * The eye-definition sync survives the wire. No in-game form; guards that joining clients draw the same
+     * eyes the server's datapacks define.
+     */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(
-                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet()), false);
-        byte[] first = bytes(buffer -> EyeConfigSyncPacket.encode(packet, buffer));
-        EyeConfigSyncPacket decoded = EyeConfigSyncPacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> EyeConfigSyncPacket.encode(decoded, buffer));
-        helper.assertTrue(Arrays.equals(first, second), "EyeConfigSyncPacket should survive a wire round-trip");
+        Map<ResourceLocation, RuntimeConfigSet> configs =
+                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
+        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false);
+        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
         helper.succeed();
     }
 
+    /**
+     * The client refuses an eye-definition sync with too many entries, too many variants, or non-finite
+     * geometry. No in-game form with an unmodified server; guards clients against a malicious server.
+     */
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
-        FriendlyByteBuf oversized = new FriendlyByteBuf(Unpooled.buffer());
+        RegistryFriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(oversized)),
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(oversized)),
                 "config sync must reject an oversized outer count before allocating entries");
 
-        CompoundTag tooManyVariants = new CompoundTag();
-        ListTag variants = new ListTag();
-        for (int i = 0; i <= EyeConfigLimits.MAX_VARIANTS_PER_CONFIG; i++) {
-            variants.add(new CompoundTag());
-        }
-        tooManyVariants.put("variants", variants);
-        helper.assertTrue(EyeConfigLimits.validateWireRuntimeConfig(tooManyVariants).limitExceeded(),
-                "raw nested lists must be budgeted before codec parsing");
+        RuntimeConfigSet tooManyVariants = sampleConfigSet();
+        tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
+                tooManyVariants.any.variants.get(0));
+        RegistryFriendlyByteBuf counted = singleConfigPayload(helper, tooManyVariants);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(counted)),
+                "config sync must reject a config over the variant limit");
 
         RuntimeConfigSet unsafe = sampleConfigSet();
         HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
         head.eyes = List.of(new EyeDefinition(
                 new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
-        FriendlyByteBuf numeric = new FriendlyByteBuf(Unpooled.buffer());
-        numeric.writeVarInt(1);
-        numeric.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
-        numeric.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, unsafe)
-                .result().orElseThrow());
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.decode(numeric)),
+        RegistryFriendlyByteBuf numeric = singleConfigPayload(helper, unsafe);
+        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(numeric)),
                 "config sync must reject non-finite placement values");
         helper.succeed();
     }
 
+    /** A config-sync payload carrying {@code set} for one entity, written without the encoder's own limit check. */
+    private static RegistryFriendlyByteBuf singleConfigPayload(GameTestHelper helper, RuntimeConfigSet set) {
+        RegistryFriendlyByteBuf buffer = buffer(helper);
+        buffer.writeVarInt(1);
+        buffer.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
+                .result().orElseThrow());
+        buffer.writeBoolean(true);
+        return buffer;
+    }
+
+    /**
+     * A color must have exactly three channels. In game: a datapack eye definition with
+     * {@code "irisColors": [0.5, 0.5]} is ignored on {@code /reload}, with an error in the log.
+     */
     public static void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {
         JsonArray twoChannels = new JsonArray();
         twoChannels.add(Float.valueOf(0.5F));
@@ -174,10 +219,35 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
+     * Both color codecs reject a channel outside {@code 0..1} or non-finite on decode. In-game,
+     * {@code /give @s somegoogly:googly_eye[somegoogly:eye_properties={irisColor:[2f,0f,0f]}]} fails to
+     * parse instead of producing an eye item.
+     */
+    public static void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
+        for (float bad : new float[]{2.0F, -0.5F, Float.NaN, Float.POSITIVE_INFINITY}) {
+            JsonArray channels = new JsonArray();
+            channels.add(Float.valueOf(bad));
+            channels.add(Float.valueOf(0.5F));
+            channels.add(Float.valueOf(0.5F));
+            helper.assertTrue(EyeColor.CODEC.parse(JsonOps.INSTANCE, channels).result().isEmpty(),
+                    "codec must reject channel " + bad);
+
+            RegistryFriendlyByteBuf buffer = buffer(helper);
+            buffer.writeFloat(bad);
+            buffer.writeFloat(0.5F);
+            buffer.writeFloat(0.5F);
+            helper.assertTrue(throwsRuntime(() -> EyeColor.STREAM_CODEC.decode(buffer)),
+                    "stream codec must reject channel " + bad);
+        }
+        helper.succeed();
+    }
+
+    /**
      * The canonical form is whatever {@code encode} produces, so this is the guard that stops a field
      * added to the record from being silently dropped on the way to disk: a value-equal round-trip can
      * only pass if every field was written. {@code DEFAULT} would round-trip even with a field elided,
-     * so the sample deliberately sets each field away from its default.
+     * so the sample deliberately sets each field away from its default. No in-game form; guards that
+     * {@code /sg export} writes every eye property an author set.
      */
     public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
         EyeDefinition sample = new EyeDefinition(
@@ -197,7 +267,8 @@ public final class SerializationGameTestsLogic {
     /**
      * Float-precision serialization: a value typed as {@code 0.22} must come back out as {@code 0.22},
      * not as the {@code 0.2199999988079071} a double-widened float prints as. The datapack files are
-     * hand-edited, so this is what keeps them readable.
+     * hand-edited, so this is what keeps them readable. In game: give an eye in the picker a
+     * position component of 0.22 and run {@code /sg exportall}; the exported JSON reads {@code 0.22}.
      */
     public static void eyeFieldsSerializeAtFloatPrecision(GameTestHelper helper) {
         EyeDefinition sample = new EyeDefinition(
@@ -209,69 +280,67 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    /** Byte idempotence for one packet form: encode → decode → encode must reproduce the bytes. */
-    private static <T> boolean roundTrips(T packet, java.util.function.BiConsumer<T, FriendlyByteBuf> encode,
-                                          java.util.function.Function<FriendlyByteBuf, T> decode) {
-        byte[] first = bytes(buffer -> encode.accept(packet, buffer));
-        T decoded = decode.apply(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(buffer -> encode.accept(decoded, buffer));
-        return Arrays.equals(first, second);
-    }
-
+    /**
+     * The picker export request survives the wire, and a request with no definition is refused on decode. No
+     * in-game form; guards that {@code /sg export} delivers exactly the definition the client authored.
+     */
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
-        helper.assertTrue(roundTrips(
-                        new PickerExportPacket(
-                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
-                        PickerExportPacket::encode, PickerExportPacket::decode),
-                "PickerExportPacket with a config should survive a wire round-trip");
-        helper.assertTrue(roundTrips(
-                        new PickerExportPacket(
-                                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, null),
-                        PickerExportPacket::encode, PickerExportPacket::decode),
-                "PickerExportPacket's null-config form should survive a wire round-trip");
+        roundTrip(helper, PickerExportPacket.STREAM_CODEC,
+                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
+                "PickerExportPacket with a config");
+
+        RegistryFriendlyByteBuf noConfig = buffer(helper);
+        noConfig.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        noConfig.writeUtf(AGE_ADULT);
+        noConfig.writeNbt(null);
+        helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(noConfig)),
+                "picker export must reject a packet with no config");
         helper.succeed();
     }
 
+    /**
+     * Picker choose and release requests survive the wire. No in-game form; guards that {@code V} in the
+     * picker freezes and releases the intended mob.
+     */
     public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
-        helper.assertTrue(roundTrips(PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
-                        PickerFreezePacket::encode, PickerFreezePacket::decode),
-                "PickerFreezePacket's freeze form should survive a wire round-trip");
-        helper.assertTrue(roundTrips(PickerFreezePacket.unfreeze(),
-                        PickerFreezePacket::encode, PickerFreezePacket::decode),
-                "PickerFreezePacket's unfreeze form should survive a wire round-trip");
+        roundTrip(helper, PickerFreezePacket.STREAM_CODEC, PickerFreezePacket.freeze(new UUID(0x1234L, 0x5678L)),
+                "PickerFreezePacket's freeze form");
+        roundTrip(helper, PickerFreezePacket.STREAM_CODEC, PickerFreezePacket.unfreeze(),
+                "PickerFreezePacket's unfreeze form");
         helper.succeed();
     }
 
+    /**
+     * Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
+     * every watching client sees a mob's eyes, placement, and colors as the server has them.
+     */
     public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
         AppearanceOverride overrides =
                 AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.4F, 0.6F));
         EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
-        EyeStatePacket withOverrides = new EyeStatePacket(42, new UUID(1L, 2L), snapshot);
-        byte[] a1 = bytes(buffer -> EyeStatePacket.encode(withOverrides, buffer));
-        EyeStatePacket d1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(a1)));
+        EyeStatePacket withOverrides = new EyeStatePacket(42, snapshot);
+        EyeStatePacket d1 = roundTrip(helper, EyeStatePacket.STREAM_CODEC, withOverrides, "EyeStatePacket with overrides");
         helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
-        byte[] a2 = bytes(buffer -> EyeStatePacket.encode(d1, buffer));
-        helper.assertTrue(Arrays.equals(a1, a2), "EyeStatePacket with overrides should round-trip");
 
         EyeStatePacket noOverrides = new EyeStatePacket(
-                43, new UUID(3L, 4L), false, 0.0F, AppearanceOverride.EMPTY);
-        byte[] b1 = bytes(buffer -> EyeStatePacket.encode(noOverrides, buffer));
-        EyeStatePacket e1 = EyeStatePacket.decode(new FriendlyByteBuf(Unpooled.wrappedBuffer(b1)));
-        byte[] b2 = bytes(buffer -> EyeStatePacket.encode(e1, buffer));
-        helper.assertTrue(Arrays.equals(b1, b2), "EyeStatePacket without overrides should round-trip");
+                43, new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
+        roundTrip(helper, EyeStatePacket.STREAM_CODEC, noOverrides, "EyeStatePacket without overrides");
         helper.succeed();
     }
 
+    /**
+     * The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
+     * unmodified server; guards clients against a malicious server.
+     */
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
-        FriendlyByteBuf invalid = new FriendlyByteBuf(Unpooled.buffer());
-        invalid.writeInt(42);
-        invalid.writeUUID(new UUID(1L, 2L));
+        RegistryFriendlyByteBuf invalid = buffer(helper);
+        invalid.writeVarInt(42);
         invalid.writeBoolean(true);
         invalid.writeFloat(Float.NaN);
         invalid.writeByte(0);
-        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.decode(invalid)),
+        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.STREAM_CODEC.decode(invalid)),
                 "eye-state sync must reject a non-finite variant roll");
         helper.succeed();
     }

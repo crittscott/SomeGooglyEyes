@@ -1,9 +1,13 @@
 package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -13,7 +17,7 @@ import javax.annotation.Nullable;
  * shared datapack config ({@link com.github.crittscott.somegoogly.config.EyeConfigModel}).
  *
  * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
- * dimension changes, and aging. The loader-specific persistence bridge maps that compound onto each
+ * dimension changes, aging, mob conversion, and a player leaving the End ({@link #copy}). The loader-specific persistence bridge maps that compound onto each
  * platform's entity storage. Three pieces:
  * <ul>
  *   <li>{@code somegoogly:hasGooglyEyes} — the on/off flag, rolled at spawn and mutable mid-life
@@ -25,8 +29,9 @@ import javax.annotation.Nullable;
  * </ul>
  *
  * <p>The read helpers and {@link Snapshot} are side-safe. Server mutation methods write a complete
- * coherent transition and then broadcast one snapshot, while packet handling installs a snapshot
- * without sending it back to the server.
+ * coherent transition and then broadcast one snapshot to the entity's trackers (and the entity itself
+ * when it is a player); {@link #sendTo} brings one new tracker up to date. Packet handling installs a
+ * snapshot without sending it back to the server.
  */
 public final class EyeState {
 
@@ -43,6 +48,26 @@ public final class EyeState {
     public record Snapshot(boolean hasEyes, float variantRoll, AppearanceOverride properties) {
     }
 
+    /**
+     * Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
+     * or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh. Copying
+     * before or after the replacement joins its level both work: an initialized target is never re-rolled,
+     * and the broadcast reaches whoever already tracks it.
+     */
+    public static void copy(LivingEntity source, LivingEntity target) {
+        if (!isInitialized(source)) {
+            return;
+        }
+        CompoundTag data = EntityPersistentData.get(target);
+        data.putBoolean(HAS_EYES, hasEyes(source));
+        data.putFloat(VARIANT_ROLL, getVariantRoll(source));
+        writeProperties(data, readProperties(source));
+        if (hasEyes(target)) {
+            ServerBehaviorScheduler.onEyesGained(target);
+        }
+        sync(target);
+    }
+
     /** Install a synchronized snapshot on the client without broadcasting it. */
     public static void applySnapshot(LivingEntity entity, Snapshot snapshot) {
         CompoundTag data = EntityPersistentData.get(entity);
@@ -57,18 +82,15 @@ public final class EyeState {
         setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
     }
 
-    /** Drop the iris tint override only; broadcasts. */
-    public static void clearIrisTint(LivingEntity entity) {
-        setProperties(entity, readProperties(entity).withIrisColor(null));
-    }
-
     /**
      * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
      * slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
-     * Defaults to 0 (the first variant) when unset.
+     * Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
+     * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(LivingEntity entity) {
-        return EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
+        float roll = EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
+        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
@@ -92,11 +114,9 @@ public final class EyeState {
     }
 
     /**
-     * Store the one-time natural-eye decision and placement roll. Broadcasts only when the decision
-     * turned eyes on: an eyeless outcome already equals every client's implicit default, so the
-     * eyeless spawn — the overwhelming majority — costs no packet. The eyed broadcast is kept so a
-     * player who is already tracking when this runs is corrected; later trackers get it from the
-     * start-tracking sync.
+     * Store the one-time natural-eye decision and placement roll. Broadcasts to current trackers only when
+     * the decision turned eyes on, since an eyeless entity already matches every client's default; later
+     * trackers get the state from the start-tracking sync.
      */
     public static void initialize(LivingEntity entity, boolean hasEyes, float variantRoll) {
         CompoundTag data = EntityPersistentData.get(entity);
@@ -188,7 +208,21 @@ public final class EyeState {
         }
     }
 
+    /**
+     * Send one newly tracking player the entity's snapshot, unless it equals the client default
+     * ({@link #isDefaultState}).
+     */
+    public static void sendTo(LivingEntity entity, ServerPlayer player) {
+        if (!isDefaultState(entity)) {
+            Networking.sendToPlayer(player, packet(entity));
+        }
+    }
+
     private static void sync(LivingEntity entity) {
-        EyeStateSync.sync(entity, snapshot(entity));
+        Networking.sendTrackingAndSelf(entity, packet(entity));
+    }
+
+    private static EyeStatePacket packet(LivingEntity entity) {
+        return new EyeStatePacket(entity.getId(), snapshot(entity));
     }
 }

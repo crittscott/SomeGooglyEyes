@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.migration.EyeItemMigration;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,11 +19,12 @@ import java.util.List;
  * a mob reuses the mob's configured placement (see {@link AppearanceOverride}).
  *
  * <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
- * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob.
+ * {@link SlimyEyeItem}, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
+ * for the stored appearance and tooltip.
  *
  * <p>The custom 3D item renderer is attached per loader (see {@code GooglyEyeItemFactory}), not here:
- * on NeoForge and Forge it is an {@code Item#initializeClient} override their patched {@code Item}
- * adds, on Fabric a separate client-init registration.
+ * on Forge it is an {@code Item#initializeClient} override its patched {@code Item} adds, on NeoForge
+ * and Fabric a separate client-init registration.
  */
 public class GooglyEyeItem extends Item {
 
@@ -32,7 +35,7 @@ public class GooglyEyeItem extends Item {
     @Override
     public void verifyComponentsAfterLoad(ItemStack stack) {
         super.verifyComponentsAfterLoad(stack);
-        EyeItemProperties.migrateStoredAppearance(stack);
+        EyeItemMigration.migrate(stack);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class GooglyEyeItem extends Item {
 
     /** A new eye-item stack carrying {@code properties}. */
     public static ItemStack create(AppearanceOverride properties, int count) {
-        ItemStack stack = new ItemStack(ModItems.GOOGLY_EYE.get(), count);
+        ItemStack stack = new ItemStack(ModContent.GOOGLY_EYE.get(), count);
         EyeItemProperties.set(stack, properties);
         return stack;
     }

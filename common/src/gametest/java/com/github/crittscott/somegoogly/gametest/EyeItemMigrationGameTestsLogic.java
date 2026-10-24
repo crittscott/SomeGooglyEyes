@@ -10,11 +10,11 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.ModDataComponents;
-import com.github.crittscott.somegoogly.item.ModItems;
-import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.migration.EyeItemMigration;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
+import com.github.crittscott.somegoogly.registry.ModContent;
+import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -47,13 +47,13 @@ import java.util.Map;
 /** Loading-path coverage for converting released 1.20.1 eye-item NBT into the current component. */
 public final class EyeItemMigrationGameTestsLogic {
 
-    private static final String LEGACY_PROPERTIES_KEY = "EyeProperties";
+    private static final String LEGACY_PROPERTIES_KEY = EyeItemMigration.RELEASED_KEY;
 
     private EyeItemMigrationGameTestsLogic() {
     }
 
     private static List<Item> eyeItems() {
-        return List.of(ModItems.GOOGLY_EYE.get(), ModItems.SLIMY_EYE.get());
+        return List.of(ModContent.GOOGLY_EYE.get(), ModContent.SLIMY_EYE.get());
     }
 
     private static ItemStack legacyStack(Item item, AppearanceOverride appearance, int count) {
@@ -88,9 +88,9 @@ public final class EyeItemMigrationGameTestsLogic {
 
     private static SlimyEyeRecipe slimyEyeRecipe() {
         NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY,
-                Ingredient.of(ModItems.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
+                Ingredient.of(ModContent.GOOGLY_EYE.get()), Ingredient.of(Items.SLIME_BALL));
         return new SlimyEyeRecipe("", CraftingBookCategory.MISC,
-                new ItemStack(ModItems.SLIMY_EYE.get()), ingredients);
+                new ItemStack(ModContent.SLIMY_EYE.get()), ingredients);
     }
 
     private static RuntimeConfig usableConfig() {
@@ -104,6 +104,11 @@ public final class EyeItemMigrationGameTestsLogic {
         return config;
     }
 
+    /**
+     * A released 1.20.1 Googly Eye or Slimy Eye with iris, cornea, and glow keeps all three. In game: in a 1.20.1 world with
+     * Some Googly Eyes 0.8.2, put a dyed, glowing Googly Eye and Slimy Eye in a chest, then open the world in this build; both
+     * tooltips show the same colors and glow.
+     */
     public static void fullAppearanceMigratesForBothItems(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
@@ -124,6 +129,10 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A released eye with only some fields set, including glow forced off, keeps exactly those fields. In game: as above, with
+     * one eye dyed only and one crafted with redstone; the tooltips show just the dye color and glow off.
+     */
     public static void sparseAndGlowStatesMigrate(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         List<AppearanceOverride> appearances = List.of(
@@ -143,6 +152,10 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Converting an eye removes only the released key and keeps the stack's other data. In game: as above, with a renamed
+     * eye; it keeps its name, and {@code /data get} on a dropped copy shows no {@code EyeProperties} custom data.
+     */
     public static void cleanupPreservesUnrelatedStackData(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY.withGlow(true);
@@ -176,6 +189,10 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A current appearance component wins over released data, and released data that does not decode stays in custom data and
+     * is logged. No in-game form: neither state arises from a normal 1.20.1 save.
+     */
     public static void currentDataWinsAndMalformedLegacyDataSurvives(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride current = AppearanceOverride.EMPTY
@@ -185,16 +202,16 @@ public final class EyeItemMigrationGameTestsLogic {
 
         for (Item item : eyeItems()) {
             ItemStack conflict = legacyStack(item, old, 1);
-            conflict.set(ModDataComponents.EYE_PROPERTIES.get(), current);
+            conflict.set(ModContent.EYE_PROPERTIES.get(), current);
             ItemStack resolved = decode(conflict, registries);
             helper.assertTrue(EyeItemProperties.get(resolved).equals(current),
                     "an existing current component must win without field merging");
             assertLegacyAbsent(helper, resolved);
 
             ItemStack emptyConflict = legacyStack(item, old, 1);
-            emptyConflict.set(ModDataComponents.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
+            emptyConflict.set(ModContent.EYE_PROPERTIES.get(), AppearanceOverride.EMPTY);
             ItemStack emptyResolved = decode(emptyConflict, registries);
-            helper.assertTrue(emptyResolved.has(ModDataComponents.EYE_PROPERTIES.get())
+            helper.assertTrue(emptyResolved.has(ModContent.EYE_PROPERTIES.get())
                             && EyeItemProperties.get(emptyResolved).isEmpty(),
                     "component presence must win even when the current component is empty");
             assertLegacyAbsent(helper, emptyResolved);
@@ -202,7 +219,7 @@ public final class EyeItemMigrationGameTestsLogic {
             CompoundTag malformed = new CompoundTag();
             malformed.putString("irisColor", "not-a-color");
             ItemStack retained = decode(legacyStack(item, malformed, 1), registries);
-            helper.assertTrue(!retained.has(ModDataComponents.EYE_PROPERTIES.get()),
+            helper.assertTrue(!retained.has(ModContent.EYE_PROPERTIES.get()),
                     "malformed old data must not invent a current component");
             helper.assertTrue(customTag(retained).contains(LEGACY_PROPERTIES_KEY),
                     "malformed old data must remain available for recovery");
@@ -210,6 +227,10 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A converted eye saves only the current form and converting again changes nothing. In game: load the converted world,
+     * save and reload it; the eyes look the same.
+     */
     public static void conversionIsIdempotentAndPersists(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
@@ -218,7 +239,7 @@ public final class EyeItemMigrationGameTestsLogic {
         for (Item item : eyeItems()) {
             ItemStack migrated = decode(legacyStack(item, expected, 2), registries);
             ItemStack beforeRepeat = migrated.copy();
-            EyeItemProperties.migrateStoredAppearance(migrated);
+            EyeItemMigration.migrate(migrated);
             helper.assertTrue(ItemStack.matches(beforeRepeat, migrated),
                     "running migration again must not change the stack");
 
@@ -235,6 +256,10 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A converted eye crafts like a new one. In game: after loading the 1.20.1 world, craft a converted eye with dye, then with a
+     * slimeball, then with a cobweb; each result shows the expected appearance.
+     */
     public static void migratedEyesSurviveCrafting(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         EyeColor cornea = new EyeColor(0.2F, 0.3F, 0.4F);
@@ -242,7 +267,7 @@ public final class EyeItemMigrationGameTestsLogic {
                 .withIrisColor(new EyeColor(0.5F, 0.6F, 0.7F))
                 .withCorneaColor(cornea)
                 .withGlow(false);
-        ItemStack migrated = decode(legacyStack(ModItems.GOOGLY_EYE.get(), expected, 1), registries);
+        ItemStack migrated = decode(legacyStack(ModContent.GOOGLY_EYE.get(), expected, 1), registries);
 
         EyeModifierRecipe modifierRecipe = new EyeModifierRecipe(CraftingBookCategory.MISC);
         ItemStack dyed = modifierRecipe.assemble(grid(migrated, new ItemStack(Items.RED_DYE)), registries);
@@ -266,11 +291,15 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A converted Slimy Eye applies its appearance to a mob. In game: after loading the 1.20.1 world, right-click an eyeless cow
+     * with a converted dyed Slimy Eye; the cow gets eyes in that color.
+     */
     public static void migratedSlimyEyeAppliesToMob(GameTestHelper helper, Player player) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(0.2F, 0.5F, 0.8F)).withGlow(false);
-        ItemStack migrated = decode(legacyStack(ModItems.SLIMY_EYE.get(), expected, 2), registries);
+        ItemStack migrated = decode(legacyStack(ModContent.SLIMY_EYE.get(), expected, 2), registries);
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
 
@@ -284,7 +313,7 @@ public final class EyeItemMigrationGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             player.getAbilities().instabuild = false;
 
-            InteractionResult result = SlimyEyeItem.applyToTarget(migrated, (ServerPlayer) player, cow);
+            InteractionResult result = EyeItemService.applySlimyEye(migrated, (ServerPlayer) player, cow);
             helper.assertTrue(result.consumesAction(), "a migrated Slimy Eye must apply successfully");
             helper.assertTrue(EyeState.readProperties(cow).equals(expected),
                     "the mob must receive the converted appearance");
@@ -298,12 +327,16 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Eyes stored in a chest convert when the chest loads. In game: open a chest from the 1.20.1 world holding eyes; their
+     * tooltips show their appearance.
+     */
     public static void chestContentsMigrateOnLoad(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY.withGlow(true);
         BlockPos pos = new BlockPos(1, 1, 1);
         ChestBlockEntity source = new ChestBlockEntity(pos, Blocks.CHEST.defaultBlockState());
-        source.setItem(0, legacyStack(ModItems.GOOGLY_EYE.get(), expected, 4));
+        source.setItem(0, legacyStack(ModContent.GOOGLY_EYE.get(), expected, 4));
 
         CompoundTag saved = source.saveWithFullMetadata(registries);
         BlockEntity loaded = BlockEntity.loadStatic(pos, Blocks.CHEST.defaultBlockState(), saved, registries);
@@ -315,11 +348,15 @@ public final class EyeItemMigrationGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Eyes inside a container item, such as a shulker box in a chest, convert when the stack loads. In game: place a shulker
+     * box from the 1.20.1 world and open it; the eyes inside show their appearance.
+     */
     public static void nestedContainerContentsMigrateOnLoad(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         AppearanceOverride expected = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(0.6F, 0.4F, 0.2F));
-        ItemStack inner = legacyStack(ModItems.SLIMY_EYE.get(), expected, 2);
+        ItemStack inner = legacyStack(ModContent.SLIMY_EYE.get(), expected, 2);
         ItemStack shulker = new ItemStack(Items.SHULKER_BOX);
         shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(inner)));
 

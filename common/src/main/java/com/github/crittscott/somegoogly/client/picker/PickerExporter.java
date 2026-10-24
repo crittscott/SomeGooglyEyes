@@ -1,26 +1,19 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.config.ModVersionLookup;
-import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.platform.ClientNetworking;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -34,7 +27,7 @@ import java.util.function.UnaryOperator;
  * shipped data uses. Two entry points:
  * <ul>
  *   <li>{@link #export()} — the single committed mob, sent to the server as a
- *       {@code PickerExportPacket}; the creative-gated server handler validates it, writes
+ *       {@code PickerExportPacket}; the authorization-gated server handler validates it, writes
  *       {@code world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}, and {@code /reload}s
  *       so it persists and re-syncs through the normal path. Works from a remote client; the result
  *       arrives as a server chat message (rate-limited server-side to one export per 10 seconds).</li>
@@ -48,15 +41,14 @@ import java.util.function.UnaryOperator;
 public final class PickerExporter {
 
     private static final String DUMP_DIR = "somegoogly-export";
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private PickerExporter() {
     }
 
     /**
      * Send the committed draft for the chosen mob to the server to be written and reloaded. Client-side
-     * we only guard the obvious (something committed) and codec-encode the draft; all real validation —
-     * and the authoritative feedback — is the server's ({@code PickerExportService}).
+     * we only guard the obvious (something committed, small enough to send) and codec-encode the draft;
+     * all real validation — and the authoritative feedback — is the server's ({@code PickerExportService}).
      */
     public static Component export() {
         ResourceLocation type = PickerState.targetType();
@@ -64,15 +56,13 @@ public final class PickerExporter {
             return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
         RuntimeConfig config = PickerState.toConfig();
-        if (config.variants.isEmpty()) {
-            return Component.translatable("somegoogly.command.picker.export_nothing_committed");
-        }
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
-        Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElse(null);
-        if (!(encoded instanceof CompoundTag tag)) {
-            return Component.translatable("somegoogly.command.picker.export_encode_failed");
+        CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).getOrThrow();
+        PickerExportPacket packet = new PickerExportPacket(type, PickerState.currentDraftAge(), tag);
+        if (!packet.fitsServerbound()) {
+            return Component.translatable("somegoogly.command.picker.export_too_large");
         }
-        ClientNetworking.sendToServer(new PickerExportPacket(type, PickerState.currentDraftAge(), tag));
+        ClientNetworking.sendToServer(packet);
         return Component.translatable("somegoogly.command.picker.export_sent", type);
     }
 
@@ -84,9 +74,9 @@ public final class PickerExporter {
      * no reload) — it just captures what's authored/live so it can be copied into the mod's
      * {@code resources/}.
      *
-     * <p>The declared version range is re-synthesized from the currently-loaded version of each entity's
-     * namespace ({@link VersionRangeMatcher#rangeFor}); the original entry's declared range isn't
-     * preserved in the runtime config, so it can't be recovered.
+     * <p>The declared version is re-synthesized from the currently-loaded version of each entity's
+     * namespace ({@link ConfigFile#exportVersion}), exactly as {@code /sg export} declares it; the
+     * original entry's declared range isn't preserved in the runtime config, so it can't be recovered.
      */
     public static Component exportAll() {
         Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
@@ -107,11 +97,11 @@ public final class PickerExporter {
         int verbatim = 0;
         try {
             for (ResourceLocation id : ids) {
-                Optional<String> version = ModVersionLookup.versionForNamespace(id.getNamespace());
+                Optional<String> version = ConfigFile.exportVersion(id.getNamespace());
                 if (version.isEmpty()) {
                     continue; // namespace's mod isn't loaded; can't tag a version
                 }
-                String range = VersionRangeMatcher.rangeFor(version.get());
+                String range = version.get();
                 PickerState.AuthoredExport draft = drafts.get(id);
                 ConfigFile file;
                 if (draft != null) {
@@ -136,13 +126,7 @@ public final class PickerExporter {
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }
-                JsonElement json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file).result().orElse(null);
-                if (json == null) {
-                    continue;
-                }
-                Path dir = root.resolve("data").resolve(id.getNamespace()).resolve("eyes");
-                Files.createDirectories(dir);
-                Files.writeString(dir.resolve(id.getPath() + ".json"), GSON.toJson(json) + "\n");
+                file.writeJson(EyeConfigReloadListener.eyeFile(root, id));
                 files++;
             }
         } catch (IOException e) {

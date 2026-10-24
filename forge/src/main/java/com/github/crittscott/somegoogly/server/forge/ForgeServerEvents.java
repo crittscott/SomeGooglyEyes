@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.server.forge;
 
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +14,7 @@ import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -29,6 +31,7 @@ public final class ForgeServerEvents {
     private ForgeServerEvents() {
     }
 
+    /** Subscribe the server listeners to the game bus; called once from the mod constructor. */
     public static void register(IEventBus gameBus) {
         gameBus.addListener(ForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
@@ -44,10 +47,23 @@ public final class ForgeServerEvents {
         gameBus.addListener(ForgeServerEvents::onLivingDamage);
         gameBus.addListener(ForgeServerEvents::onLivingHeal);
         gameBus.addListener(ForgeServerEvents::onTrade);
+        gameBus.addListener(ForgeServerEvents::onPlayerClone);
+        gameBus.addListener(ForgeServerEvents::onLivingConversion);
+    }
+
+    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) {
+            EyeState.copy(event.getOriginal(), event.getEntity());
+        }
+    }
+
+    private static void onLivingConversion(LivingConversionEvent.Post event) {
+        EyeState.copy(event.getEntity(), event.getOutcome());
     }
 
     private static void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyServerCommands.register(event.getDispatcher());
+        GooglyServerCommands.register(event.getDispatcher(), event.getBuildContext());
     }
 
     /**
@@ -91,13 +107,17 @@ public final class ForgeServerEvents {
     }
 
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            ServerServices.onPlayerLeft(player);
-        }
+        ServerServices.onPlayerLeft((ServerPlayer) event.getEntity());
     }
 
+    /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
-        event.getPlayers().forEach(ServerServices::syncEyeConfigs);
+        ServerPlayer player = event.getPlayer();
+        if (player != null) {
+            ServerServices.syncEyeConfigs(player);
+        } else {
+            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+        }
     }
 
     private static void onServerStopping(ServerStoppingEvent event) {
@@ -105,26 +125,24 @@ public final class ForgeServerEvents {
     }
 
     private static void onServerTick(TickEvent.ServerTickEvent.Post event) {
-        ServerServices.onServerTick();
+        ServerBehaviorScheduler.serverTick();
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer player
-                && event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStartTracking(living, player);
+        if (event.getTarget() instanceof LivingEntity living) {
+            ServerServices.onStartTracking(living, (ServerPlayer) event.getEntity());
         }
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
         if (event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStopTracking(living);
+            ServerBehaviorScheduler.onStopTracking(living);
         }
     }
 
     private static void onLivingDamage(LivingDamageEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide() && event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(living);
+        if (event.getSource().getEntity() instanceof Player) {
+            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
         }
     }
 

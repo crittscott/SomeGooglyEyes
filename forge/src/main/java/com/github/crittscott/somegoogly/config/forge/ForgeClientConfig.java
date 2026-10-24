@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.config.forge;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -20,15 +20,15 @@ public final class ForgeClientConfig {
     private static final ForgeConfigSpec SPEC;
 
     static {
-        BUILDER.push("Client Settings");
-        DISABLE_GOOGLY_EYES = BUILDER.comment("Disable display of all googly eyes on this client.")
+        BUILDER.push(ClientConfig.SECTION);
+        DISABLE_GOOGLY_EYES = BUILDER.comment(ClientConfig.DISABLE_GOOGLY_EYES_COMMENT)
                 .define(ClientConfig.DISABLE_GOOGLY_EYES_KEY, ClientConfig.DISABLE_GOOGLY_EYES_DEFAULT);
-        DISABLED_ENTITIES = BUILDER.comment("Entity ids that should not display googly eyes")
+        DISABLED_ENTITIES = BUILDER.comment(ClientConfig.DISABLED_ENTITIES_COMMENT)
                 .defineList(ClientConfig.DISABLED_ENTITIES_KEY, ClientConfig.DISABLED_ENTITIES_DEFAULT,
-                        value -> value instanceof String);
-        DISABLED_MODS = BUILDER.comment("Mod namespaces whose entities should not display googly eyes")
+                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
+        DISABLED_MODS = BUILDER.comment(ClientConfig.DISABLED_MODS_COMMENT)
                 .defineList(ClientConfig.DISABLED_MODS_KEY, ClientConfig.DISABLED_MODS_DEFAULT,
-                        value -> value instanceof String);
+                        value -> value instanceof String string && ServerConfig.validateNamespace(string));
         BUILDER.pop();
         SPEC = BUILDER.build();
     }
@@ -36,9 +36,9 @@ public final class ForgeClientConfig {
     private ForgeClientConfig() {
     }
 
+    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.CLIENT, SPEC,
-                SomeGooglyCommon.MOD_ID + "-client.toml");
+        context.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
     }
 
@@ -49,6 +49,5 @@ public final class ForgeClientConfig {
         ClientConfig.DISABLE_GOOGLY_EYES.set(DISABLE_GOOGLY_EYES.get());
         ClientConfig.DISABLED_ENTITIES.set(new ArrayList<>(DISABLED_ENTITIES.get()));
         ClientConfig.DISABLED_MODS.set(new ArrayList<>(DISABLED_MODS.get()));
-        ClientConfig.invalidateCaches();
     }
 }

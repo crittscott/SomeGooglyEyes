@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -15,6 +16,7 @@ public final class FabricClientCommands {
     private FabricClientCommands() {
     }
 
+    /** Register the client {@code /sg} tree and forward its server-owned branches to the server. */
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         GooglyClientCommands.register(dispatcher);
 
@@ -26,11 +28,6 @@ public final class FabricClientCommands {
         addServerPath(dispatcher, "mob");
     }
 
-    /** Add picker nodes to Minecraft's server-supplied dispatcher for completion and help display. */
-    public static <S> void mergeSuggestions(CommandDispatcher<S> dispatcher) {
-        GooglyClientCommands.register(dispatcher);
-    }
-
     private static void addServerPath(
             CommandDispatcher<FabricClientCommandSource> dispatcher, String name) {
         LiteralArgumentBuilder<FabricClientCommandSource> node =
@@ -39,7 +36,7 @@ public final class FabricClientCommands {
         node.then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument(
                         "arguments", StringArgumentType.greedyString())
                 .executes(FabricClientCommands::fallThroughToServer));
-        dispatcher.getRoot().getChild("sg").addChild(node.build());
+        dispatcher.getRoot().getChild(GooglyServerCommands.ROOT).addChild(node.build());
     }
 
     private static int fallThroughToServer(CommandContext<FabricClientCommandSource> context)
