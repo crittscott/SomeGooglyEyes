@@ -55,4 +55,15 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    }
 }

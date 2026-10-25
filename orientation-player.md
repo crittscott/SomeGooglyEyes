@@ -26,9 +26,9 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - milked (cow, mooshroom, goat): bulge;
 - showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust): pupils swell to twice their size;
 - completing a villager or wandering-trader trade: swirl;
-- healed: swirl, with a 200-tick default cooldown.
+- healed: swirl, 200-tick default cooldown.
 
-Only one expression plays at a time, and expressions are cosmetic.
+One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else.
 
 ## Obtaining eyes
 
@@ -228,5 +228,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 98 dedicated-server GameTests; NeoForge and Forge each contain 94. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 100 dedicated-server GameTests; NeoForge and Forge each contain 96. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.
