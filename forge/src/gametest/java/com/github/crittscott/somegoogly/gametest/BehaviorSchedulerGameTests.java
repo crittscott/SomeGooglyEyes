@@ -52,4 +52,15 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, helper.makeMockServerPlayerInLevel());
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
+                helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    }
 }

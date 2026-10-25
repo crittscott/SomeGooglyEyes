@@ -21,11 +21,19 @@ import javax.annotation.Nullable;
  * against the entity's current placement via {@link #matches}. {@link #update()} advances the active
  * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
+ *
+ * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
+ * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network.
  */
 public class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
     // active behavior into the simulation allocates nothing per tick.
     private static final EyeInfluence INFLUENCE = new EyeInfluence();
+
+    /** Eye height multiplier while fully asleep. */
+    public static final float SLEEP_SQUASH_Y = 0.3F;
+    /** Ticks to ease fully into or out of the sleeping squint. */
+    public static final int SLEEP_EASE_TICKS = 10;
 
     /** The placement this tracker's eyes were built for. */
     public final HeadInfo helper;
@@ -63,6 +71,9 @@ public class GooglyTracker {
     @Nullable
     public BehaviorInstance active;
 
+    /** How far into the sleeping squint the eyes are: 0 awake, 1 fully squinted. */
+    private float sleepiness;
+
     public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
         this.parent = parent;
         this.helper = helper;
@@ -80,7 +91,14 @@ public class GooglyTracker {
         this.prevX = parent.getX();
         this.prevY = parent.getY();
         this.prevZ = parent.getZ();
+        // A tracker built for an already-sleeping entity starts squinted rather than closing from open.
+        this.sleepiness = parent.isSleeping() ? 1F : 0F;
         update();
+        for (EyeInfo[] head : eyes) {
+            for (EyeInfo info : head) {
+                info.prevSquashY = info.squashY;
+            }
+        }
     }
 
     /**
@@ -147,7 +165,7 @@ public class GooglyTracker {
         public float scaleMul = 1F, prevScaleMul = 1F;
         /** Love pupil size; see {@link #scaleMul}. */
         public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
-        /** Blink squash; see {@link #scaleMul}. */
+        /** Blink squash times the sleeping squint; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
         /** Color-change blend amount; see {@link #scaleMul}. */
         public float tintAmount, prevTintAmount;
@@ -306,15 +324,15 @@ public class GooglyTracker {
 
     /**
      * Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
-     * rule. Returns whether it started (a dropped trigger returns {@code false}). Called from the
-     * trigger packet on the client.
+     * rule — or the entity is asleep. Returns whether it started (a dropped trigger returns
+     * {@code false}). Called from the trigger packet on the client.
      *
      * <p>{@code elapsed} starts the behavior that many ticks in, so a player who starts watching a mob
      * mid-effect sees the same state as everyone else: the seeded {@code onStart} plus the age fully
      * determine each behavior's influence.
      */
     public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
-        if (active != null) {
+        if (active != null || parent.isSleeping()) {
             return false;
         }
         BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
@@ -348,6 +366,15 @@ public class GooglyTracker {
             }
         }
 
+        // Ease toward the sleeping squint or back out. A behavior already playing when sleep begins
+        // finishes under it (non-interruptable); the two multiply in squashY.
+        float sleepTarget = parent.isSleeping() ? 1F : 0F;
+        float sleepStep = 1F / SLEEP_EASE_TICKS;
+        sleepiness = sleepiness < sleepTarget
+                ? Math.min(sleepTarget, sleepiness + sleepStep)
+                : Math.max(sleepTarget, sleepiness - sleepStep);
+        float sleepSquash = Mth.lerp(sleepiness, 1F, SLEEP_SQUASH_Y);
+
         float headYaw = parent.getYHeadRot();
         float headPitch = parent.getXRot();
         for (int i = 0; i < eyes.length; i++) {
@@ -366,7 +393,7 @@ public class GooglyTracker {
                 info.prevIrisScaleMul = info.irisScaleMul;
                 info.irisScaleMul = INFLUENCE.irisScaleMul;
                 info.prevSquashY = info.squashY;
-                info.squashY = INFLUENCE.squashY;
+                info.squashY = INFLUENCE.squashY * sleepSquash;
                 info.prevTintAmount = info.tintAmount;
                 info.tintAmount = INFLUENCE.tintAmount;
                 info.tintColor = INFLUENCE.corneaTint;

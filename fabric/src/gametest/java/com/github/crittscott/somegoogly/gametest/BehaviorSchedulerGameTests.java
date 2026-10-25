@@ -48,4 +48,15 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    }
 }

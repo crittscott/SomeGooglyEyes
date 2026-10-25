@@ -21,7 +21,8 @@ import java.util.Map;
  * client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
  * rule holds across every viewer and so server-only game events drive the same path. Triggers are the
  * ambient idle timer below plus game-event reactions (hurt/milked → grow, trade/heal → swirl, vanilla
- * affection entity events → love).
+ * affection entity events → love). A sleeping mob plays nothing: every trigger is dropped as if the mob
+ * were busy, and each client derives the sleeping squint from vanilla's synced sleep state.
  *
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
  * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities). A
@@ -278,8 +279,9 @@ public final class ServerBehaviorScheduler {
     }
 
     private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, int duration, long seed) {
-        if (state.busyUntil != 0) {
-            return false; // already playing something — drop the trigger
+        // Already playing something, or asleep (the client holds a squint instead): drop the trigger.
+        if (state.busyUntil != 0 || mob.isSleeping()) {
+            return false;
         }
         state.activeDuration = duration;
         state.activeId = behavior.id();
@@ -296,7 +298,7 @@ public final class ServerBehaviorScheduler {
 
     /**
      * Try to start {@code behavior} on {@code mob} now, honoring "one at a time, non-interruptable":
-     * dropped (returns {@code false}) if the mob is already mid-behavior. Works even for a mob with no
+     * dropped (returns {@code false}) if the mob is already mid-behavior or asleep. Works even for a mob with no
      * tracking state yet (creates one), so the debug command can drive any looked-at mob.
      */
     public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {
