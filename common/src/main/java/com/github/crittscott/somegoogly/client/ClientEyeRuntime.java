@@ -6,8 +6,10 @@ import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /** Loader-neutral owner of client eye trackers and their simulation lifecycle. */
 public final class ClientEyeRuntime {
@@ -18,6 +20,10 @@ public final class ClientEyeRuntime {
     private static final int SIMULATE_IDLE_TICKS = 1;
 
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
+    // Entity ids the server reports angry. Kept apart from the trackers, which come and go with rendering,
+    // so a mob that turns angry off screen is red when it comes into view. An id left behind by a mob that
+    // died angry is never reused this connection and goes at disconnect.
+    private static final Set<Integer> ANGRY = new HashSet<>();
     private static int clientTicks;
 
     private ClientEyeRuntime() {
@@ -26,6 +32,24 @@ public final class ClientEyeRuntime {
     /** Drop every tracker; call on client disconnect and on a resource reload. */
     public static void clear() {
         TRACKERS.clear();
+    }
+
+    /** Forget every server-reported anger; call on client disconnect. */
+    public static void clearAnger() {
+        ANGRY.clear();
+    }
+
+    /** Record the server-reported anger of {@code living} and pass it to its live tracker, if any. */
+    public static void setAngry(LivingEntity living, boolean angry) {
+        if (angry) {
+            ANGRY.add(living.getId());
+        } else {
+            ANGRY.remove(living.getId());
+        }
+        GooglyTracker tracker = TRACKERS.get(living);
+        if (tracker != null) {
+            tracker.angry = angry;
+        }
     }
 
     /** The client-tick counter this runtime advances once per {@link #tick()}. */
@@ -41,7 +65,7 @@ public final class ClientEyeRuntime {
     public static GooglyTracker get(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker == null || !tracker.matches(helper)) {
-            tracker = new GooglyTracker(living, helper);
+            tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()));
             TRACKERS.put(living, tracker);
         }
         return tracker;

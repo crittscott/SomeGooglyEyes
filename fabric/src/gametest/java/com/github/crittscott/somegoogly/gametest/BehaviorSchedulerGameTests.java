@@ -64,4 +64,19 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     public static void swellingCreeperRattles(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.swellingCreeperRattles(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angryMobsHaveRedPupils(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.serverOnlyAngerIsShared(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void creepyEndermanPulses(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
+    }
 }

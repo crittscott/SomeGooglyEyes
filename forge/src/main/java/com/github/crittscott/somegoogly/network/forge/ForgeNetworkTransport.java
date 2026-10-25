@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network.forge;
 
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -45,6 +46,9 @@ public final class ForgeNetworkTransport {
         connection.play().clientbound().addMain(
                 EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC,
                 (payload, context) -> ClientNetworkHandler.handleBehavior(payload));
+        connection.play().clientbound().addMain(
+                EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC,
+                (payload, context) -> ClientNetworkHandler.handleAnger(payload));
         connection.play().serverbound().addMain(
                 PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC,
                 (payload, context) -> PickerFreezePacket.handle(payload, sender(context)));

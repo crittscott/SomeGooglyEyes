@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.network.neoforge;
 
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -32,6 +33,8 @@ public final class NeoForgeNetworkTransport {
                 (payload, context) -> ClientNetworkHandler.handleEyeConfigSync(payload));
         registrar.playToClient(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC,
                 (payload, context) -> ClientNetworkHandler.handleBehavior(payload));
+        registrar.playToClient(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC,
+                (payload, context) -> ClientNetworkHandler.handleAnger(payload));
         registrar.playToServer(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC,
                 (payload, context) -> PickerFreezePacket.handle(payload, serverPlayer(context)));
         registrar.playToServer(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC,

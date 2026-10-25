@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -39,6 +40,7 @@ public final class FabricNetworkTransport {
         PayloadTypeRegistry.playS2C().register(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC);
 

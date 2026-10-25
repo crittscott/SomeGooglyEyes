@@ -6,10 +6,13 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import net.minecraft.SharedConstants;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +29,11 @@ import javax.annotation.Nullable;
  * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
  * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A
  * swelling creeper ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep
- * getting kicked back into flight in proportion to how far the swell has gone.
+ * getting kicked back into flight in proportion to how far the swell has gone. An aggressive mob
+ * ({@link Mob#isAggressive}, synced by vanilla) or one the server reports {@link #angry} has its pupils
+ * eased to red, and a creepy enderman ({@link EnderMan#isCreepy}, synced by vanilla) has its pupils pulse
+ * at a frequency of its own. None of these ongoing states blocks a behavior: each is folded in on top of
+ * whatever plays.
  */
 public class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
@@ -37,6 +44,20 @@ public class GooglyTracker {
     public static final float SLEEP_SQUASH_Y = 0.3F;
     /** Ticks to ease fully into or out of the sleeping squint. */
     public static final int SLEEP_EASE_TICKS = 10;
+    /** Pupil color while fully angry. */
+    public static final float[] ANGER_IRIS_COLOR = {0.9F, 0.05F, 0.05F};
+    /** Ticks to ease fully into or out of angry red pupils. */
+    public static final int ANGER_EASE_TICKS = 10;
+    /** Slowest and fastest creepy-enderman pupil pulse, in cycles per second. */
+    public static final float CREEPY_MIN_HZ = 0.5F;
+    public static final float CREEPY_MAX_HZ = 2F;
+    /** Range of each eye's offset into the creepy pulse, in radians. */
+    public static final float CREEPY_MIN_PHASE_OFFSET = Mth.HALF_PI;
+    public static final float CREEPY_MAX_PHASE_OFFSET = 3F * Mth.HALF_PI;
+    /** How far a creepy enderman's pupils swell and shrink around their size (fraction of it). */
+    public static final float CREEPY_PULSE_AMPLITUDE = 0.35F;
+    /** Ticks to ease fully into or out of the creepy pulse. */
+    public static final int CREEPY_EASE_TICKS = 10;
 
     /** The placement this tracker's eyes were built for. */
     public final HeadInfo helper;
@@ -74,13 +95,35 @@ public class GooglyTracker {
     @Nullable
     public BehaviorInstance active;
 
+    /**
+     * Whether the server reports this entity angry in a way vanilla doesn't sync (see {@code
+     * EyeAngerPacket}); kept current by {@link ClientNetworkHandler#handleAnger}.
+     */
+    public boolean angry;
+
     /** How far into the sleeping squint the eyes are: 0 awake, 1 fully squinted. */
     private float sleepiness;
+    /** How red the pupils are: 0 calm, 1 fully angry. */
+    private float anger;
+    /** How strongly the creepy pulse plays: 0 not creepy, 1 full pulse. */
+    private float creepiness;
+    /** Creepy pulse phase in radians, and how far it advances each tick. */
+    private float creepyPhase;
+    private final float creepyStep;
 
-    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper) {
+    /**
+     * Build the tracker. {@code angry} is the server-reported anger already known for this entity, so a
+     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted.
+     */
+    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper, boolean angry) {
         this.parent = parent;
         this.helper = helper;
         this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
+        // Drawn from the UUID-seeded source, so every viewer sees the same enderman pulse at the same rate,
+        // and each eye at the same offset within it.
+        float hz = Mth.lerp(rand.nextFloat(), CREEPY_MIN_HZ, CREEPY_MAX_HZ);
+        this.creepyStep = Mth.TWO_PI * hz / SharedConstants.TICKS_PER_SECOND;
+        this.angry = angry;
         this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
 
@@ -88,18 +131,23 @@ public class GooglyTracker {
             this.eyes[i] = new EyeInfo[helper.getEyeCount(i)];
             for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
                 this.eyes[i][i1] = new EyeInfo();
+                this.eyes[i][i1].creepyPhaseOffset =
+                        Mth.lerp(rand.nextFloat(), CREEPY_MIN_PHASE_OFFSET, CREEPY_MAX_PHASE_OFFSET);
             }
         }
 
         this.prevX = parent.getX();
         this.prevY = parent.getY();
         this.prevZ = parent.getZ();
-        // A tracker built for an already-sleeping entity starts squinted rather than closing from open.
+        // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
         this.sleepiness = parent.isSleeping() ? 1F : 0F;
+        this.anger = isAngry() ? 1F : 0F;
+        this.creepiness = isCreepy() ? 1F : 0F;
         update();
         for (EyeInfo[] head : eyes) {
             for (EyeInfo info : head) {
                 info.prevSquashY = info.squashY;
+                info.prevIrisTintAmount = info.irisTintAmount;
             }
         }
     }
@@ -168,7 +216,7 @@ public class GooglyTracker {
          * instantly, not interpolated).
          */
         public float scaleMul = 1F, prevScaleMul = 1F;
-        /** Love pupil size; see {@link #scaleMul}. */
+        /** Love pupil size times the creepy pulse; see {@link #scaleMul}. */
         public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
         /** Blink squash times the sleeping squint; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
@@ -176,6 +224,10 @@ public class GooglyTracker {
         public float tintAmount, prevTintAmount;
         /** Color-change target color; see {@link #scaleMul}. */
         public float[] tintColor;
+        /** How far the pupil is blended toward {@link #ANGER_IRIS_COLOR}; see {@link #scaleMul}. */
+        public float irisTintAmount, prevIrisTintAmount;
+        /** This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step. */
+        public float creepyPhaseOffset;
 
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
         private double prevMotionX;
@@ -383,12 +435,14 @@ public class GooglyTracker {
 
         // Ease toward the sleeping squint or back out. A behavior already playing when sleep begins
         // finishes under it (non-interruptable); the two multiply in squashY.
-        float sleepTarget = parent.isSleeping() ? 1F : 0F;
-        float sleepStep = 1F / SLEEP_EASE_TICKS;
-        sleepiness = sleepiness < sleepTarget
-                ? Math.min(sleepTarget, sleepiness + sleepStep)
-                : Math.max(sleepTarget, sleepiness - sleepStep);
+        sleepiness = ease(sleepiness, parent.isSleeping(), SLEEP_EASE_TICKS);
         float sleepSquash = Mth.lerp(sleepiness, 1F, SLEEP_SQUASH_Y);
+
+        // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
+        anger = ease(anger, isAngry(), ANGER_EASE_TICKS);
+        creepiness = ease(creepiness, isCreepy(), CREEPY_EASE_TICKS);
+        creepyPhase = (creepyPhase + creepyStep) % Mth.TWO_PI;
+        float creepyAmplitude = CREEPY_PULSE_AMPLITUDE * creepiness;
 
         // A swelling creeper's pupils rattle harder the closer it is to exploding. getSwelling runs a little
         // past 1 at the end of the fuse.
@@ -410,17 +464,35 @@ public class GooglyTracker {
                 info.prevScaleMul = info.scaleMul;
                 info.scaleMul = INFLUENCE.eyeScaleMul;
                 info.prevIrisScaleMul = info.irisScaleMul;
-                info.irisScaleMul = INFLUENCE.irisScaleMul;
+                info.irisScaleMul = INFLUENCE.irisScaleMul
+                        * (1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset));
                 info.prevSquashY = info.squashY;
                 info.squashY = INFLUENCE.squashY * sleepSquash;
                 info.prevTintAmount = info.tintAmount;
                 info.tintAmount = INFLUENCE.tintAmount;
                 info.tintColor = INFLUENCE.corneaTint;
+                info.prevIrisTintAmount = info.irisTintAmount;
+                info.irisTintAmount = anger;
 
                 // Step the pupil physics, with the behavior's spring folded in as a force.
                 info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
                         INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
             }
         }
+    }
+
+    /** Whether the pupils should be red: the mob is attacking (vanilla-synced) or the server says it's angry. */
+    private boolean isAngry() {
+        return angry || parent instanceof Mob mob && mob.isAggressive();
+    }
+
+    private boolean isCreepy() {
+        return parent instanceof EnderMan enderMan && enderMan.isCreepy();
+    }
+
+    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
+    private static float ease(float value, boolean on, int ticks) {
+        float step = 1F / ticks;
+        return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
     }
 }

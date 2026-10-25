@@ -33,6 +33,11 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angerPacketRoundTrips(GameTestHelper helper) {
+        SerializationGameTestsLogic.angerPacketRoundTrips(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.configSyncPacketRoundTrips(helper);
     }
