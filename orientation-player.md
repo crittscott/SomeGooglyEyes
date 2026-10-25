@@ -24,11 +24,11 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
-- showing affection (an animal entering love mode, villagers breeding, an iron golem offering a flower, an ocelot gaining trust): love, the pupils swelling to twice their size, capped at the eye's rim;
+- showing affection (an animal entering love mode, villagers breeding, an iron golem offering a flower, an ocelot gaining trust): love, the pupils swelling to twice their size, up to the rim;
 - completing a villager or wandering-trader trade: swirl;
-- healed: swirl, with a 200-tick default cooldown.
+- healed: swirl, 200-tick default cooldown.
 
-Only one expression plays at a time, and expressions are cosmetic.
+One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else.
 
 ## Obtaining eyes
 
@@ -228,5 +228,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 96 dedicated-server GameTests; Forge contains 92. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
+- Fabric contains 98 dedicated-server GameTests; Forge contains 94. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

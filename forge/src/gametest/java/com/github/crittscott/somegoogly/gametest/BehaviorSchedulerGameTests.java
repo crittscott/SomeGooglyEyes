@@ -54,4 +54,15 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void sleepingMobSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    }
 }

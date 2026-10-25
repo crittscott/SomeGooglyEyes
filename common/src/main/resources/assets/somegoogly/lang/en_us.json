@@ -10,7 +10,7 @@
   "key.somegoogly.part_next": "Next model part",
   "key.somegoogly.part_prev": "Previous model part",
   "key.somegoogly.toggle": "Toggle picker",
-  "somegoogly.command.admin.behavior_dropped": "dropped %s (mob is busy)",
+  "somegoogly.command.admin.behavior_dropped": "dropped %s (mob is busy or asleep)",
   "somegoogly.command.admin.behavior_playing": "playing %s",
   "somegoogly.command.admin.feedback": "[sg admin] %s",
   "somegoogly.command.admin.glow_set": "glow = %s",
