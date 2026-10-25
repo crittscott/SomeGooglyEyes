@@ -63,4 +63,9 @@ public final class BehaviorSchedulerGameTests {
     public static void sleepingMobSquints(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void swellingCreeperRattles(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.swellingCreeperRattles(helper);
+    }
 }

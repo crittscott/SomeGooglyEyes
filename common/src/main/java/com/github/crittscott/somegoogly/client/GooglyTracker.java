@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Creeper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +24,9 @@ import javax.annotation.Nullable;
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
  *
  * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
- * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network.
+ * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A
+ * swelling creeper ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep
+ * getting kicked back into flight in proportion to how far the swell has gone.
  */
 public class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
@@ -122,6 +125,8 @@ public class GooglyTracker {
         private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
         private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
         private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
+        private static final float R_AGITATED_MIN_SPEED = 1.5f;  // speed floor at full agitation (units/tick)
+        private static final float R_AGITATED_KICK = 1.6f;       // random-direction kick at full agitation when below the floor
 
         /** Head orientation, kept across ticks to differentiate into angular velocity and acceleration. */
         public float prevRotationPitch;
@@ -197,9 +202,10 @@ public class GooglyTracker {
          * @param anchorX   the behavior spring's X target in the unit disk (ignored when stiffness is nonpositive)
          * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
+         * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick
          */
         public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
-                           float anchorX, float anchorY, float stiffness) {
+                           float anchorX, float anchorY, float stiffness, float agitation) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
@@ -271,6 +277,15 @@ public class GooglyTracker {
             } else {
                 momentumX *= R_AIR;
                 momentumY *= R_AIR;
+            }
+
+            // Agitation feeds energy back in: a pupil that has slowed below the floor is kicked in a random
+            // direction, so gravity and the wall bounce keep shaping its flight instead of letting it park.
+            float minSpeed = agitation * R_AGITATED_MIN_SPEED;
+            if (minSpeed > 0F && momentumX * momentumX + momentumY * momentumY < minSpeed * minSpeed) {
+                float angle = rand.nextFloat() * Mth.TWO_PI;
+                momentumX += agitation * R_AGITATED_KICK * Mth.cos(angle);
+                momentumY += agitation * R_AGITATED_KICK * Mth.sin(angle);
             }
 
             deltaX += momentumX;
@@ -375,6 +390,10 @@ public class GooglyTracker {
                 : Math.max(sleepTarget, sleepiness - sleepStep);
         float sleepSquash = Mth.lerp(sleepiness, 1F, SLEEP_SQUASH_Y);
 
+        // A swelling creeper's pupils rattle harder the closer it is to exploding. getSwelling runs a little
+        // past 1 at the end of the fuse.
+        float agitation = parent instanceof Creeper creeper ? Math.min(1F, creeper.getSwelling(1F)) : 0F;
+
         float headYaw = parent.getYHeadRot();
         float headPitch = parent.getXRot();
         for (int i = 0; i < eyes.length; i++) {
@@ -400,7 +419,7 @@ public class GooglyTracker {
 
                 // Step the pupil physics, with the behavior's spring folded in as a force.
                 info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
-                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness);
+                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
             }
         }
     }
