@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Applies the three server-to-client payloads on the client game thread. Loader payload registration runs on
+ * Applies the four server-to-client payloads on the client game thread. Loader payload registration runs on
  * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
  * payload arrives rather than when the handler is registered.
  */
@@ -50,6 +51,14 @@ public final class ClientNetworkHandler {
         GooglyTracker tracker = ClientEyeRuntime.peek(living);
         if (tracker != null) {
             tracker.startBehavior(behavior, packet.duration(), packet.seed(), packet.elapsed());
+        }
+    }
+
+    /** Record a server-reported anger change; an unknown entity is ignored. */
+    public static void handleAnger(EyeAngerPacket packet) {
+        LivingEntity living = living(packet.entityId());
+        if (living != null) {
+            ClientEyeRuntime.setAngry(living, packet.angry());
         }
     }
 

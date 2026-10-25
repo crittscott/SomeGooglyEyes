@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 public class ServerConfig {
     public static final String ALLOW_SPAWN_ALL_KEY = "allowSpawnAll";
     public static final boolean ALLOW_SPAWN_ALL_DEFAULT = false;
+    public static final String ANGRY_EYES_KEY = "angryEyes";
+    public static final boolean ANGRY_EYES_DEFAULT = true;
     public static final String AMBIENT_BEHAVIOR_POOL_KEY = "ambientBehaviorPool";
     public static final List<String> AMBIENT_BEHAVIOR_POOL_DEFAULT = List.of(
             EyeBehavior.BLINK.id().toString(),
@@ -98,6 +100,11 @@ public class ServerConfig {
     public static final String LOVE_ON_AFFECTION_COMMENT = """
             Whether an eyed mob's pupils swell when it shows affection: an animal entering love mode,
             villagers breeding, an iron golem offering a flower, or an ocelot coming to trust a player.""";
+    public static final String ANGRY_EYES_COMMENT = """
+            Whether an eyed mob that is angry but not attacking, such as a provoked iron golem, piglin,
+            or zombified piglin, shows red pupils. The server checks each watched eyed mob once per tick
+            and tells clients only when its anger starts or ends. Mobs that are attacking show red pupils
+            regardless, from state the game already shares.""";
     public static final String SWIRL_ON_TRADE_COMMENT = """
             Whether a villager's or wandering trader's eyes swirl when a trade completes.""";
     public static final String SWIRL_ON_HEAL_COMMENT = """
@@ -128,6 +135,8 @@ public class ServerConfig {
 
     /** Whether {@code /sg spawnall} may run. */
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
+    /** Whether the server shares eyed mobs' anger with clients, for red pupils. */
+    public static final ConfigValue<Boolean> ANGRY_EYES = ConfigValue.bool(ANGRY_EYES_DEFAULT);
     /** Behavior ids idle mobs choose from, parsed to the registered behaviors they name. */
     public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
             AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool);
@@ -282,6 +291,7 @@ public class ServerConfig {
         AMBIENT_BEHAVIORS.reset();
         AMBIENT_MAX_TICKS.reset();
         AMBIENT_MIN_TICKS.reset();
+        ANGRY_EYES.reset();
         ENTITY_OVERRIDES.reset();
         GLOBAL_PERCENT.reset();
         GOOGLY_EYES_ENABLED.reset();

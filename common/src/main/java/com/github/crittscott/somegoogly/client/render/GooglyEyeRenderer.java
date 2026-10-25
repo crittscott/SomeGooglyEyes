@@ -168,12 +168,20 @@ public final class GooglyEyeRenderer {
         IRIS[0] = iris.r();
         IRIS[1] = iris.g();
         IRIS[2] = iris.b();
+        // Anger blends the pupil toward red.
+        float irisTintAmount = lerp(eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount, partialTicks);
+        if (irisTintAmount > 0F) {
+            for (int c = 0; c < 3; c++) {
+                IRIS[c] = lerp(IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c], irisTintAmount);
+            }
+        }
 
         // Pupil position: the physics delta, which already includes any behavior spring. The simulation
         // keeps it inside the unit disk (the full cornea circle once mapped), so no clamp is needed here.
         float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
         float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
-        // Love swells the pupil, capped where it fills the cornea; a configured size is never shrunk.
+        // Love and the creepy pulse swell the pupil, capped where it fills the cornea; the cap never shrinks a
+        // configured size.
         float baseIrisScale = placement.irisScale();
         float irisScaleMul = lerp(eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul, partialTicks);
         float irisScale = Math.min(baseIrisScale * irisScaleMul,

@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +27,10 @@ import java.util.Map;
  * ambient idle timer below plus game-event reactions (hurt/milked → grow, trade/heal → swirl, vanilla
  * affection entity events → love). A sleeping mob plays nothing: every trigger is dropped as if the mob
  * were busy, and each client derives the sleeping squint from vanilla's synced sleep state.
+ *
+ * <p>Anger is the one ongoing state the scheduler shares, because vanilla keeps it on the server: each
+ * tick it checks every {@link #ACTIVE} mob with {@link #isAngry} and sends an {@link EyeAngerPacket} only
+ * when that changes. It never blocks a behavior; the client reddens the pupils underneath whatever plays.
  *
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
  * maintained from {@code StartTracking}/{@code StopTracking} (so we never scan all loaded entities). A
@@ -54,6 +62,7 @@ public final class ServerBehaviorScheduler {
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
     private static final class MobState {
         int activeDuration;
+        boolean angry;                // the anger last sent to this mob's trackers
         ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
         long activeSeed;
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
@@ -189,6 +198,9 @@ public final class ServerBehaviorScheduler {
             ACTIVE.putIfAbsent(mob, state);
         }
 
+        if (state.angry) {
+            Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), true));
+        }
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
         if (state.busyUntil != 0) {
@@ -266,6 +278,13 @@ public final class ServerBehaviorScheduler {
                 STATES.remove(mob);
                 continue;
             }
+            // Anger changes are rare, so a packet goes out only when one happens. An eyeless mob's anger
+            // stays unsent; it's picked up on the first tick after the mob gains eyes.
+            boolean angry = isAngry(mob);
+            if (angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
+                state.angry = angry;
+                Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
+            }
             // Idle + ambient enabled → count down, and only at expiry check whether the mob still has
             // eyes (a mob can be walked here after having lost them again — see the class doc).
             if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
@@ -276,6 +295,21 @@ public final class ServerBehaviorScheduler {
                 }
             }
         }
+    }
+
+    /**
+     * Whether {@code mob}'s eyes should show anger the client can't see for itself: a neutral mob (iron
+     * golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
+     * to be angry at. Always {@code false} while {@code angryEyes} is off.
+     */
+    public static boolean isAngry(LivingEntity mob) {
+        if (!ServerConfig.ANGRY_EYES.get()) {
+            return false;
+        }
+        if (mob instanceof NeutralMob neutral) {
+            return neutral.isAngry();
+        }
+        return mob instanceof AbstractPiglin && mob.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
     private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, int duration, long seed) {

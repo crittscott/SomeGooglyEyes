@@ -20,8 +20,13 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -35,8 +40,9 @@ import net.minecraft.world.item.Items;
  * ambient play is disabled so only the events under test can move the schedule, except where ambient
  * rolls are what's under test. The sleeping squint, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
- * swelling creeper's rattle, derived the same way from vanilla's synced swell. The mid-effect
- * start-tracking catch-up packet needs a connected client and stays source-verified.
+ * swelling creeper's rattle, derived the same way from vanilla's synced swell, the angry red pupils, and
+ * the creepy enderman's pulse. The mid-effect start-tracking catch-up packet and the anger packet need a
+ * connected client and stay source-verified.
  */
 public final class BehaviorSchedulerGameTestsLogic {
 
@@ -50,6 +56,12 @@ public final class BehaviorSchedulerGameTestsLogic {
     private static final int SWELL_WINDOW_TICKS = 10;
     private static final float CALM_PUPIL_STEP = 0.01F;
     private static final float AGITATED_PUPIL_STEP = 0.05F;
+
+    // Float slack for comparing eased tints and pulsed pupil sizes.
+    private static final float TINT_TOLERANCE = 1e-4F;
+    // Creepy pulse: ticks covering two cycles of the slowest pulse, and a behavior lasting half of one.
+    private static final int PULSE_SAMPLE_TICKS = (int) (2 * 20 / GooglyTracker.CREEPY_MIN_HZ);
+    private static final int PULSE_BEHAVIOR_TICKS = (int) (20 / GooglyTracker.CREEPY_MIN_HZ / 2);
 
     private BehaviorSchedulerGameTestsLogic() {
     }
@@ -320,7 +332,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, "villagers have an eye config");
 
-        GooglyTracker tracker = new GooglyTracker(villager, headInfo);
+        GooglyTracker tracker = new GooglyTracker(villager, headInfo, false);
         helper.assertTrue(allSquash(tracker, 1F), "an awake mob's eyes are open");
 
         villager.startSleeping(villager.blockPosition());
@@ -332,7 +344,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.assertTrue(!tracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
                 "no behavior starts on the client while the mob sleeps");
 
-        GooglyTracker joined = new GooglyTracker(villager, headInfo);
+        GooglyTracker joined = new GooglyTracker(villager, headInfo, false);
         helper.assertTrue(allSquash(joined, GooglyTracker.SLEEP_SQUASH_Y)
                         && allPrevSquash(joined, GooglyTracker.SLEEP_SQUASH_Y),
                 "a tracker built for an already-sleeping mob starts squinted");
@@ -356,7 +368,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
         helper.assertTrue(headInfo != null, "creepers have an eye config");
 
-        GooglyTracker tracker = new GooglyTracker(creeper, headInfo);
+        GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false);
         helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
                 "a calm creeper's pupils hang still");
 
@@ -370,6 +382,156 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
                 "once the creeper shrinks back its pupils settle");
         helper.succeed();
+    }
+
+    /**
+     * An attacking mob's pupils ease to red, stay red under a behavior, and ease back when it stops; the
+     * server's anger report does the same, and a tracker built for a mob already reported angry starts red.
+     * Drives the client-side {@link GooglyTracker} directly against a server zombie. In game: let an eyed
+     * zombie chase you and its pupils turn red; outrun it until it gives up and they fade back.
+     */
+    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        HeadInfo headInfo = headInfo(helper, zombie);
+
+        GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false);
+        helper.assertTrue(allIrisTint(tracker, 0F), "a calm mob's pupils keep their color");
+
+        zombie.setAggressive(true);
+        tracker.update();
+        helper.assertTrue(!allIrisTint(tracker, 0F) && !allIrisTint(tracker, 1F),
+                "turning aggressive eases toward red rather than snapping");
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS);
+        helper.assertTrue(allIrisTint(tracker, 1F), "an aggressive mob's pupils are red");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, 5, 1L, 0),
+                "anger doesn't block a behavior");
+        tracker.update();
+        helper.assertTrue(allIrisTint(tracker, 1F), "the pupils stay red under a behavior");
+
+        zombie.setAggressive(false);
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
+        helper.assertTrue(allIrisTint(tracker, 0F), "calming down eases the red away");
+
+        tracker.angry = true;
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
+        helper.assertTrue(allIrisTint(tracker, 1F), "server-reported anger turns the pupils red");
+
+        GooglyTracker joined = new GooglyTracker(zombie, headInfo, true);
+        helper.assertTrue(allIrisTint(joined, 1F) && allPrevIrisTint(joined, 1F),
+                "a tracker built for a mob already reported angry starts red");
+        helper.succeed();
+    }
+
+    /**
+     * The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
+     * as angry while {@code angryEyes} is off. In game: hit an eyed iron golem and its pupils turn red even
+     * when it is not swinging at you; with {@code angryEyes = false} they are red only while it attacks.
+     */
+    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
+        boolean angryEyes = ServerConfig.ANGRY_EYES.get();
+        try {
+            ServerConfig.ANGRY_EYES.set(true);
+            IronGolem golem = helper.spawnWithNoFreeWill(EntityType.IRON_GOLEM, new BlockPos(1, 2, 1));
+            Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
+
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), "a calm golem isn't angry");
+            golem.setRemainingPersistentAngerTime(100);
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), "a provoked golem is angry");
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), "a calm piglin isn't angry");
+            piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), "a piglin with an anger target is angry");
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), "a cow is never angry");
+
+            ServerConfig.ANGRY_EYES.set(false);
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem) && !ServerBehaviorScheduler.isAngry(piglin),
+                    "angryEyes=false shares no anger");
+        } finally {
+            ServerConfig.ANGRY_EYES.set(angryEyes);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A creepy enderman's pupils swell and shrink around their size, keep pulsing under a behavior, and settle
+     * when it calms down. Drives the client-side {@link GooglyTracker} directly against a server enderman made
+     * creepy by giving it a target. In game: look an eyed enderman in the face; while it screams its pupils
+     * throb, and they settle once it loses interest.
+     */
+    public static void creepyEndermanPulses(GameTestHelper helper) {
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(1, 2, 1));
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
+        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false);
+        helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
+                "a calm enderman's pupils hold their size");
+
+        enderMan.setTarget(cow);
+        helper.assertTrue(enderMan.isCreepy(), "an enderman with a target is creepy");
+        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS);
+        float[] range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
+        float amplitude = GooglyTracker.CREEPY_PULSE_AMPLITUDE;
+        helper.assertTrue(range[0] < 1F - amplitude / 2 && range[1] > 1F + amplitude / 2,
+                "a creepy enderman's pupils swell and shrink");
+        helper.assertTrue(range[0] >= 1F - amplitude - TINT_TOLERANCE
+                        && range[1] <= 1F + amplitude + TINT_TOLERANCE,
+                "the pulse stays within its amplitude");
+
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, PULSE_BEHAVIOR_TICKS, 1L, 0),
+                "a creepy enderman still plays a behavior");
+        range = irisScaleRange(tracker, PULSE_BEHAVIOR_TICKS - 1);
+        helper.assertTrue(range[1] - range[0] > amplitude / 2, "the pulse keeps going under the behavior");
+
+        enderMan.setTarget(null);
+        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS + 1);
+        range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
+        helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
+                "once it calms down the pupils settle back to their size");
+        helper.succeed();
+    }
+
+    private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        helper.assertTrue(headInfo != null, type + " has an eye config");
+        return headInfo;
+    }
+
+    /** Steps the tracker; returns the smallest and largest pupil size multiplier seen on any eye. */
+    private static float[] irisScaleRange(GooglyTracker tracker, int ticks) {
+        float min = Float.MAX_VALUE;
+        float max = -Float.MAX_VALUE;
+        for (int t = 0; t < ticks; t++) {
+            tracker.update();
+            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+                for (GooglyTracker.EyeInfo info : head) {
+                    min = Math.min(min, info.irisScaleMul);
+                    max = Math.max(max, info.irisScaleMul);
+                }
+            }
+        }
+        return new float[]{min, max};
+    }
+
+    private static boolean allIrisTint(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.irisTintAmount - expected) > TINT_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allPrevIrisTint(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.prevIrisTintAmount - expected) > TINT_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /** Ticks {@code creeper} and its tracker together; returns the mean per-eye pupil step per tick. */

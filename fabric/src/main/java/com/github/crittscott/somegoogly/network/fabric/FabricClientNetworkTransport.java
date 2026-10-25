@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -31,6 +32,10 @@ public final class FabricClientNetworkTransport {
         ClientPlayNetworking.registerGlobalReceiver(EyeBehaviorTriggerPacket.ID, (client, handler, buffer, sender) -> {
             EyeBehaviorTriggerPacket packet = EyeBehaviorTriggerPacket.read(buffer);
             client.execute(() -> ClientNetworkHandler.handleBehavior(packet));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(EyeAngerPacket.ID, (client, handler, buffer, sender) -> {
+            EyeAngerPacket packet = EyeAngerPacket.read(buffer);
+            client.execute(() -> ClientNetworkHandler.handleAnger(packet));
         });
     }
 }

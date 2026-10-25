@@ -10,7 +10,7 @@ Structure, ownership, state, loader seams, and invariants; `orientation-player.m
 
 Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 17, Minecraft 1.20.1.
 
-The Gradle project has three modules; `common` is transformed into both loader artifacts, and the shared `gecko/src/main/java` folder is compiled into each.
+The Gradle project has three modules; `common` is transformed into both loader artifacts.
 
 | Source tree | Responsibility |
 | --- | --- |
@@ -51,17 +51,15 @@ Related mutations flush as one snapshot sync. A stored roll outside 0..1 reads c
 
 Eye item stacks carry `AppearanceOverride` as the `EyeProperties` NBT compound (`EyeItemProperties`); harvesting copies the first configured eye's effective appearance; the modifier recipe and Slimy Eye application change only that compound, and the Slimy Eye recipe copies all of the eye's NBT. Item stacks never carry placement geometry.
 
-The only migration is the Fabric entity data above; item and Forge entity formats are unchanged from the 0.8.2 release.
-
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests. Loader adapters run entity interaction after protection listeners (Forge `LOWEST`, Fabric a late callback phase). Fabric's adapter refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:shears` and `#forge:shears`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type, so PvP rules cannot cancel it.
 
-Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every successful interactive, self, or kill harvest emits `GameEvent.SHEAR`. Refused operations emit neither.
+Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT`, successful harvests `GameEvent.SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeping entity, whose squint `GooglyTracker` derives, as it does a swelling creeper's pupil agitation. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
+The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeping entity. `GooglyTracker` derives the sleep squint, creeper rattle, aggressive red pupils, and creepy enderman pulse from synced state; only sleep blocks behaviors. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick over the active set and sent on change. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
 
 ## Rendering and attachment
 
@@ -77,11 +75,11 @@ GeckoLib is optional and has no common artifact for 1.20.1: the typed code in `g
 
 ## Networking
 
-Five `Payload` classes (id plus `write`/`read` body): eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `14`; any incompatible wire change requires bumping it. Forge registers one typed message per payload on a `SimpleChannel` whose required version is the network version; Fabric sends a login query on its `HANDSHAKE` channel and disconnects a client that does not understand it. Fabric's receivers decode off-thread, then hand off.
+Six `Payload` classes (id plus `write`/`read` body): eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `15`; any incompatible wire change requires bumping it. Forge registers one typed message per payload on a `SimpleChannel` whose required version is the network version; Fabric sends a login query on its `HANDSHAKE` channel and disconnects a client that does not understand it. Fabric's receivers decode off-thread, then hand off.
 
 The eye-definition packet also carries `googlyEyesEnabled`. Joins always receive it; after each datapack reload and Forge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set or switch changed, since it resets client trackers.
 
-Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state and behavior packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
+Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
 
 ## Picker and commands
 
@@ -99,7 +97,7 @@ Forge: common registration runs once from the `@Mod` constructor, client service
 
 ## Automated verification
 
-`common/src/gametest/java` holds 97 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
+`common/src/gametest/java` holds 101 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 

@@ -22,6 +22,7 @@ public final class ClientLifecycle {
     public static void onDisconnect() {
         ClientEyeConfigs.clear();
         ClientEyeRuntime.clear();
+        ClientEyeRuntime.clearAnger();
         GooglyEyeItemRenderer.reset();
         PickerState.resetOnDisconnect();
     }
