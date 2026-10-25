@@ -21,6 +21,7 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,13 +34,22 @@ import net.minecraft.world.item.Items;
  * scheduler to a clean slate with {@code clear()} and force-and-restores the behavior config it touches;
  * ambient play is disabled so only the events under test can move the schedule, except where ambient
  * rolls are what's under test. The sleeping squint, which the client derives from vanilla's synced sleep
- * state, is covered here too, since sleep is the one state that blocks the schedule. The mid-effect
+ * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
+ * swelling creeper's rattle, derived the same way from vanilla's synced swell. The mid-effect
  * start-tracking catch-up packet needs a connected client and stays source-verified.
  */
 public final class BehaviorSchedulerGameTestsLogic {
 
     // Float slack for comparing eased squash values, which accumulate a 1/SLEEP_EASE_TICKS step.
     private static final float SQUASH_TOLERANCE = 1e-4F;
+
+    // Creeper rattle: ticks for swell-driven motion to die down, and swell ticks before and during the
+    // measured window (20 in all, short of the 30-tick fuse). Pupil steps are unit-disk distance per tick.
+    private static final int CALM_SETTLE_TICKS = 200;
+    private static final int SWELL_RAMP_TICKS = 10;
+    private static final int SWELL_WINDOW_TICKS = 10;
+    private static final float CALM_PUPIL_STEP = 0.01F;
+    private static final float AGITATED_PUPIL_STEP = 0.05F;
 
     private BehaviorSchedulerGameTestsLogic() {
     }
@@ -331,6 +341,54 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(tracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
         helper.assertTrue(allSquash(tracker, 1F), "waking eases the eyes back open");
         helper.succeed();
+    }
+
+    /**
+     * A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
+     * rest they hang still. Drives the client-side {@link GooglyTracker} directly against a server creeper
+     * ticked by hand, since the agitation is derived from vanilla's synced swell rather than sent; the swell
+     * is reversed well before the fuse runs out. In game: walk up to an eyed creeper until it hisses, then
+     * back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.
+     */
+    public static void swellingCreeperRattles(GameTestHelper helper) {
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
+        helper.assertTrue(headInfo != null, "creepers have an eye config");
+
+        GooglyTracker tracker = new GooglyTracker(creeper, headInfo);
+        helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
+                "a calm creeper's pupils hang still");
+
+        creeper.setSwellDir(1);
+        meanPupilStep(creeper, tracker, SWELL_RAMP_TICKS);
+        helper.assertTrue(meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS) > AGITATED_PUPIL_STEP,
+                "a swelling creeper's pupils keep moving fast");
+
+        creeper.setSwellDir(-1);
+        meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
+        helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
+                "once the creeper shrinks back its pupils settle");
+        helper.succeed();
+    }
+
+    /** Ticks {@code creeper} and its tracker together; returns the mean per-eye pupil step per tick. */
+    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks) {
+        float total = 0F;
+        int samples = 0;
+        for (int t = 0; t < ticks; t++) {
+            creeper.tick();
+            tracker.update();
+            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+                for (GooglyTracker.EyeInfo info : head) {
+                    float dx = info.deltaX - info.prevDeltaX;
+                    float dy = info.deltaY - info.prevDeltaY;
+                    total += (float) Math.sqrt(dx * dx + dy * dy);
+                    samples++;
+                }
+            }
+        }
+        return total / samples;
     }
 
     private static void stepTracker(GooglyTracker tracker, int ticks) {
