@@ -40,15 +40,11 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 ## Entity and item state
 
-`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application, and partial updates are not a supported path. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the `somegoogly:persistentData` compound the 1.20.1 and 1.21.1 releases saved into it; a non-compound value is set aside there and logged.
+`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for server transitions, tracking sync, and client packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the `somegoogly:persistentData` compound the 1.20.1 and 1.21.1 releases saved into it; a non-compound value is set aside there and logged.
 
-Persistent entity keys:
+Persistent entity keys: `somegoogly:hasGooglyEyes` (has eyes), `somegoogly:eyeVariantRoll` (stable variant roll), `somegoogly:eyeOverrides` (optional appearance overrides).
 
-- `somegoogly:hasGooglyEyes` — whether the entity has eyes;
-- `somegoogly:eyeVariantRoll` — stable placement-variant roll;
-- `somegoogly:eyeOverrides` — optional shared appearance overrides.
-
-Related mutations flush as one full-snapshot sync. A stored roll outside 0..1 reads clamped. The eye-state key and variant roll are initialized together only when absent, preserving the natural-eyes decision across persistence and transfer. `EyeState.initialize` and `EyeState.sendTo` skip an absent snapshot; mid-life mutations always send. Loader clone and conversion hooks call `EyeState.copy` on mob conversion and non-death player respawn. A player joining a level gets their own snapshot.
+Related mutations flush as one full-snapshot sync. A stored roll outside 0..1 reads clamped. The eye-state key and variant roll are initialized together only when absent. `EyeState.initialize` and `EyeState.sendTo` skip an absent snapshot; mid-life mutations always send. Loader clone and conversion hooks call `EyeState.copy` on mob conversion and non-death player respawn. A player joining a level gets their own snapshot.
 
 Eye item stacks carry `AppearanceOverride` in the registered `somegoogly:eye_properties` component (synced by `AppearanceOverride.STREAM_CODEC`); harvesting copies the first configured eye's effective appearance; the modifier recipe and Slimy Eye application change only that component, and the Slimy Eye recipe copies every component. Item stacks never carry placement geometry.
 
@@ -56,13 +52,13 @@ The migration layer converts the 1.20.1 release: `EyeItemMigration` decodes the 
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests. Loader adapters run entity interaction after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase). Fabric's adapter refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type, so PvP rules cannot cancel it.
 
-Every successful Slimy Eye application emits `GameEvent.ENTITY_INTERACT`; every successful interactive, self, or kill harvest emits `GameEvent.SHEAR`. Refused operations emit neither.
+Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT`, successful harvests `GameEvent.SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeping entity, whose squint `GooglyTracker` derives, as it does a swelling creeper's pupil agitation. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
+The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeping entity. `GooglyTracker` derives the sleep squint, creeper rattle, aggressive red pupils, and creepy enderman pulse from synced state; only sleep blocks behaviors. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
 
 ## Rendering and attachment
 
@@ -78,11 +74,11 @@ GeckoLib is optional: common compiles against compile-only `geckolib-common`; no
 
 ## Networking
 
-Five `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `14`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel version; Fabric disconnects, during configuration, a client that cannot receive its never-sent `Handshake` payload.
+Six `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `15`; any incompatible wire change requires bumping it. Forge and NeoForge register a required native channel version; Fabric disconnects, during configuration, a client that cannot receive its `Handshake` payload.
 
 The eye-definition packet also carries `googlyEyesEnabled`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set or switch changed, since it resets client trackers.
 
-Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state and behavior packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
+Sends go through `@ExpectPlatform` bridges `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check the authenticated `ServerPlayer`'s authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity itself; eye state follows the entity's spawn, so it carries only the id and an unknown id is ignored.
 
 ## Picker and commands
 
@@ -102,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` holds 97 shared tests, including save/load persistence, plus 9 for the 1.20.1 item migration; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
+`common/src/gametest/java` holds 101 shared tests, including save/load persistence, plus 9 for the 1.20.1 item migration; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 

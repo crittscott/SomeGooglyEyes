@@ -12,6 +12,7 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
@@ -39,7 +40,7 @@ import java.util.UUID;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
 /**
- * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all five native
+ * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all six native
  * payloads preserve their wire representation through encode/decode. World-less.
  */
 public final class SerializationGameTestsLogic {
@@ -55,7 +56,7 @@ public final class SerializationGameTestsLogic {
         String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
         List<ResourceLocation> gameplay = List.of(
                 NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
-                NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
+                NetworkHandler.EYE_ANGER, NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
         for (ResourceLocation id : gameplay) {
             helper.assertTrue(id.getPath().startsWith(prefix),
                     "gameplay channel " + id + " must carry protocol prefix " + prefix);
@@ -64,7 +65,7 @@ public final class SerializationGameTestsLogic {
                 "every gameplay payload must have a unique channel id");
         List<ResourceLocation> typedPayloads = List.of(
                 EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeBehaviorTriggerPacket.TYPE.id(),
-                PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
+                EyeAngerPacket.TYPE.id(), PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
         helper.assertTrue(typedPayloads.equals(gameplay),
                 "the native payload types must preserve every established wire id");
         helper.succeed();
@@ -150,6 +151,17 @@ public final class SerializationGameTestsLogic {
                 new EyeBehaviorTriggerPacket(7,
                         ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
         roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC, packet, "EyeBehaviorTriggerPacket");
+        helper.succeed();
+    }
+
+    /**
+     * The anger report survives the wire. No in-game form; guards that every client sees the anger the
+     * server shares.
+     */
+    public static void angerPacketRoundTrips(GameTestHelper helper) {
+        EyeAngerPacket decoded = roundTrip(helper, EyeAngerPacket.STREAM_CODEC, new EyeAngerPacket(7, true),
+                "EyeAngerPacket");
+        helper.assertTrue(decoded.entityId() == 7 && decoded.angry(), "EyeAngerPacket should preserve its fields");
         helper.succeed();
     }
 
