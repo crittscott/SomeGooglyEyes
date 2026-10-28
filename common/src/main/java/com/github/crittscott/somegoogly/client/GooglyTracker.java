@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 
@@ -27,7 +28,9 @@ import javax.annotation.Nullable;
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
  *
  * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
- * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A
+ * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A goat
+ * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
+ * same way but still plays behaviors. A
  * swelling creeper ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep
  * getting kicked back into flight in proportion to how far the swell has gone. An aggressive mob
  * ({@link Mob#isAggressive}, synced by vanilla) or one the server reports {@link #angry} has its pupils
@@ -40,9 +43,9 @@ public class GooglyTracker {
     // active behavior into the simulation allocates nothing per tick.
     private static final EyeInfluence INFLUENCE = new EyeInfluence();
 
-    /** Eye height multiplier while fully asleep. */
+    /** Eye height multiplier while fully squinting (asleep or ramming). */
     public static final float SLEEP_SQUASH_Y = 0.3F;
-    /** Ticks to ease fully into or out of the sleeping squint. */
+    /** Ticks to ease fully into or out of the squint. */
     public static final int SLEEP_EASE_TICKS = 10;
     /** Pupil color while fully angry. */
     public static final float[] ANGER_IRIS_COLOR = {0.9F, 0.05F, 0.05F};
@@ -101,8 +104,8 @@ public class GooglyTracker {
      */
     public boolean angry;
 
-    /** How far into the sleeping squint the eyes are: 0 awake, 1 fully squinted. */
-    private float sleepiness;
+    /** How far into the squint (sleeping or ramming) the eyes are: 0 open, 1 fully squinted. */
+    private float squint;
     /** How red the pupils are: 0 calm, 1 fully angry. */
     private float anger;
     /** How strongly the creepy pulse plays: 0 not creepy, 1 full pulse. */
@@ -140,7 +143,7 @@ public class GooglyTracker {
         this.prevY = parent.getY();
         this.prevZ = parent.getZ();
         // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
-        this.sleepiness = parent.isSleeping() ? 1F : 0F;
+        this.squint = isSquinting() ? 1F : 0F;
         this.anger = isAngry() ? 1F : 0F;
         this.creepiness = isCreepy() ? 1F : 0F;
         update();
@@ -255,9 +258,10 @@ public class GooglyTracker {
          * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick
+         * @param kick      above 0, the pupil is thrown at this speed in a random direction this tick
          */
         public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
-                           float anchorX, float anchorY, float stiffness, float agitation) {
+                           float anchorX, float anchorY, float stiffness, float agitation, float kick) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
@@ -340,6 +344,13 @@ public class GooglyTracker {
                 momentumY += agitation * R_AGITATED_KICK * Mth.sin(angle);
             }
 
+            // A jolt replaces the pupil's velocity outright; the wall bounce and gravity take it from there.
+            if (kick > 0F) {
+                float angle = rand.nextFloat() * Mth.TWO_PI;
+                momentumX = kick * Mth.cos(angle);
+                momentumY = kick * Mth.sin(angle);
+            }
+
             deltaX += momentumX;
             deltaY += momentumY;
 
@@ -406,7 +417,7 @@ public class GooglyTracker {
         behavior.onStart(instance);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
-        instance.age = elapsed;
+        instance.age = instance.startAge = elapsed;
         if (instance.age >= instance.duration) {
             return false; // already finished by the time we'd show it (stale catch-up); nothing to play
         }
@@ -433,10 +444,10 @@ public class GooglyTracker {
             }
         }
 
-        // Ease toward the sleeping squint or back out. A behavior already playing when sleep begins
-        // finishes under it (non-interruptable); the two multiply in squashY.
-        sleepiness = ease(sleepiness, parent.isSleeping(), SLEEP_EASE_TICKS);
-        float sleepSquash = Mth.lerp(sleepiness, 1F, SLEEP_SQUASH_Y);
+        // Ease toward the squint or back out. A behavior playing under it (one already playing when sleep
+        // begins, or any while a goat rams) multiplies with it in squashY.
+        squint = ease(squint, isSquinting(), SLEEP_EASE_TICKS);
+        float squintSquash = Mth.lerp(squint, 1F, SLEEP_SQUASH_Y);
 
         // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
         anger = ease(anger, isAngry(), ANGER_EASE_TICKS);
@@ -447,6 +458,12 @@ public class GooglyTracker {
         // A swelling creeper's pupils rattle harder the closer it is to exploding. getSwelling runs a little
         // past 1 at the end of the fuse.
         float agitation = parent instanceof Creeper creeper ? Math.min(1F, creeper.getSwelling(1F)) : 0F;
+
+        // A teleport's jump in position isn't motion, and would shove every pupil the same way.
+        boolean still = active != null && active.behavior.ignoresMotion();
+        double mx = still ? 0 : motionX;
+        double my = still ? 0 : motionY;
+        double mz = still ? 0 : motionZ;
 
         float headYaw = parent.getYHeadRot();
         float headPitch = parent.getXRot();
@@ -467,7 +484,7 @@ public class GooglyTracker {
                 info.irisScaleMul = INFLUENCE.irisScaleMul
                         * (1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset));
                 info.prevSquashY = info.squashY;
-                info.squashY = INFLUENCE.squashY * sleepSquash;
+                info.squashY = INFLUENCE.squashY * squintSquash;
                 info.prevTintAmount = info.tintAmount;
                 info.tintAmount = INFLUENCE.tintAmount;
                 info.tintColor = INFLUENCE.corneaTint;
@@ -475,8 +492,8 @@ public class GooglyTracker {
                 info.irisTintAmount = anger;
 
                 // Step the pupil physics, with the behavior's spring folded in as a force.
-                info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
-                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
+                info.update(rand, headYaw, headPitch, mx, my, mz,
+                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation, INFLUENCE.kick);
             }
         }
     }
@@ -484,6 +501,11 @@ public class GooglyTracker {
     /** Whether the pupils should be red: the mob is attacking (vanilla-synced) or the server says it's angry. */
     private boolean isAngry() {
         return angry || parent instanceof Mob mob && mob.isAggressive();
+    }
+
+    /** Whether the eyes should squint: the entity sleeps, or is a goat with its head lowered to ram. */
+    private boolean isSquinting() {
+        return parent.isSleeping() || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
     }
 
     private boolean isCreepy() {

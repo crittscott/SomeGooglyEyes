@@ -30,6 +30,11 @@ public final class BehaviorInstance {
 
     /** Completed ticks (1-based after the first tick); {@code age/duration} is the progress fraction. */
     public int age;
+    /**
+     * The age this client began playing at: 0, or the elapsed ticks when it joined partway in. A behavior
+     * that acts once (jolt's kick) acts on the first tick past it, so a late viewer still sees it.
+     */
+    public int startAge;
 
     /** Color-change target, or {@code null} until a color-change behavior initializes it. */
     @Nullable
