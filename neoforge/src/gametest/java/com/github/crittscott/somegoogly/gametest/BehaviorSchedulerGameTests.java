@@ -57,6 +57,12 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void shearingPlaysGrow(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.shearingPlaysGrow(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
