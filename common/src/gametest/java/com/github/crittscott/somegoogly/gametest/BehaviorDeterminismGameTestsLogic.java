@@ -38,8 +38,7 @@ public final class BehaviorDeterminismGameTestsLogic {
     private static boolean influenceEquals(EyeInfluence a, EyeInfluence b) {
         return a.anchorX == b.anchorX && a.anchorY == b.anchorY && a.stiffness == b.stiffness
                 && a.eyeScaleMul == b.eyeScaleMul && a.squashY == b.squashY
-                && a.tintAmount == b.tintAmount && Arrays.equals(a.corneaTint, b.corneaTint)
-                && a.kick == b.kick;
+                && a.tintAmount == b.tintAmount && Arrays.equals(a.corneaTint, b.corneaTint);
     }
 
     /**

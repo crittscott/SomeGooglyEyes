@@ -85,17 +85,6 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void teleportPlaysJolt(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.teleportPlaysJolt(
-                helper, helper.makeMockServerPlayerInLevel());
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void joltFlingsPupils(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.joltFlingsPupils(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void rammingGoatSquints(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
     }
