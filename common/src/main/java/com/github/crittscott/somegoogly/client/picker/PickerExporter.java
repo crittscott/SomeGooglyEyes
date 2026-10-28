@@ -57,8 +57,7 @@ public final class PickerExporter {
         }
         RuntimeConfig config = PickerState.toConfig();
         // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
-        CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config)
-                .getOrThrow(false, error -> { });
+        CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).getOrThrow(false, error -> { });
         PickerExportPacket packet = new PickerExportPacket(type, PickerState.currentDraftAge(), tag);
         if (!packet.fitsServerbound()) {
             return Component.translatable("somegoogly.command.picker.export_too_large");
@@ -81,13 +80,13 @@ public final class PickerExporter {
      */
     public static Component exportAll() {
         Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
-        Map<ResourceLocation, PickerState.AuthoredExport> drafts = PickerState.authoredConfigs();
+        Map<ResourceLocation, Map<String, RuntimeConfig>> drafts = PickerState.authoredConfigs();
         if (synced.isEmpty() && drafts.isEmpty()) {
             return Component.translatable("somegoogly.command.picker.export_all_none_loaded");
         }
 
         // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker drafts.
-        // A draft wins over the synced state for the same entity, so a mob saved-but-never-exported still
+        // A draft replaces only its authored age in the synced state, so a mob saved-but-never-exported still
         // gets written — this is what makes exportall "export all", not just the last reloaded mob.
         Set<ResourceLocation> ids = new LinkedHashSet<>(synced.keySet());
         ids.addAll(drafts.keySet());
@@ -103,27 +102,16 @@ public final class PickerExporter {
                     continue; // namespace's mod isn't loaded; can't tag a version
                 }
                 String range = version.get();
-                PickerState.AuthoredExport draft = drafts.get(id);
-                ConfigFile file;
-                if (draft != null) {
-                    // Drafts are already canonical (seeded/authored in the picker's enumeration vocabulary).
-                    RuntimeConfig pruned = RuntimeConfig.pruned(draft.config(), UnaryOperator.identity());
-                    file = pruned == null ? null : ConfigFile.single(range, draft.age(), pruned);
+                // Canonicalize copied base entries; authored age buckets already use picker tokens.
+                ModelPartVocabulary vocabulary = ModelPartVocabulary.forType(id);
+                UnaryOperator<String> canon;
+                if (vocabulary == null) {
+                    verbatim++;
+                    canon = UnaryOperator.identity();
                 } else {
-                    // Canonicalize each token against the model so the dump speaks its discovered
-                    // vocabulary (e.g. a differently-spelled name snaps to its enumerated path). The model
-                    // comes from a throwaway entity instance, so every config converts regardless of what's
-                    // loaded near the player.
-                    ModelPartVocabulary vocabulary = ModelPartVocabulary.forType(id);
-                    UnaryOperator<String> canon;
-                    if (vocabulary == null) {
-                        verbatim++;
-                        canon = UnaryOperator.identity();
-                    } else {
-                        canon = vocabulary::canonicalize;
-                    }
-                    file = ConfigFile.ofSet(synced.get(id), range, canon);
+                    canon = vocabulary::canonicalize;
                 }
+                ConfigFile file = ConfigFile.overlay(synced.get(id), drafts.getOrDefault(id, Map.of()), range, canon);
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }

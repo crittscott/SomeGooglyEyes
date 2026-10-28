@@ -51,9 +51,6 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         // Resolve the part-tree strategy for this model family (string names / stable indices).
         M model = this.getParentModel();
         EyeAttachmentResolver resolver = Resolvers.forModel(model);
-        if (resolver == null) {
-            return;
-        }
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 
         if (data.pickerTarget()) {

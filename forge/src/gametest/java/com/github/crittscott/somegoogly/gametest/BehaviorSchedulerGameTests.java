@@ -20,6 +20,11 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
@@ -68,8 +73,8 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void sleepingMobSquints(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    public static void sleepingVillagerClosesLids(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingVillagerClosesLids(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

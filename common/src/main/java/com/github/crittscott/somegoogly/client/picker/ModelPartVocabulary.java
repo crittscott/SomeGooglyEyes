@@ -42,11 +42,9 @@ public final class ModelPartVocabulary {
         if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer) {
             EntityModel<?> model = livingRenderer.getModel();
             EyeAttachmentResolver resolver = Resolvers.forModel(model);
-            if (resolver != null) {
-                List<String> tokens = resolver.enumerateParts(model);
-                if (!tokens.isEmpty()) {
-                    return new ModelPartVocabulary(tokens, token -> resolver.canonicalToken(model, token));
-                }
+            List<String> tokens = resolver.enumerateParts(model);
+            if (!tokens.isEmpty()) {
+                return new ModelPartVocabulary(tokens, token -> resolver.canonicalToken(model, token));
             }
         }
 

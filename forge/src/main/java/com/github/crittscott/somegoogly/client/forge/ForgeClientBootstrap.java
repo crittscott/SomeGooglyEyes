@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.forge;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
@@ -12,6 +13,7 @@ import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
@@ -20,6 +22,8 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -44,6 +48,8 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::registerClientCommands);
         gameBus.addListener(ForgeClientBootstrap::onClientTick);
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
+        gameBus.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
+        gameBus.addListener(ForgeClientBootstrap::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
@@ -99,6 +105,18 @@ public final class ForgeClientBootstrap {
             return;
         }
         ClientLifecycle.tick();
+    }
+
+    private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
+            ClientEyeRuntime.onEntityRemoved(living);
+        }
+    }
+
+    private static void onLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onLevelChanged();
+        }
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {

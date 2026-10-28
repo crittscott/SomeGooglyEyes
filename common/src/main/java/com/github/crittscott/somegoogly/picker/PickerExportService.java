@@ -6,8 +6,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,19 +18,17 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.storage.LevelResource;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
@@ -100,9 +96,9 @@ public final class PickerExportService {
         if (pruned == null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_no_usable_eyes");
         }
-        String limitsError = EyeConfigLimits.validateRuntimeConfig(pruned);
+        EyeConfigLimits.Issue limitsError = EyeConfigLimits.validateRuntimeConfig(pruned);
         if (limitsError != null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError);
+            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
         }
         Optional<String> version = ConfigFile.exportVersion(typeId.getNamespace());
         if (version.isEmpty()) {
@@ -114,23 +110,9 @@ public final class PickerExportService {
         Path packDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(PACK_NAME);
         Path target = EyeConfigReloadListener.eyeFile(packDir, typeId);
 
-        // Seed from the currently resolved config (whichever pack currently wins data/<ns>/eyes/<path>.json
-        // — shipped or a prior picker export alike), not from this file on disk: Minecraft resolves that
-        // JSON path to a single winning pack, so writing this file at all fully shadows whatever the
-        // previously-winning pack declared for it. Carrying the other ages forward under the current
-        // version declaration is what stops a baby export from silently erasing an already-loaded adult
-        // or age-independent entry. The original per-entry version ranges aren't recoverable this way
-        // (same tradeoff PickerExporter#exportAll's dump already accepts for the same reason).
-        List<VersionedEntry> entries = new ArrayList<>();
-        RuntimeConfigSet current = ServerEyeConfigs.all().get(typeId);
-        if (current != null) {
-            preserveOtherAge(entries, AGE_ADULT, current.adult, versionDeclaration, age);
-            preserveOtherAge(entries, AGE_BABY, current.baby, versionDeclaration, age);
-            preserveOtherAge(entries, AGE_ANY, current.any, versionDeclaration, age);
-        }
-        entries.add(VersionedEntry.of(versionDeclaration, age, pruned));
-        ConfigFile file = new ConfigFile();
-        file.entries = entries;
+        // A datapack file shadows the whole entity definition, so retain all untouched age buckets.
+        ConfigFile file = ConfigFile.overlay(ServerEyeConfigs.all().get(typeId), Map.of(age, pruned),
+                versionDeclaration, UnaryOperator.identity());
 
         try {
             file.writeJson(target);
@@ -172,12 +154,4 @@ public final class PickerExportService {
         });
     }
 
-    /** Carry a currently-resolved age bucket forward as a {@link VersionedEntry}, unless it's the age being written now or has nothing usable. */
-    private static void preserveOtherAge(List<VersionedEntry> entries, String bucketAge,
-                                         @Nullable RuntimeConfig bucketConfig, String versionDeclaration, String writtenAge) {
-        if (bucketAge.equals(writtenAge) || !RuntimeConfig.isUsable(bucketConfig)) {
-            return;
-        }
-        entries.add(VersionedEntry.of(versionDeclaration, bucketAge, bucketConfig));
-    }
 }

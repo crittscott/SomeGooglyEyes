@@ -14,6 +14,11 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -62,8 +67,8 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void sleepingMobSquints(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    public static void sleepingVillagerClosesLids(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingVillagerClosesLids(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

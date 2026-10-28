@@ -19,6 +19,21 @@ public final class PickerExportGameTests {
     private PickerExportGameTests() {
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
+        PickerExportGameTestsLogic.draftsRetainSpeciesAndAge(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void exportOverlayCombinesDraftAges(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportOverlayCombinesDraftAges(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void exportOverlayPreservesOtherAges(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportOverlayPreservesOtherAges(helper);
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);

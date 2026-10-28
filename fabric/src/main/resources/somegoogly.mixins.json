@@ -13,6 +13,9 @@
     "ServerLevelEntityEventMixin",
     "ShearingMixin"
   ],
+  "client": [
+    "ClientLevelLifecycleMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -210,8 +210,9 @@ public final class ServerBehaviorScheduler {
             ACTIVE.putIfAbsent(mob, state);
         }
 
-        if (state.angry) {
-            Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), true));
+        if (EyeState.hasEyes(mob)) {
+            // Initial state is complete; the cached delta still belongs to all existing watchers.
+            Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), isAngry(mob)));
         }
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.

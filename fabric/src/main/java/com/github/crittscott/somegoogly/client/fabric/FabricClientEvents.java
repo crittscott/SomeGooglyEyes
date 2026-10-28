@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
@@ -10,6 +11,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -25,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, the Slimy
@@ -61,6 +64,11 @@ public final class FabricClientEvents {
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_PREV);
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
+        ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
+            if (entity instanceof LivingEntity living) {
+                ClientEyeRuntime.onEntityRemoved(living);
+            }
+        });
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             if (!ClientPlayNetworking.canSend(PickerFreezePacket.ID) && client.getConnection() != null) {

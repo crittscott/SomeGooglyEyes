@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
@@ -75,6 +76,21 @@ public final class EyeConfigModel {
         /** Required ordered entries; version selection keeps the first match for each age bucket. */
         public List<VersionedEntry> entries = List.of();
 
+        private static void addAge(List<VersionedEntry> entries, String age, @Nullable RuntimeConfig base,
+                                   Map<String, RuntimeConfig> authored, String versionRange,
+                                   UnaryOperator<String> canon) {
+            boolean replaced = authored.containsKey(age);
+            RuntimeConfig config = replaced ? authored.get(age) : base;
+            RuntimeConfig pruned = RuntimeConfig.pruned(config, replaced ? UnaryOperator.identity() : canon);
+            if (pruned == null && config != null && !config.enabled) {
+                pruned = new RuntimeConfig();
+                pruned.enabled = false;
+            }
+            if (pruned != null) {
+                entries.add(VersionedEntry.of(versionRange, age, pruned));
+            }
+        }
+
         /**
          * The version declaration an export writes for {@code namespace}, from its loaded version: the
          * exact game version for Minecraft, the current minor-release range
@@ -85,11 +101,24 @@ public final class EyeConfigModel {
                     .map(version -> ResourceLocation.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
         }
 
-        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
-        public void writeJson(Path path) throws IOException {
-            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow(false, error -> { });
-            Files.createDirectories(path.getParent());
-            Files.writeString(path, GSON.toJson(json) + "\n");
+        /**
+         * Overlay authored age buckets on a resolved set without mutating it. Untouched buckets,
+         * including disabled ones, survive; authored tokens are already canonical. Returns null
+         * when no entry remains after pruning.
+         */
+        @Nullable
+        public static ConfigFile overlay(@Nullable RuntimeConfigSet base, Map<String, RuntimeConfig> authored,
+                                         String versionRange, UnaryOperator<String> canon) {
+            List<VersionedEntry> entries = new ArrayList<>();
+            addAge(entries, AGE_ADULT, base == null ? null : base.adult, authored, versionRange, canon);
+            addAge(entries, AGE_BABY, base == null ? null : base.baby, authored, versionRange, canon);
+            addAge(entries, AGE_ANY, base == null ? null : base.any, authored, versionRange, canon);
+            if (entries.isEmpty()) {
+                return null;
+            }
+            ConfigFile file = new ConfigFile();
+            file.entries = entries;
+            return file;
         }
 
         /** A file holding one entry for {@code config}. */
@@ -99,27 +128,11 @@ public final class EyeConfigModel {
             return file;
         }
 
-        /** Build a pruned, canonicalized multi-age file, or {@code null} when no age is usable. */
-        @Nullable
-        public static ConfigFile ofSet(RuntimeConfigSet set, String versionRange, UnaryOperator<String> canon) {
-            List<VersionedEntry> entries = new ArrayList<>();
-            addAge(entries, AGE_ADULT, set.adult, versionRange, canon);
-            addAge(entries, AGE_BABY, set.baby, versionRange, canon);
-            addAge(entries, AGE_ANY, set.any, versionRange, canon);
-            if (entries.isEmpty()) {
-                return null;
-            }
-            ConfigFile file = new ConfigFile();
-            file.entries = entries;
-            return file;
-        }
-
-        private static void addAge(List<VersionedEntry> entries, String age, @Nullable RuntimeConfig config,
-                                   String versionRange, UnaryOperator<String> canon) {
-            RuntimeConfig pruned = RuntimeConfig.pruned(config, canon);
-            if (pruned != null) {
-                entries.add(VersionedEntry.of(versionRange, age, pruned));
-            }
+        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
+        public void writeJson(Path path) throws IOException {
+            JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow(false, error -> { });
+            Files.createDirectories(path.getParent());
+            Files.writeString(path, GSON.toJson(json) + "\n");
         }
     }
 

@@ -14,7 +14,7 @@ Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Lo
 
 ## Mobs with eyes
 
-By default, eligible non-player mobs have a 5 percent chance to receive eyes when they spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon cannot have eyes. A mob that converts into another (a cured zombie villager, a sheared mooshroom) keeps its eyes, as does a player leaving the End.
+By default, eligible mobs have a 5 percent chance to receive eyes when they spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
-One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleeping mobs play nothing else: a sleeping villager's tan eyelids slide down over its eyes, leaving a slit at the bottom, and slide back up when it wakes; other sleepers squint. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 
@@ -196,7 +196,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
+It does not change the world. Drafts are retained independently by species and age until disconnect. Both exports replace authored ages and retain untouched adult, baby, and age-independent entries, including disabled entries. Exports declare the exact Minecraft version or the other mod's current minor-release range.
 
 ### Test mobs
 
@@ -231,5 +231,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 106 dedicated-server GameTests; Forge contains 102. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` stops rendering on a connected client but keeps the picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
+- Fabric contains 112 dedicated-server GameTests; Forge contains 108. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across unload/retracking and dimension changes, optional GeckoLib, and the rendering switch with picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.
