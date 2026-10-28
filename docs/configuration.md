@@ -46,12 +46,13 @@ a Slimy Eye.
 | `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it. `0` disables. |
 | `growOnMilk` | `true` | Milking an eyed cow, mooshroom, or goat with a bucket makes its eyes bulge (`grow`). |
 | `loveOnAffection` | `true` | An eyed mob's pupils swell (`love`) when it enters love mode, when villagers breed, when an iron golem offers a flower, or when an ocelot comes to trust a player. |
+| `joltOnTeleport` | `true` | An eyed mob's or player's pupils are flung around its eyes (`jolt`) when it teleports the way an enderman does or by eating a chorus fruit. Ender pearls, commands, and portals don't trigger it. |
 | `angryEyes` | `true` | An eyed mob that is angry but not attacking (a provoked iron golem, piglin, or zombified piglin) shows red pupils. The server checks each watched eyed mob once per tick and tells clients only when its anger starts or ends. Mobs that are attacking show red pupils regardless. |
 | `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader spins its pupils (`swirl`). |
 | `swirlOnHeal` | `true` | An eyed mob being healed plays `swirl`. |
 | `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob, so regeneration doesn't loop it. |
 
-Behavior ids all live under the `somegoogly:` namespace: `stare`, `blink`, `side_eye`, `cross_eye`, `grow`, `love`, `swirl`, `color_change`. The event-driven ones (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
+Behavior ids all live under the `somegoogly:` namespace: `stare`, `blink`, `side_eye`, `cross_eye`, `grow`, `love`, `swirl`, `color_change`, `jolt`. The event-driven ones (`grow`, `love`, `swirl`, `jolt`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
 
 A mob plays at most one expression at a time; overlapping triggers are dropped, never queued.
 

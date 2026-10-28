@@ -86,4 +86,20 @@ public final class BehaviorSchedulerGameTests {
     public static void creepyEndermanPulses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void teleportPlaysJolt(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.teleportPlaysJolt(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void joltFlingsPupils(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.joltFlingsPupils(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void rammingGoatSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
+    }
 }

@@ -17,6 +17,8 @@ package com.github.crittscott.somegoogly.eye.behavior;
  *   <li><b>squashY</b> — multiplies the eye's vertical scale (blink). Non-physical overlay.</li>
  *   <li><b>corneaTint / tintAmount</b> — lerp the cornea toward {@code corneaTint} by {@code tintAmount}
  *       (color-change). Non-physical overlay.</li>
+ *   <li><b>kick</b> — a speed to throw the pupil at in a random direction this tick (jolt); 0 = none.
+ *       The pupil then flies under the ordinary forces and wall bounce.</li>
  * </ul>
  *
  * <p>Reused per eye: the simulator calls {@link #reset()} before asking the active behavior to fill it,
@@ -45,6 +47,9 @@ public final class EyeInfluence {
     /** How far to blend the cornea toward {@link #corneaTint} (0..1). */
     public float tintAmount;
 
+    /** Speed (unit-disk units per tick) to throw the pupil at in a random direction this tick; 0 = none. */
+    public float kick;
+
     public EyeInfluence() {
         reset();
     }
@@ -59,5 +64,6 @@ public final class EyeInfluence {
         squashY = 1f;
         corneaTint = null;
         tintAmount = 0f;
+        kick = 0f;
     }
 }
