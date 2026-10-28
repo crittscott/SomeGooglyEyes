@@ -26,7 +26,6 @@ public final class ForgeServerConfig {
     private static final ForgeConfigSpec.IntValue GROW_ON_HIT_PERCENT;
     private static final ForgeConfigSpec.BooleanValue GROW_ON_MILK;
     private static final ForgeConfigSpec.BooleanValue LOVE_ON_AFFECTION;
-    private static final ForgeConfigSpec.BooleanValue JOLT_ON_TELEPORT;
     private static final ForgeConfigSpec.BooleanValue ANGRY_EYES;
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
@@ -71,8 +70,6 @@ public final class ForgeServerConfig {
                 .define(ServerConfig.GROW_ON_MILK_KEY, ServerConfig.GROW_ON_MILK_DEFAULT);
         LOVE_ON_AFFECTION = builder.comment(ServerConfig.LOVE_ON_AFFECTION_COMMENT.split("\n"))
                 .define(ServerConfig.LOVE_ON_AFFECTION_KEY, ServerConfig.LOVE_ON_AFFECTION_DEFAULT);
-        JOLT_ON_TELEPORT = builder.comment(ServerConfig.JOLT_ON_TELEPORT_COMMENT.split("\n"))
-                .define(ServerConfig.JOLT_ON_TELEPORT_KEY, ServerConfig.JOLT_ON_TELEPORT_DEFAULT);
         ANGRY_EYES = builder.comment(ServerConfig.ANGRY_EYES_COMMENT.split("\n"))
                 .define(ServerConfig.ANGRY_EYES_KEY, ServerConfig.ANGRY_EYES_DEFAULT);
         SWIRL_ON_TRADE = builder.comment(ServerConfig.SWIRL_ON_TRADE_COMMENT.split("\n"))
@@ -123,7 +120,6 @@ public final class ForgeServerConfig {
         ServerConfig.GROW_ON_HIT_PERCENT.set(GROW_ON_HIT_PERCENT.get());
         ServerConfig.GROW_ON_MILK.set(GROW_ON_MILK.get());
         ServerConfig.LOVE_ON_AFFECTION.set(LOVE_ON_AFFECTION.get());
-        ServerConfig.JOLT_ON_TELEPORT.set(JOLT_ON_TELEPORT.get());
         ServerConfig.ANGRY_EYES.set(ANGRY_EYES.get());
         ServerConfig.SWIRL_ON_TRADE.set(SWIRL_ON_TRADE.get());
         ServerConfig.SWIRL_ON_HEAL.set(SWIRL_ON_HEAL.get());
