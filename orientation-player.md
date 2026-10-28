@@ -26,9 +26,10 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - milked (cow, mooshroom, goat): bulge;
 - showing affection (an animal entering love mode, villagers breeding, an iron golem offering a flower, an ocelot gaining trust): love, the pupils swelling to twice their size, up to the rim;
 - completing a villager or wandering-trader trade: swirl;
-- healed: swirl, 200-tick default cooldown.
+- healed: swirl, 200-tick default cooldown;
+- teleporting like an enderman or by chorus fruit: jolt, the pupils flung off to ricochet.
 
-One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else. Under any expression a swelling creeper's pupils rattle faster as it nears exploding, an attacking or angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else; a goat squints while it rams. Under any expression a swelling creeper's pupils rattle faster as it nears exploding, an attacking or angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 
@@ -120,12 +121,13 @@ entityOverrides = [
 | `growOnHitPercent` | `20` | Bulge chance after player damage |
 | `growOnMilk` | `true` | Bulge after milking |
 | `loveOnAffection` | `true` | Love after an affection event |
+| `joltOnTeleport` | `true` | Jolt after a teleport |
 | `angryEyes` | `true` | Red pupils for angry, not attacking, mobs |
 | `swirlOnTrade` | `true` | Swirl after a trade |
 | `swirlOnHeal` | `true` | Swirl after healing |
 | `swirlHealCooldownTicks` | `200` | Delay between healing swirls |
 
-Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
+Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, `color_change`, and `jolt`.
 
 `allowSpawnAll` (default `false`) gates `/sg spawnall`; enable it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) outside their normal context can corrupt a world. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and entity ids that `/sg spawn` and `/sg spawnall` skip; removing either default risks the world. Both affect only those authoring commands.
 
@@ -229,5 +231,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 103 dedicated-server GameTests; Forge contains 99. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
+- Fabric contains 106 dedicated-server GameTests; Forge contains 102. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

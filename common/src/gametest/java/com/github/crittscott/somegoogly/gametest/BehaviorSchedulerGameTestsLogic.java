@@ -40,9 +40,9 @@ import net.minecraft.world.item.Items;
  * ambient play is disabled so only the events under test can move the schedule, except where ambient
  * rolls are what's under test. The sleeping squint, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
- * swelling creeper's rattle, derived the same way from vanilla's synced swell, the angry red pupils, and
- * the creepy enderman's pulse. The mid-effect start-tracking catch-up packet and the anger packet need a
- * connected client and stay source-verified.
+ * swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
+ * the angry red pupils, the creepy enderman's pulse, and the teleport jolt's fling. The mid-effect
+ * start-tracking catch-up packet and the anger packet need a connected client and stay source-verified.
  */
 public final class BehaviorSchedulerGameTestsLogic {
 
@@ -56,6 +56,13 @@ public final class BehaviorSchedulerGameTestsLogic {
     private static final int SWELL_WINDOW_TICKS = 10;
     private static final float CALM_PUPIL_STEP = 0.01F;
     private static final float AGITATED_PUPIL_STEP = 0.05F;
+
+    // Jolt: pupil speed (unit-disk units per tick) a fresh fling stays above even after a wall bounce, and
+    // how far into a jolt a late viewer joins.
+    private static final float JOLTED_PUPIL_SPEED = 0.5F;
+    private static final int JOLT_LATE_JOIN_TICKS = 10;
+    // Goat ram: ticks for the lowered head to come back up after the ram ends (it rises two steps a tick).
+    private static final int RAM_HEAD_RISE_TICKS = 10;
 
     // Float slack for comparing eased tints and pulsed pupil sizes.
     private static final float TINT_TOLERANCE = 1e-4F;
@@ -228,6 +235,91 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
         }
+        helper.succeed();
+    }
+
+    /**
+     * A teleport plays jolt, through the server's entity-event broadcast, and only while
+     * {@code joltOnTeleport} is on. In game: provoke an eyed enderman until it teleports, or watch an eyed
+     * player eat a chorus fruit, and its pupils are flung around its eyes. With {@code joltOnTeleport = false}
+     * they are not.
+     */
+    public static void teleportPlaysJolt(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onTeleport = ServerConfig.JOLT_ON_TELEPORT.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            EnderMan enderMan = eyedTrackedMob(helper, player, EntityType.ENDERMAN, new BlockPos(2, 2, 2));
+
+            ServerConfig.JOLT_ON_TELEPORT.set(false);
+            helper.getLevel().broadcastEntityEvent(enderMan, EntityEvent.TELEPORT);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(enderMan, EyeBehavior.BLINK, 3, 1L),
+                    "joltOnTeleport=false suppresses the jolt");
+            advance(3);
+
+            ServerConfig.JOLT_ON_TELEPORT.set(true);
+            helper.getLevel().broadcastEntityEvent(enderMan, EntityEvent.TELEPORT);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(enderMan, EyeBehavior.BLINK, 3, 2L),
+                    "a teleport plays jolt");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.JOLT_ON_TELEPORT.set(onTeleport);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A jolt flings every resting pupil off at speed on its first tick, and does the same for a viewer who
+     * starts watching partway into it. Drives the client-side {@link GooglyTracker} directly against a server
+     * enderman. In game: as an operator, look at an eyed enderman and run {@code /sg admin behavior jolt};
+     * its pupils shoot off and ricochet around its eyes before settling.
+     */
+    public static void joltFlingsPupils(GameTestHelper helper) {
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(2, 2, 2));
+        HeadInfo headInfo = headInfo(helper, enderMan);
+
+        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo, false);
+        stepTracker(tracker, CALM_SETTLE_TICKS);
+        helper.assertTrue(!allPupilsFasterThan(tracker, JOLTED_PUPIL_SPEED), "resting pupils are slow");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.JOLT, EyeBehavior.JOLT.defaultDuration(), 1L, 0),
+                "the jolt starts");
+        tracker.update();
+        helper.assertTrue(allPupilsFasterThan(tracker, JOLTED_PUPIL_SPEED), "a jolt flings every pupil");
+
+        GooglyTracker joined = new GooglyTracker(enderMan, headInfo, false);
+        stepTracker(joined, CALM_SETTLE_TICKS);
+        helper.assertTrue(joined.startBehavior(EyeBehavior.JOLT, EyeBehavior.JOLT.defaultDuration(), 1L,
+                JOLT_LATE_JOIN_TICKS), "a late viewer's jolt starts partway in");
+        joined.update();
+        helper.assertTrue(allPupilsFasterThan(joined, JOLTED_PUPIL_SPEED), "a late viewer still sees the fling");
+        helper.succeed();
+    }
+
+    /**
+     * A goat lowering its head to ram squints, still plays behaviors while it does, and opens its eyes again
+     * once the ram ends and its head comes back up. Drives the client-side {@link GooglyTracker} directly
+     * against a server goat given the ram entity events by hand, since the squint is derived from the head
+     * position vanilla sets from them rather than sent. In game: stand in front of an eyed goat until it
+     * lowers its head and charges; its eyes narrow for the charge and open again afterwards.
+     */
+    public static void rammingGoatSquints(GameTestHelper helper) {
+        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
+        GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false);
+        helper.assertTrue(allSquash(tracker, 1F), "a calm goat's eyes are open");
+
+        goat.handleEntityEvent(EntityEvent.START_RAM);
+        stepGoat(goat, tracker, 1);
+        helper.assertTrue(!allSquash(tracker, 1F) && !allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y),
+                "lowering the head eases into the squint rather than snapping");
+        stepGoat(goat, tracker, GooglyTracker.SLEEP_EASE_TICKS);
+        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), "a ramming goat squints");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0), "a ramming goat still plays a behavior");
+
+        goat.handleEntityEvent(EntityEvent.END_RAM);
+        stepGoat(goat, tracker, RAM_HEAD_RISE_TICKS + GooglyTracker.SLEEP_EASE_TICKS + 1);
+        helper.assertTrue(allSquash(tracker, 1F), "once the ram ends the eyes open again");
         helper.succeed();
     }
 
@@ -551,6 +643,25 @@ public final class BehaviorSchedulerGameTestsLogic {
             }
         }
         return total / samples;
+    }
+
+    /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
+    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks) {
+        for (int t = 0; t < ticks; t++) {
+            goat.tick();
+            tracker.update();
+        }
+    }
+
+    private static boolean allPupilsFasterThan(GooglyTracker tracker, float speed) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (info.momentumX * info.momentumX + info.momentumY * info.momentumY <= speed * speed) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static void stepTracker(GooglyTracker tracker, int ticks) {

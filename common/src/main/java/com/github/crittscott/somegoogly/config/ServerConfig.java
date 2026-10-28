@@ -50,6 +50,8 @@ public class ServerConfig {
     public static final boolean GROW_ON_MILK_DEFAULT = true;
     public static final String HARVEST_ON_KILL_PERCENT_KEY = "harvestOnKillPercent";
     public static final int HARVEST_ON_KILL_PERCENT_DEFAULT = 25;
+    public static final String JOLT_ON_TELEPORT_KEY = "joltOnTeleport";
+    public static final boolean JOLT_ON_TELEPORT_DEFAULT = true;
     public static final String LOVE_ON_AFFECTION_KEY = "loveOnAffection";
     public static final boolean LOVE_ON_AFFECTION_DEFAULT = true;
     public static final int PERCENT_MAX = 100;
@@ -92,7 +94,7 @@ public class ServerConfig {
             Longest wait, in ticks, between one mob's idle expressions.""";
     public static final String AMBIENT_BEHAVIOR_POOL_COMMENT = """
             Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
-            side_eye, stare, grow, love, swirl, color_change. Unknown ids are ignored.""";
+            side_eye, stare, grow, love, swirl, color_change, jolt. Unknown ids are ignored.""";
     public static final String GROW_ON_HIT_PERCENT_COMMENT = """
             Chance (0-100) that an eyed mob's eyes bulge when a player damages it.""";
     public static final String GROW_ON_MILK_COMMENT = """
@@ -100,6 +102,9 @@ public class ServerConfig {
     public static final String LOVE_ON_AFFECTION_COMMENT = """
             Whether an eyed mob's pupils swell when it shows affection: an animal entering love mode,
             villagers breeding, an iron golem offering a flower, or an ocelot coming to trust a player.""";
+    public static final String JOLT_ON_TELEPORT_COMMENT = """
+            Whether an eyed mob's or player's pupils are flung around when it teleports the way an
+            enderman does or by eating a chorus fruit.""";
     public static final String ANGRY_EYES_COMMENT = """
             Whether an eyed mob that is angry but not attacking, such as a provoked iron golem, piglin,
             or zombified piglin, shows red pupils. The server checks each watched eyed mob once per tick
@@ -166,6 +171,8 @@ public class ServerConfig {
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     /** Whether a vanilla affection event makes an eyed mob's pupils swell. */
     public static final ConfigValue<Boolean> LOVE_ON_AFFECTION = ConfigValue.bool(LOVE_ON_AFFECTION_DEFAULT);
+    /** Whether a vanilla teleport makes an eyed mob's pupils fly around. */
+    public static final ConfigValue<Boolean> JOLT_ON_TELEPORT = ConfigValue.bool(JOLT_ON_TELEPORT_DEFAULT);
     /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
@@ -298,6 +305,7 @@ public class ServerConfig {
         GROW_ON_HIT_PERCENT.reset();
         GROW_ON_MILK.reset();
         HARVEST_ON_KILL_PERCENT.reset();
+        JOLT_ON_TELEPORT.reset();
         LOVE_ON_AFFECTION.reset();
         SPAWN_EXCLUDED_ENTITIES.reset();
         SPAWN_EXCLUDED_MODS.reset();

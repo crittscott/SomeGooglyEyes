@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The eight named eye expressions a mob can play, keyed by a {@link ResourceLocation} id. These are
+ * The nine named eye expressions a mob can play, keyed by a {@link ResourceLocation} id. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
  * behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
  * a {@link BehaviorInstance}.
@@ -202,6 +202,27 @@ public enum EyeBehavior {
             }
             out.stiffness = PUPIL_STIFFNESS * trapezoid(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
         }
+    },
+
+    /**
+     * Pupils are flung off in random directions and ricochet around their eyes until they settle. A
+     * one-tick kick on the first tick this client plays it, with no spring, so gravity and the wall bounce
+     * shape the flight; the rest of the duration keeps other behaviors from damping it. Jolt plays for a
+     * teleport, so it {@linkplain #ignoresMotion ignores the entity's motion}: the jump would otherwise shove
+     * every pupil the same way.
+     */
+    JOLT("jolt", 30) {
+        @Override
+        public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
+            if (i.age == i.startAge + 1) {
+                out.kick = JOLT_SPEED;
+            }
+        }
+
+        @Override
+        public boolean ignoresMotion() {
+            return true;
+        }
     };
 
     /** Center-spring stiffness for the stare and glance behaviors. */
@@ -229,6 +250,8 @@ public enum EyeBehavior {
     private static final float STARE_RAMP_FRAC = 0.25f;
     /** Fraction of a color change spent blending in, and again blending out. */
     private static final float COLOR_CHANGE_RAMP_FRAC = 0.2f;
+    /** Speed a jolt throws each pupil at, in unit-disk units per tick; slow enough to see it cross the eye. */
+    private static final float JOLT_SPEED = 0.8f;
 
     private static final Map<ResourceLocation, EyeBehavior> BY_ID = new HashMap<>();
 
@@ -268,6 +291,14 @@ public enum EyeBehavior {
      * direction) can vary their output by {@code head}/{@code eye} via {@code instance.helper}.
      */
     public abstract void influence(BehaviorInstance instance, int head, int eye, EyeInfluence out);
+
+    /**
+     * Whether the pupils ignore the entity's own movement while this plays, for a behavior that answers a
+     * jump in position that isn't real motion.
+     */
+    public boolean ignoresMotion() {
+        return false;
+    }
 
     /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
     public void onStart(BehaviorInstance instance) {
