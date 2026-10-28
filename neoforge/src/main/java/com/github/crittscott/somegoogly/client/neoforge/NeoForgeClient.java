@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
@@ -15,6 +16,9 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -46,6 +50,8 @@ public final class NeoForgeClient {
         gameBus.addListener(NeoForgeClient::registerClientCommands);
         gameBus.addListener(NeoForgeClient::onClientTick);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
+        gameBus.addListener(NeoForgeClient::onEntityLeaveLevel);
+        gameBus.addListener(NeoForgeClient::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
         }
@@ -101,6 +107,18 @@ public final class NeoForgeClient {
 
     private static void onClientTick(ClientTickEvent.Post event) {
         ClientLifecycle.tick();
+    }
+
+    private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
+            ClientEyeRuntime.onEntityRemoved(living);
+        }
+    }
+
+    private static void onLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onLevelChanged();
+        }
     }
 
     private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {

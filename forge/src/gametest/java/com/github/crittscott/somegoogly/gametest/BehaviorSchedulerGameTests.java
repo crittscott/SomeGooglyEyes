@@ -76,6 +76,11 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void angryMobsHaveRedPupils(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.angryMobsHaveRedPupils(helper);
     }

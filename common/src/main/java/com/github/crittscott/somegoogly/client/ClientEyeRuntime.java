@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -19,40 +18,25 @@ public final class ClientEyeRuntime {
     /** Simulate a tracker only while it was rendered this tick or last (freezes off-screen eyes). */
     private static final int SIMULATE_IDLE_TICKS = 1;
 
-    private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
-    // Entity ids the server reports angry. Kept apart from the trackers, which come and go with rendering,
-    // so a mob that turns angry off screen is red when it comes into view. An id left behind by a mob that
-    // died angry is never reused this connection and goes at disconnect.
+    // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
+    private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
 
     private ClientEyeRuntime() {
     }
 
-    /** Drop every tracker; call on client disconnect and on a resource reload. */
+    /** Drop render trackers while retaining server-reported anger for loaded entities. */
     public static void clear() {
         TRACKERS.clear();
     }
 
-    /** Forget every server-reported anger; call on client disconnect. */
+    /** Forget every server-reported anger when leaving the client level. */
     public static void clearAnger() {
         ANGRY.clear();
     }
 
-    /** Record the server-reported anger of {@code living} and pass it to its live tracker, if any. */
-    public static void setAngry(LivingEntity living, boolean angry) {
-        if (angry) {
-            ANGRY.add(living.getId());
-        } else {
-            ANGRY.remove(living.getId());
-        }
-        GooglyTracker tracker = TRACKERS.get(living);
-        if (tracker != null) {
-            tracker.angry = angry;
-        }
-    }
-
-    /** The client-tick counter this runtime advances once per {@link #tick()}. */
+    /** The client-tick counter this runtime advances once per {@link #tick(boolean)}. */
     public static int clientTicks() {
         return clientTicks;
     }
@@ -71,20 +55,45 @@ public final class ClientEyeRuntime {
         return tracker;
     }
 
+    /** Forget a removed entity's simulation and server-reported anger. */
+    public static void onEntityRemoved(LivingEntity living) {
+        TRACKERS.remove(living);
+        ANGRY.remove(living.getId());
+    }
+
+    /** Forget simulations and anger when the client replaces or unloads its level. */
+    public static void onLevelChanged() {
+        clear();
+        clearAnger();
+    }
+
     /** The live tracker for this entity, or {@code null} if none exists yet (no rebuild on mismatch). */
     @Nullable
     public static GooglyTracker peek(LivingEntity living) {
         return TRACKERS.get(living);
     }
 
+    /** Record the server-reported anger of {@code living} and pass it to its live tracker, if any. */
+    public static void setAngry(LivingEntity living, boolean angry) {
+        if (angry) {
+            ANGRY.add(living.getId());
+        } else {
+            ANGRY.remove(living.getId());
+        }
+        GooglyTracker tracker = TRACKERS.get(living);
+        if (tracker != null) {
+            tracker.angry = angry;
+        }
+    }
+
     /**
      * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
-     * physics of those rendered this tick or last. A no-op while there is no level or the game is paused.
+     * physics of those rendered this tick or last when {@code simulate} is true. The client lifecycle
+     * disables simulation while there is no level or the game is paused.
      */
-    public static void tick() {
+    public static void tick(boolean simulate) {
         clientTicks++;
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null || minecraft.isPaused()) {
+        if (!simulate) {
             return;
         }
         Iterator<Map.Entry<LivingEntity, GooglyTracker>> iterator = TRACKERS.entrySet().iterator();

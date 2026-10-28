@@ -104,12 +104,12 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     rejected++;
                     continue;
                 }
-                String error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+                EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
                 if (error == null) {
                     selected.put(entry.getKey(), config);
                 } else {
                     rejected++;
-                    SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error);
+                    SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
                 }
             } catch (Exception e) {
                 failedParse++;
@@ -133,11 +133,11 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                         fallback.getValue(), key.namespace(), key.installed(), key.used());
             }
         }
-        String aggregateError = EyeConfigLimits.validateSync(selected);
+        EyeConfigLimits.Issue aggregateError = EyeConfigLimits.validateSync(selected);
         if (aggregateError != null) {
             SomeGooglyCommon.LOGGER.error(
                     "Eye config reload exceeds synchronized work limits; keeping the previous configs: {}",
-                    aggregateError);
+                    aggregateError.diagnostic());
             return;
         }
         Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);

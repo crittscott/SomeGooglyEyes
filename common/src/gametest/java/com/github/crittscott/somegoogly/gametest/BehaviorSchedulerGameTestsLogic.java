@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
@@ -54,9 +56,11 @@ public final class BehaviorSchedulerGameTestsLogic {
     // Float slack for comparing eased squash values, which accumulate a 1/SLEEP_EASE_TICKS step.
     private static final float SQUASH_TOLERANCE = 1e-4F;
 
-    // Creeper rattle: ticks for swell-driven motion to die down, and swell ticks before and during the
-    // measured window (20 in all, short of the 30-tick fuse). Pupil steps are unit-disk distance per tick.
+    // Creeper rattle: separate settling and measurement windows; swell ramp and measurement total
+    // 20 ticks, short of the 30-tick fuse. Pupil steps are unit-disk distance per tick.
     private static final int CALM_SETTLE_TICKS = 200;
+    private static final int CALM_WINDOW_TICKS = 200;
+    private static final long CREEPER_RATTLE_SEED = 1L;
     private static final int SWELL_RAMP_TICKS = 10;
     private static final int SWELL_WINDOW_TICKS = 10;
     private static final float CALM_PUPIL_STEP = 0.01F;
@@ -471,28 +475,80 @@ public final class BehaviorSchedulerGameTestsLogic {
      * A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
      * rest they hang still. Drives the client-side {@link GooglyTracker} directly against a server creeper
      * ticked by hand, since the agitation is derived from vanilla's synced swell rather than sent; the swell
-     * is reversed well before the fuse runs out. In game: walk up to an eyed creeper until it hisses, then
+     * is reversed well before the fuse runs out. The fixture floats motionless, uses seeded pupil noise,
+     * and discards settling ticks before measuring either calm window.
+     * In game: walk up to an eyed creeper until it hisses, then
      * back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.
      */
     public static void swellingCreeperRattles(GameTestHelper helper) {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
+        creeper.setNoGravity(true);
+        creeper.setDeltaMovement(Vec3.ZERO);
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
-        helper.assertTrue(headInfo != null, "creepers have an eye config");
+        helper.assertTrue(headInfo != null && headInfo.hasConfig(), "creepers have usable eye geometry");
 
         GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false);
-        helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
-                "a calm creeper's pupils hang still");
+        tracker.rand.setSeed(CREEPER_RATTLE_SEED);
+        meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
+        float calmStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
+        helper.assertTrue(calmStep < CALM_PUPIL_STEP,
+                "a calm creeper's mean pupil step must be below " + CALM_PUPIL_STEP + ", got " + calmStep);
 
         creeper.setSwellDir(1);
         meanPupilStep(creeper, tracker, SWELL_RAMP_TICKS);
-        helper.assertTrue(meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS) > AGITATED_PUPIL_STEP,
-                "a swelling creeper's pupils keep moving fast");
+        float swellingStep = meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS);
+        helper.assertTrue(swellingStep > AGITATED_PUPIL_STEP,
+                "a swelling creeper's mean pupil step must exceed " + AGITATED_PUPIL_STEP + ", got " + swellingStep);
 
         creeper.setSwellDir(-1);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
-        helper.assertTrue(meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS) < CALM_PUPIL_STEP,
-                "once the creeper shrinks back its pupils settle");
+        float settledStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
+        helper.assertTrue(settledStep < CALM_PUPIL_STEP,
+                "a settled creeper's mean pupil step must be below " + CALM_PUPIL_STEP + ", got " + settledStep);
+        helper.succeed();
+    }
+
+    /**
+     * Server-reported anger survives renderer resets but ends with the entity or client level. In game:
+     * provoke an eyed golem, leave tracking distance, let it calm, and return; its pupils are calm.
+     * Repeat while another player stays near it, then change dimensions. Resource reload while the
+     * angry golem remains loaded must keep its red pupils. This test drives the runtime operations;
+     * real packet lookup and loader unload delivery require the connected-client reproduction.
+     */
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        zombie.setAggressive(false);
+        HeadInfo info = headInfo(helper, zombie);
+        ClientEyeRuntime.onLevelChanged();
+        try {
+            ClientEyeRuntime.setAngry(zombie, true);
+            GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(initial.angry && allIrisTint(initial, 1F),
+                    "anger received before first render initializes red pupils");
+            ClientEyeRuntime.setAngry(zombie, false);
+            helper.assertTrue(!initial.angry, "a false report updates the existing tracker");
+            stepTracker(initial, GooglyTracker.ANGER_EASE_TICKS + 1);
+            helper.assertTrue(allIrisTint(initial, 0F), "pupils return to calm after a false report");
+            ClientEyeRuntime.setAngry(zombie, true);
+            ClientEyeRuntime.clear();
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).angry,
+                    "render tracker eviction must retain anger for a loaded entity");
+            ClientEyeRuntime.onEntityRemoved(zombie);
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "entity removal deletes its tracker");
+            Zombie replacement = EntityType.ZOMBIE.create(helper.getLevel());
+            replacement.setId(zombie.getId());
+            GooglyTracker calm = ClientEyeRuntime.get(replacement, info);
+            helper.assertTrue(!calm.angry && allIrisTint(calm, 0F),
+                    "a replacement entity with the same id must not inherit unloaded anger");
+            ClientEyeRuntime.setAngry(replacement, true);
+            ClientEyeRuntime.onLevelChanged();
+            helper.assertTrue(ClientEyeRuntime.peek(replacement) == null
+                            && !ClientEyeRuntime.get(replacement, info).angry,
+                    "client world replacement drops both trackers and anger");
+        } finally {
+            ClientEyeRuntime.onLevelChanged();
+        }
         helper.succeed();
     }
 

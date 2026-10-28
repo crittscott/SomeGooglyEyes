@@ -31,8 +31,8 @@ import net.minecraft.world.entity.LivingEntity;
 public final class FabricServerEvents {
 
     /**
-     * Late phase for the eye-item entity interaction: Fabric protection mods register their
-     * {@link UseEntityCallback} in the default phase, so running after it lets them veto first.
+     * Late phase for eye-item entity interactions and self-shearing. Default-phase protection
+     * callbacks can veto before either action mutates state.
      */
     private static final ResourceLocation LATE_PHASE =
             ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
@@ -50,7 +50,8 @@ public final class FabricServerEvents {
                 !player.isSpectator() && entity instanceof LivingEntity living
                         ? EyeItemService.interact(player, level, hand, living)
                         : InteractionResult.PASS);
-        UseItemCallback.EVENT.register((player, level, hand) -> {
+        UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
+        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> {
             if (player.isSpectator()
                     || EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
                 return InteractionResultHolder.pass(player.getItemInHand(hand));

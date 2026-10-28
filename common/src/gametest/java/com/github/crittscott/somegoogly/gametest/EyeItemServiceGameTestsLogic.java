@@ -147,6 +147,9 @@ public final class EyeItemServiceGameTestsLogic {
      * air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
      * and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
      * with {@code googlyEyesEnabled = false}, nothing happens.
+     * With a protection mod refusing item use, repeat with plain and Optometrist shears: neither use
+     * removes eyes, drops an eye, changes durability, or hurts the player. This callback-ordering
+     * check needs a connected client and the loader's item-use event; the service test below bypasses it.
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {
         Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));

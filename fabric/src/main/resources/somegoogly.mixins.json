@@ -9,6 +9,9 @@
     "LivingEntityReactionMixin",
     "MerchantResultSlotMixin"
   ],
+  "client": [
+    "MinecraftLevelMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

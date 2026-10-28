@@ -13,13 +13,23 @@ public final class PickerExportGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);
+    public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
+        PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsEnderDragon(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
+    public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
+        PickerExportGameTestsLogic.draftsRetainSpeciesAndAge(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportOverlayCombinesDraftAges(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportOverlayCombinesDraftAges(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportOverlayPreservesOtherAges(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportOverlayPreservesOtherAges(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -28,8 +38,8 @@ public final class PickerExportGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
+    public static void exportRejectsConfigWithNoUsableEyes(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsConfigWithNoUsableEyes(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -38,8 +48,17 @@ public final class PickerExportGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsConfigWithNoUsableEyes(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsConfigWithNoUsableEyes(helper);
+    public static void exportRejectsEnderDragon(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
+    }
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -47,8 +66,4 @@ public final class PickerExportGameTests implements FabricGameTest {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
-        PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
-    }
 }
