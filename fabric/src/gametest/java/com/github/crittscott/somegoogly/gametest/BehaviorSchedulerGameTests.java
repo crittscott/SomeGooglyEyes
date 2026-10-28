@@ -90,4 +90,9 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     public static void rammingGoatSquints(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void aimingArcherWinks(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.aimingArcherWinks(helper);
+    }
 }
