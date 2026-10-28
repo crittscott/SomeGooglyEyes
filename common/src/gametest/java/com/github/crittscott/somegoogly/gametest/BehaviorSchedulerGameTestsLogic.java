@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -26,6 +27,8 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Pillager;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.Villager;
@@ -42,8 +45,9 @@ import net.minecraft.world.item.Items;
  * rolls are what's under test. The sleeping squint, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
  * swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
- * the angry red pupils, and the creepy enderman's pulse. The mid-effect start-tracking catch-up packet and
- * the anger packet need a connected client and stay source-verified.
+ * the aiming archer's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
+ * mid-effect start-tracking catch-up packet and the anger packet need a connected client and stay
+ * source-verified.
  */
 public final class BehaviorSchedulerGameTestsLogic {
 
@@ -258,6 +262,50 @@ public final class BehaviorSchedulerGameTestsLogic {
         goat.handleEntityEvent(EntityEvent.END_RAM);
         stepGoat(goat, tracker, RAM_HEAD_RISE_TICKS + GooglyTracker.SLEEP_EASE_TICKS + 1);
         helper.assertTrue(allSquash(tracker, 1F), "once the ram ends the eyes open again");
+        helper.succeed();
+    }
+
+    /**
+     * A skeleton drawing its bow squints the eye on its off-hand side and keeps the other open, still plays
+     * behaviors while it does, and opens the eye again once it lets go; a left-handed skeleton squints the
+     * other eye. Other archers don't: a pillager charging its crossbow keeps both eyes open. Drives the
+     * client-side {@link GooglyTracker} directly against server mobs whose item use is set by hand, since
+     * the squint is derived from the item use vanilla syncs rather than sent. In game: in survival, approach
+     * an eyed skeleton; one eye narrows each time it draws its bow and opens when it fires.
+     */
+    public static void aimingArcherWinks(GameTestHelper helper) {
+        Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
+                new BlockPos(1, 2, 1));
+        GooglyTracker tracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false);
+        helper.assertTrue(allSquash(tracker, 1F), "an idle skeleton's eyes are open");
+
+        skeleton.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(tracker, 1);
+        helper.assertTrue(!allSquash(tracker, 1F) && !winking(tracker, true),
+                "drawing the bow eases into the squint rather than snapping");
+        stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(tracker, true), "a right-handed skeleton drawing its bow squints its left eye");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0),
+                "an aiming skeleton still plays a behavior");
+
+        skeleton.stopUsingItem();
+        stepTracker(tracker, 5 + GooglyTracker.AIM_EASE_TICKS + 1);
+        helper.assertTrue(allSquash(tracker, 1F), "letting go of the bow opens the eye again");
+
+        Skeleton lefty = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), true,
+                new BlockPos(3, 2, 1));
+        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false);
+        lefty.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(leftyTracker, false), "a left-handed skeleton squints its right eye");
+
+        Pillager pillager = armed(helper, EntityType.PILLAGER, new ItemStack(Items.CROSSBOW), false,
+                new BlockPos(1, 2, 3));
+        GooglyTracker pillagerTracker = new GooglyTracker(pillager, headInfo(helper, pillager), false);
+        pillager.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(pillagerTracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(allSquash(pillagerTracker, 1F),
+                "only skeletons squint to aim: a pillager charging its crossbow keeps both eyes open");
         helper.succeed();
     }
 
@@ -629,6 +677,39 @@ public final class BehaviorSchedulerGameTestsLogic {
         for (int i = 0; i < ticks; i++) {
             tracker.update();
         }
+    }
+
+    /** A mob of {@code type} holding {@code weapon} in its main hand, with the given handedness. */
+    private static <T extends Mob> T armed(GameTestHelper helper, EntityType<T> type, ItemStack weapon,
+                                           boolean leftHanded, BlockPos pos) {
+        T mob = helper.spawnWithNoFreeWill(type, pos);
+        mob.setLeftHanded(leftHanded);
+        mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+        return mob;
+    }
+
+    /**
+     * Whether head 0 is aim-squinting: the eye farthest to the mob's left ({@code left}) or right is fully
+     * squinted for aiming, and every other eye is open. Eye positions are in head model space, where +X is
+     * the mob's right.
+     */
+    private static boolean winking(GooglyTracker tracker, boolean left) {
+        GooglyTracker.EyeInfo[] head = tracker.eyes[0];
+        int closed = 0;
+        for (int i = 1; i < head.length; i++) {
+            double x = tracker.helper.placementAt(0, i).position().x;
+            double closedX = tracker.helper.placementAt(0, closed).position().x;
+            if (left ? x < closedX : x > closedX) {
+                closed = i;
+            }
+        }
+        for (int i = 0; i < head.length; i++) {
+            float expected = i == closed ? GooglyTracker.AIM_SQUASH_Y : 1F;
+            if (Math.abs(head[i].squashY - expected) > SQUASH_TOLERANCE) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean allSquash(GooglyTracker tracker, float expected) {

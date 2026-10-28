@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
-One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else; a goat squints while it rams. Under any expression a swelling creeper's pupils rattle faster as it nears exploding, an attacking or angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 
@@ -202,7 +202,7 @@ It does not change the world. Both exports declare Minecraft definitions with th
 
 `/sg spawn <entity type>` creates one persistent, frozen mob at the targeted block.
 
-`/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default. Use it only in a disposable test world: force-spawning mobs like MineColonies' or Create's outside their mod's normal context can corrupt or destabilize the world, which is why both are excluded by default (see `spawnExcludedMods` above).
+`/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world (see `allowSpawnAll` above).
 
 Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
 
@@ -229,5 +229,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 107 dedicated-server GameTests; NeoForge and Forge each contain 103. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` actually stops rendering on an already-connected client while still letting the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 108 dedicated-server GameTests; NeoForge and Forge each contain 104. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` stops rendering on a connected client but keeps the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

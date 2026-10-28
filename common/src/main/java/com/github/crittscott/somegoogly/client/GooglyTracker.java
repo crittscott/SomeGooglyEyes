@@ -9,11 +9,14 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.goat.Goat;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.item.ProjectileWeaponItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,9 +33,10 @@ import javax.annotation.Nullable;
  * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
  * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A goat
  * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
- * same way but still plays behaviors. A
- * swelling creeper ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep
- * getting kicked back into flight in proportion to how far the swell has gone. An aggressive mob
+ * same way but still plays behaviors. A skeleton drawing its bow ({@link LivingEntity#getUseItem}, synced
+ * by vanilla) closes the eye on its off-hand side. A swelling creeper
+ * ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep getting kicked back
+ * into flight in proportion to how far the swell has gone. An aggressive mob
  * ({@link Mob#isAggressive}, synced by vanilla) or one the server reports {@link #angry} has its pupils
  * eased to red, and a creepy enderman ({@link EnderMan#isCreepy}, synced by vanilla) has its pupils pulse
  * at a frequency of its own. None of these ongoing states blocks a behavior: each is folded in on top of
@@ -47,6 +51,10 @@ public class GooglyTracker {
     public static final float SLEEP_SQUASH_Y = 0.3F;
     /** Ticks to ease fully into or out of the squint. */
     public static final int SLEEP_EASE_TICKS = 10;
+    /** Off-hand eye height multiplier while fully aiming. */
+    public static final float AIM_SQUASH_Y = 0.15F;
+    /** Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20. */
+    public static final int AIM_EASE_TICKS = 4;
     /** Pupil color while fully angry. */
     public static final float[] ANGER_IRIS_COLOR = {0.9F, 0.05F, 0.05F};
     /** Ticks to ease fully into or out of angry red pupils. */
@@ -106,6 +114,15 @@ public class GooglyTracker {
 
     /** How far into the squint (sleeping or ramming) the eyes are: 0 open, 1 fully squinted. */
     private float squint;
+    /** How far the off-hand eye is squinted for aiming: 0 open, 1 fully squinted. */
+    private float aim;
+    /**
+     * Per head, the index of the eye farthest to the entity's left and to its right, or -1 for both when
+     * the head has no eye off to one side. Eye positions are in head model space, where +X is the entity's
+     * right.
+     */
+    private final int[] leftEye;
+    private final int[] rightEye;
     /** How red the pupils are: 0 calm, 1 fully angry. */
     private float anger;
     /** How strongly the creepy pulse plays: 0 not creepy, 1 full pulse. */
@@ -129,14 +146,29 @@ public class GooglyTracker {
         this.angry = angry;
         this.overrides = EyeState.readProperties(parent);
         this.eyes = new EyeInfo[helper.getHeadCount()][];
+        this.leftEye = new int[eyes.length];
+        this.rightEye = new int[eyes.length];
 
         for (int i = 0; i < eyes.length; i++) {
             this.eyes[i] = new EyeInfo[helper.getEyeCount(i)];
+            int left = 0;
+            int right = 0;
             for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
                 this.eyes[i][i1] = new EyeInfo();
                 this.eyes[i][i1].creepyPhaseOffset =
                         Mth.lerp(rand.nextFloat(), CREEPY_MIN_PHASE_OFFSET, CREEPY_MAX_PHASE_OFFSET);
+                double x = helper.placementAt(i, i1).position().x;
+                if (x < helper.placementAt(i, left).position().x) {
+                    left = i1;
+                }
+                if (x > helper.placementAt(i, right).position().x) {
+                    right = i1;
+                }
             }
+            // A lone or centered eye stays open: closing it would read as a blink, not aiming.
+            boolean sided = left != right;
+            this.leftEye[i] = sided ? left : -1;
+            this.rightEye[i] = sided ? right : -1;
         }
 
         this.prevX = parent.getX();
@@ -144,6 +176,7 @@ public class GooglyTracker {
         this.prevZ = parent.getZ();
         // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
         this.squint = isSquinting() ? 1F : 0F;
+        this.aim = isAiming() ? 1F : 0F;
         this.anger = isAngry() ? 1F : 0F;
         this.creepiness = isCreepy() ? 1F : 0F;
         update();
@@ -441,6 +474,12 @@ public class GooglyTracker {
         squint = ease(squint, isSquinting(), SLEEP_EASE_TICKS);
         float squintSquash = Mth.lerp(squint, 1F, SLEEP_SQUASH_Y);
 
+        // Aiming closes only the eye on the off-hand side, sighting along the weapon with the other, and
+        // multiplies with the squint and any behavior the same way.
+        aim = ease(aim, isAiming(), AIM_EASE_TICKS);
+        float aimSquash = Mth.lerp(aim, 1F, AIM_SQUASH_Y);
+        int[] aimClosedEye = parent.getMainArm() == HumanoidArm.RIGHT ? leftEye : rightEye;
+
         // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
         anger = ease(anger, isAngry(), ANGER_EASE_TICKS);
         creepiness = ease(creepiness, isCreepy(), CREEPY_EASE_TICKS);
@@ -470,7 +509,7 @@ public class GooglyTracker {
                 info.irisScaleMul = INFLUENCE.irisScaleMul
                         * (1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset));
                 info.prevSquashY = info.squashY;
-                info.squashY = INFLUENCE.squashY * squintSquash;
+                info.squashY = INFLUENCE.squashY * squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F);
                 info.prevTintAmount = info.tintAmount;
                 info.tintAmount = INFLUENCE.tintAmount;
                 info.tintColor = INFLUENCE.corneaTint;
@@ -492,6 +531,12 @@ public class GooglyTracker {
     /** Whether the eyes should squint: the entity sleeps, or is a goat with its head lowered to ram. */
     private boolean isSquinting() {
         return parent.isSleeping() || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
+    }
+
+    /** Whether the entity is a skeleton drawing a bow or other ranged weapon. */
+    private boolean isAiming() {
+        return parent instanceof AbstractSkeleton && parent.isUsingItem()
+                && parent.getUseItem().getItem() instanceof ProjectileWeaponItem;
     }
 
     private boolean isCreepy() {
