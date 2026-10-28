@@ -59,7 +59,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT`, successful h
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent; clients derive the animation. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeper. Its per-tick walk sends server-only anger (`NeutralMob`, piglin `ANGRY_AT`) on change. `GooglyTracker` derives the sleep and ram squint, creeper rattle, red pupils, and enderman pulse from synced state; only sleep blocks behaviors. `ClientEyeRuntime` holds rendered entities' transient pupil and behavior state.
+The `EyeBehavior` enum is the catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent; clients derive the animation. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. Its per-tick walk sends server-only anger (`NeutralMob`, piglin `ANGRY_AT`) on change. `GooglyTracker` derives the sleep and ram squint, creeper rattle, red pupils, and enderman pulse from synced state; only sleep blocks behaviors. `ClientEyeRuntime` holds rendered entities' transient pupil and behavior state.
 
 ## Rendering and attachment
 
@@ -91,13 +91,13 @@ Client and server own disjoint `/sg` branches: editing is client-side; admin, sp
 
 ## Loader integration
 
-Fabric Mixins cover data migration, hurt and heal, trades, shears-kill drops, milking, and server-broadcast entity events; the mooshroom shear (no conversion event on either loader), milking, and entity events have Forge Mixins too, since Forge has no event for them. Mixins target the pinned Minecraft version; each loader writes its own fixed refmap.
+Fabric Mixins cover data migration, hurt and heal, trades, shears-kill drops, milking, sheep shearing, and server-broadcast entity events; the mooshroom shear (no conversion event on either loader), milking, sheep shearing, and entity events have Forge Mixins too, since Forge has no event for them. Mixins target the pinned Minecraft version; each loader writes its own fixed refmap.
 
 Forge: common registration runs once from the `@Mod` constructor, client services must be attached to the correct bus (mod versus game), and physical-client bootstrap stays isolated from dedicated-server bootstrap. Forge GameTests use `@PrefixGameTestTemplate(false)` with the `empty` template.
 
 ## Automated verification
 
-`common/src/gametest/java` holds 102 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
+`common/src/gametest/java` holds 103 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 

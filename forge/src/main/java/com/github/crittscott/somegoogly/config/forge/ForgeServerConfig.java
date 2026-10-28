@@ -26,6 +26,7 @@ public final class ForgeServerConfig {
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> AMBIENT_BEHAVIOR_POOL;
     private static final ForgeConfigSpec.IntValue GROW_ON_HIT_PERCENT;
     private static final ForgeConfigSpec.BooleanValue GROW_ON_MILK;
+    private static final ForgeConfigSpec.BooleanValue GROW_ON_SHEAR;
     private static final ForgeConfigSpec.BooleanValue LOVE_ON_AFFECTION;
     private static final ForgeConfigSpec.BooleanValue ANGRY_EYES;
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
@@ -69,6 +70,8 @@ public final class ForgeServerConfig {
                         ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
         GROW_ON_MILK = builder.comment(ServerConfig.GROW_ON_MILK_COMMENT.split("\n"))
                 .define(ServerConfig.GROW_ON_MILK_KEY, ServerConfig.GROW_ON_MILK_DEFAULT);
+        GROW_ON_SHEAR = builder.comment(ServerConfig.GROW_ON_SHEAR_COMMENT.split("\n"))
+                .define(ServerConfig.GROW_ON_SHEAR_KEY, ServerConfig.GROW_ON_SHEAR_DEFAULT);
         LOVE_ON_AFFECTION = builder.comment(ServerConfig.LOVE_ON_AFFECTION_COMMENT.split("\n"))
                 .define(ServerConfig.LOVE_ON_AFFECTION_KEY, ServerConfig.LOVE_ON_AFFECTION_DEFAULT);
         ANGRY_EYES = builder.comment(ServerConfig.ANGRY_EYES_COMMENT.split("\n"))
@@ -120,6 +123,7 @@ public final class ForgeServerConfig {
         ServerConfig.AMBIENT_BEHAVIOR_POOL.set(new ArrayList<>(AMBIENT_BEHAVIOR_POOL.get()));
         ServerConfig.GROW_ON_HIT_PERCENT.set(GROW_ON_HIT_PERCENT.get());
         ServerConfig.GROW_ON_MILK.set(GROW_ON_MILK.get());
+        ServerConfig.GROW_ON_SHEAR.set(GROW_ON_SHEAR.get());
         ServerConfig.LOVE_ON_AFFECTION.set(LOVE_ON_AFFECTION.get());
         ServerConfig.ANGRY_EYES.set(ANGRY_EYES.get());
         ServerConfig.SWIRL_ON_TRADE.set(SWIRL_ON_TRADE.get());

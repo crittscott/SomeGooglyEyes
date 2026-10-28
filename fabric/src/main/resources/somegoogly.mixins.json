@@ -10,7 +10,8 @@
     "MerchantResultSlotMixin",
     "MilkingMixin",
     "MushroomCowShearMixin",
-    "ServerLevelEntityEventMixin"
+    "ServerLevelEntityEventMixin",
+    "ShearingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
