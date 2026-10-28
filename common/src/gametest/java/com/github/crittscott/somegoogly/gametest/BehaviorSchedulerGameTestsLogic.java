@@ -20,6 +20,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -296,6 +297,40 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.GROW_ON_MILK.set(onMilk);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Shearing a sheep plays grow, and only while {@code growOnShear} is on. In game: use shears on an eyed
+     * sheep, and its eyes bulge as the wool drops. With {@code growOnShear = false} they do not.
+     */
+    public static void shearingPlaysGrow(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onShear = ServerConfig.GROW_ON_SHEAR.get();
+        ItemStack held = player.getMainHandItem().copy();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Sheep quiet = eyedTrackedMob(helper, player, EntityType.SHEEP, new BlockPos(1, 2, 1));
+            Sheep bulging = eyedTrackedMob(helper, player, EntityType.SHEEP, new BlockPos(3, 2, 1));
+
+            ServerConfig.GROW_ON_SHEAR.set(false);
+            shear(player, quiet);
+            helper.assertTrue(quiet.isSheared(), "the shears sheared the first sheep");
+            helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 3, 1L),
+                    "growOnShear=false suppresses the shearing grow");
+
+            ServerConfig.GROW_ON_SHEAR.set(true);
+            shear(player, bulging);
+            helper.assertTrue(bulging.isSheared(), "the shears sheared the second sheep");
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 3, 2L),
+                    "shearing a sheep plays grow");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GROW_ON_SHEAR.set(onShear);
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
         }
         helper.succeed();
@@ -630,6 +665,15 @@ public final class BehaviorSchedulerGameTestsLogic {
     private static void milk(ServerPlayer player, Mob mob) {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
         mob.interact(player, InteractionHand.MAIN_HAND);
+    }
+
+    /**
+     * Use shears on {@code mob} the way a player's right-click does. Goes through {@code Player#interactOn}
+     * because Forge and NeoForge shear from the shears item rather than the sheep's {@code mobInteract}.
+     */
+    private static void shear(ServerPlayer player, Mob mob) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+        player.interactOn(mob, InteractionHand.MAIN_HAND);
     }
 
     /**

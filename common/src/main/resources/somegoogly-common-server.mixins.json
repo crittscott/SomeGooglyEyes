@@ -6,7 +6,8 @@
   "refmap": "somegoogly-common.refmap.json",
   "mixins": [
     "MilkingMixin",
-    "ServerLevelEntityEventMixin"
+    "ServerLevelEntityEventMixin",
+    "ShearingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -58,7 +58,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT`, successful h
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, and entity-event triggers; it starts nothing on a sleeping entity. `GooglyTracker` derives the sleep and goat-ram squint, creeper rattle, aggressive red pupils, and creepy enderman pulse from synced state; only sleep blocks behaviors. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
+The `EyeBehavior` enum is the behavior catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent, and clients derive the animation; no per-tick packets exist. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeping entity. `GooglyTracker` derives the sleep and goat-ram squint, creeper rattle, aggressive red pupils, and creepy enderman pulse from synced state; only sleep blocks behaviors. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities.
 
 ## Rendering and attachment
 
@@ -90,7 +90,7 @@ Client and server own disjoint `/sg` branches: editing is client-side; admin, sp
 
 ## Loader integration
 
-Fabric Mixins cover data migration, hurt and heal, trades, and shears-kill drops (no Fabric API events); common Mixins (`somegoogly-common-server.mixins.json`) report milking and entity events. All target the pinned Minecraft version; Fabric and common write fixed refmaps.
+Fabric Mixins cover data migration, hurt and heal, trades, and shears-kill drops (no Fabric API events); common Mixins (`somegoogly-common-server.mixins.json`) report milking, sheep shearing, and entity events. All target the pinned Minecraft version; Fabric and common write fixed refmaps.
 
 NeoForge: common registration runs once from the `@Mod` constructor, and client services must be attached to the correct bus (mod versus game).
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` holds 102 shared tests, including save/load persistence, plus 9 for the 1.20.1 item migration; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
+`common/src/gametest/java` holds 103 shared tests, including save/load persistence, plus 9 for the 1.20.1 item migration; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 

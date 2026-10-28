@@ -45,6 +45,7 @@ a Slimy Eye.
 | `ambientBehaviorPool` | blink, cross_eye, side_eye, stare | Which expressions the idle timer may pick, by id. Remove a line to drop it from rotation. |
 | `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it. `0` disables. |
 | `growOnMilk` | `true` | Milking an eyed cow, mooshroom, or goat with a bucket makes its eyes bulge (`grow`). |
+| `growOnShear` | `true` | Shearing an eyed sheep makes its eyes bulge (`grow`). |
 | `loveOnAffection` | `true` | An eyed mob's pupils swell (`love`) when it enters love mode, when villagers breed, when an iron golem offers a flower, or when an ocelot comes to trust a player. |
 | `angryEyes` | `true` | An eyed mob that is angry but not attacking (a provoked iron golem, piglin, or zombified piglin) shows red pupils. The server checks each watched eyed mob once per tick and tells clients only when its anger starts or ends. Mobs that are attacking show red pupils regardless. |
 | `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader spins its pupils (`swirl`). |

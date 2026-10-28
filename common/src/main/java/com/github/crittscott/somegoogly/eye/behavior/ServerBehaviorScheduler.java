@@ -167,6 +167,18 @@ public final class ServerBehaviorScheduler {
         start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
+    /** {@code sheep} was sheared: play 'grow' (if enabled). */
+    public static void onSheared(LivingEntity sheep) {
+        if (!ServerConfig.GROW_ON_SHEAR.get()) {
+            return;
+        }
+        MobState state = eventTarget(sheep);
+        if (state == null) {
+            return;
+        }
+        start(sheep, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
+    }
+
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
     public static void onPlayerHurt(LivingEntity mob) {
         if (RANDOM.nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
