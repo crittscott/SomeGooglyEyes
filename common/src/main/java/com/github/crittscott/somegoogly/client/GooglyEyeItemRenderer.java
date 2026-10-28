@@ -93,7 +93,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             prevY = player.getY();
             prevZ = player.getZ();
             // A held eye plays no behavior, so the pupil has no spring (stiffness 0) — pure physics.
-            eye.update(rand, player.getYHeadRot(), player.getXRot(), mx, my, mz, 0F, 0F, 0F, 0F, 0F);
+            eye.update(rand, player.getYHeadRot(), player.getXRot(), mx, my, mz, 0F, 0F, 0F, 0F);
         }
 
         void reset() {

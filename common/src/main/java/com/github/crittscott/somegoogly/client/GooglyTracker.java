@@ -258,10 +258,9 @@ public class GooglyTracker {
          * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick
-         * @param kick      above 0, the pupil is thrown at this speed in a random direction this tick
          */
         public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
-                           float anchorX, float anchorY, float stiffness, float agitation, float kick) {
+                           float anchorX, float anchorY, float stiffness, float agitation) {
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
@@ -344,13 +343,6 @@ public class GooglyTracker {
                 momentumY += agitation * R_AGITATED_KICK * Mth.sin(angle);
             }
 
-            // A jolt replaces the pupil's velocity outright; the wall bounce and gravity take it from there.
-            if (kick > 0F) {
-                float angle = rand.nextFloat() * Mth.TWO_PI;
-                momentumX = kick * Mth.cos(angle);
-                momentumY = kick * Mth.sin(angle);
-            }
-
             deltaX += momentumX;
             deltaY += momentumY;
 
@@ -417,7 +409,7 @@ public class GooglyTracker {
         behavior.onStart(instance);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
-        instance.age = instance.startAge = elapsed;
+        instance.age = elapsed;
         if (instance.age >= instance.duration) {
             return false; // already finished by the time we'd show it (stale catch-up); nothing to play
         }
@@ -459,12 +451,6 @@ public class GooglyTracker {
         // past 1 at the end of the fuse.
         float agitation = parent instanceof Creeper creeper ? Math.min(1F, creeper.getSwelling(1F)) : 0F;
 
-        // A teleport's jump in position isn't motion, and would shove every pupil the same way.
-        boolean still = active != null && active.behavior.ignoresMotion();
-        double mx = still ? 0 : motionX;
-        double my = still ? 0 : motionY;
-        double mz = still ? 0 : motionZ;
-
         float headYaw = parent.getYHeadRot();
         float headPitch = parent.getXRot();
         for (int i = 0; i < eyes.length; i++) {
@@ -492,8 +478,8 @@ public class GooglyTracker {
                 info.irisTintAmount = anger;
 
                 // Step the pupil physics, with the behavior's spring folded in as a force.
-                info.update(rand, headYaw, headPitch, mx, my, mz,
-                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation, INFLUENCE.kick);
+                info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
+                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
             }
         }
     }

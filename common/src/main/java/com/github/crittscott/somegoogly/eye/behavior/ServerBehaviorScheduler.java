@@ -82,27 +82,25 @@ public final class ServerBehaviorScheduler {
     /**
      * The server broadcast vanilla entity event {@code eventId} for {@code entity} to its viewers. The
      * affection events (an animal entering love mode, villagers breeding, an iron golem offering a
-     * flower, an ocelot gaining trust) play 'love', and a teleport (an enderman's, or a chorus fruit's)
-     * plays 'jolt', each if enabled; every other event is ignored.
+     * flower, an ocelot gaining trust) play 'love' if enabled; every other event is ignored.
      */
     public static void onEntityEvent(Entity entity, byte eventId) {
         if (!(entity instanceof LivingEntity mob)) {
             return;
         }
-        EyeBehavior behavior = switch (eventId) {
+        boolean affection = switch (eventId) {
             case EntityEvent.IN_LOVE_HEARTS, EntityEvent.LOVE_HEARTS, EntityEvent.OFFER_FLOWER,
-                 EntityEvent.TRUSTING_SUCCEEDED -> ServerConfig.LOVE_ON_AFFECTION.get() ? EyeBehavior.LOVE : null;
-            case EntityEvent.TELEPORT -> ServerConfig.JOLT_ON_TELEPORT.get() ? EyeBehavior.JOLT : null;
-            default -> null;
+                 EntityEvent.TRUSTING_SUCCEEDED -> true;
+            default -> false;
         };
-        if (behavior == null) {
+        if (!affection || !ServerConfig.LOVE_ON_AFFECTION.get()) {
             return;
         }
         MobState state = eventTarget(mob);
         if (state == null) {
             return;
         }
-        start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
+        start(mob, state, EyeBehavior.LOVE, EyeBehavior.LOVE.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -122,26 +120,13 @@ public final class ServerBehaviorScheduler {
      * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
      * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
      * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
-     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs. An
-     * eyed player is always a target, since they see their own eyes in third person: one nobody else is
-     * watching gets an untracked state, which {@link #serverTick} evicts once it is idle.
+     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
      */
     private static MobState eventTarget(LivingEntity mob) {
-        if (!EyeState.hasEyes(mob)) {
+        MobState state = STATES.get(mob);
+        if (state == null || !EyeState.hasEyes(mob)) {
             return null;
         }
-        MobState state = STATES.get(mob);
-        if (state == null && mob instanceof ServerPlayer) {
-            state = newState();
-            STATES.put(mob, state);
-            ACTIVE.put(mob, state);
-        }
-        return state;
-    }
-
-    private static MobState newState() {
-        MobState state = new MobState();
-        state.ambientCooldown = nextCooldown();
         return state;
     }
 
@@ -201,7 +186,11 @@ public final class ServerBehaviorScheduler {
      * #onEyesGained} instead. Also catches the player up if the mob is already mid-effect.
      */
     public static void onStartTracking(LivingEntity mob, ServerPlayer player) {
-        MobState state = STATES.computeIfAbsent(mob, m -> newState());
+        MobState state = STATES.computeIfAbsent(mob, m -> {
+            MobState s = new MobState();
+            s.ambientCooldown = nextCooldown();
+            return s;
+        });
         state.trackers++;
         // Already eyed when tracking begins (natural spawn, or a slimy eye applied while untracked):
         // promote immediately. A mid-life gain while already tracked comes through onEyesGained instead.
@@ -347,7 +336,11 @@ public final class ServerBehaviorScheduler {
      * tracking state yet (creates one), so the debug command can drive any looked-at mob.
      */
     public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {
-        MobState state = STATES.computeIfAbsent(mob, m -> newState());
+        MobState state = STATES.computeIfAbsent(mob, m -> {
+            MobState s = new MobState();
+            s.ambientCooldown = nextCooldown();
+            return s;
+        });
         return start(mob, state, behavior, duration, seed);
     }
 }
