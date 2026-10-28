@@ -13,24 +13,24 @@ import java.util.WeakHashMap;
  */
 public final class Resolvers {
 
-    private static final List<EyeAttachmentResolver> ALL = List.of(
-            AdvancedModelBoxResolver.citadel(),
-            AdvancedModelBoxResolver.uranus(),
-            new LLibraryResolver(),
-            new RootModelResolver()
-    );
-
-    // Which resolver handles a given model instance never changes for that instance's life, and the
-    // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
-    // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
-    private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
-
     /**
      * Attach points resolved once per (model instance, token) and replayed every frame, shared by every
      * resolver. A datapack reload must <b>not</b> clear this (new configs change which token is asked for,
      * not what a token names inside a model); {@link #clearCaches} clears it when the models are replaced.
      */
     static final ModelMemo<EntityModel<?>, Attachment> ATTACHMENTS = new ModelMemo<>();
+
+    // Which resolver handles a given model instance never changes for that instance's life, and the
+    // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
+    // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
+    private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
+
+    private static final EyeAttachmentResolver ROOT = new RootModelResolver();
+    private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
+            AdvancedModelBoxResolver.citadel(),
+            AdvancedModelBoxResolver.uranus(),
+            new LLibraryResolver()
+    );
 
     private Resolvers() {
     }
@@ -44,22 +44,23 @@ public final class Resolvers {
     public static void clearCaches() {
         ATTACHMENTS.clear();
         BY_MODEL.clear();
-        for (EyeAttachmentResolver r : ALL) {
+        ROOT.clearModelCache();
+        for (EyeAttachmentResolver r : SPECIALIZED) {
             r.clearModelCache();
         }
     }
 
-    /** @return a resolver for the model, or {@code null} if none handles it. */
-    public static EyeAttachmentResolver forModel(EntityModel<?> model) {
-        return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
-    }
-
     private static EyeAttachmentResolver findResolver(EntityModel<?> model) {
-        for (EyeAttachmentResolver r : ALL) {
+        for (EyeAttachmentResolver r : SPECIALIZED) {
             if (r.handles(model)) {
                 return r;
             }
         }
-        return null;
+        return ROOT;
+    }
+
+    /** @return the specialized resolver for this model, or the root-model resolver. */
+    public static EyeAttachmentResolver forModel(EntityModel<?> model) {
+        return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
     }
 }

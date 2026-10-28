@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,20 +23,26 @@ public final class Gizmo {
 
     private static final float AXIS_LEN = 3.0f;
     private static final float END_CUBE = 0.10f;
+    private static final float NEGATIVE_AXIS_BRIGHTNESS = 0.4f;
     private static final float ORIGIN_CUBE = 0.06f;
+
+    private static final EyeColor X_COLOR = new EyeColor(1.0f, 0.15f, 0.15f);
+    private static final EyeColor Y_COLOR = new EyeColor(0.15f, 1.0f, 0.15f);
+    private static final EyeColor Z_COLOR = new EyeColor(0.25f, 0.45f, 1.0f);
 
     private Gizmo() {
     }
 
     private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
-                             float r, float g, float b) {
+                             EyeColor color) {
+        float r = color.r(), g = color.g(), b = color.b();
         line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(ps, vc, 0, 0, 0, -x, -y, -z, r * 0.4f, g * 0.4f, b * 0.4f); // negative (dim)
+        line(ps, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
     }
 
     private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
-                             float h, float r, float g, float b) {
-        ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, r, g, b, 1.0f);
+                             float h, EyeColor color) {
+        ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
     }
 
     /** Draw the axis gizmo at the current pose origin. */
@@ -43,17 +50,17 @@ public final class Gizmo {
         VertexConsumer vc = buffers.getBuffer(LinesNoDepth.GIZMO_LINES);
 
         // Axes: bright toward +, dim toward - (the + end also gets a cube as the only label).
-        axis(poseStack, vc, AXIS_LEN, 0, 0, 1.0f, 0.15f, 0.15f); // X red
-        axis(poseStack, vc, 0, AXIS_LEN, 0, 0.15f, 1.0f, 0.15f); // Y green
-        axis(poseStack, vc, 0, 0, AXIS_LEN, 0.25f, 0.45f, 1.0f); // Z blue
+        axis(poseStack, vc, AXIS_LEN, 0, 0, X_COLOR); // X red
+        axis(poseStack, vc, 0, AXIS_LEN, 0, Y_COLOR); // Y green
+        axis(poseStack, vc, 0, 0, AXIS_LEN, Z_COLOR); // Z blue
 
         // Positive-end cubes.
-        cube(poseStack, vc, AXIS_LEN, 0, 0, END_CUBE, 1.0f, 0.15f, 0.15f);
-        cube(poseStack, vc, 0, AXIS_LEN, 0, END_CUBE, 0.15f, 1.0f, 0.15f);
-        cube(poseStack, vc, 0, 0, AXIS_LEN, END_CUBE, 0.25f, 0.45f, 1.0f);
+        cube(poseStack, vc, AXIS_LEN, 0, 0, END_CUBE, X_COLOR);
+        cube(poseStack, vc, 0, AXIS_LEN, 0, END_CUBE, Y_COLOR);
+        cube(poseStack, vc, 0, 0, AXIS_LEN, END_CUBE, Z_COLOR);
 
         // Origin marker.
-        cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, 1.0f, 1.0f, 1.0f);
+        cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
     }
 
     private static void line(PoseStack ps, VertexConsumer vc,

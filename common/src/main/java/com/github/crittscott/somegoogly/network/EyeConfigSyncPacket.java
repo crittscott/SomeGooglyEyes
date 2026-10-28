@@ -71,9 +71,9 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             configs.put(id, decoded);
             encoded.put(id, tag);
         }
-        String error = EyeConfigLimits.validateSync(configs);
+        EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
-            throw new DecoderException("Unsafe synced eye config: " + error);
+            throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
         }
         this.configs = configs;
         this.encoded = encoded;

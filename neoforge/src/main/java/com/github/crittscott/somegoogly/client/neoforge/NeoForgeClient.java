@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -13,6 +14,9 @@ import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -30,6 +34,36 @@ public final class NeoForgeClient {
     private NeoForgeClient() {
     }
 
+    private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
+        ClientRenderLayers.clearCaches();
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            ClientRenderLayers.install(event.getSkin(skin));
+        }
+        for (EntityType<?> entityType : event.getEntityTypes()) {
+            ClientRenderLayers.install(event.getRenderer(entityType));
+        }
+    }
+
+    private static void onClientTick(ClientTickEvent.Post event) {
+        ClientLifecycle.tick();
+    }
+
+    private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
+            ClientEyeRuntime.onEntityRemoved(living);
+        }
+    }
+
+    private static void onLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onLevelChanged();
+        }
+    }
+
+    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientLifecycle.onDisconnect();
+    }
+
     /** Register the client config and every client-side NeoForge listener. */
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
         NeoForgeClientConfig.register(modBus, modContainer);
@@ -43,31 +77,15 @@ public final class NeoForgeClient {
         gameBus.addListener(NeoForgeClient::registerClientCommands);
         gameBus.addListener(NeoForgeClient::onClientTick);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
+        gameBus.addListener(NeoForgeClient::onEntityLeaveLevel);
+        gameBus.addListener(NeoForgeClient::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
         }
     }
 
-    private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
-        ClientRenderLayers.clearCaches();
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            ClientRenderLayers.install(event.getSkin(skin));
-        }
-        for (EntityType<?> entityType : event.getEntityTypes()) {
-            ClientRenderLayers.install(event.getRenderer(entityType));
-        }
-    }
-
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
         GooglyClientCommands.register(event.getDispatcher());
-    }
-
-    private static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
-        event.register(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
-    }
-
-    private static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
-        event.register(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
@@ -77,6 +95,10 @@ public final class NeoForgeClient {
                         graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 
+    private static void registerItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
+    }
+
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(PickerKeys.LOCK);
         event.register(PickerKeys.PART_NEXT);
@@ -84,11 +106,7 @@ public final class NeoForgeClient {
         event.register(PickerKeys.TOGGLE);
     }
 
-    private static void onClientTick(ClientTickEvent.Post event) {
-        ClientLifecycle.tick();
-    }
-
-    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        ClientLifecycle.onDisconnect();
+    private static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+        event.register(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 }

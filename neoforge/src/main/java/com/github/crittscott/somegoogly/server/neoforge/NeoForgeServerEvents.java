@@ -36,7 +36,7 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST,
                 (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
-        gameBus.addListener(NeoForgeServerEvents::onRightClickItem);
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
         gameBus.addListener(NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);

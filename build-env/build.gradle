@@ -128,6 +128,7 @@ tasks.register('generateDocs', Sync) {
 tasks.register('collectJars', Copy) {
     group = 'build'
     description = "Copies the loaders' already-built production jars into ../jars."
+    doNotTrackState("../jars is shared across version worktrees and may hold Dropbox online-only files")
 
     into rootProject.file('../jars')
 

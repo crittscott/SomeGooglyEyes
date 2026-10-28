@@ -66,10 +66,15 @@ public final class EyeConfigLimitsGameTestsLogic {
         return config(variant(head(eye)));
     }
 
-    private static void assertRejected(GameTestHelper helper, RuntimeConfig config, String fragment) {
-        String error = EyeConfigLimits.validateRuntimeConfig(config);
-        helper.assertTrue(error != null && error.contains(fragment),
-                "expected a rejection mentioning '" + fragment + "', got " + error);
+    private static void assertRejected(GameTestHelper helper, RuntimeConfig config, String reason) {
+        EyeConfigLimits.Issue error = EyeConfigLimits.validateRuntimeConfig(config);
+        helper.assertTrue(error != null, "expected rejection for " + reason);
+        while (!error.arguments().isEmpty()
+                && error.arguments().getLast() instanceof EyeConfigLimits.Issue nested) {
+            error = nested;
+        }
+        helper.assertTrue(error.key().equals("somegoogly.validation." + reason),
+                "expected rejection for " + reason + ", got " + error.key());
     }
 
     /**
@@ -79,7 +84,7 @@ public final class EyeConfigLimitsGameTestsLogic {
     public static void variantWeightMustBeNonnegative(GameTestHelper helper) {
         Variant negative = variant(1, 1);
         negative.weight = -5.0;
-        assertRejected(helper, config(negative), "invalid weight");
+        assertRejected(helper, config(negative), "invalid_weight");
         helper.succeed();
     }
 
@@ -93,12 +98,12 @@ public final class EyeConfigLimitsGameTestsLogic {
         EyePlacement selfTarget = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
                 EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 0);
         assertRejected(helper, configWithEye(new EyeDefinition(selfTarget, EyeAppearance.DEFAULT)),
-                "cross-eye target");
+                "cross_target");
 
         EyePlacement outOfRange = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
                 EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 1);
         assertRejected(helper, configWithEye(new EyeDefinition(outOfRange, EyeAppearance.DEFAULT)),
-                "cross-eye target");
+                "cross_target");
 
         EyePlacement partnered = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
                 EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 1);
@@ -122,7 +127,7 @@ public final class EyeConfigLimitsGameTestsLogic {
         assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
                         Vec3.ZERO, 64F, 1F, 1F,
                         EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, -1),
-                EyeAppearance.DEFAULT)), "scale or depth");
+                EyeAppearance.DEFAULT)), "scale_depth");
         assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
                         Vec3.ZERO, 1F, 1F, 1F,
                         EyePlacement.DEFAULT_INCLINATION, 9_000F, -1),
@@ -140,12 +145,11 @@ public final class EyeConfigLimitsGameTestsLogic {
         for (int i = 0; i < tooManyVariants.length; i++) {
             tooManyVariants[i] = variant(1, 1);
         }
-        assertRejected(helper, config(tooManyVariants), "variant count");
+        assertRejected(helper, config(tooManyVariants), "variant_count");
 
-        assertRejected(helper, config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT + 1, 1)), "head count");
-        assertRejected(helper, config(variant(1, EyeConfigLimits.MAX_EYES_PER_HEAD + 1)), "eye count exceeds "
-                + EyeConfigLimits.MAX_EYES_PER_HEAD);
-        assertRejected(helper, config(variant(9, 15)), "eye count exceeds " + EyeConfigLimits.MAX_EYES_PER_VARIANT);
+        assertRejected(helper, config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT + 1, 1)), "head_count");
+        assertRejected(helper, config(variant(1, EyeConfigLimits.MAX_EYES_PER_HEAD + 1)), "head_eye_count");
+        assertRejected(helper, config(variant(9, 15)), "variant_eye_count");
         helper.succeed();
     }
 }

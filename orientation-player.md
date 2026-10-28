@@ -186,7 +186,7 @@ While the picker is active, configured mobs display eyes regardless of spawn cha
 6. Manage arrangements with `/sg variant new`, `/sg variant <n>`, `/sg variant weight <w>`, and `/sg variant del <n>`.
 7. Export with `/sg export` or `/sg exportall`.
 
-Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits.
+Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits. Saved arrangements are retained separately for each species and life stage, so adult and baby edits can coexist in one session.
 
 `/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks. It is limited to one successful export per player every 10 seconds, and a definition too large to send is refused with a message.
 
@@ -196,7 +196,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
+It does not change the world. Both exports replace authored ages and preserve the other loaded age definitions. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
 
 ### Test mobs
 
@@ -229,5 +229,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 108 dedicated-server GameTests; NeoForge and Forge each contain 104. Each loader requires production-build verification and physical-client smoke testing of ordinary and baby models, players, special resolver families, expression and pupil animation, both item render paths, harvesting and application, picker editing/export, renderer reload, optional GeckoLib entities, and that `googlyEyesEnabled=false` stops rendering on a connected client but keeps the picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 112 dedicated-server GameTests; NeoForge and Forge each contain 108. Physical verification covers production artifacts, adult/baby/player models and resolvers, animations, both item render paths, harvesting/application, picker editing/export, reloads, optional GeckoLib, and the master switch with picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

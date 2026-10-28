@@ -35,7 +35,7 @@ public final class ForgeServerEvents {
     public static void register(IEventBus gameBus) {
         gameBus.addListener(ForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
-        gameBus.addListener(ForgeServerEvents::onRightClickItem);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
         gameBus.addListener(ForgeServerEvents::onLivingDrops);
         gameBus.addListener(ForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(ForgeServerEvents::onPlayerLoggedOut);
