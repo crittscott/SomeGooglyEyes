@@ -4,15 +4,11 @@ import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,10 +16,10 @@ import net.minecraft.world.item.ItemStack;
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
  * {@link AppearanceOverride}. Reuses the in-world eye model so the item and the mob eyes can't drift.
  *
- * <p>When the local player holds the item, its first-person view has a live pupil — a small standalone
- * googly physics driven by the player's look movement plus gravity, stepped from the client tick. Every
- * other view (inventory, item frame, ground, and any player's hand in third person, since an item renderer
- * is not told who holds the item) is static, pupil centered.
+ * <p>When the local player holds the item, its first-person view is a live eye, the {@link HeldEye} stepped
+ * from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
+ * own behaviors. Every other view (inventory, item frame, ground, and any player's hand in third person,
+ * since an item renderer is not told who holds the item) is static, pupil centered.
  *
  * <p>Each loader attaches it as the Googly Eye's custom item renderer; {@code models/item/googly_eye.json}
  * selects the builtin entity model that hands rendering to it.
@@ -42,7 +38,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
 
-    private static final HeldWobble WOBBLE = new HeldWobble();
+    private static final HeldEye HELD = new HeldEye();
 
     private ModelGooglyEye model;
 
@@ -50,68 +46,17 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
     }
 
-    /** Advance the held-eye pupil one tick; called from the client tick. */
+    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
     public static void tick() {
-        WOBBLE.tick();
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.isPaused()) {
+            HELD.tick(minecraft.player);
+        }
     }
 
     /** Drop held-eye state when leaving a world or server. */
     public static void reset() {
-        WOBBLE.reset();
-    }
-
-    /**
-     * Googly physics for the local player's held eye, using the <b>same</b> {@link GooglyTracker.EyeInfo}
-     * per-tick step as mob eyes (fed the player's look + position deltas), so the behavior is identical:
-     * it reacts to movement and settles to rest when the player stands still. It steps only while the
-     * player holds a Googly Eye and starts at rest each time one is picked up.
-     */
-    private static final class HeldWobble {
-        private final RandomSource rand = RandomSource.create();
-        private GooglyTracker.EyeInfo eye;
-        private double prevX;
-        private double prevY;
-        private double prevZ;
-
-        void tick() {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null || !holdsGooglyEye(player)) {
-                eye = null;
-                return;
-            }
-            double mx = 0;
-            double my = 0;
-            double mz = 0;
-            if (eye == null) {
-                eye = new GooglyTracker.EyeInfo();
-            } else {
-                mx = player.getX() - prevX;
-                my = player.getY() - prevY;
-                mz = player.getZ() - prevZ;
-            }
-            prevX = player.getX();
-            prevY = player.getY();
-            prevZ = player.getZ();
-            // A held eye plays no behavior, so the pupil has no spring (stiffness 0) — pure physics.
-            eye.update(rand, player.getYHeadRot(), player.getXRot(), mx, my, mz, 0F, 0F, 0F, 0F);
-        }
-
-        void reset() {
-            eye = null;
-        }
-
-        float x(float partialTick) {
-            return eye == null ? 0F : Mth.lerp(partialTick, eye.prevDeltaX, eye.deltaX);
-        }
-
-        float y(float partialTick) {
-            return eye == null ? 0F : Mth.lerp(partialTick, eye.prevDeltaY, eye.deltaY);
-        }
-
-        private static boolean holdsGooglyEye(LocalPlayer player) {
-            return player.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
-                    || player.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
-        }
+        HELD.reset();
     }
 
     private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
@@ -130,19 +75,9 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
         AppearanceOverride props = EyeItemProperties.get(stack);
-        float[] cornea = props.cornea().orElse(EyeColor.WHITE).toArray();
-        float[] iris = props.iris().orElse(EyeColor.BLACK).toArray();
+        EyeColor cornea = props.cornea().orElse(EyeColor.WHITE);
+        EyeColor iris = props.iris().orElse(EyeColor.BLACK);
         boolean glow = props.glow().orElse(false);
-
-        float irisX = 0F;
-        float irisY = 0F;
-        if (isFirstPersonHand(ctx)) {
-            float partialTick = Minecraft.getInstance().getFrameTime();
-            irisX = WOBBLE.x(partialTick);
-            irisY = WOBBLE.y(partialTick);
-        }
-
-        float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
 
         ModelGooglyEye m = model();
         pose.pushPose();
@@ -155,9 +90,17 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
-
-        GooglyEyeRenderer.drawEye(pose, m, buffer, light, overlay, cornea, iris, IRIS_SCALE, irisX, irisY, glow);
+        GooglyTracker.EyeInfo held = isFirstPersonHand(ctx) ? HELD.eye : null;
+        if (held != null) {
+            // The live eye keeps eye-local down for gravity: this pose is relative to the camera, not the world.
+            GooglyEyeRenderer.drawAnimatedEye(pose, m, buffer, light, overlay, held, MODEL_SCALE, 1F, cornea, iris,
+                    IRIS_SCALE, glow, Minecraft.getInstance().getFrameTime());
+        } else {
+            float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
+            pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
+            GooglyEyeRenderer.drawEye(pose, m, buffer, light, overlay, cornea.toArray(), iris.toArray(), IRIS_SCALE,
+                    0F, 0F, glow);
+        }
         pose.popPose();
     }
 }

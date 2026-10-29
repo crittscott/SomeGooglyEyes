@@ -257,7 +257,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" class="member-name-link">update</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#applyOverlays(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,float,float,float,float)" class="member-name-link">applyOverlays</a><wbr>(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ float&nbsp;irisPulse,
+ float&nbsp;squash,
+ float&nbsp;lid,
+ float&nbsp;irisTint)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
+ lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
+ caller derives on top of it.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" class="member-name-link">update</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand,
  float&nbsp;headYaw,
  float&nbsp;headPitch,
  double&nbsp;motionX,
@@ -267,7 +278,7 @@ loadScripts(document, 'script');</script>
  float&nbsp;anchorY,
  float&nbsp;stiffness,
  float&nbsp;agitation)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Advance the pupil simulation by one tick and update its previous/current render positions.</div>
 </div>
 </div>
@@ -502,6 +513,27 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="applyOverlays(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,float,float,float,float)">
+<h3>applyOverlays</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">applyOverlays</span><wbr><span class="parameters">(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ float&nbsp;irisPulse,
+ float&nbsp;squash,
+ float&nbsp;lid,
+ float&nbsp;irisTint)</span></div>
+<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
+ lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
+ caller derives on top of it.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>influence</code> - the behavior's influence on this eye this tick</dd>
+<dd><code>irisPulse</code> - pupil size multiplier from the creepy pulse (1 for none)</dd>
+<dd><code>squash</code> - vertical scale multiplier from the squints (1 for none)</dd>
+<dd><code>lid</code> - how much of the eye each lid covers (0 for none)</dd>
+<dd><code>irisTint</code> - how far the pupil is blended toward <a href="GooglyTracker.html#ANGER_IRIS_COLOR"><code>GooglyTracker.ANGER_IRIS_COLOR</code></a> (0 for none)</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)">
 <h3>update</h3>

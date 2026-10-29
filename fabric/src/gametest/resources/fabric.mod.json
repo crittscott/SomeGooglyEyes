@@ -21,7 +21,8 @@
       "com.github.crittscott.somegoogly.gametest.EyeConfigLimitsGameTests",
       "com.github.crittscott.somegoogly.gametest.EyeItemServiceGameTests",
       "com.github.crittscott.somegoogly.gametest.BehaviorSchedulerGameTests",
-      "com.github.crittscott.somegoogly.gametest.PickerAuthGameTests"
+      "com.github.crittscott.somegoogly.gametest.PickerAuthGameTests",
+      "com.github.crittscott.somegoogly.gametest.HeldEyeGameTests"
     ]
   },
   "depends": {

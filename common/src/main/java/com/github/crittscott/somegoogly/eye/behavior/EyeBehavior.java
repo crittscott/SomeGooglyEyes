@@ -59,6 +59,11 @@ public enum EyeBehavior {
 
         @Override
         public void onStart(BehaviorInstance i) {
+            if (i.helper == null) {
+                // A lone eye always winks.
+                i.mask = new boolean[][]{{true}};
+                return;
+            }
             int heads = i.helper.getHeadCount();
             i.mask = new boolean[heads][];
             int total = 0;
@@ -179,6 +184,10 @@ public enum EyeBehavior {
     CROSS_EYE("cross_eye", 70) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
+            // A lone eye has no partner to look at.
+            if (i.helper == null) {
+                return;
+            }
             EyePlacement self = i.helper.placementAt(head, eye);
             int targetIdx = self.crossTarget();
             // No partner, self-reference, or a stale/out-of-range index → this eye stays neutral.

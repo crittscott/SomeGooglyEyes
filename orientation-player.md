@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye is a 3D item whose pupil moves while you hold it in first person; other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye held in first person is live: its pupil moves, and now and then it winks, stares, or glances aside; it bulges when you're hurt and swirls when you heal. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
 Worlds saved by the 0.8.2 release for Minecraft 1.20.1 open with their eyed mobs, eye items, and settings intact.
 
@@ -231,5 +231,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 113 dedicated-server GameTests; Forge contains 109. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across unload/retracking and dimension changes, optional GeckoLib, and the rendering switch with picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
+- Fabric contains 118 dedicated-server GameTests; Forge contains 114. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, and the rendering switch with picker preview. Migrating a real 0.8.2 Fabric save also needs physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.
