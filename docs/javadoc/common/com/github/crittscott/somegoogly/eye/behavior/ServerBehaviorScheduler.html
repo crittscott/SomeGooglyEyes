@@ -94,7 +94,13 @@ loadScripts(document, 'script');</script>
 <div class="block">The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
  client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
  rule holds across every viewer and so server-only game events drive the same path. Triggers are the
- ambient idle timer below plus game-event reactions (hurt → grow, trade/heal → swirl).
+ ambient idle timer below plus game-event reactions (hurt/milked → grow, trade/heal → swirl, vanilla
+ affection entity events → love). A sleeping mob plays nothing: every trigger is dropped as if the mob
+ were busy, and each client derives the sleeping squint from vanilla's synced sleep state.
+
+ <p>Anger is the one ongoing state the scheduler shares, because vanilla keeps it on the server: each
+ tick it checks every <code>ACTIVE</code> mob with <a href="#isAngry(net.minecraft.world.entity.LivingEntity)"><code>isAngry(net.minecraft.world.entity.LivingEntity)</code></a> and sends an <a href="../../network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network"><code>EyeAngerPacket</code></a> only
+ when that changes. It never blocks a behavior; the client reddens the pupils underneath whatever plays.
 
  <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
  maintained from <code>StartTracking</code>/<code>StopTracking</code> (so we never scan all loaded entities). A
@@ -128,6 +134,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Forget all state (server stop), so a single-player JVM doesn't bleed one world into the next.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isAngry(net.minecraft.world.entity.LivingEntity)" class="member-name-link">isAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether <code>mob</code>'s eyes should show anger the client can't see for itself: a neutral mob (iron
+ golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
+ to be angry at.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEntityEvent(net.minecraft.world.entity.Entity,byte)" class="member-name-link">onEntityEvent</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
+ byte&nbsp;eventId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The server broadcast vanilla entity event <code>eventId</code> for <code>entity</code> to its viewers.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEyesGained(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onEyesGained</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -139,9 +158,19 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>mob</code> was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerHurt(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onPlayerHurt</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMilked(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onMilked</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A player milked <code>mob</code>: play 'grow' (if enabled).</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerHurt(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onPlayerHurt</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A player damaged <code>mob</code>: roll the configured chance to play 'grow'.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onSheared(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onSheared</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;sheep)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>sheep</code> was sheared: play 'grow' (if enabled).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)" class="member-name-link">onStartTracking</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
@@ -173,7 +202,7 @@ loadScripts(document, 'script');</script>
  long&nbsp;seed)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Try to start <code>behavior</code> on <code>mob</code> now, honoring "one at a time, non-interruptable":
- dropped (returns <code>false</code>) if the mob is already mid-behavior.</div>
+ dropped (returns <code>false</code>) if the mob is already mid-behavior or asleep.</div>
 </div>
 </div>
 </div>
@@ -200,6 +229,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="onEntityEvent(net.minecraft.world.entity.Entity,byte)">
+<h3>onEntityEvent</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityEvent</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
+ byte&nbsp;eventId)</span></div>
+<div class="block">The server broadcast vanilla entity event <code>eventId</code> for <code>entity</code> to its viewers. The
+ affection events (an animal entering love mode, villagers breeding, an iron golem offering a
+ flower, an ocelot gaining trust) play 'love' if enabled; every other event is ignored.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="onEyesGained(net.minecraft.world.entity.LivingEntity)">
 <h3>onEyesGained</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEyesGained</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
@@ -213,6 +252,20 @@ loadScripts(document, 'script');</script>
 <h3>onHealed</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onHealed</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
 <div class="block"><code>mob</code> was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="onMilked(net.minecraft.world.entity.LivingEntity)">
+<h3>onMilked</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onMilked</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
+<div class="block">A player milked <code>mob</code>: play 'grow' (if enabled).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="onSheared(net.minecraft.world.entity.LivingEntity)">
+<h3>onSheared</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onSheared</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;sheep)</span></div>
+<div class="block"><code>sheep</code> was sheared: play 'grow' (if enabled).</div>
 </section>
 </li>
 <li>
@@ -257,6 +310,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="isAngry(net.minecraft.world.entity.LivingEntity)">
+<h3>isAngry</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAngry</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
+<div class="block">Whether <code>mob</code>'s eyes should show anger the client can't see for itself: a neutral mob (iron
+ golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
+ to be angry at. Always <code>false</code> while <code>angryEyes</code> is off.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="trigger(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long)">
 <h3>trigger</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">trigger</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob,
@@ -264,7 +326,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;duration,
  long&nbsp;seed)</span></div>
 <div class="block">Try to start <code>behavior</code> on <code>mob</code> now, honoring "one at a time, non-interruptable":
- dropped (returns <code>false</code>) if the mob is already mid-behavior. Works even for a mob with no
+ dropped (returns <code>false</code>) if the mob is already mid-behavior or asleep. Works even for a mob with no
  tracking state yet (creates one), so the debug command can drive any looked-at mob.</div>
 </section>
 </li>

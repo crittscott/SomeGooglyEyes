@@ -45,7 +45,7 @@ import net.minecraft.world.phys.Vec3;
  * {@code trigger()}'s return (a dropped trigger means the mob is busy or asleep). Every test forces the
  * scheduler to a clean slate with {@code clear()} and force-and-restores the behavior config it touches;
  * ambient play is disabled so only the events under test can move the schedule, except where ambient
- * rolls are what's under test. The sleeping squint, which the client derives from vanilla's synced sleep
+ * rolls are what's under test. The sleeping villager's lids, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
  * swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
  * the aiming archer's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
@@ -54,7 +54,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class BehaviorSchedulerGameTestsLogic {
 
-    // Float slack for comparing eased squash values, which accumulate a 1/SLEEP_EASE_TICKS step.
+    // Float slack for comparing eased squash and lid values, which accumulate a 1/ticks easing step.
     private static final float SQUASH_TOLERANCE = 1e-4F;
 
     // Creeper rattle: separate settling and measurement windows; swell ramp and measurement total
@@ -201,10 +201,21 @@ public final class BehaviorSchedulerGameTestsLogic {
         return true;
     }
 
-    private static boolean allPrevSquash(GooglyTracker tracker, float expected) {
+    private static boolean allLid(GooglyTracker tracker, float expected) {
         for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
             for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.prevSquashY - expected) > SQUASH_TOLERANCE) {
+                if (Math.abs(info.lid - expected) > SQUASH_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allPrevLid(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.prevLid - expected) > SQUASH_TOLERANCE) {
                     return false;
                 }
             }
@@ -734,38 +745,41 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
-     * A sleeping mob's eyes ease into a squint, hold it until it wakes, and ease back open; a tracker built
-     * for an already-sleeping mob starts squinted, and no behavior starts on the client while it sleeps.
-     * Drives the client-side {@link GooglyTracker} directly against a server villager, since the squint is
-     * derived from vanilla's synced sleep state rather than sent. In game: at night, watch an eyed villager
-     * go to bed; its eyes narrow to a squint, stay that way until it wakes, then open again.
+     * A sleeping villager's eyelids close to a slit over its full-size eyes, stay closed until it wakes, and
+     * open back out of sight; a tracker built for an already-sleeping villager starts with them closed, and
+     * no behavior starts on the client while it sleeps. Drives the client-side {@link GooglyTracker}
+     * directly against a server villager, since the lids are derived from vanilla's synced sleep state rather
+     * than sent. In game: at night, watch an eyed villager go to bed; tan lids slide in over each eye from
+     * above and below, leaving a slit across the middle, stay that way until it wakes, then slide back out
+     * and vanish.
      */
-    public static void sleepingMobSquints(GameTestHelper helper) {
+    public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, "villagers have an eye config");
 
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false);
-        helper.assertTrue(allSquash(tracker, 1F), "an awake mob's eyes are open");
+        helper.assertTrue(allLid(tracker, 0F), "an awake villager has no lids");
 
         villager.startSleeping(villager.blockPosition());
         tracker.update();
-        helper.assertTrue(!allSquash(tracker, 1F) && !allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y),
-                "falling asleep eases into the squint rather than snapping");
-        stepTracker(tracker, GooglyTracker.SLEEP_EASE_TICKS);
-        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), "a sleeping mob squints");
+        helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
+                "falling asleep slides the lids closed rather than snapping them shut");
+        stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS);
+        helper.assertTrue(allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE), "a sleeping villager's lids are closed");
+        helper.assertTrue(allSquash(tracker, 1F), "a sleeping villager's eyes keep their shape under the lids");
         helper.assertTrue(!tracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
                 "no behavior starts on the client while the mob sleeps");
 
         GooglyTracker joined = new GooglyTracker(villager, headInfo, false);
-        helper.assertTrue(allSquash(joined, GooglyTracker.SLEEP_SQUASH_Y)
-                        && allPrevSquash(joined, GooglyTracker.SLEEP_SQUASH_Y),
-                "a tracker built for an already-sleeping mob starts squinted");
+        helper.assertTrue(allLid(joined, GooglyTracker.SLEEP_LID_COVERAGE)
+                        && allPrevLid(joined, GooglyTracker.SLEEP_LID_COVERAGE),
+                "a tracker built for an already-sleeping villager starts with its lids closed");
 
         villager.stopSleeping();
-        stepTracker(tracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(tracker, 1F), "waking eases the eyes back open");
+        stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1);
+        helper.assertTrue(allLid(tracker, 0F), "waking slides the lids back open out of sight");
         helper.succeed();
     }
 

@@ -99,8 +99,8 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void sleepingMobSquints(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.sleepingMobSquints(helper);
+    public static void sleepingVillagerClosesLids(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.sleepingVillagerClosesLids(helper);
     }
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void swellingCreeperRattles(GameTestHelper helper) {

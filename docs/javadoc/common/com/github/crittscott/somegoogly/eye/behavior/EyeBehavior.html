@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">EyeBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span></div>
-<div class="block">The seven named eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id. These are
+<div class="block">The eight named eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id. These are
  code-defined client animations, and both sides only need the ids to agree: the server names a
  behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
  a <a href="BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a>.
@@ -105,7 +105,7 @@ loadScripts(document, 'script');</script>
  <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never compose.
  They participate in the eye <b>physics simulation</b>, not the renderer: once per simulation tick the
  simulator asks the single active behavior to fill an <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a> per eye — a pupil spring
- (anchor + stiffness) and/or the non-physical overlays (scale, squash, tint). The renderer then just
+ (anchor + stiffness) and/or the non-physical overlays (eye scale, pupil size, squash, tint). The renderer then just
  interpolates and draws the resulting eye state; it never touches behaviors.
 
  <p>This type must stay free of client-only imports: the server class-loads it to pick and schedule
@@ -148,17 +148,21 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Eyes briefly bulge larger and settle back.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SIDE_EYE" class="member-name-link">SIDE_EYE</a></code></div>
+<div class="col-first even-row-color"><code><a href="#LOVE" class="member-name-link">LOVE</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Pupils swell to several times their size, hold, and shrink back.</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#SIDE_EYE" class="member-name-link">SIDE_EYE</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Pupils are sprung to center, then the anchor slides slowly to one side (chosen from the seed) and
  holds there before the spring releases.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#STARE" class="member-name-link">STARE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#STARE" class="member-name-link">STARE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Pupils are sprung to center and held, then released so they drop back into the physics wobble.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SWIRL" class="member-name-link">SWIRL</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#SWIRL" class="member-name-link">SWIRL</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as the
  effect ends.</div>
 </div>
@@ -259,6 +263,15 @@ the order they are declared.</div>
 <h3>GROW</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">GROW</span></div>
 <div class="block">Eyes briefly bulge larger and settle back. Non-physical overlay: drives the eye-scale channel.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="LOVE">
+<h3>LOVE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">LOVE</span></div>
+<div class="block">Pupils swell to several times their size, hold, and shrink back. Non-physical overlay: drives the
+ pupil-size channel only — the pupil keeps wobbling underneath, though a pupil swollen to the cornea
+ rim has no room left to move.</div>
 </section>
 </li>
 <li>

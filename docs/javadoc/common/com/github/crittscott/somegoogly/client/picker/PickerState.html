@@ -114,9 +114,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="PickerState.AuthoredExport.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.AuthoredExport</a></code></div>
+<div class="col-second even-row-color"><code><a href="PickerState.Draft.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.Draft</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">One authored entity's export payload: its config plus the age it was authored under.</div>
+<div class="block">One retained draft with its complete species and life-stage identity.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="PickerState.DraftKey.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftKey</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The species and life stage whose placements a draft describes.</div>
+</div>
+<div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="PickerState.DraftSession.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftSession</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Retained picker drafts and selection, independent of crosshair and renderer lookup.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final class&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="PickerState.DraftVariant.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></code></div>
@@ -147,11 +157,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Turn the picker on (so the preview/gizmo render); choosing a mob is a separate step.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="PickerState.AuthoredExport.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.AuthoredExport</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&gt;&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#authoredConfigs()" class="member-name-link">authoredConfigs</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every authored entity's draft as a runtime config plus its authored age, keyed by type, skipping
- mobs that were chosen but have no saved eyes.</div>
+<div class="block">Committed drafts grouped by species and age for age-preserving bulk export.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearDraft()" class="member-name-link">clearDraft</a>()</code></div>
@@ -173,7 +182,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentDraftAge()" class="member-name-link">currentDraftAge</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The age ("adult"/"baby") the mob currently being authored was last targeted at, for export.</div>
+<div class="block">The life stage of the selected draft, or null before any selection.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentEye()" class="member-name-link">currentEye</a>()</code></div>
@@ -366,7 +375,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#targetType()" class="member-name-link">targetType</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The entity-type id of the chosen mob, or <code>null</code> when nothing is chosen.</div>
+<div class="block">The selected draft's entity type, or <code>null</code> before any mob has been chosen.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toConfig()" class="member-name-link">toConfig</a>()</code></div>
@@ -416,64 +425,6 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="isActive()">
-<h3>isActive</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isActive</span>()</div>
-<div class="block">Whether the picker is on (preview layers, HUD, and keybinds all key off this).</div>
-</section>
-</li>
-<li>
-<section class="detail" id="parts()">
-<h3>parts</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">parts</span>()</div>
-<div class="block">Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must not
- mutate the returned backing list.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="partIndex()">
-<h3>partIndex</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">partIndex</span>()</div>
-<div class="block">Index into <a href="#parts()"><code>parts()</code></a> of the current placement-frame part.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="variants()">
-<h3>variants</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a>&gt;</span>&nbsp;<span class="element-name">variants</span>()</div>
-<div class="block">Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the list
- or its elements; use the variant operations instead.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="variantIndex()">
-<h3>variantIndex</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">variantIndex</span>()</div>
-<div class="block">Index into <a href="#variants()"><code>variants()</code></a> of the variant being edited.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="currentEye()">
-<h3>currentEye</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a></span>&nbsp;<span class="element-name">currentEye</span>()</div>
-<div class="block">The live draft eye, or <code>null</code> in the empty state. Mutate via the <code>set*</code> ops.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="currentPart()">
-<h3>currentPart</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">currentPart</span>()</div>
-<div class="block">The part token used as the placement frame, or <code>null</code> for <code>none</code>.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="selectedIndex()">
-<h3>selectedIndex</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">selectedIndex</span>()</div>
-<div class="block">Index of the saved eye being edited (<code>-1</code> = the draft is new/unsaved).</div>
-</section>
-</li>
-<li>
 <section class="detail" id="activate()">
 <h3>activate</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">activate</span>()</div>
@@ -481,17 +432,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="deactivate()">
-<h3>deactivate</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deactivate</span>()</div>
-<div class="block">Turn the picker off and release the frozen mob; the authored drafts stay in memory.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="clearPart()">
-<h3>clearPart</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearPart</span>()</div>
-<div class="block">The CLI <code>part none</code> op.</div>
+<section class="detail" id="authoredConfigs()">
+<h3>authoredConfigs</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&gt;&gt;</span>&nbsp;<span class="element-name">authoredConfigs</span>()</div>
+<div class="block">Committed drafts grouped by species and age for age-preserving bulk export.</div>
 </section>
 </li>
 <li>
@@ -504,10 +448,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="hasDraft()">
-<h3>hasDraft</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasDraft</span>()</div>
-<div class="block">Whether a live draft eye is currently being shaped (vs the empty state).</div>
+<section class="detail" id="clearPart()">
+<h3>clearPart</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearPart</span>()</div>
+<div class="block">The CLI <code>part none</code> op.</div>
 </section>
 </li>
 <li>
@@ -517,6 +461,20 @@ loadScripts(document, 'script');</script>
  float&nbsp;y,
  float&nbsp;z)</span></div>
 <div class="block">The CLI <code>create x y z</code> op: start a fresh current eye at the given position.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="currentDraftAge()">
+<h3>currentDraftAge</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">currentDraftAge</span>()</div>
+<div class="block">The life stage of the selected draft, or null before any selection.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="currentEye()">
+<h3>currentEye</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a></span>&nbsp;<span class="element-name">currentEye</span>()</div>
+<div class="block">The live draft eye, or <code>null</code> in the empty state. Mutate via the <code>set*</code> ops.</div>
 </section>
 </li>
 <li>
@@ -535,6 +493,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="currentPart()">
+<h3>currentPart</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">currentPart</span>()</div>
+<div class="block">The part token used as the placement frame, or <code>null</code> for <code>none</code>.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="currentVariant()">
 <h3>currentVariant</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></span>&nbsp;<span class="element-name">currentVariant</span>()</div>
@@ -550,10 +515,25 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="deactivate()">
+<h3>deactivate</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deactivate</span>()</div>
+<div class="block">Turn the picker off and release the frozen mob; the authored drafts stay in memory.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="delete(int)">
 <h3>delete</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">delete</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
 <div class="block">The CLI <code>delete &lt;n&gt;</code> op (1-based): remove an eye from the current variant.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="deleteVariant(int)">
+<h3>deleteVariant</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">deleteVariant</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
+<div class="block">The CLI <code>variant del &lt;n&gt;</code> op (1-based). Refuses to remove the last variant (there is always
+ at least one). Returns false if out of range or it would empty the list.</div>
 </section>
 </li>
 <li>
@@ -566,11 +546,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="deleteVariant(int)">
-<h3>deleteVariant</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">deleteVariant</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
-<div class="block">The CLI <code>variant del &lt;n&gt;</code> op (1-based). Refuses to remove the last variant (there is always
- at least one). Returns false if out of range or it would empty the list.</div>
+<section class="detail" id="hasDraft()">
+<h3>hasDraft</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasDraft</span>()</div>
+<div class="block">Whether a live draft eye is currently being shaped (vs the empty state).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isActive()">
+<h3>isActive</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isActive</span>()</div>
+<div class="block">Whether the picker is on (preview layers, HUD, and keybinds all key off this).</div>
 </section>
 </li>
 <li>
@@ -595,6 +581,34 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="partIndex()">
+<h3>partIndex</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">partIndex</span>()</div>
+<div class="block">Index into <a href="#parts()"><code>parts()</code></a> of the current placement-frame part.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="parts()">
+<h3>parts</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">parts</span>()</div>
+<div class="block">Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must not
+ mutate the returned backing list.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="resetOnDisconnect()">
+<h3>resetOnDisconnect</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetOnDisconnect</span>()</div>
+<div class="block">Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
+ connection may already be gone, and the server's own logout handling
+ (<a href="../../picker/PickerFreezeService.html#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)"><code>PickerFreezeService.onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)</code></a>) releases any frozen mob regardless.
+
+ <p>The authored drafts go too, along with <a href="#targetType()"><code>targetType()</code></a>. They were authored against — and
+ seeded from — the server we're leaving, and <code>export</code> would happily send them to the next
+ server we join, writing one world's eye configs into another's datapack.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="save()">
 <h3>save</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">save</span>()</div>
@@ -608,6 +622,13 @@ loadScripts(document, 'script');</script>
 <h3>select</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">select</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
 <div class="block">The CLI <code>select &lt;n&gt;</code> op (1-based): load a saved eye from the current variant for adjustment.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="selectedIndex()">
+<h3>selectedIndex</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">selectedIndex</span>()</div>
+<div class="block">Index of the saved eye being edited (<code>-1</code> = the draft is new/unsaved).</div>
 </section>
 </li>
 <li>
@@ -627,10 +648,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="setEyeScale(float)">
-<h3>setEyeScale</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEyeScale</span><wbr><span class="parameters">(float&nbsp;v)</span></div>
-<div class="block">Set the current draft eye's overall scale, clamped to <code>&gt;= 0</code>.</div>
+<section class="detail" id="setCrossTarget(int)">
+<h3>setCrossTarget</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setCrossTarget</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
+<div class="block">The CLI <code>properties crosstarget &lt;n&gt;</code> op: point the current eye's cross-eye behavior at the eye
+ at 1-based list index <code>oneBased</code> (<code>&lt;= 0</code> clears it). The target must be a <i>different</i>
+ eye that shares the current part — cross-eye is same-head only. Returns false if out of range, the
+ edited eye itself, or on a different part.</div>
 </section>
 </li>
 <li>
@@ -641,13 +665,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="setCrossTarget(int)">
-<h3>setCrossTarget</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setCrossTarget</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
-<div class="block">The CLI <code>properties crosstarget &lt;n&gt;</code> op: point the current eye's cross-eye behavior at the eye
- at 1-based list index <code>oneBased</code> (<code>&lt;= 0</code> clears it). The target must be a <i>different</i>
- eye that shares the current part — cross-eye is same-head only. Returns false if out of range, the
- edited eye itself, or on a different part.</div>
+<section class="detail" id="setEyeScale(float)">
+<h3>setEyeScale</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEyeScale</span><wbr><span class="parameters">(float&nbsp;v)</span></div>
+<div class="block">Set the current draft eye's overall scale, clamped to <code>&gt;= 0</code>.</div>
 </section>
 </li>
 <li>
@@ -724,7 +745,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="targetType()">
 <h3>targetType</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">targetType</span>()</div>
-<div class="block">The entity-type id of the chosen mob, or <code>null</code> when nothing is chosen.</div>
+<div class="block">The selected draft's entity type, or <code>null</code> before any mob has been chosen.</div>
 </section>
 </li>
 <li>
@@ -735,39 +756,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="authoredConfigs()">
-<h3>authoredConfigs</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="PickerState.AuthoredExport.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.AuthoredExport</a>&gt;</span>&nbsp;<span class="element-name">authoredConfigs</span>()</div>
-<div class="block">Every authored entity's draft as a runtime config plus its authored age, keyed by type, skipping
- mobs that were chosen but have no saved eyes. Lets <code>exportall</code> emit mobs that were saved
- but never individually exported, tagged with the age they were authored under.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="currentDraftAge()">
-<h3>currentDraftAge</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">currentDraftAge</span>()</div>
-<div class="block">The age ("adult"/"baby") the mob currently being authored was last targeted at, for export.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="totalEyeCount()">
 <h3>totalEyeCount</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">totalEyeCount</span>()</div>
 <div class="block">Eyes saved across all variants (the export guard).</div>
-</section>
-</li>
-<li>
-<section class="detail" id="resetOnDisconnect()">
-<h3>resetOnDisconnect</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetOnDisconnect</span>()</div>
-<div class="block">Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
- connection may already be gone, and the server's own logout handling
- (<a href="../../picker/PickerFreezeService.html#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)"><code>PickerFreezeService.onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)</code></a>) releases any frozen mob regardless.
-
- <p>The authored drafts go too, along with <code>targetType</code>. They were authored against — and
- seeded from — the server we're leaving, and <code>export</code> would happily send them to the next
- server we join, writing one world's eye configs into another's datapack.</div>
 </section>
 </li>
 <li>
@@ -782,6 +774,21 @@ loadScripts(document, 'script');</script>
 <h3>variantCount</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">variantCount</span>()</div>
 <div class="block">How many placement-variant drafts the current editing session holds.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="variantIndex()">
+<h3>variantIndex</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">variantIndex</span>()</div>
+<div class="block">Index into <a href="#variants()"><code>variants()</code></a> of the variant being edited.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="variants()">
+<h3>variants</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a>&gt;</span>&nbsp;<span class="element-name">variants</span>()</div>
+<div class="block">Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the list
+ or its elements; use the variant operations instead.</div>
 </section>
 </li>
 </ul>
