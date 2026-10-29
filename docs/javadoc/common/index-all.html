@@ -60,6 +60,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The behavior playing on this entity, or <code>null</code>.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#active" class="member-name-link">active</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">The behavior playing, or <code>null</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#adult" class="member-name-link">adult</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a></dt>
 <dd>
 <div class="block">Adult-specific config, or <code>null</code> when this set does not define one.</div>
@@ -142,6 +146,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_BEHAVIORS_KEY" class="member-name-link">AMBIENT_BEHAVIORS_KEY</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#AMBIENT_MAX_TICKS" class="member-name-link">AMBIENT_MAX_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Longest and shortest idle wait between behaviors, in ticks; the server's ambient defaults.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_MAX_TICKS" class="member-name-link">AMBIENT_MAX_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>
 <div class="block">Longest wait in ticks between one mob's idle expressions.</div>
@@ -151,6 +159,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_MAX_TICKS_DEFAULT" class="member-name-link">AMBIENT_MAX_TICKS_DEFAULT</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_MAX_TICKS_KEY" class="member-name-link">AMBIENT_MAX_TICKS_KEY</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#AMBIENT_MIN_TICKS" class="member-name-link">AMBIENT_MIN_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_MIN_TICKS" class="member-name-link">AMBIENT_MIN_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>
@@ -228,6 +238,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html#apply(java.util.Map,net.minecraft.server.packs.resources.ResourceManager,net.minecraft.util.profiling.ProfilerFiller)" class="member-name-link">apply(Map&lt;ResourceLocation, JsonElement&gt;, ResourceManager, ProfilerFiller)</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigReloadListener</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#applyOverlays(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,float,float,float,float)" class="member-name-link">applyOverlays(EyeInfluence, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
+<dd>
+<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
+ lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
+ caller derives on top of it.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">applySlimyEye(ItemStack, ServerPlayer, LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/EyeItemService.html" title="class in com.github.crittscott.somegoogly.server">EyeItemService</a></dt>
 <dd>
 <div class="block">The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
@@ -788,6 +804,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Draw the axis gizmo at the current pose origin.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, GooglyTracker.EyeInfo, float, float, EyeColor, EyeColor, float, boolean, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dd>
+<div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
+ configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>irisScale</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
 <div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
@@ -1004,6 +1025,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#extractArgument(net.minecraft.world.item.ItemStack)" class="member-name-link">extractArgument(ItemStack)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">The pupil, or <code>null</code> while no Googly Eye is held.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#EYE_ANGER" class="member-name-link">EYE_ANGER</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
@@ -1673,17 +1698,35 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The selected variant's head list; its identity invalidates per-mob trackers.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#HEAL_COOLDOWN_TICKS" class="member-name-link">HEAL_COOLDOWN_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Ticks after a heal swirl before healing can swirl again; the server's heal-swirl default.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">HeldEye</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
+<dd>
+<div class="block">The live eye a player holds: one <a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil, stepped with the same physics as
+ mob eyes from the holder's look and position deltas, plus the behaviors it plays.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#%3Cinit%3E()" class="member-name-link">HeldEye()</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#%3Cinit%3E(net.minecraft.util.RandomSource)" class="member-name-link">HeldEye(RandomSource)</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></dt>
 <dd>
 <div class="block">The placement this tracker's eyes were built for.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
-<div class="block">Placement view whose head and eye indexes define per-eye behavior state.</div>
+<div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
+ eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html#helper()" class="member-name-link">helper()</a> - Method in record class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>helper</code> record component.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#holdsGooglyEye(net.minecraft.world.entity.LivingEntity)" class="member-name-link">holdsGooglyEye(LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Whether <code>entity</code> holds a Googly Eye in either hand.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
@@ -2608,6 +2651,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Drop held-eye state when leaving a world or server.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#reset()" class="member-name-link">reset()</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Drop the eye and anything playing on it.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html#reset()" class="member-name-link">reset()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#reset()" class="member-name-link">reset()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
@@ -2978,6 +3025,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Pupils are sprung to center and held, then released so they drop back into the physics wobble.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#start(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior)" class="member-name-link">start(EyeBehavior)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Start <code>behavior</code> at its default length, unless one is already playing or no eye is held.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.html#startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" class="member-name-link">startBehavior(EyeBehavior, int, long, int)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></dt>
 <dd>
 <div class="block">Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
@@ -3077,12 +3128,18 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#tick()" class="member-name-link">tick()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
 <dd>
-<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#tick(boolean)" class="member-name-link">tick(boolean)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
 <div class="block">Advance the tick counter, evict any tracker idle past <code>ClientEyeRuntime.EVICT_IDLE_TICKS</code>, and step the
  physics of those rendered this tick or last when <code>simulate</code> is true.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/HeldEye.html#tick(net.minecraft.world.entity.LivingEntity)" class="member-name-link">tick(LivingEntity)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></dt>
+<dd>
+<div class="block">Advance one tick for <code>holder</code>, or reset when there is none or it holds no Googly Eye: age the
+ active behavior, start any behavior this tick's hurt, heal, or idle timer calls for, and step the
+ pupil with the behavior folded in.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#TICKS_MAX" class="member-name-link">TICKS_MAX</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>

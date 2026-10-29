@@ -35,7 +35,7 @@ One expression plays at a time; all are cosmetic. Sleepers play nothing else; vi
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears here and throughout mean vanilla shears or any item in the conventional `c:tools/shear` tag. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears means vanilla shears or any `c:tools/shear` item. A successful harvest costs one shears durability.
 
 ### Optometrist
 
@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye is a 3D item whose pupil moves while you hold it in first person; other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye held in first person is live: its pupil moves, and it sometimes winks, stares, or glances aside; it bulges when you're hurt and swirls when you heal. Other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
 Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
@@ -58,13 +58,13 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 | Redstone dust | Forces glow off |
 | Cobweb | Clears all appearance overrides |
 
-Modifiers may be applied in successive crafting operations. Googly Eyes have no creation recipe; they must be harvested or taken from the creative menu.
+Modifiers stack across crafts. Googly Eyes have no creation recipe; they must be harvested or taken from the creative menu.
 
 Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
 
 An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health, even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 While holding either eye item, sneak and aim at a living entity to see whether it:
 
@@ -229,5 +229,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 113 dedicated-server GameTests; NeoForge and Forge each contain 109. Physical verification covers production artifacts, adult/baby/player models and resolvers, animations, both item render paths, harvesting/application, picker editing/export, reloads, optional GeckoLib, and the master switch with picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 118 dedicated-server GameTests; NeoForge and Forge each contain 114. Physical verification covers production artifacts, adult/baby/player models and resolvers, animations, both item render paths, harvesting/application, picker editing/export, reloads, optional GeckoLib, and the master switch with picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

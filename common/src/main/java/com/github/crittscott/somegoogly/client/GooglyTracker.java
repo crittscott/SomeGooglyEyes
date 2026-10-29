@@ -300,6 +300,33 @@ public class GooglyTracker {
         }
 
         /**
+         * Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
+         * lerping: the active behavior's {@code influence} (neutral when none), with the ongoing states the
+         * caller derives on top of it.
+         *
+         * @param influence  the behavior's influence on this eye this tick
+         * @param irisPulse  pupil size multiplier from the creepy pulse (1 for none)
+         * @param squash     vertical scale multiplier from the squints (1 for none)
+         * @param lid        how much of the eye each lid covers (0 for none)
+         * @param irisTint   how far the pupil is blended toward {@link #ANGER_IRIS_COLOR} (0 for none)
+         */
+        public void applyOverlays(EyeInfluence influence, float irisPulse, float squash, float lid, float irisTint) {
+            prevScaleMul = scaleMul;
+            scaleMul = influence.eyeScaleMul;
+            prevIrisScaleMul = irisScaleMul;
+            irisScaleMul = influence.irisScaleMul * irisPulse;
+            prevSquashY = squashY;
+            squashY = influence.squashY * squash;
+            prevLid = this.lid;
+            this.lid = lid;
+            prevTintAmount = tintAmount;
+            tintAmount = influence.tintAmount;
+            tintColor = influence.corneaTint;
+            prevIrisTintAmount = irisTintAmount;
+            irisTintAmount = irisTint;
+        }
+
+        /**
          * Advance the pupil simulation by one tick and update its previous/current render positions.
          * Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.
          *
@@ -529,21 +556,9 @@ public class GooglyTracker {
                     active.behavior.influence(active, i, i1, INFLUENCE);
                 }
 
-                // Fold the non-physical overlays into the eye's render state (prev/current for lerping).
-                info.prevScaleMul = info.scaleMul;
-                info.scaleMul = INFLUENCE.eyeScaleMul;
-                info.prevIrisScaleMul = info.irisScaleMul;
-                info.irisScaleMul = INFLUENCE.irisScaleMul
-                        * (1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset));
-                info.prevSquashY = info.squashY;
-                info.squashY = INFLUENCE.squashY * squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F);
-                info.prevLid = info.lid;
-                info.lid = lidCoverage;
-                info.prevTintAmount = info.tintAmount;
-                info.tintAmount = INFLUENCE.tintAmount;
-                info.tintColor = INFLUENCE.corneaTint;
-                info.prevIrisTintAmount = info.irisTintAmount;
-                info.irisTintAmount = anger;
+                info.applyOverlays(INFLUENCE,
+                        1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset),
+                        squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F), lidCoverage, anger);
 
                 // Step the pupil physics, with the behavior's spring folded in as a force.
                 info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,

@@ -21,7 +21,11 @@ public final class BehaviorInstance {
 
     /** Stateless behavior definition being played. */
     public final EyeBehavior behavior;
-    /** Placement view whose head and eye indexes define per-eye behavior state. */
+    /**
+     * Placement view whose head and eye indexes define per-eye behavior state, or {@code null} for a lone
+     * eye with no placement (the held Googly Eye), which plays as head 0, eye 0.
+     */
+    @Nullable
     public final HeadInfo helper;
     /** Total play length in ticks, normalized to at least one. */
     public final int duration;
@@ -41,7 +45,7 @@ public final class BehaviorInstance {
     public boolean[][] mask;
 
     /** Create unstarted per-play state; the caller next invokes {@link EyeBehavior#onStart}. */
-    public BehaviorInstance(EyeBehavior behavior, HeadInfo helper, int duration, long seed) {
+    public BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
         this.helper = helper;
         this.duration = Math.max(1, duration);
