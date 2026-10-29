@@ -100,10 +100,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client"><code>ModelGooglyEye</code></a>, tinted by the item's
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>. Reuses the in-world eye model so the item and the mob eyes can't drift.
 
- <p>When the local player holds the item, its first-person view has a live pupil — a small standalone
- googly physics driven by the player's look movement plus gravity, stepped from the client tick. Every
- other view (inventory, item frame, ground, and any player's hand in third person, since an item renderer
- is not told who holds the item) is static, pupil centered.
+ <p>When the local player holds the item, its first-person view is a live eye, the <a href="HeldEye.html" title="class in com.github.crittscott.somegoogly.client"><code>HeldEye</code></a> stepped
+ from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
+ own behaviors. Every other view (inventory, item frame, ground, and any player's hand in third person,
+ since an item renderer is not told who holds the item) is static, pupil centered.
 
  <p>Each loader attaches it as the Googly Eye's custom item renderer; <code>models/item/googly_eye.json</code>
  selects the builtin entity model that hands rendering to it.
@@ -162,7 +162,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </div>
 </div>
 </div>
@@ -208,7 +208,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="tick()">
 <h3>tick</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
-<div class="block">Advance the held-eye pupil one tick; called from the client tick.</div>
+<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </section>
 </li>
 <li>

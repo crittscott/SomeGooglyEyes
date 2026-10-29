@@ -88,6 +88,69 @@ public final class GooglyEyeRenderer {
     }
 
     /**
+     * Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
+     * configured {@code eyeScale}, {@code depth} multiplier, and pupil size {@code irisScale}. Reads the
+     * eye's already-simulated state (the behavior, if any, was folded in by its simulator) and interpolates
+     * it by {@code partialTicks}: grow scales the whole eye, blink and the squints squash it, the tints blend
+     * its colors, love and the creepy pulse swell the pupil, and a sleeping villager's lids are drawn over it
+     * last. Leaves the pose stack as it found it.
+     */
+    public static void drawAnimatedEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
+                                       int packedLight, int overlay, GooglyTracker.EyeInfo eyeInfo,
+                                       float eyeScale, float depth, EyeColor cornea, EyeColor iris,
+                                       float irisScale, boolean glow, float partialTicks) {
+        pose.pushPose();
+        float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
+        float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
+        float scale = eyeScale * eyeScaleMul;
+        pose.scale(scale, scale * squashY, scale * ModelGooglyEye.BASE_DEPTH * depth);
+
+        CORNEA[0] = cornea.r();
+        CORNEA[1] = cornea.g();
+        CORNEA[2] = cornea.b();
+        // Color-change behavior blends the cornea toward its target color.
+        if (eyeInfo.tintColor != null) {
+            float tintAmount = lerp(eyeInfo.prevTintAmount, eyeInfo.tintAmount, partialTicks);
+            if (tintAmount > 0F) {
+                for (int c = 0; c < 3; c++) {
+                    CORNEA[c] = lerp(CORNEA[c], eyeInfo.tintColor[c], tintAmount);
+                }
+            }
+        }
+        IRIS[0] = iris.r();
+        IRIS[1] = iris.g();
+        IRIS[2] = iris.b();
+        // Anger blends the pupil toward red.
+        float irisTintAmount = lerp(eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount, partialTicks);
+        if (irisTintAmount > 0F) {
+            for (int c = 0; c < 3; c++) {
+                IRIS[c] = lerp(IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c], irisTintAmount);
+            }
+        }
+
+        // Pupil position: the physics delta, which already includes any behavior spring. The simulation
+        // keeps it inside the unit disk (the full cornea circle once mapped), so no clamp is needed here.
+        float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
+        float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
+        // Love and the creepy pulse swell the pupil, capped where it fills the cornea; the cap never shrinks a
+        // configured size.
+        float irisScaleMul = lerp(eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul, partialTicks);
+        float pupilScale = Math.min(irisScale * irisScaleMul, Math.max(irisScale, ModelGooglyEye.MAX_PUPIL_SIZE));
+        drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, pupilScale, irisX, irisY, glow);
+
+        // A sleeping villager's lids close over the eye from above and below. They never glow: drawn only in
+        // the cutout pass, they hide the glow behind them by depth.
+        float lid = lerp(eyeInfo.prevLid, eyeInfo.lid, partialTicks);
+        if (lid > 0F) {
+            float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
+            model.renderLids(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
+                    lidColor[0], lidColor[1], lidColor[2], 1F, lid);
+        }
+
+        pose.popPose();
+    }
+
+    /**
      * Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
      * {@code irisScale} and offset to {@code (irisX, irisY)} in the unit disk, and, when {@code glow} is
      * set, the same two parts again in the emissive render type. Every eye the mod draws (mob, picker
@@ -143,61 +206,8 @@ public final class GooglyEyeRenderer {
         // fully-animated orientation.
         captureGravity(pose, eyeInfo);
 
-        // Everything below reads the eye's already-simulated state (the behavior, if any, was folded in
-        // by the tracker) and interpolates by partialTicks. Grow scales the whole eye; blink squashes it; a
-        // sleeping villager's lids are drawn over it last.
-        float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
-        float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
-        float eyeScale = placement.eyeScale() * eyeScaleMul;
-        pose.scale(eyeScale, eyeScale * squashY,
-                eyeScale * ModelGooglyEye.BASE_DEPTH * placement.depth());
-
-        EyeColor cornea = look.cornea();
-        CORNEA[0] = cornea.r();
-        CORNEA[1] = cornea.g();
-        CORNEA[2] = cornea.b();
-        // Color-change behavior blends the cornea toward its target color.
-        if (eyeInfo.tintColor != null) {
-            float tintAmount = lerp(eyeInfo.prevTintAmount, eyeInfo.tintAmount, partialTicks);
-            if (tintAmount > 0F) {
-                for (int c = 0; c < 3; c++) {
-                    CORNEA[c] = lerp(CORNEA[c], eyeInfo.tintColor[c], tintAmount);
-                }
-            }
-        }
-        EyeColor iris = look.iris();
-        IRIS[0] = iris.r();
-        IRIS[1] = iris.g();
-        IRIS[2] = iris.b();
-        // Anger blends the pupil toward red.
-        float irisTintAmount = lerp(eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount, partialTicks);
-        if (irisTintAmount > 0F) {
-            for (int c = 0; c < 3; c++) {
-                IRIS[c] = lerp(IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c], irisTintAmount);
-            }
-        }
-
-        // Pupil position: the physics delta, which already includes any behavior spring. The simulation
-        // keeps it inside the unit disk (the full cornea circle once mapped), so no clamp is needed here.
-        float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
-        float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
-        // Love and the creepy pulse swell the pupil, capped where it fills the cornea; the cap never shrinks a
-        // configured size.
-        float baseIrisScale = placement.irisScale();
-        float irisScaleMul = lerp(eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul, partialTicks);
-        float irisScale = Math.min(baseIrisScale * irisScaleMul,
-                Math.max(baseIrisScale, ModelGooglyEye.MAX_PUPIL_SIZE));
-        drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, irisScale,
-                irisX, irisY, look.glow());
-
-        // A sleeping villager's lids close over the eye from above and below. They never glow: drawn only in
-        // the cutout pass, they hide the glow behind them by depth.
-        float lid = lerp(eyeInfo.prevLid, eyeInfo.lid, partialTicks);
-        if (lid > 0F) {
-            float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
-            model.renderLids(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
-                    lidColor[0], lidColor[1], lidColor[2], 1F, lid);
-        }
+        drawAnimatedEye(pose, model, bufferSource, packedLight, overlay, eyeInfo, placement.eyeScale(),
+                placement.depth(), look.cornea(), look.iris(), placement.irisScale(), look.glow(), partialTicks);
 
         pose.popPose();
     }
