@@ -9,7 +9,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
  * <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
  * so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
  * front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
- * inexpensive, and each cap is drawn as a fan of quads over its ring.
+ * inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also draw upper and
+ * lower eyelids in front of both.
  */
 public final class ModelGooglyEye {
 
@@ -29,6 +30,11 @@ public final class ModelGooglyEye {
     private static final float IRIS_BACK_Z = -1.05F;
     private static final float IRIS_FRONT_Z = -1.50F;
     private static final float IRIS_RADIUS = 1.00F;
+    // The eyelids: a little wider than the cornea, from the cornea's back to just ahead of the iris.
+    private static final float LID_FRONT_Z = -1.699F;
+    private static final float LID_RADIUS = 1.95F;
+    /** Arc segments along the lid's curved rim; even, since its front face is drawn two triangles a quad. */
+    private static final int LID_SEGMENTS = 16;
     /**
      * The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
      * cornea rim and the pupil has no room left to travel.
@@ -41,6 +47,12 @@ public final class ModelGooglyEye {
     private static final int SIDES = 16;
     private static final float[] RING_X = new float[SIDES];
     private static final float[] RING_Y = new float[SIDES];
+    // Lid rim scratch reused by every renderLids call: rendering is single-threaded and one call finishes
+    // before the next starts.
+    private static final float[] LID_X = new float[LID_SEGMENTS + 1];
+    private static final float[] LID_Y = new float[LID_SEGMENTS + 1];
+    private static final float[] LID_NX = new float[LID_SEGMENTS + 1];
+    private static final float[] LID_NY = new float[LID_SEGMENTS + 1];
 
     private float irisOffsetX;
     private float irisOffsetY;
@@ -150,5 +162,78 @@ public final class ModelGooglyEye {
                             float red, float green, float blue, float alpha) {
         renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
                 irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z, false);
+    }
+
+    /**
+     * Draw an upper and a lower eyelid, each closed until it covers {@code coverage} of the eye's height
+     * (0 none, at most half), in the given color. Each lid is the part of a disk a little wider than the
+     * cornea beyond a horizontal edge, as deep as the whole eye, so it caps the cornea from the front and
+     * side; its front face sits ahead of the iris, which shows only between the two edges. Neither has a
+     * back face, which would face only the head.
+     */
+    public void renderLids(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
+                           float red, float green, float blue, float alpha, float coverage) {
+        if (coverage <= 0F) {
+            return;
+        }
+        PoseStack.Pose pose = poseStack.last();
+
+        // The upper lid's shape. Render space is -Y up, so it spans y <= edge. Its rim runs by increasing
+        // angle (the cornea ring's direction) from one end of the edge over the top to the other.
+        float edge = LID_RADIUS * (2F * Math.min(coverage, 0.5F) - 1F);
+        double halfEdgeAngle = Math.asin(edge / LID_RADIUS);
+        double start = Math.PI - halfEdgeAngle;
+        double span = Math.PI + 2.0 * halfEdgeAngle;
+        for (int i = 0; i <= LID_SEGMENTS; i++) {
+            double angle = start + span * i / LID_SEGMENTS;
+            LID_NX[i] = (float) Math.cos(angle);
+            LID_NY[i] = (float) Math.sin(angle);
+            LID_X[i] = LID_NX[i] * LID_RADIUS;
+            LID_Y[i] = LID_NY[i] * LID_RADIUS;
+        }
+
+        // The lower lid is the upper turned half a circle about the eye's center (side -1), which keeps the
+        // winding.
+        for (int side = 1; side >= -1; side -= 2) {
+            // Front face: a fan from the edge's midpoint, two triangles a quad, wound backward like the
+            // cornea's.
+            for (int i = 0; i < LID_SEGMENTS; i += 2) {
+                emit(buffer, pose, 0F, side * edge, LID_FRONT_Z, 0F, 0F, -1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i + 2], side * LID_Y[i + 2], LID_FRONT_Z, 0F, 0F, -1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i + 1], side * LID_Y[i + 1], LID_FRONT_Z, 0F, 0F, -1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i], side * LID_Y[i], LID_FRONT_Z, 0F, 0F, -1F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            // Curved rim, with radial normals like the cornea's.
+            for (int i = 0; i < LID_SEGMENTS; i++) {
+                emit(buffer, pose, side * LID_X[i], side * LID_Y[i], LID_FRONT_Z,
+                        side * LID_NX[i], side * LID_NY[i], 0F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i + 1], side * LID_Y[i + 1], LID_FRONT_Z,
+                        side * LID_NX[i + 1], side * LID_NY[i + 1], 0F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i + 1], side * LID_Y[i + 1], CORNEA_BACK_Z,
+                        side * LID_NX[i + 1], side * LID_NY[i + 1], 0F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+                emit(buffer, pose, side * LID_X[i], side * LID_Y[i], CORNEA_BACK_Z,
+                        side * LID_NX[i], side * LID_NY[i], 0F,
+                        packedLight, packedOverlay, red, green, blue, alpha);
+            }
+
+            // The flat edge, facing the eye's center, closing the rim from its last point back to its first.
+            int last = LID_SEGMENTS;
+            emit(buffer, pose, side * LID_X[last], side * LID_Y[last], LID_FRONT_Z, 0F, side, 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, pose, side * LID_X[0], side * LID_Y[0], LID_FRONT_Z, 0F, side, 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, pose, side * LID_X[0], side * LID_Y[0], CORNEA_BACK_Z, 0F, side, 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+            emit(buffer, pose, side * LID_X[last], side * LID_Y[last], CORNEA_BACK_Z, 0F, side, 0F,
+                    packedLight, packedOverlay, red, green, blue, alpha);
+        }
     }
 }

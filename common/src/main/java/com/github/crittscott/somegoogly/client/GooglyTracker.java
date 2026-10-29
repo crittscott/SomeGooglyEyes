@@ -16,6 +16,7 @@ import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
 import javax.annotation.Nonnull;
@@ -30,8 +31,9 @@ import javax.annotation.Nullable;
  * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
  *
- * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) its eyes
- * ease into a squint and no new behavior starts; nothing about sleep crosses the mod's own network. A goat
+ * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) no new
+ * behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
+ * nothing about sleep crosses the mod's own network. A goat
  * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
  * same way but still plays behaviors. A skeleton drawing its bow ({@link LivingEntity#getUseItem}, synced
  * by vanilla) closes the eye on its off-hand side. A swelling creeper
@@ -51,6 +53,15 @@ public class GooglyTracker {
     public static final float SLEEP_SQUASH_Y = 0.3F;
     /** Ticks to ease fully into or out of the squint. */
     public static final int SLEEP_EASE_TICKS = 10;
+    /**
+     * How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
+     * between them across the middle.
+     */
+    public static final float SLEEP_LID_COVERAGE = 0.45F;
+    /** Ticks for a villager's lids to slide fully down or back up. */
+    public static final int SLEEP_LID_EASE_TICKS = 20;
+    /** Sleeping villager eyelid color. */
+    public static final float[] SLEEP_LID_COLOR = {0.82F, 0.68F, 0.52F};
     /** Off-hand eye height multiplier while fully aiming. */
     public static final float AIM_SQUASH_Y = 0.15F;
     /** Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20. */
@@ -114,6 +125,8 @@ public class GooglyTracker {
 
     /** How far into the squint (sleeping or ramming) the eyes are: 0 open, 1 fully squinted. */
     private float squint;
+    /** How far a sleeping villager's lids are closed: 0 out of sight, 1 down to the slit. */
+    private float lid;
     /** How far the off-hand eye is squinted for aiming: 0 open, 1 fully squinted. */
     private float aim;
     /**
@@ -133,7 +146,7 @@ public class GooglyTracker {
 
     /**
      * Build the tracker. {@code angry} is the server-reported anger already known for this entity, so a
-     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted.
+     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded.
      */
     public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper, boolean angry) {
         this.parent = parent;
@@ -176,6 +189,7 @@ public class GooglyTracker {
         this.prevZ = parent.getZ();
         // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
         this.squint = isSquinting() ? 1F : 0F;
+        this.lid = isLidded() ? 1F : 0F;
         this.aim = isAiming() ? 1F : 0F;
         this.anger = isAngry() ? 1F : 0F;
         this.creepiness = isCreepy() ? 1F : 0F;
@@ -183,6 +197,7 @@ public class GooglyTracker {
         for (EyeInfo[] head : eyes) {
             for (EyeInfo info : head) {
                 info.prevSquashY = info.squashY;
+                info.prevLid = info.lid;
                 info.prevIrisTintAmount = info.irisTintAmount;
             }
         }
@@ -256,6 +271,8 @@ public class GooglyTracker {
         public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
         /** Blink squash times the sleeping squint; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
+        /** How much of the eye each of a sleeping villager's lids covers (0 none); see {@link #scaleMul}. */
+        public float lid, prevLid;
         /** Color-change blend amount; see {@link #scaleMul}. */
         public float tintAmount, prevTintAmount;
         /** Color-change target color; see {@link #scaleMul}. */
@@ -473,6 +490,9 @@ public class GooglyTracker {
         // begins, or any while a goat rams) multiplies with it in squashY.
         squint = ease(squint, isSquinting(), SLEEP_EASE_TICKS);
         float squintSquash = Mth.lerp(squint, 1F, SLEEP_SQUASH_Y);
+        // A sleeping villager lowers its lids instead, leaving its eyes their full shape behind them.
+        lid = ease(lid, isLidded(), SLEEP_LID_EASE_TICKS);
+        float lidCoverage = lid * SLEEP_LID_COVERAGE;
 
         // Aiming closes only the eye on the off-hand side, sighting along the weapon with the other, and
         // multiplies with the squint and any behavior the same way.
@@ -510,6 +530,8 @@ public class GooglyTracker {
                         * (1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset));
                 info.prevSquashY = info.squashY;
                 info.squashY = INFLUENCE.squashY * squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F);
+                info.prevLid = info.lid;
+                info.lid = lidCoverage;
                 info.prevTintAmount = info.tintAmount;
                 info.tintAmount = INFLUENCE.tintAmount;
                 info.tintColor = INFLUENCE.corneaTint;
@@ -528,9 +550,18 @@ public class GooglyTracker {
         return angry || parent instanceof Mob mob && mob.isAggressive();
     }
 
-    /** Whether the eyes should squint: the entity sleeps, or is a goat with its head lowered to ram. */
+    /** Whether the eyelids should be closed: the entity is a sleeping villager. */
+    private boolean isLidded() {
+        return parent instanceof Villager && parent.isSleeping();
+    }
+
+    /**
+     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
+     * lowered to ram.
+     */
     private boolean isSquinting() {
-        return parent.isSleeping() || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
+        return parent.isSleeping() && !isLidded()
+                || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
     }
 
     /** Whether the entity is a skeleton drawing a bow or other ranged weapon. */

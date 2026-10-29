@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
-One expression plays at a time; all are cosmetic. Sleeping mobs squint and play nothing else. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleepers play nothing else; villagers close tan eyelids to a slit, others squint. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 

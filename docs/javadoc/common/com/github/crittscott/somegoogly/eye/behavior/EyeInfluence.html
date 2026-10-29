@@ -103,6 +103,7 @@ loadScripts(document, 'script');</script>
        doesn't drive the pupil at all (it keeps wobbling freely): grow, blink, and color leave it there.
        Stare anchors at center, side/cross anchor off to one side, swirl's anchor orbits.</li>
    <li><b>eyeScaleMul</b> — multiplies the eye's configured scale (grow). Non-physical overlay.</li>
+   <li><b>irisScaleMul</b> — multiplies the pupil's configured size (love). Non-physical overlay.</li>
    <li><b>squashY</b> — multiplies the eye's vertical scale (blink). Non-physical overlay.</li>
    <li><b>corneaTint / tintAmount</b> — lerp the cornea toward <code>corneaTint</code> by <code>tintAmount</code>
        (color-change). Non-physical overlay.</li>
@@ -141,18 +142,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Multiplies the configured eye scale (1 = unchanged).</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#irisScaleMul" class="member-name-link">irisScaleMul</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Multiplies the eye's vertical scale (1 = unchanged, &lt;1 = squashed for a blink).</div>
+<div class="block">Multiplies the configured pupil (iris) size (1 = unchanged); the renderer caps it at the cornea.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#stiffness" class="member-name-link">stiffness</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Spring stiffness pulling the pupil toward the anchor; 0 = the behavior doesn't touch the pupil.</div>
+<div class="block">Multiplies the eye's vertical scale (1 = unchanged, &lt;1 = squashed for a blink).</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#tintAmount" class="member-name-link">tintAmount</a></code></div>
+<div class="col-second even-row-color"><code><a href="#stiffness" class="member-name-link">stiffness</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Spring stiffness pulling the pupil toward the anchor; 0 = the behavior doesn't touch the pupil.</div>
+</div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#tintAmount" class="member-name-link">tintAmount</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">How far to blend the cornea toward <a href="#corneaTint"><code>corneaTint</code></a> (0..1).</div>
 </div>
 </div>
@@ -229,6 +235,13 @@ loadScripts(document, 'script');</script>
 <h3>eyeScaleMul</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">eyeScaleMul</span></div>
 <div class="block">Multiplies the configured eye scale (1 = unchanged).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="irisScaleMul">
+<h3>irisScaleMul</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">irisScaleMul</span></div>
+<div class="block">Multiplies the configured pupil (iris) size (1 = unchanged); the renderer caps it at the cornea.</div>
 </section>
 </li>
 <li>

@@ -96,7 +96,8 @@ loadScripts(document, 'script');</script>
  <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
  so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
  front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
- inexpensive, and each cap is drawn as a fan of quads over its ring.</div>
+ inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also draw upper and
+ lower eyelids in front of both.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -113,6 +114,12 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><code><a href="#BASE_DEPTH" class="member-name-link">BASE_DEPTH</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width).</div>
+</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#MAX_PUPIL_SIZE" class="member-name-link">MAX_PUPIL_SIZE</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
+ cornea rim and the pupil has no room left to travel.</div>
 </div>
 </div>
 </section>
@@ -174,6 +181,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Draw the iris cylinder in the given color, offset by the current pupil position.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderLids(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
+ int&nbsp;packedLight,
+ int&nbsp;packedOverlay,
+ float&nbsp;red,
+ float&nbsp;green,
+ float&nbsp;blue,
+ float&nbsp;alpha,
+ float&nbsp;coverage)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
+ (0 none, at most half), in the given color.</div>
+</div>
 </div>
 </div>
 </div>
@@ -204,6 +225,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="tag-list">
 <li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.ModelGooglyEye.BASE_DEPTH">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="MAX_PUPIL_SIZE">
+<h3>MAX_PUPIL_SIZE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">MAX_PUPIL_SIZE</span></div>
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
+ cornea rim and the pupil has no room left to travel.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.ModelGooglyEye.MAX_PUPIL_SIZE">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -269,6 +306,25 @@ loadScripts(document, 'script');</script>
  float&nbsp;blue,
  float&nbsp;alpha)</span></div>
 <div class="block">Draw the iris cylinder in the given color, offset by the current pupil position.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="renderLids(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)">
+<h3>renderLids</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderLids</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
+ int&nbsp;packedLight,
+ int&nbsp;packedOverlay,
+ float&nbsp;red,
+ float&nbsp;green,
+ float&nbsp;blue,
+ float&nbsp;alpha,
+ float&nbsp;coverage)</span></div>
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
+ (0 none, at most half), in the given color. Each lid is the part of a disk a little wider than the
+ cornea beyond a horizontal edge, as deep as the whole eye, so it caps the cornea from the front and
+ side; its front face sits ahead of the iris, which shows only between the two edges. Neither has a
+ back face, which would face only the head.</div>
 </section>
 </li>
 </ul>
