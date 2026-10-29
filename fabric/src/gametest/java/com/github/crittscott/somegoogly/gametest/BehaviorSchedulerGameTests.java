@@ -25,6 +25,11 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void aimingPlayerWinks(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.aimingPlayerWinks(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void angerFollowsEntityLifetime(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
     }

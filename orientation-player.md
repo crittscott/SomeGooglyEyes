@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
-One expression plays at a time; all are cosmetic. Sleepers play nothing else; villagers close tan eyelids to a slit, others squint. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleepers play nothing else; villagers lower tan lids, others squint. Under any expression, a ramming goat squints, a skeleton or player drawing a bow closes the eye away from the bow arm, a swelling creeper's pupils rattle faster toward the blast, angry mobs' pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 
@@ -229,5 +229,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.21.4 require manual compatibility verification.
-- Fabric contains 112 dedicated-server GameTests; NeoForge and Forge each contain 108. Physical verification covers production artifacts, adult/baby/player models and resolvers, animations, both item render paths, harvesting/application, picker editing/export, reloads, optional GeckoLib, and the master switch with picker preview. Migration from an actual 1.21.1 save also requires physical verification.
+- Fabric contains 113 dedicated-server GameTests; NeoForge and Forge each contain 109. Physical verification covers production artifacts, adult/baby/player models and resolvers, animations, both item render paths, harvesting/application, picker editing/export, reloads, optional GeckoLib, and the master switch with picker preview. Migration from an actual 1.21.1 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

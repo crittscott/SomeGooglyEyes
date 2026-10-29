@@ -103,8 +103,9 @@ loadScripts(document, 'script');</script>
  behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
  nothing about sleep crosses the mod's own network. A goat
  lowering its head to ram (<code>Goat.getRammingXHeadRot()</code>, set by vanilla's ram entity events) squints the
- same way but still plays behaviors. A skeleton drawing its bow (<code>LivingEntity.getUseItem()</code>, synced
- by vanilla) closes the eye on its off-hand side. A swelling creeper
+ same way but still plays behaviors. A skeleton drawing its bow, or a player drawing a bow
+ (<code>LivingEntity.getUseItem()</code>, synced by vanilla), closes the eye away from the arm holding it. A
+ swelling creeper
  (<code>Creeper.getSwelling(float)</code>, also synced by vanilla) agitates its pupils, which keep getting kicked back
  into flight in proportion to how far the swell has gone. An aggressive mob
  (<code>Mob.isAggressive()</code>, synced by vanilla) or one the server reports <a href="#angry"><code>angry</code></a> has its pupils

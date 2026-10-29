@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,6 +18,9 @@ import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
 import javax.annotation.Nonnull;
@@ -35,8 +39,9 @@ import javax.annotation.Nullable;
  * behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
  * nothing about sleep crosses the mod's own network. A goat
  * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
- * same way but still plays behaviors. A skeleton drawing its bow ({@link LivingEntity#getUseItem}, synced
- * by vanilla) closes the eye on its off-hand side. A swelling creeper
+ * same way but still plays behaviors. A skeleton drawing its bow, or a player drawing a bow
+ * ({@link LivingEntity#getUseItem}, synced by vanilla), closes the eye away from the arm holding it. A
+ * swelling creeper
  * ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep getting kicked back
  * into flight in proportion to how far the swell has gone. An aggressive mob
  * ({@link Mob#isAggressive}, synced by vanilla) or one the server reports {@link #angry} has its pupils
@@ -494,11 +499,13 @@ public class GooglyTracker {
         lid = ease(lid, isLidded(), SLEEP_LID_EASE_TICKS);
         float lidCoverage = lid * SLEEP_LID_COVERAGE;
 
-        // Aiming closes only the eye on the off-hand side, sighting along the weapon with the other, and
-        // multiplies with the squint and any behavior the same way.
+        // Aiming closes only the eye opposite the arm holding the weapon, sighting along it with the other,
+        // and multiplies with the squint and any behavior the same way.
         aim = ease(aim, isAiming(), AIM_EASE_TICKS);
         float aimSquash = Mth.lerp(aim, 1F, AIM_SQUASH_Y);
-        int[] aimClosedEye = parent.getMainArm() == HumanoidArm.RIGHT ? leftEye : rightEye;
+        HumanoidArm weaponArm = parent.getUsedItemHand() == InteractionHand.MAIN_HAND
+                ? parent.getMainArm() : parent.getMainArm().getOpposite();
+        int[] aimClosedEye = weaponArm == HumanoidArm.RIGHT ? leftEye : rightEye;
 
         // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
         anger = ease(anger, isAngry(), ANGER_EASE_TICKS);
@@ -564,10 +571,17 @@ public class GooglyTracker {
                 || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
     }
 
-    /** Whether the entity is a skeleton drawing a bow or other ranged weapon. */
+    /**
+     * Whether the entity is a skeleton drawing a bow or other ranged weapon, or a player drawing a bow. A
+     * player's crossbow doesn't count: charging it is item use, but aiming it once loaded is not.
+     */
     private boolean isAiming() {
-        return parent instanceof AbstractSkeleton && parent.isUsingItem()
-                && parent.getUseItem().getItem() instanceof ProjectileWeaponItem;
+        if (!parent.isUsingItem()) {
+            return false;
+        }
+        Item weapon = parent.getUseItem().getItem();
+        return parent instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
+                || parent instanceof Player && weapon instanceof BowItem;
     }
 
     private boolean isCreepy() {

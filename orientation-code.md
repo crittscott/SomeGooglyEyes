@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` holds 108 shared tests, with persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, protection callback ordering, actual anger packet/unload delivery, and real-save migration are manual. Shared regressions cover draft age retention, export age overlays, and anger-cache lifetime.
+`common/src/gametest/java` holds 109 shared tests, with persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Root `generateDocs` syncs all production and GameTest Javadoc into `docs/javadoc/`. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, protection callback ordering, actual anger packet/unload delivery, and real-save migration are manual. Shared regressions cover draft age retention, export age overlays, and anger-cache lifetime.
 
 ## Operational boundaries
 
