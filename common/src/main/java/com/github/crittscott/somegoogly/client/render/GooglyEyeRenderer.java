@@ -145,7 +145,7 @@ public final class GooglyEyeRenderer {
 
         // Everything below reads the eye's already-simulated state (the behavior, if any, was folded in
         // by the tracker) and interpolates by partialTicks. Grow scales the whole eye; blink squashes it; a
-        // sleeping villager's lid is drawn over it last.
+        // sleeping villager's lids are drawn over it last.
         float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
         float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
         float eyeScale = placement.eyeScale() * eyeScaleMul;
@@ -190,12 +190,12 @@ public final class GooglyEyeRenderer {
         drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, irisScale,
                 irisX, irisY, look.glow());
 
-        // A sleeping villager's lid covers the top of the eye. It never glows: drawn only in the cutout pass,
-        // it hides the glow behind it by depth.
+        // A sleeping villager's lids close over the eye from above and below. They never glow: drawn only in
+        // the cutout pass, they hide the glow behind them by depth.
         float lid = lerp(eyeInfo.prevLid, eyeInfo.lid, partialTicks);
         if (lid > 0F) {
             float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
-            model.renderLid(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
+            model.renderLids(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
                     lidColor[0], lidColor[1], lidColor[2], 1F, lid);
         }
 

@@ -83,7 +83,20 @@ loadScripts(document, 'script');</script>
  <p>One tracker is kept per tracked <code>LivingEntity</code> (see <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a>), matched
  against the entity's current placement via <a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>matches(com.github.crittscott.somegoogly.eye.HeadInfo)</code></a>. <a href="#update()"><code>update()</code></a> advances the active
  behavior and steps every eye's physics once per client tick; <a href="#startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)"><code>startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior, int, long, int)</code></a> applies a
- server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.</div>
+ server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
+
+ <p>While the entity sleeps (<code>LivingEntity.isSleeping()</code>, synced by vanilla to every viewer) no new
+ behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
+ nothing about sleep crosses the mod's own network. A goat
+ lowering its head to ram (<code>Goat.getRammingXHeadRot()</code>, set by vanilla's ram entity events) squints the
+ same way but still plays behaviors. A skeleton drawing its bow (<code>LivingEntity.getUseItem()</code>, synced
+ by vanilla) closes the eye on its off-hand side. A swelling creeper
+ (<code>Creeper.getSwelling(float)</code>, also synced by vanilla) agitates its pupils, which keep getting kicked back
+ into flight in proportion to how far the swell has gone. An aggressive mob
+ (<code>Mob.isAggressive()</code>, synced by vanilla) or one the server reports <a href="#angry"><code>angry</code></a> has its pupils
+ eased to red, and a creepy enderman (<code>EnderMan.isCreepy()</code>, synced by vanilla) has its pupils pulse
+ at a frequency of its own. None of these ongoing states blocks a behavior: each is folded in on top of
+ whatever plays.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -120,51 +133,129 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The behavior playing on this entity, or <code>null</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>[][]</code></div>
-<div class="col-second odd-row-color"><code><a href="#eyes" class="member-name-link">eyes</a></code></div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#AIM_EASE_TICKS" class="member-name-link">AIM_EASE_TICKS</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20.</div>
+</div>
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#AIM_SQUASH_Y" class="member-name-link">AIM_SQUASH_Y</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Off-hand eye height multiplier while fully aiming.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#ANGER_EASE_TICKS" class="member-name-link">ANGER_EASE_TICKS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Ticks to ease fully into or out of angry red pupils.</div>
+</div>
+<div class="col-first even-row-color"><code>static final float[]</code></div>
+<div class="col-second even-row-color"><code><a href="#ANGER_IRIS_COLOR" class="member-name-link">ANGER_IRIS_COLOR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Pupil color while fully angry.</div>
+</div>
+<div class="col-first odd-row-color"><code>boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#angry" class="member-name-link">angry</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Whether the server reports this entity angry in a way vanilla doesn't sync (see <code>
+ EyeAngerPacket</code>); kept current by <a href="ClientNetworkHandler.html#handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)"><code>ClientNetworkHandler.handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)</code></a>.</div>
+</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#CREEPY_EASE_TICKS" class="member-name-link">CREEPY_EASE_TICKS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Ticks to ease fully into or out of the creepy pulse.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#CREEPY_MAX_HZ" class="member-name-link">CREEPY_MAX_HZ</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#CREEPY_MAX_PHASE_OFFSET" class="member-name-link">CREEPY_MAX_PHASE_OFFSET</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#CREEPY_MIN_HZ" class="member-name-link">CREEPY_MIN_HZ</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Slowest and fastest creepy-enderman pupil pulse, in cycles per second.</div>
+</div>
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#CREEPY_MIN_PHASE_OFFSET" class="member-name-link">CREEPY_MIN_PHASE_OFFSET</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Range of each eye's offset into the creepy pulse, in radians.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#CREEPY_PULSE_AMPLITUDE" class="member-name-link">CREEPY_PULSE_AMPLITUDE</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">How far a creepy enderman's pupils swell and shrink around their size (fraction of it).</div>
+</div>
+<div class="col-first even-row-color"><code><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>[][]</code></div>
+<div class="col-second even-row-color"><code><a href="#eyes" class="member-name-link">eyes</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Pupil simulators, indexed by head then eye, shaped by this tracker's placement.</div>
 </div>
-<div class="col-first even-row-color"><code>final <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
-<div class="col-second even-row-color"><code><a href="#helper" class="member-name-link">helper</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>final <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#helper" class="member-name-link">helper</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The placement this tracker's eyes were built for.</div>
 </div>
-<div class="col-first odd-row-color"><code>int</code></div>
-<div class="col-second odd-row-color"><code><a href="#lastRenderTick" class="member-name-link">lastRenderTick</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>int</code></div>
+<div class="col-second even-row-color"><code><a href="#lastRenderTick" class="member-name-link">lastRenderTick</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The client tick during which this tracker was last rendered.</div>
 </div>
+<div class="col-first odd-row-color"><code>double</code></div>
+<div class="col-second odd-row-color"><code><a href="#motionX" class="member-name-link">motionX</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+</div>
 <div class="col-first even-row-color"><code>double</code></div>
-<div class="col-second even-row-color"><code><a href="#motionX" class="member-name-link">motionX</a></code></div>
+<div class="col-second even-row-color"><code><a href="#motionY" class="member-name-link">motionY</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>double</code></div>
-<div class="col-second odd-row-color"><code><a href="#motionY" class="member-name-link">motionY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#motionZ" class="member-name-link">motionZ</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
 </div>
-<div class="col-first even-row-color"><code>double</code></div>
-<div class="col-second even-row-color"><code><a href="#motionZ" class="member-name-link">motionZ</a></code></div>
+<div class="col-first even-row-color"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
+<div class="col-second even-row-color"><code><a href="#overrides" class="member-name-link">overrides</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
-</div>
-<div class="col-first odd-row-color"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#overrides" class="member-name-link">overrides</a></code></div>
-<div class="col-last odd-row-color">
 <div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render layers
  don't re-read it from NBT every frame.</div>
 </div>
-<div class="col-first even-row-color"><code>final net.minecraft.world.entity.LivingEntity</code></div>
-<div class="col-second even-row-color"><code><a href="#parent" class="member-name-link">parent</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>final net.minecraft.world.entity.LivingEntity</code></div>
+<div class="col-second odd-row-color"><code><a href="#parent" class="member-name-link">parent</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The entity whose eyes this tracker simulates.</div>
 </div>
-<div class="col-first odd-row-color"><code>final net.minecraft.util.RandomSource</code></div>
-<div class="col-second odd-row-color"><code><a href="#rand" class="member-name-link">rand</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>final net.minecraft.util.RandomSource</code></div>
+<div class="col-second even-row-color"><code><a href="#rand" class="member-name-link">rand</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Per-entity randomness for pupil jitter, seeded from the entity's UUID.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#SLEEP_EASE_TICKS" class="member-name-link">SLEEP_EASE_TICKS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Ticks to ease fully into or out of the squint.</div>
+</div>
+<div class="col-first even-row-color"><code>static final float[]</code></div>
+<div class="col-second even-row-color"><code><a href="#SLEEP_LID_COLOR" class="member-name-link">SLEEP_LID_COLOR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Sleeping villager eyelid color.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#SLEEP_LID_COVERAGE" class="member-name-link">SLEEP_LID_COVERAGE</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
+ between them across the middle.</div>
+</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#SLEEP_LID_EASE_TICKS" class="member-name-link">SLEEP_LID_EASE_TICKS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Ticks for a villager's lids to slide fully down or back up.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#SLEEP_SQUASH_Y" class="member-name-link">SLEEP_SQUASH_Y</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Eye height multiplier while fully squinting (asleep or ramming).</div>
 </div>
 </div>
 </section>
@@ -177,9 +268,12 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">GooglyTracker</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;parent,
- <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean)" class="member-name-link">GooglyTracker</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;parent,
+ <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
+ boolean&nbsp;angry)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Build the tracker.</div>
+</div>
 </div>
 </section>
 </li>
@@ -212,7 +306,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;elapsed)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Start a behavior now, unless one is already playing â€” the "one at a time, non-interruptable"
- rule.</div>
+ rule â€” or the entity is asleep.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
@@ -236,6 +330,214 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="SLEEP_SQUASH_Y">
+<h3>SLEEP_SQUASH_Y</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">SLEEP_SQUASH_Y</span></div>
+<div class="block">Eye height multiplier while fully squinting (asleep or ramming).</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.SLEEP_SQUASH_Y">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SLEEP_EASE_TICKS">
+<h3>SLEEP_EASE_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">SLEEP_EASE_TICKS</span></div>
+<div class="block">Ticks to ease fully into or out of the squint.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.SLEEP_EASE_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SLEEP_LID_COVERAGE">
+<h3>SLEEP_LID_COVERAGE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">SLEEP_LID_COVERAGE</span></div>
+<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
+ between them across the middle.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.SLEEP_LID_COVERAGE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SLEEP_LID_EASE_TICKS">
+<h3>SLEEP_LID_EASE_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">SLEEP_LID_EASE_TICKS</span></div>
+<div class="block">Ticks for a villager's lids to slide fully down or back up.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.SLEEP_LID_EASE_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="SLEEP_LID_COLOR">
+<h3>SLEEP_LID_COLOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float[]</span>&nbsp;<span class="element-name">SLEEP_LID_COLOR</span></div>
+<div class="block">Sleeping villager eyelid color.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="AIM_SQUASH_Y">
+<h3>AIM_SQUASH_Y</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">AIM_SQUASH_Y</span></div>
+<div class="block">Off-hand eye height multiplier while fully aiming.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.AIM_SQUASH_Y">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="AIM_EASE_TICKS">
+<h3>AIM_EASE_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">AIM_EASE_TICKS</span></div>
+<div class="block">Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.AIM_EASE_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="ANGER_IRIS_COLOR">
+<h3>ANGER_IRIS_COLOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float[]</span>&nbsp;<span class="element-name">ANGER_IRIS_COLOR</span></div>
+<div class="block">Pupil color while fully angry.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANGER_EASE_TICKS">
+<h3>ANGER_EASE_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">ANGER_EASE_TICKS</span></div>
+<div class="block">Ticks to ease fully into or out of angry red pupils.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.ANGER_EASE_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_MIN_HZ">
+<h3>CREEPY_MIN_HZ</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">CREEPY_MIN_HZ</span></div>
+<div class="block">Slowest and fastest creepy-enderman pupil pulse, in cycles per second.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_MIN_HZ">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_MAX_HZ">
+<h3>CREEPY_MAX_HZ</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">CREEPY_MAX_HZ</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_MAX_HZ">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_MIN_PHASE_OFFSET">
+<h3>CREEPY_MIN_PHASE_OFFSET</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">CREEPY_MIN_PHASE_OFFSET</span></div>
+<div class="block">Range of each eye's offset into the creepy pulse, in radians.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_MIN_PHASE_OFFSET">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_MAX_PHASE_OFFSET">
+<h3>CREEPY_MAX_PHASE_OFFSET</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">CREEPY_MAX_PHASE_OFFSET</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_MAX_PHASE_OFFSET">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_PULSE_AMPLITUDE">
+<h3>CREEPY_PULSE_AMPLITUDE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">CREEPY_PULSE_AMPLITUDE</span></div>
+<div class="block">How far a creepy enderman's pupils swell and shrink around their size (fraction of it).</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_PULSE_AMPLITUDE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CREEPY_EASE_TICKS">
+<h3>CREEPY_EASE_TICKS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">CREEPY_EASE_TICKS</span></div>
+<div class="block">Ticks to ease fully into or out of the creepy pulse.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.GooglyTracker.CREEPY_EASE_TICKS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="helper">
 <h3>helper</h3>
@@ -312,6 +614,14 @@ loadScripts(document, 'script');</script>
  client-only, since the server sends only the trigger.</div>
 </section>
 </li>
+<li>
+<section class="detail" id="angry">
+<h3>angry</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">angry</span></div>
+<div class="block">Whether the server reports this entity angry in a way vanilla doesn't sync (see <code>
+ EyeAngerPacket</code>); kept current by <a href="ClientNetworkHandler.html#handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)"><code>ClientNetworkHandler.handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)</code></a>.</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -321,12 +631,15 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)">
+<section class="detail" id="&lt;init&gt;(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean)">
 <h3>GooglyTracker</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GooglyTracker</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.world.entity.LivingEntity&nbsp;parent,
  @Nonnull
- <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
+ <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
+ boolean&nbsp;angry)</span></div>
+<div class="block">Build the tracker. <code>angry</code> is the server-reported anger already known for this entity, so a
+ tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded.</div>
 </section>
 </li>
 </ul>
@@ -361,8 +674,8 @@ loadScripts(document, 'script');</script>
  long&nbsp;seed,
  int&nbsp;elapsed)</span></div>
 <div class="block">Start a behavior now, unless one is already playing â€” the "one at a time, non-interruptable"
- rule. Returns whether it started (a dropped trigger returns <code>false</code>). Called from the
- trigger packet on the client.
+ rule â€” or the entity is asleep. Returns whether it started (a dropped trigger returns
+ <code>false</code>). Called from the trigger packet on the client.
 
  <p><code>elapsed</code> starts the behavior that many ticks in, so a player who starts watching a mob
  mid-effect sees the same state as everyone else: the seeded <code>onStart</code> plus the age fully

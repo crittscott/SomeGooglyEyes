@@ -97,29 +97,50 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop every tracker; call on client disconnect and on a resource reload.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clientTicks()" class="member-name-link">clientTicks</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearAnger()" class="member-name-link">clearAnger</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The client-tick counter this runtime advances once per <a href="#tick()"><code>tick()</code></a>.</div>
+<div class="block">Forget every server-reported anger; call on client disconnect.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">get</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
- <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clientTicks()" class="member-name-link">clientTicks</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The client-tick counter this runtime advances once per <a href="#tick(boolean)"><code>tick(boolean)</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">get</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The tracker for this entity's current placement, creating one on first use and replacing any
  existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye"><code>HeadInfo</code></a> no longer matches (the eye array is shaped from it, so a
  variant or age change cannot reuse the old tracker).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#peek(net.minecraft.world.entity.LivingEntity)" class="member-name-link">peek</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEntityRemoved(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onEntityRemoved</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Forget a removed entity's simulation and server-reported anger.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onLevelChanged()" class="member-name-link">onLevelChanged</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Forget simulations and anger when the client replaces or unloads its level.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#peek(net.minecraft.world.entity.LivingEntity)" class="member-name-link">peek</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The live tracker for this entity, or <code>null</code> if none exists yet (no rebuild on mismatch).</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ boolean&nbsp;angry)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
- physics of those rendered this tick or last.</div>
+ physics of those rendered this tick or last when <code>simulate</code> is true.</div>
 </div>
 </div>
 </div>
@@ -146,10 +167,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="clearAnger()">
+<h3>clearAnger</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearAnger</span>()</div>
+<div class="block">Forget every server-reported anger; call on client disconnect.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="clientTicks()">
 <h3>clientTicks</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">clientTicks</span>()</div>
-<div class="block">The client-tick counter this runtime advances once per <a href="#tick()"><code>tick()</code></a>.</div>
+<div class="block">The client-tick counter this runtime advances once per <a href="#tick(boolean)"><code>tick(boolean)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -163,6 +191,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="onEntityRemoved(net.minecraft.world.entity.LivingEntity)">
+<h3>onEntityRemoved</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityRemoved</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
+<div class="block">Forget a removed entity's simulation and server-reported anger.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="onLevelChanged()">
+<h3>onLevelChanged</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onLevelChanged</span>()</div>
+<div class="block">Forget simulations and anger when the client replaces or unloads its level.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="peek(net.minecraft.world.entity.LivingEntity)">
 <h3>peek</h3>
 <div class="member-signature"><span class="annotations">@Nullable
@@ -171,11 +213,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="tick()">
+<section class="detail" id="setAngry(net.minecraft.world.entity.LivingEntity,boolean)">
+<h3>setAngry</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setAngry</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ boolean&nbsp;angry)</span></div>
+<div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tick(boolean)">
 <h3>tick</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span><wbr><span class="parameters">(boolean&nbsp;simulate)</span></div>
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
- physics of those rendered this tick or last. A no-op while there is no level or the game is paused.</div>
+ physics of those rendered this tick or last when <code>simulate</code> is true. The client lifecycle
+ disables simulation while there is no level or the game is paused.</div>
 </section>
 </li>
 </ul>

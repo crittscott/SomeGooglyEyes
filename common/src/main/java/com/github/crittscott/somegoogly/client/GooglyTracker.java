@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
  *
  * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) no new
- * behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids slide down to a slit;
+ * behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
  * nothing about sleep crosses the mod's own network. A goat
  * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
  * same way but still plays behaviors. A skeleton drawing its bow ({@link LivingEntity#getUseItem}, synced
@@ -53,8 +53,11 @@ public class GooglyTracker {
     public static final float SLEEP_SQUASH_Y = 0.3F;
     /** Ticks to ease fully into or out of the squint. */
     public static final int SLEEP_EASE_TICKS = 10;
-    /** How much of the eye a sleeping villager's lid covers when fully down, leaving a slit at the bottom. */
-    public static final float SLEEP_LID_COVERAGE = 0.9F;
+    /**
+     * How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
+     * between them across the middle.
+     */
+    public static final float SLEEP_LID_COVERAGE = 0.45F;
     /** Ticks for a villager's lids to slide fully down or back up. */
     public static final int SLEEP_LID_EASE_TICKS = 20;
     /** Sleeping villager eyelid color. */
@@ -122,7 +125,7 @@ public class GooglyTracker {
 
     /** How far into the squint (sleeping or ramming) the eyes are: 0 open, 1 fully squinted. */
     private float squint;
-    /** How far a sleeping villager's lids are down: 0 up out of sight, 1 down to the slit. */
+    /** How far a sleeping villager's lids are closed: 0 out of sight, 1 down to the slit. */
     private float lid;
     /** How far the off-hand eye is squinted for aiming: 0 open, 1 fully squinted. */
     private float aim;
@@ -268,7 +271,7 @@ public class GooglyTracker {
         public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
         /** Blink squash times the sleeping squint; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
-        /** How much of the eye a sleeping villager's upper lid covers (0 none); see {@link #scaleMul}. */
+        /** How much of the eye each of a sleeping villager's lids covers (0 none); see {@link #scaleMul}. */
         public float lid, prevLid;
         /** Color-change blend amount; see {@link #scaleMul}. */
         public float tintAmount, prevTintAmount;
@@ -547,7 +550,7 @@ public class GooglyTracker {
         return angry || parent instanceof Mob mob && mob.isAggressive();
     }
 
-    /** Whether the eyelids should be down: the entity is a sleeping villager. */
+    /** Whether the eyelids should be closed: the entity is a sleeping villager. */
     private boolean isLidded() {
         return parent instanceof Villager && parent.isSleeping();
     }

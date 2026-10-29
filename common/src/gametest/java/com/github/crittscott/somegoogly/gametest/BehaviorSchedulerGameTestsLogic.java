@@ -433,12 +433,13 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
-     * A sleeping villager's eyelids slide down to a slit over its full-size eyes, stay down until it wakes,
-     * and slide back up out of sight; a tracker built for an already-sleeping villager starts with them down,
-     * and no behavior starts on the client while it sleeps. Drives the client-side {@link GooglyTracker}
+     * A sleeping villager's eyelids close to a slit over its full-size eyes, stay closed until it wakes, and
+     * open back out of sight; a tracker built for an already-sleeping villager starts with them closed, and
+     * no behavior starts on the client while it sleeps. Drives the client-side {@link GooglyTracker}
      * directly against a server villager, since the lids are derived from vanilla's synced sleep state rather
-     * than sent. In game: at night, watch an eyed villager go to bed; tan lids slide down over its eyes,
-     * leaving a slit at the bottom, stay that way until it wakes, then slide back up and vanish.
+     * than sent. In game: at night, watch an eyed villager go to bed; tan lids slide in over each eye from
+     * above and below, leaving a slit across the middle, stay that way until it wakes, then slide back out
+     * and vanish.
      */
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
@@ -452,9 +453,9 @@ public final class BehaviorSchedulerGameTestsLogic {
         villager.startSleeping(villager.blockPosition());
         tracker.update();
         helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
-                "falling asleep slides the lids down rather than snapping them shut");
+                "falling asleep slides the lids closed rather than snapping them shut");
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS);
-        helper.assertTrue(allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE), "a sleeping villager's lids are down");
+        helper.assertTrue(allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE), "a sleeping villager's lids are closed");
         helper.assertTrue(allSquash(tracker, 1F), "a sleeping villager's eyes keep their shape under the lids");
         helper.assertTrue(!tracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
                 "no behavior starts on the client while the mob sleeps");
@@ -462,11 +463,11 @@ public final class BehaviorSchedulerGameTestsLogic {
         GooglyTracker joined = new GooglyTracker(villager, headInfo, false);
         helper.assertTrue(allLid(joined, GooglyTracker.SLEEP_LID_COVERAGE)
                         && allPrevLid(joined, GooglyTracker.SLEEP_LID_COVERAGE),
-                "a tracker built for an already-sleeping villager starts with its lids down");
+                "a tracker built for an already-sleeping villager starts with its lids closed");
 
         villager.stopSleeping();
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1);
-        helper.assertTrue(allLid(tracker, 0F), "waking slides the lids back up out of sight");
+        helper.assertTrue(allLid(tracker, 0F), "waking slides the lids back open out of sight");
         helper.succeed();
     }
 

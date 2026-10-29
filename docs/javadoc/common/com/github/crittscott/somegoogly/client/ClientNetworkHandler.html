@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientNetworkHandler</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Applies the three server-to-client payloads on the client game thread. Loader payload registration runs on
+<div class="block">Applies the four server-to-client payloads on the client game thread. Loader payload registration runs on
  both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
  payload arrives rather than when the handler is registered.</div>
 </section>
@@ -95,18 +95,23 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior</a><wbr>(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)" class="member-name-link">handleAnger</a><wbr>(<a href="../network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a>&nbsp;packet)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+<div class="block">Record a server-reported anger change; an unknown entity is ignored.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior</a><wbr>(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
 </div>
 </div>
@@ -145,6 +150,13 @@ loadScripts(document, 'script');</script>
 <h3>handleBehavior</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleBehavior</span><wbr><span class="parameters">(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</span></div>
 <div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)">
+<h3>handleAnger</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleAnger</span><wbr><span class="parameters">(<a href="../network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a>&nbsp;packet)</span></div>
+<div class="block">Record a server-reported anger change; an unknown entity is ignored.</div>
 </section>
 </li>
 </ul>
