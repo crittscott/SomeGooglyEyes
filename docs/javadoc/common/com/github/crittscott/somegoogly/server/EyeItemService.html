@@ -101,6 +101,26 @@ loadScripts(document, 'script');</script>
  gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)" class="member-name-link">applySlimyEye</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.core.Direction&nbsp;face)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The Slimy Eye apply verb for a placed mob head, server side, clicked on its <code>face</code>: an eyeless head
+ whose mob has an adult definition gains eyes carrying the stack's appearance on a freshly rolled placement
+ variant, consuming one eye outside creative.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#harvestSkull(net.minecraft.server.level.ServerPlayer,net.minecraft.world.InteractionHand,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)" class="member-name-link">harvestSkull</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.InteractionHand&nbsp;hand,
+ net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.core.Direction&nbsp;face)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The Optometrist harvest for a placed mob head, server side, clicked on its <code>face</code>: one Googly Eye
+ carrying the head's effective appearance pops out of the block, the head loses its eyes, the shears in
+ <code>hand</code> lose one durability, the shearing sound plays, and <code>GameEvent.SHEAR</code> is emitted.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.LivingEntity)" class="member-name-link">interact</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.InteractionHand&nbsp;hand,
@@ -109,20 +129,38 @@ loadScripts(document, 'script');</script>
 <div class="block">Right-click-on-entity entry point for both eye items.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onDeath(net.minecraft.world.entity.LivingEntity,net.minecraft.world.damagesource.DamageSource,java.util.function.Consumer)" class="member-name-link">onDeath</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#markHeadDrop(net.minecraft.world.entity.LivingEntity,net.minecraft.world.item.ItemStack)" class="member-name-link">markHeadDrop</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
+ net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head is the mob's
+ own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the placed head shows the mob's
+ arrangement and colors.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onDeath(net.minecraft.world.entity.LivingEntity,net.minecraft.world.damagesource.DamageSource,java.util.function.Consumer)" class="member-name-link">onDeath</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.damagesource.DamageSource&nbsp;source,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;dropSink)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
  phase: Forge adds it to the <code>LivingDropsEvent</code> collection, Fabric appends it
  from a <code>dropCustomDeathLoot</code> mixin.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sneak + right-click air with shears to shear your own eyes off â€” the self-serve counterpart to
  another player having applied a Slimy Eye to you.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#useOnSkull(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.phys.BlockHitResult)" class="member-name-link">useOnSkull</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+ net.minecraft.world.level.Level&nbsp;level,
+ net.minecraft.world.InteractionHand&nbsp;hand,
+ net.minecraft.world.phys.BlockHitResult&nbsp;hit)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye goes to
+ <a href="#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)"><code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity, Direction)</code></a>, Optometrist shears on an eyed
+ head to <a href="#harvestSkull(net.minecraft.server.level.ServerPlayer,net.minecraft.world.InteractionHand,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)"><code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity, net.minecraft.core.Direction)</code></a>.</div>
 </div>
 </div>
 </div>
@@ -157,6 +195,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="useOnSkull(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.phys.BlockHitResult)">
+<h3>useOnSkull</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">useOnSkull</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
+ net.minecraft.world.level.Level&nbsp;level,
+ net.minecraft.world.InteractionHand&nbsp;hand,
+ net.minecraft.world.phys.BlockHitResult&nbsp;hit)</span></div>
+<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye goes to
+ <a href="#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)"><code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity, Direction)</code></a>, Optometrist shears on an eyed
+ head to <a href="#harvestSkull(net.minecraft.server.level.ServerPlayer,net.minecraft.world.InteractionHand,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)"><code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity, net.minecraft.core.Direction)</code></a>. The client answers <code>InteractionResult.SUCCESS</code> in exactly those cases,
+ so it neither runs nor sends the item's own use on top (a sneaking player's self-apply or self-shear).
+ Anything else, including plain shears, returns <code>InteractionResult.PASS</code>.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)">
 <h3>applySlimyEye</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">applySlimyEye</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
@@ -170,6 +222,45 @@ loadScripts(document, 'script');</script>
  enabled and <code>canHarmPlayer</code> to hold, so it can't be used to restyle a teammate or anyone in a
  PvP-off world. Both the mob path (<a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.LivingEntity)"><code>interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.LivingEntity)</code></a>) and the sneak self-apply
  (<code>SlimyEyeItem#use</code>) route through here.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)">
+<h3>applySlimyEye</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">applySlimyEye</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.core.Direction&nbsp;face)</span></div>
+<div class="block">The Slimy Eye apply verb for a placed mob head, server side, clicked on its <code>face</code>: an eyeless head
+ whose mob has an adult definition gains eyes carrying the stack's appearance on a freshly rolled placement
+ variant, consuming one eye outside creative. The player must be allowed to use the item on that block, as
+ placing a block there would require. Otherwise, or while <code>googlyEyesEnabled</code> is off, it refuses
+ (<code>FAIL</code>) and consumes nothing.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="harvestSkull(net.minecraft.server.level.ServerPlayer,net.minecraft.world.InteractionHand,net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.core.Direction)">
+<h3>harvestSkull</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">harvestSkull</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.world.InteractionHand&nbsp;hand,
+ net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.core.Direction&nbsp;face)</span></div>
+<div class="block">The Optometrist harvest for a placed mob head, server side, clicked on its <code>face</code>: one Googly Eye
+ carrying the head's effective appearance pops out of the block, the head loses its eyes, the shears in
+ <code>hand</code> lose one durability, the shearing sound plays, and <code>GameEvent.SHEAR</code> is emitted. The
+ player must be allowed to use the shears on that block. Returns <code>InteractionResult.PASS</code> when it
+ doesn't apply (no eyes, not allowed, <code>googlyEyesEnabled</code> off).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="markHeadDrop(net.minecraft.world.entity.LivingEntity,net.minecraft.world.item.ItemStack)">
+<h3>markHeadDrop</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">markHeadDrop</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob,
+ net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head is the mob's
+ own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the placed head shows the mob's
+ arrangement and colors. Players are left out: their death drops are their inventory. Each loader routes
+ every stack of the death-loot phase here; any other stack is left alone.</div>
 </section>
 </li>
 <li>

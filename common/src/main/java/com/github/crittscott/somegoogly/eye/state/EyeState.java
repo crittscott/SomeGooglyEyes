@@ -44,8 +44,27 @@ public final class EyeState {
     private EyeState() {
     }
 
-    /** The full portable state synchronized for one living entity. */
+    /**
+     * The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+     * keys above in a mod-owned compound.
+     */
     public record Snapshot(boolean hasEyes, float variantRoll, AppearanceOverride properties) {
+
+        /** No eyes, the first variant, no appearance overrides; what an absent compound reads as. */
+        public static final Snapshot NONE = new Snapshot(false, 0.0F, AppearanceOverride.EMPTY);
+
+        /** Read the state keys of {@code data}; absent keys read as {@link #NONE}'s values. */
+        public static Snapshot read(CompoundTag data) {
+            return new Snapshot(data.getBoolean(HAS_EYES), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
+                    data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null));
+        }
+
+        /** Write every state key into {@code data}, removing the overrides compound when there are none. */
+        public void write(CompoundTag data) {
+            data.putBoolean(HAS_EYES, hasEyes);
+            data.putFloat(VARIANT_ROLL, variantRoll);
+            writeProperties(data, properties);
+        }
     }
 
     /**
@@ -58,10 +77,7 @@ public final class EyeState {
         if (!isInitialized(source)) {
             return;
         }
-        CompoundTag data = EntityPersistentData.get(target);
-        data.putBoolean(HAS_EYES, hasEyes(source));
-        data.putFloat(VARIANT_ROLL, getVariantRoll(source));
-        writeProperties(data, readProperties(source));
+        snapshot(source).write(EntityPersistentData.get(target));
         if (hasEyes(target)) {
             ServerBehaviorScheduler.onEyesGained(target);
         }
@@ -70,10 +86,7 @@ public final class EyeState {
 
     /** Install a synchronized snapshot on the client without broadcasting it. */
     public static void applySnapshot(LivingEntity entity, Snapshot snapshot) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        data.putBoolean(HAS_EYES, snapshot.hasEyes());
-        data.putFloat(VARIANT_ROLL, snapshot.variantRoll());
-        writeProperties(data, snapshot.properties());
+        snapshot.write(EntityPersistentData.get(entity));
     }
 
     /** Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts. */
@@ -89,8 +102,7 @@ public final class EyeState {
      * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(LivingEntity entity) {
-        float roll = EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
-        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
+        return variantRoll(EntityPersistentData.get(entity));
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
@@ -146,7 +158,7 @@ public final class EyeState {
 
     /** Read all synchronized fields as one coherent value. */
     public static Snapshot snapshot(LivingEntity entity) {
-        return new Snapshot(hasEyes(entity), getVariantRoll(entity), readProperties(entity));
+        return Snapshot.read(EntityPersistentData.get(entity));
     }
 
     /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
@@ -198,6 +210,12 @@ public final class EyeState {
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
         writeProperties(EntityPersistentData.get(entity), properties);
         sync(entity);
+    }
+
+    /** The stored roll of {@code data}, clamped into 0..1, with a non-finite value read as 0. */
+    private static float variantRoll(CompoundTag data) {
+        float roll = data.getFloat(VARIANT_ROLL);
+        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
     }
 
     private static void writeProperties(CompoundTag data, AppearanceOverride properties) {

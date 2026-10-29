@@ -86,10 +86,15 @@ public final class ServerEyeConfigs {
         return get(entity, living.isBaby());
     }
 
-    /** Resolve the selected variant without sharing the client's renderer cache. */
-    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
-        RuntimeConfig config = get(entity, living);
+    /** Resolve the selected variant for the requested age without sharing the client's renderer cache. */
+    public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
+        RuntimeConfig config = get(entity, baby);
         return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
+    }
+
+    /** Resolve the selected variant for {@code living}'s current age. */
+    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
+        return resolve(entity, living.isBaby(), variantRoll);
     }
 
     /**

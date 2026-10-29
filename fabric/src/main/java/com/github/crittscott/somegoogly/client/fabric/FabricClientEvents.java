@@ -13,6 +13,7 @@ import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -82,6 +83,9 @@ public final class FabricClientEvents {
             PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
                     minecraft.getWindow().getGuiScaledHeight());
         });
+
+        ItemTooltipCallback.EVENT.register((stack, context, lines) ->
+                EyeItemProperties.appendHeadTooltip(stack, lines));
 
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),

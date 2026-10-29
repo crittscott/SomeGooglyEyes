@@ -24,6 +24,8 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
+**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again.
+
 ## Eye potential
 Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
 

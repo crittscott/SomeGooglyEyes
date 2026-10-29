@@ -176,11 +176,18 @@ loadScripts(document, 'script');</script>
  every client's copy, alone.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
- net.minecraft.world.entity.LivingEntity&nbsp;living,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,boolean,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ boolean&nbsp;baby,
  float&nbsp;variantRoll)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve the selected variant without sharing the client's renderer cache.</div>
+<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer cache.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ net.minecraft.world.entity.LivingEntity&nbsp;living,
+ float&nbsp;variantRoll)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolve the selected variant for <code>living</code>'s current age.</div>
 </div>
 </div>
 </div>
@@ -262,12 +269,21 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="resolve(net.minecraft.resources.ResourceLocation,boolean,float)">
+<h3>resolve</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ boolean&nbsp;baby,
+ float&nbsp;variantRoll)</span></div>
+<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer cache.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)">
 <h3>resolve</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
  net.minecraft.world.entity.LivingEntity&nbsp;living,
  float&nbsp;variantRoll)</span></div>
-<div class="block">Resolve the selected variant without sharing the client's renderer cache.</div>
+<div class="block">Resolve the selected variant for <code>living</code>'s current age.</div>
 </section>
 </li>
 <li>

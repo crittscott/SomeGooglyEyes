@@ -86,7 +86,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Loader-neutral owner of client eye trackers and their simulation lifecycle.</div>
+<div class="block">Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ClientLifecycle.html" title="class in com.github.crittscott.somegoogly.client">ClientLifecycle</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeInspector.html" title="class in com.github.crittscott.somegoogly.client">EyeInspector</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Client action-bar verdict for whether the aimed entity can currently receive googly eyes.</div>
+<div class="block">Client action-bar verdict for whether the aimed entity or placed mob head can currently receive googly eyes.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -128,6 +128,11 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The live eyes of one placed mob head: a <a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil per configured eye, stepped with
+ the same physics as mob eyes for a head that never moves, plus the expression playing on them.</div>
 </div>
 </div>
 </div>

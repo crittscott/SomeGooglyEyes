@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 /**
  * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- * {@code googlyEyesEnabled} master switch. The server builds it from the installed set and that set's
+ * {@code googlyEyesEnabled} master switch and the ambient settings placed heads schedule from. The server builds it from the installed set and that set's
  * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
  * validated when installed, so writing it to each connection only copies tags. The client decodes and
  * re-validates everything it receives.
@@ -25,16 +26,19 @@ public class EyeConfigSyncPacket implements Payload {
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
     public static final ResourceLocation ID = NetworkHandler.EYE_CONFIG;
 
+    private final AmbientSettings ambient;
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final Map<ResourceLocation, CompoundTag> encoded;
     private final boolean googlyEyesEnabled;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
-                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled) {
+                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled,
+                               AmbientSettings ambient) {
         this.configs = configs;
         this.encoded = encoded;
         this.googlyEyesEnabled = googlyEyesEnabled;
+        this.ambient = ambient;
     }
 
     /** Decode and validate a received payload. */
@@ -77,13 +81,14 @@ public class EyeConfigSyncPacket implements Payload {
         this.configs = configs;
         this.encoded = encoded;
         this.googlyEyesEnabled = buffer.readBoolean();
+        this.ambient = AmbientSettings.read(buffer);
     }
 
     /** The number of bytes a packet carrying {@code encoded} occupies on the wire. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            writeBody(buffer, encoded, false);
+            writeBody(buffer, encoded, false, AmbientSettings.NONE);
             return buffer.writerIndex();
         } finally {
             buffer.release();
@@ -91,24 +96,30 @@ public class EyeConfigSyncPacket implements Payload {
     }
 
     private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
-                                  boolean googlyEyesEnabled) {
+                                  boolean googlyEyesEnabled, AmbientSettings ambient) {
         buffer.writeVarInt(encoded.size());
         for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
         buffer.writeBoolean(googlyEyesEnabled);
+        ambient.write(buffer);
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
         int start = buffer.writerIndex();
-        writeBody(buffer, encoded, googlyEyesEnabled);
+        writeBody(buffer, encoded, googlyEyesEnabled, ambient);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written
                     + " bytes, exceeding the safe " + MAX_PAYLOAD_BYTES + "-byte limit");
         }
+    }
+
+    /** The server's ambient settings, for placed heads. */
+    public AmbientSettings ambient() {
+        return ambient;
     }
 
     /** The resolved eye definitions, by entity type. */

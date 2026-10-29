@@ -152,7 +152,7 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
                     continue;
                 }
                 GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight,
-                        packedOverlay, frame.tracker, frame.helper, frame.overrides, h, i, partialTick);
+                        packedOverlay, frame.tracker.eyes[h][i], frame.helper, frame.overrides, h, i, partialTick);
                 drew = true;
             }
         }

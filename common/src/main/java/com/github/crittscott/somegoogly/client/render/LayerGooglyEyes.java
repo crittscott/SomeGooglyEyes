@@ -79,7 +79,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
                 for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
                     if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
                         GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                                tracker, helper, overrides, headIndex, eyeIndex, partialTicks);
+                                tracker.eyes[headIndex][eyeIndex], helper, overrides, headIndex, eyeIndex,
+                                partialTicks);
                     }
                 }
             }

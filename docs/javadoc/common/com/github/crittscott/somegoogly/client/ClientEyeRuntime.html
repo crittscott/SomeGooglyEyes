@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientEyeRuntime</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader-neutral owner of client eye trackers and their simulation lifecycle.</div>
+<div class="block">Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -136,9 +136,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
+ replacing any built for another kind of head at the same position; <code>null</code> when the client's
+ definitions give it nothing to draw.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
  physics of those rendered this tick or last when <code>simulate</code> is true.</div>
 </div>
@@ -221,12 +229,24 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)">
+<h3>skullEyes</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></span>&nbsp;<span class="element-name">skullEyes</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.resources.ResourceLocation&nbsp;entity)</span></div>
+<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
+ replacing any built for another kind of head at the same position; <code>null</code> when the client's
+ definitions give it nothing to draw.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="tick(boolean)">
 <h3>tick</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span><wbr><span class="parameters">(boolean&nbsp;simulate)</span></div>
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
  physics of those rendered this tick or last when <code>simulate</code> is true. The client lifecycle
- disables simulation while there is no level or the game is paused.</div>
+ disables simulation while there is no level or the game is paused. A head's eyes are also dropped
+ when its eye state has changed, to be rebuilt from the new state when it next renders.</div>
 </section>
 </li>
 </ul>

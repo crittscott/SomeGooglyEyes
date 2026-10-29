@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
+    "EntityHeadDropMixin",
     "EntityPersistentDataMigrationMixin",
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
@@ -11,10 +12,13 @@
     "MilkingMixin",
     "MushroomCowShearMixin",
     "ServerLevelEntityEventMixin",
-    "ShearingMixin"
+    "ShearingMixin",
+    "SkullBlockEntityDataMixin"
   ],
   "client": [
-    "ClientLevelLifecycleMixin"
+    "ClientLevelLifecycleMixin",
+    "HeadItemRendererMixin",
+    "SkullBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

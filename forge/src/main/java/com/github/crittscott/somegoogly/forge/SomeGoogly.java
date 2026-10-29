@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
 import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
+import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -27,6 +28,7 @@ public final class SomeGoogly {
         ForgeContentRegistrar registrar = new ForgeContentRegistrar();
         SomeGooglyCommon.init(registrar);
         registrar.register(modEventBus);
+        HeadEyesLootModifier.register(modEventBus);
         ForgeNetworkTransport.register();
         ForgeServerConfig.register(context);
 

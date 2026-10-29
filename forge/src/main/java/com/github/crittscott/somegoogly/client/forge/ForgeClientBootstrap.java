@@ -23,6 +23,7 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -50,6 +51,7 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
         gameBus.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
         gameBus.addListener(ForgeClientBootstrap::onLevelUnload);
+        gameBus.addListener(ForgeClientBootstrap::onItemTooltip);
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
@@ -111,6 +113,10 @@ public final class ForgeClientBootstrap {
         if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
             ClientEyeRuntime.onEntityRemoved(living);
         }
+    }
+
+    private static void onItemTooltip(ItemTooltipEvent event) {
+        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
     }
 
     private static void onLevelUnload(LevelEvent.Unload event) {

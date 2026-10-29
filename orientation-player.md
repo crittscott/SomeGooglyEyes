@@ -66,7 +66,15 @@ An eyed mob or one without a definition for its current life stage refuses the i
 
 To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health, even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
-While holding either eye item, sneak and aim at a living entity to see whether it:
+## Mob heads
+
+Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition; dragon and modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+
+A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. Head items show their eyes at rest; worn heads show none.
+
+## Checking a target
+
+While holding either eye item, sneak and aim at a living entity or placed head to see whether it:
 
 - can receive eyes now;
 - already has eyes;
@@ -98,7 +106,7 @@ Forge applies edits as soon as they reload the file; Fabric applies them at worl
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
 
-While `googlyEyesEnabled` is `false`, no new mob rolls eyes, no client renders any eyes on any mob (old or new), and eyes can't be hand-applied or harvested. Existing eye data is kept, not erased, and reappears once the switch is turned back on. The creative eye picker is exempt, since it is an authoring tool rather than gameplay.
+While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data is kept and reappears when the switch returns. The creative picker, an authoring tool, is exempt.
 
 Overrides use `"entity-pattern,percent"`. Exact IDs take priority; otherwise the first matching wildcard is used.
 
@@ -114,7 +122,7 @@ entityOverrides = [
 
 | Key | Default | Effect |
 | --- | --- | --- |
-| `ambientBehaviors` | `true` | Enables idle expressions |
+| `ambientBehaviors` | `true` | Enables idle expressions, on mobs and heads |
 | `ambientMinTicks` | `200` | Minimum idle interval |
 | `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
@@ -129,7 +137,7 @@ entityOverrides = [
 
 Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
 
-`allowSpawnAll` (default `false`) gates `/sg spawnall`; enable it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) outside their normal context can corrupt a world. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and entity ids that `/sg spawn` and `/sg spawnall` skip; removing either default risks the world. Both affect only those authoring commands.
+`allowSpawnAll` (default `false`) gates `/sg spawnall`; use it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) can corrupt one. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and ids that `/sg spawn` and `/sg spawnall` skip; removing the defaults risks the world.
 
 ### Client display
 
@@ -142,8 +150,8 @@ config/somegoogly-client.toml
 | Key | Default | Effect |
 | --- | --- | --- |
 | `disableGooglyEyes` | `false` | Hides all eyes |
-| `disabledEntities` | empty | Hides listed entity IDs |
-| `disabledMods` | empty | Hides entities from listed namespaces |
+| `disabledEntities` | empty | Hides listed entity IDs, and their heads |
+| `disabledMods` | empty | Hides entities from listed namespaces, and their heads |
 
 These options affect only display. On Forge they apply as soon as the loader reloads the file; on Fabric they apply at game start. Invisibility also hides eyes.
 
@@ -157,9 +165,9 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required. The optional-mod definitions retain their earlier compatibility selectors. Updates to another mod's models may require its eye definitions to be adjusted.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required; their definitions keep earlier compatibility selectors and may need adjusting when those mods' models change.
 
-74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand. The armadillo, bogged, and breeze definitions target later Minecraft versions, whose mobs do not exist in 1.20.1. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
+74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; armadillo, bogged, and breeze target later versions, and the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
 Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
 
@@ -188,7 +196,7 @@ While the picker is active, configured mobs display eyes regardless of spawn cha
 
 Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits.
 
-`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks. It is limited to one successful export per player every 10 seconds, and a definition too large to send is refused with a message.
+`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks, at most once per player every 10 seconds; a definition too large to send is refused.
 
 `/sg exportall` writes all loaded definitions and session edits to:
 
@@ -196,7 +204,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world. Drafts are retained independently by species and age until disconnect. Both exports replace authored ages and retain untouched adult, baby, and age-independent entries, including disabled entries. Exports declare the exact Minecraft version or the other mod's current minor-release range.
+It does not change the world. Drafts persist per species and age until disconnect. Both exports replace authored ages, keep untouched (even disabled) ones, and declare the exact Minecraft version or the other mod's current minor-release range.
 
 ### Test mobs
 
@@ -204,7 +212,7 @@ It does not change the world. Drafts are retained independently by species and a
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world (see `allowSpawnAll` above).
 
-Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
+Both spawn commands skip the ender dragon, unsummonable entities, and configured exclusions, and place nothing another mod cancels. A namespace-restricted `/sg spawnall` reports each skipped type and why; `/sg spawn` suggests only types it would spawn.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
@@ -227,9 +235,6 @@ Color channels range from 0 to 1.
 
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
-- The ender dragon cannot receive eyes.
-- Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 118 dedicated-server GameTests; Forge contains 114. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, and the rendering switch with picker preview. Migrating a real 0.8.2 Fabric save also needs physical verification.
-- The dynamic modifier recipe may not display in recipe viewers.
+- Fabric has 123 dedicated-server GameTests; Forge 119. Physical-client checks cover models (ordinary, baby, players, resolver families), expressions, item rendering, harvesting/application on mobs and heads, head eyes, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, the rendering switch with picker preview, and migrating a real 0.8.2 Fabric save.

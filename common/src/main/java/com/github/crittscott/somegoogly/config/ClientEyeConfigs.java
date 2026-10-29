@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -14,8 +15,8 @@ import java.util.Map;
 
 /**
  * Client-side store of the resolved server eye state, populated from the server via
- * {@code EyeConfigSyncPacket}: the per-entity eye geometry configs and the current
- * {@code googlyEyesEnabled} master switch. This store also owns the resolved-view cache used by
+ * {@code EyeConfigSyncPacket}: the per-entity eye geometry configs, the current
+ * {@code googlyEyesEnabled} master switch, and the ambient settings placed heads schedule from. This store also owns the resolved-view cache used by
  * renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 public final class ClientEyeConfigs {
 
+    private static volatile AmbientSettings ambient = AmbientSettings.NONE;
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
     private static volatile boolean googlyEyesEnabled = true;
@@ -43,8 +45,14 @@ public final class ClientEyeConfigs {
         return configs;
     }
 
+    /** The server's ambient settings, as of the last sync. */
+    public static AmbientSettings ambient() {
+        return ambient;
+    }
+
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
+        ambient = AmbientSettings.NONE;
         configs = Collections.emptyMap();
         googlyEyesEnabled = true;
         resolved.clear();
@@ -62,9 +70,8 @@ public final class ClientEyeConfigs {
         return set == null ? null : set.get(baby);
     }
 
-    /** Resolve and cache the selected variant for client rendering. */
-    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
-        boolean baby = living.isBaby();
+    /** Resolve and cache the selected variant for the requested age, for client rendering. */
+    public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
         RuntimeConfig config = get(entity, baby);
         int variant = EyeConfigModel.chooseVariantIndex(config, variantRoll);
         int key = (variant << 1) | (baby ? 1 : 0);
@@ -78,12 +85,19 @@ public final class ClientEyeConfigs {
         return created;
     }
 
+    /** Resolve and cache the selected variant for {@code living}'s current age. */
+    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
+        return resolve(entity, living.isBaby(), variantRoll);
+    }
+
     /**
      * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
      * rendering view. The supplied model values become store-owned and must not be mutated afterward.
      */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled) {
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
+                                  AmbientSettings ambient) {
         configs = Map.copyOf(next);
+        ClientEyeConfigs.ambient = ambient;
         ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
         resolved.clear();
         SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
