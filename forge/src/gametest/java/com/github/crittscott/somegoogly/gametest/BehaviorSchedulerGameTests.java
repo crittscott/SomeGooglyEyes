@@ -104,4 +104,9 @@ public final class BehaviorSchedulerGameTests {
     public static void aimingArcherWinks(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.aimingArcherWinks(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void aimingPlayerWinks(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.aimingPlayerWinks(helper);
+    }
 }
