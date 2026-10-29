@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
-One expression plays at a time; all are cosmetic. Sleeping mobs play nothing else: a sleeping villager's tan eyelids close over each eye from above and below, leaving a slit across the middle, and open again when it wakes; other sleepers squint. Under any expression, a ramming goat squints, a skeleton drawing its bow closes its off-hand eye, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
+One expression plays at a time; all are cosmetic. Sleepers play nothing else; villagers close tan eyelids to a slit, others squint. Under any expression, a ramming goat squints, a skeleton drawing its bow, or a player drawing and holding one, closes the eye away from the bow arm, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
 ## Obtaining eyes
 
@@ -231,5 +231,5 @@ Color channels range from 0 to 1.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
 - Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric contains 112 dedicated-server GameTests; Forge contains 108. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across unload/retracking and dimension changes, optional GeckoLib, and the rendering switch with picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
+- Fabric contains 113 dedicated-server GameTests; Forge contains 109. Physical-client checks cover ordinary/baby models, players, resolver families, expressions, both item render paths, harvesting/application, protection vetoes, age-specific editing/export, renderer reload, anger across unload/retracking and dimension changes, optional GeckoLib, and the rendering switch with picker preview. Migration of Fabric entity data from an actual 0.8.2 save also requires physical verification.
 - The dynamic modifier recipe may not display in recipe viewers.

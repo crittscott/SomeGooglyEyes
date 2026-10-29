@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -46,7 +48,7 @@ import net.minecraft.world.item.Items;
  * rolls are what's under test. The sleeping villager's lids, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
  * swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
- * the aiming archer's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
+ * the aiming archer's and player's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
  * mid-effect start-tracking catch-up packet and the anger packet need a connected client and stay
  * source-verified.
  */
@@ -307,6 +309,54 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(pillagerTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(allSquash(pillagerTracker, 1F),
                 "only skeletons squint to aim: a pillager charging its crossbow keeps both eyes open");
+        helper.succeed();
+    }
+
+    /**
+     * A player drawing a bow closes the eye opposite the arm holding it for as long as the draw is held,
+     * and opens it again on release: the left eye for a bow in a right-handed player's main hand, the right
+     * eye for a bow in the off hand or a left-handed player's main hand. Charging a crossbow keeps both eyes
+     * open. Drives the client-side {@link GooglyTracker} directly against mock players whose item use is set
+     * by hand. In game: apply a Slimy Eye to yourself, switch to third person, and draw and hold a bow; the
+     * eye on the side away from the bow narrows until you loose the arrow.
+     */
+    public static void aimingPlayerWinks(GameTestHelper helper) {
+        Player archer = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
+                HumanoidArm.RIGHT);
+        GooglyTracker tracker = new GooglyTracker(archer, headInfo(helper, archer), false);
+        helper.assertTrue(allSquash(tracker, 1F), "an idle player's eyes are open");
+
+        archer.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(tracker, true), "a right-handed player drawing a bow squints the left eye");
+        stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(tracker, true), "holding the full draw keeps the squint");
+
+        archer.stopUsingItem();
+        stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS + 1);
+        helper.assertTrue(allSquash(tracker, 1F), "loosing the arrow opens the eye again");
+
+        Player offHand = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.OFF_HAND,
+                HumanoidArm.RIGHT);
+        GooglyTracker offHandTracker = new GooglyTracker(offHand, headInfo(helper, offHand), false);
+        offHand.startUsingItem(InteractionHand.OFF_HAND);
+        stepTracker(offHandTracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(offHandTracker, false), "a bow drawn from the off hand squints the right eye");
+
+        Player lefty = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
+                HumanoidArm.LEFT);
+        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false);
+        lefty.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(winking(leftyTracker, false), "a left-handed player squints the right eye");
+
+        Player crossbowman = playerHolding(helper, new ItemStack(Items.CROSSBOW), InteractionHand.MAIN_HAND,
+                HumanoidArm.RIGHT);
+        GooglyTracker crossbowTracker = new GooglyTracker(crossbowman, headInfo(helper, crossbowman), false);
+        crossbowman.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(crossbowTracker, GooglyTracker.AIM_EASE_TICKS);
+        helper.assertTrue(allSquash(crossbowTracker, 1F),
+                "a player charging a crossbow keeps both eyes open");
         helper.succeed();
     }
 
@@ -733,6 +783,15 @@ public final class BehaviorSchedulerGameTestsLogic {
         mob.setLeftHanded(leftHanded);
         mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
         return mob;
+    }
+
+    /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */
+    private static Player playerHolding(GameTestHelper helper, ItemStack weapon, InteractionHand hand,
+                                        HumanoidArm mainArm) {
+        Player player = helper.makeMockPlayer();
+        player.setMainArm(mainArm);
+        player.setItemInHand(hand, weapon);
+        return player;
     }
 
     /**

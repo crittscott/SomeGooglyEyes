@@ -57,7 +57,7 @@ Successful application emits `GameEvent.ENTITY_INTERACT`; harvest emits `GameEve
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent; clients derive the animation. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. Its tick sends anger (`NeutralMob`, piglin `ANGRY_AT`) on change. `GooglyTracker` derives the sleeping villager's eyelids (drawn by `ModelGooglyEye.renderLids`), the sleep and ram squint, one-eyed aiming squint, creeper rattle, red pupils, and enderman pulse from synced state; only sleep blocks behaviors. `ClientEyeRuntime` holds transient pupil and behavior state. New viewers receive current anger, including false, for eyed mobs without consuming other viewers' pending delta. Entity unload removes trackers and anger; renderer reload preserves anger. Fabric entity-unload callbacks and a client world-change Mixin, and Forge client entity-leave and level-unload events, clear outgoing state; disconnect clears both caches.
+The `EyeBehavior` enum is the catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent; clients derive the animation. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. Its tick sends anger (`NeutralMob`, piglin `ANGRY_AT`) on change. `GooglyTracker` derives sleeping villagers' eyelids (`ModelGooglyEye.renderLids`), the sleep and ram squint, one-eyed aiming squint (skeletons and bow-drawing players), creeper rattle, red pupils, and enderman pulse from synced state; only sleep blocks behaviors. `ClientEyeRuntime` holds transient pupil and behavior state. New viewers receive current anger, including false, for eyed mobs without consuming other viewers' pending delta. Entity unload removes trackers and anger; renderer reload preserves anger. Fabric entity-unload callbacks and a client world-change Mixin, and Forge client entity-leave and level-unload events, clear outgoing state; disconnect clears both caches.
 
 ## Rendering and attachment
 
@@ -95,7 +95,7 @@ Forge registration runs from `@Mod`; client bootstrap stays isolated from dedica
 
 ## Automated verification
 
-`common/src/gametest/java` holds 108 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
+`common/src/gametest/java` holds 109 shared tests, including save/load persistence; each loader wraps them, and Fabric adds 4 migration and TOML tests. Required-client rejection, server commands, picker operator gating, plain-shears self-damage, and real-save migration are manual.
 
 ## Operational boundaries
 
