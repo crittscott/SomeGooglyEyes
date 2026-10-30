@@ -11,11 +11,13 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -54,6 +56,10 @@ public final class NeoForgeClient {
         }
     }
 
+    private static void onItemTooltip(ItemTooltipEvent event) {
+        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
+    }
+
     private static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
             ClientEyeRuntime.onLevelChanged();
@@ -78,6 +84,7 @@ public final class NeoForgeClient {
         gameBus.addListener(NeoForgeClient::onClientTick);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
         gameBus.addListener(NeoForgeClient::onEntityLeaveLevel);
+        gameBus.addListener(NeoForgeClient::onItemTooltip);
         gameBus.addListener(NeoForgeClient::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);

@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.registry;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
@@ -25,7 +26,8 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 /**
  * Everything the mod registers, declared once and bound through each loader's {@link ContentRegistrar}:
  * the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
- * component both carry, the mod's creative tab, and the eye-modifier recipe serializer. The Optometrist
+ * component both carry, the eye-state component of a mob head item, the mod's creative tab, and the
+ * eye-modifier recipe serializer. The Optometrist
  * enchantment and self-shear damage type are data-driven, so only their resource keys live here; the
  * Slimy Eye recipe is a vanilla {@code crafting_transmute}, so it needs no serializer.
  */
@@ -35,6 +37,10 @@ public final class ModContent {
     public static final ContentRegistrar.Handle<SlimyEyeItem> SLIMY_EYE = new ContentRegistrar.Handle<>();
 
     public static final ContentRegistrar.Handle<DataComponentType<AppearanceOverride>> EYE_PROPERTIES =
+            new ContentRegistrar.Handle<>();
+
+    /** The eye state a mob head item carries, which placing it hands to the head block entity. */
+    public static final ContentRegistrar.Handle<DataComponentType<EyeState.Snapshot>> HEAD_EYES =
             new ContentRegistrar.Handle<>();
 
     /**
@@ -70,12 +76,17 @@ public final class ModContent {
     private ModContent() {
     }
 
-    /** Bind every handle; the data component first, since the items' stacks carry it. */
+    /** Bind every handle; the data components first, since the items' stacks carry them. */
     public static void register(ContentRegistrar registrar) {
         EYE_PROPERTIES.bind(registrar.registerDataComponent(
                 "eye_properties", () -> DataComponentType.<AppearanceOverride>builder()
                         .persistent(AppearanceOverride.CODEC)
                         .networkSynchronized(AppearanceOverride.STREAM_CODEC)
+                        .build()));
+        HEAD_EYES.bind(registrar.registerDataComponent(
+                "head_eyes", () -> DataComponentType.<EyeState.Snapshot>builder()
+                        .persistent(EyeState.Snapshot.CODEC)
+                        .networkSynchronized(EyeState.Snapshot.STREAM_CODEC)
                         .build()));
 
         GOOGLY_EYE.bind(registrar.registerItem("googly_eye", GooglyEyeItem::new));

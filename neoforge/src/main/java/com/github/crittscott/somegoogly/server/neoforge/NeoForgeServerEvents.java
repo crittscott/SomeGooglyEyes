@@ -36,8 +36,10 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST,
                 (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
-        gameBus.addListener(NeoForgeServerEvents::onLivingDrops);
+        // Late enough to see the heads other mods add to the drops.
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);
         gameBus.addListener(NeoForgeServerEvents::onDatapackSync);
@@ -83,6 +85,16 @@ public final class NeoForgeServerEvents {
         }
     }
 
+    /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
+    private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = EyeItemService.useOnSkull(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
     private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
         if (result != InteractionResult.PASS) {
@@ -93,6 +105,9 @@ public final class NeoForgeServerEvents {
 
     private static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity living = event.getEntity();
+        for (ItemEntity drop : event.getDrops()) {
+            EyeItemService.markHeadDrop(living, drop.getItem());
+        }
         EyeItemService.onDeath(living, event.getSource(), stack -> {
             ItemEntity drop = new ItemEntity(
                     living.level(), living.getX(), living.getY(), living.getZ(), stack);

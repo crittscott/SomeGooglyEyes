@@ -12,3 +12,8 @@ accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	babyMod
 
 # Forge has no special model renderer registration event; see ForgeClientBootstrap.
 accessible	field	net/minecraft/client/renderer/special/SpecialModelRenderers	ID_MAPPER	Lnet/minecraft/util/ExtraCodecs$LateBoundIdMapper;
+
+accessible	field	net/minecraft/client/model/SkullModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/PiglinHeadModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+
+accessible	class	net/minecraft/world/level/block/entity/BlockEntity$DataComponentInput

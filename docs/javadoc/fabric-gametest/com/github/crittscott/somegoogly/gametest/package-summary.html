@@ -222,6 +222,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Serialization contracts: the flat-JSON eye codecs round-trip by value, and all six native
  payloads preserve their wire representation through encode/decode.</div>
 </div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Fabric GameTest entry points for <a href="SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SkullEyeGameTestsLogic</code></a>; see that class for the actual assertions.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Googly eyes on placed mob heads: applying and harvesting them through <code>EyeItemService.useOnSkull(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.phys.BlockHitResult)</code>, an
+ eyed mob's own head inheriting its eyes (<code>EyeItemService.markHeadDrop(net.minecraft.world.entity.LivingEntity, net.minecraft.world.item.ItemStack)</code>, reached through each loader's
+ death-drop hook), breaking and re-placing a head, and saving one.</div>
+</div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SomeGooglyGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTests</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Fabric GameTest entry points for the shared core and picker-spawn assertions.</div>

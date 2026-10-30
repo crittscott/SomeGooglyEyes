@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeInspector</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Client action-bar verdict for whether the aimed entity can currently receive googly eyes.</div>
+<div class="block">Client action-bar verdict for whether the aimed entity or placed mob head can currently receive googly eyes.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -109,8 +109,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Each client tick, while the player sneaks holding an eye item, show the aimed entity's verdict on the action
- bar.</div>
+<div class="block">Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
+ the aimed placed head when it is nearer, on the action bar.</div>
 </div>
 </div>
 </div>
@@ -133,8 +133,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="tick()">
 <h3>tick</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
-<div class="block">Each client tick, while the player sneaks holding an eye item, show the aimed entity's verdict on the action
- bar.</div>
+<div class="block">Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
+ the aimed placed head when it is nearer, on the action bar.</div>
 </section>
 </li>
 </ul>

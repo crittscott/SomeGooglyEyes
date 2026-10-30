@@ -5,8 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "somegoogly-common.refmap.json",
   "client": [
+    "ItemModelResolverMixin",
+    "ItemStackRenderStateMixin",
     "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin"
+    "LivingEntityRenderStateMixin",
+    "SkullBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

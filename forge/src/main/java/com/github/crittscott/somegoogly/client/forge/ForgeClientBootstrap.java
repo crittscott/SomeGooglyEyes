@@ -11,6 +11,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
@@ -20,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -68,6 +70,10 @@ public final class ForgeClientBootstrap {
         }
     }
 
+    private static void onItemTooltip(ItemTooltipEvent event) {
+        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
+    }
+
     private static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
             ClientEyeRuntime.onLevelChanged();
@@ -94,6 +100,7 @@ public final class ForgeClientBootstrap {
         gameBus.addListener(ForgeClientBootstrap::onClientTick);
         gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
         gameBus.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
+        gameBus.addListener(ForgeClientBootstrap::onItemTooltip);
         gameBus.addListener(ForgeClientBootstrap::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);

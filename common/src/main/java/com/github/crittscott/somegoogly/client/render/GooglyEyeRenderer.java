@@ -181,12 +181,13 @@ public final class GooglyEyeRenderer {
     }
 
     /**
-     * Draw a single eye, applying both the per-mob {@code overrides} and the mob's active behavior.
-     * The pose is expected to already sit in the head's attachment space; this method applies the eye's
-     * own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it found it.
+     * Draw a single eye, simulated by {@code eyeInfo}, applying both the per-mob (or per-head) {@code overrides}
+     * and the active behavior. The pose is expected to already sit in the head's attachment space; this method
+     * applies the eye's own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it
+     * found it.
      */
     public static void renderEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                                 int packedLight, int overlay, GooglyTracker tracker, HeadInfo helper,
+                                 int packedLight, int overlay, GooglyTracker.EyeInfo eyeInfo, HeadInfo helper,
                                  AppearanceOverride overrides, int headIndex, int eyeIndex, float partialTicks) {
         pose.pushPose();
 
@@ -198,8 +199,6 @@ public final class GooglyEyeRenderer {
         Vec3 position = placement.position();
         pose.translate(position.x, position.y, position.z);
         pose.mulPose(placement.orientation());
-
-        GooglyTracker.EyeInfo eyeInfo = tracker.eyes[headIndex][eyeIndex];
 
         // The pose now sits in this eye's pupil plane (post offset + aim, pre-scale): capture which way
         // world-down points here, for the next tick's gravity. This is the one spot that knows the eye's

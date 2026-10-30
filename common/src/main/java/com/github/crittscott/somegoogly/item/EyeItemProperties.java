@@ -2,6 +2,8 @@ package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -24,9 +26,24 @@ public final class EyeItemProperties {
         return get(stack).iris().orElse(EyeColor.BLACK).toOpaqueArgb32();
     }
 
+    /**
+     * The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker line, then the
+     * eyes' appearance. A head without eyes gets none.
+     */
+    public static void appendHeadTooltip(ItemStack stack, List<Component> tooltip) {
+        EyeState.Snapshot eyes = SkullEyeState.itemSnapshot(stack);
+        if (eyes != null) {
+            tooltip.add(Component.translatable("somegoogly.tooltip.head_eyes").withStyle(ChatFormatting.GRAY));
+            appendTooltip(eyes.properties(), tooltip);
+        }
+    }
+
     /** The tooltip lines describing {@code stack}'s appearance, appended in place. */
     public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
-        AppearanceOverride props = get(stack);
+        appendTooltip(get(stack), tooltip);
+    }
+
+    private static void appendTooltip(AppearanceOverride props, List<Component> tooltip) {
         props.iris().ifPresent(color ->
                 tooltip.add(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
         props.cornea().ifPresent(color ->

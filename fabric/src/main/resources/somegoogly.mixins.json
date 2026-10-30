@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
+    "EntityHeadDropMixin",
     "EntityPersistentDataMigrationMixin",
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
