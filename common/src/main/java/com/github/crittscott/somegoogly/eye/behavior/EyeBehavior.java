@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The eight named eye expressions a mob can play, keyed by a {@link ResourceLocation} id. These are
+ * The eight named one-shot eye expressions a mob can play, keyed by a {@link ResourceLocation} id; the
+ * behaviors that last as long as a mob stays in some state are the {@link OngoingBehavior}s. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
  * behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
  * a {@link BehaviorInstance}.

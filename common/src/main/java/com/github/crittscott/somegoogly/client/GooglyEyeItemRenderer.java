@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -50,7 +51,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
         if (!minecraft.isPaused()) {
-            HELD.tick(minecraft.player);
+            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
         }
     }
 

@@ -94,9 +94,11 @@ loadScripts(document, 'script');</script>
 <div class="block">The live eye a player holds: one <a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil, stepped with the same physics as
  mob eyes from the holder's look and position deltas, plus the behaviors it plays. Only the holder sees
  it, in first person, so its behaviors start on the holder's own client: now and then it winks, stares, or
- glances aside; it bulges when the holder is hurt (<code>LivingEntity.hurtTime</code>, set by vanilla's damage
- event) and swirls when the holder heals. One behavior plays at a time, as on a mob. Cross-eye, which
- needs a partner eye, and the ongoing mob states (squints, lids, anger, pulse, rattle) don't apply.
+ glances aside, from the server's ambient pool; it may bulge when the holder is hurt (<code>LivingEntity.hurtTime</code>,
+ set by vanilla's damage event), at the server's <code>growOnHitPercent</code>; and it swirls when the holder heals,
+ under the server's <code>swirlOnHeal</code> and its cooldown. All of these come from the synced
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorSettings</code></a>. One behavior plays at a time, as on a mob. Cross-eye, which needs a partner eye, and
+ the ongoing behaviors don't apply.
 
  <p>It steps only while the holder holds a Googly Eye, and starts at rest, with nothing playing, each time
  one is picked up or the holder changes.</div>
@@ -117,23 +119,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The behavior playing, or <code>null</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#AMBIENT_MAX_TICKS" class="member-name-link">AMBIENT_MAX_TICKS</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Longest and shortest idle wait between behaviors, in ticks; the server's ambient defaults.</div>
-</div>
-<div class="col-first even-row-color"><code>static final int</code></div>
-<div class="col-second even-row-color"><code><a href="#AMBIENT_MIN_TICKS" class="member-name-link">AMBIENT_MIN_TICKS</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code><a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#eye" class="member-name-link">eye</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The pupil, or <code>null</code> while no Googly Eye is held.</div>
-</div>
-<div class="col-first even-row-color"><code>static final int</code></div>
-<div class="col-second even-row-color"><code><a href="#HEAL_COOLDOWN_TICKS" class="member-name-link">HEAL_COOLDOWN_TICKS</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Ticks after a heal swirl before healing can swirl again; the server's heal-swirl default.</div>
 </div>
 </div>
 </section>
@@ -180,11 +169,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Start <code>behavior</code> at its default length, unless one is already playing or no eye is held.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.entity.LivingEntity)" class="member-name-link">tick</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;holder)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;holder,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Advance one tick for <code>holder</code>, or reset when there is none or it holds no Googly Eye: age the
- active behavior, start any behavior this tick's hurt, heal, or idle timer calls for, and step the
- pupil with the behavior folded in.</div>
+ active behavior, start any behavior this tick's hurt, heal, or idle timer calls for under
+ <code>settings</code>, and step the pupil with the behavior folded in.</div>
 </div>
 </div>
 </div>
@@ -203,50 +193,6 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="AMBIENT_MAX_TICKS">
-<h3>AMBIENT_MAX_TICKS</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">AMBIENT_MAX_TICKS</span></div>
-<div class="block">Longest and shortest idle wait between behaviors, in ticks; the server's ambient defaults.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.HeldEye.AMBIENT_MAX_TICKS">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="AMBIENT_MIN_TICKS">
-<h3>AMBIENT_MIN_TICKS</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">AMBIENT_MIN_TICKS</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.HeldEye.AMBIENT_MIN_TICKS">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="HEAL_COOLDOWN_TICKS">
-<h3>HEAL_COOLDOWN_TICKS</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">HEAL_COOLDOWN_TICKS</span></div>
-<div class="block">Ticks after a heal swirl before healing can swirl again; the server's heal-swirl default.</div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.client.HeldEye.HEAL_COOLDOWN_TICKS">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="active">
 <h3>active</h3>
@@ -314,13 +260,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="tick(net.minecraft.world.entity.LivingEntity)">
+<section class="detail" id="tick(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
 <h3>tick</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span><wbr><span class="parameters">(@Nullable
- net.minecraft.world.entity.LivingEntity&nbsp;holder)</span></div>
+ net.minecraft.world.entity.LivingEntity&nbsp;holder,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</span></div>
 <div class="block">Advance one tick for <code>holder</code>, or reset when there is none or it holds no Googly Eye: age the
- active behavior, start any behavior this tick's hurt, heal, or idle timer calls for, and step the
- pupil with the behavior folded in.</div>
+ active behavior, start any behavior this tick's hurt, heal, or idle timer calls for under
+ <code>settings</code>, and step the pupil with the behavior folded in.</div>
 </section>
 </li>
 </ul>

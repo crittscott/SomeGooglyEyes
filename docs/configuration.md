@@ -38,23 +38,37 @@ a Slimy Eye.
 
 ### Behavior settings
 
+Eyes have two kinds of behavior. **Expressions** are one-shot animations (`stare`, `blink`, `side_eye`, `cross_eye`, `grow`, `love`, `swirl`, `color_change`, all under the `somegoogly:` namespace); a mob plays at most one at a time, and overlapping triggers are dropped, never queued. **Ongoing behaviors** last as long as the mob stays in some state, and sit on top of whatever expression plays.
+
+#### Expressions
+
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `ambientBehaviors` | `true` | Whether idle eyed mobs periodically play a random expression. |
-| `ambientMinTicks` / `ambientMaxTicks` | `200` / `800` | Idle time between ambient expressions on a mob. |
-| `ambientBehaviorPool` | blink, cross_eye, side_eye, stare | Which expressions the idle timer may pick, by id. Remove a line to drop it from rotation. |
-| `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it. `0` disables. |
+| `ambientBehaviors` | `true` | Whether idle eyed mobs, placed heads, and a held Googly Eye periodically play a random expression. |
+| `ambientMinTicks` / `ambientMaxTicks` | `200` / `800` | Idle time between ambient expressions. |
+| `ambientBehaviorPool` | blink, cross_eye, side_eye, stare | Which expressions the idle timer may pick, by id. Remove a line to drop it from rotation. A held Googly Eye skips `cross_eye`. |
+| `growOnHitPercent` | `20` | Percent chance an eyed mob's eyes bulge (`grow`) when a player damages it, and that a held Googly Eye bulges when its holder is hurt. `0` disables. |
 | `growOnMilk` | `true` | Milking an eyed cow, mooshroom, or goat with a bucket makes its eyes bulge (`grow`). |
 | `growOnShear` | `true` | Shearing an eyed sheep makes its eyes bulge (`grow`). |
 | `loveOnAffection` | `true` | An eyed mob's pupils swell (`love`) when it enters love mode, when villagers breed, when an iron golem offers a flower, or when an ocelot comes to trust a player. |
-| `angryEyes` | `true` | An eyed mob that is angry but not attacking (a provoked iron golem, piglin, or zombified piglin) shows red pupils. The server checks each watched eyed mob once per tick and tells clients only when its anger starts or ends. Mobs that are attacking show red pupils regardless. |
 | `swirlOnTrade` | `true` | Completing a trade with an eyed villager or wandering trader spins its pupils (`swirl`). |
-| `swirlOnHeal` | `true` | An eyed mob being healed plays `swirl`. |
-| `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob, so regeneration doesn't loop it. |
+| `swirlOnHeal` | `true` | An eyed mob being healed, or the holder of a Googly Eye healing, plays `swirl`. |
+| `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob or held eye, so regeneration doesn't loop it. |
 
-Behavior ids all live under the `somegoogly:` namespace: `stare`, `blink`, `side_eye`, `cross_eye`, `grow`, `love`, `swirl`, `color_change`. The event-driven ones (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
+The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
 
-A mob plays at most one expression at a time; overlapping triggers are dropped, never queued.
+#### Ongoing behaviors
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `squintOnSleep` | `true` | A sleeping eyed mob squints; a sleeping villager closes tan eyelids to a slit instead. A sleeping mob plays no expressions either way. |
+| `squintOnRam` | `true` | An eyed goat squints while it lowers its head to ram. |
+| `winkOnAim` | `true` | An eyed skeleton drawing its bow, or an eyed player drawing a bow, closes the eye away from the arm holding it. |
+| `rattleOnSwell` | `true` | A swelling eyed creeper's pupils rattle, harder the closer it is to exploding. |
+| `pulseWhenCreepy` | `true` | A creepy eyed enderman's pupils pulse while it stares down whoever looked at it. |
+| `angryEyes` | `true` | An eyed mob that is attacking, or angry without attacking (a provoked iron golem, piglin, or zombified piglin), shows red pupils. For the second kind the server checks each watched eyed mob once per tick and tells clients only when its anger starts or ends; with this off it checks nothing. |
+
+Each client works these out from state the game already shares, so they cost the server nothing beyond `angryEyes`' check. Connected clients see a change to any of these settings as soon as the server applies it.
 
 ### Picker settings
 

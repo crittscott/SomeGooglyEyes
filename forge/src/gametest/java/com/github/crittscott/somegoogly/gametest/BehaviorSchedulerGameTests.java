@@ -109,4 +109,9 @@ public final class BehaviorSchedulerGameTests {
     public static void aimingPlayerWinks(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.aimingPlayerWinks(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.switchedOffOngoingBehaviorsStayNeutral(helper);
+    }
 }

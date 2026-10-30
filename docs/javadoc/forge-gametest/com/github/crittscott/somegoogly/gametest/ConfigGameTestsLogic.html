@@ -110,51 +110,58 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyShippedMinecraftDefinitionLoads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyShippedMinecraftDefinitionLoads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSectionsMatchReleasedFiles</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
+ doesn't name when they correct a file: renaming a section would reset every value in it to its default
+ on upgrade.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyShippedMinecraftDefinitionLoads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyShippedMinecraftDefinitionLoads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Every bundled Minecraft eye definition loads and is usable for each age it declares.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactMinecraftGenerationIsSelected</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactMinecraftGenerationIsSelected</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Minecraft-version selection, end to end, including paired adult/baby entries.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
  wins.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to
  nothing.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">No datapack, from any namespace, may install an eye config for the ender dragon.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A reload installs a new config set only when the resolved content changes; server stop clears the
  installed set.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
  opt-in.</div>
 </div>
@@ -183,6 +190,17 @@ loadScripts(document, 'script');</script>
  In game: set <code>globalPercent = 2</code> and
  <code>entityOverrides = ["minecraft:zombie,100", "minecraft:*,50"]</code> in the server config, then spawn
  mobs from eggs: every zombie has eyes, about half of the cows do, and only the occasional modded mob.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>configSectionsMatchReleasedFiles</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
+ doesn't name when they correct a file: renaming a section would reset every value in it to its default
+ on upgrade. In game: on Forge or NeoForge, open a world made with 0.8.2 for 1.20.1 whose <code>somegoogly-server.toml</code> sets
+ <code>globalPercent = 17</code>; after loading it with this version the file still says 17 and has gained the
+ new keys.</div>
 </section>
 </li>
 <li>

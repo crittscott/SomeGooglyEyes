@@ -5,7 +5,9 @@ import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
@@ -40,6 +42,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.EnumSet;
+
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
  * playing and when. {@link BehaviorDeterminismGameTestsLogic} covers the client's animation derivation;
@@ -50,11 +54,15 @@ import net.minecraft.world.phys.Vec3;
  * rolls are what's under test. The sleeping villager's lids, which the client derives from vanilla's synced sleep
  * state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
  * swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
- * the aiming archer's and player's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
+ * the aiming archer's and player's one-eyed squint, the angry red pupils, and the creepy enderman's pulse, each
+ * also with its server switch off. The
  * mid-effect start-tracking catch-up packet and the anger packet need a connected client and stay
  * source-verified.
  */
 public final class BehaviorSchedulerGameTestsLogic {
+
+    // Every ongoing behavior switched on, as by default.
+    private static final BehaviorSettings ON = BehaviorSettings.DEFAULTS;
 
     // Float slack for comparing eased squash and lid values, which accumulate a 1/ticks easing step.
     private static final float SQUASH_TOLERANCE = 1e-4F;
@@ -255,7 +263,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     public static void rammingGoatSquints(GameTestHelper helper) {
         Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
-        GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false);
+        GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false, ON);
         helper.assertTrue(allSquash(tracker, 1F), "a calm goat's eyes are open");
 
         goat.handleEntityEvent(EntityEvent.START_RAM);
@@ -283,7 +291,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void aimingArcherWinks(GameTestHelper helper) {
         Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
                 new BlockPos(1, 2, 1));
-        GooglyTracker tracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false);
+        GooglyTracker tracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, ON);
         helper.assertTrue(allSquash(tracker, 1F), "an idle skeleton's eyes are open");
 
         skeleton.startUsingItem(InteractionHand.MAIN_HAND);
@@ -301,14 +309,14 @@ public final class BehaviorSchedulerGameTestsLogic {
 
         Skeleton lefty = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), true,
                 new BlockPos(3, 2, 1));
-        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false);
+        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false, ON);
         lefty.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(winking(leftyTracker, false), "a left-handed skeleton squints its right eye");
 
         Pillager pillager = armed(helper, EntityType.PILLAGER, new ItemStack(Items.CROSSBOW), false,
                 new BlockPos(1, 2, 3));
-        GooglyTracker pillagerTracker = new GooglyTracker(pillager, headInfo(helper, pillager), false);
+        GooglyTracker pillagerTracker = new GooglyTracker(pillager, headInfo(helper, pillager), false, ON);
         pillager.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(pillagerTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(allSquash(pillagerTracker, 1F),
@@ -327,7 +335,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void aimingPlayerWinks(GameTestHelper helper) {
         Player archer = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.RIGHT);
-        GooglyTracker tracker = new GooglyTracker(archer, headInfo(helper, archer), false);
+        GooglyTracker tracker = new GooglyTracker(archer, headInfo(helper, archer), false, ON);
         helper.assertTrue(allSquash(tracker, 1F), "an idle player's eyes are open");
 
         archer.startUsingItem(InteractionHand.MAIN_HAND);
@@ -342,21 +350,21 @@ public final class BehaviorSchedulerGameTestsLogic {
 
         Player offHand = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.OFF_HAND,
                 HumanoidArm.RIGHT);
-        GooglyTracker offHandTracker = new GooglyTracker(offHand, headInfo(helper, offHand), false);
+        GooglyTracker offHandTracker = new GooglyTracker(offHand, headInfo(helper, offHand), false, ON);
         offHand.startUsingItem(InteractionHand.OFF_HAND);
         stepTracker(offHandTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(winking(offHandTracker, false), "a bow drawn from the off hand squints the right eye");
 
         Player lefty = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.LEFT);
-        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false);
+        GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false, ON);
         lefty.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(winking(leftyTracker, false), "a left-handed player squints the right eye");
 
         Player crossbowman = playerHolding(helper, new ItemStack(Items.CROSSBOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.RIGHT);
-        GooglyTracker crossbowTracker = new GooglyTracker(crossbowman, headInfo(helper, crossbowman), false);
+        GooglyTracker crossbowTracker = new GooglyTracker(crossbowman, headInfo(helper, crossbowman), false, ON);
         crossbowman.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(crossbowTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(allSquash(crossbowTracker, 1F),
@@ -501,11 +509,11 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, "villagers have an eye config");
 
-        GooglyTracker tracker = new GooglyTracker(villager, headInfo, false);
+        GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
         helper.assertTrue(allLid(tracker, 0F), "an awake villager has no lids");
 
         villager.startSleeping(villager.blockPosition());
-        tracker.update();
+        tracker.update(ON);
         helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
                 "falling asleep slides the lids closed rather than snapping them shut");
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS);
@@ -514,7 +522,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.assertTrue(!tracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
                 "no behavior starts on the client while the mob sleeps");
 
-        GooglyTracker joined = new GooglyTracker(villager, headInfo, false);
+        GooglyTracker joined = new GooglyTracker(villager, headInfo, false, ON);
         helper.assertTrue(allLid(joined, GooglyTracker.SLEEP_LID_COVERAGE)
                         && allPrevLid(joined, GooglyTracker.SLEEP_LID_COVERAGE),
                 "a tracker built for an already-sleeping villager starts with its lids closed");
@@ -542,7 +550,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
         helper.assertTrue(headInfo != null && headInfo.hasConfig(), "creepers have usable eye geometry");
 
-        GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false);
+        GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false, ON);
         tracker.rand.setSeed(CREEPER_RATTLE_SEED);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
         float calmStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
@@ -616,18 +624,18 @@ public final class BehaviorSchedulerGameTestsLogic {
         Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
         HeadInfo headInfo = headInfo(helper, zombie);
 
-        GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false);
+        GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false, ON);
         helper.assertTrue(allIrisTint(tracker, 0F), "a calm mob's pupils keep their color");
 
         zombie.setAggressive(true);
-        tracker.update();
+        tracker.update(ON);
         helper.assertTrue(!allIrisTint(tracker, 0F) && !allIrisTint(tracker, 1F),
                 "turning aggressive eases toward red rather than snapping");
         stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS);
         helper.assertTrue(allIrisTint(tracker, 1F), "an aggressive mob's pupils are red");
         helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, 5, 1L, 0),
                 "anger doesn't block a behavior");
-        tracker.update();
+        tracker.update(ON);
         helper.assertTrue(allIrisTint(tracker, 1F), "the pupils stay red under a behavior");
 
         zombie.setAggressive(false);
@@ -638,7 +646,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
         helper.assertTrue(allIrisTint(tracker, 1F), "server-reported anger turns the pupils red");
 
-        GooglyTracker joined = new GooglyTracker(zombie, headInfo, true);
+        GooglyTracker joined = new GooglyTracker(zombie, headInfo, true, ON);
         helper.assertTrue(allIrisTint(joined, 1F) && allPrevIrisTint(joined, 1F),
                 "a tracker built for a mob already reported angry starts red");
         helper.succeed();
@@ -683,7 +691,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void creepyEndermanPulses(GameTestHelper helper) {
         EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(1, 2, 1));
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
-        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false);
+        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
         helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
                 "a calm enderman's pupils hold their size");
 
@@ -711,6 +719,81 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Each ongoing behavior stays neutral while its server switch is off, and a sleeping mob still plays no
+     * expression with its squint off. Drives the client-side {@link GooglyTracker} directly with settings that
+     * switch one behavior off at a time, against the same vanilla states the "on" tests use. In game, with
+     * each key set to {@code false} in {@code somegoogly-server.toml}: with {@code squintOnSleep}, a sleeping
+     * eyed villager shows no lids and a sleeping player with a Slimy Eye keeps their eyes open; with
+     * {@code squintOnRam}, a charging eyed goat keeps its eyes open; with {@code winkOnAim}, an eyed skeleton
+     * drawing its bow keeps both eyes open; with {@code rattleOnSwell}, a hissing eyed creeper's pupils hang
+     * still; with {@code pulseWhenCreepy}, a screaming eyed enderman's pupils hold their size; with
+     * {@code angryEyes}, an eyed zombie chasing you keeps its pupil color.
+     */
+    public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
+        Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(1, 2, 1));
+        BehaviorSettings noSleep = without(OngoingBehavior.SLEEP_SQUINT);
+        GooglyTracker villagerTracker = new GooglyTracker(villager, headInfo(helper, villager), false, noSleep);
+        villager.startSleeping(villager.blockPosition());
+        stepTracker(villagerTracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1, noSleep);
+        helper.assertTrue(allLid(villagerTracker, 0F) && allSquash(villagerTracker, 1F),
+                "squintOnSleep=false: a sleeping villager shows no lids");
+        helper.assertTrue(!villagerTracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
+                "squintOnSleep=false: a sleeping mob still starts no behavior");
+
+        Player sleeper = helper.makeMockPlayer(GameType.SURVIVAL);
+        GooglyTracker sleeperTracker = new GooglyTracker(sleeper, headInfo(helper, sleeper), false, ON);
+        sleeper.startSleeping(sleeper.blockPosition());
+        stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
+        helper.assertTrue(allSquash(sleeperTracker, GooglyTracker.SLEEP_SQUASH_Y), "a sleeping player squints");
+        stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noSleep);
+        helper.assertTrue(allSquash(sleeperTracker, 1F), "squintOnSleep=false: a sleeping player's eyes open");
+
+        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(3, 2, 1));
+        BehaviorSettings noRam = without(OngoingBehavior.RAM_SQUINT);
+        GooglyTracker goatTracker = new GooglyTracker(goat, headInfo(helper, goat), false, noRam);
+        goat.handleEntityEvent(EntityEvent.START_RAM);
+        stepGoat(goat, goatTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noRam);
+        helper.assertTrue(allSquash(goatTracker, 1F), "squintOnRam=false: a ramming goat's eyes stay open");
+
+        Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
+                new BlockPos(1, 2, 3));
+        BehaviorSettings noAim = without(OngoingBehavior.AIM_WINK);
+        GooglyTracker skeletonTracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, noAim);
+        skeleton.startUsingItem(InteractionHand.MAIN_HAND);
+        stepTracker(skeletonTracker, GooglyTracker.AIM_EASE_TICKS + 1, noAim);
+        helper.assertTrue(allSquash(skeletonTracker, 1F), "winkOnAim=false: an aiming skeleton keeps both eyes open");
+
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
+        BehaviorSettings noRattle = without(OngoingBehavior.SWELL_RATTLE);
+        GooglyTracker creeperTracker = new GooglyTracker(creeper, headInfo(helper, creeper), false, noRattle);
+        meanPupilStep(creeper, creeperTracker, CALM_SETTLE_TICKS, noRattle);
+        creeper.setSwellDir(1);
+        meanPupilStep(creeper, creeperTracker, SWELL_RAMP_TICKS, noRattle);
+        helper.assertTrue(meanPupilStep(creeper, creeperTracker, SWELL_WINDOW_TICKS, noRattle) < CALM_PUPIL_STEP,
+                "rattleOnSwell=false: a swelling creeper's pupils hang still");
+        creeper.setSwellDir(-1);
+
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
+        BehaviorSettings noPulse = without(OngoingBehavior.CREEPY_PULSE);
+        GooglyTracker enderTracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, noPulse);
+        enderMan.setTarget(cow);
+        float[] range = irisScaleRange(enderTracker, PULSE_SAMPLE_TICKS, noPulse);
+        helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
+                "pulseWhenCreepy=false: a creepy enderman's pupils hold their size");
+        enderMan.setTarget(null);
+
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 1));
+        BehaviorSettings noAnger = without(OngoingBehavior.ANGER);
+        GooglyTracker zombieTracker = new GooglyTracker(zombie, headInfo(helper, zombie), true, noAnger);
+        helper.assertTrue(allIrisTint(zombieTracker, 0F), "angryEyes=false: a mob reported angry starts calm");
+        zombie.setAggressive(true);
+        stepTracker(zombieTracker, GooglyTracker.ANGER_EASE_TICKS + 1, noAnger);
+        helper.assertTrue(allIrisTint(zombieTracker, 0F), "angryEyes=false: an attacking mob keeps its pupil color");
+        helper.succeed();
+    }
+
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
@@ -720,10 +803,14 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     /** Steps the tracker; returns the smallest and largest pupil size multiplier seen on any eye. */
     private static float[] irisScaleRange(GooglyTracker tracker, int ticks) {
+        return irisScaleRange(tracker, ticks, ON);
+    }
+
+    private static float[] irisScaleRange(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
         float min = Float.MAX_VALUE;
         float max = -Float.MAX_VALUE;
         for (int t = 0; t < ticks; t++) {
-            tracker.update();
+            tracker.update(settings);
             for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
                 for (GooglyTracker.EyeInfo info : head) {
                     min = Math.min(min, info.irisScaleMul);
@@ -758,11 +845,15 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     /** Ticks {@code creeper} and its tracker together; returns the mean per-eye pupil step per tick. */
     private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks) {
+        return meanPupilStep(creeper, tracker, ticks, ON);
+    }
+
+    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
         float total = 0F;
         int samples = 0;
         for (int t = 0; t < ticks; t++) {
             creeper.tick();
-            tracker.update();
+            tracker.update(settings);
             for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
                 for (GooglyTracker.EyeInfo info : head) {
                     float dx = info.deltaX - info.prevDeltaX;
@@ -777,15 +868,23 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
     private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks) {
+        stepGoat(goat, tracker, ticks, ON);
+    }
+
+    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
         for (int t = 0; t < ticks; t++) {
             goat.tick();
-            tracker.update();
+            tracker.update(settings);
         }
     }
 
     private static void stepTracker(GooglyTracker tracker, int ticks) {
+        stepTracker(tracker, ticks, ON);
+    }
+
+    private static void stepTracker(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
         for (int i = 0; i < ticks; i++) {
-            tracker.update();
+            tracker.update(settings);
         }
     }
 
@@ -916,5 +1015,14 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_TRADE.set(onTrade);
         }
         helper.succeed();
+    }
+
+    /** The default settings with {@code off} switched off. */
+    private static BehaviorSettings without(OngoingBehavior off) {
+        EnumSet<OngoingBehavior> on = EnumSet.noneOf(OngoingBehavior.class);
+        on.addAll(ON.ongoing());
+        on.remove(off);
+        return new BehaviorSettings(ON.ambient(), ON.minTicks(), ON.maxTicks(), ON.pool(), ON.growOnHitPercent(),
+                ON.swirlOnHeal(), ON.swirlHealCooldownTicks(), on);
     }
 }
