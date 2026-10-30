@@ -84,9 +84,11 @@ loadScripts(document, 'script');</script>
  the new block entity, and the head's loot copies it back onto the dropped item. Neither loader's own
  block-entity store serves here, since a plain <code>load</code> doesn't read either one back.
 
- <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to that model's
- head part, which a head model shares with its mob (<a href="#headParts(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>headParts(com.github.crittscott.somegoogly.eye.HeadInfo)</code></a>). A head type with no mob here (the
- dragon, other mods' heads) never has eyes.
+ <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to the part of its mob
+ that the head model reproduces (<a href="#headParts(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.HeadInfo)"><code>headParts(net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.eye.HeadInfo)</code></a>). Vanilla head types are matched by type, the Heads mod's
+ by block id (<a href="#entityFor(net.minecraft.resources.ResourceLocation)"><code>entityFor(ResourceLocation)</code></a>), so that mod is never referenced and its absence changes
+ nothing. A head with no mob here (the dragon, other mods' heads, Heads' heads whose mob's eyes sit on a part
+ the head doesn't reproduce) never has eyes.
 
  <p>Server mutations end in a block update, which resends the block entity's data to every client in
  range; clients only read the compound.</div>
@@ -124,6 +126,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The key of the eye-state compound in a head block entity's saved data.</div>
 </div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>net.minecraft.world.entity.EntityType&lt;?&gt;&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#HEADS_MOBS" class="member-name-link">HEADS_MOBS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The Heads mod's heads by floor-block id path: the mob whose definition each borrows.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#HEADS_NAMESPACE" class="member-name-link">HEADS_NAMESPACE</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The Heads mod's namespace.</div>
+</div>
 </div>
 </section>
 </li>
@@ -138,6 +150,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#canHaveEyes(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)" class="member-name-link">canHaveEyes</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ <a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether a head of <code>entity</code>'s kind can have eyes under that mob's adult <code>config</code>: it is usable and
+ has a weighted variant with eyes the head shows.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.resources.ResourceLocation</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.resources.ResourceLocation)" class="member-name-link">entityFor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;blockId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The mob whose eye definition the Heads mod's head block <code>blockId</code> (floor or wall) uses, or <code>null</code>
+ for any other block id.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.world.item.ItemStack)" class="member-name-link">entityFor</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -154,10 +179,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the placed head has eyes; cheap enough to ask every frame.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headParts(com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts</a><wbr>(<a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headParts(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The indexes of <code>helper</code>'s heads attached to the model's head part (an attachment token whose last
- segment is "head"), in order: the heads a placed head shows.</div>
+<div class="block">The indexes of <code>helper</code>'s heads, from <code>entity</code>'s definition, that a head of that mob shows, in
+ order: those attached to the part the head reproduces, by default the model's head part (an attachment
+ token whose last segment is "head").</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemSnapshot(net.minecraft.world.item.ItemStack)" class="member-name-link">itemSnapshot</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
@@ -181,6 +208,15 @@ loadScripts(document, 'script');</script>
  <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&nbsp;snapshot)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Store <code>snapshot</code> on the head item <code>stack</code>, where placing it hands it to the block entity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#variantIndex(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)" class="member-name-link">variantIndex</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ <a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ float&nbsp;variantRoll)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The index of the variant of <code>entity</code>'s adult <code>config</code> that a head with <code>variantRoll</code> shows:
+ the roll chooses among the variants with eyes on the part the head reproduces, so a mob's variant with eyes
+ only elsewhere (a cow's on its body) never leaves a head blank.</div>
 </div>
 </div>
 </div>
@@ -214,6 +250,31 @@ loadScripts(document, 'script');</script>
 </dl>
 </section>
 </li>
+<li>
+<section class="detail" id="HEADS_MOBS">
+<h3>HEADS_MOBS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr>net.minecraft.world.entity.EntityType&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">HEADS_MOBS</span></div>
+<div class="block">The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
+ differ only by a <code>_wall</code> segment. Left out are the heads of mobs with no definition (axolotl,
+ endermite, silverfish) and those whose mob's eyes sit on a part the head model doesn't reproduce (squid,
+ glow squid, slime, magma cube).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="HEADS_NAMESPACE">
+<h3>HEADS_NAMESPACE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">HEADS_NAMESPACE</span></div>
+<div class="block">The Heads mod's namespace.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../../constant-values.html#com.github.crittscott.somegoogly.eye.state.SkullEyeState.HEADS_NAMESPACE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -222,6 +283,17 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="canHaveEyes(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)">
+<h3>canHaveEyes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canHaveEyes</span><wbr><span class="parameters">(@Nullable
+ net.minecraft.resources.ResourceLocation&nbsp;entity,
+ @Nullable
+ <a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</span></div>
+<div class="block">Whether a head of <code>entity</code>'s kind can have eyes under that mob's adult <code>config</code>: it is usable and
+ has a weighted variant with eyes the head shows.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="entityFor(net.minecraft.world.level.block.Block)">
 <h3>entityFor</h3>
@@ -239,6 +311,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="entityFor(net.minecraft.resources.ResourceLocation)">
+<h3>entityFor</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">entityFor</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;blockId)</span></div>
+<div class="block">The mob whose eye definition the Heads mod's head block <code>blockId</code> (floor or wall) uses, or <code>null</code>
+ for any other block id.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="hasEyes(net.minecraft.world.level.block.entity.SkullBlockEntity)">
 <h3>hasEyes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasEyes</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</span></div>
@@ -246,11 +327,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="headParts(com.github.crittscott.somegoogly.eye.HeadInfo)">
+<section class="detail" id="headParts(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.HeadInfo)">
 <h3>headParts</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int[]</span>&nbsp;<span class="element-name">headParts</span><wbr><span class="parameters">(<a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
-<div class="block">The indexes of <code>helper</code>'s heads attached to the model's head part (an attachment token whose last
- segment is "head"), in order: the heads a placed head shows.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int[]</span>&nbsp;<span class="element-name">headParts</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
+<div class="block">The indexes of <code>helper</code>'s heads, from <code>entity</code>'s definition, that a head of that mob shows, in
+ order: those attached to the part the head reproduces, by default the model's head part (an attachment
+ token whose last segment is "head").</div>
 </section>
 </li>
 <li>
@@ -283,6 +366,18 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stampItem</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&nbsp;snapshot)</span></div>
 <div class="block">Store <code>snapshot</code> on the head item <code>stack</code>, where placing it hands it to the block entity.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="variantIndex(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)">
+<h3>variantIndex</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">variantIndex</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ @Nullable
+ <a href="../../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ float&nbsp;variantRoll)</span></div>
+<div class="block">The index of the variant of <code>entity</code>'s adult <code>config</code> that a head with <code>variantRoll</code> shows:
+ the roll chooses among the variants with eyes on the part the head reproduces, so a mob's variant with eyes
+ only elsewhere (a cow's on its body) never leaves a head blank.</div>
 </section>
 </li>
 </ul>

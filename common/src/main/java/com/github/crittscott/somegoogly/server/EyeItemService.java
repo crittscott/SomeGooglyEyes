@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.server;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -164,8 +163,8 @@ public final class EyeItemService {
         }
         Level level = player.level();
         EyeState.Snapshot state = SkullEyeState.snapshot(skull);
-        HeadInfo helper = ServerEyeConfigs.resolve(entity, false, state.variantRoll());
-        int[] parts = SkullEyeState.headParts(helper);
+        HeadInfo helper = ServerEyeConfigs.resolveHead(entity, state.variantRoll());
+        int[] parts = SkullEyeState.headParts(entity, helper);
         if (parts.length > 0) {
             Block.popResource(level, pos, buildEyeDrop(helper, parts[0], state.properties()));
         }
@@ -188,7 +187,7 @@ public final class EyeItemService {
         }
         ResourceLocation entity = SkullEyeState.entityFor(stack);
         if (entity != null && entity.equals(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))
-                && RuntimeConfig.isUsable(ServerEyeConfigs.get(entity, false))
+                && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false))
                 && SkullEyeState.itemSnapshot(stack) == null) {
             SkullEyeState.stampItem(stack, EyeState.snapshot(mob));
         }
@@ -269,10 +268,10 @@ public final class EyeItemService {
                 SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
-    /** Whether the placed head's mob has a usable adult definition to borrow. */
+    /** Whether the placed head's mob has an adult definition to borrow with eyes the head shows. */
     private static boolean canHeadHaveEyes(SkullBlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        return entity != null && RuntimeConfig.isUsable(ServerEyeConfigs.get(entity, false));
+        return entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
     }
 
     /** Whether {@code player} may use {@code stack} on the block at {@code pos}, as building there would need. */

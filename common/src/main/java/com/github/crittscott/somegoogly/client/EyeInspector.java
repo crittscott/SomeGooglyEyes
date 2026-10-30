@@ -82,10 +82,10 @@ public final class EyeInspector {
         return cannot();
     }
 
-    /** A placed head can have eyes when its mob has an adult definition, which it borrows. */
+    /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
     private static Component verdict(SkullBlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (entity == null || !RuntimeConfig.isUsable(ClientEyeConfigs.get(entity, false))) {
+        if (entity == null || !SkullEyeState.canHaveEyes(entity, ClientEyeConfigs.get(entity, false))) {
             return cannot();
         }
         return SkullEyeState.hasEyes(skull) ? alreadyHas() : canHave();

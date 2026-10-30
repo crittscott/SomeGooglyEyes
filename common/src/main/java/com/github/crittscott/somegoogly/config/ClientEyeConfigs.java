@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -50,6 +51,20 @@ public final class ClientEyeConfigs {
         return ambient;
     }
 
+    /** The cached view of {@code config}'s {@code variant} for {@code entity}, created on first use. */
+    private static HeadInfo cached(ResourceLocation entity, boolean baby, @Nullable RuntimeConfig config,
+                                   int variant) {
+        int key = (variant << 1) | (baby ? 1 : 0);
+        Map<Integer, HeadInfo> byVariant = resolved.computeIfAbsent(entity, e -> new HashMap<>());
+        HeadInfo cached = byVariant.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        HeadInfo created = new HeadInfo(config, variant);
+        byVariant.put(key, created);
+        return created;
+    }
+
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
         ambient = AmbientSettings.NONE;
@@ -73,21 +88,21 @@ public final class ClientEyeConfigs {
     /** Resolve and cache the selected variant for the requested age, for client rendering. */
     public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
         RuntimeConfig config = get(entity, baby);
-        int variant = EyeConfigModel.chooseVariantIndex(config, variantRoll);
-        int key = (variant << 1) | (baby ? 1 : 0);
-        Map<Integer, HeadInfo> byVariant = resolved.computeIfAbsent(entity, e -> new HashMap<>());
-        HeadInfo cached = byVariant.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        HeadInfo created = new HeadInfo(config, variant);
-        byVariant.put(key, created);
-        return created;
+        return cached(entity, baby, config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
     /** Resolve and cache the selected variant for {@code living}'s current age. */
     public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
         return resolve(entity, living.isBaby(), variantRoll);
+    }
+
+    /**
+     * Resolve and cache the variant a placed head of {@code entity}'s kind shows
+     * ({@link SkullEyeState#variantIndex}), for client rendering.
+     */
+    public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
+        RuntimeConfig config = get(entity, false);
+        return cached(entity, false, config, SkullEyeState.variantIndex(entity, config, variantRoll));
     }
 
     /**

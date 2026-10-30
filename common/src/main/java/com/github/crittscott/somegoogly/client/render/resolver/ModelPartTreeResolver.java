@@ -111,6 +111,11 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
             }
             return true;
         }
+
+        @Override
+        public ModelPart part() {
+            return chain[chain.length - 1];
+        }
     }
 
     @Override

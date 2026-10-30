@@ -110,9 +110,15 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolve a type through a throwaway client entity so export-all does not depend on nearby mobs.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tokens()" class="member-name-link">tokens</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sampleFor(net.minecraft.resources.ResourceLocation)" class="member-name-link">sampleFor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;id)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A throwaway client entity of type <code>id</code>, never added to the level, whose renderer gives the type's
+ model; the local player for the player type, <code>null</code> outside a level or for a non-living type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#tokens()" class="member-name-link">tokens</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The model's attachable part tokens, in selection order.</div>
 </div>
 </div>
@@ -161,6 +167,15 @@ loadScripts(document, 'script');</script>
 <h3>tokens</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">tokens</span>()</div>
 <div class="block">The model's attachable part tokens, in selection order.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="sampleFor(net.minecraft.resources.ResourceLocation)">
+<h3>sampleFor</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.entity.LivingEntity</span>&nbsp;<span class="element-name">sampleFor</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;id)</span></div>
+<div class="block">A throwaway client entity of type <code>id</code>, never added to the level, whose renderer gives the type's
+ model; the local player for the player type, <code>null</code> outside a level or for a non-living type.</div>
 </section>
 </li>
 </ul>

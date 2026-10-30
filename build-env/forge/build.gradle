@@ -47,6 +47,17 @@ loom {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven { url = 'https://api.modrinth.com/maven' }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
+
 configurations {
     common {
         canBeResolved = true
@@ -72,6 +83,10 @@ dependencies {
     // Optional at runtime; needed at compile time by the GeckoLib render integration. Not remapped:
     // GeckoLib's Forge artifacts are already usable as-is.
     compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
+
+    // Heads, loaded in development runs and GameTests only, so its heads can be checked; the mod never
+    // references it and neither compiles against nor publishes it.
+    modLocalRuntime "maven.modrinth:heads:$rootProject.heads_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')

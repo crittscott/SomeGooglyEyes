@@ -37,7 +37,8 @@ public final class ForgeServerEvents {
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
-        gameBus.addListener(ForgeServerEvents::onLivingDrops);
+        // Late enough to see the heads other mods add to the drops, such as the Heads mod's.
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingDrops);
         gameBus.addListener(ForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(ForgeServerEvents::onPlayerLoggedOut);
         gameBus.addListener(ForgeServerEvents::onDatapackSync);

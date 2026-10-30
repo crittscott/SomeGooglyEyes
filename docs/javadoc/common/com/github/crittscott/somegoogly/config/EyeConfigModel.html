@@ -167,6 +167,14 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolve a stable 0..1 roll through a runtime config's cumulative variant weights.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float,java.util.function.Predicate)" class="member-name-link">chooseVariantIndex</a><wbr>(<a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ float&nbsp;roll,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a>&gt;&nbsp;eligible)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>eligible</code> variants
+ alone; 0 when none has weight.</div>
+</div>
 </div>
 </div>
 </div>
@@ -241,6 +249,17 @@ loadScripts(document, 'script');</script>
  <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
  float&nbsp;roll)</span></div>
 <div class="block">Resolve a stable 0..1 roll through a runtime config's cumulative variant weights.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float,java.util.function.Predicate)">
+<h3>chooseVariantIndex</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">chooseVariantIndex</span><wbr><span class="parameters">(@Nullable
+ <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ float&nbsp;roll,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a>&gt;&nbsp;eligible)</span></div>
+<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>eligible</code> variants
+ alone; 0 when none has weight.</div>
 </section>
 </li>
 </ul>

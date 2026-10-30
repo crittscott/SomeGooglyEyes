@@ -57,6 +57,7 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.92.11+1.20.1` | Fabric runtime and development API |
 | GeckoLib | `software.bernie.geckolib:geckolib-<loader>-1.20.1:4.7.4` | Compile-only optional render integration for each loader |
+| Heads | `maven.modrinth:heads:X7aPmbm0` (Heads 1.1.3 for Forge 1.20.1) | Forge development runs and GameTests only (`modLocalRuntime`); never compiled against or published |
 | JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module because Loom does not expose Minecraft's copy to common |
 
 The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
@@ -78,9 +79,10 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`) from 
 | Fabric Java compatibility | `>=17` |
 | Fabric API runtime declaration | `>=0.92.11+1.20.1`; compilation uses `0.92.11+1.20.1` |
 | GeckoLib | optional on every loader; `4.7.4` or newer when present |
+| Heads | optional on Forge, any version (`mods.toml`); never required |
 
 ## Resolution and version authorities
 
 `gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, and mod versions. The root `build.gradle` pins the three external Gradle plugins and JSR 305, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle itself. The loader scripts consume the root properties rather than restating dependency versions.
 
-Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Parchment Maven and GeckoLib's Cloudsmith Maven; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.
+Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Parchment Maven and GeckoLib's Cloudsmith Maven; Forge also declares Modrinth Maven, exclusively for the `maven.modrinth` group; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -40,12 +41,25 @@ public final class EyeConfigModel {
 
     /** Resolve a stable 0..1 roll through a runtime config's cumulative variant weights. */
     public static int chooseVariantIndex(@Nullable RuntimeConfig config, float roll) {
+        return chooseVariantIndex(config, roll, variant -> true);
+    }
+
+    /**
+     * Resolve a stable 0..1 roll through the cumulative weights of the runtime config's {@code eligible} variants
+     * alone; 0 when none has weight.
+     */
+    public static int chooseVariantIndex(@Nullable RuntimeConfig config, float roll, Predicate<Variant> eligible) {
         if (config == null || config.variants.isEmpty()) {
             return 0;
         }
         double total = 0;
-        for (Variant variant : config.variants) {
-            total += variant.weight;
+        int last = 0;
+        for (int i = 0; i < config.variants.size(); i++) {
+            Variant variant = config.variants.get(i);
+            if (eligible.test(variant)) {
+                total += variant.weight;
+                last = i;
+            }
         }
         if (total <= 0) {
             return 0;
@@ -53,12 +67,15 @@ public final class EyeConfigModel {
         double target = roll * total;
         double accumulated = 0;
         for (int i = 0; i < config.variants.size(); i++) {
-            accumulated += config.variants.get(i).weight;
-            if (target < accumulated) {
-                return i;
+            Variant variant = config.variants.get(i);
+            if (eligible.test(variant)) {
+                accumulated += variant.weight;
+                if (target < accumulated) {
+                    return i;
+                }
             }
         }
-        return config.variants.size() - 1;
+        return last;
     }
 
     /** Raw datapack file structure (one file per entity). */

@@ -7,6 +7,8 @@ accessWidener	v2	named
 
 # ModelPart.children (private Map<String, ModelPart>, the name -> child map)
 accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
+# ModelPart.cubes (the cubes a Heads-mod head's eyes are fitted by)
+accessible	field	net/minecraft/client/model/geom/ModelPart	cubes	Ljava/util/List;
 
 # AgeableListModel.headParts()/bodyParts() (protected Iterable<ModelPart>)
 accessible	method	net/minecraft/client/model/AgeableListModel	headParts	()Ljava/lang/Iterable;

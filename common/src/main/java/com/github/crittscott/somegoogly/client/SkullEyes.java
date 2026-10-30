@@ -74,11 +74,11 @@ public final class SkullEyes {
      */
     @Nullable
     static SkullEyes create(BlockPos pos, ResourceLocation entity, Snapshot snapshot) {
-        HeadInfo helper = ClientEyeConfigs.resolve(entity, false, snapshot.variantRoll());
+        HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
         if (!helper.hasConfig()) {
             return null;
         }
-        int[] parts = SkullEyeState.headParts(helper);
+        int[] parts = SkullEyeState.headParts(entity, helper);
         return parts.length == 0 ? null : new SkullEyes(pos.immutable(), entity, snapshot, helper, parts);
     }
 

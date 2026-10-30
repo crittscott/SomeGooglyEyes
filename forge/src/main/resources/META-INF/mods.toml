@@ -30,3 +30,9 @@ description='''${mod_description}'''
     versionRange="[${geckolib_version},)"
     ordering="AFTER"
     side="CLIENT"
+[[dependencies.${mod_id}]]
+    modId="heads"
+    mandatory=false
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"

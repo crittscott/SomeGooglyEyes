@@ -31,8 +31,29 @@ public final class SkullEyeGameTests {
     // }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyedMobsHeadsModHeadInheritsItsEyes(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void headEyesSurviveSaveLoad(GameTestHelper helper) {
         SkullEyeGameTestsLogic.headEyesSurviveSaveLoad(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModHeadTakesKeepsAndGivesUpEyes(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModMobsHaveHeadEyes(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)

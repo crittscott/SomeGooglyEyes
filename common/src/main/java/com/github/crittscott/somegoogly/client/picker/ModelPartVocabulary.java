@@ -89,8 +89,12 @@ public final class ModelPartVocabulary {
         return match != null ? match : storedToken;
     }
 
+    /**
+     * A throwaway client entity of type {@code id}, never added to the level, whose renderer gives the type's
+     * model; the local player for the player type, {@code null} outside a level or for a non-living type.
+     */
     @Nullable
-    private static LivingEntity sampleFor(ResourceLocation id) {
+    public static LivingEntity sampleFor(ResourceLocation id) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
             return minecraft.player;
@@ -104,7 +108,7 @@ public final class ModelPartVocabulary {
             return type.create(level) instanceof LivingEntity living ? living : null;
         } catch (Throwable constructionFailed) {
             ClientIntegrationFailures.warnOnce(
-                    "entity factory", "picker sample construction", id.toString(), constructionFailed);
+                    "entity factory", "sample construction", id.toString(), constructionFailed);
             return null;
         }
     }

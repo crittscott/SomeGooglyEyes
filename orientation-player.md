@@ -68,7 +68,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 ## Mob heads
 
-Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition; dragon and modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. So can the Heads mod's heads on Forge, except its axolotl, endermite, silverfish, squid, glow squid, slime, and magma cube heads; their eyes are fitted to each head's shape. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. Head items show their eyes at rest; worn heads show none.
 
@@ -165,7 +165,7 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods are not required; their definitions keep earlier compatibility selectors and may need adjusting when those mods' models change.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. These mods are optional; their definitions may need adjusting when their models change.
 
 74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; armadillo, bogged, and breeze target later versions, and the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
@@ -210,7 +210,7 @@ It does not change the world. Drafts persist per species and age until disconnec
 
 `/sg spawn <entity type>` creates one persistent, frozen mob at the targeted block.
 
-`/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world (see `allowSpawnAll` above).
+`/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world.
 
 Both spawn commands skip the ender dragon, unsummonable entities, and configured exclusions, and place nothing another mod cancels. A namespace-restricted `/sg spawnall` reports each skipped type and why; `/sg spawn` suggests only types it would spawn.
 
@@ -236,5 +236,4 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
-- Optional-mod definitions and client-side model attachment on 1.20.1 require manual compatibility verification.
-- Fabric has 123 dedicated-server GameTests; Forge 119. Physical-client checks cover models (ordinary, baby, players, resolver families), expressions, item rendering, harvesting/application on mobs and heads, head eyes, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, the rendering switch with picker preview, and migrating a real 0.8.2 Fabric save.
+- Fabric has 125 dedicated-server GameTests; Forge 123. Physical-client checks cover models (ordinary, baby, players, resolver families), expressions, item rendering, harvesting/application on mobs and heads, head eyes, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, the rendering switch with picker preview, and migrating a real 0.8.2 Fabric save.

@@ -30,6 +30,16 @@ public final class SkullEyeGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModMobsHaveHeadEyes(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristHarvestsAPlacedHead(GameTestHelper helper) {
         SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(helper, FakePlayer.get(helper.getLevel()));
     }
