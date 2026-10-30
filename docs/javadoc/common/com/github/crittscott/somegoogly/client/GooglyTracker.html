@@ -81,23 +81,17 @@ loadScripts(document, 'script');</script>
  eye, plus which <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a> (if any) is currently playing on that entity.
 
  <p>One tracker is kept per tracked <code>LivingEntity</code> (see <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a>), matched
- against the entity's current placement via <a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>matches(com.github.crittscott.somegoogly.eye.HeadInfo)</code></a>. <a href="#update()"><code>update()</code></a> advances the active
+ against the entity's current placement via <a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>matches(com.github.crittscott.somegoogly.eye.HeadInfo)</code></a>. <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a> advances the active
  behavior and steps every eye's physics once per client tick; <a href="#startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)"><code>startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior, int, long, int)</code></a> applies a
  server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
 
- <p>While the entity sleeps (<code>LivingEntity.isSleeping()</code>, synced by vanilla to every viewer) no new
- behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
- nothing about sleep crosses the mod's own network. A goat
- lowering its head to ram (<code>Goat.getRammingXHeadRot()</code>, set by vanilla's ram entity events) squints the
- same way but still plays behaviors. A skeleton drawing its bow, or a player drawing a bow
- (<code>LivingEntity.getUseItem()</code>, synced by vanilla), closes the eye away from the arm holding it. A
- swelling creeper
- (<code>Creeper.getSwelling(float)</code>, also synced by vanilla) agitates its pupils, which keep getting kicked back
- into flight in proportion to how far the swell has gone. An aggressive mob
- (<code>Mob.isAggressive()</code>, synced by vanilla) or one the server reports <a href="#angry"><code>angry</code></a> has its pupils
- eased to red, and a creepy enderman (<code>EnderMan.isCreepy()</code>, synced by vanilla) has its pupils pulse
- at a frequency of its own. None of these ongoing states blocks a behavior: each is folded in on top of
- whatever plays.</div>
+ <p>Each tick also folds in the <a href="../eye/behavior/OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s whose server switches are on, easing each one in or
+ out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a slit; the ramming
+ goat's squint; the archer's one-eyed aim, closing the eye away from the arm holding the weapon; the swelling
+ creeper's rattle, kicking its pupils back into flight in proportion to the swell; red pupils for an attacking
+ mob or one the server reports <a href="#angry"><code>angry</code></a>; and the creepy enderman's pupil pulse, at a frequency of its
+ own. None of these blocks a behavior: each sits on top of whatever plays. A sleeping entity starts no new
+ behavior whether or not its squint is on.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -204,17 +198,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>double</code></div>
 <div class="col-second odd-row-color"><code><a href="#motionX" class="member-name-link">motionX</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>double</code></div>
 <div class="col-second even-row-color"><code><a href="#motionY" class="member-name-link">motionY</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color"><code>double</code></div>
 <div class="col-second odd-row-color"><code><a href="#motionZ" class="member-name-link">motionZ</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second even-row-color"><code><a href="#overrides" class="member-name-link">overrides</a></code></div>
@@ -269,9 +263,10 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean)" class="member-name-link">GooglyTracker</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;parent,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">GooglyTracker</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;parent,
  <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
- boolean&nbsp;angry)</code></div>
+ boolean&nbsp;angry,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Build the tracker.</div>
 </div>
@@ -310,9 +305,10 @@ loadScripts(document, 'script');</script>
  rule â€” or the entity is asleep.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">update</a><wbr>(<a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye.</div>
+<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye, with
+ the ongoing behaviors <code>settings</code> switches on folded in.</div>
 </div>
 </div>
 </div>
@@ -573,21 +569,21 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="motionX">
 <h3>motionX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionX</span></div>
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="motionY">
 <h3>motionY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionY</span></div>
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="motionZ">
 <h3>motionZ</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">motionZ</span></div>
-<div class="block">The entity's position change over the last <a href="#update()"><code>update()</code></a>.</div>
+<div class="block">The entity's position change over the last <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
 </section>
 </li>
 <li>
@@ -632,15 +628,18 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean)">
+<section class="detail" id="&lt;init&gt;(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
 <h3>GooglyTracker</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GooglyTracker</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.world.entity.LivingEntity&nbsp;parent,
  @Nonnull
  <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
- boolean&nbsp;angry)</span></div>
+ boolean&nbsp;angry,
+ @Nonnull
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</span></div>
 <div class="block">Build the tracker. <code>angry</code> is the server-reported anger already known for this entity, so a
- tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded.</div>
+ tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded;
+ <code>settings</code> says which ongoing behaviors are on.</div>
 </section>
 </li>
 </ul>
@@ -684,10 +683,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="update()">
+<section class="detail" id="update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
 <h3>update</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
-<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span><wbr><span class="parameters">(<a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</span></div>
+<div class="block">Advance one client tick: sample the entity's motion, age the active behavior, and step every eye, with
+ the ongoing behaviors <code>settings</code> switches on folded in.</div>
 </section>
 </li>
 </ul>

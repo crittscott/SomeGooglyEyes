@@ -79,7 +79,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Client-side store of the resolved server eye state, populated from the server via
  <code>EyeConfigSyncPacket</code>: the per-entity eye geometry configs, the current
- <code>googlyEyesEnabled</code> master switch, and the ambient settings placed heads schedule from. This store also owns the resolved-view cache used by
+ <code>googlyEyesEnabled</code> master switch, and the behavior settings clients run behaviors from. This store also owns the resolved-view cache used by
  renderers.
 
  <p>Separate from <a href="ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerEyeConfigs</code></a> to avoid single-player static-state bleed: in SP the
@@ -105,10 +105,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The immutable synced map, by entity.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#ambient()" class="member-name-link">ambient</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviors()" class="member-name-link">behaviors</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The server's ambient settings, as of the last sync.</div>
+<div class="block">The server's behavior settings, as of the last sync.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
@@ -127,9 +127,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The server's current <code>googlyEyesEnabled</code> master switch, as of the last sync.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.AmbientSettings)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
  boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a>&nbsp;ambient)</code></div>
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
  rendering view.</div>
@@ -181,10 +181,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="ambient()">
-<h3>ambient</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a></span>&nbsp;<span class="element-name">ambient</span>()</div>
-<div class="block">The server's ambient settings, as of the last sync.</div>
+<section class="detail" id="behaviors()">
+<h3>behaviors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">behaviors</span>()</div>
+<div class="block">The server's behavior settings, as of the last sync.</div>
 </section>
 </li>
 <li>
@@ -238,11 +238,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.AmbientSettings)">
+<section class="detail" id="replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
 <h3>replaceAll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
  boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a>&nbsp;ambient)</span></div>
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
 <div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
  rendering view. The supplied model values become store-owned and must not be mutated afterward.</div>
 </section>

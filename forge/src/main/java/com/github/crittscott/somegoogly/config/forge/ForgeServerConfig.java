@@ -29,6 +29,11 @@ public final class ForgeServerConfig {
     private static final ForgeConfigSpec.BooleanValue GROW_ON_SHEAR;
     private static final ForgeConfigSpec.BooleanValue LOVE_ON_AFFECTION;
     private static final ForgeConfigSpec.BooleanValue ANGRY_EYES;
+    private static final ForgeConfigSpec.BooleanValue SQUINT_ON_SLEEP;
+    private static final ForgeConfigSpec.BooleanValue SQUINT_ON_RAM;
+    private static final ForgeConfigSpec.BooleanValue WINK_ON_AIM;
+    private static final ForgeConfigSpec.BooleanValue RATTLE_ON_SWELL;
+    private static final ForgeConfigSpec.BooleanValue PULSE_WHEN_CREEPY;
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_TRADE;
     private static final ForgeConfigSpec.BooleanValue SWIRL_ON_HEAL;
     private static final ForgeConfigSpec.IntValue SWIRL_HEAL_COOLDOWN_TICKS;
@@ -76,6 +81,16 @@ public final class ForgeServerConfig {
                 .define(ServerConfig.LOVE_ON_AFFECTION_KEY, ServerConfig.LOVE_ON_AFFECTION_DEFAULT);
         ANGRY_EYES = builder.comment(ServerConfig.ANGRY_EYES_COMMENT.split("\n"))
                 .define(ServerConfig.ANGRY_EYES_KEY, ServerConfig.ANGRY_EYES_DEFAULT);
+        SQUINT_ON_SLEEP = builder.comment(ServerConfig.SQUINT_ON_SLEEP_COMMENT.split("\n"))
+                .define(ServerConfig.SQUINT_ON_SLEEP_KEY, ServerConfig.SQUINT_ON_SLEEP_DEFAULT);
+        SQUINT_ON_RAM = builder.comment(ServerConfig.SQUINT_ON_RAM_COMMENT.split("\n"))
+                .define(ServerConfig.SQUINT_ON_RAM_KEY, ServerConfig.SQUINT_ON_RAM_DEFAULT);
+        WINK_ON_AIM = builder.comment(ServerConfig.WINK_ON_AIM_COMMENT.split("\n"))
+                .define(ServerConfig.WINK_ON_AIM_KEY, ServerConfig.WINK_ON_AIM_DEFAULT);
+        RATTLE_ON_SWELL = builder.comment(ServerConfig.RATTLE_ON_SWELL_COMMENT.split("\n"))
+                .define(ServerConfig.RATTLE_ON_SWELL_KEY, ServerConfig.RATTLE_ON_SWELL_DEFAULT);
+        PULSE_WHEN_CREEPY = builder.comment(ServerConfig.PULSE_WHEN_CREEPY_COMMENT.split("\n"))
+                .define(ServerConfig.PULSE_WHEN_CREEPY_KEY, ServerConfig.PULSE_WHEN_CREEPY_DEFAULT);
         SWIRL_ON_TRADE = builder.comment(ServerConfig.SWIRL_ON_TRADE_COMMENT.split("\n"))
                 .define(ServerConfig.SWIRL_ON_TRADE_KEY, ServerConfig.SWIRL_ON_TRADE_DEFAULT);
         SWIRL_ON_HEAL = builder.comment(ServerConfig.SWIRL_ON_HEAL_COMMENT.split("\n"))
@@ -126,6 +141,11 @@ public final class ForgeServerConfig {
         ServerConfig.GROW_ON_SHEAR.set(GROW_ON_SHEAR.get());
         ServerConfig.LOVE_ON_AFFECTION.set(LOVE_ON_AFFECTION.get());
         ServerConfig.ANGRY_EYES.set(ANGRY_EYES.get());
+        ServerConfig.SQUINT_ON_SLEEP.set(SQUINT_ON_SLEEP.get());
+        ServerConfig.SQUINT_ON_RAM.set(SQUINT_ON_RAM.get());
+        ServerConfig.WINK_ON_AIM.set(WINK_ON_AIM.get());
+        ServerConfig.RATTLE_ON_SWELL.set(RATTLE_ON_SWELL.get());
+        ServerConfig.PULSE_WHEN_CREEPY.set(PULSE_WHEN_CREEPY.get());
         ServerConfig.SWIRL_ON_TRADE.set(SWIRL_ON_TRADE.get());
         ServerConfig.SWIRL_ON_HEAL.set(SWIRL_ON_HEAL.get());
         ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(SWIRL_HEAL_COOLDOWN_TICKS.get());

@@ -110,7 +110,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-definition sync survives the wire, ambient settings included.</div>
+<div class="block">The eye-definition sync survives the wire, behavior settings included.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -221,9 +221,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-definition sync survives the wire, ambient settings included. No in-game form; guards that joining
- clients draw the same eyes the server's datapacks define, and schedule placed heads' expressions from the
- server's settings.</div>
+<div class="block">The eye-definition sync survives the wire, behavior settings included. No in-game form; guards that joining
+ clients draw the same eyes the server's datapacks define, and run ongoing behaviors and placed heads' and
+ the held eye's expressions from the server's settings.</div>
 </section>
 </li>
 <li>

@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
@@ -88,7 +88,7 @@ public final class SkullEyes {
     }
 
     /** Start the expression of the slot holding {@code gameTime}, if that is when it plays, caught up to it. */
-    private void startAmbient(long gameTime, AmbientSettings ambient) {
+    private void startAmbient(long gameTime, BehaviorSettings ambient) {
         if (!ambient.plays()) {
             return;
         }
@@ -112,7 +112,7 @@ public final class SkullEyes {
      * Advance one client tick at level {@code gameTime}: retire a finished expression, start the slot's when it is
      * due, and step every drawn eye with the expression folded in.
      */
-    void tick(long gameTime, AmbientSettings ambient) {
+    void tick(long gameTime, BehaviorSettings ambient) {
         if (active != null) {
             active.age++;
             if (active.age >= active.duration) {

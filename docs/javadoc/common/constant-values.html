@@ -122,23 +122,6 @@ loadScripts(document, 'script');</script>
 </div>
 </li>
 <li>
-<div class="caption"><span>com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HeldEye.html" title="class in com.github.crittscott.somegoogly.client">HeldEye</a></span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Constant Field</div>
-<div class="table-header col-last">Value</div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.client.HeldEye.AMBIENT_MAX_TICKS">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/client/HeldEye.html#AMBIENT_MAX_TICKS">AMBIENT_MAX_TICKS</a></code></div>
-<div class="col-last even-row-color"><code>800</code></div>
-<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.client.HeldEye.AMBIENT_MIN_TICKS">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/client/HeldEye.html#AMBIENT_MIN_TICKS">AMBIENT_MIN_TICKS</a></code></div>
-<div class="col-last odd-row-color"><code>200</code></div>
-<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.client.HeldEye.HEAL_COOLDOWN_TICKS">public&nbsp;static&nbsp;final&nbsp;int</code></div>
-<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/client/HeldEye.html#HEAL_COOLDOWN_TICKS">HEAL_COOLDOWN_TICKS</a></code></div>
-<div class="col-last even-row-color"><code>200</code></div>
-</div>
-</li>
-<li>
 <div class="caption"><span>com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></span></div>
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -199,7 +182,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color"><code>"somegoogly-client.toml"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ClientConfig.SECTION">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#SECTION">SECTION</a></code></div>
-<div class="col-last even-row-color"><code>"client"</code></div>
+<div class="col-last even-row-color"><code>"Client Settings"</code></div>
 </div>
 </li>
 <li>
@@ -271,7 +254,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color"><code>"ambientBehaviorPool"</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.AMBIENT_BEHAVIORS_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_BEHAVIORS_COMMENT">AMBIENT_BEHAVIORS_COMMENT</a></code></div>
-<div class="col-last odd-row-color"><code>"Whether eyed mobs play idle expressions (chosen from ambientBehaviorPool) on their own."</code></div>
+<div class="col-last odd-row-color"><code>"Whether eyed mobs, placed heads, and a held Googly Eye play idle expressions (chosen from\nambientBehaviorPool) on their own."</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.AMBIENT_BEHAVIORS_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#AMBIENT_BEHAVIORS_DEFAULT">AMBIENT_BEHAVIORS_DEFAULT</a></code></div>
 <div class="col-last even-row-color"><code>true</code></div>
@@ -298,7 +281,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color"><code>"ambientMinTicks"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.ANGRY_EYES_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ANGRY_EYES_COMMENT">ANGRY_EYES_COMMENT</a></code></div>
-<div class="col-last even-row-color"><code>"Whether an eyed mob that is angry but not attacking, such as a provoked iron golem, piglin,\nor zombified piglin, shows red pupils. The server checks each watched eyed mob once per tick\nand tells clients only when its anger starts or ends. Mobs that are attacking show red pupils\nregardless, from state the game already shares."</code></div>
+<div class="col-last even-row-color"><code>"Whether an eyed mob that is attacking, or angry without attacking, such as a provoked iron\ngolem, piglin, or zombified piglin, shows red pupils. For the second kind the server checks\neach watched eyed mob once per tick and tells clients only when its anger starts or ends;\nwith this off it checks nothing."</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.ANGRY_EYES_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ANGRY_EYES_DEFAULT">ANGRY_EYES_DEFAULT</a></code></div>
 <div class="col-last odd-row-color"><code>true</code></div>
@@ -334,7 +317,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color"><code>"googlyEyesEnabled"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_COMMENT">GROW_ON_HIT_PERCENT_COMMENT</a></code></div>
-<div class="col-last even-row-color"><code>"Chance (0-100) that an eyed mob\'s eyes bulge when a player damages it."</code></div>
+<div class="col-last even-row-color"><code>"Chance (0-100) that an eyed mob\'s eyes bulge when a player damages it, and that a held\nGoogly Eye bulges when its holder is hurt."</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#GROW_ON_HIT_PERCENT_DEFAULT">GROW_ON_HIT_PERCENT_DEFAULT</a></code></div>
 <div class="col-last odd-row-color"><code>20</code></div>
@@ -383,15 +366,33 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PERCENT_MIN">public&nbsp;static&nbsp;final&nbsp;int</code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PERCENT_MIN">PERCENT_MIN</a></code></div>
 <div class="col-last even-row-color"><code>0</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PULSE_WHEN_CREEPY_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PULSE_WHEN_CREEPY_COMMENT">PULSE_WHEN_CREEPY_COMMENT</a></code></div>
+<div class="col-last odd-row-color"><code>"Whether a creepy eyed enderman\'s pupils, while it stares down whoever looked at it, pulse."</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PULSE_WHEN_CREEPY_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PULSE_WHEN_CREEPY_DEFAULT">PULSE_WHEN_CREEPY_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>true</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.PULSE_WHEN_CREEPY_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#PULSE_WHEN_CREEPY_KEY">PULSE_WHEN_CREEPY_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"pulseWhenCreepy"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.RATTLE_ON_SWELL_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#RATTLE_ON_SWELL_COMMENT">RATTLE_ON_SWELL_COMMENT</a></code></div>
+<div class="col-last even-row-color"><code>"Whether a swelling eyed creeper\'s pupils rattle, harder the closer it is to exploding."</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.RATTLE_ON_SWELL_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#RATTLE_ON_SWELL_DEFAULT">RATTLE_ON_SWELL_DEFAULT</a></code></div>
+<div class="col-last odd-row-color"><code>true</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.RATTLE_ON_SWELL_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#RATTLE_ON_SWELL_KEY">RATTLE_ON_SWELL_KEY</a></code></div>
+<div class="col-last even-row-color"><code>"rattleOnSwell"</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_BEHAVIORS">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_BEHAVIORS">SECTION_BEHAVIORS</a></code></div>
-<div class="col-last odd-row-color"><code>"behaviors"</code></div>
+<div class="col-last odd-row-color"><code>"Behaviors"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_PICKER">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_PICKER">SECTION_PICKER</a></code></div>
-<div class="col-last even-row-color"><code>"picker"</code></div>
+<div class="col-last even-row-color"><code>"Picker"</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SECTION_SERVER">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SECTION_SERVER">SECTION_SERVER</a></code></div>
-<div class="col-last odd-row-color"><code>"server"</code></div>
+<div class="col-last odd-row-color"><code>"Server Settings"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SPAWN_EXCLUDED_ENTITIES_COMMENT">SPAWN_EXCLUDED_ENTITIES_COMMENT</a></code></div>
 <div class="col-last even-row-color"><code>"Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.\n\"minecraft:armor_stand\". Same authoring-only scope as spawnExcludedMods."</code></div>
@@ -404,9 +405,27 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SPAWN_EXCLUDED_MODS_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SPAWN_EXCLUDED_MODS_KEY">SPAWN_EXCLUDED_MODS_KEY</a></code></div>
 <div class="col-last odd-row-color"><code>"spawnExcludedMods"</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_RAM_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_RAM_COMMENT">SQUINT_ON_RAM_COMMENT</a></code></div>
+<div class="col-last even-row-color"><code>"Whether an eyed goat\'s eyes squint while it lowers its head to ram."</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_RAM_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_RAM_DEFAULT">SQUINT_ON_RAM_DEFAULT</a></code></div>
+<div class="col-last odd-row-color"><code>true</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_RAM_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_RAM_KEY">SQUINT_ON_RAM_KEY</a></code></div>
+<div class="col-last even-row-color"><code>"squintOnRam"</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_SLEEP_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_SLEEP_COMMENT">SQUINT_ON_SLEEP_COMMENT</a></code></div>
+<div class="col-last odd-row-color"><code>"Whether a sleeping eyed mob\'s eyes squint, or, for a villager, its eyelids close to a slit.\nA sleeping mob plays no expressions either way."</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_SLEEP_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_SLEEP_DEFAULT">SQUINT_ON_SLEEP_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>true</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SQUINT_ON_SLEEP_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SQUINT_ON_SLEEP_KEY">SQUINT_ON_SLEEP_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"squintOnSleep"</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SWIRL_HEAL_COOLDOWN_TICKS_COMMENT">SWIRL_HEAL_COOLDOWN_TICKS_COMMENT</a></code></div>
-<div class="col-last even-row-color"><code>"Minimum ticks between one mob\'s healing swirls."</code></div>
+<div class="col-last even-row-color"><code>"Minimum ticks between one mob\'s, or one held eye\'s, healing swirls."</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT">public&nbsp;static&nbsp;final&nbsp;int</code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT">SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT</a></code></div>
 <div class="col-last odd-row-color"><code>200</code></div>
@@ -415,7 +434,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color"><code>"swirlHealCooldownTicks"</code></div>
 <div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SWIRL_ON_HEAL_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SWIRL_ON_HEAL_COMMENT">SWIRL_ON_HEAL_COMMENT</a></code></div>
-<div class="col-last odd-row-color"><code>"Whether an eyed mob\'s eyes swirl when it is healed."</code></div>
+<div class="col-last odd-row-color"><code>"Whether an eyed mob\'s eyes, or a held Googly Eye, swirl when it, or its holder, is healed."</code></div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.SWIRL_ON_HEAL_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SWIRL_ON_HEAL_DEFAULT">SWIRL_ON_HEAL_DEFAULT</a></code></div>
 <div class="col-last even-row-color"><code>true</code></div>
@@ -437,6 +456,15 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.TICKS_MIN">public&nbsp;static&nbsp;final&nbsp;int</code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#TICKS_MIN">TICKS_MIN</a></code></div>
 <div class="col-last even-row-color"><code>1</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.WINK_ON_AIM_COMMENT">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM_COMMENT">WINK_ON_AIM_COMMENT</a></code></div>
+<div class="col-last odd-row-color"><code>"Whether an eyed skeleton drawing its bow, or an eyed player drawing a bow, closes the eye\naway from the arm holding it."</code></div>
+<div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.WINK_ON_AIM_DEFAULT">public&nbsp;static&nbsp;final&nbsp;boolean</code></div>
+<div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM_DEFAULT">WINK_ON_AIM_DEFAULT</a></code></div>
+<div class="col-last even-row-color"><code>true</code></div>
+<div class="col-first odd-row-color"><code id="com.github.crittscott.somegoogly.config.ServerConfig.WINK_ON_AIM_KEY">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM_KEY">WINK_ON_AIM_KEY</a></code></div>
+<div class="col-last odd-row-color"><code>"winkOnAim"</code></div>
 </div>
 </li>
 </ul>
@@ -531,7 +559,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Value</div>
 <div class="col-first even-row-color"><code id="com.github.crittscott.somegoogly.network.NetworkHandler.NETWORK_VERSION">public&nbsp;static&nbsp;final&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#NETWORK_VERSION">NETWORK_VERSION</a></code></div>
-<div class="col-last even-row-color"><code>"16"</code></div>
+<div class="col-last even-row-color"><code>"17"</code></div>
 </div>
 </li>
 <li>

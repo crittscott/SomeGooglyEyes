@@ -56,10 +56,18 @@ public class ServerConfig {
     public static final boolean LOVE_ON_AFFECTION_DEFAULT = true;
     public static final int PERCENT_MAX = 100;
     public static final int PERCENT_MIN = 0;
+    public static final String PULSE_WHEN_CREEPY_KEY = "pulseWhenCreepy";
+    public static final boolean PULSE_WHEN_CREEPY_DEFAULT = true;
+    public static final String RATTLE_ON_SWELL_KEY = "rattleOnSwell";
+    public static final boolean RATTLE_ON_SWELL_DEFAULT = true;
     public static final String SPAWN_EXCLUDED_ENTITIES_KEY = "spawnExcludedEntities";
     public static final List<String> SPAWN_EXCLUDED_ENTITIES_DEFAULT = List.of();
     public static final String SPAWN_EXCLUDED_MODS_KEY = "spawnExcludedMods";
     public static final List<String> SPAWN_EXCLUDED_MODS_DEFAULT = List.of("minecolonies", "create");
+    public static final String SQUINT_ON_RAM_KEY = "squintOnRam";
+    public static final boolean SQUINT_ON_RAM_DEFAULT = true;
+    public static final String SQUINT_ON_SLEEP_KEY = "squintOnSleep";
+    public static final boolean SQUINT_ON_SLEEP_DEFAULT = true;
     public static final String SWIRL_HEAL_COOLDOWN_TICKS_KEY = "swirlHealCooldownTicks";
     public static final int SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT = 200;
     public static final String SWIRL_ON_HEAL_KEY = "swirlOnHeal";
@@ -68,12 +76,15 @@ public class ServerConfig {
     public static final boolean SWIRL_ON_TRADE_DEFAULT = true;
     public static final int TICKS_MAX = SharedConstants.TICKS_PER_GAME_DAY;
     public static final int TICKS_MIN = 1;
+    public static final String WINK_ON_AIM_KEY = "winkOnAim";
+    public static final boolean WINK_ON_AIM_DEFAULT = true;
 
-    // TOML file and section names, shared by every loader's server config.
+    // TOML file and section names, shared by every loader's server config. The section names are those the
+    // released 0.8.2 files use, so a world's existing file keeps its values when Forge corrects it against the spec.
     public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
-    public static final String SECTION_SERVER = "server";
-    public static final String SECTION_BEHAVIORS = "behaviors";
-    public static final String SECTION_PICKER = "picker";
+    public static final String SECTION_SERVER = "Server Settings";
+    public static final String SECTION_BEHAVIORS = "Behaviors";
+    public static final String SECTION_PICKER = "Picker";
 
     // Config-file comments, one line per comment line, shared by every loader's server config schema.
     public static final String GOOGLY_EYES_ENABLED_COMMENT = """
@@ -87,7 +98,8 @@ public class ServerConfig {
     public static final String HARVEST_ON_KILL_PERCENT_COMMENT = """
             Chance (0-100) that killing an eyed mob with a direct melee blow from shears drops a Googly Eye.""";
     public static final String AMBIENT_BEHAVIORS_COMMENT = """
-            Whether eyed mobs play idle expressions (chosen from ambientBehaviorPool) on their own.""";
+            Whether eyed mobs, placed heads, and a held Googly Eye play idle expressions (chosen from
+            ambientBehaviorPool) on their own.""";
     public static final String AMBIENT_MIN_TICKS_COMMENT = """
             Shortest wait, in ticks, between one mob's idle expressions.""";
     public static final String AMBIENT_MAX_TICKS_COMMENT = """
@@ -96,7 +108,8 @@ public class ServerConfig {
             Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
             side_eye, stare, grow, love, swirl, color_change. Unknown ids are ignored.""";
     public static final String GROW_ON_HIT_PERCENT_COMMENT = """
-            Chance (0-100) that an eyed mob's eyes bulge when a player damages it.""";
+            Chance (0-100) that an eyed mob's eyes bulge when a player damages it, and that a held
+            Googly Eye bulges when its holder is hurt.""";
     public static final String GROW_ON_MILK_COMMENT = """
             Whether an eyed cow's, mooshroom's, or goat's eyes bulge when it is milked.""";
     public static final String GROW_ON_SHEAR_COMMENT = """
@@ -105,16 +118,28 @@ public class ServerConfig {
             Whether an eyed mob's pupils swell when it shows affection: an animal entering love mode,
             villagers breeding, an iron golem offering a flower, or an ocelot coming to trust a player.""";
     public static final String ANGRY_EYES_COMMENT = """
-            Whether an eyed mob that is angry but not attacking, such as a provoked iron golem, piglin,
-            or zombified piglin, shows red pupils. The server checks each watched eyed mob once per tick
-            and tells clients only when its anger starts or ends. Mobs that are attacking show red pupils
-            regardless, from state the game already shares.""";
+            Whether an eyed mob that is attacking, or angry without attacking, such as a provoked iron
+            golem, piglin, or zombified piglin, shows red pupils. For the second kind the server checks
+            each watched eyed mob once per tick and tells clients only when its anger starts or ends;
+            with this off it checks nothing.""";
+    public static final String SQUINT_ON_SLEEP_COMMENT = """
+            Whether a sleeping eyed mob's eyes squint, or, for a villager, its eyelids close to a slit.
+            A sleeping mob plays no expressions either way.""";
+    public static final String SQUINT_ON_RAM_COMMENT = """
+            Whether an eyed goat's eyes squint while it lowers its head to ram.""";
+    public static final String WINK_ON_AIM_COMMENT = """
+            Whether an eyed skeleton drawing its bow, or an eyed player drawing a bow, closes the eye
+            away from the arm holding it.""";
+    public static final String RATTLE_ON_SWELL_COMMENT = """
+            Whether a swelling eyed creeper's pupils rattle, harder the closer it is to exploding.""";
+    public static final String PULSE_WHEN_CREEPY_COMMENT = """
+            Whether a creepy eyed enderman's pupils, while it stares down whoever looked at it, pulse.""";
     public static final String SWIRL_ON_TRADE_COMMENT = """
             Whether a villager's or wandering trader's eyes swirl when a trade completes.""";
     public static final String SWIRL_ON_HEAL_COMMENT = """
-            Whether an eyed mob's eyes swirl when it is healed.""";
+            Whether an eyed mob's eyes, or a held Googly Eye, swirl when it, or its holder, is healed.""";
     public static final String SWIRL_HEAL_COOLDOWN_TICKS_COMMENT = """
-            Minimum ticks between one mob's healing swirls.""";
+            Minimum ticks between one mob's, or one held eye's, healing swirls.""";
     public static final String ENTITY_OVERRIDES_COMMENT = """
             Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
             '*' wildcards the entity id, e.g. "minecraft:zombie,100", "*:*_horse,50", "alexsmobs:*,0".
@@ -139,7 +164,7 @@ public class ServerConfig {
 
     /** Whether {@code /sg spawnall} may run. */
     public static final ConfigValue<Boolean> ALLOW_SPAWN_ALL = ConfigValue.bool(ALLOW_SPAWN_ALL_DEFAULT);
-    /** Whether the server shares eyed mobs' anger with clients, for red pupils. */
+    /** Whether angry eyed mobs show red pupils; also whether the server shares anger vanilla keeps to itself. */
     public static final ConfigValue<Boolean> ANGRY_EYES = ConfigValue.bool(ANGRY_EYES_DEFAULT);
     /** Behavior ids idle mobs choose from, parsed to the registered behaviors they name. */
     public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
@@ -172,12 +197,20 @@ public class ServerConfig {
             ConfigValue.integer(HARVEST_ON_KILL_PERCENT_DEFAULT, PERCENT_MIN, PERCENT_MAX);
     /** Whether a vanilla affection event makes an eyed mob's pupils swell. */
     public static final ConfigValue<Boolean> LOVE_ON_AFFECTION = ConfigValue.bool(LOVE_ON_AFFECTION_DEFAULT);
+    /** Whether a creepy enderman's pupils pulse. */
+    public static final ConfigValue<Boolean> PULSE_WHEN_CREEPY = ConfigValue.bool(PULSE_WHEN_CREEPY_DEFAULT);
+    /** Whether a swelling creeper's pupils rattle. */
+    public static final ConfigValue<Boolean> RATTLE_ON_SWELL = ConfigValue.bool(RATTLE_ON_SWELL_DEFAULT);
     /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
     /** Namespaces the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
+    /** Whether a goat lowering its head to ram squints. */
+    public static final ConfigValue<Boolean> SQUINT_ON_RAM = ConfigValue.bool(SQUINT_ON_RAM_DEFAULT);
+    /** Whether a sleeping mob squints, or a sleeping villager lowers its lids. */
+    public static final ConfigValue<Boolean> SQUINT_ON_SLEEP = ConfigValue.bool(SQUINT_ON_SLEEP_DEFAULT);
     /** Minimum ticks between one mob's healing swirls. */
     public static final ConfigValue<Integer> SWIRL_HEAL_COOLDOWN_TICKS =
             ConfigValue.integer(SWIRL_HEAL_COOLDOWN_TICKS_DEFAULT, TICKS_MIN, TICKS_MAX);
@@ -185,9 +218,16 @@ public class ServerConfig {
     public static final ConfigValue<Boolean> SWIRL_ON_HEAL = ConfigValue.bool(SWIRL_ON_HEAL_DEFAULT);
     /** Whether a completed trade makes the trader's eyes swirl. */
     public static final ConfigValue<Boolean> SWIRL_ON_TRADE = ConfigValue.bool(SWIRL_ON_TRADE_DEFAULT);
+    /** Whether an archer drawing its bow closes one eye. */
+    public static final ConfigValue<Boolean> WINK_ON_AIM = ConfigValue.bool(WINK_ON_AIM_DEFAULT);
 
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
     private record SpawnOverride(boolean exact, String literalId, Pattern pattern, int percent) {
+    }
+
+    /** The expressions the default {@link #AMBIENT_BEHAVIOR_POOL} names. */
+    public static List<EyeBehavior> defaultBehaviors() {
+        return parseBehaviorPool(AMBIENT_BEHAVIOR_POOL_DEFAULT);
     }
 
     /**
@@ -306,11 +346,16 @@ public class ServerConfig {
         GROW_ON_SHEAR.reset();
         HARVEST_ON_KILL_PERCENT.reset();
         LOVE_ON_AFFECTION.reset();
+        PULSE_WHEN_CREEPY.reset();
+        RATTLE_ON_SWELL.reset();
         SPAWN_EXCLUDED_ENTITIES.reset();
         SPAWN_EXCLUDED_MODS.reset();
+        SQUINT_ON_RAM.reset();
+        SQUINT_ON_SLEEP.reset();
         SWIRL_HEAL_COOLDOWN_TICKS.reset();
         SWIRL_ON_HEAL.reset();
         SWIRL_ON_TRADE.reset();
+        WINK_ON_AIM.reset();
     }
 
     /**

@@ -10,7 +10,7 @@ Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear w
 
 The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks, allowing different eye arrangements for vanilla and modded mobs.
 
-Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.92.11+1.20.1 or newer. Forge requires Forge 47.4.0 or newer within the 47 release line. Both loaders require Java 17; GeckoLib 4.7.4 or newer is an optional client dependency. Multiplayer clients and servers must both have Some Googly Eyes with the same network version.
+Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.92.11+1.20.1 or newer. Forge requires Forge 47.4.0 or newer within the 47 release line. Both loaders require Java 17; GeckoLib 4.7.4 or newer is an optional client dependency. Clients and servers need the same network version.
 
 ## Mobs with eyes
 
@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye held in first person is live: its pupil moves, and now and then it winks, stares, or glances aside; it bulges when you're hurt and swirls when you heal. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye held in first person is live: its pupil moves, and it plays idle, hurt (bulge), and heal (swirl) expressions under the server's expression settings. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
 Worlds saved by the 0.8.2 release for Minecraft 1.20.1 open with their eyed mobs, eye items, and settings intact.
 
@@ -95,7 +95,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-Forge applies edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric's reader accepts basic and literal strings, logging any value it cannot read.
+Forge applies edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away.
 
 ### Spawn and harvest
 
@@ -118,7 +118,7 @@ entityOverrides = [
 ]
 ```
 
-### Expressions
+### Behaviors
 
 | Key | Default | Effect |
 | --- | --- | --- |
@@ -130,12 +130,17 @@ entityOverrides = [
 | `growOnMilk` | `true` | Bulge after milking |
 | `growOnShear` | `true` | Bulge after shearing |
 | `loveOnAffection` | `true` | Love after an affection event |
-| `angryEyes` | `true` | Red pupils for angry, not attacking, mobs |
+| `angryEyes` | `true` | Red pupils for attacking or angry mobs |
+| `squintOnSleep` | `true` | Sleep squint; villager lids |
+| `squintOnRam` | `true` | Ramming goat squint |
+| `winkOnAim` | `true` | One-eyed bow aim |
+| `rattleOnSwell` | `true` | Creeper rattle |
+| `pulseWhenCreepy` | `true` | Enderman pulse |
 | `swirlOnTrade` | `true` | Swirl after a trade |
 | `swirlOnHeal` | `true` | Swirl after healing |
 | `swirlHealCooldownTicks` | `200` | Delay between healing swirls |
 
-Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
+Expression IDs (`somegoogly:`): `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, `color_change`.
 
 `allowSpawnAll` (default `false`) gates `/sg spawnall`; use it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) can corrupt one. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and ids that `/sg spawn` and `/sg spawnall` skip; removing the defaults risks the world.
 
@@ -169,7 +174,7 @@ Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Adventu
 
 74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; armadillo, bogged, and breeze target later versions, and the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
-Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
+Resource packs can replace eye textures and item models. There is no JEI plugin.
 
 ## Creative eye picker
 
@@ -236,4 +241,4 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
-- Fabric has 125 dedicated-server GameTests; Forge 123. Physical-client checks cover models (ordinary, baby, players, resolver families), expressions, item rendering, harvesting/application on mobs and heads, head eyes, protection vetoes, age-specific editing/export, renderer reload, anger across retracking and dimensions, optional GeckoLib, the rendering switch with picker preview, and migrating a real 0.8.2 Fabric save.
+- Fabric has 130 dedicated-server GameTests; Forge 127. Physical-client checks cover models, expressions, item rendering, harvesting and application, head eyes, protection vetoes, picker editing and export, anger across retracking, GeckoLib, the rendering switch, and migrating a real 0.8.2 Fabric save.

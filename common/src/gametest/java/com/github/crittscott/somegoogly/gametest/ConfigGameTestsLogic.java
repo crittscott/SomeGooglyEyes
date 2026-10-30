@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.ServerConfig;
@@ -57,6 +58,22 @@ public final class ConfigGameTestsLogic {
             ServerConfig.GLOBAL_PERCENT.set(originalGlobal);
             ServerConfig.ENTITY_OVERRIDES.set(originalOverrides);
         }
+        helper.succeed();
+    }
+
+    /**
+     * The config files keep the section names the released 0.8.2 files use, since Forge drops whatever its spec
+     * doesn't name when it corrects a file: renaming a section would reset every value in it to its default
+     * on upgrade. In game: on Forge, open a world made with 0.8.2 whose {@code somegoogly-server.toml} sets
+     * {@code globalPercent = 17}; after loading it with this version the file still says 17 and has gained the
+     * new keys.
+     */
+    public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
+        helper.assertTrue(ServerConfig.SECTION_SERVER.equals("Server Settings")
+                        && ServerConfig.SECTION_BEHAVIORS.equals("Behaviors")
+                        && ServerConfig.SECTION_PICKER.equals("Picker"),
+                "the server config keeps 0.8.2's section names");
+        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), "the client config keeps 0.8.2's section name");
         helper.succeed();
     }
 

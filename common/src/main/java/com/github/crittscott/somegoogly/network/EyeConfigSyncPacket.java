@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- * {@code googlyEyesEnabled} master switch and the ambient settings placed heads schedule from. The server builds it from the installed set and that set's
+ * {@code googlyEyesEnabled} master switch and the behavior settings clients run behaviors from. The server builds it from the installed set and that set's
  * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
  * validated when installed, so writing it to each connection only copies tags. The client decodes and
  * re-validates everything it receives.
@@ -26,7 +26,7 @@ public class EyeConfigSyncPacket implements Payload {
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
     public static final ResourceLocation ID = NetworkHandler.EYE_CONFIG;
 
-    private final AmbientSettings ambient;
+    private final BehaviorSettings behaviors;
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final Map<ResourceLocation, CompoundTag> encoded;
     private final boolean googlyEyesEnabled;
@@ -34,11 +34,11 @@ public class EyeConfigSyncPacket implements Payload {
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
                                Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled,
-                               AmbientSettings ambient) {
+                               BehaviorSettings behaviors) {
         this.configs = configs;
         this.encoded = encoded;
         this.googlyEyesEnabled = googlyEyesEnabled;
-        this.ambient = ambient;
+        this.behaviors = behaviors;
     }
 
     /** Decode and validate a received payload. */
@@ -81,14 +81,14 @@ public class EyeConfigSyncPacket implements Payload {
         this.configs = configs;
         this.encoded = encoded;
         this.googlyEyesEnabled = buffer.readBoolean();
-        this.ambient = AmbientSettings.read(buffer);
+        this.behaviors = BehaviorSettings.read(buffer);
     }
 
     /** The number of bytes a packet carrying {@code encoded} occupies on the wire. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            writeBody(buffer, encoded, false, AmbientSettings.NONE);
+            writeBody(buffer, encoded, false, BehaviorSettings.DEFAULTS);
             return buffer.writerIndex();
         } finally {
             buffer.release();
@@ -96,20 +96,20 @@ public class EyeConfigSyncPacket implements Payload {
     }
 
     private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
-                                  boolean googlyEyesEnabled, AmbientSettings ambient) {
+                                  boolean googlyEyesEnabled, BehaviorSettings behaviors) {
         buffer.writeVarInt(encoded.size());
         for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
         buffer.writeBoolean(googlyEyesEnabled);
-        ambient.write(buffer);
+        behaviors.write(buffer);
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
         int start = buffer.writerIndex();
-        writeBody(buffer, encoded, googlyEyesEnabled, ambient);
+        writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
         int written = buffer.writerIndex() - start;
         if (written > MAX_PAYLOAD_BYTES) {
             throw new EncoderException("Eye config sync payload is " + written
@@ -117,9 +117,9 @@ public class EyeConfigSyncPacket implements Payload {
         }
     }
 
-    /** The server's ambient settings, for placed heads. */
-    public AmbientSettings ambient() {
-        return ambient;
+    /** The server's behavior settings. */
+    public BehaviorSettings behaviors() {
+        return behaviors;
     }
 
     /** The resolved eye definitions, by entity type. */

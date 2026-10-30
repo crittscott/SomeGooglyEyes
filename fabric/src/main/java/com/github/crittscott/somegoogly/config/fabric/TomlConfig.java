@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,22 @@ public final class TomlConfig {
             SomeGooglyCommon.LOGGER.info("Wrote default config file {}", path);
         }
         return parse(Files.readString(path, StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Rewrite the file at {@code path} as {@code rendered} when {@code values}, read from it, lack any of
+     * {@code keys}, as Forge corrects its own config files: {@code rendered} must carry the values just read,
+     * so the file keeps them and gains each missing key at its default, with its comment. Returns whether
+     * the file was rewritten.
+     */
+    public static boolean completeIfMissing(Path path, Map<String, Object> values, Collection<String> keys,
+                                            String rendered) throws IOException {
+        if (values.keySet().containsAll(keys)) {
+            return false;
+        }
+        Files.writeString(path, rendered, StandardCharsets.UTF_8);
+        SomeGooglyCommon.LOGGER.info("Added missing keys to config file {}", path);
+        return true;
     }
 
     /** The boolean at {@code key}, or {@code fallback} when absent or, logged, of another type. */
@@ -111,7 +128,12 @@ public final class TomlConfig {
                 key, expected, value, value.getClass().getSimpleName(), fallback);
     }
 
-    /** Render {@code values} as a TOML array of escaped basic strings, for writing default files. */
+    /** Render a table header for {@code name}, quoting it when it isn't a bare TOML key, as Forge does. */
+    public static String table(String name) {
+        return name.matches("[A-Za-z0-9_-]+") ? "[" + name + "]" : "[\"" + name + "\"]";
+    }
+
+    /** Render {@code values} as a TOML array of escaped basic strings, for writing config files. */
     public static String stringList(List<String> values) {
         StringBuilder result = new StringBuilder("[");
         for (int i = 0; i < values.size(); i++) {

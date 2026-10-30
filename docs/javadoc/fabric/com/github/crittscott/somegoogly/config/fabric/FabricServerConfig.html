@@ -79,8 +79,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
  each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops. One
- <code>SCHEMA</code> list drives both the commented default file and the load; its sections, keys, defaults,
- and comments match the native Forge server spec.</div>
+ <code>SCHEMA</code> list drives the commented file and the load; its sections, keys, defaults, and comments match
+ the native Forge server spec. Like Forge, a file missing any key, such as one from an earlier release, is
+ rewritten with the values it holds and each missing key at its default.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -96,8 +97,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#load(java.nio.file.Path)" class="member-name-link">load</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Load the server config at <code>path</code> into <code>ServerConfig</code>, writing the defaults there if it is absent
+ and adding any keys it lacks.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Load the server config at server start and each <code>/reload</code>, and reset it at server stop.</div>
 </div>
 </div>
@@ -122,6 +129,14 @@ loadScripts(document, 'script');</script>
 <h3>register</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
 <div class="block">Load the server config at server start and each <code>/reload</code>, and reset it at server stop.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="load(java.nio.file.Path)">
+<h3>load</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">load</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</span></div>
+<div class="block">Load the server config at <code>path</code> into <code>ServerConfig</code>, writing the defaults there if it is absent
+ and adding any keys it lacks.</div>
 </section>
 </li>
 </ul>

@@ -17,8 +17,9 @@ import java.util.function.Supplier;
 /**
  * Creates and loads the active world's server TOML when the server starts and again at the start of
  * each {@code /reload}, since Fabric has no config system; values return to defaults when the server stops. One
- * {@link #SCHEMA} list drives both the commented default file and the load; its sections, keys, defaults,
- * and comments match the native Forge server spec.
+ * {@link #SCHEMA} list drives the commented file and the load; its sections, keys, defaults, and comments match
+ * the native Forge server spec. Like Forge, a file missing any key, such as one from an earlier release, is
+ * rewritten with the values it holds and each missing key at its default.
  */
 public final class FabricServerConfig {
 
@@ -65,6 +66,21 @@ public final class FabricServerConfig {
             bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.ANGRY_EYES_KEY,
                     ServerConfig.ANGRY_EYES_COMMENT,
                     ServerConfig.ANGRY_EYES_DEFAULT, ServerConfig.ANGRY_EYES),
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP_KEY,
+                    ServerConfig.SQUINT_ON_SLEEP_COMMENT,
+                    ServerConfig.SQUINT_ON_SLEEP_DEFAULT, ServerConfig.SQUINT_ON_SLEEP),
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_RAM_KEY,
+                    ServerConfig.SQUINT_ON_RAM_COMMENT,
+                    ServerConfig.SQUINT_ON_RAM_DEFAULT, ServerConfig.SQUINT_ON_RAM),
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.WINK_ON_AIM_KEY,
+                    ServerConfig.WINK_ON_AIM_COMMENT,
+                    ServerConfig.WINK_ON_AIM_DEFAULT, ServerConfig.WINK_ON_AIM),
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.RATTLE_ON_SWELL_KEY,
+                    ServerConfig.RATTLE_ON_SWELL_COMMENT,
+                    ServerConfig.RATTLE_ON_SWELL_DEFAULT, ServerConfig.RATTLE_ON_SWELL),
+            bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.PULSE_WHEN_CREEPY_KEY,
+                    ServerConfig.PULSE_WHEN_CREEPY_COMMENT,
+                    ServerConfig.PULSE_WHEN_CREEPY_DEFAULT, ServerConfig.PULSE_WHEN_CREEPY),
             bool(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SWIRL_ON_TRADE_KEY,
                     ServerConfig.SWIRL_ON_TRADE_COMMENT,
                     ServerConfig.SWIRL_ON_TRADE_DEFAULT, ServerConfig.SWIRL_ON_TRADE),
@@ -84,8 +100,6 @@ public final class FabricServerConfig {
                     ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT,
                     ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig.SPAWN_EXCLUDED_ENTITIES));
 
-    private static final String DEFAULTS = render();
-
     private FabricServerConfig() {
     }
 
@@ -98,14 +112,21 @@ public final class FabricServerConfig {
     }
 
     private static void load(MinecraftServer server) {
+        load(server.getWorldPath(LevelResource.ROOT).resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME));
+    }
+
+    /**
+     * Load the server config at {@code path} into {@link ServerConfig}, writing the defaults there if it is absent
+     * and adding any keys it lacks.
+     */
+    public static void load(Path path) {
         ServerConfig.resetDefaults();
-        Path path = server.getWorldPath(LevelResource.ROOT)
-                .resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME);
         try {
-            Map<String, Object> values = TomlConfig.readOrCreate(path, DEFAULTS);
+            Map<String, Object> values = TomlConfig.readOrCreate(path, render());
             for (Entry entry : SCHEMA) {
                 entry.apply().accept(values);
             }
+            TomlConfig.completeIfMissing(path, values, SCHEMA.stream().map(Entry::key).toList(), render());
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Could not load server config {}", path, e);
         }
@@ -119,7 +140,7 @@ public final class FabricServerConfig {
                 if (section != null) {
                     toml.append('\n');
                 }
-                toml.append('[').append(entry.section()).append("]\n");
+                toml.append(TomlConfig.table(entry.section())).append('\n');
                 section = entry.section();
             }
             if (entry.comment() != null) {
@@ -127,31 +148,31 @@ public final class FabricServerConfig {
                     toml.append("# ").append(line).append('\n');
                 }
             }
-            toml.append(entry.key()).append(" = ").append(entry.defaultToml().get()).append('\n');
+            toml.append(entry.key()).append(" = ").append(entry.toml().get()).append('\n');
         }
         return toml.toString();
     }
 
     private static Entry bool(String section, String key, String comment,
                              boolean defaultValue, ConfigValue<Boolean> target) {
-        return new Entry(section, key, comment, () -> String.valueOf(defaultValue),
+        return new Entry(section, key, comment, () -> String.valueOf(target.get()),
                 values -> target.set(TomlConfig.bool(values, key, defaultValue)));
     }
 
     private static Entry integer(String section, String key, String comment,
                                  int defaultValue, ConfigValue<Integer> target) {
-        return new Entry(section, key, comment, () -> String.valueOf(defaultValue),
+        return new Entry(section, key, comment, () -> String.valueOf(target.get()),
                 values -> TomlConfig.assign(target, key, TomlConfig.integer(values, key, defaultValue)));
     }
 
     private static Entry strings(String section, String key, String comment,
                                  List<String> defaultValue, ConfigValue<List<String>> target) {
-        return new Entry(section, key, comment, () -> TomlConfig.stringList(defaultValue),
+        return new Entry(section, key, comment, () -> TomlConfig.stringList(target.get()),
                 values -> TomlConfig.assign(target, key, TomlConfig.strings(values, key, defaultValue)));
     }
 
-    /** One config key: where it lives in the file, how its default renders, and how a load applies it. */
+    /** One config key: where it lives in the file, how its current value renders, and how a load applies it. */
     private record Entry(String section, String key, String comment,
-                         Supplier<String> defaultToml, Consumer<Map<String, Object>> apply) {
+                         Supplier<String> toml, Consumer<Map<String, Object>> apply) {
     }
 }
