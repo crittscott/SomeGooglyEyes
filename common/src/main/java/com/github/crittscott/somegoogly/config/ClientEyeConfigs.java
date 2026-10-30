@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Client-side store of the resolved server eye state, populated from the server via
  * {@code EyeConfigSyncPacket}: the per-entity eye geometry configs, the current
- * {@code googlyEyesEnabled} master switch, and the ambient settings placed heads schedule from. This store also owns the resolved-view cache used by
+ * {@code googlyEyesEnabled} master switch, and the behavior settings clients run behaviors from. This store also owns the resolved-view cache used by
  * renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class ClientEyeConfigs {
 
-    private static volatile AmbientSettings ambient = AmbientSettings.NONE;
+    private static volatile BehaviorSettings behaviors = BehaviorSettings.DEFAULTS;
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
     private static volatile boolean googlyEyesEnabled = true;
@@ -46,9 +46,9 @@ public final class ClientEyeConfigs {
         return configs;
     }
 
-    /** The server's ambient settings, as of the last sync. */
-    public static AmbientSettings ambient() {
-        return ambient;
+    /** The server's behavior settings, as of the last sync. */
+    public static BehaviorSettings behaviors() {
+        return behaviors;
     }
 
     /** The cached view of {@code config}'s {@code variant} for {@code entity}, created on first use. */
@@ -67,7 +67,7 @@ public final class ClientEyeConfigs {
 
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
-        ambient = AmbientSettings.NONE;
+        behaviors = BehaviorSettings.DEFAULTS;
         configs = Collections.emptyMap();
         googlyEyesEnabled = true;
         resolved.clear();
@@ -110,9 +110,9 @@ public final class ClientEyeConfigs {
      * rendering view. The supplied model values become store-owned and must not be mutated afterward.
      */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
-                                  AmbientSettings ambient) {
+                                  BehaviorSettings behaviors) {
         configs = Map.copyOf(next);
-        ClientEyeConfigs.ambient = ambient;
+        ClientEyeConfigs.behaviors = behaviors;
         ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
         resolved.clear();
         SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",

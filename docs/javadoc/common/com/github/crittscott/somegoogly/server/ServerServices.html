@@ -111,7 +111,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)" class="member-name-link">broadcastEyeConfigsIfChanged</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send the current resolved eye definitions, master switch, and ambient settings to every player, but only
+<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
  when any of them differs from what clients last received.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
@@ -140,7 +140,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncEyeConfigs</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send the current resolved eye definitions, master switch, and ambient settings to a joining player.</div>
+<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to a joining player.</div>
 </div>
 </div>
 </div>
@@ -196,14 +196,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="syncEyeConfigs(net.minecraft.server.level.ServerPlayer)">
 <h3>syncEyeConfigs</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">syncEyeConfigs</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Send the current resolved eye definitions, master switch, and ambient settings to a joining player.</div>
+<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to a joining player.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)">
 <h3>broadcastEyeConfigsIfChanged</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">broadcastEyeConfigsIfChanged</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
-<div class="block">Send the current resolved eye definitions, master switch, and ambient settings to every player, but only
+<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
  when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
  apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.</div>
 </section>

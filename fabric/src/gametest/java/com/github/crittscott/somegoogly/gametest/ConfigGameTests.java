@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.config.fabric.FabricServerConfig;
 import com.github.crittscott.somegoogly.config.fabric.TomlConfig;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,6 +24,11 @@ public final class ConfigGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
         ConfigGameTestsLogic.percentForResolvesExactBeforeWildcard(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
+        ConfigGameTestsLogic.configSectionsMatchReleasedFiles(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -112,6 +119,76 @@ public final class ConfigGameTests implements FabricGameTest {
             }
         } catch (IOException e) {
             throw new RuntimeException("TOML round-trip raised an IOException", e);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A server file written by the released 0.8.2 Fabric build loads with every value it holds, and is rewritten
+     * once with the keys it lacks at their defaults, keeping those values; a complete file is left alone. In
+     * game: on Fabric, open a world made with 0.8.2 whose {@code somegoogly-server.toml} sets
+     * {@code globalPercent = 17}; after loading it with this version the file still says 17 and has gained the
+     * new keys, such as {@code squintOnSleep = true}.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void releasedServerTomlKeepsItsValues(GameTestHelper helper) {
+        String released = """
+                [Server Settings]
+                googlyEyesEnabled = true
+                globalPercent = 17
+                harvestOnKillPercent = 25
+                # Per-entity eye chances, one entry per line as "entity-pattern,percent" (percent 0-100).
+                entityOverrides = ["minecraft:zombie,100"]
+
+                [Behaviors]
+                ambientBehaviors = true
+                ambientMinTicks = 150
+                ambientMaxTicks = 400
+                ambientBehaviorPool = ["somegoogly:blink", "somegoogly:stare"]
+                growOnHitPercent = 20
+                swirlOnTrade = false
+                swirlOnHeal = true
+                swirlHealCooldownTicks = 200
+
+                [Picker]
+                allowSpawnAll = false
+                """;
+        try {
+            Path dir = Files.createTempDirectory("somegoogly-toml-test");
+            Path file = dir.resolve("server.toml");
+            try {
+                Files.writeString(file, released);
+                FabricServerConfig.load(file);
+                helper.assertTrue(ServerConfig.GLOBAL_PERCENT.get() == 17
+                                && ServerConfig.ENTITY_OVERRIDES.get().equals(List.of("minecraft:zombie,100"))
+                                && ServerConfig.AMBIENT_MIN_TICKS.get() == 150
+                                && ServerConfig.AMBIENT_BEHAVIOR_POOL.get()
+                                        .equals(List.of("somegoogly:blink", "somegoogly:stare"))
+                                && !ServerConfig.SWIRL_ON_TRADE.get(),
+                        "every released value loads");
+                helper.assertTrue(ServerConfig.SQUINT_ON_SLEEP.get() && ServerConfig.GROW_ON_MILK.get(),
+                        "keys the released file lacks take their defaults");
+
+                String completed = Files.readString(file);
+                helper.assertTrue(completed.contains("globalPercent = 17")
+                                && completed.contains("ambientMinTicks = 150")
+                                && completed.contains("swirlOnTrade = false")
+                                && completed.contains("\"minecraft:zombie,100\""),
+                        "the rewritten file keeps the released values");
+                helper.assertTrue(completed.contains("squintOnSleep = true")
+                                && completed.contains("[\"Server Settings\"]"),
+                        "the rewritten file gains the missing keys under the released sections");
+
+                FabricServerConfig.load(file);
+                helper.assertTrue(Files.readString(file).equals(completed), "a complete file is left alone");
+                helper.assertTrue(ServerConfig.GLOBAL_PERCENT.get() == 17, "the completed file loads the same values");
+            } finally {
+                ServerConfig.resetDefaults();
+                Files.deleteIfExists(file);
+                Files.deleteIfExists(dir);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Released TOML load raised an IOException", e);
         }
         helper.succeed();
     }

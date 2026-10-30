@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 /** Client-local rendering preferences shared across loaders. */
 public final class ClientConfig {
 
-    // TOML file and section names, shared by every loader's client config.
+    // TOML file and section names, shared by every loader's client config. The section name is the one the
+    // released 0.8.2 file uses, so an existing file keeps its values when Forge or NeoForge corrects it.
     public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-client.toml";
-    public static final String SECTION = "client";
+    public static final String SECTION = "Client Settings";
 
     public static final String DISABLE_GOOGLY_EYES_KEY = "disableGooglyEyes";
     public static final boolean DISABLE_GOOGLY_EYES_DEFAULT = false;

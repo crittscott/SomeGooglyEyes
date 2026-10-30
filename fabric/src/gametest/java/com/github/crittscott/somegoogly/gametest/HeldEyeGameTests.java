@@ -18,6 +18,11 @@ public final class HeldEyeGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE)
+    public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper);
+    }
+
+    @GameTest(template = TEMPLATE)
     public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper);
     }

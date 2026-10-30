@@ -62,6 +62,11 @@ public class ConfigValue<T> {
         };
     }
 
+    /** The (already normalized) factory default. */
+    public T defaultValue() {
+        return defaultValue;
+    }
+
     /** The current normalized value. */
     public T get() {
         return value;

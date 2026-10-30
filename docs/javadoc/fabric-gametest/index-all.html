@@ -202,11 +202,19 @@ loadScripts(document, 'script');</script>
  gametest server — the manual <code>somegoogly-test-datapack</code> is not mounted here), the reload
  listener's exact Minecraft-version selection, and the pure <code>ServerConfig.percentFor(net.minecraft.resources.ResourceLocation)</code> resolution.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSectionsMatchReleasedFiles(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSectionsMatchReleasedFiles(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
+<dd>
+<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
+ doesn't name when they correct a file: renaming a section would reset every value in it to its default
+ on upgrade.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The eye-definition sync survives the wire, ambient settings included.</div>
+<div class="block">The eye-definition sync survives the wire, behavior settings included.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -569,7 +577,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeBulgesWhenHurt(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye bulges when its holder is hurt.</div>
+<div class="block">A held eye bulges when its holder is hurt, at the server's <code>growOnHitPercent</code>; here it is 100.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -582,11 +590,20 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Coverage for <code>HeldEye</code>, the live eye a player sees in first person while holding a Googly Eye.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeHonorsServerSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeHonorsServerSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A held eye follows the server's switches: with <code>growOnHitPercent</code> at 0 being hurt plays nothing,
+ with <code>swirlOnHeal</code> off healing plays nothing, and with <code>ambientBehaviors</code> off it never
+ plays an idle expression.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyePlaysIdleBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyePlaysIdleBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye left alone winks, stares, or glances aside now and then, and never crosses.</div>
+<div class="block">A held eye left alone plays an expression from the server's ambient pool now and then, and never
+ crosses.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeResetsWhenPutAway(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -599,8 +616,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeSwirlsWhenHealed(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye swirls when its holder heals, at most once per <code>HeldEye.HEAL_COOLDOWN_TICKS</code>, and a
- heal while something else plays is dropped.</div>
+<div class="block">A held eye swirls when its holder heals, at most once per <code>swirlHealCooldownTicks</code>, and a heal while
+ something else plays is dropped.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeWinksAlone(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -830,6 +847,11 @@ loadScripts(document, 'script');</script>
    <code>eye_modifier</code> — one googly eye plus one recognized modifier transforms the eye's
        <code>AppearanceOverride</code>.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#releasedServerTomlKeepsItsValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">releasedServerTomlKeepsItsValues(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dd>
+<div class="block">A server file written by the released 0.8.2 Fabric build loads with every value it holds, and is rewritten
+ once with the keys it lacks at their defaults, keeping those values; a complete file is left alone.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
@@ -1057,6 +1079,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
  rest they hang still.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchedOffOngoingBehaviorsStayNeutral(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchedOffOngoingBehaviorsStayNeutral(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
+<dd>
+<div class="block">Each ongoing behavior stays neutral while its server switch is off, and a sleeping mob still plays no
+ expression with its squint off.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerFreezeGameTests.html#switchingMobsReleasesThePreviousOne(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchingMobsReleasesThePreviousOne(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerFreezeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerFreezeGameTests</a></dt>
 <dd>&nbsp;</dd>

@@ -32,7 +32,7 @@ The server owns gameplay, definitions, and authorization; the client owns render
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge copy native CLIENT/SERVER specs in on load and reload, restoring defaults on SERVER unload. Fabric's own `TomlConfig` reads both files, the server file at start and each `/reload`, resetting on stop.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric's own `TomlConfig` reads both files, the server file at start and each `/reload`, resetting on stop. Fabric, like the native specs, fills in missing keys; sections keep 0.8.2's names.
 
 Server config keys have the same order across loaders.
 
@@ -60,11 +60,11 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-The `EyeBehavior` enum is the catalog. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. `GooglyTracker` derives villager eyelids, the sleep, ram, and aiming squints, creeper rattle, red pupils, and enderman pulse from synced state; only sleep blocks behaviors. `HeldEye` plays the held item's idle, hurt, and heal behaviors; nothing is sent. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced `AmbientSettings` mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change and to new viewers of eyed mobs. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities and heads (by position, rebuilt when their snapshot changes). Entity unload and level replacement remove trackers and anger; renderer resets keep it.
+`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` plays the held item's idle, hurt, and heal behaviors per the synced `BehaviorSettings`. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change and to new viewers of eyed mobs. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities and heads (by position, rebuilt when their snapshot changes). Entity unload and level replacement remove trackers and anger; renderer resets keep it.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each rebuild; GeckoLib renderers get theirs from its `CompileRenderLayers` event. `LayerGooglyEyes` must precede the slime outer layer; both draw the picker preview. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches views per age and variant. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` every simulated one; `ClientLifecycle` ticks `HeldEye`, drawn live in first person only; `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
+`ClientRenderLayers` installs `LayerGooglyEyes` on every living renderer, duplicate-safe, after each rebuild; GeckoLib renderers get theirs from its `CompileRenderLayers` event. `LayerGooglyEyes` must precede the slime outer layer; both draw the picker preview. Layers see only render states, so common Mixins (`somegoogly-common.mixins.json`, all loaders) store each entity's `EyeRenderData` decision on `LivingEntityRenderState` during extraction; the GeckoLib layer takes it in `preRender`. `ClientEyeConfigs` caches views. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` every simulated one; `ClientLifecycle` ticks `HeldEye`, drawn live in first person only; `EyePlacement.orientation` is the one eye rotation, for rendering and pupil-plane projection.
 
 Attachment resolvers cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` transforms first. `RootModelResolver` walks `EntityModel.root()` and follows the reflected Citadel, Uranus, and LLibrary resolvers. Baby models are separate scaled instances; the picker picks an `AgeableMobRenderer`'s by age.
 
@@ -78,9 +78,9 @@ Item definitions in `assets/somegoogly/items/` select special model renderer `Go
 
 ## Networking
 
-Six `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `16`; any incompatible wire change requires bumping it. Forge and NeoForge require a native channel version; Fabric disconnects, during configuration, a client that can't receive its `Handshake`.
+Six `CustomPacketPayload` classes: eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Their ids, in `NetworkHandler`, embed network version `17`; bump it on wire changes. Forge and NeoForge require a native channel version; Fabric disconnects a client that can't receive its `Handshake`.
 
-The eye-definition packet also carries `googlyEyesEnabled` and `AmbientSettings`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set, switch, or ambient settings changed, since it resets client trackers.
+The eye-definition packet also carries `googlyEyesEnabled` and `BehaviorSettings`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set, switch, or behavior settings changed, since it resets client trackers.
 
 Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
 
@@ -102,7 +102,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-`common/src/gametest/java` holds 120 shared tests, with persistence; each loader wraps all but one head-drop test, and Fabric adds 4 migration and TOML tests. Required-client rejection, server commands, picker gating, self-shear damage, protection ordering, anger delivery, and real-save migration are manual.
+`common/src/gametest/java` holds 123 shared tests, with persistence; each loader wraps all but one head-drop test, and Fabric adds 5 migration and TOML tests. Required-client rejection, server commands, picker gating, self-shear damage, protection ordering, anger delivery, and real-save migration are manual.
 
 ## Operational boundaries
 

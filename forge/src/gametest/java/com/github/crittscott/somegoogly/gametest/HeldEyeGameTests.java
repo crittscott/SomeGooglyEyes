@@ -23,6 +23,11 @@ public final class HeldEyeGameTests {
     }
 
     @GameTest(template = TEMPLATE)
+    public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper);
+    }
+
+    @GameTest(template = TEMPLATE)
     public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper);
     }

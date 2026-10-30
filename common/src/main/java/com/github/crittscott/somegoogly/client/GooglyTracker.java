@@ -2,8 +2,10 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.SharedConstants;
@@ -12,16 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.animal.goat.Goat;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ProjectileWeaponItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,23 +24,17 @@ import javax.annotation.Nullable;
  * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
  *
  * <p>One tracker is kept per tracked {@link LivingEntity} (see {@link ClientEyeRuntime}), matched
- * against the entity's current placement via {@link #matches}. {@link #update()} advances the active
+ * against the entity's current placement via {@link #matches}. {@link #update} advances the active
  * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
  * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
  *
- * <p>While the entity sleeps ({@link LivingEntity#isSleeping}, synced by vanilla to every viewer) no new
- * behavior starts, and its eyes ease into a squint, or, for a villager, its eyelids close to a slit;
- * nothing about sleep crosses the mod's own network. A goat
- * lowering its head to ram ({@link Goat#getRammingXHeadRot}, set by vanilla's ram entity events) squints the
- * same way but still plays behaviors. A skeleton drawing its bow, or a player drawing a bow
- * ({@link LivingEntity#getUseItem}, synced by vanilla), closes the eye away from the arm holding it. A
- * swelling creeper
- * ({@link Creeper#getSwelling}, also synced by vanilla) agitates its pupils, which keep getting kicked back
- * into flight in proportion to how far the swell has gone. An aggressive mob
- * ({@link Mob#isAggressive}, synced by vanilla) or one the server reports {@link #angry} has its pupils
- * eased to red, and a creepy enderman ({@link EnderMan#isCreepy}, synced by vanilla) has its pupils pulse
- * at a frequency of its own. None of these ongoing states blocks a behavior: each is folded in on top of
- * whatever plays.
+ * <p>Each tick also folds in the {@link OngoingBehavior}s whose server switches are on, easing each one in or
+ * out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a slit; the ramming
+ * goat's squint; the archer's one-eyed aim, closing the eye away from the arm holding the weapon; the swelling
+ * creeper's rattle, kicking its pupils back into flight in proportion to the swell; red pupils for an attacking
+ * mob or one the server reports {@link #angry}; and the creepy enderman's pupil pulse, at a frequency of its
+ * own. None of these blocks a behavior: each sits on top of whatever plays. A sleeping entity starts no new
+ * behavior whether or not its squint is on.
  */
 public class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
@@ -100,7 +87,7 @@ public class GooglyTracker {
      */
     public int lastRenderTick;
 
-    /** The entity's position change over the last {@link #update()}. */
+    /** The entity's position change over the last {@link #update}. */
     public double motionX, motionY, motionZ;
 
     private double prevX, prevY, prevZ;
@@ -151,9 +138,11 @@ public class GooglyTracker {
 
     /**
      * Build the tracker. {@code angry} is the server-reported anger already known for this entity, so a
-     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded.
+     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded;
+     * {@code settings} says which ongoing behaviors are on.
      */
-    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper, boolean angry) {
+    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper, boolean angry,
+                         @Nonnull BehaviorSettings settings) {
         this.parent = parent;
         this.helper = helper;
         this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
@@ -193,12 +182,12 @@ public class GooglyTracker {
         this.prevY = parent.getY();
         this.prevZ = parent.getZ();
         // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
-        this.squint = isSquinting() ? 1F : 0F;
-        this.lid = isLidded() ? 1F : 0F;
-        this.aim = isAiming() ? 1F : 0F;
-        this.anger = isAngry() ? 1F : 0F;
-        this.creepiness = isCreepy() ? 1F : 0F;
-        update();
+        this.squint = isSquinting(settings) ? 1F : 0F;
+        this.lid = isLidded(settings) ? 1F : 0F;
+        this.aim = level(OngoingBehavior.AIM_WINK, settings);
+        this.anger = isAngry(settings) ? 1F : 0F;
+        this.creepiness = level(OngoingBehavior.CREEPY_PULSE, settings);
+        update(settings);
         for (EyeInfo[] head : eyes) {
             for (EyeInfo info : head) {
                 info.prevSquashY = info.squashY;
@@ -499,8 +488,11 @@ public class GooglyTracker {
         return true;
     }
 
-    /** Advance one client tick: sample the entity's motion, age the active behavior, and step every eye. */
-    public void update() {
+    /**
+     * Advance one client tick: sample the entity's motion, age the active behavior, and step every eye, with
+     * the ongoing behaviors {@code settings} switches on folded in.
+     */
+    public void update(BehaviorSettings settings) {
         motionX = parent.getX() - prevX;
         motionY = parent.getY() - prevY;
         motionZ = parent.getZ() - prevZ;
@@ -520,29 +512,28 @@ public class GooglyTracker {
 
         // Ease toward the squint or back out. A behavior playing under it (one already playing when sleep
         // begins, or any while a goat rams) multiplies with it in squashY.
-        squint = ease(squint, isSquinting(), SLEEP_EASE_TICKS);
+        squint = ease(squint, isSquinting(settings), SLEEP_EASE_TICKS);
         float squintSquash = Mth.lerp(squint, 1F, SLEEP_SQUASH_Y);
         // A sleeping villager lowers its lids instead, leaving its eyes their full shape behind them.
-        lid = ease(lid, isLidded(), SLEEP_LID_EASE_TICKS);
+        lid = ease(lid, isLidded(settings), SLEEP_LID_EASE_TICKS);
         float lidCoverage = lid * SLEEP_LID_COVERAGE;
 
         // Aiming closes only the eye opposite the arm holding the weapon, sighting along it with the other,
         // and multiplies with the squint and any behavior the same way.
-        aim = ease(aim, isAiming(), AIM_EASE_TICKS);
+        aim = ease(aim, level(OngoingBehavior.AIM_WINK, settings) > 0F, AIM_EASE_TICKS);
         float aimSquash = Mth.lerp(aim, 1F, AIM_SQUASH_Y);
         HumanoidArm weaponArm = parent.getUsedItemHand() == InteractionHand.MAIN_HAND
                 ? parent.getMainArm() : parent.getMainArm().getOpposite();
         int[] aimClosedEye = weaponArm == HumanoidArm.RIGHT ? leftEye : rightEye;
 
         // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
-        anger = ease(anger, isAngry(), ANGER_EASE_TICKS);
-        creepiness = ease(creepiness, isCreepy(), CREEPY_EASE_TICKS);
+        anger = ease(anger, isAngry(settings), ANGER_EASE_TICKS);
+        creepiness = ease(creepiness, level(OngoingBehavior.CREEPY_PULSE, settings) > 0F, CREEPY_EASE_TICKS);
         creepyPhase = (creepyPhase + creepyStep) % Mth.TWO_PI;
         float creepyAmplitude = CREEPY_PULSE_AMPLITUDE * creepiness;
 
-        // A swelling creeper's pupils rattle harder the closer it is to exploding. getSwelling runs a little
-        // past 1 at the end of the fuse.
-        float agitation = parent instanceof Creeper creeper ? Math.min(1F, creeper.getSwelling(1F)) : 0F;
+        // A swelling creeper's pupils rattle harder the closer it is to exploding.
+        float agitation = level(OngoingBehavior.SWELL_RATTLE, settings);
 
         float headYaw = parent.getYHeadRot();
         float headPitch = parent.getXRot();
@@ -567,40 +558,31 @@ public class GooglyTracker {
         }
     }
 
-    /** Whether the pupils should be red: the mob is attacking (vanilla-synced) or the server says it's angry. */
-    private boolean isAngry() {
-        return angry || parent instanceof Mob mob && mob.isAggressive();
+    /**
+     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
+     * says it's angry.
+     */
+    private boolean isAngry(BehaviorSettings settings) {
+        return settings.enabled(OngoingBehavior.ANGER) && (angry || OngoingBehavior.ANGER.level(parent) > 0F);
     }
 
-    /** Whether the eyelids should be closed: the entity is a sleeping villager. */
-    private boolean isLidded() {
-        return parent instanceof Villager && parent.isSleeping();
+    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
+    private boolean isLidded(BehaviorSettings settings) {
+        return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
     }
 
     /**
      * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
-     * lowered to ram.
+     * lowered to ram, each while its switch is on.
      */
-    private boolean isSquinting() {
-        return parent.isSleeping() && !isLidded()
-                || parent instanceof Goat goat && goat.getRammingXHeadRot() > 0F;
+    private boolean isSquinting(BehaviorSettings settings) {
+        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
+                || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
     }
 
-    /**
-     * Whether the entity is a skeleton drawing a bow or other ranged weapon, or a player drawing a bow. A
-     * player's crossbow doesn't count: charging it is item use, but aiming it once loaded is not.
-     */
-    private boolean isAiming() {
-        if (!parent.isUsingItem()) {
-            return false;
-        }
-        Item weapon = parent.getUseItem().getItem();
-        return parent instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
-                || parent instanceof Player && weapon instanceof BowItem;
-    }
-
-    private boolean isCreepy() {
-        return parent instanceof EnderMan enderMan && enderMan.isCreepy();
+    /** How strongly {@code behavior} applies to this entity now, or 0 while its switch is off. */
+    private float level(OngoingBehavior behavior, BehaviorSettings settings) {
+        return settings.enabled(behavior) ? behavior.level(parent) : 0F;
     }
 
     /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */

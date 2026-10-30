@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -60,7 +60,7 @@ public final class ClientEyeRuntime {
     public static GooglyTracker get(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker == null || !tracker.matches(helper)) {
-            tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()));
+            tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()), ClientEyeConfigs.behaviors());
             TRACKERS.put(living, tracker);
         }
         return tracker;
@@ -128,7 +128,7 @@ public final class ClientEyeRuntime {
             return;
         }
         ClientLevel level = Minecraft.getInstance().level;
-        AmbientSettings ambient = ClientEyeConfigs.ambient();
+        BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         Iterator<Map.Entry<BlockPos, SkullEyes>> skulls = SKULLS.entrySet().iterator();
         while (skulls.hasNext()) {
             Map.Entry<BlockPos, SkullEyes> entry = skulls.next();
@@ -139,7 +139,7 @@ public final class ClientEyeRuntime {
                     || !SkullEyeState.snapshot(skull).equals(eyes.snapshot)) {
                 skulls.remove();
             } else if (idle <= SIMULATE_IDLE_TICKS) {
-                eyes.tick(level.getGameTime(), ambient);
+                eyes.tick(level.getGameTime(), behaviors);
             }
         }
         Iterator<Map.Entry<LivingEntity, GooglyTracker>> iterator = TRACKERS.entrySet().iterator();
@@ -149,7 +149,7 @@ public final class ClientEyeRuntime {
             if (idle > EVICT_IDLE_TICKS) {
                 iterator.remove();
             } else if (idle <= SIMULATE_IDLE_TICKS) {
-                tracker.update();
+                tracker.update(behaviors);
             }
         }
     }

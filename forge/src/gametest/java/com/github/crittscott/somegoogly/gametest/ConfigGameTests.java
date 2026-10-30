@@ -23,6 +23,11 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
+        ConfigGameTestsLogic.configSectionsMatchReleasedFiles(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
         ConfigGameTestsLogic.spawnAllDefaultsOff(helper);
     }

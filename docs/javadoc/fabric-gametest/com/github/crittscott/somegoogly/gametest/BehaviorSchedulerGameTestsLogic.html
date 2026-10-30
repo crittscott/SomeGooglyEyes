@@ -99,7 +99,8 @@ loadScripts(document, 'script');</script>
  rolls are what's under test. The sleeping villager's lids, which the client derives from vanilla's synced sleep
  state, is covered here too, since sleep is the one state that blocks the schedule, and so is the
  swelling creeper's rattle, derived the same way from vanilla's synced swell, the ramming goat's squint,
- the aiming archer's and player's one-eyed squint, the angry red pupils, and the creepy enderman's pulse. The
+ the aiming archer's and player's one-eyed squint, the angry red pupils, and the creepy enderman's pulse, each
+ also with its server switch off. The
  mid-effect start-tracking catch-up packet and the anger packet need a connected client and stay
  source-verified.</div>
 </section>
@@ -224,6 +225,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
  rest they hang still.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchedOffOngoingBehaviorsStayNeutral</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Each ongoing behavior stays neutral while its server switch is off, and a sleeping mob still plays no
+ expression with its squint off.</div>
 </div>
 </div>
 </div>
@@ -424,6 +431,21 @@ loadScripts(document, 'script');</script>
  randomness, measuring calm motion only after settling. Agitation comes from vanilla's synced swell;
  the swell is reversed well before the fuse runs out. In game: walk up to an eyed creeper until it hisses, then
  back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>switchedOffOngoingBehaviorsStayNeutral</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">switchedOffOngoingBehaviorsStayNeutral</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Each ongoing behavior stays neutral while its server switch is off, and a sleeping mob still plays no
+ expression with its squint off. Drives the client-side <code>GooglyTracker</code> directly with settings that
+ switch one behavior off at a time, against the same vanilla states the "on" tests use. In game, with
+ each key set to <code>false</code> in <code>somegoogly-server.toml</code>: with <code>squintOnSleep</code>, a sleeping
+ eyed villager shows no lids and a sleeping player with a Slimy Eye keeps their eyes open; with
+ <code>squintOnRam</code>, a charging eyed goat keeps its eyes open; with <code>winkOnAim</code>, an eyed skeleton
+ drawing its bow keeps both eyes open; with <code>rattleOnSwell</code>, a hissing eyed creeper's pupils hang
+ still; with <code>pulseWhenCreepy</code>, a screaming eyed enderman's pupils hold their size; with
+ <code>angryEyes</code>, an eyed zombie chasing you keeps its pupil color.</div>
 </section>
 </li>
 </ul>

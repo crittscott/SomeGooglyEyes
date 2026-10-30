@@ -105,4 +105,8 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.swellingCreeperRattles(helper);
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.switchedOffOngoingBehaviorsStayNeutral(helper);
+    }
 }

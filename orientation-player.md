@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye held in first person is live: its pupil moves, and it sometimes winks, stares, or glances aside; it bulges when you're hurt and swirls when you heal. Other views show it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
+A Googly Eye held in first person is live: its pupil moves, and it plays idle, hurt (bulge), and heal (swirl) expressions under the server's expression settings. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
 Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
@@ -95,7 +95,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric's reader accepts basic and literal strings, logging any value it cannot read.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away.
 
 ### Spawn and harvest
 
@@ -118,7 +118,7 @@ entityOverrides = [
 ]
 ```
 
-### Expressions
+### Behaviors
 
 | Key | Default | Effect |
 | --- | --- | --- |
@@ -130,12 +130,17 @@ entityOverrides = [
 | `growOnMilk` | `true` | Bulge after milking |
 | `growOnShear` | `true` | Bulge after shearing |
 | `loveOnAffection` | `true` | Love after an affection event |
-| `angryEyes` | `true` | Red pupils for angry, not attacking, mobs |
+| `angryEyes` | `true` | Red pupils for attacking or angry mobs |
+| `squintOnSleep` | `true` | Sleep squint; villager lids |
+| `squintOnRam` | `true` | Ramming goat squint |
+| `winkOnAim` | `true` | One-eyed bow aim |
+| `rattleOnSwell` | `true` | Creeper rattle |
+| `pulseWhenCreepy` | `true` | Enderman pulse |
 | `swirlOnTrade` | `true` | Swirl after a trade |
 | `swirlOnHeal` | `true` | Swirl after healing |
 | `swirlHealCooldownTicks` | `200` | Delay between healing swirls |
 
-Behavior IDs use the `somegoogly:` namespace. Available behaviors are `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, and `color_change`.
+Expression IDs (`somegoogly:`): `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, `color_change`.
 
 `allowSpawnAll` (default `false`) gates `/sg spawnall`; use it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) can corrupt one. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and ids that `/sg spawn` and `/sg spawnall` skip.
 
@@ -169,7 +174,7 @@ Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Adventu
 
 The 78 bundled Minecraft definitions all select 1.21.4 and are enabled, including the player and armor stand. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
-Resource packs can replace eye textures and item models. The mod has no JEI plugin; the Slimy Eye recipe is normally discoverable, but the dynamic modifier recipe may not display usefully.
+Resource packs can replace eye textures and item models.
 
 ## Creative eye picker
 
@@ -236,5 +241,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 123 dedicated-server GameTests; NeoForge and Forge each contain 119. Physical checks cover production artifacts, models and resolvers, animations, item rendering, harvesting/application, head eyes, picker export, reloads, GeckoLib, the master switch, and migrating a real 1.21.1 save.
+- Fabric contains 127 dedicated-server GameTests; NeoForge and Forge each contain 122. Physical checks cover production artifacts, models and resolvers, animations, item rendering, harvesting/application, head eyes, picker export, reloads, GeckoLib, the master switch, and migrating a real 1.21.1 save.
 - The dynamic modifier recipe may not display in recipe viewers.

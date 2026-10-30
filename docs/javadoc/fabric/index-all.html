@@ -90,6 +90,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/fabric/package-summary.html">com.github.crittscott.somegoogly.server.fabric</a> - package com.github.crittscott.somegoogly.server.fabric</dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#completeIfMissing(java.nio.file.Path,java.util.Map,java.util.Collection,java.lang.String)" class="member-name-link">completeIfMissing(Path, Map&lt;String, Object&gt;, Collection&lt;String&gt;, String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dd>
+<div class="block">Rewrite the file at <code>path</code> as <code>rendered</code> when <code>values</code>, read from it, lack any of
+ <code>keys</code>, as Forge and NeoForge correct their own config files: <code>rendered</code> must carry the values just read,
+ so the file keeps them and gains each missing key at its default, with its comment.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
@@ -188,6 +194,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/FabricClientConfig.html#load()" class="member-name-link">load()</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/FabricClientConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricClientConfig</a></dt>
 <dd>
 <div class="block">Read <code>config/somegoogly-client.toml</code>, writing it with defaults if absent, into <code>ClientConfig</code>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html#load(java.nio.file.Path)" class="member-name-link">load(Path)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></dt>
+<dd>
+<div class="block">Load the server config at <code>path</code> into <code>ServerConfig</code>, writing the defaults there if it is absent
+ and adding any keys it lacks.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
@@ -292,7 +303,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#stringList(java.util.List)" class="member-name-link">stringList(List&lt;String&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
-<div class="block">Render <code>values</code> as a TOML array of escaped basic strings, for writing default files.</div>
+<div class="block">Render <code>values</code> as a TOML array of escaped basic strings, for writing config files.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#strings(java.util.Map,java.lang.String,java.util.List)" class="member-name-link">strings(Map&lt;String, Object&gt;, String, List&lt;String&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
@@ -301,6 +312,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:T">T</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#table(java.lang.String)" class="member-name-link">table(String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dd>
+<div class="block">Render a table header for <code>name</code>, quoting it when it isn't a bare TOML key, as Forge does.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a> - Class in <a href="com/github/crittscott/somegoogly/config/fabric/package-summary.html">com.github.crittscott.somegoogly.config.fabric</a></dt>
 <dd>
 <div class="block">Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files.</div>

@@ -24,7 +24,7 @@ public final class ClientNetworkHandler {
 
     /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
     public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
-        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled(), packet.ambient());
+        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled(), packet.behaviors());
         ClientEyeRuntime.clear();
     }
 

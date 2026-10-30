@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -8,27 +10,23 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The live eye a player holds: one {@link GooglyTracker.EyeInfo} pupil, stepped with the same physics as
  * mob eyes from the holder's look and position deltas, plus the behaviors it plays. Only the holder sees
  * it, in first person, so its behaviors start on the holder's own client: now and then it winks, stares, or
- * glances aside; it bulges when the holder is hurt ({@link LivingEntity#hurtTime}, set by vanilla's damage
- * event) and swirls when the holder heals. One behavior plays at a time, as on a mob. Cross-eye, which
- * needs a partner eye, and the ongoing mob states (squints, lids, anger, pulse, rattle) don't apply.
+ * glances aside, from the server's ambient pool; it may bulge when the holder is hurt ({@link LivingEntity#hurtTime},
+ * set by vanilla's damage event), at the server's {@code growOnHitPercent}; and it swirls when the holder heals,
+ * under the server's {@code swirlOnHeal} and its cooldown. All of these come from the synced
+ * {@link BehaviorSettings}. One behavior plays at a time, as on a mob. Cross-eye, which needs a partner eye, and
+ * the ongoing behaviors don't apply.
  *
  * <p>It steps only while the holder holds a Googly Eye, and starts at rest, with nothing playing, each time
  * one is picked up or the holder changes.
  */
 public final class HeldEye {
-
-    /** Longest and shortest idle wait between behaviors, in ticks; the server's ambient defaults. */
-    public static final int AMBIENT_MAX_TICKS = 800;
-    public static final int AMBIENT_MIN_TICKS = 200;
-    /** Pool the idle timer picks from. */
-    private static final EyeBehavior[] AMBIENT_POOL = {EyeBehavior.BLINK, EyeBehavior.SIDE_EYE, EyeBehavior.STARE};
-    /** Ticks after a heal swirl before healing can swirl again; the server's heal-swirl default. */
-    public static final int HEAL_COOLDOWN_TICKS = 200;
 
     /** The behavior playing, or {@code null}. */
     @Nullable
@@ -61,21 +59,17 @@ public final class HeldEye {
                 || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
     }
 
-    private void begin(LivingEntity holder) {
+    private void begin(LivingEntity holder, BehaviorSettings settings) {
         this.holder = holder;
         eye = new GooglyTracker.EyeInfo();
         active = null;
-        ambientCountdown = nextAmbientDelay();
+        ambientCountdown = settings.nextAmbientTicks(rand);
         healCooldown = 0;
         prevHealth = holder.getHealth();
         prevHurt = holder.hurtTime > 0;
         prevX = holder.getX();
         prevY = holder.getY();
         prevZ = holder.getZ();
-    }
-
-    private int nextAmbientDelay() {
-        return AMBIENT_MIN_TICKS + rand.nextInt(AMBIENT_MAX_TICKS - AMBIENT_MIN_TICKS + 1);
     }
 
     /** Drop the eye and anything playing on it. */
@@ -100,17 +94,32 @@ public final class HeldEye {
     }
 
     /**
-     * Advance one tick for {@code holder}, or reset when there is none or it holds no Googly Eye: age the
-     * active behavior, start any behavior this tick's hurt, heal, or idle timer calls for, and step the
-     * pupil with the behavior folded in.
+     * Start one of the server's ambient expressions, if ambient play is on; the pool's cross-eye is skipped,
+     * since a lone eye has no partner to cross toward.
      */
-    public void tick(@Nullable LivingEntity holder) {
+    private void startAmbient(BehaviorSettings settings) {
+        if (!settings.ambient()) {
+            return;
+        }
+        List<EyeBehavior> pool = new ArrayList<>(settings.pool());
+        pool.remove(EyeBehavior.CROSS_EYE);
+        if (!pool.isEmpty()) {
+            start(pool.get(rand.nextInt(pool.size())));
+        }
+    }
+
+    /**
+     * Advance one tick for {@code holder}, or reset when there is none or it holds no Googly Eye: age the
+     * active behavior, start any behavior this tick's hurt, heal, or idle timer calls for under
+     * {@code settings}, and step the pupil with the behavior folded in.
+     */
+    public void tick(@Nullable LivingEntity holder, BehaviorSettings settings) {
         if (holder == null || !holdsGooglyEye(holder)) {
             reset();
             return;
         }
         if (eye == null || holder != this.holder) {
-            begin(holder);
+            begin(holder, settings);
         }
 
         // Retire a finished behavior first, so this tick's triggers can start the next one.
@@ -127,16 +136,19 @@ public final class HeldEye {
         boolean hurt = holder.hurtTime > 0;
         float health = holder.getHealth();
         if (hurt && !prevHurt) {
-            start(EyeBehavior.GROW);
-        } else if (health > prevHealth && healCooldown == 0 && start(EyeBehavior.SWIRL)) {
+            if (rand.nextInt(ServerConfig.PERCENT_MAX) < settings.growOnHitPercent()) {
+                start(EyeBehavior.GROW);
+            }
+        } else if (health > prevHealth && settings.swirlOnHeal() && healCooldown == 0
+                && start(EyeBehavior.SWIRL)) {
             // Armed only on an actual start, so a heal while busy doesn't cost the next one its swirl.
-            healCooldown = HEAL_COOLDOWN_TICKS;
+            healCooldown = settings.swirlHealCooldownTicks();
         }
         prevHurt = hurt;
         prevHealth = health;
         if (--ambientCountdown <= 0) {
-            start(AMBIENT_POOL[rand.nextInt(AMBIENT_POOL.length)]);
-            ambientCountdown = nextAmbientDelay();
+            startAmbient(settings);
+            ambientCountdown = settings.nextAmbientTicks(rand);
         }
 
         double mx = holder.getX() - prevX;

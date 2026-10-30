@@ -97,7 +97,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">EyeBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span></div>
-<div class="block">The eight named eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id. These are
+<div class="block">The eight named one-shot eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id; the
+ behaviors that last as long as a mob stays in some state are the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s. These are
  code-defined client animations, and both sides only need the ids to agree: the server names a
  behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
  a <a href="BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a>.

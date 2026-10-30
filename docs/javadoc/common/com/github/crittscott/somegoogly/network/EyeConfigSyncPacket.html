@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
 <div class="block">Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- <code>googlyEyesEnabled</code> master switch and the ambient settings placed heads schedule from. The server builds it from the installed set and that set's
+ <code>googlyEyesEnabled</code> master switch and the behavior settings clients run behaviors from. The server builds it from the installed set and that set's
  precomputed NBT (<a href="../config/ServerEyeConfigs.html#encoded()"><code>ServerEyeConfigs.encoded()</code></a>), which was
  validated when installed, so writing it to each connection only copies tags. The client decodes and
  re-validates everything it receives.</div>
@@ -142,10 +142,10 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.AmbientSettings)" class="member-name-link">EyeConfigSyncPacket</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">EyeConfigSyncPacket</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded,
  boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a>&nbsp;ambient)</code></div>
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</code></div>
 <div class="col-last even-row-color">
 <div class="block"><code>encoded</code> must hold exactly <code>configs</code>, each encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>.</div>
 </div>
@@ -163,10 +163,10 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#ambient()" class="member-name-link">ambient</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviors()" class="member-name-link">behaviors</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The server's ambient settings, for placed heads.</div>
+<div class="block">The server's behavior settings.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configs()" class="member-name-link">configs</a>()</code></div>
@@ -238,12 +238,12 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.AmbientSettings)">
+<section class="detail" id="&lt;init&gt;(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
 <h3>EyeConfigSyncPacket</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EyeConfigSyncPacket</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded,
  boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a>&nbsp;ambient)</span></div>
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
 <div class="block"><code>encoded</code> must hold exactly <code>configs</code>, each encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>.</div>
 </section>
 </li>
@@ -263,10 +263,10 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 </section>
 </li>
 <li>
-<section class="detail" id="ambient()">
-<h3>ambient</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/AmbientSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">AmbientSettings</a></span>&nbsp;<span class="element-name">ambient</span>()</div>
-<div class="block">The server's ambient settings, for placed heads.</div>
+<section class="detail" id="behaviors()">
+<h3>behaviors</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">behaviors</span>()</div>
+<div class="block">The server's behavior settings.</div>
 </section>
 </li>
 <li>
