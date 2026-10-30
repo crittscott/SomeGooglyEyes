@@ -8,6 +8,8 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
@@ -166,15 +168,19 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire. No in-game form; guards that joining clients draw the same
-     * eyes the server's datapacks define.
+     * The eye-definition sync survives the wire, ambient settings included. No in-game form; guards that joining
+     * clients draw the same eyes the server's datapacks define, and schedule placed heads' expressions from the
+     * server's settings.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
                 Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
-        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false);
+        AmbientSettings ambient = new AmbientSettings(true, 300, 100, List.of(EyeBehavior.BLINK, EyeBehavior.CROSS_EYE));
+        EyeConfigSyncPacket packet =
+                new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false, ambient);
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
+        helper.assertTrue(decoded.ambient().equals(ambient), "the ambient settings should survive the round-trip");
         helper.succeed();
     }
 

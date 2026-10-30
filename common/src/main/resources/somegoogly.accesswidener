@@ -40,3 +40,9 @@ accessible	field	net/minecraft/client/model/LlamaModel	rightFrontLeg	Lnet/minecr
 accessible	field	net/minecraft/client/model/LlamaModel	leftFrontLeg	Lnet/minecraft/client/model/geom/ModelPart;
 accessible	field	net/minecraft/client/model/LlamaModel	rightChest	Lnet/minecraft/client/model/geom/ModelPart;
 accessible	field	net/minecraft/client/model/LlamaModel	leftChest	Lnet/minecraft/client/model/geom/ModelPart;
+
+accessible	field	net/minecraft/client/model/geom/ModelPart	cubes	Ljava/util/List;
+accessible	field	net/minecraft/client/model/SkullModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/PiglinHeadModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+
+accessible	class	net/minecraft/world/level/block/entity/BlockEntity$DataComponentInput

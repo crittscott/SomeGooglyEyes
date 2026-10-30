@@ -13,6 +13,7 @@ loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 
     forge {
+        mixinConfig 'somegoogly-common.mixins.json'
         mixinConfig 'somegoogly-common-server.mixins.json'
     }
 

@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
 import com.github.crittscott.somegoogly.registry.neoforge.NeoForgeContentRegistrar;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
+import com.github.crittscott.somegoogly.server.neoforge.HeadEyesLootModifier;
 import com.github.crittscott.somegoogly.server.neoforge.NeoForgeServerEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -22,6 +23,7 @@ public final class SomeGooglyNeoForge {
         NeoForgeContentRegistrar registrar = new NeoForgeContentRegistrar();
         SomeGooglyCommon.init(registrar);
         registrar.register(modBus);
+        HeadEyesLootModifier.register(modBus);
         NeoForgeNetworkTransport.register(modBus);
         NeoForgeServerConfig.register(modBus, modContainer);
         if (dist == Dist.CLIENT) {

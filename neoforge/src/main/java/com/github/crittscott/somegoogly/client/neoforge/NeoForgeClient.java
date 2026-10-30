@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -51,6 +52,7 @@ public final class NeoForgeClient {
         gameBus.addListener(NeoForgeClient::onClientTick);
         gameBus.addListener(NeoForgeClient::onLoggingOut);
         gameBus.addListener(NeoForgeClient::onEntityLeaveLevel);
+        gameBus.addListener(NeoForgeClient::onItemTooltip);
         gameBus.addListener(NeoForgeClient::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
@@ -113,6 +115,10 @@ public final class NeoForgeClient {
         if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
             ClientEyeRuntime.onEntityRemoved(living);
         }
+    }
+
+    private static void onItemTooltip(ItemTooltipEvent event) {
+        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
     }
 
     private static void onLevelUnload(LevelEvent.Unload event) {

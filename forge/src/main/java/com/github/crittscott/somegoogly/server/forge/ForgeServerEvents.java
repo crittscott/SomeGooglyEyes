@@ -35,8 +35,10 @@ public final class ForgeServerEvents {
     public static void register(IEventBus gameBus) {
         gameBus.addListener(ForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
-        gameBus.addListener(ForgeServerEvents::onLivingDrops);
+        // Late enough to see the heads other mods add to the drops.
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingDrops);
         gameBus.addListener(ForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(ForgeServerEvents::onPlayerLoggedOut);
         gameBus.addListener(ForgeServerEvents::onDatapackSync);
@@ -82,6 +84,16 @@ public final class ForgeServerEvents {
         }
     }
 
+    /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
+    private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        InteractionResult result = EyeItemService.useOnSkull(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
     private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
         if (result != InteractionResult.PASS) {
@@ -92,6 +104,9 @@ public final class ForgeServerEvents {
 
     private static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity living = event.getEntity();
+        for (ItemEntity drop : event.getDrops()) {
+            EyeItemService.markHeadDrop(living, drop.getItem());
+        }
         EyeItemService.onDeath(living, event.getSource(), stack -> {
             ItemEntity drop = new ItemEntity(
                     living.level(), living.getX(), living.getY(), living.getZ(), stack);

@@ -1,6 +1,9 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.geom.ModelPart;
+
+import javax.annotation.Nullable;
 
 /**
  * A resolved attach point: the ordered transforms that carry a pose from the model's base render space
@@ -10,6 +13,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
  * once per (model, token) and applies the result every frame.
  */
 public interface Attachment {
+
+    /** The attach part itself, for a resolver that walks {@link ModelPart}s; otherwise {@code null}. */
+    @Nullable
+    default ModelPart part() {
+        return null;
+    }
 
     /**
      * Move {@code poseStack} into the part's current (this-frame, post-animation) space. The caller owns

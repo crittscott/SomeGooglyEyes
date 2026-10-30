@@ -133,6 +133,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The behavior trigger survives the wire.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">brokenHeadKeepsItsEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">brokenHeadKeepsItsEyes(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
@@ -212,7 +218,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The eye-definition sync survives the wire.</div>
+<div class="block">The eye-definition sync survives the wire, ambient settings included.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -446,6 +452,14 @@ loadScripts(document, 'script');</script>
  added to the record from being silently dropped on the way to disk: a value-equal round-trip can
  only pass if every field was written.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#eyedMobDropsAnEyedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobDropsAnEyedHead(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">An eyed mob's head inherits the mob's eyes; an eyeless mob's head doesn't.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#eyedMobsHeadsModHeadInheritsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">An eyed mob's own Heads-mod head inherits the mob's eyes; another mob's head doesn't.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#eyeFieldsSerializeAtFloatPrecision(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeFieldsSerializeAtFloatPrecision(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#eyeFieldsSerializeAtFloatPrecision(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeFieldsSerializeAtFloatPrecision(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
@@ -583,6 +597,31 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#headEyesSurviveSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headEyesSurviveSaveLoad(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#headEyesSurviveSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headEyesSurviveSaveLoad(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A head's eyes survive saving and loading its block entity.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModBlocksMapToTheirMobs(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModBlocksMapToTheirMobs(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
+ shears, as a vanilla head does.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModMobsHaveHeadEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModMobsHaveHeadEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
+ variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
+ (a cow's on its body).</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">healSwirlIsRateLimited(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healSwirlIsRateLimited(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
@@ -743,6 +782,12 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html#optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristAcceptsOnlyShears(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestsLogic</a></dt>
 <dd>
 <div class="block">Optometrist goes only on shears and is treasure-only.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristHarvestsAPlacedHead(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristHarvestsAPlacedHead(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html#optometristInteractHarvestsEyesForOneDurability(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristInteractHarvestsEyesForOneDurability(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -949,6 +994,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A shorter version pads with zeros, so <code>1.20</code> equals <code>1.20.0</code>.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Fabric GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SkullEyeGameTestsLogic</code></a>; see that class for the actual assertions.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#%3Cinit%3E()" class="member-name-link">SkullEyeGameTests()</a> - Constructor for class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Googly eyes on placed mob heads: applying and harvesting them through <code>EyeItemService.useOnSkull(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.phys.BlockHitResult)</code>, an
+ eyed mob's own head inheriting its eyes (<code>EyeItemService.markHeadDrop(net.minecraft.world.entity.LivingEntity, net.minecraft.world.item.ItemStack)</code>, reached through each loader's
+ death-drop hook), breaking and re-placing a head, and saving one.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#sleepingMobPlaysNoBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">sleepingMobPlaysNoBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#sleepingMobPlaysNoBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sleepingMobPlaysNoBehaviors(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
@@ -983,11 +1040,23 @@ loadScripts(document, 'script');</script>
 <div class="block">A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from the
  stack.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
 <dd>
 <div class="block">An already-eyed mob refuses a Slimy Eye and keeps its look.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A head without a definition, or any head while the switch is off, refuses a Slimy Eye.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html#slimyEyeRerollsThePlacementVariant(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeRerollsThePlacementVariant(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a></dt>
 <dd>&nbsp;</dd>

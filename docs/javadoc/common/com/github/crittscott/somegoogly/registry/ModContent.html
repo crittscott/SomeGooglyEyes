@@ -93,7 +93,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Everything the mod registers, declared once and bound through each loader's <a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry"><code>ContentRegistrar</code></a>:
  the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), the appearance
- component both carry, the mod's creative tab, and the eye-modifier and Slimy Eye recipe serializers. The
+ component both carry, the eye-state component of a mob head item, the mod's creative tab, and the
+ eye-modifier and Slimy Eye recipe serializers. The
  Optometrist enchantment and self-shear damage type are data-driven, so only their resource keys live
  here.</div>
 </section>
@@ -122,26 +123,31 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#GOOGLY_EYE" class="member-name-link">GOOGLY_EYE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#OPTOMETRIST" class="member-name-link">OPTOMETRIST</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.damagesource.DamageType&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#SELF_SHEAR" class="member-name-link">SELF_SHEAR</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;net.minecraft.core.component.DataComponentType&lt;<a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#HEAD_EYES" class="member-name-link">HEAD_EYES</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The eye state a mob head item carries, which placing it hands to the head block entity.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#OPTOMETRIST" class="member-name-link">OPTOMETRIST</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.resources.ResourceKey<wbr>&lt;net.minecraft.world.damagesource.DamageType&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#SELF_SHEAR" class="member-name-link">SELF_SHEAR</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes.</div>
 </div>
-<div class="col-first even-row-color"><code>static final net.minecraft.tags.TagKey<wbr>&lt;net.minecraft.world.item.Item&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#SHEARS" class="member-name-link">SHEARS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final net.minecraft.tags.TagKey<wbr>&lt;net.minecraft.world.item.Item&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SHEARS" class="member-name-link">SHEARS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
  so modded shears count without extending <code>ShearsItem</code>.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#SLIMY_EYE_RECIPE" class="member-name-link">SLIMY_EYE_RECIPE</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a><wbr>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SLIMY_EYE_RECIPE" class="member-name-link">SLIMY_EYE_RECIPE</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -159,7 +165,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(com.github.crittscott.somegoogly.registry.ContentRegistrar)" class="member-name-link">register</a><wbr>(<a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry">ContentRegistrar</a>&nbsp;registrar)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Bind every handle; the data component first, since the items' stacks carry it.</div>
+<div class="block">Bind every handle; the data components first, since the items' stacks carry them.</div>
 </div>
 </div>
 </div>
@@ -194,6 +200,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="EYE_PROPERTIES">
 <h3>EYE_PROPERTIES</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.core.component.DataComponentType&lt;<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;&gt;</span>&nbsp;<span class="element-name">EYE_PROPERTIES</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="HEAD_EYES">
+<h3>HEAD_EYES</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.core.component.DataComponentType&lt;<a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;&gt;</span>&nbsp;<span class="element-name">HEAD_EYES</span></div>
+<div class="block">The eye state a mob head item carries, which placing it hands to the head block entity.</div>
 </section>
 </li>
 <li>
@@ -251,7 +264,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="register(com.github.crittscott.somegoogly.registry.ContentRegistrar)">
 <h3>register</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry">ContentRegistrar</a>&nbsp;registrar)</span></div>
-<div class="block">Bind every handle; the data component first, since the items' stacks carry it.</div>
+<div class="block">Bind every handle; the data components first, since the items' stacks carry them.</div>
 </section>
 </li>
 </ul>

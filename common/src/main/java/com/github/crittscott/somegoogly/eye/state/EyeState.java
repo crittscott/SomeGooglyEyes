@@ -4,8 +4,13 @@ import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.platform.Networking;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,8 +49,41 @@ public final class EyeState {
     private EyeState() {
     }
 
-    /** The full portable state synchronized for one living entity. */
+    /**
+     * The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+     * keys above in a mod-owned compound. A head item carries it as a data component instead, through
+     * {@link #CODEC} and {@link #STREAM_CODEC}.
+     */
     public record Snapshot(boolean hasEyes, float variantRoll, AppearanceOverride properties) {
+
+        public static final Codec<Snapshot> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.BOOL.fieldOf("has_eyes").forGetter(Snapshot::hasEyes),
+                Codec.floatRange(0.0F, 1.0F).fieldOf("variant_roll").forGetter(Snapshot::variantRoll),
+                AppearanceOverride.CODEC.optionalFieldOf("properties", AppearanceOverride.EMPTY)
+                        .forGetter(Snapshot::properties)
+        ).apply(instance, Snapshot::new));
+        /** The roll is clamped on decode, as a stored roll is. */
+        public static final StreamCodec<ByteBuf, Snapshot> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, Snapshot::hasEyes,
+                ByteBufCodecs.FLOAT.map(EyeState::clampRoll, roll -> roll), Snapshot::variantRoll,
+                AppearanceOverride.STREAM_CODEC, Snapshot::properties,
+                Snapshot::new);
+
+        /** No eyes, the first variant, no appearance overrides; what an absent compound reads as. */
+        public static final Snapshot NONE = new Snapshot(false, 0.0F, AppearanceOverride.EMPTY);
+
+        /** Read the state keys of {@code data}; absent keys read as {@link #NONE}'s values. */
+        public static Snapshot read(CompoundTag data) {
+            return new Snapshot(data.getBoolean(HAS_EYES), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
+                    data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null));
+        }
+
+        /** Write every state key into {@code data}, removing the overrides compound when there are none. */
+        public void write(CompoundTag data) {
+            data.putBoolean(HAS_EYES, hasEyes);
+            data.putFloat(VARIANT_ROLL, variantRoll);
+            writeProperties(data, properties);
+        }
     }
 
     /**
@@ -58,10 +96,7 @@ public final class EyeState {
         if (!isInitialized(source)) {
             return;
         }
-        CompoundTag data = EntityPersistentData.get(target);
-        data.putBoolean(HAS_EYES, hasEyes(source));
-        data.putFloat(VARIANT_ROLL, getVariantRoll(source));
-        writeProperties(data, readProperties(source));
+        snapshot(source).write(EntityPersistentData.get(target));
         if (hasEyes(target)) {
             ServerBehaviorScheduler.onEyesGained(target);
         }
@@ -70,10 +105,7 @@ public final class EyeState {
 
     /** Install a synchronized snapshot on the client without broadcasting it. */
     public static void applySnapshot(LivingEntity entity, Snapshot snapshot) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        data.putBoolean(HAS_EYES, snapshot.hasEyes());
-        data.putFloat(VARIANT_ROLL, snapshot.variantRoll());
-        writeProperties(data, snapshot.properties());
+        snapshot.write(EntityPersistentData.get(entity));
     }
 
     /** Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts. */
@@ -89,8 +121,7 @@ public final class EyeState {
      * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(LivingEntity entity) {
-        float roll = EntityPersistentData.get(entity).getFloat(VARIANT_ROLL);
-        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
+        return variantRoll(EntityPersistentData.get(entity));
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
@@ -146,7 +177,7 @@ public final class EyeState {
 
     /** Read all synchronized fields as one coherent value. */
     public static Snapshot snapshot(LivingEntity entity) {
-        return new Snapshot(hasEyes(entity), getVariantRoll(entity), readProperties(entity));
+        return Snapshot.read(EntityPersistentData.get(entity));
     }
 
     /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
@@ -198,6 +229,16 @@ public final class EyeState {
     public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
         writeProperties(EntityPersistentData.get(entity), properties);
         sync(entity);
+    }
+
+    /** The stored roll of {@code data}, clamped ({@link #clampRoll}). */
+    private static float variantRoll(CompoundTag data) {
+        return clampRoll(data.getFloat(VARIANT_ROLL));
+    }
+
+    /** {@code roll} clamped into 0..1, with a non-finite value read as 0. */
+    private static float clampRoll(float roll) {
+        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
     }
 
     private static void writeProperties(CompoundTag data, AppearanceOverride properties) {

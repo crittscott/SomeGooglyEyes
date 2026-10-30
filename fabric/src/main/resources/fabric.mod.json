@@ -18,6 +18,7 @@
   "accessWidener": "somegoogly.accesswidener",
   "mixins": [
     "somegoogly.mixins.json",
+    "somegoogly-common.mixins.json",
     "somegoogly-common-server.mixins.json"
   ],
   "entrypoints": {

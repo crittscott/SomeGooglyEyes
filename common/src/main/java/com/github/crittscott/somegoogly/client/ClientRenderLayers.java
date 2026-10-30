@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
+import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -24,9 +25,13 @@ public final class ClientRenderLayers {
     private ClientRenderLayers() {
     }
 
-    /** Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or after it. */
+    /**
+     * Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed by model, so
+     * before or after it.
+     */
     public static void clearCaches() {
         Resolvers.clearCaches();
+        SkullEyeRenderer.clearCaches();
     }
 
     /**

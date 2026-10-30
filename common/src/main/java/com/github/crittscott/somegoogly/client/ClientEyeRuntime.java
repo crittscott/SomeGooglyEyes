@@ -1,7 +1,15 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.behavior.AmbientSettings;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -10,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-/** Loader-neutral owner of client eye trackers and their simulation lifecycle. */
+/** Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle. */
 public final class ClientEyeRuntime {
 
     /** Evict a tracker once it has gone unrendered for more than this many client ticks. */
@@ -20,6 +28,8 @@ public final class ClientEyeRuntime {
 
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
+    /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
+    private static final Map<BlockPos, SkullEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
 
@@ -28,6 +38,7 @@ public final class ClientEyeRuntime {
 
     /** Drop render trackers while retaining server-reported anger for loaded entities. */
     public static void clear() {
+        SKULLS.clear();
         TRACKERS.clear();
     }
 
@@ -87,14 +98,49 @@ public final class ClientEyeRuntime {
     }
 
     /**
+     * The eyes of the eyed head {@code skull}, a head of {@code entity}'s kind, creating them on first use and
+     * replacing any built for another kind of head at the same position; {@code null} when the client's
+     * definitions give it nothing to draw.
+     */
+    @Nullable
+    public static SkullEyes skullEyes(SkullBlockEntity skull, ResourceLocation entity) {
+        SkullEyes eyes = SKULLS.get(skull.getBlockPos());
+        if (eyes == null || !eyes.entity.equals(entity)) {
+            eyes = SkullEyes.create(skull.getBlockPos(), entity, SkullEyeState.snapshot(skull));
+            if (eyes == null) {
+                SKULLS.remove(skull.getBlockPos());
+                return null;
+            }
+            SKULLS.put(skull.getBlockPos().immutable(), eyes);
+        }
+        return eyes;
+    }
+
+    /**
      * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
      * physics of those rendered this tick or last when {@code simulate} is true. The client lifecycle
-     * disables simulation while there is no level or the game is paused.
+     * disables simulation while there is no level or the game is paused. A head's eyes are also dropped
+     * when its eye state has changed, to be rebuilt from the new state when it next renders.
      */
     public static void tick(boolean simulate) {
         clientTicks++;
         if (!simulate) {
             return;
+        }
+        ClientLevel level = Minecraft.getInstance().level;
+        AmbientSettings ambient = ClientEyeConfigs.ambient();
+        Iterator<Map.Entry<BlockPos, SkullEyes>> skulls = SKULLS.entrySet().iterator();
+        while (skulls.hasNext()) {
+            Map.Entry<BlockPos, SkullEyes> entry = skulls.next();
+            SkullEyes eyes = entry.getValue();
+            int idle = clientTicks - eyes.lastRenderTick;
+            if (idle > EVICT_IDLE_TICKS || level == null
+                    || !(level.getBlockEntity(entry.getKey()) instanceof SkullBlockEntity skull)
+                    || !SkullEyeState.snapshot(skull).equals(eyes.snapshot)) {
+                skulls.remove();
+            } else if (idle <= SIMULATE_IDLE_TICKS) {
+                eyes.tick(level.getGameTime(), ambient);
+            }
         }
         Iterator<Map.Entry<LivingEntity, GooglyTracker>> iterator = TRACKERS.entrySet().iterator();
         while (iterator.hasNext()) {
