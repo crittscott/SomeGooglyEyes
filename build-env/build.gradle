@@ -1,7 +1,7 @@
 plugins {
-    id 'dev.architectury.loom' version '1.17.493' apply false
-    id 'architectury-plugin' version '3.5.170'
-    id 'com.gradleup.shadow' version '9.4.3' apply false
+    id 'dev.architectury.loom' apply false
+    id 'architectury-plugin'
+    id 'com.gradleup.shadow' apply false
 }
 
 architectury {
@@ -32,6 +32,18 @@ ext.configureGameTests = { Project loaderProject ->
     }
 }
 
+// Loader metadata version ranges, derived from the exact versions in gradle.properties.
+ext.minecraft_version_range = "[${minecraft_version}]"
+def forgeMajor = forge_version.tokenize('.')[0] as int
+ext.forge_version_range = "[${forge_version},${forgeMajor + 1})"
+ext.forge_loader_version_range = "[${forgeMajor},${forgeMajor + 1})"
+if (project.hasProperty('neoforge_version')) {
+    // The release line is the version without its build number; the range ends at the next line.
+    def line = neoforge_version.tokenize('-')[0].tokenize('.').init()
+    def nextLine = (line.init() + ((line.last() as int) + 1)).join('.')
+    ext.neoforge_version_range = "[${neoforge_version},${nextLine})"
+}
+
 // Placeholder values shared by every loader's `${...}` resource expansion. Each loader adds its own
 // loader-specific version ranges on top of this.
 ext.sharedModProperties = [
@@ -46,6 +58,7 @@ ext.sharedModProperties = [
         mod_sources      : "${mod_homepage}/tree/${minecraft_version}",
         mod_issues       : "${mod_homepage}/issues",
         geckolib_version : geckolib_version,
+        java_version     : java_version,
 ]
 
 allprojects {
@@ -63,6 +76,7 @@ subprojects {
     }
 
     repositories {
+        mavenCentral()
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     }
@@ -80,7 +94,7 @@ subprojects {
 
         // Every module's source uses javax.annotation.Nullable. Minecraft ships JSR 305 at runtime, but
         // Loom does not put it on common's compile classpath, so declare it for all modules here.
-        compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+        compileOnly "com.google.code.findbugs:jsr305:$rootProject.jsr305_version"
     }
 
     java {
@@ -89,12 +103,12 @@ subprojects {
         withSourcesJar()
 
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
         }
     }
 }
 
-// Loader production artifacts bundle common; their remapped source archives carry it as well.
+// Loader production archives bundle common, so their source archives contain the same implementation.
 enabled_platforms.split(',').each { platform ->
     project(":$platform").tasks.named('sourcesJar', Jar).configure {
         from project(':common').sourceSets.main.allSource

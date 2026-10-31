@@ -78,11 +78,11 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
+    forge "net.minecraftforge:forge:$rootProject.minecraft_version-$rootProject.forge_version"
 
     // Optional at runtime; needed at compile time by the GeckoLib render integration. Not remapped:
     // GeckoLib's Forge artifacts are already usable as-is.
-    compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:$rootProject.geckolib_version"
+    compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 
     // Heads, loaded in development runs and GameTests only, so its heads can be checked; the mod never
     // references it and neither compiles against nor publishes it.
@@ -94,7 +94,7 @@ dependencies {
 
 // Expands ${...} placeholders in mods.toml (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
-    // Loader-owned loot declarations must also form a valid data pack in development.
+    // This loader's resource root must be a data pack in development as well as in the bundled jar.
     from project(':common').file('src/main/resources/pack.mcmeta')
     var replaceProperties = rootProject.sharedModProperties + [
             minecraft_version_range: minecraft_version_range,

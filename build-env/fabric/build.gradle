@@ -68,12 +68,8 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    // Fabric has no native config parser; both modules are nested in the production artifact.
+    // Fabric has no native config parser. Bundle both NightConfig modules in the loader artifact.
     implementation "com.electronwill.night-config:core:$rootProject.nightconfig_version"
     implementation "com.electronwill.night-config:toml:$rootProject.nightconfig_version"
     include "com.electronwill.night-config:core:$rootProject.nightconfig_version"
@@ -84,7 +80,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
     // Optional at runtime; needed at compile time by the GeckoLib render integration.
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:$rootProject.geckolib_version"
+    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')

@@ -14,13 +14,17 @@
 
 ## Googly Eyes and Slimy Eyes
 
+## Mob heads
+
+## Checking a target
+
 ## Creative tab
 
 ## Configuration
 
 ### Spawn and harvest
 
-### Expressions
+### Behaviors
 
 ### Client display
 
