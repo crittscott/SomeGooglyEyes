@@ -5,7 +5,6 @@
   "refmap": "somegoogly.refmap.json",
   "mixins": [
     "EntityHeadDropMixin",
-    "EntityPersistentDataMigrationMixin",
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
     "MerchantResultSlotMixin"

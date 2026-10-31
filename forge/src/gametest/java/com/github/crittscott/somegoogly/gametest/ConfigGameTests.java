@@ -59,7 +59,8 @@ public final class ConfigGameTests {
     }
     /**
      * Native file correction retains released values and adds absent keys. In game: open a world saved
-     * by the 1.21.1 release with globalPercent set to 17; correction keeps 17 and adds squintOnSleep.
+     * by the 1.21.4 release with globalPercent set to 17 and the squintOnSleep line deleted; correction
+     * keeps 17 and restores squintOnSleep.
      */
     public static void releasedConfigSurvivesNativeCorrection(GameTestHelper helper) {
         CommentedConfig config = new TomlParser().parse("[\"Server Settings\"]\nglobalPercent = 17\n");

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
  */
 public final class EntityPersistentDataImpl {
 
-    public static final AttachmentType<CompoundTag> TYPE = AttachmentRegistry.<CompoundTag>builder()
+    private static final AttachmentType<CompoundTag> TYPE = AttachmentRegistry.<CompoundTag>builder()
             .persistent(CompoundTag.CODEC)
             .initializer(CompoundTag::new)
             .buildAndRegister(ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "persistent_data"));

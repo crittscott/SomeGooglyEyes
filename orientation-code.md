@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.6; an unreleased waypoint toward 1.21.8.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.8.
 
 `common` is transformed into all three loader artifacts.
 
@@ -30,7 +30,7 @@ The server owns gameplay and authorization; the client owns rendering and picker
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. `FabricConfigMigration` quotes the released unquoted header. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch at startup and changes.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch at startup and changes.
 
 Server config keys have the same order across loaders.
 
@@ -38,7 +38,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 ## Entity and item state
 
-`EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the 1.21.1 release's `somegoogly:persistentData` compound into it; a non-compound value is set aside there and logged.
+`EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric.
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
@@ -48,7 +48,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
 
-Only Fabric entity data needs migration from the 1.21.1 release.
+Saved data from the 1.21.4 release is already in current form; nothing migrates.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier` delegates to `SkullEyeState.copyToLoot`, with native data in each loader; Fabric `LootTableEvents.MODIFY` adding `copy_components`). Fabric's adapter refuses spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
@@ -66,7 +66,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
-The picker gizmo uses a registered no-depth render pipeline. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and ends Forge's HUD draw via Mixin. Common Mixins bracket placed-head and head-item rendering and key head items' GUI identity on eyes. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Common Mixins bracket placed-head and head-item rendering and key head items' GUI identity on eyes. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
@@ -90,7 +90,7 @@ The client owns picker drafts and previews; the server owns freezing, spawning, 
 
 ## Loader integration
 
-Fabric Mixins cover persistent-data migration, heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins (`somegoogly-common-server.mixins.json`) report milking, sheep shearing, and entity events and hold head eyes. Mixins target the pinned Minecraft version, with fixed refmaps.
+Fabric Mixins cover heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins (`somegoogly-common-server.mixins.json`) report milking, sheep shearing, and entity events and hold head eyes. Mixins target the pinned Minecraft version, with fixed refmaps.
 
 NeoForge registers from the `@Mod` constructor, client listeners on the right bus.
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-Fabric discovers annotated instance methods through `fabric-gametest`; Forge/NeoForge register functions paired with loader-owned test-instance JSON. Shared tests use component-valued messages and cover serialization, gameplay state, expression lifetime, disabled scheduling, and obstructed targeting. Forge/NeoForge add native config-correction and interaction/spawn-refusal tests; Fabric adds migration and TOML preservation tests. Fabric has 131 registered scenarios; Forge and NeoForge each have 129. Required-client rejection, full command UX, general protection ordering, anger delivery, and real-save migration still need manual checks.
+Fabric discovers annotated instance methods through `fabric-gametest`; Forge/NeoForge register functions paired with loader-owned test-instance JSON. Shared tests use component-valued messages and cover serialization, gameplay state, expression lifetime, disabled scheduling, and obstructed targeting. Forge/NeoForge add native config-correction and interaction/spawn-refusal tests; Fabric adds TOML preservation tests. Fabric has 128 registered scenarios; Forge and NeoForge each have 129. Required-client rejection, full command UX, general protection ordering, anger delivery, and loading real 1.21.4 saves still need manual checks.
 
 ## Operational boundaries
 

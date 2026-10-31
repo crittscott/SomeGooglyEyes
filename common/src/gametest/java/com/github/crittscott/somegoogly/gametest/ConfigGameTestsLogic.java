@@ -65,15 +65,15 @@ public final class ConfigGameTestsLogic {
     /**
      * Shared schema constants name the sections used by the immediately preceding release. This checks
      * names only; the loader-specific scenarios exercise native file correction. In game: open a world
-     * saved by the 1.21.1 release whose server config sets {@code globalPercent = 17}; that value remains
-     * after the file gains newly introduced keys.
+     * saved by the 1.21.4 release whose server config sets {@code globalPercent = 17} and has its
+     * {@code squintOnSleep} line deleted; that value remains after the file regains the missing key.
      */
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
         helper.assertTrue(ServerConfig.SECTION_SERVER.equals("Server Settings")
                         && ServerConfig.SECTION_BEHAVIORS.equals("Behaviors")
                         && ServerConfig.SECTION_PICKER.equals("Picker"),
-                Component.literal("the server config keeps 0.8.2's section names"));
-        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), Component.literal("the client config keeps 0.8.2's section name"));
+                Component.literal("the server config keeps the released section names"));
+        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), Component.literal("the client config keeps the released section name"));
         helper.succeed();
     }
 

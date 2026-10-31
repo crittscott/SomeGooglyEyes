@@ -196,8 +196,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Shared schema constants name the sections used by the immediately preceding release. This checks
  names only; the loader-specific scenarios exercise native file correction. In game: open a world
- saved by the 1.21.1 release whose server config sets <code>globalPercent = 17</code>; that value remains
- after the file gains newly introduced keys.</div>
+ saved by the 1.21.4 release whose server config sets <code>globalPercent = 17</code> and has its
+ <code>squintOnSleep</code> line deleted; that value remains after the file regains the missing key.</div>
 </section>
 </li>
 <li>

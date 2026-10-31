@@ -80,7 +80,7 @@ public class ServerConfig {
     public static final boolean WINK_ON_AIM_DEFAULT = true;
 
     // TOML file and section names, shared by every loader's server config. The section names are those the
-    // released 0.8.2 files use, so a world's existing file keeps its values when Forge or NeoForge corrects it.
+    // previous release's files use, so a world's existing file keeps its values when Forge or NeoForge corrects it.
     public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-server.toml";
     public static final String SECTION_SERVER = "Server Settings";
     public static final String SECTION_BEHAVIORS = "Behaviors";

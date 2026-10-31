@@ -127,15 +127,7 @@ public final class TomlConfig {
             Files.writeString(path, defaults, StandardCharsets.UTF_8);
             SomeGooglyCommon.LOGGER.info("Wrote default config file {}", path);
         }
-        String source = Files.readString(path, StandardCharsets.UTF_8);
-        String migrated = FabricConfigMigration.quoteReleasedHeader(source);
-        CommentedConfig values = parse(migrated);
-        if (!migrated.equals(source)) {
-            Files.copy(path, path.resolveSibling(path.getFileName() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
-            Files.writeString(path, migrated, StandardCharsets.UTF_8);
-            SomeGooglyCommon.LOGGER.info("Migrated released config section header in {}", path);
-        }
-        return values;
+        return parse(Files.readString(path, StandardCharsets.UTF_8));
     }
 
     /** Values from exactly the schema's declared table; similarly named keys elsewhere do not apply. */

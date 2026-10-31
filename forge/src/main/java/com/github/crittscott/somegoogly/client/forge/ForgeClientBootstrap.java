@@ -5,7 +5,9 @@ import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
@@ -15,11 +17,13 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
@@ -50,6 +54,13 @@ public final class ForgeClientBootstrap {
                 ClientRenderLayers.install(renderer);
             }
         }
+    }
+
+    /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
+    private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
+        event.getLayeredDraw().add(
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
@@ -84,6 +95,7 @@ public final class ForgeClientBootstrap {
         registerItemModelTypes();
 
         EntityRenderersEvent.AddLayers.getBus(modBusGroup).addListener(ForgeClientBootstrap::addRendererLayers);
+        AddGuiOverlayLayersEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::addGuiLayers);
         RegisterKeyMappingsEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::registerKeyMappings);
 
         RegisterClientCommandsEvent.BUS.addListener(ForgeClientBootstrap::registerClientCommands);
