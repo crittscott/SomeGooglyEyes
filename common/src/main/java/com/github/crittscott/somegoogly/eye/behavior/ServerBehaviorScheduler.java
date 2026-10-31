@@ -55,6 +55,7 @@ public final class ServerBehaviorScheduler {
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
+    private static boolean suspended;
 
     private ServerBehaviorScheduler() {
     }
@@ -77,6 +78,7 @@ public final class ServerBehaviorScheduler {
         STATES.clear();
         ACTIVE.clear();
         now = 0;
+        suspended = false;
     }
 
     /**
@@ -124,7 +126,7 @@ public final class ServerBehaviorScheduler {
      */
     private static MobState eventTarget(LivingEntity mob) {
         MobState state = STATES.get(mob);
-        if (state == null || !EyeState.hasEyes(mob)) {
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || state == null || !EyeState.hasEyes(mob)) {
             return null;
         }
         return state;
@@ -210,6 +212,11 @@ public final class ServerBehaviorScheduler {
             ACTIVE.putIfAbsent(mob, state);
         }
 
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+            suspended = true;
+            return;
+        }
+
         if (EyeState.hasEyes(mob)) {
             // Initial state is complete; the cached delta still belongs to all existing watchers.
             Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), isAngry(mob)));
@@ -266,6 +273,9 @@ public final class ServerBehaviorScheduler {
      */
     public static void serverTick() {
         now++;
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        boolean resuming = suspended && enabled;
+        suspended = !enabled;
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         Iterator<Map.Entry<LivingEntity, MobState>> it = ACTIVE.entrySet().iterator();
         while (it.hasNext()) {
@@ -291,10 +301,19 @@ public final class ServerBehaviorScheduler {
                 STATES.remove(mob);
                 continue;
             }
+            if (!enabled) {
+                continue;
+            }
+            // Watchers added while disabled received no catch-up packets; resume every current viewer.
+            if (resuming && state.busyUntil != 0) {
+                Networking.sendTrackingAndSelf(mob, new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
+                        state.activeDuration, state.activeSeed, (int) (now - state.startedAt)));
+            }
             // Anger changes are rare, so a packet goes out only when one happens. An eyeless mob's anger
             // stays unsent; it's picked up on the first tick after the mob gains eyes.
             boolean angry = isAngry(mob);
-            if (angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
+            if (resuming && EyeState.hasEyes(mob)
+                    || angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
             }

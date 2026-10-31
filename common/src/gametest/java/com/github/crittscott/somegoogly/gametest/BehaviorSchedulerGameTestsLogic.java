@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -17,18 +18,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityEvent;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -305,6 +306,8 @@ public final class BehaviorSchedulerGameTestsLogic {
         zombie.setAggressive(false);
         HeadInfo info = headInfo(helper, zombie);
         ClientEyeRuntime.onLevelChanged();
+        BehaviorSettings originalBehaviors = ClientEyeConfigs.behaviors();
+        ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), ON);
         try {
             ClientEyeRuntime.setAngry(zombie, true);
             GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
@@ -330,6 +333,51 @@ public final class BehaviorSchedulerGameTestsLogic {
             helper.assertTrue(ClientEyeRuntime.peek(replacement) == null
                             && !ClientEyeRuntime.get(replacement, info).angry,
                     "client world replacement drops both trackers and anger");
+        } finally {
+            ClientEyeRuntime.onLevelChanged();
+            ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A received expression survives first-render delay and render-cache replacement and expires while
+     * offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
+     * second client mid-expression; both see the same progress. Look away and back, and it has not paused.
+     */
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        HeadInfo info = headInfo(helper, zombie);
+        try {
+            ClientEyeRuntime.onLevelChanged();
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 12, 42L, 3);
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "receipt must not create a drawing cache");
+            ClientEyeRuntime.tickBehaviors();
+            GooglyTracker first = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(first.active != null && first.active.age == 4,
+                    "first render catches up a previously received expression");
+            ClientEyeRuntime.clear();
+            ClientEyeRuntime.tickBehaviors();
+            GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
+                    "replacing a render tracker preserves expression progress");
+            ClientEyeRuntime.tick(false);
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
+                    "paused client ticks do not advance expression time");
+            ClientEyeRuntime.clear();
+            for (int tick = 0; tick < 7; tick++) {
+                ClientEyeRuntime.tickBehaviors();
+            }
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "unrendered expressions expire without a tracker");
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.onEntityRemoved(zombie);
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "entity unloading removes received expression state");
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.onLevelChanged();
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "world replacement removes received expression state");
         } finally {
             ClientEyeRuntime.onLevelChanged();
         }
@@ -637,6 +685,46 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
+     * Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+     * ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
+     * back on; no hidden expression is waiting, and later milking starts a new grow normally.
+     */
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper, ServerPlayer player) {
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
+        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
+        boolean milk = ServerConfig.GROW_ON_MILK.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            ServerConfig.GROW_ON_MILK.set(true);
+            ServerConfig.AMBIENT_BEHAVIORS.set(true);
+            ServerConfig.AMBIENT_MIN_TICKS.set(ServerConfig.TICKS_MIN);
+            ServerConfig.AMBIENT_MAX_TICKS.set(ServerConfig.TICKS_MIN);
+            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
+            ServerBehaviorScheduler.onMilked(cow);
+            advance(ServerConfig.TICKS_MIN + 1);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+                    "neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable");
+            advance(3);
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            ServerBehaviorScheduler.onMilked(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+                    "re-enabling resumes reactions using retained watcher bookkeeping");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.AMBIENT_MIN_TICKS.set(min);
+            ServerConfig.AMBIENT_MAX_TICKS.set(max);
+            ServerConfig.GROW_ON_MILK.set(milk);
+        }
+        helper.succeed();
+    }
+
+    /**
      * "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
      * elapses. In game: as a creative operator, look at an eyed mob and run {@code /sg admin behavior swirl},
      * then {@code /sg admin behavior blink} while it swirls; the blink does not play. Run it again after the
@@ -694,7 +782,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     /**
      * The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
      * as angry while {@code angryEyes} is off. In game: hit an eyed iron golem and its pupils turn red even
-     * when it is not swinging at you; with {@code angryEyes = false} they are red only while it attacks.
+     * when it is not swinging at you; with {@code angryEyes = false} neither attacking nor server-only anger makes them red.
      */
     public static void serverOnlyAngerIsShared(GameTestHelper helper) {
         boolean angryEyes = ServerConfig.ANGRY_EYES.get();

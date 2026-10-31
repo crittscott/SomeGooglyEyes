@@ -1,13 +1,13 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
@@ -19,15 +19,16 @@ import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
+import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.google.gson.JsonArray;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.nbt.NbtOps;
 import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -185,6 +186,13 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
         helper.assertTrue(decoded.behaviors().equals(behaviors), "the behavior settings should survive the round-trip");
+        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
+        int budget = EyeConfigSyncPacket.wireSize(encoded);
+        EyeConfigSyncPacket maximum = new EyeConfigSyncPacket(configs, encoded, true, BehaviorSettings.WIRE_MAXIMUM);
+        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, maximum).length == budget,
+                "the reload budget must include the largest supported behavior block");
+        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet).length <= budget,
+                "a non-default settings packet must fit the reload budget");
         helper.succeed();
     }
 
@@ -193,16 +201,24 @@ public final class SerializationGameTestsLogic {
      * geometry. No in-game form with an unmodified server; guards clients against a malicious server.
      */
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
+        RegistryFriendlyByteBuf safe = singleConfigPayload(helper, sampleConfigSet());
+        try {
+            helper.assertTrue(EyeConfigSyncPacket.STREAM_CODEC.decode(safe).configs().size() == 1
+                            && safe.readableBytes() == 0,
+                    "the fixture builder must produce a complete decodable payload");
+        } finally {
+            safe.release();
+        }
         RegistryFriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(oversized)),
+        helper.assertTrue(rejectsConfig(oversized, "Eye config count exceeds network limit"),
                 "config sync must reject an oversized outer count before allocating entries");
 
         RuntimeConfigSet tooManyVariants = sampleConfigSet();
         tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
                 tooManyVariants.any.variants.get(0));
         RegistryFriendlyByteBuf counted = singleConfigPayload(helper, tooManyVariants);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(counted)),
+        helper.assertTrue(rejectsConfig(counted, "variant count"),
                 "config sync must reject a config over the variant limit");
 
         RuntimeConfigSet unsafe = sampleConfigSet();
@@ -211,9 +227,21 @@ public final class SerializationGameTestsLogic {
                 new EyePlacement(new Vec3(Double.NaN, 0.0, 0.0), 1.0F, 1.0F, 1.0F,
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
         RegistryFriendlyByteBuf numeric = singleConfigPayload(helper, unsafe);
-        helper.assertTrue(throwsRuntime(() -> EyeConfigSyncPacket.STREAM_CODEC.decode(numeric)),
+        helper.assertTrue(rejectsConfig(numeric, "position is not finite"),
                 "config sync must reject non-finite placement values");
         helper.succeed();
+    }
+
+    /** Require the intended definition rejection, rather than a truncated-buffer or unrelated failure. */
+    private static boolean rejectsConfig(RegistryFriendlyByteBuf buffer, String diagnostic) {
+        try {
+            EyeConfigSyncPacket.STREAM_CODEC.decode(buffer);
+            return false;
+        } catch (DecoderException e) {
+            return e.getMessage().contains(diagnostic);
+        } finally {
+            buffer.release();
+        }
     }
 
     /** A config-sync payload carrying {@code set} for one entity, written without the encoder's own limit check. */
@@ -224,6 +252,7 @@ public final class SerializationGameTestsLogic {
         buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
                 .result().orElseThrow());
         buffer.writeBoolean(true);
+        BehaviorSettings.DEFAULTS.write(buffer);
         return buffer;
     }
 

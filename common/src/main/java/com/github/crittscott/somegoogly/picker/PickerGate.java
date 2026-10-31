@@ -8,10 +8,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Server-side authorization and throttling for client-driven picker operations — the two halves of the
@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 public final class PickerGate {
 
-    /** Ticks between {@code /sg spawnall} runs per player. */
+    /** Server-wide interval in ticks between {@code /sg spawnall} runs. */
     public static final int SPAWN_ALL_COOLDOWN_TICKS = 200;
 
     /** Ticks between successful exports per player (10 seconds; failed validation doesn't arm it). */

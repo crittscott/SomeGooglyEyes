@@ -126,23 +126,23 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#appearanceAt(int,int)" class="member-name-link">appearanceAt</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The eye's config appearance, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's config appearance.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAttachToken(int)" class="member-name-link">getAttachToken</a><wbr>(int&nbsp;headIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">This head's model attachment token, or <code>null</code> when the head index is out of range.</div>
+<div class="block">The selected head's model attachment token.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEyeCount(int)" class="member-name-link">getEyeCount</a><wbr>(int&nbsp;headIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">How many eyes this head carries; 0 for an out-of-range head.</div>
+<div class="block">How many eyes the selected head carries.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEyeScale(int,int)" class="member-name-link">getEyeScale</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The eye's placement scale, or the default scale when the requested eye is absent.</div>
+<div class="block">The selected eye's placement scale.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHeadCount()" class="member-name-link">getHeadCount</a>()</code></div>
@@ -163,7 +163,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#placementAt(int,int)" class="member-name-link">placementAt</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The eye's placement, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's placement.</div>
 </div>
 </div>
 </div>
@@ -202,7 +202,7 @@ loadScripts(document, 'script');</script>
 <h3>appearanceAt</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></span>&nbsp;<span class="element-name">appearanceAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
-<div class="block">The eye's config appearance, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's config appearance.</div>
 </section>
 </li>
 <li>
@@ -215,16 +215,15 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getAttachToken(int)">
 <h3>getAttachToken</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getAttachToken</span><wbr><span class="parameters">(int&nbsp;headIndex)</span></div>
-<div class="block">This head's model attachment token, or <code>null</code> when the head index is out of range.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getAttachToken</span><wbr><span class="parameters">(int&nbsp;headIndex)</span></div>
+<div class="block">The selected head's model attachment token.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="getEyeCount(int)">
 <h3>getEyeCount</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getEyeCount</span><wbr><span class="parameters">(int&nbsp;headIndex)</span></div>
-<div class="block">How many eyes this head carries; 0 for an out-of-range head.</div>
+<div class="block">How many eyes the selected head carries.</div>
 </section>
 </li>
 <li>
@@ -232,7 +231,7 @@ loadScripts(document, 'script');</script>
 <h3>getEyeScale</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getEyeScale</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
-<div class="block">The eye's placement scale, or the default scale when the requested eye is absent.</div>
+<div class="block">The selected eye's placement scale.</div>
 </section>
 </li>
 <li>
@@ -254,7 +253,7 @@ loadScripts(document, 'script');</script>
 <h3>placementAt</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></span>&nbsp;<span class="element-name">placementAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
-<div class="block">The eye's placement, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's placement.</div>
 </section>
 </li>
 </ul>

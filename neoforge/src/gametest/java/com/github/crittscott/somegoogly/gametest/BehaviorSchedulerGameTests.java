@@ -107,6 +107,7 @@ public final class BehaviorSchedulerGameTests {
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingVillagerClosesLids(helper);
     }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void swellingCreeperRattles(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.swellingCreeperRattles(helper);
@@ -115,5 +116,15 @@ public final class BehaviorSchedulerGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.switchedOffOngoingBehaviorsStayNeutral(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 }

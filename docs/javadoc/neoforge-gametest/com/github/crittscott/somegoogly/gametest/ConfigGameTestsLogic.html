@@ -112,9 +112,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSectionsMatchReleasedFiles</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
- doesn't name when they correct a file: renaming a section would reset every value in it to its default
- on upgrade.</div>
+<div class="block">Shared schema constants name the sections used by the immediately preceding release.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#everyShippedMinecraftDefinitionLoads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyShippedMinecraftDefinitionLoads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -196,11 +194,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSectionsMatchReleasedFiles</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
- doesn't name when they correct a file: renaming a section would reset every value in it to its default
- on upgrade. In game: on Forge or NeoForge, open a world made with 0.8.2 for 1.20.1 whose <code>somegoogly-server.toml</code> sets
- <code>globalPercent = 17</code>; after loading it with this version the file still says 17 and has gained the
- new keys.</div>
+<div class="block">Shared schema constants name the sections used by the immediately preceding release. This checks
+ names only; the loader-specific scenarios exercise native file correction. In game: open a world
+ saved by the 1.21.1 release whose server config sets <code>globalPercent = 17</code>; that value remains
+ after the file gains newly introduced keys.</div>
 </section>
 </li>
 <li>

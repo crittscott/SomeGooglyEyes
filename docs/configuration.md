@@ -55,7 +55,7 @@ Eyes have two kinds of behavior. **Expressions** are one-shot animations (`stare
 | `swirlOnHeal` | `true` | An eyed mob being healed, or the holder of a Googly Eye healing, plays `swirl`. |
 | `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob or held eye, so regeneration doesn't loop it. |
 
-The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
+The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` is not in the default pool; it can be added to the pool or triggered by the admin command.
 
 #### Ongoing behaviors
 

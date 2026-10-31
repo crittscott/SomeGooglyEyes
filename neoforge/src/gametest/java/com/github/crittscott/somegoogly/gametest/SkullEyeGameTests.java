@@ -3,7 +3,11 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -51,5 +55,21 @@ public final class SkullEyeGameTests {
     public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
         SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper) {
+        var player = FakePlayerFactory.getMinecraft(helper.getLevel());
+        SkullEyeGameTestsLogic.deniedItemUseLeavesHeadsUntouched(helper, player, (hit, denied) -> {
+            var event = new PlayerInteractEvent.RightClickBlock(
+                    player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
+            if (denied) {
+                event.setUseItem(TriState.FALSE);
+            }
+            NeoForge.EVENT_BUS.post(event);
+            if (denied) {
+                helper.assertTrue(!event.isCanceled(), "the adapter must preserve a noncanceled item denial");
+            }
+        });
     }
 }

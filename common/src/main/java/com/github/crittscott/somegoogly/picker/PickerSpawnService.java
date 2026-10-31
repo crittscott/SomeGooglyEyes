@@ -14,24 +14,25 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
@@ -115,55 +116,89 @@ public final class PickerSpawnService {
         return null;
     }
 
+    /** A terrain edit held until both finalization and entity insertion have accepted the spawn. */
+    private record BlockChange(BlockPos pos, BlockState state) {
+    }
+
     /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
     private record Candidate(ResourceLocation id, Entity entity) {
     }
 
-    /**
-     * Turn the platform tile into a basin for a water mob: raise the 5x5 perimeter into sandstone walls
-     * and flood the inner 3x3, both as tall as the mob's water column so it stays submerged and the water
-     * cannot spill over the rim. Assumes {@link #buildPlatform} already laid the floor under it.
-     */
-    private static void buildBasin(ServerLevel level, int cellX, int cellZ, int platformY, Entity entity) {
-        int height = waterColumnHeight(entity);
-        for (int dy = 0; dy < height; dy++) {
-            for (int dx = -PLATFORM_RADIUS; dx <= PLATFORM_RADIUS; dx++) {
-                for (int dz = -PLATFORM_RADIUS; dz <= PLATFORM_RADIUS; dz++) {
-                    boolean wall = Math.abs(dx) == PLATFORM_RADIUS || Math.abs(dz) == PLATFORM_RADIUS;
-                    level.setBlockAndUpdate(new BlockPos(cellX + dx, platformY + dy, cellZ + dz),
-                            wall ? Blocks.SANDSTONE.defaultBlockState() : Blocks.WATER.defaultBlockState());
+    /** Insert the mob and its riders, honoring each insertion result and removing partial additions on refusal. */
+    private static boolean addCommandEntity(ServerLevel level, Entity entity) {
+        List<Entity> members = new ArrayList<>();
+        members.add(entity);
+        entity.getIndirectPassengers().forEach(members::add);
+        for (Entity member : members) {
+            if (level.getEntity(member.getUUID()) != null) {
+                return false;
+            }
+        }
+        List<Entity> added = new ArrayList<>();
+        boolean complete = false;
+        try {
+            for (Entity member : members) {
+                if (!level.addFreshEntity(member)) {
+                    return false;
+                }
+                added.add(member);
+            }
+            complete = true;
+            return true;
+        } finally {
+            if (!complete) {
+                for (int index = added.size() - 1; index >= 0; index--) {
+                    added.get(index).discard();
                 }
             }
         }
     }
 
     /**
-     * Lay a 5x5 sandstone tile centered on the cell with its top one block below {@code platformY} (the
-     * player's standing level). Existing blocks are overwritten — this is a debug command meant for
-     * throwaway test worlds, so it makes no attempt to preserve anything underneath.
+     * Plan a basin for a water mob: raise the 5x5 perimeter into sandstone walls
+     * and flood the inner 3x3, both as tall as the mob's water column so it stays submerged and the water
+     * cannot spill over the rim. Follows {@link #planPlatform} in the pending edit list.
      */
-    private static void buildPlatform(ServerLevel level, int cellX, int cellZ, int platformY) {
-        for (int dx = -PLATFORM_RADIUS; dx <= PLATFORM_RADIUS; dx++) {
-            for (int dz = -PLATFORM_RADIUS; dz <= PLATFORM_RADIUS; dz++) {
-                level.setBlockAndUpdate(new BlockPos(cellX + dx, platformY - 1, cellZ + dz),
-                        Blocks.SANDSTONE.defaultBlockState());
+    private static void planBasin(List<BlockChange> changes, int cellX, int cellZ, int platformY, Entity entity) {
+        int height = waterColumnHeight(entity);
+        for (int dy = 0; dy < height; dy++) {
+            for (int dx = -PLATFORM_RADIUS; dx <= PLATFORM_RADIUS; dx++) {
+                for (int dz = -PLATFORM_RADIUS; dz <= PLATFORM_RADIUS; dz++) {
+                    boolean wall = Math.abs(dx) == PLATFORM_RADIUS || Math.abs(dz) == PLATFORM_RADIUS;
+                    changes.add(new BlockChange(new BlockPos(cellX + dx, platformY + dy, cellZ + dz),
+                            wall ? Blocks.SANDSTONE.defaultBlockState() : Blocks.WATER.defaultBlockState()));
+                }
             }
         }
     }
 
     /**
-     * Cap the platform cell with a second 5x5 layer {@value #ROOF_HEIGHT} blocks above the floor, so
+     * Plan a 5x5 sandstone tile centered on the cell with its top one block below {@code platformY} (the
+     * player's standing level). Existing blocks are overwritten — this is a debug command meant for
+     * throwaway test worlds, so it makes no attempt to preserve anything underneath.
+     */
+    private static void planPlatform(List<BlockChange> changes, int cellX, int cellZ, int platformY) {
+        for (int dx = -PLATFORM_RADIUS; dx <= PLATFORM_RADIUS; dx++) {
+            for (int dz = -PLATFORM_RADIUS; dz <= PLATFORM_RADIUS; dz++) {
+                changes.add(new BlockChange(new BlockPos(cellX + dx, platformY - 1, cellZ + dz),
+                        Blocks.SANDSTONE.defaultBlockState()));
+            }
+        }
+    }
+
+    /**
+     * Plan a second 5x5 layer capping the platform cell {@value #ROOF_HEIGHT} blocks above the floor, so
      * sun-sensitive mobs (skeletons, zombies) sit in shade instead of bursting into flames. NoAi does not
      * stop the sun-burn tick and there's no clean per-mob "don't burn" flag, so we block the sky instead.
      * The center block (directly over the mob) is glowstone, lighting the otherwise-dark cell.
      */
-    private static void buildRoof(ServerLevel level, int cellX, int cellZ, int platformY) {
+    private static void planRoof(List<BlockChange> changes, int cellX, int cellZ, int platformY) {
         int roofY = platformY - 1 + ROOF_HEIGHT;
         for (int dx = -PLATFORM_RADIUS; dx <= PLATFORM_RADIUS; dx++) {
             for (int dz = -PLATFORM_RADIUS; dz <= PLATFORM_RADIUS; dz++) {
                 boolean center = dx == 0 && dz == 0;
-                level.setBlockAndUpdate(new BlockPos(cellX + dx, roofY, cellZ + dz),
-                        center ? Blocks.GLOWSTONE.defaultBlockState() : Blocks.SANDSTONE.defaultBlockState());
+                changes.add(new BlockChange(new BlockPos(cellX + dx, roofY, cellZ + dz),
+                        center ? Blocks.GLOWSTONE.defaultBlockState() : Blocks.SANDSTONE.defaultBlockState()));
             }
         }
     }
@@ -272,16 +307,17 @@ public final class PickerSpawnService {
 
             Entity entity = candidate.entity;
             boolean water = requiresWater(entity);
+            List<BlockChange> terrain = new ArrayList<>();
 
             double y;
             if (buildPlatforms) {
                 // Flat floor at the player's level; water mobs get a walled basin instead of an open tile.
                 // A sandstone roof shades the cell so sun-sensitive mobs don't burn.
-                buildPlatform(level, cellX, cellZ, platformY);
+                planPlatform(terrain, cellX, cellZ, platformY);
                 if (water) {
-                    buildBasin(level, cellX, cellZ, platformY, entity);
+                    planBasin(terrain, cellX, cellZ, platformY, entity);
                 }
-                buildRoof(level, cellX, cellZ, platformY);
+                planRoof(terrain, cellX, cellZ, platformY);
                 y = platformY;
             } else {
                 BlockPos ground = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(cellX, 0, cellZ));
@@ -293,7 +329,7 @@ public final class PickerSpawnService {
                     BlockPos feet = new BlockPos(cellX, ground.getY(), cellZ);
                     int columnHeight = waterColumnHeight(entity);
                     for (int dy = 0; dy < columnHeight; dy++) {
-                        level.setBlockAndUpdate(feet.above(dy), Blocks.WATER.defaultBlockState());
+                        terrain.add(new BlockChange(feet.above(dy), Blocks.WATER.defaultBlockState()));
                     }
                 }
             }
@@ -325,7 +361,11 @@ public final class PickerSpawnService {
                 continue;
             }
 
-            if (level.tryAddFreshEntityWithPassengers(entity)) {
+            if (addCommandEntity(level, entity)) {
+                // No terrain is touched until every spawn refusal has been resolved.
+                for (BlockChange change : terrain) {
+                    level.setBlockAndUpdate(change.pos(), change.state());
+                }
                 spawned++;
                 columnIndex++;
             } else {
@@ -426,7 +466,7 @@ public final class PickerSpawnService {
             return;
         }
 
-        if (level.tryAddFreshEntityWithPassengers(entity)) {
+        if (addCommandEntity(level, entity)) {
             tell(player, "somegoogly.command.spawn.spawned", id.toString());
         } else {
             tell(player, "somegoogly.command.spawn.refused", id.toString());
@@ -485,5 +525,4 @@ public final class PickerSpawnService {
         // Minecraft yaw 0 faces +Z and increases clockwise; this is the look vector inverse.
         return (float) Mth.wrapDegrees(Math.toDegrees(Math.atan2(-dx, dz)));
     }
-
 }

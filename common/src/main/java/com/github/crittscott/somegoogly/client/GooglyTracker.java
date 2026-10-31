@@ -109,6 +109,10 @@ public class GooglyTracker {
     @Nullable
     public BehaviorInstance active;
 
+    /** The server expression this disposable simulation has initialized, if any. */
+    @Nullable
+    ClientEyeRuntime.ReceivedBehavior receivedBehavior;
+
     /**
      * Whether the server reports this entity angry in a way vanilla doesn't sync (see {@code
      * EyeAngerPacket}); kept current by {@link ClientNetworkHandler#handleAnger}.
@@ -563,7 +567,8 @@ public class GooglyTracker {
      * says it's angry.
      */
     private boolean isAngry(BehaviorSettings settings) {
-        return settings.enabled(OngoingBehavior.ANGER) && (angry || OngoingBehavior.ANGER.level(parent) > 0F);
+        return level(OngoingBehavior.ANGER, settings) > 0F
+                || angry && settings.enabled(OngoingBehavior.ANGER);
     }
 
     /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */

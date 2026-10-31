@@ -4,11 +4,11 @@
 
 # Some Googly Eyes — player-facing behavior
 
-What a player currently observes. `orientation-code.md` covers the code structure.
+`orientation-code.md` covers code structure.
 
-Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
+Some Googly Eyes adds animated eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
 
-The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks, allowing different eye arrangements for vanilla and modded mobs.
+Two items, one enchantment, and one creative tab; datapacks place eyes on vanilla and modded mobs.
 
 Artifacts target Minecraft 1.21.4 on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.119.4+1.21.4 or newer. NeoForge requires NeoForge 21.4.158 or newer within the 21.4 release line. Forge requires Forge 54.1.18 or newer within the 54 release line. All loaders require Java 21; GeckoLib 4.8.5 or newer is an optional client dependency. Clients and servers need the same network version.
 
@@ -95,7 +95,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric preserves malformed TOML files and adds missing keys without replacing existing values, saving original text as `.bak`.
 
 ### Spawn and harvest
 
@@ -106,7 +106,7 @@ NeoForge and Forge apply edits as soon as they reload the file; Fabric applies t
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
 
-While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data is kept and reappears when the switch returns. The creative picker, an authoring tool, is exempt.
+While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data is kept and reappears when the switch returns. Automatic mob expressions and anger checks also stop while disabled. The creative picker, an authoring tool, is exempt.
 
 Overrides use `"entity-pattern,percent"`. Exact IDs take priority; otherwise the first matching wildcard is used.
 
@@ -217,7 +217,7 @@ It does not change the world. Both exports replace authored ages and preserve th
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world.
 
-Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
+Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed, and a refused bulk spawn does not change its cell's terrain. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
@@ -241,5 +241,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 127 dedicated-server GameTests; NeoForge and Forge each contain 122. Physical checks cover production artifacts, models and resolvers, animations, item rendering, harvesting/application, head eyes, picker export, reloads, GeckoLib, the master switch, and migrating a real 1.21.1 save.
+- Fabric contains 131 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, GeckoLib, and real-save migration.
 - The dynamic modifier recipe may not display in recipe viewers.

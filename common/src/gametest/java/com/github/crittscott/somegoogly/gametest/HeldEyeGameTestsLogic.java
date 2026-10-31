@@ -88,6 +88,9 @@ public final class HeldEyeGameTestsLogic {
      * swirls, winks, stares, or glances aside.
      */
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
+        helper.assertTrue(!BehaviorSettings.NONE.plays() && BehaviorSettings.NONE.growOnHitPercent() == 0
+                        && !BehaviorSettings.NONE.swirlOnHeal() && BehaviorSettings.NONE.ongoing().isEmpty(),
+                "before first sync no server-controlled expression is enabled");
         BehaviorSettings off = settings(false, ServerConfig.PERCENT_MIN, false);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setHealth(10F);

@@ -111,6 +111,18 @@ loadScripts(document, 'script');</script>
 <div class="block">A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">entityTargetingStopsAtWalls</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Extended entity targeting stops at blocks.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusedBulkSpawnLeavesTerrain(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">refusedBulkSpawnLeavesTerrain</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>/sg spawn</code> and <code>/sg spawnall</code> refuse the ender dragon, players, and config-excluded types,
@@ -133,6 +145,25 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>entityTargetingStopsAtWalls</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">entityTargetingStopsAtWalls</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Extended entity targeting stops at blocks. In game: stand behind a wall from an eyed cow and aim at
+ it with an eye item or an admin command; neither inspection nor editing selects it through the wall.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="refusedBulkSpawnLeavesTerrain(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>refusedBulkSpawnLeavesTerrain</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">refusedBulkSpawnLeavesTerrain</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.
+ The loader wrapper installs the refusing listener. In game: refuse command spawns with a listener,
+ stand over air, and run spawnall; the command skips the mobs without replacing terrain or head data.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>spawnCommandsRefuseDragonPlayersAndExcludedTypes</h3>

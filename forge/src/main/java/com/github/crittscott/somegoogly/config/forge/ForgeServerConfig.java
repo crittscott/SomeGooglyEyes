@@ -39,7 +39,8 @@ public final class ForgeServerConfig {
     private static final ForgeConfigSpec.BooleanValue ALLOW_SPAWN_ALL;
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_MODS;
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_ENTITIES;
-    private static final ForgeConfigSpec SPEC;
+    /** Native schema used to load and correct this loader's world server file. */
+    public static final ForgeConfigSpec SPEC;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -151,6 +152,7 @@ public final class ForgeServerConfig {
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
         ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
         ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
+        ServerServices.onServerConfigApplied();
         // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {

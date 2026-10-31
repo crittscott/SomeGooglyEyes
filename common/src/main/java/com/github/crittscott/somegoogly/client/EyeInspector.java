@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 /** Client action-bar verdict for whether the aimed entity or placed mob head can currently receive googly eyes. */
@@ -37,14 +38,14 @@ public final class EyeInspector {
                 || !player.isShiftKeyDown() || !holdingEye(player)) {
             return;
         }
-        LivingEntity target = LookTarget.livingInCrosshair(player, REACH);
+        EntityHitResult target = LookTarget.livingHitInCrosshair(player, REACH);
         if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
                 && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
-                        < player.getEyePosition().distanceToSqr(target.position()))) {
+                        < player.getEyePosition().distanceToSqr(target.getLocation()))) {
             player.displayClientMessage(verdict(skull), true);
         } else if (target != null) {
-            player.displayClientMessage(verdict(target), true);
+            player.displayClientMessage(verdict((LivingEntity) target.getEntity()), true);
         }
     }
 

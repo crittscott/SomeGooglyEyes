@@ -16,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
  * same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
  * animation locally.
  *
- * <p>The client drops the trigger if it has no tracker for the mob yet (not currently rendering it) or if
- * a behavior is already playing — the same "one at a time, non-interruptable" rule the server enforces.
+ * <p>The client retains the latest trigger for a known entity independently of its render tracker and
+ * derives its current age from elapsed simulation time, including when the tracker is rebuilt.
  */
 public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
 

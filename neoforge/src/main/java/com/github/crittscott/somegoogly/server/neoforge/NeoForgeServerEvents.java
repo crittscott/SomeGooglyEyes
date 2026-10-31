@@ -12,6 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -87,6 +88,9 @@ public final class NeoForgeServerEvents {
 
     /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
     private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseItem() == TriState.FALSE) {
+            return;
+        }
         InteractionResult result = EyeItemService.useOnSkull(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         if (result != InteractionResult.PASS) {

@@ -1,12 +1,12 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -62,11 +62,10 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
-     * doesn't name when they correct a file: renaming a section would reset every value in it to its default
-     * on upgrade. In game: on Forge or NeoForge, open a world made with 0.8.2 for 1.20.1 whose {@code somegoogly-server.toml} sets
-     * {@code globalPercent = 17}; after loading it with this version the file still says 17 and has gained the
-     * new keys.
+     * Shared schema constants name the sections used by the immediately preceding release. This checks
+     * names only; the loader-specific scenarios exercise native file correction. In game: open a world
+     * saved by the 1.21.1 release whose server config sets {@code globalPercent = 17}; that value remains
+     * after the file gains newly introduced keys.
      */
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
         helper.assertTrue(ServerConfig.SECTION_SERVER.equals("Server Settings")

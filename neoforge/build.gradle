@@ -73,6 +73,8 @@ dependencies {
 
 // Expands ${...} placeholders in neoforge.mods.toml (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
+    // This loader's resource root must be a data pack in development as well as in the bundled jar.
+    from project(':common').file('src/main/resources/pack.mcmeta')
     var replaceProperties = rootProject.sharedModProperties + [
             minecraft_version_range: minecraft_version_range,
             neoforge_version_range: neoforge_version_range,
@@ -107,6 +109,9 @@ shadowJar {
     // The common refmap maps to Fabric's intermediary names; this loader runs on Mojang names, which the
     // common Mixins already use, so they must apply without it.
     exclude 'somegoogly-common.refmap.json'
+    filesMatching('pack.mcmeta') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 }
 
 remapJar {

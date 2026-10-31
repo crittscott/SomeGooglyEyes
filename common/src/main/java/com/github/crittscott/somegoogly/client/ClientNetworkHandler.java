@@ -41,17 +41,14 @@ public final class ClientNetworkHandler {
         }
     }
 
-    /** Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored. */
+    /** Retain a behavior for a known entity, including one that has not rendered yet. */
     public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
         LivingEntity living = living(packet.entityId());
         if (behavior == null || living == null) {
             return;
         }
-        GooglyTracker tracker = ClientEyeRuntime.peek(living);
-        if (tracker != null) {
-            tracker.startBehavior(behavior, packet.duration(), packet.seed(), packet.elapsed());
-        }
+        ClientEyeRuntime.setBehavior(living, behavior, packet.duration(), packet.seed(), packet.elapsed());
     }
 
     /** Record a server-reported anger change; an unknown entity is ignored. */

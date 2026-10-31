@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.server;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -19,8 +20,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
@@ -28,6 +29,9 @@ import java.util.Map;
  * {@link ServerBehaviorScheduler}).
  */
 public final class ServerServices {
+
+    @Nullable
+    private static Boolean loggedGooglyEyesEnabled;
 
     /**
      * The definitions connected clients last received, with the master switch and behavior settings below, or
@@ -39,6 +43,15 @@ public final class ServerServices {
     private static boolean sentGooglyEyesEnabled;
 
     private ServerServices() {
+    }
+
+    /** Record the applied world switch once at startup and whenever its effective value changes. */
+    public static void onServerConfigApplied() {
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        if (loggedGooglyEyesEnabled == null || loggedGooglyEyesEnabled != enabled) {
+            SomeGooglyCommon.LOGGER.info("Server configuration applied (googlyEyesEnabled={})", enabled);
+            loggedGooglyEyesEnabled = enabled;
+        }
     }
 
     /**
@@ -71,6 +84,7 @@ public final class ServerServices {
         PickerFreezeService.onServerStopping(server);
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
+        loggedGooglyEyesEnabled = null;
         sentEyeConfigs = null;
     }
 

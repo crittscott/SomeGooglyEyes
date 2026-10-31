@@ -85,11 +85,11 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         this.behaviors = BehaviorSettings.read(buffer);
     }
 
-    /** The number of bytes a packet carrying {@code encoded} occupies on the wire. */
+    /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            writeBody(buffer, encoded, false, BehaviorSettings.DEFAULTS);
+            writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
             return buffer.writerIndex();
         } finally {
             buffer.release();

@@ -156,43 +156,56 @@ loadScripts(document, 'script');</script>
  when it calms down.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">disabledEyesSuspendAutomaticBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+ ready to resume.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective
  triggers.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healSwirlIsRateLimited</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healSwirlIsRateLimited</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
  is idle.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#milkingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">milkingPlaysGrow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Milking a cow, mooshroom, or goat with a bucket plays grow, and only while <code>growOnMilk</code> is on.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">oneBehaviorAtATimeUntilItElapses</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#milkingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">milkingPlaysGrow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Milking a cow, mooshroom, or goat with a bucket plays grow, and only while <code>growOnMilk</code> is on.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">oneBehaviorAtATimeUntilItElapses</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
  elapses.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rammingGoatSquints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rammingGoatSquints</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rammingGoatSquints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rammingGoatSquints</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A goat lowering its head to ram squints, still plays behaviors while it does, and opens its eyes again
  once the ram ends and its head comes back up.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
+ offscreen.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverOnlyAngerIsShared(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverOnlyAngerIsShared</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -297,6 +310,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>receivedExpressionsOutliveRenderTrackers</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">receivedExpressionsOutliveRenderTrackers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
+ offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
+ second client mid-expression; both see the same progress. Look away and back, and it has not paused.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="angryMobsHaveRedPupils(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>angryMobsHaveRedPupils</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angryMobsHaveRedPupils</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -359,6 +381,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>disabledEyesSuspendAutomaticBehaviors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disabledEyesSuspendAutomaticBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+ ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
+ back on; no hidden expression is waiting, and later milking starts a new grow normally.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>oneBehaviorAtATimeUntilItElapses</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">oneBehaviorAtATimeUntilItElapses</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -386,7 +418,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverOnlyAngerIsShared</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
  as angry while <code>angryEyes</code> is off. In game: hit an eyed iron golem and its pupils turn red even
- when it is not swinging at you; with <code>angryEyes = false</code> they are red only while it attacks.</div>
+ when it is not swinging at you; with <code>angryEyes = false</code> neither attacking nor server-only anger makes them red.</div>
 </section>
 </li>
 <li>

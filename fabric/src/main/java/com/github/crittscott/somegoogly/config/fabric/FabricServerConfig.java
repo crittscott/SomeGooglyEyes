@@ -1,8 +1,10 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -12,14 +14,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Creates and loads the active world's server TOML when the server starts and again at the start of
  * each {@code /reload}, since Fabric has no config system; values return to defaults when the server stops. One
  * {@link #SCHEMA} list drives the commented file and the load; its sections, keys, defaults, and comments match
  * the native Forge and NeoForge server specs. Like those loaders, a file missing any key, such as one from an earlier release, is
- * rewritten with the values it holds and each missing key at its default.
+ * completed with only absent keys at their defaults; existing values and comments are retained.
  */
 public final class FabricServerConfig {
 
@@ -113,6 +114,7 @@ public final class FabricServerConfig {
 
     private static void load(MinecraftServer server) {
         load(server.getWorldPath(LevelResource.ROOT).resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME));
+        ServerServices.onServerConfigApplied();
     }
 
     /**
@@ -120,14 +122,18 @@ public final class FabricServerConfig {
      * and adding any keys it lacks.
      */
     public static void load(Path path) {
-        ServerConfig.resetDefaults();
         try {
-            Map<String, Object> values = TomlConfig.readOrCreate(path, render());
+            CommentedConfig values = TomlConfig.readOrCreate(path, render());
+            // Resolve every table before changing the shared runtime configuration.
             for (Entry entry : SCHEMA) {
-                entry.apply().accept(values);
+                TomlConfig.section(values, entry.section());
             }
-            TomlConfig.completeIfMissing(path, values, SCHEMA.stream().map(Entry::key).toList(), render());
-        } catch (IOException e) {
+            ServerConfig.resetDefaults();
+            for (Entry entry : SCHEMA) {
+                entry.apply().accept(TomlConfig.section(values, entry.section()));
+            }
+            TomlConfig.completeIfMissing(path, values, render());
+        } catch (IOException | IllegalArgumentException e) {
             SomeGooglyCommon.LOGGER.error("Could not load server config {}", path, e);
         }
     }
@@ -148,31 +154,31 @@ public final class FabricServerConfig {
                     toml.append("# ").append(line).append('\n');
                 }
             }
-            toml.append(entry.key()).append(" = ").append(entry.toml().get()).append('\n');
+            toml.append(entry.key()).append(" = ").append(entry.toml()).append('\n');
         }
         return toml.toString();
     }
 
     private static Entry bool(String section, String key, String comment,
                              boolean defaultValue, ConfigValue<Boolean> target) {
-        return new Entry(section, key, comment, () -> String.valueOf(target.get()),
+        return new Entry(section, key, comment, String.valueOf(defaultValue),
                 values -> target.set(TomlConfig.bool(values, key, defaultValue)));
     }
 
     private static Entry integer(String section, String key, String comment,
                                  int defaultValue, ConfigValue<Integer> target) {
-        return new Entry(section, key, comment, () -> String.valueOf(target.get()),
+        return new Entry(section, key, comment, String.valueOf(defaultValue),
                 values -> TomlConfig.assign(target, key, TomlConfig.integer(values, key, defaultValue)));
     }
 
     private static Entry strings(String section, String key, String comment,
                                  List<String> defaultValue, ConfigValue<List<String>> target) {
-        return new Entry(section, key, comment, () -> TomlConfig.stringList(target.get()),
+        return new Entry(section, key, comment, TomlConfig.stringList(defaultValue),
                 values -> TomlConfig.assign(target, key, TomlConfig.strings(values, key, defaultValue)));
     }
 
-    /** One config key: where it lives in the file, how its current value renders, and how a load applies it. */
-    private record Entry(String section, String key, String comment,
-                         Supplier<String> toml, Consumer<Map<String, Object>> apply) {
+    /** One config key: its table, default text, comment, and runtime assignment. */
+    private record Entry(String section, String key, String comment, String toml,
+                         Consumer<Map<String, Object>> apply) {
     }
 }

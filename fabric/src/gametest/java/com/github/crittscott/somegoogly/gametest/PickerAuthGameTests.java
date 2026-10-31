@@ -23,4 +23,9 @@ public final class PickerAuthGameTests implements FabricGameTest {
     public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
         PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayer.get(helper.getLevel()));
+    }
 }

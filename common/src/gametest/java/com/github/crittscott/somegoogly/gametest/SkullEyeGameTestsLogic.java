@@ -3,8 +3,8 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -35,12 +35,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Googly eyes on placed mob heads: applying and harvesting them through {@link EyeItemService#useOnSkull}, an
  * eyed mob's own head inheriting its eyes ({@link EyeItemService#markHeadDrop}, reached through each loader's
  * death-drop hook), breaking and re-placing a head, and saving one. The loader adapters' protection-mod
- * ordering around the use call stays source-verified, as for mobs; the rendered eyes and their client-side
+ * ordering is exercised by native item-denial tests on Forge and NeoForge; the rendered eyes and their client-side
  * expressions need a client.
  *
  * <p>For the in-game steps below, get Optometrist shears as described in {@link EyeItemServiceGameTestsLogic}.
@@ -55,6 +56,35 @@ public final class SkullEyeGameTestsLogic {
     private static final BlockPos MOB = new BlockPos(1, 2, 3);
 
     private SkullEyeGameTestsLogic() {
+    }
+
+    /**
+     * A native item-use denial prevents both applying and harvesting head eyes, without consuming the
+     * item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
+     * listener while leaving the event uncanceled, then try a Slimy Eye and Optometrist shears.
+     */
+    public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper, Player player,
+                                                         BiConsumer<BlockHitResult, Boolean> interact) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        BlockPos pos = skull.getBlockPos();
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        ItemStack slimy = purpleSlimyEye();
+        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+        interact.accept(hit, true);
+        helper.assertTrue(!SkullEyeState.hasEyes(skull) && slimy.getCount() == 1,
+                "denied application leaves both head and item untouched");
+        interact.accept(hit, false);
+        helper.assertTrue(SkullEyeState.hasEyes(skull) && slimy.isEmpty(),
+                "an allowed event reaches the adapter and applies eyes");
+        Snapshot original = SkullEyeState.snapshot(skull);
+        ItemStack shears = optometristShears(helper);
+        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        int dropsBefore = drops(helper, HEAD, ModContent.GOOGLY_EYE.get()).size();
+        interact.accept(hit, true);
+        helper.assertTrue(SkullEyeState.snapshot(skull).equals(original) && shears.getDamageValue() == 0
+                        && drops(helper, HEAD, ModContent.GOOGLY_EYE.get()).size() == dropsBefore,
+                "denied harvesting preserves eyes and shears and creates no drop");
+        helper.succeed();
     }
 
     /**

@@ -1,19 +1,19 @@
 package com.github.crittscott.somegoogly.config;
 
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
@@ -145,9 +145,6 @@ public final class EyeConfigLimits {
                 return issue("invalid_weight", "variant %s has invalid weight", variantIndex);
             }
             totalWeight += variant.weight;
-            if (!Double.isFinite(totalWeight)) {
-                return issue("weight_overflow", "variant weights overflow");
-            }
             if (variant.heads.isEmpty()) {
                 return issue("no_heads", "variant %s has no heads", variantIndex);
             }
@@ -205,5 +202,4 @@ public final class EyeConfigLimits {
         }
         return null;
     }
-
 }

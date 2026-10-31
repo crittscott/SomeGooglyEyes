@@ -56,7 +56,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         super(ExtraCodecs.JSON, EYE_FILES);
     }
 
-    /** The file under data-pack root {@code packRoot} that holds {@code typeId}'s eye definition. */
+    /**
+     * Construct the file path for {@code typeId}'s eye definition. Does not check filesystem containment;
+     * callers accepting a client-authored identifier must first require membership in the entity registry.
+     */
     public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
         ResourceLocation file = EYE_FILES.idToFile(typeId);
         return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());

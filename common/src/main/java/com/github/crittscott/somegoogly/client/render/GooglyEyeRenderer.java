@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
@@ -100,8 +101,8 @@ public final class GooglyEyeRenderer {
                                        float eyeScale, float depth, EyeColor cornea, EyeColor iris,
                                        float irisScale, boolean glow, float partialTicks) {
         pose.pushPose();
-        float eyeScaleMul = lerp(eyeInfo.prevScaleMul, eyeInfo.scaleMul, partialTicks);
-        float squashY = lerp(eyeInfo.prevSquashY, eyeInfo.squashY, partialTicks);
+        float eyeScaleMul = Mth.lerp(partialTicks, eyeInfo.prevScaleMul, eyeInfo.scaleMul);
+        float squashY = Mth.lerp(partialTicks, eyeInfo.prevSquashY, eyeInfo.squashY);
         float scale = eyeScale * eyeScaleMul;
         pose.scale(scale, scale * squashY, scale * ModelGooglyEye.BASE_DEPTH * depth);
 
@@ -110,10 +111,10 @@ public final class GooglyEyeRenderer {
         CORNEA[2] = cornea.b();
         // Color-change behavior blends the cornea toward its target color.
         if (eyeInfo.tintColor != null) {
-            float tintAmount = lerp(eyeInfo.prevTintAmount, eyeInfo.tintAmount, partialTicks);
+            float tintAmount = Mth.lerp(partialTicks, eyeInfo.prevTintAmount, eyeInfo.tintAmount);
             if (tintAmount > 0F) {
                 for (int c = 0; c < 3; c++) {
-                    CORNEA[c] = lerp(CORNEA[c], eyeInfo.tintColor[c], tintAmount);
+                    CORNEA[c] = Mth.lerp(tintAmount, CORNEA[c], eyeInfo.tintColor[c]);
                 }
             }
         }
@@ -121,26 +122,26 @@ public final class GooglyEyeRenderer {
         IRIS[1] = iris.g();
         IRIS[2] = iris.b();
         // Anger blends the pupil toward red.
-        float irisTintAmount = lerp(eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount, partialTicks);
+        float irisTintAmount = Mth.lerp(partialTicks, eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount);
         if (irisTintAmount > 0F) {
             for (int c = 0; c < 3; c++) {
-                IRIS[c] = lerp(IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c], irisTintAmount);
+                IRIS[c] = Mth.lerp(irisTintAmount, IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c]);
             }
         }
 
         // Pupil position: the physics delta, which already includes any behavior spring. The simulation
         // keeps it inside the unit disk (the full cornea circle once mapped), so no clamp is needed here.
-        float irisX = lerp(eyeInfo.prevDeltaX, eyeInfo.deltaX, partialTicks);
-        float irisY = lerp(eyeInfo.prevDeltaY, eyeInfo.deltaY, partialTicks);
+        float irisX = Mth.lerp(partialTicks, eyeInfo.prevDeltaX, eyeInfo.deltaX);
+        float irisY = Mth.lerp(partialTicks, eyeInfo.prevDeltaY, eyeInfo.deltaY);
         // Love and the creepy pulse swell the pupil, capped where it fills the cornea; the cap never shrinks a
         // configured size.
-        float irisScaleMul = lerp(eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul, partialTicks);
+        float irisScaleMul = Mth.lerp(partialTicks, eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul);
         float pupilScale = Math.min(irisScale * irisScaleMul, Math.max(irisScale, ModelGooglyEye.MAX_PUPIL_SIZE));
         drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, pupilScale, irisX, irisY, glow);
 
         // A sleeping villager's lids close over the eye from above and below. They never glow: drawn only in
         // the cutout pass, they hide the glow behind them by depth.
-        float lid = lerp(eyeInfo.prevLid, eyeInfo.lid, partialTicks);
+        float lid = Mth.lerp(partialTicks, eyeInfo.prevLid, eyeInfo.lid);
         if (lid > 0F) {
             float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
             model.renderLids(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
@@ -174,10 +175,6 @@ public final class GooglyEyeRenderer {
         pose.scale(irisScale, irisScale, 1F);
         model.renderIris(pose, buffer, packedLight, overlay, iris[0], iris[1], iris[2], 1F);
         pose.popPose();
-    }
-
-    static float lerp(float a, float b, float t) {
-        return a + (b - a) * t;
     }
 
     /**

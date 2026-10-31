@@ -167,10 +167,10 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlReadsLiteralStringsAndSkipsUnreadableValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlReadsLiteralStringsAndSkipsUnreadableValues</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlReadsLiteralStringsAndRejectsWrongTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlReadsLiteralStringsAndRejectsWrongTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>, and
- falls back to the default for a value it cannot read.</div>
+ uses the integer default for a value of the wrong type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -180,6 +180,11 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tomlCompletionPreservesAuthoredContent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">tomlCompletionPreservesAuthoredContent</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Valid TOML syntax and table identity survive completion; malformed input is preserved.</div>
+</div>
 </div>
 </div>
 </div>
@@ -295,14 +300,23 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="serverTomlReadsLiteralStringsAndSkipsUnreadableValues(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>serverTomlReadsLiteralStringsAndSkipsUnreadableValues</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlReadsLiteralStringsAndSkipsUnreadableValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<section class="detail" id="serverTomlReadsLiteralStringsAndRejectsWrongTypes(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>serverTomlReadsLiteralStringsAndRejectsWrongTypes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlReadsLiteralStringsAndRejectsWrongTypes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>, and
- falls back to the default for a value it cannot read. In game: on a Fabric server, write
+ uses the integer default for a value of the wrong type. In game: on a Fabric server, write
  <code>spawnExcludedMods = ['minecolonies', 'create']</code> and <code>globalPercent = 5.0</code> into
  <code>serverconfig/somegoogly-server.toml</code>, run <code>/reload</code>, and check the log warns about
  <code>globalPercent</code> while both mods stay excluded.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tomlCompletionPreservesAuthoredContent(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>tomlCompletionPreservesAuthoredContent</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tomlCompletionPreservesAuthoredContent</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Valid TOML syntax and table identity survive completion; malformed input is preserved. In game:
+ quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then reload. The value
+ becomes 10 and the authored content remains. A syntax error is logged without rewriting the file.</div>
 </section>
 </li>
 </ul>

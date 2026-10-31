@@ -22,6 +22,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 
@@ -86,6 +87,9 @@ public final class ForgeServerEvents {
 
     /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
     private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseItem() == Event.Result.DENY) {
+            return;
+        }
         InteractionResult result = EyeItemService.useOnSkull(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         if (result != InteractionResult.PASS) {

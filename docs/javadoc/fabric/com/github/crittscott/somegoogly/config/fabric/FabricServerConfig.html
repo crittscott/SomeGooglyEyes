@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
  each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops. One
  <code>SCHEMA</code> list drives the commented file and the load; its sections, keys, defaults, and comments match
  the native Forge and NeoForge server specs. Like those loaders, a file missing any key, such as one from an earlier release, is
- rewritten with the values it holds and each missing key at its default.</div>
+ completed with only absent keys at their defaults; existing values and comments are retained.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

@@ -1,18 +1,18 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Client-side store of the resolved server eye state, populated from the server via
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class ClientEyeConfigs {
 
-    private static volatile BehaviorSettings behaviors = BehaviorSettings.DEFAULTS;
+    private static volatile BehaviorSettings behaviors = BehaviorSettings.NONE;
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
     private static volatile boolean googlyEyesEnabled = true;
@@ -67,7 +67,7 @@ public final class ClientEyeConfigs {
 
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
-        behaviors = BehaviorSettings.DEFAULTS;
+        behaviors = BehaviorSettings.NONE;
         configs = Collections.emptyMap();
         googlyEyesEnabled = true;
         resolved.clear();

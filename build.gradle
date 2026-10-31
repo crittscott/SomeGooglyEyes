@@ -94,6 +94,13 @@ subprojects {
     }
 }
 
+// Loader production archives bundle common, so their source archives contain the same implementation.
+enabled_platforms.split(',').each { platform ->
+    project(":$platform").tasks.named('sourcesJar', Jar).configure {
+        from project(':common').sourceSets.main.allSource
+    }
+}
+
 def documentedGameTestProjects = enabled_platforms.split(',').collect { project(":$it") }
 def documentedProjects = [project(':common')] + documentedGameTestProjects
 

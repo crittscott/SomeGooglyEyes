@@ -1,20 +1,17 @@
 package com.github.crittscott.somegoogly.server.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -22,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
  * to every loot table through {@code data/forge/loot_modifiers/global_loot_modifiers.json}; it acts only on
  * loot generated for a head block entity that has eyes.
- * Its data files live in {@code common}'s resources, which carry the mod's {@code pack.mcmeta}.
+ * Its data files live in this loader's resources.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
@@ -49,16 +46,7 @@ public final class HeadEyesLootModifier extends LootModifier {
     @Override
     protected ObjectArrayList<ItemStack> doApply(LootTable table, ObjectArrayList<ItemStack> generatedLoot,
                                                 LootContext context) {
-        if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
-            EyeState.Snapshot state = SkullEyeState.snapshot(skull);
-            if (state.hasEyes()) {
-                for (ItemStack stack : generatedLoot) {
-                    if (SkullEyeState.entityFor(stack) != null) {
-                        SkullEyeState.stampItem(stack, state);
-                    }
-                }
-            }
-        }
+        SkullEyeState.copyToLoot(context, generatedLoot);
         return generatedLoot;
     }
 }
