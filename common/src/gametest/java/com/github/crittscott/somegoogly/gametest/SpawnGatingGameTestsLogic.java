@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 /**
@@ -28,11 +28,11 @@ public final class SpawnGatingGameTestsLogic {
         int original = ServerConfig.GLOBAL_PERCENT.get();
         try {
             ServerConfig.GLOBAL_PERCENT.set(100);
-            Cow eyed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow eyed = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             helper.assertTrue(EyeState.hasEyes(eyed), Component.literal("an eligible cow at globalPercent=100 should spawn with eyes"));
 
             ServerConfig.GLOBAL_PERCENT.set(0);
-            Cow bare = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2));
+            Cow bare = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(4, 2, 2));
             helper.assertTrue(!EyeState.hasEyes(bare), Component.literal("an eligible cow at globalPercent=0 should spawn without eyes"));
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(original);
@@ -49,7 +49,7 @@ public final class SpawnGatingGameTestsLogic {
     public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
         // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later
         // /sg admin eyes true uses this mob's own arrangement.
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         float roll = EyeState.getVariantRoll(cow);
         helper.assertTrue(roll >= 0.0F && roll < 1.0F, Component.literal("variant roll should be in [0, 1), got " + roll));
         helper.succeed();

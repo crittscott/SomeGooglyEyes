@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
@@ -197,7 +197,7 @@ public final class SkullEyeGameTestsLogic {
      * its loader wrappers are commented out until the cause is found.
      */
     public static void eyedMobDropsAnEyedHead(GameTestHelper helper) {
-        Skeleton eyed = helper.spawnWithNoFreeWill(EntityType.SKELETON, MOB);
+        Skeleton eyed = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, MOB);
         EyeState.setHasEyes(eyed, true);
         EyeState.setIrisTint(eyed, IRIS);
         Snapshot expected = EyeState.snapshot(eyed);
@@ -208,7 +208,7 @@ public final class SkullEyeGameTestsLogic {
                 Component.literal("the eyed skeleton's skull carries its eyes"));
         heads.get(0).discard();
 
-        Skeleton plain = helper.spawnWithNoFreeWill(EntityType.SKELETON, MOB);
+        Skeleton plain = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, MOB);
         blowUpWithChargedCreeper(helper, plain);
         heads = drops(helper, MOB, Items.SKELETON_SKULL);
         helper.assertTrue(heads.size() == 1, Component.literal("the second kill drops a skull too"));
@@ -237,7 +237,7 @@ public final class SkullEyeGameTestsLogic {
 
     /** Kill {@code mob} with a fresh charged creeper's explosion, the kill that makes it drop its head. */
     private static void blowUpWithChargedCreeper(GameTestHelper helper, Skeleton mob) {
-        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityTypes.CREEPER, new BlockPos(3, 2, 3));
         CompoundTag data = SomeGooglyGameTestsLogic.saveEntity(creeper);
         data.putBoolean("powered", true);
         SomeGooglyGameTestsLogic.loadEntity(creeper, data);

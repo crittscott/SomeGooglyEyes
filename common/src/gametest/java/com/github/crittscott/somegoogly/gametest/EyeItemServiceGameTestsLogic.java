@@ -17,7 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -69,7 +69,7 @@ public final class EyeItemServiceGameTestsLogic {
         // The loader's shared fake player takes the server's default game mode, and creative skips both the
         // consumption and the durability cost this test checks.
         ((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeColor iris = new EyeColor(0.2F, 0.6F, 0.9F);
         EyeState.setHasEyes(cow, true);
         EyeState.setIrisTint(cow, iris);
@@ -100,7 +100,7 @@ public final class EyeItemServiceGameTestsLogic {
      * and the Optometrist shears keep full durability.
      */
     public static void optometristInteractPassesWhenNotApplicable(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         Level level = helper.getLevel();
 
         EyeState.setHasEyes(cow, true);

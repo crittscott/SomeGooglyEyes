@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.listener.EventListener;
@@ -52,8 +52,8 @@ public final class PickerAuthGameTests {
     public static void refusedInsertionLeavesTerrain(GameTestHelper helper) {
         int[] refused = {0};
         Predicate<EntityJoinLevelEvent> refusal = event -> {
-            if (event.getEntity().getType() == EntityType.COW
-                    || event.getEntity().getType() == EntityType.SQUID) {
+            if (event.getEntity().getType() == EntityTypes.COW
+                    || event.getEntity().getType() == EntityTypes.SQUID) {
                 refused[0]++;
                 return true;
             }

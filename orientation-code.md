@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.1.2.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.2.
 
 `common` is bundled in all three loader artifacts.
 

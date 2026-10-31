@@ -21,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -111,10 +112,10 @@ public final class BehaviorSchedulerGameTestsLogic {
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(1, 2, 1));
-            IronGolem golem = eyedTrackedMob(helper, player, EntityType.IRON_GOLEM, new BlockPos(3, 2, 1));
-            Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(1, 2, 3));
-            Ocelot ocelot = eyedTrackedMob(helper, player, EntityType.OCELOT, new BlockPos(3, 2, 3));
+            Cow cow = eyedTrackedMob(helper, player, EntityTypes.COW, new BlockPos(1, 2, 1));
+            IronGolem golem = eyedTrackedMob(helper, player, EntityTypes.IRON_GOLEM, new BlockPos(3, 2, 1));
+            Villager villager = eyedTrackedMob(helper, player, EntityTypes.VILLAGER, new BlockPos(1, 2, 3));
+            Ocelot ocelot = eyedTrackedMob(helper, player, EntityTypes.OCELOT, new BlockPos(3, 2, 3));
 
             ServerConfig.LOVE_ON_AFFECTION.set(false);
             cow.setInLove(player);
@@ -157,7 +158,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * an eyed skeleton; one eye narrows each time it draws its bow and opens when it fires.
      */
     public static void aimingArcherWinks(GameTestHelper helper) {
-        Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
+        Skeleton skeleton = armed(helper, EntityTypes.SKELETON, new ItemStack(Items.BOW), false,
                 new BlockPos(1, 2, 1));
         GooglyTracker tracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, ON);
         helper.assertTrue(allSquash(tracker, 1F), Component.literal("an idle skeleton's eyes are open"));
@@ -175,14 +176,14 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(tracker, 5 + GooglyTracker.AIM_EASE_TICKS + 1);
         helper.assertTrue(allSquash(tracker, 1F), Component.literal("letting go of the bow opens the eye again"));
 
-        Skeleton lefty = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), true,
+        Skeleton lefty = armed(helper, EntityTypes.SKELETON, new ItemStack(Items.BOW), true,
                 new BlockPos(3, 2, 1));
         GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false, ON);
         lefty.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(winking(leftyTracker, false), Component.literal("a left-handed skeleton squints its right eye"));
 
-        Pillager pillager = armed(helper, EntityType.PILLAGER, new ItemStack(Items.CROSSBOW), false,
+        Pillager pillager = armed(helper, EntityTypes.PILLAGER, new ItemStack(Items.CROSSBOW), false,
                 new BlockPos(1, 2, 3));
         GooglyTracker pillagerTracker = new GooglyTracker(pillager, headInfo(helper, pillager), false, ON);
         pillager.startUsingItem(InteractionHand.MAIN_HAND);
@@ -303,7 +304,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * real packet lookup and loader unload delivery require the connected-client reproduction.
      */
     public static void angerFollowsEntityLifetime(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(2, 2, 2));
         zombie.setAggressive(false);
         HeadInfo info = headInfo(helper, zombie);
         ClientEyeRuntime.onLevelChanged();
@@ -324,7 +325,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                     Component.literal("render tracker eviction must retain anger for a loaded entity"));
             ClientEyeRuntime.onEntityRemoved(zombie);
             helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, Component.literal("entity removal deletes its tracker"));
-            Zombie replacement = EntityType.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.COMMAND);
+            Zombie replacement = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.COMMAND);
             replacement.setId(zombie.getId());
             GooglyTracker calm = ClientEyeRuntime.get(replacement, info);
             helper.assertTrue(!calm.angry && allIrisTint(calm, 0F),
@@ -347,7 +348,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * second client mid-expression; both see the same progress. Look away and back, and it has not paused.
      */
     public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(2, 2, 2));
         HeadInfo info = headInfo(helper, zombie);
         try {
             ClientEyeRuntime.onLevelChanged();
@@ -392,7 +393,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * zombie chase you and its pupils turn red; outrun it until it gives up and they fade back.
      */
     public static void angryMobsHaveRedPupils(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(2, 2, 2));
         HeadInfo headInfo = headInfo(helper, zombie);
 
         GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false, ON);
@@ -439,8 +440,8 @@ public final class BehaviorSchedulerGameTestsLogic {
      * throb, and they settle once it loses interest.
      */
     public static void creepyEndermanPulses(GameTestHelper helper) {
-        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(1, 2, 1));
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(1, 2, 1));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(3, 2, 3));
         GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
         helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
                 Component.literal("a calm enderman's pupils hold their size"));
@@ -491,7 +492,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
             ServerConfig.SWIRL_ON_HEAL.set(true);
             ServerConfig.SWIRL_ON_TRADE.set(true);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             ServerBehaviorScheduler.onStartTracking(cow, player);
             EyeState.setHasEyes(cow, false);
 
@@ -522,7 +523,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
@@ -574,7 +575,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
             ServerConfig.SWIRL_ON_HEAL.set(true);
             ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(1000);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
@@ -656,9 +657,9 @@ public final class BehaviorSchedulerGameTestsLogic {
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(1, 2, 1));
-            MushroomCow mooshroom = eyedTrackedMob(helper, player, EntityType.MOOSHROOM, new BlockPos(3, 2, 1));
-            Goat goat = eyedTrackedMob(helper, player, EntityType.GOAT, new BlockPos(1, 2, 3));
+            Cow cow = eyedTrackedMob(helper, player, EntityTypes.COW, new BlockPos(1, 2, 1));
+            MushroomCow mooshroom = eyedTrackedMob(helper, player, EntityTypes.MOOSHROOM, new BlockPos(3, 2, 1));
+            Goat goat = eyedTrackedMob(helper, player, EntityTypes.GOAT, new BlockPos(1, 2, 3));
 
             ServerConfig.GROW_ON_MILK.set(false);
             milk(player, cow);
@@ -703,7 +704,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(true);
             ServerConfig.AMBIENT_MIN_TICKS.set(ServerConfig.TICKS_MIN);
             ServerConfig.AMBIENT_MAX_TICKS.set(ServerConfig.TICKS_MIN);
-            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
+            Cow cow = eyedTrackedMob(helper, player, EntityTypes.COW, new BlockPos(2, 2, 2));
             ServerBehaviorScheduler.onMilked(cow);
             advance(ServerConfig.TICKS_MIN + 1);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
@@ -736,7 +737,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
@@ -762,7 +763,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * lowers its head and charges; its eyes narrow for the charge and open again afterwards.
      */
     public static void rammingGoatSquints(GameTestHelper helper) {
-        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
+        Goat goat = helper.spawnWithNoFreeWill(EntityTypes.GOAT, new BlockPos(2, 2, 2));
         GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false, ON);
         helper.assertTrue(allSquash(tracker, 1F), Component.literal("a calm goat's eyes are open"));
 
@@ -789,9 +790,9 @@ public final class BehaviorSchedulerGameTestsLogic {
         boolean angryEyes = ServerConfig.ANGRY_EYES.get();
         try {
             ServerConfig.ANGRY_EYES.set(true);
-            IronGolem golem = helper.spawnWithNoFreeWill(EntityType.IRON_GOLEM, new BlockPos(1, 2, 1));
-            Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
+            IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(1, 2, 1));
+            Piglin piglin = helper.spawnWithNoFreeWill(EntityTypes.PIGLIN, new BlockPos(3, 2, 1));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(1, 2, 3));
 
             helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), Component.literal("a calm golem isn't angry"));
             golem.setTimeToRemainAngry(100);
@@ -830,8 +831,8 @@ public final class BehaviorSchedulerGameTestsLogic {
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Sheep quiet = eyedTrackedMob(helper, player, EntityType.SHEEP, new BlockPos(1, 2, 1));
-            Sheep bulging = eyedTrackedMob(helper, player, EntityType.SHEEP, new BlockPos(3, 2, 1));
+            Sheep quiet = eyedTrackedMob(helper, player, EntityTypes.SHEEP, new BlockPos(1, 2, 1));
+            Sheep bulging = eyedTrackedMob(helper, player, EntityTypes.SHEEP, new BlockPos(3, 2, 1));
 
             ServerConfig.GROW_ON_SHEAR.set(false);
             shear(player, quiet);
@@ -875,7 +876,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_HEAL.set(true);
             ServerConfig.SWIRL_ON_TRADE.set(true);
             ServerConfig.LOVE_ON_AFFECTION.set(true);
-            Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(2, 2, 2));
+            Villager villager = eyedTrackedMob(helper, player, EntityTypes.VILLAGER, new BlockPos(2, 2, 2));
             villager.startSleeping(villager.blockPosition());
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
@@ -910,7 +911,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * and vanish.
      */
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
-        Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
+        Villager villager = helper.spawnWithNoFreeWill(EntityTypes.VILLAGER, new BlockPos(2, 2, 2));
         Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, Component.literal("villagers have an eye config"));
@@ -969,7 +970,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.
      */
     public static void swellingCreeperRattles(GameTestHelper helper) {
-        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityTypes.CREEPER, new BlockPos(2, 2, 2));
         creeper.setNoGravity(true);
         creeper.setDeltaMovement(Vec3.ZERO);
         Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
@@ -1011,7 +1012,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      * {@code angryEyes}, an eyed zombie chasing you keeps its pupil color.
      */
     public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
-        Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(1, 2, 1));
+        Villager villager = helper.spawnWithNoFreeWill(EntityTypes.VILLAGER, new BlockPos(1, 2, 1));
         BehaviorSettings noSleep = without(OngoingBehavior.SLEEP_SQUINT);
         GooglyTracker villagerTracker = new GooglyTracker(villager, headInfo(helper, villager), false, noSleep);
         villager.startSleeping(villager.blockPosition());
@@ -1029,14 +1030,14 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noSleep);
         helper.assertTrue(allSquash(sleeperTracker, 1F), Component.literal("squintOnSleep=false: a sleeping player's eyes open"));
 
-        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(3, 2, 1));
+        Goat goat = helper.spawnWithNoFreeWill(EntityTypes.GOAT, new BlockPos(3, 2, 1));
         BehaviorSettings noRam = without(OngoingBehavior.RAM_SQUINT);
         GooglyTracker goatTracker = new GooglyTracker(goat, headInfo(helper, goat), false, noRam);
         goat.handleEntityEvent(EntityEvent.START_RAM);
         stepGoat(goat, goatTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noRam);
         helper.assertTrue(allSquash(goatTracker, 1F), Component.literal("squintOnRam=false: a ramming goat's eyes stay open"));
 
-        Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
+        Skeleton skeleton = armed(helper, EntityTypes.SKELETON, new ItemStack(Items.BOW), false,
                 new BlockPos(1, 2, 3));
         BehaviorSettings noAim = without(OngoingBehavior.AIM_WINK);
         GooglyTracker skeletonTracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, noAim);
@@ -1044,7 +1045,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(skeletonTracker, GooglyTracker.AIM_EASE_TICKS + 1, noAim);
         helper.assertTrue(allSquash(skeletonTracker, 1F), Component.literal("winkOnAim=false: an aiming skeleton keeps both eyes open"));
 
-        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityTypes.CREEPER, new BlockPos(3, 2, 3));
         creeper.setNoGravity(true);
         creeper.setDeltaMovement(Vec3.ZERO);
         BehaviorSettings noRattle = without(OngoingBehavior.SWELL_RATTLE);
@@ -1057,8 +1058,8 @@ public final class BehaviorSchedulerGameTestsLogic {
                 Component.literal("rattleOnSwell=false: a swelling creeper's pupils hang still"));
         creeper.setSwellDir(-1);
 
-        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(2, 2, 2));
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 3));
         BehaviorSettings noPulse = without(OngoingBehavior.CREEPY_PULSE);
         GooglyTracker enderTracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, noPulse);
         enderMan.setTarget(cow);
@@ -1067,7 +1068,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                 Component.literal("pulseWhenCreepy=false: a creepy enderman's pupils hold their size"));
         enderMan.setTarget(null);
 
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 1));
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(2, 2, 1));
         BehaviorSettings noAnger = without(OngoingBehavior.ANGER);
         GooglyTracker zombieTracker = new GooglyTracker(zombie, headInfo(helper, zombie), true, noAnger);
         helper.assertTrue(allIrisTint(zombieTracker, 0F), Component.literal("angryEyes=false: a mob reported angry starts calm"));

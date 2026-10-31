@@ -21,7 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -86,8 +86,8 @@ public final class EligibilityGameTestsLogic {
      * {@code entityOverrides = ["minecraft:cow,100"]}; remove the datapack and {@code /reload}, and they do.
      */
     public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW);
 
         Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -115,7 +115,7 @@ public final class EligibilityGameTestsLogic {
         // The loader's shared fake player takes the server's default game mode, and creative skips both the
         // consumption and the durability cost this test checks.
         ((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeColor red = new EyeColor(1F, 0F, 0F);
         // The spawn itself may have naturally rolled eyes under whatever configs were live at the time;
         // force the deterministic eyeless starting point this test assumes.
@@ -135,7 +135,7 @@ public final class EligibilityGameTestsLogic {
             // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!disabled.consumesAction(), Component.literal("googlyEyesEnabled=false should refuse the apply"));
@@ -162,14 +162,14 @@ public final class EligibilityGameTestsLogic {
      * using a blue-iris Slimy Eye; nothing happens, the item is kept, and the cow's eyes stay red and in place.
      */
     public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeColor red = new EyeColor(1F, 0F, 0F);
 
         Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW), set));
 
             EyeState.setIrisTint(cow, red);
             EyeState.setHasEyes(cow, true);
@@ -196,13 +196,13 @@ public final class EligibilityGameTestsLogic {
      * rear.
      */
     public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
 
         Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW), set));
 
             EyeState.setHasEyes(cow, false);
             // A sentinel outside nextFloat()'s [0, 1) range: any freshly drawn roll must displace it.
@@ -229,8 +229,8 @@ public final class EligibilityGameTestsLogic {
      * adult cow; the calf has no eyes, and once it grows up it does.
      */
     public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW);
         Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet adultOnly = new RuntimeConfigSet();
@@ -264,7 +264,7 @@ public final class EligibilityGameTestsLogic {
      * the same places.
      */
     public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
-        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW);
         Map<Identifier, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         int originalPercent = ServerConfig.GLOBAL_PERCENT.get();
@@ -275,13 +275,13 @@ public final class EligibilityGameTestsLogic {
             ServerConfig.GLOBAL_PERCENT.set(100);
 
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            Cow suppressed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Cow suppressed = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
             helper.assertTrue(EyeState.isInitialized(suppressed),
                     Component.literal("the decision is still recorded so it is never re-rolled"));
             helper.assertTrue(!EyeState.hasEyes(suppressed), Component.literal("googlyEyesEnabled=false suppresses the spawn roll"));
 
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
-            Cow eyed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2));
+            Cow eyed = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(4, 2, 2));
             helper.assertTrue(EyeState.hasEyes(eyed), Component.literal("an eligible entity at globalPercent=100 rolls eyes"));
 
             float roll = EyeState.getVariantRoll(eyed);
@@ -303,14 +303,14 @@ public final class EligibilityGameTestsLogic {
      * stack count does not change.
      */
     public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
         Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         boolean instabuild = player.getAbilities().instabuild;
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.COW), set));
 
             player.getAbilities().instabuild = true;
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
@@ -336,7 +336,7 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
+            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.PLAYER), set));
             EyeState.setHasEyes(player, false);
 
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);

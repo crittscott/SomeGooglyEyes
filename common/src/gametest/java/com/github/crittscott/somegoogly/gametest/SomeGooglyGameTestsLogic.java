@@ -24,7 +24,7 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.animal.cow.MushroomCow;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -60,13 +60,13 @@ public final class SomeGooglyGameTestsLogic {
      * still shows the same eyes in the same color.
      */
     public static void entityPersistentDataSurvivesSaveLoad(GameTestHelper helper, String loader) {
-        Cow original = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow original = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         EyeState.initialize(original, true, 0.375F);
         EyeState.setIrisTint(original, iris);
 
         CompoundTag saved = saveEntity(original);
-        Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
+        Cow restored = Objects.requireNonNull(EntityTypes.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
         loadEntity(restored, saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), Component.literal(loader + " should restore the has-eyes flag"));
@@ -83,7 +83,7 @@ public final class SomeGooglyGameTestsLogic {
      */
     public static void conversionKeepsEyeState(GameTestHelper helper) {
         BlockPos spawnPos = new BlockPos(2, 2, 2);
-        MushroomCow mooshroom = helper.spawnWithNoFreeWill(EntityType.MOOSHROOM, spawnPos);
+        MushroomCow mooshroom = helper.spawnWithNoFreeWill(EntityTypes.MOOSHROOM, spawnPos);
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         EyeState.initialize(mooshroom, true, 0.375F);
         EyeState.setIrisTint(mooshroom, iris);
@@ -94,7 +94,7 @@ public final class SomeGooglyGameTestsLogic {
             // The cow replaces the mooshroom in place; a tight box keeps neighboring tests' cows out of the count.
             AABB area = new AABB(helper.absolutePos(spawnPos)).inflate(CONVERSION_SEARCH_RADIUS);
             List<Cow> cows = helper.getLevel().getEntitiesOfClass(Cow.class, area,
-                    cow -> cow.getType() == EntityType.COW);
+                    cow -> cow.getType() == EntityTypes.COW);
             helper.assertTrue(cows.size() == 1, Component.literal("Expected the sheared mooshroom to become one cow"));
             Cow cow = cows.getFirst();
             helper.assertTrue(EyeState.hasEyes(cow), Component.literal("Converted mob should keep its eyes"));
@@ -154,7 +154,7 @@ public final class SomeGooglyGameTestsLogic {
      * cow's loot, and the shears lose one durability for the harvest.
      */
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         ItemStack shears = new ItemStack(Items.SHEARS);
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         List<ItemStack> drops = new ArrayList<>();
@@ -189,7 +189,7 @@ public final class SomeGooglyGameTestsLogic {
      * {@code googlyEyesEnabled = false}.
      */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         ItemStack shears = new ItemStack(Items.SHEARS);
         List<ItemStack> drops = new ArrayList<>();
         int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
@@ -210,7 +210,7 @@ public final class SomeGooglyGameTestsLogic {
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().mobAttack(cow), drops::add);
 
             Arrow arrow = Objects.requireNonNull(
-                    EntityType.ARROW.create(helper.getLevel(), EntitySpawnReason.TRIGGERED));
+                    EntityTypes.ARROW.create(helper.getLevel(), EntitySpawnReason.TRIGGERED));
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().arrow(arrow, player), drops::add);
 
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(0);

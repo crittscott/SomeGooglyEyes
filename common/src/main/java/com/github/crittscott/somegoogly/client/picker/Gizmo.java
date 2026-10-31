@@ -15,8 +15,6 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 
-import java.util.Optional;
-
 /**
  * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes
  * (3 blocks each way), a cube only on each positive end, and an origin marker. Rendered in the
@@ -31,14 +29,12 @@ public final class Gizmo {
             RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
                     .withLocation(Identifier.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
                     .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false, 0F, 0F))
-                    .withColorTargetState(new ColorTargetState(Optional.of(BlendFunction.TRANSLUCENT),
-                            ColorTargetState.WRITE_RED | ColorTargetState.WRITE_GREEN
-                                    | ColorTargetState.WRITE_BLUE | ColorTargetState.WRITE_ALPHA))
+                    .withColorTargetState(0, new ColorTargetState(BlendFunction.TRANSLUCENT))
                     .withCull(false)
                     .build());
     // The render type depends on the pipeline initialized above.
     private static final RenderType GIZMO_LINES = RenderType.create(
-            "somegoogly_gizmo_lines", RenderSetup.builder(GIZMO_PIPELINE).bufferSize(256).createRenderSetup());
+            "somegoogly_gizmo_lines", RenderSetup.builder(GIZMO_PIPELINE).createRenderSetup());
     private static final float LINE_WIDTH = 1.0f;
     private static final float NEGATIVE_AXIS_BRIGHTNESS = 0.4f;
     private static final float ORIGIN_CUBE = 0.06f;

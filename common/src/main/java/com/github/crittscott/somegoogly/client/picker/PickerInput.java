@@ -46,7 +46,7 @@ public final class PickerInput {
     public static void handle(KeyMapping key) {
         // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
         // /sg CLI in chat) so picker bindings don't fire while the player is interacting with a GUI.
-        if (Minecraft.getInstance().screen != null) {
+        if (Minecraft.getInstance().gui.screen() != null) {
             return;
         }
 

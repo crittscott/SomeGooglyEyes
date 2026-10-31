@@ -10,6 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -77,7 +78,7 @@ public final class RecipeGameTestsLogic {
         ItemStack eye = GooglyEyeItem.create(AppearanceOverride.EMPTY, 1);
         Component customName = Component.literal("keep");
         eye.set(DataComponents.CUSTOM_NAME, customName);
-        ItemStack result = craftWithModifier(helper, grid(eye, new ItemStack(Items.RED_DYE)));
+        ItemStack result = craftWithModifier(helper, grid(eye, new ItemStack(Items.DYE.pick(DyeColor.RED))));
         helper.assertTrue(EyeItemProperties.get(result).iris().isPresent(), Component.literal("dye should set the iris color"));
         helper.assertTrue(customName.equals(result.get(DataComponents.CUSTOM_NAME)),
                 Component.literal("an unrelated stack component should survive the edit"));

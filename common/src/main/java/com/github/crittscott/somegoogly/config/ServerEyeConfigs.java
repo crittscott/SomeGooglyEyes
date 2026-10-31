@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 
 import org.jspecify.annotations.Nullable;
@@ -36,7 +37,7 @@ public final class ServerEyeConfigs {
      * datapack configs for it and {@code /sg spawnall} skips it.
      */
     public static final Identifier ENDER_DRAGON =
-            EntityType.getKey(EntityType.ENDER_DRAGON);
+            EntityType.getKey(EntityTypes.ENDER_DRAGON);
 
     private record Installed(Map<Identifier, RuntimeConfigSet> configs,
                              Map<Identifier, CompoundTag> encoded) {

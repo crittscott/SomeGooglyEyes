@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 import java.util.UUID;
@@ -29,7 +29,7 @@ public final class PickerFreezeGameTestsLogic {
      * flag is the very thing these tests exercise.
      */
     private static Cow spawnCow(GameTestHelper helper, BlockPos pos) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, pos);
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, pos);
         cow.setNoAi(false);
         return cow;
     }
@@ -65,7 +65,7 @@ public final class PickerFreezeGameTestsLogic {
     public static void freezePreservesAlreadyForcedNoAi(GameTestHelper helper) {
         // The "mob was already NoAi before the picker" case; forced explicitly, since
         // spawnWithNoFreeWill does not touch the flag.
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         cow.setNoAi(true);
         UUID editor = UUID.randomUUID();
 

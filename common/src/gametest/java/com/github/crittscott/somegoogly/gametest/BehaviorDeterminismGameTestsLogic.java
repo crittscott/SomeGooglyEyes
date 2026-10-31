@@ -11,7 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 import java.util.Arrays;
@@ -86,7 +86,7 @@ public final class BehaviorDeterminismGameTestsLogic {
     }
 
     private static HeadInfo helperFor(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
         return ServerEyeConfigs.resolve(type, cow, EyeState.getVariantRoll(cow));
     }

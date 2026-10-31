@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -52,8 +52,8 @@ public final class PickerAuthGameTests {
     public static void refusedInsertionLeavesTerrain(GameTestHelper helper) {
         int[] refused = {0};
         Consumer<EntityJoinLevelEvent> refusal = event -> {
-            if (event.getEntity().getType() == EntityType.COW
-                    || event.getEntity().getType() == EntityType.SQUID) {
+            if (event.getEntity().getType() == EntityTypes.COW
+                    || event.getEntity().getType() == EntityTypes.SQUID) {
                 refused[0]++;
                 event.setCanceled(true);
             }

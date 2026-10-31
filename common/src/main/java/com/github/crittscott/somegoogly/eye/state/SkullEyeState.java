@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -47,12 +48,12 @@ public final class SkullEyeState {
     /** The last segment of an attachment token that names a model's head part. */
     private static final String HEAD_PART = "head";
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
-            SkullBlock.Types.CREEPER, EntityType.CREEPER,
-            SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
-            SkullBlock.Types.PLAYER, EntityType.PLAYER,
-            SkullBlock.Types.SKELETON, EntityType.SKELETON,
-            SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
-            SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
+            SkullBlock.Types.CREEPER, EntityTypes.CREEPER,
+            SkullBlock.Types.PIGLIN, EntityTypes.PIGLIN,
+            SkullBlock.Types.PLAYER, EntityTypes.PLAYER,
+            SkullBlock.Types.SKELETON, EntityTypes.SKELETON,
+            SkullBlock.Types.WITHER_SKELETON, EntityTypes.WITHER_SKELETON,
+            SkullBlock.Types.ZOMBIE, EntityTypes.ZOMBIE);
 
     private SkullEyeState() {
     }

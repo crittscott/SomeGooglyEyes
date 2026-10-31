@@ -6,7 +6,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 /**
@@ -24,7 +24,7 @@ public final class EyeStateOverrideGameTestsLogic {
     }
 
     private static Cow spawnCow(GameTestHelper helper) {
-        return helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        return helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
     }
 
     /**

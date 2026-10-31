@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.level.Level;
@@ -49,7 +49,7 @@ public final class PickerSpawnServiceGameTestsLogic {
             player.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
             helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.AIR);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
+            Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 3));
             helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
                     Component.literal("the unobstructed cow is selected by the extended ray"));
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.STONE);
@@ -75,7 +75,7 @@ public final class PickerSpawnServiceGameTestsLogic {
         try {
             List<String> otherTypes = new ArrayList<>();
             BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
-                if (type != EntityType.COW && type != EntityType.SQUID) {
+                if (type != EntityTypes.COW && type != EntityTypes.SQUID) {
                     otherTypes.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
                 }
             });
@@ -119,14 +119,14 @@ public final class PickerSpawnServiceGameTestsLogic {
     public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
         List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
         try {
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
+            helper.assertTrue(PickerSpawnService.refusal(EntityTypes.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
                     Component.literal("The ender dragon must be refused"));
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
+            helper.assertTrue(PickerSpawnService.refusal(EntityTypes.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
                     Component.literal("Players must be refused as not summonable"));
-            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), Component.literal("A cow must be spawnable by default"));
+            helper.assertTrue(PickerSpawnService.isSpawnable(EntityTypes.COW), Component.literal("A cow must be spawnable by default"));
 
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
+            helper.assertTrue(PickerSpawnService.refusal(EntityTypes.COW) == SpawnRefusal.EXCLUDED,
                     Component.literal("A config-excluded type must be refused"));
         } finally {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
@@ -177,7 +177,7 @@ public final class PickerSpawnServiceGameTestsLogic {
         private EntitySpawnReason spawnType;
 
         private TrackingCow(Level level) {
-            super(EntityType.COW, level);
+            super(EntityTypes.COW, level);
         }
 
         @Override

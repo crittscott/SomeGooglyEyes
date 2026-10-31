@@ -14,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 
 import org.jspecify.annotations.Nullable;
@@ -106,7 +107,7 @@ public final class ModelPartVocabulary {
     @Nullable
     private static LivingEntity sampleFor(Identifier id) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
+        if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.PLAYER))) {
             return minecraft.player;
         }
         ClientLevel level = minecraft.level;
