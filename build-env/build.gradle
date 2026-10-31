@@ -1,7 +1,7 @@
 plugins {
-    id 'dev.architectury.loom' version '1.17.493' apply false
-    id 'architectury-plugin' version '3.5.170'
-    id 'com.gradleup.shadow' version '9.4.3' apply false
+    id 'dev.architectury.loom' apply false
+    id 'architectury-plugin'
+    id 'com.gradleup.shadow' apply false
 }
 
 architectury {
@@ -32,6 +32,18 @@ ext.configureGameTests = { Project loaderProject ->
     }
 }
 
+// Loader metadata version ranges, derived from the exact versions in gradle.properties.
+ext.minecraft_version_range = "[${minecraft_version}]"
+def forgeMajor = forge_version.tokenize('.')[0] as int
+ext.forge_version_range = "[${forge_version},${forgeMajor + 1})"
+ext.forge_loader_version_range = "[${forgeMajor},${forgeMajor + 1})"
+if (project.hasProperty('neoforge_version')) {
+    // The release line is the version without its build number; the range ends at the next line.
+    def line = neoforge_version.tokenize('-')[0].tokenize('.').init()
+    def nextLine = (line.init() + ((line.last() as int) + 1)).join('.')
+    ext.neoforge_version_range = "[${neoforge_version},${nextLine})"
+}
+
 // Placeholder values shared by every loader's `${...}` resource expansion. Each loader adds its own
 // loader-specific version ranges on top of this.
 ext.sharedModProperties = [
@@ -46,6 +58,7 @@ ext.sharedModProperties = [
         mod_sources      : "${mod_homepage}/tree/${minecraft_version}",
         mod_issues       : "${mod_homepage}/issues",
         geckolib_version : geckolib_version,
+        java_version     : java_version,
 ]
 
 allprojects {
@@ -80,7 +93,7 @@ subprojects {
         }
 
         // Declare the nullability annotations explicitly for common as well as the loader modules.
-        compileOnly 'org.jspecify:jspecify:1.0.0'
+        compileOnly "org.jspecify:jspecify:$rootProject.jspecify_version"
     }
 
     java {
@@ -89,7 +102,7 @@ subprojects {
         withSourcesJar()
 
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
         }
     }
 }
