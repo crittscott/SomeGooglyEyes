@@ -36,13 +36,13 @@ public final class FabricNetworkTransport {
 
     /** Register every payload type and the serverbound receivers; called once from the mod initializer. */
     public static void register() {
-        PayloadTypeRegistry.configurationS2C().register(Handshake.TYPE, Handshake.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundConfiguration().register(Handshake.TYPE, Handshake.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.TYPE,
                 (payload, context) -> PickerFreezePacket.handle(payload, context.player()));

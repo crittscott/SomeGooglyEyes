@@ -3,7 +3,9 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DepthTestFunction;
+import com.mojang.blaze3d.platform.CompareOp;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -12,6 +14,8 @@ import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
+
+import java.util.Optional;
 
 /**
  * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes
@@ -26,9 +30,10 @@ public final class Gizmo {
     private static final RenderPipeline GIZMO_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
                     .withLocation(Identifier.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
-                    .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-                    .withDepthWrite(false)
-                    .withBlend(BlendFunction.TRANSLUCENT)
+                    .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false, 0F, 0F))
+                    .withColorTargetState(new ColorTargetState(Optional.of(BlendFunction.TRANSLUCENT),
+                            ColorTargetState.WRITE_RED | ColorTargetState.WRITE_GREEN
+                                    | ColorTargetState.WRITE_BLUE | ColorTargetState.WRITE_ALPHA))
                     .withCull(false)
                     .build());
     // The render type depends on the pipeline initialized above.

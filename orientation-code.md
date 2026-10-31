@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.11.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.1.
 
 `common` is transformed into all three loader artifacts.
 
@@ -22,7 +22,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common uses loader adapters and `@ExpectPlatform`.
+`@ExpectPlatform` supplies loader adapters.
 
 `ModContent` binds content through loader `ContentRegistrar`s. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
@@ -46,7 +46,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
 
-Saved data from the 1.21.4 release is already in current form; nothing migrates.
+Saved data from the 1.21.11 release is already in current form; nothing migrates.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier` delegates to `SkullEyeState.copyToLoot`, with native data in each loader; Fabric `LootTableEvents.MODIFY` adding `copy_components`). Fabric's adapter refuses spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires level PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
@@ -60,21 +60,19 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 ## Rendering and attachment
 
-Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses its `CompileRenderLayers` event. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` submission tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer.drawEye` submits every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. Rendering and pupil projection share `EyePlacement.orientation`.
+Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; Fabric/NeoForge use GeckoLib’s `CompileRenderLayers` event. `LayerGooglyEyes` poses its parent model before resolving. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` submission tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer.drawEye` submits every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. Rendering and pupil projection share `EyePlacement.orientation`.
 
-Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
+Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers.
 
-The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, with line width supplied per vertex. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key head items' GUI identity on eyes. `SkullEyeRenderer` poses the `SkullModel`/`PiglinHeadModel` and submits on its head part. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, with line width supplied per vertex. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key head items' GUI identity on eyes. The skull hook shares the submitted model state and pose. `SkullEyeRenderer` poses the `SkullModel`/`PiglinHeadModel` and submits on its head part. Worn heads get no eyes.
 
-GeckoLib links only after detection; attach failures cannot block loading.
-
-Item definitions select `GooglyEyeItemRenderer` and `SlimyEyeIrisTint` (`layer2`). NeoForge registers them by event; Forge and Fabric use vanilla's `ID_MAPPER`s.
+Item definitions select `GooglyEyeItemRenderer` and `SlimyEyeIrisTint` (`layer2`). A `SpecialModelWrapper` Mixin captures appearance and display context for deferred held-eye animation, GUI scaling, and item-frame orientation. NeoForge registers them by event; Forge and Fabric use vanilla's `ID_MAPPER`s.
 
 ## Networking
 
-Six payloads carry definitions, entity eye state, expressions, anger, picker freeze, and export. `NetworkHandler` ids embed version `17`; bump on wire changes. Native loaders require that channel version; Fabric requires its `Handshake`.
+Six payloads carry definitions, entity eye state, expressions, anger, picker freeze, and export. `NetworkHandler` ids embed version `17`; bump on wire changes. Native loaders require that version; Fabric requires its `Handshake`.
 
-The definition packet carries `googlyEyesEnabled` and `BehaviorSettings`; reload validation reserves the largest supported behavior block. Joins receive it; `ServerServices.broadcastEyeConfigsIfChanged` resends after reload/config apply only when definitions or settings changed, because it resets client trackers.
+The definition packet carries `googlyEyesEnabled` and `BehaviorSettings`; reload validation reserves the maximum behavior block. Joins receive it; `ServerServices.broadcastEyeConfigsIfChanged` resends after reload/config apply only when definitions or settings changed, because it resets client trackers.
 
 Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
 
@@ -88,7 +86,7 @@ Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworkin
 
 ## Loader integration
 
-Fabric Mixins cover heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins (`somegoogly-common-server.mixins.json`) report milking, sheep shearing, and entity events and hold head eyes. Mixins target the pinned Minecraft version, with fixed refmaps.
+Fabric Mixins cover heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins (`somegoogly-common-server.mixins.json`) report milking, sheep shearing, and entity events and hold head eyes. Mixins target the pinned, unobfuscated Minecraft version without refmaps.
 
 NeoForge registers from the `@Mod` constructor, client listeners on the right bus.
 

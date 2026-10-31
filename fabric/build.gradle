@@ -12,11 +12,6 @@ rootProject.configureGameTests(project)
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 
-    mixin {
-        useLegacyMixinAp = true
-        defaultRefmapName = 'somegoogly.refmap.json'
-    }
-
     mods {
         main {
             sourceSet sourceSets.main
@@ -71,14 +66,14 @@ dependencies {
     include "com.electronwill.night-config:core:$rootProject.nightconfig_version"
     include "com.electronwill.night-config:toml:$rootProject.nightconfig_version"
 
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    implementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    implementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
-    modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    compileOnly "com.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
+    common(project(path: ':common')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
@@ -111,9 +106,17 @@ tasks.named('processGametestResources', ProcessResources).configure {
 
 shadowJar {
     configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
+    archiveClassifier = null
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
+// The bundled common output is the production artifact.
+jar {
+    archiveClassifier = 'dev'
 }
+
+tasks.named('assemble') {
+    dependsOn shadowJar
+}
+
+loom.nestJars(tasks.named('shadowJar'), configurations.named('include'))
+loom.injectAccessWidener(tasks.named('shadowJar'))

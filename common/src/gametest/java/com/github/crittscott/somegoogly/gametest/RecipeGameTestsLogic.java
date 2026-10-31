@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -56,7 +55,7 @@ public final class RecipeGameTestsLogic {
         Optional<RecipeHolder<CraftingRecipe>> recipe = lookUp(helper, grid);
         helper.assertTrue(recipe.isPresent() && recipe.get().id().identifier().equals(EYE_MODIFIER),
                 Component.literal("the grid should match the shipped eye_modifier recipe"));
-        return recipe.get().value().assemble(grid, helper.getLevel().registryAccess());
+        return recipe.get().value().assemble(grid);
     }
 
     /**
@@ -118,7 +117,6 @@ public final class RecipeGameTestsLogic {
      * iris color and glow, and its icon's iris is blue.
      */
     public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
-        RegistryAccess registries = helper.getLevel().registryAccess();
         EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
         AppearanceOverride appearance = AppearanceOverride.EMPTY.withIrisColor(iris).withGlow(true);
 
@@ -130,7 +128,7 @@ public final class RecipeGameTestsLogic {
 
         helper.assertTrue(recipe.isPresent(), Component.literal("an eye and a slimeball should match a crafting recipe"));
 
-        ItemStack result = recipe.get().value().assemble(grid, registries);
+        ItemStack result = recipe.get().value().assemble(grid);
         helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), Component.literal("the result should be a slimy eye"));
 
         AppearanceOverride carried = EyeItemProperties.get(result);

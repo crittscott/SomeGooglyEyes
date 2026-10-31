@@ -43,9 +43,9 @@ public final class EyeInspector {
                 && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
-            player.displayClientMessage(verdict(skull), true);
+            player.sendOverlayMessage(verdict(skull));
         } else if (target != null) {
-            player.displayClientMessage(verdict((LivingEntity) target.getEntity()), true);
+            player.sendOverlayMessage(verdict((LivingEntity) target.getEntity()));
         }
     }
 

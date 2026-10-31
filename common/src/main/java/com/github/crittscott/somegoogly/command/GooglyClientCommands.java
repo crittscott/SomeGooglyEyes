@@ -123,7 +123,7 @@ public class GooglyClientCommands {
     private static void feedback(CommandContext<?> ctx, String key, Object... args) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            player.displayClientMessage(Component.translatable(key, args), false);
+            player.sendSystemMessage(Component.translatable(key, args));
         }
     }
 

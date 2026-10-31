@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
@@ -103,9 +102,6 @@ public final class ForgeClientBootstrap {
         EntityLeaveLevelEvent.BUS.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
         ItemTooltipEvent.BUS.addListener(ForgeClientBootstrap::onItemTooltip);
         LevelEvent.Unload.BUS.addListener(ForgeClientBootstrap::onLevelUnload);
-        if (GeckoCompat.isLoaded()) {
-            ForgeGeckoLayers.register();
-        }
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

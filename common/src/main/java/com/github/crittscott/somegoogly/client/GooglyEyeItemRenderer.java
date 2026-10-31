@@ -36,7 +36,7 @@ import java.util.function.Consumer;
  * <p>Draws through {@link GooglyEyeRenderer#drawEye}, so the item and the mob eyes share one drawing
  * path, texture, and pair of render types.
  */
-public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOverride> {
+public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItemRenderer.Frame> {
 
     public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "googly_eye");
 
@@ -51,12 +51,16 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     private static final HeldEye HELD = new HeldEye();
 
+    /** Appearance and display context captured before deferred item submission. */
+    public record Frame(AppearanceOverride appearance, ItemDisplayContext context) {
+    }
+
     /** The unbaked form named by the item definition; it has no fields. */
-    public record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public record Unbaked() implements SpecialModelRenderer.Unbaked<Frame> {
         public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(new Unbaked());
 
         @Override
-        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+        public SpecialModelRenderer<Frame> bake(SpecialModelRenderer.BakingContext context) {
             return new GooglyEyeItemRenderer();
         }
 
@@ -66,27 +70,14 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         }
     }
 
-    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (!minecraft.isPaused()) {
-            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
-        }
-    }
-
-    /** Drop held-eye state when leaving a world or server. */
-    public static void reset() {
-        HELD.reset();
-    }
-
-    private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
-        return ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-                || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
-    }
-
     @Override
-    public AppearanceOverride extractArgument(ItemStack stack) {
-        return EyeItemProperties.get(stack);
+    public Frame extractArgument(ItemStack stack) {
+        return extractArgument(stack, ItemDisplayContext.NONE);
+    }
+
+    /** Capture the display context with the appearance before deferred submission. */
+    public Frame extractArgument(ItemStack stack, ItemDisplayContext context) {
+        return new Frame(EyeItemProperties.get(stack), context);
     }
 
     /** The inventory view, the largest of the static views: the eye centered in the item box at GUI scale. */
@@ -99,10 +90,24 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         ModelGooglyEye.addExtents(pose.last().pose(), output);
     }
 
+    private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
+        return ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+    }
+
+    /** Drop held-eye state when leaving a world or server. */
+    public static void reset() {
+        HELD.reset();
+    }
+
     @Override
-    public void submit(@Nullable AppearanceOverride argument, ItemDisplayContext ctx, PoseStack pose,
+    public void submit(@Nullable Frame argument, PoseStack pose,
                        SubmitNodeCollector collector, int light, int overlay, boolean hasFoil, int outlineColor) {
-        AppearanceOverride props = argument != null ? argument : AppearanceOverride.EMPTY;
+        if (argument == null) {
+            return;
+        }
+        AppearanceOverride props = argument.appearance();
+        ItemDisplayContext ctx = argument.context();
         EyeColor cornea = props.cornea().orElse(EyeColor.WHITE);
         EyeColor iris = props.iris().orElse(EyeColor.BLACK);
         boolean glow = props.glow().orElse(false);
@@ -130,4 +135,13 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         }
         pose.popPose();
     }
+
+    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
+    public static void tick() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.isPaused()) {
+            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
+        }
+    }
+
 }

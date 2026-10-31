@@ -3,5 +3,7 @@
   "category": "misc",
   "input": "somegoogly:googly_eye",
   "material": "minecraft:slime_ball",
-  "result": "somegoogly:slimy_eye"
+  "result": {
+    "id": "somegoogly:slimy_eye"
+  }
 }

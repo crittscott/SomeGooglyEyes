@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.I18n;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public final class PickerHud {
     }
 
     /** Draw the picker HUD while the picker is active. */
-    public static void render(GuiGraphics graphics, int width, int height) {
+    public static void render(GuiGraphicsExtractor graphics, int width, int height) {
         if (!PickerState.isActive()) {
             return;
         }
@@ -155,7 +155,7 @@ public final class PickerHud {
         for (List<Line> row : rows) {
             int x = left;
             for (Line segment : row) {
-                graphics.drawString(font, segment.text, x, y, segment.color);
+                graphics.text(font, segment.text, x, y, segment.color);
                 x += font.width(segment.text);
             }
             y += LINE_HEIGHT;

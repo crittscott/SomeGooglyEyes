@@ -3,14 +3,14 @@
   "minVersion": "0.8",
   "package": "com.github.crittscott.somegoogly.client.mixin",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "somegoogly-common.refmap.json",
   "client": [
     "ItemModelResolverMixin",
     "ItemStackRenderStateMixin",
     "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
     "SkullBlockRendererMixin",
-    "SkullBlockRenderStateMixin"
+    "SkullBlockRenderStateMixin",
+    "SpecialModelWrapperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

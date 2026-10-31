@@ -34,7 +34,7 @@ public final class ForgeServerEvents {
     /** Subscribe the server listeners to their game events' buses; called once from the mod constructor. */
     public static void register() {
         RegisterCommandsEvent.BUS.addListener(ForgeServerEvents::onRegisterCommands);
-        PlayerInteractEvent.EntityInteract.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteract);
+        PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteract);
         PlayerInteractEvent.RightClickBlock.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickBlock);
         PlayerInteractEvent.RightClickItem.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops.
@@ -84,7 +84,7 @@ public final class ForgeServerEvents {
      * Lowest priority so a land-claim or region-protection mod that cancels the entity interaction
      * gets first refusal — this handler cancels the event as soon as it acts.
      */
-    private static boolean onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+    private static boolean onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         if (!(event.getTarget() instanceof LivingEntity living)) {
             return false;
         }

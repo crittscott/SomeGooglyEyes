@@ -23,7 +23,7 @@ public final class SomeGooglyFabric implements ModInitializer {
         FabricServerConfig.register();
         FabricServerEvents.register();
         ResourceLoader.get(PackType.SERVER_DATA)
-                .registerReloader(EyeConfigReloadListener.ID, new EyeConfigReloadListener());
+                .registerReloadListener(EyeConfigReloadListener.ID, new EyeConfigReloadListener());
 
         SomeGooglyCommon.LOGGER.info("{} initialized on Fabric", SomeGooglyCommon.MOD_NAME);
     }

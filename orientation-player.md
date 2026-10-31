@@ -8,7 +8,7 @@
 
 Some Googly Eyes adds animated eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
 
-This checkout targets Minecraft 1.21.11, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.18.4 or newer and Fabric API 0.141.6+1.21.11 or newer. NeoForge requires NeoForge 21.11.48 or newer within the 21.11 release line. Forge requires Forge 61.1.5 or newer within the 61 release line. All loaders require Java 21. GeckoLib 5.4.5 or newer is optional. Clients and servers need the same network version.
+This checkout targets Minecraft 26.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.19.5 or newer and Fabric API 0.145.1+26.1 or newer. NeoForge requires NeoForge 26.1.0.19-beta or newer below 26.1.1. Forge requires Forge 62.0.9 or newer within the 62 release line. All loaders require Java 25. GeckoLib 5.5+ is optional on Fabric and NeoForge. Clients and servers need the same network version.
 
 ## Mobs with eyes
 
@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 A Googly Eye held in first person is live: its pupil moves, and it plays idle, hurt (bulge), and heal (swirl) expressions under the server's expression settings. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
-Worlds saved by the 1.21.4 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 1.21.4 release.
+Worlds saved by the 1.21.11 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 1.21.11 release.
 
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
@@ -168,7 +168,7 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Caverns & Chasms, Critters and Companions, Ecologics, Environmental, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Upgrade Aquatic, Variants & Ventures, and WilderNature. They are unverified against 1.21.11 releases.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Caverns & Chasms, Critters and Companions, Ecologics, Environmental, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Upgrade Aquatic, Variants & Ventures, and WilderNature. They are unverified against 26.1 releases.
 
 The 78 bundled Minecraft definitions all select 1.21.4 and are enabled, including the player and armor stand. Axolotl, camel husk, copper golem, endermite, happy ghast, mannequin, nautilus, parched, pufferfish, silverfish, tadpole, tropical fish, and zombie nautilus have no bundled definition. Unmatched versions use the nearest declared generation. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
@@ -237,5 +237,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, camel husk, copper golem, endermite, happy ghast, mannequin, nautilus, parched, pufferfish, silverfish, tadpole, tropical fish, and zombie nautilus do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, and loading real 1.21.4 saves.
+- Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, and loading real 1.21.11 saves.
 - The modifier recipe may be absent from recipe viewers.

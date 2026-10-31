@@ -4,19 +4,14 @@ architectury {
 
 loom {
     accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
-
-    // The common Mixins need their own refmap: Fabric resolves them against intermediary names, and
-    // the Fabric module's refmap covers only Mixins compiled there.
-    mixin {
-        useLegacyMixinAp = true
-        defaultRefmapName = 'somegoogly-common.refmap.json'
-    }
 }
 
 dependencies {
+    compileOnly "io.github.llamalad7:mixinextras-common:$rootProject.mixinextras_version"
+
     // Supplies the Mixin annotations for the common Mixins. Do NOT use Fabric Loader API from common.
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    compileOnly "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     // Optional at runtime; needed at compile time by the GeckoLib render integration.
-    modCompileOnly "software.bernie.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    compileOnly "com.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 }

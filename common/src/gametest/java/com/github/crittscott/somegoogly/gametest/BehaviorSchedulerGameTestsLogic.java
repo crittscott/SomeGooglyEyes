@@ -641,7 +641,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     /** Use an empty bucket on {@code mob} the way a player's right-click does. */
     private static void milk(ServerPlayer player, Mob mob) {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
-        mob.interact(player, InteractionHand.MAIN_HAND);
+        mob.interact(player, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
     }
 
     /**
@@ -816,7 +816,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     private static void shear(ServerPlayer player, Mob mob) {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-        player.interactOn(mob, InteractionHand.MAIN_HAND);
+        player.interactOn(mob, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
     }
 
     /**

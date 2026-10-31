@@ -11,8 +11,7 @@ public final class ModVersionLookupImpl {
     }
 
     public static Optional<String> modVersion(String modId) {
-        return ModList.get()
-                .getModContainerById(modId)
+        return ModList.getModContainerById(modId)
                 .map(container -> container.getModInfo().getVersion().toString());
     }
 }
