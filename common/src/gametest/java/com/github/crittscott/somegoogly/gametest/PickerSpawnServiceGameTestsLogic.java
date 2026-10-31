@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -45,17 +46,17 @@ public final class PickerSpawnServiceGameTestsLogic {
         float originalPitch = player.getXRot();
         try {
             BlockPos origin = helper.absolutePos(new BlockPos(2, 1, 0));
-            player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            player.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
             helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.AIR);
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
             helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
-                    "the unobstructed cow is selected by the extended ray");
+                    Component.literal("the unobstructed cow is selected by the extended ray"));
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.STONE);
             helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == null,
-                    "an intervening wall prevents selecting the hidden cow");
+                    Component.literal("an intervening wall prevents selecting the hidden cow"));
         } finally {
-            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+            player.snapTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
         }
         helper.succeed();
     }
@@ -81,10 +82,10 @@ public final class PickerSpawnServiceGameTestsLogic {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
             BlockPos origin = helper.absolutePos(new BlockPos(2, 3, 0));
-            player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            player.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
             helper.setBlock(new BlockPos(2, 2, 0), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 3), Blocks.SKELETON_SKULL);
-            SkullBlockEntity skull = (SkullBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 3));
+            SkullBlockEntity skull = helper.getBlockEntity(new BlockPos(2, 2, 3), SkullBlockEntity.class);
             EyeState.Snapshot eyes = new EyeState.Snapshot(true, 0.5F, AppearanceOverride.EMPTY);
             SkullEyeState.set(skull, eyes);
             Map<BlockPos, BlockState> before = new LinkedHashMap<>();
@@ -98,14 +99,14 @@ public final class PickerSpawnServiceGameTestsLogic {
             }
             PickerSpawnService.spawn(player, "minecraft");
             before.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
-                    "refused bulk spawn must leave terrain unchanged at " + pos));
+                    Component.literal("refused bulk spawn must leave terrain unchanged at " + pos)));
             helper.assertTrue(helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
                             && SkullEyeState.snapshot(skull).equals(eyes),
-                    "refused terrain edits preserve the original block entity and its eye data");
+                    Component.literal("refused terrain edits preserve the original block entity and its eye data"));
         } finally {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
-            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+            player.snapTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
         }
     }
 
@@ -119,14 +120,14 @@ public final class PickerSpawnServiceGameTestsLogic {
         List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
         try {
             helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
-                    "The ender dragon must be refused");
+                    Component.literal("The ender dragon must be refused"));
             helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
-                    "Players must be refused as not summonable");
-            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), "A cow must be spawnable by default");
+                    Component.literal("Players must be refused as not summonable"));
+            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), Component.literal("A cow must be spawnable by default"));
 
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
             helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
-                    "A config-excluded type must be refused");
+                    Component.literal("A config-excluded type must be refused"));
         } finally {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
         }
@@ -149,21 +150,21 @@ public final class PickerSpawnServiceGameTestsLogic {
                 destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
                 yaw);
 
-        helper.assertTrue(finalized, "An uncancelled command spawn must report successful finalization");
-        helper.assertTrue(cow.finalizeCalls == 1, "Command-spawn preparation must finalize a mob exactly once");
+        helper.assertTrue(finalized, Component.literal("An uncancelled command spawn must report successful finalization"));
+        helper.assertTrue(cow.finalizeCalls == 1, Component.literal("Command-spawn preparation must finalize a mob exactly once"));
         helper.assertTrue(cow.spawnType == EntitySpawnReason.COMMAND,
-                "Command-spawn preparation must use the command spawn reason");
+                Component.literal("Command-spawn preparation must use the command spawn reason"));
         helper.assertTrue(destination.equals(cow.positionAtFinalize),
-                "Mob finalization must see the entity's destination");
+                Component.literal("Mob finalization must see the entity's destination"));
         helper.assertTrue(!cow.noAiAtFinalize,
-                "Picker NoAi must be applied after normal spawn finalization");
-        helper.assertTrue(cow.isNoAi(), "A picker-spawned mob must have NoAi");
-        helper.assertTrue(cow.isPersistenceRequired(), "A picker-spawned mob must be persistent");
+                Component.literal("Picker NoAi must be applied after normal spawn finalization"));
+        helper.assertTrue(cow.isNoAi(), Component.literal("A picker-spawned mob must have NoAi"));
+        helper.assertTrue(cow.isPersistenceRequired(), Component.literal("A picker-spawned mob must be persistent"));
         helper.assertTrue(cow.getYRot() == yaw && cow.getYHeadRot() == yaw && cow.yBodyRot == yaw,
-                "Picker facing must override rotations assigned during spawn finalization");
+                Component.literal("Picker facing must override rotations assigned during spawn finalization"));
 
         CompoundTag saved = cow.saveWithoutId(new CompoundTag());
-        helper.assertTrue(!saved.isEmpty(), "A prepared picker mob must serialize successfully");
+        helper.assertTrue(!saved.isEmpty(), Component.literal("A prepared picker mob must serialize successfully"));
         helper.succeed();
     }
 

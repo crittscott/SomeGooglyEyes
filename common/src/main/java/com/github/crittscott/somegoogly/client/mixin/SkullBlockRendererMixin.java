@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,10 +24,10 @@ import javax.annotation.Nullable;
 @Mixin(SkullBlockRenderer.class)
 abstract class SkullBlockRendererMixin {
 
-    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/phys/Vec3;)V",
             at = @At("HEAD"))
     private void somegoogly$beginHead(SkullBlockEntity skull, float partialTick, PoseStack pose,
-                                      MultiBufferSource bufferSource, int packedLight, int packedOverlay,
+                                      MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPosition,
                                       CallbackInfo callback) {
         SkullEyeRenderer.begin(skull, partialTick);
     }
@@ -39,10 +40,10 @@ abstract class SkullBlockRendererMixin {
         SkullEyeRenderer.render(pose, bufferSource, packedLight, model);
     }
 
-    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
+    @Inject(method = "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/phys/Vec3;)V",
             at = @At("RETURN"))
     private void somegoogly$endHead(SkullBlockEntity skull, float partialTick, PoseStack pose,
-                                    MultiBufferSource bufferSource, int packedLight, int packedOverlay,
+                                    MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPosition,
                                     CallbackInfo callback) {
         SkullEyeRenderer.end();
     }

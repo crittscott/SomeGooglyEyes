@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -68,13 +69,13 @@ public final class EyeConfigLimitsGameTestsLogic {
 
     private static void assertRejected(GameTestHelper helper, RuntimeConfig config, String reason) {
         EyeConfigLimits.Issue error = EyeConfigLimits.validateRuntimeConfig(config);
-        helper.assertTrue(error != null, "expected rejection for " + reason);
+        helper.assertTrue(error != null, Component.literal("expected rejection for " + reason));
         while (!error.arguments().isEmpty()
                 && error.arguments().getLast() instanceof EyeConfigLimits.Issue nested) {
             error = nested;
         }
         helper.assertTrue(error.key().equals("somegoogly.validation." + reason),
-                "expected rejection for " + reason + ", got " + error.key());
+                Component.literal("expected rejection for " + reason + ", got " + error.key()));
     }
 
     /**
@@ -110,7 +111,7 @@ public final class EyeConfigLimitsGameTestsLogic {
         RuntimeConfig ok = config(variant(head(
                 new EyeDefinition(partnered, EyeAppearance.DEFAULT), validEye())));
         helper.assertTrue(EyeConfigLimits.validateRuntimeConfig(ok) == null,
-                "an eye may cross toward another eye in the same head");
+                Component.literal("an eye may cross toward another eye in the same head"));
         helper.succeed();
     }
 

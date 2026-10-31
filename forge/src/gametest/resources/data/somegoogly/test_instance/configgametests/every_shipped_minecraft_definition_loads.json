@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:configgametests/every_shipped_minecraft_definition_loads",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 60
+}

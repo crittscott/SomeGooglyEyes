@@ -1,39 +1,38 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Fabric GameTest entry points for {@link RecipeGameTestsLogic}; see that class for the actual
  * assertions.
  */
-public final class RecipeGameTests implements FabricGameTest {
+public final class RecipeGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void cobwebClearsAllOverrides(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void cobwebClearsAllOverrides(GameTestHelper helper) {
         RecipeGameTestsLogic.cobwebClearsAllOverrides(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void dyeSetsIrisAndKeepsUnrelatedComponent(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void dyeSetsIrisAndKeepsUnrelatedComponent(GameTestHelper helper) {
         RecipeGameTestsLogic.dyeSetsIrisAndKeepsUnrelatedComponent(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void glowstoneAndRedstoneToggleGlow(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void glowstoneAndRedstoneToggleGlow(GameTestHelper helper) {
         RecipeGameTestsLogic.glowstoneAndRedstoneToggleGlow(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void twoEyesDoNotMatch(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void twoEyesDoNotMatch(GameTestHelper helper) {
         RecipeGameTestsLogic.twoEyesDoNotMatch(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RecipeGameTestsLogic.slimyEyeCarriesTheEyesAppearance(helper);
     }
 }

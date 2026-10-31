@@ -5,9 +5,9 @@ import com.github.crittscott.somegoogly.client.render.resolver.ModelMemo;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when GeckoLib
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * <p>Bones are named in the {@code .geo.json}, so enumeration yields real names (better than the
  * vanilla reflection family's {@code #N}). There is deliberately no "move the pose to a bone" here:
- * a GeckoLib layer can only draw at a bone from inside {@link GooglyGeoLayer#renderForBone}, where
+ * a GeckoLib layer can only draw at a bone from inside GeckoLib's per-bone rendering task, where
  * GeckoLib hands it the fully-composed pose — re-walking bone transforms outside the model render
  * misses the entity's body rotations (see {@link GooglyGeoLayer}). So lookup returns the {@link GeoBone}
  * itself, matched by identity at render time.

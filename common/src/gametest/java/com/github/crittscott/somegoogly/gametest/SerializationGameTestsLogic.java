@@ -30,6 +30,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -64,15 +65,15 @@ public final class SerializationGameTestsLogic {
                 NetworkHandler.EYE_ANGER, NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
         for (ResourceLocation id : gameplay) {
             helper.assertTrue(id.getPath().startsWith(prefix),
-                    "gameplay channel " + id + " must carry protocol prefix " + prefix);
+                    Component.literal("gameplay channel " + id + " must carry protocol prefix " + prefix));
         }
         helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
-                "every gameplay payload must have a unique channel id");
+                Component.literal("every gameplay payload must have a unique channel id"));
         List<ResourceLocation> typedPayloads = List.of(
                 EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeBehaviorTriggerPacket.TYPE.id(),
                 EyeAngerPacket.TYPE.id(), PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
         helper.assertTrue(typedPayloads.equals(gameplay),
-                "the native payload types must preserve every established wire id");
+                Component.literal("the native payload types must preserve every established wire id"));
         helper.succeed();
     }
 
@@ -98,7 +99,7 @@ public final class SerializationGameTestsLogic {
         T decoded = codec.decode(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(first),
                 helper.getLevel().registryAccess()));
         byte[] second = bytes(helper, codec, decoded);
-        helper.assertTrue(Arrays.equals(first, second), description + " should survive a wire round-trip");
+        helper.assertTrue(Arrays.equals(first, second), Component.literal(description + " should survive a wire round-trip"));
         return decoded;
     }
 
@@ -125,25 +126,25 @@ public final class SerializationGameTestsLogic {
      */
     public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
         helper.assertTrue(AppearanceOverride.fromNbt(null).equals(AppearanceOverride.EMPTY),
-                "null tag → EMPTY");
+                Component.literal("null tag → EMPTY"));
         helper.assertTrue(AppearanceOverride.fromNbt(AppearanceOverride.EMPTY.toNbt()).equals(AppearanceOverride.EMPTY),
-                "EMPTY round-trips");
+                Component.literal("EMPTY round-trips"));
 
         AppearanceOverride irisOnly = AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.1F, 0.2F, 0.3F));
-        helper.assertTrue(AppearanceOverride.fromNbt(irisOnly.toNbt()).equals(irisOnly), "iris-only round-trips");
+        helper.assertTrue(AppearanceOverride.fromNbt(irisOnly.toNbt()).equals(irisOnly), Component.literal("iris-only round-trips"));
 
         AppearanceOverride glowOnly = AppearanceOverride.EMPTY.withGlow(true);
-        helper.assertTrue(AppearanceOverride.fromNbt(glowOnly.toNbt()).equals(glowOnly), "glow-only round-trips");
+        helper.assertTrue(AppearanceOverride.fromNbt(glowOnly.toNbt()).equals(glowOnly), Component.literal("glow-only round-trips"));
 
         AppearanceOverride full = AppearanceOverride.EMPTY
                 .withCorneaColor(new EyeColor(0.4F, 0.5F, 0.6F))
                 .withIrisColor(new EyeColor(0.7F, 0.8F, 0.9F))
                 .withGlow(false);
-        helper.assertTrue(AppearanceOverride.fromNbt(full.toNbt()).equals(full), "fully-populated override round-trips");
+        helper.assertTrue(AppearanceOverride.fromNbt(full.toNbt()).equals(full), Component.literal("fully-populated override round-trips"));
         AppearanceOverride invalid = AppearanceOverride.EMPTY
                 .withIrisColor(new EyeColor(Float.NaN, 0.5F, 0.5F));
         helper.assertTrue(AppearanceOverride.fromNbt(invalid.toNbt()).equals(AppearanceOverride.EMPTY),
-                "non-finite portable appearance data is discarded");
+                Component.literal("non-finite portable appearance data is discarded"));
         helper.succeed();
     }
 
@@ -166,7 +167,7 @@ public final class SerializationGameTestsLogic {
     public static void angerPacketRoundTrips(GameTestHelper helper) {
         EyeAngerPacket decoded = roundTrip(helper, EyeAngerPacket.STREAM_CODEC, new EyeAngerPacket(7, true),
                 "EyeAngerPacket");
-        helper.assertTrue(decoded.entityId() == 7 && decoded.angry(), "EyeAngerPacket should preserve its fields");
+        helper.assertTrue(decoded.entityId() == 7 && decoded.angry(), Component.literal("EyeAngerPacket should preserve its fields"));
         helper.succeed();
     }
 
@@ -184,15 +185,15 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket packet =
                 new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false, behaviors);
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
-        helper.assertTrue(!decoded.googlyEyesEnabled(), "the googlyEyesEnabled flag should survive the round-trip");
-        helper.assertTrue(decoded.behaviors().equals(behaviors), "the behavior settings should survive the round-trip");
+        helper.assertTrue(!decoded.googlyEyesEnabled(), Component.literal("the googlyEyesEnabled flag should survive the round-trip"));
+        helper.assertTrue(decoded.behaviors().equals(behaviors), Component.literal("the behavior settings should survive the round-trip"));
         Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
         int budget = EyeConfigSyncPacket.wireSize(encoded);
         EyeConfigSyncPacket maximum = new EyeConfigSyncPacket(configs, encoded, true, BehaviorSettings.WIRE_MAXIMUM);
         helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, maximum).length == budget,
-                "the reload budget must include the largest supported behavior block");
+                Component.literal("the reload budget must include the largest supported behavior block"));
         helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet).length <= budget,
-                "a non-default settings packet must fit the reload budget");
+                Component.literal("a non-default settings packet must fit the reload budget"));
         helper.succeed();
     }
 
@@ -205,21 +206,21 @@ public final class SerializationGameTestsLogic {
         try {
             helper.assertTrue(EyeConfigSyncPacket.STREAM_CODEC.decode(safe).configs().size() == 1
                             && safe.readableBytes() == 0,
-                    "the fixture builder must produce a complete decodable payload");
+                    Component.literal("the fixture builder must produce a complete decodable payload"));
         } finally {
             safe.release();
         }
         RegistryFriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
         helper.assertTrue(rejectsConfig(oversized, "Eye config count exceeds network limit"),
-                "config sync must reject an oversized outer count before allocating entries");
+                Component.literal("config sync must reject an oversized outer count before allocating entries"));
 
         RuntimeConfigSet tooManyVariants = sampleConfigSet();
         tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
                 tooManyVariants.any.variants.get(0));
         RegistryFriendlyByteBuf counted = singleConfigPayload(helper, tooManyVariants);
         helper.assertTrue(rejectsConfig(counted, "variant count"),
-                "config sync must reject a config over the variant limit");
+                Component.literal("config sync must reject a config over the variant limit"));
 
         RuntimeConfigSet unsafe = sampleConfigSet();
         HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
@@ -228,7 +229,7 @@ public final class SerializationGameTestsLogic {
                         0.0F, 0.0F, EyePlacement.NO_CROSS_TARGET), EyeAppearance.DEFAULT));
         RegistryFriendlyByteBuf numeric = singleConfigPayload(helper, unsafe);
         helper.assertTrue(rejectsConfig(numeric, "position is not finite"),
-                "config sync must reject non-finite placement values");
+                Component.literal("config sync must reject non-finite placement values"));
         helper.succeed();
     }
 
@@ -265,7 +266,7 @@ public final class SerializationGameTestsLogic {
         twoChannels.add(Float.valueOf(0.5F));
         twoChannels.add(Float.valueOf(0.5F));
         boolean parsed = EyeColor.CODEC.parse(JsonOps.INSTANCE, twoChannels).result().isPresent();
-        helper.assertTrue(!parsed, "a 2-channel color list must fail to parse");
+        helper.assertTrue(!parsed, Component.literal("a 2-channel color list must fail to parse"));
         helper.succeed();
     }
 
@@ -281,14 +282,14 @@ public final class SerializationGameTestsLogic {
             channels.add(Float.valueOf(0.5F));
             channels.add(Float.valueOf(0.5F));
             helper.assertTrue(EyeColor.CODEC.parse(JsonOps.INSTANCE, channels).result().isEmpty(),
-                    "codec must reject channel " + bad);
+                    Component.literal("codec must reject channel " + bad));
 
             RegistryFriendlyByteBuf buffer = buffer(helper);
             buffer.writeFloat(bad);
             buffer.writeFloat(0.5F);
             buffer.writeFloat(0.5F);
             helper.assertTrue(throwsRuntime(() -> EyeColor.STREAM_CODEC.decode(buffer)),
-                    "stream codec must reject channel " + bad);
+                    Component.literal("stream codec must reject channel " + bad));
         }
         helper.succeed();
     }
@@ -306,12 +307,12 @@ public final class SerializationGameTestsLogic {
                 new EyeAppearance(new EyeColor(0.1F, 0.2F, 0.3F), new EyeColor(0.4F, 0.5F, 0.6F), true));
         var encoded = EyeDefinition.CODEC.encodeStart(JsonOps.INSTANCE, sample).result().orElseThrow();
         EyeDefinition decoded = EyeDefinition.CODEC.parse(JsonOps.INSTANCE, encoded).result().orElseThrow();
-        helper.assertTrue(decoded.equals(sample), "every eye field must survive encode→decode by value");
+        helper.assertTrue(decoded.equals(sample), Component.literal("every eye field must survive encode→decode by value"));
 
         // Every field is required: an empty object is a parse failure, not a tree of defaults.
         boolean parsedEmpty = EyeDefinition.CODEC
                 .parse(JsonOps.INSTANCE, new com.google.gson.JsonObject()).result().isPresent();
-        helper.assertTrue(!parsedEmpty, "an eye with no fields must fail to parse");
+        helper.assertTrue(!parsedEmpty, Component.literal("an eye with no fields must fail to parse"));
         helper.succeed();
     }
 
@@ -327,7 +328,7 @@ public final class SerializationGameTestsLogic {
                 EyeAppearance.DEFAULT);
         String json = EyeDefinition.CODEC.encodeStart(JsonOps.INSTANCE, sample).result().orElseThrow().toString();
         helper.assertTrue(!json.contains("0.219999"),
-                "float-widening noise must not reach the datapack JSON, got: " + json);
+                Component.literal("float-widening noise must not reach the datapack JSON, got: " + json));
         helper.succeed();
     }
 
@@ -347,7 +348,7 @@ public final class SerializationGameTestsLogic {
         noConfig.writeUtf(AGE_ADULT);
         noConfig.writeNbt(null);
         helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(noConfig)),
-                "picker export must reject a packet with no config");
+                Component.literal("picker export must reject a packet with no config"));
         helper.succeed();
     }
 
@@ -373,7 +374,7 @@ public final class SerializationGameTestsLogic {
         EyeState.Snapshot snapshot = new EyeState.Snapshot(true, 0.5F, overrides);
         EyeStatePacket withOverrides = new EyeStatePacket(42, snapshot);
         EyeStatePacket d1 = roundTrip(helper, EyeStatePacket.STREAM_CODEC, withOverrides, "EyeStatePacket with overrides");
-        helper.assertTrue(d1.snapshot().equals(snapshot), "EyeStatePacket should preserve its snapshot");
+        helper.assertTrue(d1.snapshot().equals(snapshot), Component.literal("EyeStatePacket should preserve its snapshot"));
 
         EyeStatePacket noOverrides = new EyeStatePacket(
                 43, new EyeState.Snapshot(false, 0.0F, AppearanceOverride.EMPTY));
@@ -392,7 +393,7 @@ public final class SerializationGameTestsLogic {
         invalid.writeFloat(Float.NaN);
         invalid.writeByte(0);
         helper.assertTrue(throwsRuntime(() -> EyeStatePacket.STREAM_CODEC.decode(invalid)),
-                "eye-state sync must reject a non-finite variant roll");
+                Component.literal("eye-state sync must reject a non-finite variant roll"));
         helper.succeed();
     }
 

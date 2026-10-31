@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:configgametests/reload_replaces_configs_only_on_content_change",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 60
+}

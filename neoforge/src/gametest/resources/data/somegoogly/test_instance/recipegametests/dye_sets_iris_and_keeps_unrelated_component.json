@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:recipegametests/dye_sets_iris_and_keeps_unrelated_component",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 60
+}

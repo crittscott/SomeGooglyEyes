@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:somegooglygametests/spawn_commands_refuse_dragon_players_and_excluded_types",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 20
+}

@@ -1,21 +1,22 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
-import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -64,17 +65,17 @@ public final class EligibilityGameTestsLogic {
      * with a Googly Eye at an eyeless cow reports no configuration, and a Slimy Eye no longer applies to cows.
      */
     public static void usablePredicateEndpoints(GameTestHelper helper) {
-        helper.assertTrue(!RuntimeConfig.isUsable(null), "a missing config should not be usable");
+        helper.assertTrue(!RuntimeConfig.isUsable(null), Component.literal("a missing config should not be usable"));
 
         RuntimeConfig noVariants = new RuntimeConfig();
         noVariants.variants = List.of();
-        helper.assertTrue(!RuntimeConfig.isUsable(noVariants), "a config with no variants should not be usable");
+        helper.assertTrue(!RuntimeConfig.isUsable(noVariants), Component.literal("a config with no variants should not be usable"));
 
         RuntimeConfig usable = usableConfig();
-        helper.assertTrue(RuntimeConfig.isUsable(usable), "an enabled config with a variant should be usable");
+        helper.assertTrue(RuntimeConfig.isUsable(usable), Component.literal("an enabled config with a variant should be usable"));
 
         usable.enabled = false;
-        helper.assertTrue(!RuntimeConfig.isUsable(usable), "enabled:false should be a hard disable");
+        helper.assertTrue(!RuntimeConfig.isUsable(usable), Component.literal("enabled:false should be a hard disable"));
         helper.succeed();
     }
 
@@ -92,10 +93,10 @@ public final class EligibilityGameTestsLogic {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(cowId, set));
-            helper.assertTrue(ServerEyeConfigs.isEligible(cow), "a cow with a usable config should be eligible");
+            helper.assertTrue(ServerEyeConfigs.isEligible(cow), Component.literal("a cow with a usable config should be eligible"));
 
             ServerEyeConfigs.replaceAll(Map.of());
-            helper.assertTrue(!ServerEyeConfigs.isEligible(cow), "a cow with no config should not be eligible");
+            helper.assertTrue(!ServerEyeConfigs.isEligible(cow), Component.literal("a cow with no config should not be eligible"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -123,9 +124,9 @@ public final class EligibilityGameTestsLogic {
             ServerEyeConfigs.replaceAll(Map.of());
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
             InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
-            helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
-            helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
-            helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
+            helper.assertTrue(!refused.consumesAction(), Component.literal("an ineligible target should refuse the apply"));
+            helper.assertTrue(!EyeState.hasEyes(cow), Component.literal("an ineligible target should not gain eyes"));
+            helper.assertTrue(stack.getCount() == 2, Component.literal("a refused apply should not consume the eye"));
 
             // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
@@ -133,18 +134,18 @@ public final class EligibilityGameTestsLogic {
             ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
-            helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
-            helper.assertTrue(!EyeState.hasEyes(cow), "a disabled apply should not gain eyes");
-            helper.assertTrue(stack.getCount() == 2, "a disabled apply should not consume the eye");
+            helper.assertTrue(!disabled.consumesAction(), Component.literal("googlyEyesEnabled=false should refuse the apply"));
+            helper.assertTrue(!EyeState.hasEyes(cow), Component.literal("a disabled apply should not gain eyes"));
+            helper.assertTrue(stack.getCount() == 2, Component.literal("a disabled apply should not consume the eye"));
 
             // Configured and enabled: eyes on, the stack's appearance carried across, exactly one eye spent.
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
-            helper.assertTrue(applied.consumesAction(), "an eligible target should accept the apply");
-            helper.assertTrue(EyeState.hasEyes(cow), "an eligible target should gain eyes");
+            helper.assertTrue(applied.consumesAction(), Component.literal("an eligible target should accept the apply"));
+            helper.assertTrue(EyeState.hasEyes(cow), Component.literal("an eligible target should gain eyes"));
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
-                    "the applied eyes should carry the stack's iris color");
-            helper.assertTrue(stack.getCount() == 1, "applying should consume exactly one eye");
+                    Component.literal("the applied eyes should carry the stack's iris color"));
+            helper.assertTrue(stack.getCount() == 1, Component.literal("applying should consume exactly one eye"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
@@ -173,12 +174,12 @@ public final class EligibilityGameTestsLogic {
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
             InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
-            helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
-            helper.assertTrue(stack.getCount() == 1, "a refused apply should not consume the eye");
-            helper.assertTrue(EyeState.hasEyes(cow), "a refusal should leave the eyes on");
+            helper.assertTrue(!refused.consumesAction(), Component.literal("an already-eyed target should refuse the apply"));
+            helper.assertTrue(stack.getCount() == 1, Component.literal("a refused apply should not consume the eye"));
+            helper.assertTrue(EyeState.hasEyes(cow), Component.literal("a refusal should leave the eyes on"));
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),
-                    "a refusal should not touch the appearance");
-            helper.assertTrue(EyeState.getVariantRoll(cow) == roll, "a refusal should not touch the variant roll");
+                    Component.literal("a refusal should not touch the appearance"));
+            helper.assertTrue(EyeState.getVariantRoll(cow) == roll, Component.literal("a refusal should not touch the variant roll"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -206,9 +207,9 @@ public final class EligibilityGameTestsLogic {
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
             InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
-            helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
+            helper.assertTrue(applied.consumesAction(), Component.literal("an eyeless configured target should accept the apply"));
             float roll = EyeState.getVariantRoll(cow);
-            helper.assertTrue(roll >= 0F && roll < 1F, "an application should draw a fresh variant roll");
+            helper.assertTrue(roll >= 0F && roll < 1F, Component.literal("an application should draw a fresh variant roll"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -232,17 +233,17 @@ public final class EligibilityGameTestsLogic {
             adultOnly.adult = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(cowId, adultOnly));
             helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
-                    "an adult-only config still lets the entity roll at spawn");
+                    Component.literal("an adult-only config still lets the entity roll at spawn"));
 
             RuntimeConfigSet babyOnly = new RuntimeConfigSet();
             babyOnly.baby = usableConfig();
             ServerEyeConfigs.replaceAll(Map.of(cowId, babyOnly));
             helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
-                    "a baby-only config also lets an adult roll, so both buckets are consulted");
+                    Component.literal("a baby-only config also lets an adult roll, so both buckets are consulted"));
 
             ServerEyeConfigs.replaceAll(Map.of());
             helper.assertTrue(!ServerEyeConfigs.canEverWearEyes(cow),
-                    "an unconfigured entity can never wear eyes");
+                    Component.literal("an unconfigured entity can never wear eyes"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -272,18 +273,18 @@ public final class EligibilityGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             Cow suppressed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
             helper.assertTrue(EyeState.isInitialized(suppressed),
-                    "the decision is still recorded so it is never re-rolled");
-            helper.assertTrue(!EyeState.hasEyes(suppressed), "googlyEyesEnabled=false suppresses the spawn roll");
+                    Component.literal("the decision is still recorded so it is never re-rolled"));
+            helper.assertTrue(!EyeState.hasEyes(suppressed), Component.literal("googlyEyesEnabled=false suppresses the spawn roll"));
 
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             Cow eyed = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(4, 2, 2));
-            helper.assertTrue(EyeState.hasEyes(eyed), "an eligible entity at globalPercent=100 rolls eyes");
+            helper.assertTrue(EyeState.hasEyes(eyed), Component.literal("an eligible entity at globalPercent=100 rolls eyes"));
 
             float roll = EyeState.getVariantRoll(eyed);
             ServerConfig.GLOBAL_PERCENT.set(0);
             ServerServices.onLivingEntityLoaded(eyed);
             helper.assertTrue(EyeState.hasEyes(eyed) && EyeState.getVariantRoll(eyed) == roll,
-                    "a later load never revisits an already-initialized entity");
+                    Component.literal("a later load never revisits an already-initialized entity"));
         } finally {
             ServerEyeConfigs.replaceAll(originalConfigs);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
@@ -311,9 +312,9 @@ public final class EligibilityGameTestsLogic {
             ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
             InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
-            helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
-            helper.assertTrue(EyeState.hasEyes(cow), "the target gains eyes");
-            helper.assertTrue(stack.getCount() == 3, "a creative application consumes no eye");
+            helper.assertTrue(applied.consumesAction(), Component.literal("a creative application still succeeds"));
+            helper.assertTrue(EyeState.hasEyes(cow), Component.literal("the target gains eyes"));
+            helper.assertTrue(stack.getCount() == 3, Component.literal("a creative application consumes no eye"));
         } finally {
             player.getAbilities().instabuild = instabuild;
             ServerEyeConfigs.replaceAll(original);
@@ -341,13 +342,13 @@ public final class EligibilityGameTestsLogic {
             player.setShiftKeyDown(false);
             InteractionResult passed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
             helper.assertTrue(passed == InteractionResult.PASS,
-                    "a non-sneaking use passes so a stray right-click does not eye the player");
-            helper.assertTrue(!EyeState.hasEyes(player), "nothing was applied");
+                    Component.literal("a non-sneaking use passes so a stray right-click does not eye the player"));
+            helper.assertTrue(!EyeState.hasEyes(player), Component.literal("nothing was applied"));
 
             player.setShiftKeyDown(true);
             InteractionResult consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
-            helper.assertTrue(consumed.consumesAction(), "sneak + use applies the eye to the player");
-            helper.assertTrue(EyeState.hasEyes(player), "the player now has eyes");
+            helper.assertTrue(consumed.consumesAction(), Component.literal("sneak + use applies the eye to the player"));
+            helper.assertTrue(EyeState.hasEyes(player), Component.literal("the player now has eyes"));
         } finally {
             player.setShiftKeyDown(false);
             EyeState.disableAndClearProperties(player);

@@ -313,10 +313,10 @@ loadScripts(document, 'script');</script>
  and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
  <a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T&gt;</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T,<wbr>R&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
- <code>LayerGooglyEyes</code>).</div>
+<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
+ at the animated attachment bones.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">

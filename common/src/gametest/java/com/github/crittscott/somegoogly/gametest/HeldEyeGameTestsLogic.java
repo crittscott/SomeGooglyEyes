@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -70,13 +71,13 @@ public final class HeldEyeGameTestsLogic {
         BehaviorSettings always = settings(true, ServerConfig.PERCENT_MAX, true);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, always);
-        helper.assertTrue(held.eye != null && held.active == null, "a freshly held eye is live and plays nothing");
+        helper.assertTrue(held.eye != null && held.active == null, Component.literal("a freshly held eye is live and plays nothing"));
 
         player.hurtTime = player.hurtDuration = 10;
         held.tick(player, always);
-        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.GROW, "being hurt plays grow");
+        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.GROW, Component.literal("being hurt plays grow"));
         step(held, player, GROW_RISE_TICKS, always);
-        helper.assertTrue(held.eye.scaleMul > 1F, "the eye bulges");
+        helper.assertTrue(held.eye.scaleMul > 1F, Component.literal("the eye bulges"));
         helper.succeed();
     }
 
@@ -90,7 +91,7 @@ public final class HeldEyeGameTestsLogic {
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
         helper.assertTrue(!BehaviorSettings.NONE.plays() && BehaviorSettings.NONE.growOnHitPercent() == 0
                         && !BehaviorSettings.NONE.swirlOnHeal() && BehaviorSettings.NONE.ongoing().isEmpty(),
-                "before first sync no server-controlled expression is enabled");
+                Component.literal("before first sync no server-controlled expression is enabled"));
         BehaviorSettings off = settings(false, ServerConfig.PERCENT_MIN, false);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setHealth(10F);
@@ -98,17 +99,17 @@ public final class HeldEyeGameTestsLogic {
 
         player.hurtTime = player.hurtDuration = 10;
         held.tick(player, off);
-        helper.assertTrue(held.active == null, "growOnHitPercent=0: being hurt plays nothing");
+        helper.assertTrue(held.active == null, Component.literal("growOnHitPercent=0: being hurt plays nothing"));
         player.hurtTime = 0;
         held.tick(player, off);
 
         player.heal(1F);
         held.tick(player, off);
-        helper.assertTrue(held.active == null, "swirlOnHeal=false: healing plays nothing");
+        helper.assertTrue(held.active == null, Component.literal("swirlOnHeal=false: healing plays nothing"));
 
         for (int i = 0; i < off.maxTicks(); i++) {
             held.tick(player, off);
-            helper.assertTrue(held.active == null, "ambientBehaviors=false: no idle expression plays");
+            helper.assertTrue(held.active == null, Component.literal("ambientBehaviors=false: no idle expression plays"));
         }
         helper.succeed();
     }
@@ -125,24 +126,24 @@ public final class HeldEyeGameTestsLogic {
 
         player.heal(1F);
         held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.SWIRL, "healing plays swirl");
+        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.SWIRL, Component.literal("healing plays swirl"));
         BehaviorInstance swirl = held.active;
         player.heal(1F);
         held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active == swirl, "a heal while the swirl plays is dropped");
+        helper.assertTrue(held.active == swirl, Component.literal("a heal while the swirl plays is dropped"));
 
         // The idle timer can't fire before ambientMinTicks, past the end of the swirl.
         stepUntilIdle(held, player, DEFAULTS);
         player.heal(1F);
         held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active == null, "a heal inside the cooldown doesn't swirl");
+        helper.assertTrue(held.active == null, Component.literal("a heal inside the cooldown doesn't swirl"));
 
         step(held, player, DEFAULTS.swirlHealCooldownTicks(), DEFAULTS);
         stepUntilIdle(held, player, DEFAULTS);
         player.heal(1F);
         held.tick(player, DEFAULTS);
         helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.SWIRL,
-                "once the cooldown passes healing swirls again");
+                Component.literal("once the cooldown passes healing swirls again"));
         helper.succeed();
     }
 
@@ -161,9 +162,9 @@ public final class HeldEyeGameTestsLogic {
                 played = held.active.behavior;
             }
         }
-        helper.assertTrue(played != null, "an idle behavior plays within the longest idle wait");
+        helper.assertTrue(played != null, Component.literal("an idle behavior plays within the longest idle wait"));
         helper.assertTrue(DEFAULTS.pool().contains(played) && played != EyeBehavior.CROSS_EYE,
-                "the idle behavior comes from the pool and isn't a cross-eye, not " + played.id());
+                Component.literal("the idle behavior comes from the pool and isn't a cross-eye, not " + played.id()));
         helper.succeed();
     }
 
@@ -174,9 +175,9 @@ public final class HeldEyeGameTestsLogic {
     public static void heldEyeWinksAlone(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, DEFAULTS);
-        helper.assertTrue(held.start(EyeBehavior.BLINK), "a blink starts on an idle held eye");
+        helper.assertTrue(held.start(EyeBehavior.BLINK), Component.literal("a blink starts on an idle held eye"));
         step(held, player, BLINK_PEAK_TICKS, DEFAULTS);
-        helper.assertTrue(held.eye.squashY < BLINK_PEAK_SQUASH, "the lone eye closes for the blink");
+        helper.assertTrue(held.eye.squashY < BLINK_PEAK_SQUASH, Component.literal("the lone eye closes for the blink"));
 
         BehaviorInstance cross = new BehaviorInstance(EyeBehavior.CROSS_EYE, null,
                 EyeBehavior.CROSS_EYE.defaultDuration(), 1L);
@@ -185,7 +186,7 @@ public final class HeldEyeGameTestsLogic {
         EyeInfluence influence = new EyeInfluence();
         EyeBehavior.CROSS_EYE.influence(cross, 0, 0, influence);
         helper.assertTrue(influence.stiffness == 0F && influence.anchorX == 0F && influence.anchorY == 0F,
-                "a lone eye has no partner to cross toward");
+                Component.literal("a lone eye has no partner to cross toward"));
         helper.succeed();
     }
 
@@ -201,17 +202,17 @@ public final class HeldEyeGameTestsLogic {
 
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         held.tick(player, DEFAULTS);
-        helper.assertTrue(held.eye == null && held.active == null, "putting the eye away drops it");
+        helper.assertTrue(held.eye == null && held.active == null, Component.literal("putting the eye away drops it"));
 
         player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
         held.tick(player, DEFAULTS);
-        helper.assertTrue(held.eye != null && held.active == null, "an eye in the off hand starts fresh");
+        helper.assertTrue(held.eye != null && held.active == null, Component.literal("an eye in the off hand starts fresh"));
 
         Player other = helper.makeMockPlayer(GameType.SURVIVAL);
         other.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
         held.start(EyeBehavior.STARE);
         held.tick(other, DEFAULTS);
-        helper.assertTrue(held.active == null, "a new holder starts fresh");
+        helper.assertTrue(held.active == null, Component.literal("a new holder starts fresh"));
         helper.succeed();
     }
 }

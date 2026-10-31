@@ -117,7 +117,7 @@ public final class SkullEyeState {
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(SkullBlockEntity skull) {
         CompoundTag data = ((Holder) skull).somegoogly$find();
-        return data != null && data.getBoolean(EyeState.HAS_EYES);
+        return data != null && data.getBooleanOr(EyeState.HAS_EYES, false);
     }
 
     /**

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:behaviorschedulergametests/disabled_eyes_suspend_automatic_behaviors",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 60
+}

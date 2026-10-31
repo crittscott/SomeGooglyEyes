@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:behaviorschedulergametests/received_expressions_outlive_render_trackers",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 60
+}

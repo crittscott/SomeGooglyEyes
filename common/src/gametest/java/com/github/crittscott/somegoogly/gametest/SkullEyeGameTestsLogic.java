@@ -15,6 +15,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -72,10 +73,10 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
         interact.accept(hit, true);
         helper.assertTrue(!SkullEyeState.hasEyes(skull) && slimy.getCount() == 1,
-                "denied application leaves both head and item untouched");
+                Component.literal("denied application leaves both head and item untouched"));
         interact.accept(hit, false);
         helper.assertTrue(SkullEyeState.hasEyes(skull) && slimy.isEmpty(),
-                "an allowed event reaches the adapter and applies eyes");
+                Component.literal("an allowed event reaches the adapter and applies eyes"));
         Snapshot original = SkullEyeState.snapshot(skull);
         ItemStack shears = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
@@ -83,7 +84,7 @@ public final class SkullEyeGameTestsLogic {
         interact.accept(hit, true);
         helper.assertTrue(SkullEyeState.snapshot(skull).equals(original) && shears.getDamageValue() == 0
                         && drops(helper, HEAD, ModContent.GOOGLY_EYE.get()).size() == dropsBefore,
-                "denied harvesting preserves eyes and shears and creates no drop");
+                Component.literal("denied harvesting preserves eyes and shears and creates no drop"));
         helper.succeed();
     }
 
@@ -98,16 +99,16 @@ public final class SkullEyeGameTestsLogic {
         ItemStack slimy = purpleSlimyEye();
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
 
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "a Slimy Eye applies to a head");
-        helper.assertTrue(SkullEyeState.hasEyes(skull), "the head has eyes");
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, Component.literal("a Slimy Eye applies to a head"));
+        helper.assertTrue(SkullEyeState.hasEyes(skull), Component.literal("the head has eyes"));
         helper.assertTrue(IRIS.equals(SkullEyeState.snapshot(skull).properties().iris().orElse(null)),
-                "the head's eyes carry the Slimy Eye's iris color");
-        helper.assertTrue(slimy.isEmpty(), "a survival application uses up the Slimy Eye");
+                Component.literal("the head's eyes carry the Slimy Eye's iris color"));
+        helper.assertTrue(slimy.isEmpty(), Component.literal("a survival application uses up the Slimy Eye"));
 
         ItemStack second = purpleSlimyEye();
         player.setItemInHand(InteractionHand.MAIN_HAND, second);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, "an eyed head refuses another eye");
-        helper.assertTrue(second.getCount() == 1, "a refused application keeps the Slimy Eye");
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, Component.literal("an eyed head refuses another eye"));
+        helper.assertTrue(second.getCount() == 1, Component.literal("a refused application keeps the Slimy Eye"));
         helper.succeed();
     }
 
@@ -121,20 +122,20 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
 
         SkullBlockEntity dragon = placeHead(helper, Blocks.DRAGON_HEAD);
-        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, "a dragon head refuses eyes");
-        helper.assertTrue(!SkullEyeState.hasEyes(dragon), "the dragon head stays eyeless");
+        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, Component.literal("a dragon head refuses eyes"));
+        helper.assertTrue(!SkullEyeState.hasEyes(dragon), Component.literal("the dragon head stays eyeless"));
 
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL,
-                    "googlyEyesEnabled=false refuses the application");
-            helper.assertTrue(!SkullEyeState.hasEyes(skull), "the head stays eyeless");
+                    Component.literal("googlyEyesEnabled=false refuses the application"));
+            helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the head stays eyeless"));
         } finally {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
-        helper.assertTrue(slimy.getCount() == 1, "no refusal uses up the Slimy Eye");
+        helper.assertTrue(slimy.getCount() == 1, Component.literal("no refusal uses up the Slimy Eye"));
         helper.succeed();
     }
 
@@ -149,18 +150,18 @@ public final class SkullEyeGameTestsLogic {
         SkullEyeState.set(skull, purpleEyes());
 
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, "plain shears pass");
-        helper.assertTrue(SkullEyeState.hasEyes(skull), "plain shears leave the eyes on");
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, Component.literal("plain shears pass"));
+        helper.assertTrue(SkullEyeState.hasEyes(skull), Component.literal("plain shears leave the eyes on"));
 
         ItemStack shears = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "Optometrist shears harvest");
-        helper.assertTrue(!SkullEyeState.hasEyes(skull), "the harvest clears the head's eyes");
-        helper.assertTrue(shears.getDamageValue() == 1, "the harvest spends one shears durability");
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, Component.literal("Optometrist shears harvest"));
+        helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the harvest clears the head's eyes"));
+        helper.assertTrue(shears.getDamageValue() == 1, Component.literal("the harvest spends one shears durability"));
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
-        helper.assertTrue(eyes.size() == 1, "exactly one Googly Eye pops out");
+        helper.assertTrue(eyes.size() == 1, Component.literal("exactly one Googly Eye pops out"));
         helper.assertTrue(IRIS.equals(EyeItemProperties.get(eyes.get(0).getItem()).iris().orElse(null)),
-                "the Googly Eye carries the head's iris color");
+                Component.literal("the Googly Eye carries the head's iris color"));
         helper.succeed();
     }
 
@@ -176,13 +177,13 @@ public final class SkullEyeGameTestsLogic {
 
         helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
         List<ItemEntity> heads = drops(helper, HEAD, Items.SKELETON_SKULL);
-        helper.assertTrue(heads.size() == 1, "the broken head drops itself");
+        helper.assertTrue(heads.size() == 1, Component.literal("the broken head drops itself"));
         ItemStack item = heads.get(0).getItem();
-        helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(item)), "the dropped head carries its eyes");
+        helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(item)), Component.literal("the dropped head carries its eyes"));
 
         SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
         placed.applyComponentsFromItemStack(item);
-        helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), "placing the head restores its eyes");
+        helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), Component.literal("placing the head restores its eyes"));
         helper.succeed();
     }
 
@@ -202,17 +203,17 @@ public final class SkullEyeGameTestsLogic {
         Snapshot expected = EyeState.snapshot(eyed);
         blowUpWithChargedCreeper(helper, eyed);
         List<ItemEntity> heads = drops(helper, MOB, Items.SKELETON_SKULL);
-        helper.assertTrue(heads.size() == 1, "a charged creeper's kill drops the skeleton's skull");
+        helper.assertTrue(heads.size() == 1, Component.literal("a charged creeper's kill drops the skeleton's skull"));
         helper.assertTrue(expected.equals(SkullEyeState.itemSnapshot(heads.get(0).getItem())),
-                "the eyed skeleton's skull carries its eyes");
+                Component.literal("the eyed skeleton's skull carries its eyes"));
         heads.get(0).discard();
 
         Skeleton plain = helper.spawnWithNoFreeWill(EntityType.SKELETON, MOB);
         blowUpWithChargedCreeper(helper, plain);
         heads = drops(helper, MOB, Items.SKELETON_SKULL);
-        helper.assertTrue(heads.size() == 1, "the second kill drops a skull too");
+        helper.assertTrue(heads.size() == 1, Component.literal("the second kill drops a skull too"));
         helper.assertTrue(SkullEyeState.itemSnapshot(heads.get(0).getItem()) == null,
-                "an eyeless skeleton's skull carries no eyes");
+                Component.literal("an eyeless skeleton's skull carries no eyes"));
         heads.get(0).discard();
         helper.succeed();
     }
@@ -230,7 +231,7 @@ public final class SkullEyeGameTestsLogic {
         BlockEntity loaded = BlockEntity.loadStatic(skull.getBlockPos(), skull.getBlockState(), saved,
                 helper.getLevel().registryAccess());
         helper.assertTrue(loaded instanceof SkullBlockEntity reloaded && eyes.equals(SkullEyeState.snapshot(reloaded)),
-                "the reloaded head has the same eyes");
+                Component.literal("the reloaded head has the same eyes"));
         helper.succeed();
     }
 
@@ -261,7 +262,7 @@ public final class SkullEyeGameTestsLogic {
 
     private static SkullBlockEntity placeHead(GameTestHelper helper, Block head) {
         helper.setBlock(HEAD, head);
-        return (SkullBlockEntity) helper.getBlockEntity(HEAD);
+        return helper.getBlockEntity(HEAD, SkullBlockEntity.class);
     }
 
     private static Snapshot purpleEyes() {

@@ -3,6 +3,7 @@
     "description": {
       "translate": "somegoogly.pack.description"
     },
-    "pack_format": 61
+    "pack_format": 71,
+    "supported_formats": {"min_inclusive": 55, "max_inclusive": 71}
   }
 }

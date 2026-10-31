@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:somegooglygametests/command_spawn_finalizes_before_applying_picker_state",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 20
+}

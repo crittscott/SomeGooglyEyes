@@ -14,6 +14,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +30,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -118,27 +119,27 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.LOVE_ON_AFFECTION.set(false);
             cow.setInLove(player);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    "loveOnAffection=false suppresses love");
+                    Component.literal("loveOnAffection=false suppresses love"));
             advance(3);
 
             ServerConfig.LOVE_ON_AFFECTION.set(true);
             cow.setInLove(player);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    "an animal entering love mode plays love");
+                    Component.literal("an animal entering love mode plays love"));
             golem.offerFlower(true);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3, 3L),
-                    "an iron golem offering a flower plays love");
+                    Component.literal("an iron golem offering a flower plays love"));
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 4L),
-                    "villager love hearts play love");
+                    Component.literal("villager love hearts play love"));
             helper.getLevel().broadcastEntityEvent(ocelot, EntityEvent.TRUSTING_SUCCEEDED);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 3, 5L),
-                    "an ocelot gaining trust plays love");
+                    Component.literal("an ocelot gaining trust plays love"));
 
             advance(EyeBehavior.LOVE.defaultDuration());
             helper.getLevel().broadcastEntityEvent(cow, EntityEvent.TAMING_FAILED);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 6L),
-                    "an entity event that is not affection plays nothing");
+                    Component.literal("an entity event that is not affection plays nothing"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -159,27 +160,27 @@ public final class BehaviorSchedulerGameTestsLogic {
         Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
                 new BlockPos(1, 2, 1));
         GooglyTracker tracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, ON);
-        helper.assertTrue(allSquash(tracker, 1F), "an idle skeleton's eyes are open");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("an idle skeleton's eyes are open"));
 
         skeleton.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(tracker, 1);
         helper.assertTrue(!allSquash(tracker, 1F) && !winking(tracker, true),
-                "drawing the bow eases into the squint rather than snapping");
+                Component.literal("drawing the bow eases into the squint rather than snapping"));
         stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(tracker, true), "a right-handed skeleton drawing its bow squints its left eye");
+        helper.assertTrue(winking(tracker, true), Component.literal("a right-handed skeleton drawing its bow squints its left eye"));
         helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0),
-                "an aiming skeleton still plays a behavior");
+                Component.literal("an aiming skeleton still plays a behavior"));
 
         skeleton.stopUsingItem();
         stepTracker(tracker, 5 + GooglyTracker.AIM_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(tracker, 1F), "letting go of the bow opens the eye again");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("letting go of the bow opens the eye again"));
 
         Skeleton lefty = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), true,
                 new BlockPos(3, 2, 1));
         GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false, ON);
         lefty.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(leftyTracker, false), "a left-handed skeleton squints its right eye");
+        helper.assertTrue(winking(leftyTracker, false), Component.literal("a left-handed skeleton squints its right eye"));
 
         Pillager pillager = armed(helper, EntityType.PILLAGER, new ItemStack(Items.CROSSBOW), false,
                 new BlockPos(1, 2, 3));
@@ -187,7 +188,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         pillager.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(pillagerTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(allSquash(pillagerTracker, 1F),
-                "only skeletons squint to aim: a pillager charging its crossbow keeps both eyes open");
+                Component.literal("only skeletons squint to aim: a pillager charging its crossbow keeps both eyes open"));
         helper.succeed();
     }
 
@@ -203,31 +204,31 @@ public final class BehaviorSchedulerGameTestsLogic {
         Player archer = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.RIGHT);
         GooglyTracker tracker = new GooglyTracker(archer, headInfo(helper, archer), false, ON);
-        helper.assertTrue(allSquash(tracker, 1F), "an idle player's eyes are open");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("an idle player's eyes are open"));
 
         archer.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(tracker, true), "a right-handed player drawing a bow squints the left eye");
+        helper.assertTrue(winking(tracker, true), Component.literal("a right-handed player drawing a bow squints the left eye"));
         stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(tracker, true), "holding the full draw keeps the squint");
+        helper.assertTrue(winking(tracker, true), Component.literal("holding the full draw keeps the squint"));
 
         archer.stopUsingItem();
         stepTracker(tracker, GooglyTracker.AIM_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(tracker, 1F), "loosing the arrow opens the eye again");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("loosing the arrow opens the eye again"));
 
         Player offHand = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.OFF_HAND,
                 HumanoidArm.RIGHT);
         GooglyTracker offHandTracker = new GooglyTracker(offHand, headInfo(helper, offHand), false, ON);
         offHand.startUsingItem(InteractionHand.OFF_HAND);
         stepTracker(offHandTracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(offHandTracker, false), "a bow drawn from the off hand squints the right eye");
+        helper.assertTrue(winking(offHandTracker, false), Component.literal("a bow drawn from the off hand squints the right eye"));
 
         Player lefty = playerHolding(helper, new ItemStack(Items.BOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.LEFT);
         GooglyTracker leftyTracker = new GooglyTracker(lefty, headInfo(helper, lefty), false, ON);
         lefty.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(leftyTracker, GooglyTracker.AIM_EASE_TICKS);
-        helper.assertTrue(winking(leftyTracker, false), "a left-handed player squints the right eye");
+        helper.assertTrue(winking(leftyTracker, false), Component.literal("a left-handed player squints the right eye"));
 
         Player crossbowman = playerHolding(helper, new ItemStack(Items.CROSSBOW), InteractionHand.MAIN_HAND,
                 HumanoidArm.RIGHT);
@@ -235,7 +236,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         crossbowman.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(crossbowTracker, GooglyTracker.AIM_EASE_TICKS);
         helper.assertTrue(allSquash(crossbowTracker, 1F),
-                "a player charging a crossbow keeps both eyes open");
+                Component.literal("a player charging a crossbow keeps both eyes open"));
         helper.succeed();
     }
 
@@ -312,27 +313,27 @@ public final class BehaviorSchedulerGameTestsLogic {
             ClientEyeRuntime.setAngry(zombie, true);
             GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(initial.angry && allIrisTint(initial, 1F),
-                    "anger received before first render initializes red pupils");
+                    Component.literal("anger received before first render initializes red pupils"));
             ClientEyeRuntime.setAngry(zombie, false);
-            helper.assertTrue(!initial.angry, "a false report updates the existing tracker");
+            helper.assertTrue(!initial.angry, Component.literal("a false report updates the existing tracker"));
             stepTracker(initial, GooglyTracker.ANGER_EASE_TICKS + 1);
-            helper.assertTrue(allIrisTint(initial, 0F), "pupils return to calm after a false report");
+            helper.assertTrue(allIrisTint(initial, 0F), Component.literal("pupils return to calm after a false report"));
             ClientEyeRuntime.setAngry(zombie, true);
             ClientEyeRuntime.clear();
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).angry,
-                    "render tracker eviction must retain anger for a loaded entity");
+                    Component.literal("render tracker eviction must retain anger for a loaded entity"));
             ClientEyeRuntime.onEntityRemoved(zombie);
-            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "entity removal deletes its tracker");
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, Component.literal("entity removal deletes its tracker"));
             Zombie replacement = EntityType.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.COMMAND);
             replacement.setId(zombie.getId());
             GooglyTracker calm = ClientEyeRuntime.get(replacement, info);
             helper.assertTrue(!calm.angry && allIrisTint(calm, 0F),
-                    "a replacement entity with the same id must not inherit unloaded anger");
+                    Component.literal("a replacement entity with the same id must not inherit unloaded anger"));
             ClientEyeRuntime.setAngry(replacement, true);
             ClientEyeRuntime.onLevelChanged();
             helper.assertTrue(ClientEyeRuntime.peek(replacement) == null
                             && !ClientEyeRuntime.get(replacement, info).angry,
-                    "client world replacement drops both trackers and anger");
+                    Component.literal("client world replacement drops both trackers and anger"));
         } finally {
             ClientEyeRuntime.onLevelChanged();
             ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
@@ -351,33 +352,33 @@ public final class BehaviorSchedulerGameTestsLogic {
         try {
             ClientEyeRuntime.onLevelChanged();
             ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 12, 42L, 3);
-            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "receipt must not create a drawing cache");
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, Component.literal("receipt must not create a drawing cache"));
             ClientEyeRuntime.tickBehaviors();
             GooglyTracker first = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(first.active != null && first.active.age == 4,
-                    "first render catches up a previously received expression");
+                    Component.literal("first render catches up a previously received expression"));
             ClientEyeRuntime.clear();
             ClientEyeRuntime.tickBehaviors();
             GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
-                    "replacing a render tracker preserves expression progress");
+                    Component.literal("replacing a render tracker preserves expression progress"));
             ClientEyeRuntime.tick(false);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
-                    "paused client ticks do not advance expression time");
+                    Component.literal("paused client ticks do not advance expression time"));
             ClientEyeRuntime.clear();
             for (int tick = 0; tick < 7; tick++) {
                 ClientEyeRuntime.tickBehaviors();
             }
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
-                    "unrendered expressions expire without a tracker");
+                    Component.literal("unrendered expressions expire without a tracker"));
             ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
             ClientEyeRuntime.onEntityRemoved(zombie);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
-                    "entity unloading removes received expression state");
+                    Component.literal("entity unloading removes received expression state"));
             ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
             ClientEyeRuntime.onLevelChanged();
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
-                    "world replacement removes received expression state");
+                    Component.literal("world replacement removes received expression state"));
         } finally {
             ClientEyeRuntime.onLevelChanged();
         }
@@ -395,30 +396,30 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo headInfo = headInfo(helper, zombie);
 
         GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false, ON);
-        helper.assertTrue(allIrisTint(tracker, 0F), "a calm mob's pupils keep their color");
+        helper.assertTrue(allIrisTint(tracker, 0F), Component.literal("a calm mob's pupils keep their color"));
 
         zombie.setAggressive(true);
         tracker.update(ON);
         helper.assertTrue(!allIrisTint(tracker, 0F) && !allIrisTint(tracker, 1F),
-                "turning aggressive eases toward red rather than snapping");
+                Component.literal("turning aggressive eases toward red rather than snapping"));
         stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS);
-        helper.assertTrue(allIrisTint(tracker, 1F), "an aggressive mob's pupils are red");
+        helper.assertTrue(allIrisTint(tracker, 1F), Component.literal("an aggressive mob's pupils are red"));
         helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, 5, 1L, 0),
-                "anger doesn't block a behavior");
+                Component.literal("anger doesn't block a behavior"));
         tracker.update(ON);
-        helper.assertTrue(allIrisTint(tracker, 1F), "the pupils stay red under a behavior");
+        helper.assertTrue(allIrisTint(tracker, 1F), Component.literal("the pupils stay red under a behavior"));
 
         zombie.setAggressive(false);
         stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
-        helper.assertTrue(allIrisTint(tracker, 0F), "calming down eases the red away");
+        helper.assertTrue(allIrisTint(tracker, 0F), Component.literal("calming down eases the red away"));
 
         tracker.angry = true;
         stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
-        helper.assertTrue(allIrisTint(tracker, 1F), "server-reported anger turns the pupils red");
+        helper.assertTrue(allIrisTint(tracker, 1F), Component.literal("server-reported anger turns the pupils red"));
 
         GooglyTracker joined = new GooglyTracker(zombie, headInfo, true, ON);
         helper.assertTrue(allIrisTint(joined, 1F) && allPrevIrisTint(joined, 1F),
-                "a tracker built for a mob already reported angry starts red");
+                Component.literal("a tracker built for a mob already reported angry starts red"));
         helper.succeed();
     }
 
@@ -442,29 +443,29 @@ public final class BehaviorSchedulerGameTestsLogic {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
         GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
         helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
-                "a calm enderman's pupils hold their size");
+                Component.literal("a calm enderman's pupils hold their size"));
 
         enderMan.setTarget(cow);
-        helper.assertTrue(enderMan.isCreepy(), "an enderman with a target is creepy");
+        helper.assertTrue(enderMan.isCreepy(), Component.literal("an enderman with a target is creepy"));
         stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS);
         float[] range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
         float amplitude = GooglyTracker.CREEPY_PULSE_AMPLITUDE;
         helper.assertTrue(range[0] < 1F - amplitude / 2 && range[1] > 1F + amplitude / 2,
-                "a creepy enderman's pupils swell and shrink");
+                Component.literal("a creepy enderman's pupils swell and shrink"));
         helper.assertTrue(range[0] >= 1F - amplitude - TINT_TOLERANCE
                         && range[1] <= 1F + amplitude + TINT_TOLERANCE,
-                "the pulse stays within its amplitude");
+                Component.literal("the pulse stays within its amplitude"));
 
         helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, PULSE_BEHAVIOR_TICKS, 1L, 0),
-                "a creepy enderman still plays a behavior");
+                Component.literal("a creepy enderman still plays a behavior"));
         range = irisScaleRange(tracker, PULSE_BEHAVIOR_TICKS - 1);
-        helper.assertTrue(range[1] - range[0] > amplitude / 2, "the pulse keeps going under the behavior");
+        helper.assertTrue(range[1] - range[0] > amplitude / 2, Component.literal("the pulse keeps going under the behavior"));
 
         enderMan.setTarget(null);
         stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS + 1);
         range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
         helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
-                "once it calms down the pupils settle back to their size");
+                Component.literal("once it calms down the pupils settle back to their size"));
         helper.succeed();
     }
 
@@ -497,7 +498,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
-                    "an eyeless mob's game events never start a behavior even while it is tracked");
+                    Component.literal("an eyeless mob's game events never start a behavior even while it is tracked"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -528,19 +529,19 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_HEAL.set(false);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    "swirlOnHeal=false suppresses the heal swirl");
+                    Component.literal("swirlOnHeal=false suppresses the heal swirl"));
             advance(3);
 
             ServerConfig.SWIRL_ON_TRADE.set(false);
             ServerBehaviorScheduler.onTrade(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    "swirlOnTrade=false suppresses the trade swirl");
+                    Component.literal("swirlOnTrade=false suppresses the trade swirl"));
             advance(3);
 
             ServerConfig.GROW_ON_HIT_PERCENT.set(0);
             ServerBehaviorScheduler.onPlayerHurt(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
-                    "growOnHitPercent=0 never rolls the hurt grow");
+                    Component.literal("growOnHitPercent=0 never rolls the hurt grow"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -554,7 +555,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
-        helper.assertTrue(headInfo != null, type + " has an eye config");
+        helper.assertTrue(headInfo != null, Component.literal(type + " has an eye config"));
         return headInfo;
     }
 
@@ -579,12 +580,12 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
-                    "the first heal starts a swirl");
+                    Component.literal("the first heal starts a swirl"));
 
             advance(EyeBehavior.SWIRL.defaultDuration());
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
-                    "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
+                    Component.literal("a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -662,19 +663,19 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.GROW_ON_MILK.set(false);
             milk(player, cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    "growOnMilk=false suppresses the milking grow");
+                    Component.literal("growOnMilk=false suppresses the milking grow"));
             advance(3);
 
             ServerConfig.GROW_ON_MILK.set(true);
             milk(player, cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    "milking a cow plays grow");
+                    Component.literal("milking a cow plays grow"));
             milk(player, mooshroom);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3, 3L),
-                    "milking a mooshroom plays grow");
+                    Component.literal("milking a mooshroom plays grow"));
             milk(player, goat);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 3, 4L),
-                    "milking a goat plays grow");
+                    Component.literal("milking a goat plays grow"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -706,13 +707,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onMilked(cow);
             advance(ServerConfig.TICKS_MIN + 1);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    "neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable");
+                    Component.literal("neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable"));
             advance(3);
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             ServerBehaviorScheduler.onMilked(cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    "re-enabling resumes reactions using retained watcher bookkeeping");
+                    Component.literal("re-enabling resumes reactions using retained watcher bookkeeping"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
@@ -740,12 +741,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
-                    "the first trigger starts");
+                    Component.literal("the first trigger starts"));
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
-                    "a second trigger is dropped while one is playing");
+                    Component.literal("a second trigger is dropped while one is playing"));
             advance(10);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
-                    "once the active behavior elapses a new trigger starts");
+                    Component.literal("once the active behavior elapses a new trigger starts"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -763,19 +764,19 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void rammingGoatSquints(GameTestHelper helper) {
         Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
         GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false, ON);
-        helper.assertTrue(allSquash(tracker, 1F), "a calm goat's eyes are open");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("a calm goat's eyes are open"));
 
         goat.handleEntityEvent(EntityEvent.START_RAM);
         stepGoat(goat, tracker, 1);
         helper.assertTrue(!allSquash(tracker, 1F) && !allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y),
-                "lowering the head eases into the squint rather than snapping");
+                Component.literal("lowering the head eases into the squint rather than snapping"));
         stepGoat(goat, tracker, GooglyTracker.SLEEP_EASE_TICKS);
-        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), "a ramming goat squints");
-        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0), "a ramming goat still plays a behavior");
+        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), Component.literal("a ramming goat squints"));
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0), Component.literal("a ramming goat still plays a behavior"));
 
         goat.handleEntityEvent(EntityEvent.END_RAM);
         stepGoat(goat, tracker, RAM_HEAD_RISE_TICKS + GooglyTracker.SLEEP_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(tracker, 1F), "once the ram ends the eyes open again");
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("once the ram ends the eyes open again"));
         helper.succeed();
     }
 
@@ -792,17 +793,17 @@ public final class BehaviorSchedulerGameTestsLogic {
             Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
 
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), "a calm golem isn't angry");
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), Component.literal("a calm golem isn't angry"));
             golem.setRemainingPersistentAngerTime(100);
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), "a provoked golem is angry");
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), "a calm piglin isn't angry");
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), Component.literal("a provoked golem is angry"));
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), Component.literal("a calm piglin isn't angry"));
             piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), "a piglin with an anger target is angry");
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), "a cow is never angry");
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), Component.literal("a piglin with an anger target is angry"));
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), Component.literal("a cow is never angry"));
 
             ServerConfig.ANGRY_EYES.set(false);
             helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem) && !ServerBehaviorScheduler.isAngry(piglin),
-                    "angryEyes=false shares no anger");
+                    Component.literal("angryEyes=false shares no anger"));
         } finally {
             ServerConfig.ANGRY_EYES.set(angryEyes);
         }
@@ -834,15 +835,15 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.GROW_ON_SHEAR.set(false);
             shear(player, quiet);
-            helper.assertTrue(quiet.isSheared(), "the shears sheared the first sheep");
+            helper.assertTrue(quiet.isSheared(), Component.literal("the shears sheared the first sheep"));
             helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 3, 1L),
-                    "growOnShear=false suppresses the shearing grow");
+                    Component.literal("growOnShear=false suppresses the shearing grow"));
 
             ServerConfig.GROW_ON_SHEAR.set(true);
             shear(player, bulging);
-            helper.assertTrue(bulging.isSheared(), "the shears sheared the second sheep");
+            helper.assertTrue(bulging.isSheared(), Component.literal("the shears sheared the second sheep"));
             helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 3, 2L),
-                    "shearing a sheep plays grow");
+                    Component.literal("shearing a sheep plays grow"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -878,7 +879,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             villager.startSleeping(villager.blockPosition());
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
-                    "a trigger on a sleeping mob is dropped");
+                    Component.literal("a trigger on a sleeping mob is dropped"));
             ServerBehaviorScheduler.onHealed(villager);
             ServerBehaviorScheduler.onTrade(villager);
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
@@ -886,7 +887,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             villager.stopSleeping();
             helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 2L),
-                    "no heal, trade, affection, or ambient behavior started while the mob slept");
+                    Component.literal("no heal, trade, affection, or ambient behavior started while the mob slept"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -912,29 +913,29 @@ public final class BehaviorSchedulerGameTestsLogic {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
-        helper.assertTrue(headInfo != null, "villagers have an eye config");
+        helper.assertTrue(headInfo != null, Component.literal("villagers have an eye config"));
 
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
-        helper.assertTrue(allLid(tracker, 0F), "an awake villager has no lids");
+        helper.assertTrue(allLid(tracker, 0F), Component.literal("an awake villager has no lids"));
 
         villager.startSleeping(villager.blockPosition());
         tracker.update(ON);
         helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
-                "falling asleep slides the lids closed rather than snapping them shut");
+                Component.literal("falling asleep slides the lids closed rather than snapping them shut"));
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS);
-        helper.assertTrue(allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE), "a sleeping villager's lids are closed");
-        helper.assertTrue(allSquash(tracker, 1F), "a sleeping villager's eyes keep their shape under the lids");
+        helper.assertTrue(allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE), Component.literal("a sleeping villager's lids are closed"));
+        helper.assertTrue(allSquash(tracker, 1F), Component.literal("a sleeping villager's eyes keep their shape under the lids"));
         helper.assertTrue(!tracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
-                "no behavior starts on the client while the mob sleeps");
+                Component.literal("no behavior starts on the client while the mob sleeps"));
 
         GooglyTracker joined = new GooglyTracker(villager, headInfo, false, ON);
         helper.assertTrue(allLid(joined, GooglyTracker.SLEEP_LID_COVERAGE)
                         && allPrevLid(joined, GooglyTracker.SLEEP_LID_COVERAGE),
-                "a tracker built for an already-sleeping villager starts with its lids closed");
+                Component.literal("a tracker built for an already-sleeping villager starts with its lids closed"));
 
         villager.stopSleeping();
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1);
-        helper.assertTrue(allLid(tracker, 0F), "waking slides the lids back open out of sight");
+        helper.assertTrue(allLid(tracker, 0F), Component.literal("waking slides the lids back open out of sight"));
         helper.succeed();
     }
 
@@ -973,28 +974,28 @@ public final class BehaviorSchedulerGameTestsLogic {
         creeper.setDeltaMovement(Vec3.ZERO);
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
-        helper.assertTrue(headInfo.hasConfig(), "creepers have a usable eye config");
+        helper.assertTrue(headInfo.hasConfig(), Component.literal("creepers have a usable eye config"));
 
         GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false, ON);
         tracker.rand.setSeed(CREEPER_RATTLE_SEED);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
         float calmStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
         helper.assertTrue(calmStep < CALM_PUPIL_STEP,
-                "a calm creeper's pupils hang still: measured " + calmStep + ", expected < " + CALM_PUPIL_STEP);
+                Component.literal("a calm creeper's pupils hang still: measured " + calmStep + ", expected < " + CALM_PUPIL_STEP));
 
         creeper.setSwellDir(1);
         meanPupilStep(creeper, tracker, SWELL_RAMP_TICKS);
         float agitatedStep = meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS);
         helper.assertTrue(agitatedStep > AGITATED_PUPIL_STEP,
-                "a swelling creeper's pupils keep moving fast: measured " + agitatedStep
-                        + ", expected > " + AGITATED_PUPIL_STEP);
+                Component.literal("a swelling creeper's pupils keep moving fast: measured " + agitatedStep
+                        + ", expected > " + AGITATED_PUPIL_STEP));
 
         creeper.setSwellDir(-1);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
         float settledStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
         helper.assertTrue(settledStep < CALM_PUPIL_STEP,
-                "once the creeper shrinks back its pupils settle: measured " + settledStep
-                        + ", expected < " + CALM_PUPIL_STEP);
+                Component.literal("once the creeper shrinks back its pupils settle: measured " + settledStep
+                        + ", expected < " + CALM_PUPIL_STEP));
         helper.succeed();
     }
 
@@ -1016,24 +1017,24 @@ public final class BehaviorSchedulerGameTestsLogic {
         villager.startSleeping(villager.blockPosition());
         stepTracker(villagerTracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1, noSleep);
         helper.assertTrue(allLid(villagerTracker, 0F) && allSquash(villagerTracker, 1F),
-                "squintOnSleep=false: a sleeping villager shows no lids");
+                Component.literal("squintOnSleep=false: a sleeping villager shows no lids"));
         helper.assertTrue(!villagerTracker.startBehavior(EyeBehavior.BLINK, 5, 1L, 0),
-                "squintOnSleep=false: a sleeping mob still starts no behavior");
+                Component.literal("squintOnSleep=false: a sleeping mob still starts no behavior"));
 
         Player sleeper = helper.makeMockPlayer(GameType.SURVIVAL);
         GooglyTracker sleeperTracker = new GooglyTracker(sleeper, headInfo(helper, sleeper), false, ON);
         sleeper.startSleeping(sleeper.blockPosition());
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(sleeperTracker, GooglyTracker.SLEEP_SQUASH_Y), "a sleeping player squints");
+        helper.assertTrue(allSquash(sleeperTracker, GooglyTracker.SLEEP_SQUASH_Y), Component.literal("a sleeping player squints"));
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noSleep);
-        helper.assertTrue(allSquash(sleeperTracker, 1F), "squintOnSleep=false: a sleeping player's eyes open");
+        helper.assertTrue(allSquash(sleeperTracker, 1F), Component.literal("squintOnSleep=false: a sleeping player's eyes open"));
 
         Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(3, 2, 1));
         BehaviorSettings noRam = without(OngoingBehavior.RAM_SQUINT);
         GooglyTracker goatTracker = new GooglyTracker(goat, headInfo(helper, goat), false, noRam);
         goat.handleEntityEvent(EntityEvent.START_RAM);
         stepGoat(goat, goatTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noRam);
-        helper.assertTrue(allSquash(goatTracker, 1F), "squintOnRam=false: a ramming goat's eyes stay open");
+        helper.assertTrue(allSquash(goatTracker, 1F), Component.literal("squintOnRam=false: a ramming goat's eyes stay open"));
 
         Skeleton skeleton = armed(helper, EntityType.SKELETON, new ItemStack(Items.BOW), false,
                 new BlockPos(1, 2, 3));
@@ -1041,7 +1042,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         GooglyTracker skeletonTracker = new GooglyTracker(skeleton, headInfo(helper, skeleton), false, noAim);
         skeleton.startUsingItem(InteractionHand.MAIN_HAND);
         stepTracker(skeletonTracker, GooglyTracker.AIM_EASE_TICKS + 1, noAim);
-        helper.assertTrue(allSquash(skeletonTracker, 1F), "winkOnAim=false: an aiming skeleton keeps both eyes open");
+        helper.assertTrue(allSquash(skeletonTracker, 1F), Component.literal("winkOnAim=false: an aiming skeleton keeps both eyes open"));
 
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
         creeper.setNoGravity(true);
@@ -1053,7 +1054,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         creeper.setSwellDir(1);
         meanPupilStep(creeper, creeperTracker, SWELL_RAMP_TICKS, noRattle);
         helper.assertTrue(meanPupilStep(creeper, creeperTracker, SWELL_WINDOW_TICKS, noRattle) < CALM_PUPIL_STEP,
-                "rattleOnSwell=false: a swelling creeper's pupils hang still");
+                Component.literal("rattleOnSwell=false: a swelling creeper's pupils hang still"));
         creeper.setSwellDir(-1);
 
         EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(2, 2, 2));
@@ -1063,16 +1064,16 @@ public final class BehaviorSchedulerGameTestsLogic {
         enderMan.setTarget(cow);
         float[] range = irisScaleRange(enderTracker, PULSE_SAMPLE_TICKS, noPulse);
         helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
-                "pulseWhenCreepy=false: a creepy enderman's pupils hold their size");
+                Component.literal("pulseWhenCreepy=false: a creepy enderman's pupils hold their size"));
         enderMan.setTarget(null);
 
         Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 1));
         BehaviorSettings noAnger = without(OngoingBehavior.ANGER);
         GooglyTracker zombieTracker = new GooglyTracker(zombie, headInfo(helper, zombie), true, noAnger);
-        helper.assertTrue(allIrisTint(zombieTracker, 0F), "angryEyes=false: a mob reported angry starts calm");
+        helper.assertTrue(allIrisTint(zombieTracker, 0F), Component.literal("angryEyes=false: a mob reported angry starts calm"));
         zombie.setAggressive(true);
         stepTracker(zombieTracker, GooglyTracker.ANGER_EASE_TICKS + 1, noAnger);
-        helper.assertTrue(allIrisTint(zombieTracker, 0F), "angryEyes=false: an attacking mob keeps its pupil color");
+        helper.assertTrue(allIrisTint(zombieTracker, 0F), Component.literal("angryEyes=false: an attacking mob keeps its pupil color"));
         helper.succeed();
     }
     /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */

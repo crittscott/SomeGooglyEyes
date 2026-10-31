@@ -1,13 +1,150 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
 
-/**
- * Stub entry point for the {@code somegoogly_gametest} dev-mod. Loom's gametest source set needs to be
- * registered as a real Forge mod so FML scans it for {@code @GameTestHolder} classes; this mod has no
- * behavior of its own.
- */
+import java.util.function.Consumer;
+
+/** Registers dev-only test functions consumed by the test-instance datapack resources. */
 @Mod(SomeGooglyGameTestMod.MOD_ID)
 public final class SomeGooglyGameTestMod {
     public static final String MOD_ID = "somegoogly_gametest";
+
+    public SomeGooglyGameTestMod(FMLJavaModLoadingContext context) {
+        DeferredRegister<Consumer<GameTestHelper>> functions =
+                DeferredRegister.create(Registries.TEST_FUNCTION, "somegoogly");
+        functions.register("behaviordeterminismgametests/every_behavior_is_seed_deterministic_over_its_run", () -> BehaviorDeterminismGameTests::everyBehaviorIsSeedDeterministicOverItsRun);
+        functions.register("behaviorschedulergametests/affection_events_play_love", () -> BehaviorSchedulerGameTests::affectionEventsPlayLove);
+        functions.register("behaviorschedulergametests/aiming_archer_winks", () -> BehaviorSchedulerGameTests::aimingArcherWinks);
+        functions.register("behaviorschedulergametests/aiming_player_winks", () -> BehaviorSchedulerGameTests::aimingPlayerWinks);
+        functions.register("behaviorschedulergametests/anger_follows_entity_lifetime", () -> BehaviorSchedulerGameTests::angerFollowsEntityLifetime);
+        functions.register("behaviorschedulergametests/angry_mobs_have_red_pupils", () -> BehaviorSchedulerGameTests::angryMobsHaveRedPupils);
+        functions.register("behaviorschedulergametests/creepy_enderman_pulses", () -> BehaviorSchedulerGameTests::creepyEndermanPulses);
+        functions.register("behaviorschedulergametests/disabled_eyes_suspend_automatic_behaviors", () -> BehaviorSchedulerGameTests::disabledEyesSuspendAutomaticBehaviors);
+        functions.register("behaviorschedulergametests/eyeless_tracked_mob_ignores_game_events", () -> BehaviorSchedulerGameTests::eyelessTrackedMobIgnoresGameEvents);
+        functions.register("behaviorschedulergametests/game_event_triggers_respect_config", () -> BehaviorSchedulerGameTests::gameEventTriggersRespectConfig);
+        functions.register("behaviorschedulergametests/heal_swirl_is_rate_limited", () -> BehaviorSchedulerGameTests::healSwirlIsRateLimited);
+        functions.register("behaviorschedulergametests/milking_plays_grow", () -> BehaviorSchedulerGameTests::milkingPlaysGrow);
+        functions.register("behaviorschedulergametests/one_behavior_at_a_time_until_it_elapses", () -> BehaviorSchedulerGameTests::oneBehaviorAtATimeUntilItElapses);
+        functions.register("behaviorschedulergametests/ramming_goat_squints", () -> BehaviorSchedulerGameTests::rammingGoatSquints);
+        functions.register("behaviorschedulergametests/received_expressions_outlive_render_trackers", () -> BehaviorSchedulerGameTests::receivedExpressionsOutliveRenderTrackers);
+        functions.register("behaviorschedulergametests/server_only_anger_is_shared", () -> BehaviorSchedulerGameTests::serverOnlyAngerIsShared);
+        functions.register("behaviorschedulergametests/shearing_plays_grow", () -> BehaviorSchedulerGameTests::shearingPlaysGrow);
+        functions.register("behaviorschedulergametests/sleeping_mob_plays_no_behaviors", () -> BehaviorSchedulerGameTests::sleepingMobPlaysNoBehaviors);
+        functions.register("behaviorschedulergametests/sleeping_villager_closes_lids", () -> BehaviorSchedulerGameTests::sleepingVillagerClosesLids);
+        functions.register("behaviorschedulergametests/swelling_creeper_rattles", () -> BehaviorSchedulerGameTests::swellingCreeperRattles);
+        functions.register("behaviorschedulergametests/switched_off_ongoing_behaviors_stay_neutral", () -> BehaviorSchedulerGameTests::switchedOffOngoingBehaviorsStayNeutral);
+        functions.register("configgametests/config_sections_match_released_files", () -> ConfigGameTests::configSectionsMatchReleasedFiles);
+        functions.register("configgametests/every_shipped_minecraft_definition_loads", () -> ConfigGameTests::everyShippedMinecraftDefinitionLoads);
+        functions.register("configgametests/exact_minecraft_generation_is_selected", () -> ConfigGameTests::exactMinecraftGenerationIsSelected);
+        functions.register("configgametests/percent_for_resolves_exact_before_wildcard", () -> ConfigGameTests::percentForResolvesExactBeforeWildcard);
+        functions.register("configgametests/percent_for_resolves_wildcards_in_list_order", () -> ConfigGameTests::percentForResolvesWildcardsInListOrder);
+        functions.register("configgametests/released_config_survives_native_correction", () -> ConfigGameTests::releasedConfigSurvivesNativeCorrection);
+        functions.register("configgametests/reload_falls_back_to_nearest_generation", () -> ConfigGameTests::reloadFallsBackToNearestGeneration);
+        functions.register("configgametests/reload_hard_excludes_ender_dragon", () -> ConfigGameTests::reloadHardExcludesEnderDragon);
+        functions.register("configgametests/reload_replaces_configs_only_on_content_change", () -> ConfigGameTests::reloadReplacesConfigsOnlyOnContentChange);
+        functions.register("configgametests/reload_tolerates_bad_files_and_duplicates", () -> ConfigGameTests::reloadToleratesBadFilesAndDuplicates);
+        functions.register("configgametests/spawn_all_defaults_off", () -> ConfigGameTests::spawnAllDefaultsOff);
+        functions.register("eligibilitygametests/can_ever_wear_eyes_spans_both_age_buckets", () -> EligibilityGameTests::canEverWearEyesSpansBothAgeBuckets);
+        functions.register("eligibilitygametests/eligibility_follows_the_shared_predicate", () -> EligibilityGameTests::eligibilityFollowsTheSharedPredicate);
+        functions.register("eligibilitygametests/natural_decision_respects_master_toggle_and_is_one_shot", () -> EligibilityGameTests::naturalDecisionRespectsMasterToggleAndIsOneShot);
+        functions.register("eligibilitygametests/slimy_eye_applies_only_to_eligible_targets", () -> EligibilityGameTests::slimyEyeAppliesOnlyToEligibleTargets);
+        functions.register("eligibilitygametests/slimy_eye_creative_application_does_not_consume", () -> EligibilityGameTests::slimyEyeCreativeApplicationDoesNotConsume);
+        functions.register("eligibilitygametests/slimy_eye_refuses_an_already_eyed_target", () -> EligibilityGameTests::slimyEyeRefusesAnAlreadyEyedTarget);
+        functions.register("eligibilitygametests/slimy_eye_rerolls_the_placement_variant", () -> EligibilityGameTests::slimyEyeRerollsThePlacementVariant);
+        functions.register("eligibilitygametests/slimy_eye_self_apply_requires_sneak", () -> EligibilityGameTests::slimyEyeSelfApplyRequiresSneak);
+        functions.register("eligibilitygametests/usable_predicate_endpoints", () -> EligibilityGameTests::usablePredicateEndpoints);
+        functions.register("eyeconfiglimitsgametests/container_count_caps_are_enforced", () -> EyeConfigLimitsGameTests::containerCountCapsAreEnforced);
+        functions.register("eyeconfiglimitsgametests/cross_target_must_reference_another_eye_in_the_same_head", () -> EyeConfigLimitsGameTests::crossTargetMustReferenceAnotherEyeInTheSameHead);
+        functions.register("eyeconfiglimitsgametests/numeric_placement_bounds_are_enforced", () -> EyeConfigLimitsGameTests::numericPlacementBoundsAreEnforced);
+        functions.register("eyeconfiglimitsgametests/variant_weight_must_be_nonnegative", () -> EyeConfigLimitsGameTests::variantWeightMustBeNonnegative);
+        functions.register("eyeitemservicegametests/optometrist_interact_harvests_eyes_for_one_durability", () -> EyeItemServiceGameTests::optometristInteractHarvestsEyesForOneDurability);
+        functions.register("eyeitemservicegametests/optometrist_interact_passes_when_not_applicable", () -> EyeItemServiceGameTests::optometristInteractPassesWhenNotApplicable);
+        functions.register("eyeitemservicegametests/self_remove_with_shears_drops_an_eye_and_costs_durability", () -> EyeItemServiceGameTests::selfRemoveWithShearsDropsAnEyeAndCostsDurability);
+        functions.register("eyestateoverridegametests/clearing_every_field_removes_the_compound", () -> EyeStateOverrideGameTests::clearingEveryFieldRemovesTheCompound);
+        functions.register("eyestateoverridegametests/clearing_tint_removes_only_that_field", () -> EyeStateOverrideGameTests::clearingTintRemovesOnlyThatField);
+        functions.register("eyestateoverridegametests/clearing_tints_preserves_glow", () -> EyeStateOverrideGameTests::clearingTintsPreservesGlow);
+        functions.register("eyestateoverridegametests/glow_override_can_be_set_and_dropped", () -> EyeStateOverrideGameTests::glowOverrideCanBeSetAndDropped);
+        functions.register("eyestateoverridegametests/setting_one_field_leaves_others_absent", () -> EyeStateOverrideGameTests::settingOneFieldLeavesOthersAbsent);
+        functions.register("eyestateoverridegametests/snapshot_applies_all_fields_together", () -> EyeStateOverrideGameTests::snapshotAppliesAllFieldsTogether);
+        functions.register("heldeyegametests/held_eye_bulges_when_hurt", () -> HeldEyeGameTests::heldEyeBulgesWhenHurt);
+        functions.register("heldeyegametests/held_eye_honors_server_settings", () -> HeldEyeGameTests::heldEyeHonorsServerSettings);
+        functions.register("heldeyegametests/held_eye_plays_idle_behaviors", () -> HeldEyeGameTests::heldEyePlaysIdleBehaviors);
+        functions.register("heldeyegametests/held_eye_resets_when_put_away", () -> HeldEyeGameTests::heldEyeResetsWhenPutAway);
+        functions.register("heldeyegametests/held_eye_swirls_when_healed", () -> HeldEyeGameTests::heldEyeSwirlsWhenHealed);
+        functions.register("heldeyegametests/held_eye_winks_alone", () -> HeldEyeGameTests::heldEyeWinksAlone);
+        functions.register("pickerauthgametests/entity_targeting_stops_at_walls", () -> PickerAuthGameTests::entityTargetingStopsAtWalls);
+        functions.register("pickerauthgametests/picker_requests_throttle_per_tick", () -> PickerAuthGameTests::pickerRequestsThrottlePerTick);
+        functions.register("pickerauthgametests/refused_finalization_leaves_terrain", () -> PickerAuthGameTests::refusedFinalizationLeavesTerrain);
+        functions.register("pickerauthgametests/refused_insertion_leaves_terrain", () -> PickerAuthGameTests::refusedInsertionLeavesTerrain);
+        functions.register("pickerauthgametests/spawn_all_has_a_server_wide_cooldown", () -> PickerAuthGameTests::spawnAllHasAServerWideCooldown);
+        functions.register("pickerexportgametests/canonical_json_writes_default_valued_fields", () -> PickerExportGameTests::canonicalJsonWritesDefaultValuedFields);
+        functions.register("pickerexportgametests/drafts_retain_species_and_age", () -> PickerExportGameTests::draftsRetainSpeciesAndAge);
+        functions.register("pickerexportgametests/export_overlay_combines_draft_ages", () -> PickerExportGameTests::exportOverlayCombinesDraftAges);
+        functions.register("pickerexportgametests/export_overlay_preserves_other_ages", () -> PickerExportGameTests::exportOverlayPreservesOtherAges);
+        functions.register("pickerexportgametests/export_packet_refuses_oversized_config", () -> PickerExportGameTests::exportPacketRefusesOversizedConfig);
+        functions.register("pickerexportgametests/export_rejects_config_with_no_usable_eyes", () -> PickerExportGameTests::exportRejectsConfigWithNoUsableEyes);
+        functions.register("pickerexportgametests/export_rejects_empty_payload_as_malformed", () -> PickerExportGameTests::exportRejectsEmptyPayloadAsMalformed);
+        functions.register("pickerexportgametests/export_rejects_ender_dragon", () -> PickerExportGameTests::exportRejectsEnderDragon);
+        functions.register("pickerexportgametests/export_rejects_garbage_typed_field", () -> PickerExportGameTests::exportRejectsGarbageTypedField);
+        functions.register("pickerexportgametests/export_rejects_unknown_entity_type", () -> PickerExportGameTests::exportRejectsUnknownEntityType);
+        functions.register("pickerexportgametests/export_rejects_unsafe_numeric_config", () -> PickerExportGameTests::exportRejectsUnsafeNumericConfig);
+        functions.register("pickerfreezegametests/freeze_captures_and_unfreeze_restores", () -> PickerFreezeGameTests::freezeCapturesAndUnfreezeRestores);
+        functions.register("pickerfreezegametests/freeze_preserves_already_forced_no_ai", () -> PickerFreezeGameTests::freezePreservesAlreadyForcedNoAi);
+        functions.register("pickerfreezegametests/freeze_refuses_second_editor", () -> PickerFreezeGameTests::freezeRefusesSecondEditor);
+        functions.register("pickerfreezegametests/join_during_live_edit_reasserts_the_freeze", () -> PickerFreezeGameTests::joinDuringLiveEditReassertsTheFreeze);
+        functions.register("pickerfreezegametests/stale_marker_is_restored_on_join", () -> PickerFreezeGameTests::staleMarkerIsRestoredOnJoin);
+        functions.register("pickerfreezegametests/switching_mobs_releases_the_previous_one", () -> PickerFreezeGameTests::switchingMobsReleasesThePreviousOne);
+        functions.register("recipegametests/cobweb_clears_all_overrides", () -> RecipeGameTests::cobwebClearsAllOverrides);
+        functions.register("recipegametests/dye_sets_iris_and_keeps_unrelated_component", () -> RecipeGameTests::dyeSetsIrisAndKeepsUnrelatedComponent);
+        functions.register("recipegametests/glowstone_and_redstone_toggle_glow", () -> RecipeGameTests::glowstoneAndRedstoneToggleGlow);
+        functions.register("recipegametests/slimy_eye_carries_the_eyes_appearance", () -> RecipeGameTests::slimyEyeCarriesTheEyesAppearance);
+        functions.register("recipegametests/two_eyes_do_not_match", () -> RecipeGameTests::twoEyesDoNotMatch);
+        functions.register("serializationgametests/anger_packet_round_trips", () -> SerializationGameTests::angerPacketRoundTrips);
+        functions.register("serializationgametests/appearance_override_sparse_nbt_round_trips", () -> SerializationGameTests::appearanceOverrideSparseNbtRoundTrips);
+        functions.register("serializationgametests/behavior_trigger_packet_round_trips", () -> SerializationGameTests::behaviorTriggerPacketRoundTrips);
+        functions.register("serializationgametests/config_sync_packet_round_trips", () -> SerializationGameTests::configSyncPacketRoundTrips);
+        functions.register("serializationgametests/config_sync_rejects_oversized_and_unsafe_payloads", () -> SerializationGameTests::configSyncRejectsOversizedAndUnsafePayloads);
+        functions.register("serializationgametests/eye_color_rejects_out_of_range_channels", () -> SerializationGameTests::eyeColorRejectsOutOfRangeChannels);
+        functions.register("serializationgametests/eye_color_rejects_wrong_channel_count", () -> SerializationGameTests::eyeColorRejectsWrongChannelCount);
+        functions.register("serializationgametests/eye_definition_codec_round_trips_every_field", () -> SerializationGameTests::eyeDefinitionCodecRoundTripsEveryField);
+        functions.register("serializationgametests/eye_fields_serialize_at_float_precision", () -> SerializationGameTests::eyeFieldsSerializeAtFloatPrecision);
+        functions.register("serializationgametests/eye_state_packet_rejects_non_finite_values", () -> SerializationGameTests::eyeStatePacketRejectsNonFiniteValues);
+        functions.register("serializationgametests/eye_state_packet_round_trips", () -> SerializationGameTests::eyeStatePacketRoundTrips);
+        functions.register("serializationgametests/network_protocol_ids_are_versioned_and_unique", () -> SerializationGameTests::networkProtocolIdsAreVersionedAndUnique);
+        functions.register("serializationgametests/picker_export_packet_round_trips", () -> SerializationGameTests::pickerExportPacketRoundTrips);
+        functions.register("serializationgametests/picker_freeze_packet_round_trips", () -> SerializationGameTests::pickerFreezePacketRoundTrips);
+        functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
+        functions.register("skulleyegametests/denied_item_use_leaves_heads_untouched", () -> SkullEyeGameTests::deniedItemUseLeavesHeadsUntouched);
+        functions.register("skulleyegametests/head_eyes_survive_save_load", () -> SkullEyeGameTests::headEyesSurviveSaveLoad);
+        functions.register("skulleyegametests/optometrist_harvests_a_placed_head", () -> SkullEyeGameTests::optometristHarvestsAPlacedHead);
+        functions.register("skulleyegametests/slimy_eye_gives_a_placed_head_eyes", () -> SkullEyeGameTests::slimyEyeGivesAPlacedHeadEyes);
+        functions.register("skulleyegametests/slimy_eye_refuses_unconfigured_heads_and_the_switch", () -> SkullEyeGameTests::slimyEyeRefusesUnconfiguredHeadsAndTheSwitch);
+        functions.register("somegooglygametests/command_spawn_finalizes_before_applying_picker_state", () -> SomeGooglyGameTests::commandSpawnFinalizesBeforeApplyingPickerState);
+        functions.register("somegooglygametests/conversion_keeps_eye_state", () -> SomeGooglyGameTests::conversionKeepsEyeState);
+        functions.register("somegooglygametests/death_harvest_rejects_nonqualifying_kills", () -> SomeGooglyGameTests::deathHarvestRejectsNonqualifyingKills);
+        functions.register("somegooglygametests/death_harvest_uses_the_supplied_drop_sink", () -> SomeGooglyGameTests::deathHarvestUsesTheSuppliedDropSink);
+        functions.register("somegooglygametests/forge_entity_persistent_data_survives_save_load", () -> SomeGooglyGameTests::forgeEntityPersistentDataSurvivesSaveLoad);
+        functions.register("somegooglygametests/googly_eye_item_stores_appearance_override", () -> SomeGooglyGameTests::googlyEyeItemStoresAppearanceOverride);
+        functions.register("somegooglygametests/optometrist_accepts_only_shears", () -> SomeGooglyGameTests::optometristAcceptsOnlyShears);
+        functions.register("somegooglygametests/spawn_commands_refuse_dragon_players_and_excluded_types", () -> SomeGooglyGameTests::spawnCommandsRefuseDragonPlayersAndExcludedTypes);
+        functions.register("spawngatinggametests/full_percent_grants_eyes_and_zero_denies_them", () -> SpawnGatingGameTests::fullPercentGrantsEyesAndZeroDeniesThem);
+        functions.register("spawngatinggametests/spawn_always_assigns_a_variant_roll", () -> SpawnGatingGameTests::spawnAlwaysAssignsAVariantRoll);
+        functions.register("variantselectiongametests/cumulative_weight_boundaries_pick_expected_variant", () -> VariantSelectionGameTests::cumulativeWeightBoundariesPickExpectedVariant);
+        functions.register("variantselectiongametests/degenerate_configs_fall_to_first_variant", () -> VariantSelectionGameTests::degenerateConfigsFallToFirstVariant);
+        functions.register("versionrangegametests/entirely_below_splits_stale_from_downgrade", () -> VersionRangeGameTests::entirelyBelowSplitsStaleFromDowngrade);
+        functions.register("versionrangegametests/exact_version_matches_only_itself", () -> VersionRangeGameTests::exactVersionMatchesOnlyItself);
+        functions.register("versionrangegametests/malformed_range_does_not_match", () -> VersionRangeGameTests::malformedRangeDoesNotMatch);
+        functions.register("versionrangegametests/nearest_gap_resolves_to_older_neighbor", () -> VersionRangeGameTests::nearestGapResolvesToOlderNeighbor);
+        functions.register("versionrangegametests/nearest_handles_exact_and_malformed_declarations", () -> VersionRangeGameTests::nearestHandlesExactAndMalformedDeclarations);
+        functions.register("versionrangegametests/nearest_picks_newest_older_generation", () -> VersionRangeGameTests::nearestPicksNewestOlderGeneration);
+        functions.register("versionrangegametests/nearest_picks_oldest_newer_generation_on_downgrade", () -> VersionRangeGameTests::nearestPicksOldestNewerGenerationOnDowngrade);
+        functions.register("versionrangegametests/optional_mod_version_range_synthesis", () -> VersionRangeGameTests::optionalModVersionRangeSynthesis);
+        functions.register("versionrangegametests/range_bounds_respect_inclusivity", () -> VersionRangeGameTests::rangeBoundsRespectInclusivity);
+        functions.register("versionrangegametests/shorter_version_pads_with_zero", () -> VersionRangeGameTests::shorterVersionPadsWithZero);
+        functions.register(context.getModEventBus());
+    }
 }

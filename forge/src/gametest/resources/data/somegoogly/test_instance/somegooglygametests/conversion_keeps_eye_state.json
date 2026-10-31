@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:somegooglygametests/conversion_keeps_eye_state",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 20
+}

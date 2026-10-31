@@ -1,19 +1,13 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.gametest.GameTestHolder;
 
 /**
  * Forge GameTest entry points for the shared core and picker-spawn assertions.
  */
-@GameTestHolder(SomeGooglyCommon.MOD_ID)
 public final class SomeGooglyGameTests {
-
-    private static final String TEMPLATE = "somegoogly:empty";
 
     private SomeGooglyGameTests() {
     }
@@ -29,12 +23,10 @@ public final class SomeGooglyGameTests {
         return player;
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.commandSpawnFinalizesBeforeApplyingPickerState(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
     }
@@ -43,33 +35,27 @@ public final class SomeGooglyGameTests {
      * Exercises Forge's native entity persistent compound through an entity save/load cycle. In game: see
      * {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
      */
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void forgeEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(helper, "Forge");
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void conversionKeepsEyeState(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void googlyEyeItemStoresAppearanceOverride(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.googlyEyeItemStoresAppearanceOverride(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.optometristAcceptsOnlyShears(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
                 helper, survivalPlayer(helper));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, survivalPlayer(helper));

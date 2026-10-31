@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
 
  <p>Bones are named in the <code>.geo.json</code>, so enumeration yields real names (better than the
  vanilla reflection family's <code>#N</code>). There is deliberately no "move the pose to a bone" here:
- a GeckoLib layer can only draw at a bone from inside <a href="GooglyGeoLayer.html#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>GooglyGeoLayer.renderForBone(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.GeoBone, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a>, where
+ a GeckoLib layer can only draw at a bone from inside GeckoLib's per-bone rendering task, where
  GeckoLib hands it the fully-composed pose — re-walking bone transforms outside the model render
  misses the entity's body rotations (see <a href="GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GooglyGeoLayer</code></a>). So lookup returns the <code>GeoBone</code>
  itself, matched by identity at render time.

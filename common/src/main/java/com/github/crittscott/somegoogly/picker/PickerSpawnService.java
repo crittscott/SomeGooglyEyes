@@ -485,7 +485,7 @@ public final class PickerSpawnService {
      */
     public static boolean prepareForCommandSpawn(
             ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
-        entity.moveTo(x, y, z, yaw, 0.0F);
+        entity.snapTo(x, y, z, yaw, 0.0F);
         if (entity instanceof Mob mob) {
             if (!MobSpawning.finalizeSpawn(mob, level, EntitySpawnReason.COMMAND)) {
                 return false;

@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
@@ -38,8 +39,8 @@ public final class EyeStateOverrideGameTestsLogic {
 
         EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
         AppearanceOverride after = EyeState.readProperties(cow);
-        helper.assertTrue(after.iris().isEmpty(), "iris should be cleared");
-        helper.assertTrue(after.cornea().isPresent(), "cornea should be untouched when clearing iris");
+        helper.assertTrue(after.iris().isEmpty(), Component.literal("iris should be cleared"));
+        helper.assertTrue(after.cornea().isPresent(), Component.literal("cornea should be untouched when clearing iris"));
         helper.succeed();
     }
 
@@ -52,11 +53,11 @@ public final class EyeStateOverrideGameTestsLogic {
         Cow cow = spawnCow(helper);
 
         EyeState.setGlow(cow, true);
-        helper.assertTrue(EyeState.readProperties(cow).glow().orElse(false), "glow override should be set true");
+        helper.assertTrue(EyeState.readProperties(cow).glow().orElse(false), Component.literal("glow override should be set true"));
 
         // null clears the override so the eye falls back to its per-eye config glow.
         EyeState.setGlow(cow, null);
-        helper.assertTrue(EyeState.readProperties(cow).glow().isEmpty(), "setGlow(null) should drop the glow override");
+        helper.assertTrue(EyeState.readProperties(cow).glow().isEmpty(), Component.literal("setGlow(null) should drop the glow override"));
         helper.succeed();
     }
 
@@ -70,10 +71,10 @@ public final class EyeStateOverrideGameTestsLogic {
         EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
 
         AppearanceOverride override = EyeState.readProperties(cow);
-        helper.assertTrue(override.iris().isPresent(), "iris override should be present");
-        helper.assertTrue(override.cornea().isEmpty(), "cornea should stay absent (sparse override)");
-        helper.assertTrue(override.glow().isEmpty(), "glow should stay absent (sparse override)");
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) != null, "an override compound should exist on the entity");
+        helper.assertTrue(override.iris().isPresent(), Component.literal("iris override should be present"));
+        helper.assertTrue(override.cornea().isEmpty(), Component.literal("cornea should stay absent (sparse override)"));
+        helper.assertTrue(override.glow().isEmpty(), Component.literal("glow should stay absent (sparse override)"));
+        helper.assertTrue(EyeState.overridesTagOrNull(cow) != null, Component.literal("an override compound should exist on the entity"));
         helper.succeed();
     }
 
@@ -88,8 +89,8 @@ public final class EyeStateOverrideGameTestsLogic {
         EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
         EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
 
-        helper.assertTrue(EyeState.readProperties(cow).isEmpty(), "override should be empty once its only field is cleared");
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) == null, "the override compound should be removed when empty");
+        helper.assertTrue(EyeState.readProperties(cow).isEmpty(), Component.literal("override should be empty once its only field is cleared"));
+        helper.assertTrue(EyeState.overridesTagOrNull(cow) == null, Component.literal("the override compound should be removed when empty"));
         helper.succeed();
     }
 
@@ -106,9 +107,9 @@ public final class EyeStateOverrideGameTestsLogic {
 
         EyeState.clearTints(cow);
         AppearanceOverride after = EyeState.readProperties(cow);
-        helper.assertTrue(after.iris().isEmpty(), "iris should be cleared");
-        helper.assertTrue(after.cornea().isEmpty(), "cornea should be cleared");
-        helper.assertTrue(after.glow().orElse(false), "clearing tints should preserve glow");
+        helper.assertTrue(after.iris().isEmpty(), Component.literal("iris should be cleared"));
+        helper.assertTrue(after.cornea().isEmpty(), Component.literal("cornea should be cleared"));
+        helper.assertTrue(after.glow().orElse(false), Component.literal("clearing tints should preserve glow"));
         helper.succeed();
     }
 
@@ -125,9 +126,9 @@ public final class EyeStateOverrideGameTestsLogic {
 
         EyeState.applySnapshot(cow, new EyeState.Snapshot(true, 0.75F, properties));
         EyeState.Snapshot after = EyeState.snapshot(cow);
-        helper.assertTrue(after.hasEyes(), "snapshot should apply the has-eyes flag");
-        helper.assertTrue(after.variantRoll() == 0.75F, "snapshot should apply the variant roll");
-        helper.assertTrue(after.properties().equals(properties), "snapshot should apply appearance properties");
+        helper.assertTrue(after.hasEyes(), Component.literal("snapshot should apply the has-eyes flag"));
+        helper.assertTrue(after.variantRoll() == 0.75F, Component.literal("snapshot should apply the variant roll"));
+        helper.assertTrue(after.properties().equals(properties), Component.literal("snapshot should apply appearance properties"));
         helper.succeed();
     }
 }

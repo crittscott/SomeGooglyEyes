@@ -14,10 +14,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Server-owned picker mob freezing: a picker-targeted mob is held {@code NoAi=true} while edited and
@@ -84,7 +84,7 @@ public final class PickerFreezeService {
         CompoundTag data = EntityPersistentData.get(mob);
         // Prefer a stale marker over the live flag: if a crash left the mob forced-NoAi with its marker
         // intact (and onMobJoin hasn't run for it), the marker holds the true pre-picker value.
-        boolean prevNoAi = data.contains(PREV_NO_AI_TAG) ? data.getBoolean(PREV_NO_AI_TAG) : mob.isNoAi();
+        boolean prevNoAi = data.getBooleanOr(PREV_NO_AI_TAG, mob.isNoAi());
         data.putBoolean(PREV_NO_AI_TAG, prevNoAi);
         mob.setNoAi(true);
         mob.setDeltaMovement(Vec3.ZERO);
@@ -137,7 +137,7 @@ public final class PickerFreezeService {
         }
         SomeGooglyCommon.LOGGER.info("Restoring AI state of {} {} left frozen by the picker",
                 BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()), mobId);
-        mob.setNoAi(data.getBoolean(PREV_NO_AI_TAG));
+        mob.setNoAi(data.getBooleanOr(PREV_NO_AI_TAG, false));
         data.remove(PREV_NO_AI_TAG);
     }
 

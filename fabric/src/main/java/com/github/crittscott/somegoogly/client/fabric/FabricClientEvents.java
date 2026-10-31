@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -18,7 +18,8 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -80,11 +81,13 @@ public final class FabricClientEvents {
             }
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
-        HudRenderCallback.EVENT.register((graphics, partialTick) -> {
+        HudLayerRegistrationCallback.EVENT.register(layers -> layers.attachLayerAfter(
+                IdentifiedLayer.SUBTITLES,
+                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) -> {
             Minecraft minecraft = Minecraft.getInstance();
             PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
                     minecraft.getWindow().getGuiScaledHeight());
-        });
+        }));
 
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->
                 EyeItemProperties.appendHeadTooltip(stack, lines));

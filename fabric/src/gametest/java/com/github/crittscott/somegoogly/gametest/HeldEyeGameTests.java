@@ -1,44 +1,43 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Fabric GameTest entry points for {@link HeldEyeGameTestsLogic}; see that class for the actual
  * assertions.
  */
-public final class HeldEyeGameTests implements FabricGameTest {
+public final class HeldEyeGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyeBulgesWhenHurt(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyeBulgesWhenHurt(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(helper);
     }
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyeHonorsServerSettings(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper);
     }
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper);
     }
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyeResetsWhenPutAway(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyeResetsWhenPutAway(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(helper);
     }
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(helper);
     }
 
-    @GameTest(template = TEMPLATE)
-    public static void heldEyeWinksAlone(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void heldEyeWinksAlone(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeWinksAlone(helper);
     }
 }

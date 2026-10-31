@@ -3,14 +3,14 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
@@ -29,8 +29,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
@@ -53,7 +53,7 @@ public final class PickerExportGameTestsLogic {
         helper.assertTrue(VersionedEntry.CODEC.encodeStart(JsonOps.INSTANCE, actual).getOrThrow().equals(
                         VersionedEntry.CODEC.encodeStart(JsonOps.INSTANCE,
                                 VersionedEntry.of("1.21.4", age, expected)).getOrThrow()),
-                "export must preserve the complete " + age + " arrangement");
+                Component.literal("export must preserve the complete " + age + " arrangement"));
     }
 
     /**
@@ -81,7 +81,7 @@ public final class PickerExportGameTestsLogic {
                 .getAsJsonArray("eyes").get(0).getAsJsonObject();
 
         helper.assertTrue(eye.has("crossTarget") && eye.get("crossTarget").getAsInt() == -1,
-                "crossTarget must be written even at its no-partner default (-1)");
+                Component.literal("crossTarget must be written even at its no-partner default (-1)"));
         helper.succeed();
     }
 
@@ -108,22 +108,22 @@ public final class PickerExportGameTestsLogic {
         baby.variants().getFirst().eyes.getFirst().eye.position[0] = 5F;
         session.select(sheep, false, () -> draft(3F));
         helper.assertTrue(session.select(cow, false, () -> draft(99F)) == adult,
-                "returning to an adult reuses only its adult draft");
-        helper.assertTrue(session.current().key().age().equals(AGE_ADULT), "adult draft keeps its age");
+                Component.literal("returning to an adult reuses only its adult draft"));
+        helper.assertTrue(session.current().key().age().equals(AGE_ADULT), Component.literal("adult draft keeps its age"));
         helper.assertTrue(session.select(cow, true, () -> draft(99F)) == baby,
-                "returning to a baby reuses only its baby draft");
-        helper.assertTrue(session.current().key().age().equals(AGE_BABY), "baby draft keeps its age");
+                Component.literal("returning to a baby reuses only its baby draft"));
+        helper.assertTrue(session.current().key().age().equals(AGE_BABY), Component.literal("baby draft keeps its age"));
         Map<ResourceLocation, Map<String, RuntimeConfig>> exports = session.exports();
         helper.assertTrue(exports.size() == 2 && exports.get(cow).size() == 2,
-                "export retains both cow ages and the other species");
+                Component.literal("export retains both cow ages and the other species"));
         helper.assertTrue(exports.get(cow).get(AGE_ADULT).variants.getFirst().heads.getFirst()
                         .eyes.getFirst().placement().position().x == 4F
                         && exports.get(cow).get(AGE_BABY).variants.getFirst().heads.getFirst()
                         .eyes.getFirst().placement().position().x == 5F,
-                "each exported age keeps its own edits");
+                Component.literal("each exported age keeps its own edits"));
         session.clear();
         helper.assertTrue(session.current() == null && session.exports().isEmpty(),
-                "clearing a session removes both selection and retained drafts");
+                Component.literal("clearing a session removes both selection and retained drafts"));
         helper.succeed();
     }
 
@@ -156,19 +156,19 @@ public final class PickerExportGameTestsLogic {
         RuntimeConfig baby = exportConfig(5F, 3, true);
         Map<String, RuntimeConfig> drafts = Map.of(AGE_ADULT, adult, AGE_BABY, baby);
         ConfigFile file = roundTripFile(ConfigFile.overlay(base, drafts, "1.21.4", token -> "root/" + token));
-        helper.assertTrue(file.entries.size() == 3, "bulk export retains an empty disabled bucket");
+        helper.assertTrue(file.entries.size() == 3, Component.literal("bulk export retains an empty disabled bucket"));
         assertAge(helper, file, AGE_ADULT, adult);
         assertAge(helper, file, AGE_BABY, baby);
         assertAge(helper, file, AGE_ANY, base.any);
         ConfigFile fresh = roundTripFile(ConfigFile.overlay(null, drafts, "1.21.4", UnaryOperator.identity()));
-        helper.assertTrue(fresh.entries.size() == 2, "new definitions contain both authored ages");
+        helper.assertTrue(fresh.entries.size() == 2, Component.literal("new definitions contain both authored ages"));
         assertAge(helper, fresh, AGE_ADULT, adult);
         assertAge(helper, fresh, AGE_BABY, baby);
         ConfigFile canonical = roundTripFile(ConfigFile.overlay(base, Map.of(AGE_BABY, baby),
                 "1.21.4", token -> "root/" + token));
         helper.assertTrue(canonical.entries.stream().filter(entry -> entry.age.equals(AGE_ADULT)).findFirst()
                         .orElseThrow().variants.getFirst().heads.getFirst().attachPoint.equals("root/head"),
-                "copied base tokens are canonicalized while authored tokens stay unchanged");
+                Component.literal("copied base tokens are canonicalized while authored tokens stay unchanged"));
         helper.succeed();
     }
 
@@ -186,14 +186,14 @@ public final class PickerExportGameTestsLogic {
         for (String age : List.of(AGE_ADULT, AGE_BABY)) {
             ConfigFile file = roundTripFile(ConfigFile.overlay(base, Map.of(age, replacement),
                     "1.21.4", UnaryOperator.identity()));
-            helper.assertTrue(file.entries.size() == 3, "single-age export retains every age bucket");
+            helper.assertTrue(file.entries.size() == 3, Component.literal("single-age export retains every age bucket"));
             assertAge(helper, file, AGE_ADULT, age.equals(AGE_ADULT) ? replacement : base.adult);
             assertAge(helper, file, AGE_BABY, age.equals(AGE_BABY) ? replacement : base.baby);
             assertAge(helper, file, AGE_ANY, base.any);
         }
         helper.assertTrue(base.adult.variants.getFirst().heads.getFirst().eyes.getFirst().placement()
                         .position().x == 1F && base.baby.enabled && !base.any.enabled,
-                "overlay must not mutate the installed source set");
+                Component.literal("overlay must not mutate the installed source set"));
         helper.succeed();
     }
 
@@ -207,12 +207,12 @@ public final class PickerExportGameTestsLogic {
         CompoundTag small = new CompoundTag();
         small.putBoolean("enabled", true);
         helper.assertTrue(new PickerExportPacket(cow, AGE_ADULT, small).fitsServerbound(),
-                "an ordinary config must fit in a serverbound payload");
+                Component.literal("an ordinary config must fit in a serverbound payload"));
 
         CompoundTag large = new CompoundTag();
         large.putString("padding", "x".repeat(PickerExportPacket.MAX_SERVERBOUND_BYTES));
         helper.assertTrue(!new PickerExportPacket(cow, AGE_ADULT, large).fitsServerbound(),
-                "a config larger than vanilla's serverbound payload cap must be refused before sending");
+                Component.literal("a config larger than vanilla's serverbound payload cap must be refused before sending"));
         helper.succeed();
     }
 
@@ -228,7 +228,7 @@ public final class PickerExportGameTestsLogic {
                 ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) empty);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_no_usable_eyes")),
-                "a config with nothing to draw must be rejected, got: " + result.getString());
+                Component.literal("a config with nothing to draw must be rejected, got: " + result.getString()));
         helper.succeed();
     }
     /**
@@ -240,7 +240,7 @@ public final class PickerExportGameTestsLogic {
                 ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
-                "a payload with no fields must be refused as malformed, got: " + result.getString());
+                Component.literal("a payload with no fields must be refused as malformed, got: " + result.getString()));
         helper.succeed();
     }
 
@@ -253,7 +253,7 @@ public final class PickerExportGameTestsLogic {
                 ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_ender_dragon")),
-                "the ender dragon must be refused at export, got: " + result.getString());
+                Component.literal("the ender dragon must be refused at export, got: " + result.getString()));
         helper.succeed();
     }
 
@@ -271,7 +271,7 @@ public final class PickerExportGameTestsLogic {
                 ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, garbage);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
-                "a garbage-typed variants field must be refused as malformed, got: " + result.getString());
+                Component.literal("a garbage-typed variants field must be refused as malformed, got: " + result.getString()));
         helper.succeed();
     }
 
@@ -285,7 +285,7 @@ public final class PickerExportGameTestsLogic {
                 server(helper), UUID.randomUUID(), type, AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unknown_type", type.toString())),
-                "an id absent from the entity registry must be rejected, got: " + result.getString());
+                Component.literal("an id absent from the entity registry must be rejected, got: " + result.getString()));
         helper.succeed();
     }
 
@@ -306,17 +306,17 @@ public final class PickerExportGameTestsLogic {
         EyeConfigLimits.Issue error = EyeConfigLimits.validateRuntimeConfig(config);
         helper.assertTrue(error.message().equals(Component.translatable("somegoogly.validation.eye_context",
                         0, 0, 0, Component.translatable("somegoogly.validation.position"))),
-                "the position reason and all placement context must remain translatable");
+                Component.literal("the position reason and all placement context must remain translatable"));
         helper.assertTrue(error.diagnostic().equals(
                         "variant 0 head 0 eye 0: position is not finite or is out of range"),
-                "logs keep a plain diagnostic independent of the client language");
+                Component.literal("logs keep a plain diagnostic independent of the client language"));
         Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
                 ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) encoded);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unsafe_payload", error.message())),
-                "non-finite exported geometry must be rejected, got: " + result.getString());
+                Component.literal("non-finite exported geometry must be rejected, got: " + result.getString()));
         helper.succeed();
     }
 

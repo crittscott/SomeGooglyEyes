@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
@@ -15,9 +15,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -63,11 +64,11 @@ public final class SomeGooglyGameTestsLogic {
         Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
         restored.load(saved);
 
-        helper.assertTrue(EyeState.hasEyes(restored), loader + " should restore the has-eyes flag");
+        helper.assertTrue(EyeState.hasEyes(restored), Component.literal(loader + " should restore the has-eyes flag"));
         helper.assertTrue(EyeState.getVariantRoll(restored) == 0.375F,
-                loader + " should restore the placement-variant roll");
+                Component.literal(loader + " should restore the placement-variant roll"));
         helper.assertTrue(iris.equals(EyeState.readProperties(restored).iris().orElse(null)),
-                loader + " should restore appearance overrides");
+                Component.literal(loader + " should restore appearance overrides"));
         helper.succeed();
     }
 
@@ -89,12 +90,12 @@ public final class SomeGooglyGameTestsLogic {
             AABB area = new AABB(helper.absolutePos(spawnPos)).inflate(CONVERSION_SEARCH_RADIUS);
             List<Cow> cows = helper.getLevel().getEntitiesOfClass(Cow.class, area,
                     cow -> cow.getType() == EntityType.COW);
-            helper.assertTrue(cows.size() == 1, "Expected the sheared mooshroom to become one cow");
+            helper.assertTrue(cows.size() == 1, Component.literal("Expected the sheared mooshroom to become one cow"));
             Cow cow = cows.getFirst();
-            helper.assertTrue(EyeState.hasEyes(cow), "Converted mob should keep its eyes");
-            helper.assertTrue(EyeState.getVariantRoll(cow) == 0.375F, "Converted mob should keep its variant roll");
+            helper.assertTrue(EyeState.hasEyes(cow), Component.literal("Converted mob should keep its eyes"));
+            helper.assertTrue(EyeState.getVariantRoll(cow) == 0.375F, Component.literal("Converted mob should keep its variant roll"));
             helper.assertTrue(iris.equals(EyeState.readProperties(cow).iris().orElse(null)),
-                    "Converted mob should keep its appearance overrides");
+                    Component.literal("Converted mob should keep its appearance overrides"));
         });
     }
 
@@ -111,8 +112,8 @@ public final class SomeGooglyGameTestsLogic {
         ItemStack stack = GooglyEyeItem.create(appearance, 3);
         AppearanceOverride roundTrip = EyeItemProperties.get(stack);
 
-        helper.assertTrue(stack.getCount() == 3, "Expected created eye stack count to be preserved");
-        helper.assertTrue(roundTrip.equals(appearance), "Expected eye item appearance component to round-trip");
+        helper.assertTrue(stack.getCount() == 3, Component.literal("Expected created eye stack count to be preserved"));
+        helper.assertTrue(roundTrip.equals(appearance), Component.literal("Expected eye item appearance component to round-trip"));
         helper.succeed();
     }
 
@@ -125,11 +126,11 @@ public final class SomeGooglyGameTestsLogic {
                 .lookupOrThrow(Registries.ENCHANTMENT)
                 .getOrThrow(ModContent.OPTOMETRIST);
         helper.assertTrue(optometrist.value().isSupportedItem(new ItemStack(Items.SHEARS)),
-                "Optometrist should accept shears");
+                Component.literal("Optometrist should accept shears"));
         helper.assertTrue(!optometrist.value().isSupportedItem(new ItemStack(Items.IRON_PICKAXE)),
-                "Optometrist should reject another durable item");
+                Component.literal("Optometrist should reject another durable item"));
         helper.assertTrue(optometrist.is(EnchantmentTags.TREASURE),
-                "Optometrist should remain treasure-only");
+                Component.literal("Optometrist should remain treasure-only"));
         helper.succeed();
     }
 
@@ -157,14 +158,14 @@ public final class SomeGooglyGameTestsLogic {
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
         }
 
-        helper.assertTrue(drops.size() == 1, "A qualifying death harvest should emit exactly one stack");
-        helper.assertTrue(drops.get(0).is(ModContent.GOOGLY_EYE.get()), "The emitted stack should be a Googly Eye");
+        helper.assertTrue(drops.size() == 1, Component.literal("A qualifying death harvest should emit exactly one stack"));
+        helper.assertTrue(drops.get(0).is(ModContent.GOOGLY_EYE.get()), Component.literal("The emitted stack should be a Googly Eye"));
         helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0)).iris().orElse(null)),
-                "The harvested eye should capture the entity's effective iris color");
-        helper.assertTrue(shears.getDamageValue() == 1, "A successful death harvest should damage the shears once");
+                Component.literal("The harvested eye should capture the entity's effective iris color"));
+        helper.assertTrue(shears.getDamageValue() == 1, Component.literal("A successful death harvest should damage the shears once"));
         helper.assertTrue(helper.getLevel().getEntitiesOfClass(
                         ItemEntity.class, cow.getBoundingBox().inflate(4.0)).isEmpty(),
-                "The shared harvest service should not spawn the returned eye directly");
+                Component.literal("The shared harvest service should not spawn the returned eye directly"));
         helper.succeed();
     }
 
@@ -216,8 +217,8 @@ public final class SomeGooglyGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
 
-        helper.assertTrue(drops.isEmpty(), "Nonqualifying death harvests should emit no eye stacks");
-        helper.assertTrue(shears.getDamageValue() == 0, "Nonqualifying death harvests should not damage shears");
+        helper.assertTrue(drops.isEmpty(), Component.literal("Nonqualifying death harvests should emit no eye stacks"));
+        helper.assertTrue(shears.getDamageValue() == 0, Component.literal("Nonqualifying death harvests should not damage shears"));
         helper.succeed();
     }
 }

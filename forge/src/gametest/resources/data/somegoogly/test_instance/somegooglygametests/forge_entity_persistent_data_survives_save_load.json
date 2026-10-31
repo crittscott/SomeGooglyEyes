@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:somegooglygametests/forge_entity_persistent_data_survives_save_load",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 20
+}

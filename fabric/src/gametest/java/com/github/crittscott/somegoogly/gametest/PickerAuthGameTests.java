@@ -1,31 +1,30 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Fabric GameTest entry points for {@link PickerAuthGameTestsLogic}; see that class for the actual
  * assertions.
  */
-public final class PickerAuthGameTests implements FabricGameTest {
+public final class PickerAuthGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void pickerRequestsThrottlePerTick(GameTestHelper helper) {
         PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
         PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void entityTargetingStopsAtWalls(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayer.get(helper.getLevel()));
     }
 }

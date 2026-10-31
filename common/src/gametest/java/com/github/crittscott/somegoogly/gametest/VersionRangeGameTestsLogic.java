@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -27,8 +28,8 @@ public final class VersionRangeGameTestsLogic {
      * (red); zombies spawn with red irises.
      */
     public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
-        helper.assertTrue(VersionRangeMatcher.matches("1.20.1", "1.20.1"), "exact version should match itself");
-        helper.assertTrue(!VersionRangeMatcher.matches("1.20.1", "1.20.2"), "exact version should not match a different one");
+        helper.assertTrue(VersionRangeMatcher.matches("1.20.1", "1.20.1"), Component.literal("exact version should match itself"));
+        helper.assertTrue(!VersionRangeMatcher.matches("1.20.1", "1.20.2"), Component.literal("exact version should not match a different one"));
         helper.succeed();
     }
 
@@ -37,10 +38,10 @@ public final class VersionRangeGameTestsLogic {
      * {@code "1.21.4"} (red); the server log reports the invalid range and zombies spawn with red irises.
      */
     public static void malformedRangeDoesNotMatch(GameTestHelper helper) {
-        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1", "1.20.1"), "range with no closing bracket should not match");
-        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1-1.21)", "1.20.5"), "range with no comma should not match");
-        helper.assertTrue(!VersionRangeMatcher.matches("", "1.20.1"), "blank range should not match");
-        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", ""), "blank version should not match");
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1", "1.20.1"), Component.literal("range with no closing bracket should not match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1-1.21)", "1.20.5"), Component.literal("range with no comma should not match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("", "1.20.1"), Component.literal("blank range should not match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", ""), Component.literal("blank version should not match"));
         helper.succeed();
     }
 
@@ -51,14 +52,14 @@ public final class VersionRangeGameTestsLogic {
      */
     public static void rangeBoundsRespectInclusivity(GameTestHelper helper) {
         // [lower,upper): lower inclusive, upper exclusive.
-        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.1"), "inclusive lower bound should match");
-        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.6"), "value inside range should match");
-        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", "1.21"), "exclusive upper bound should not match");
-        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.0"), "value below lower bound should not match");
+        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.1"), Component.literal("inclusive lower bound should match"));
+        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.6"), Component.literal("value inside range should match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", "1.21"), Component.literal("exclusive upper bound should not match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1,1.21)", "1.20.0"), Component.literal("value below lower bound should not match"));
 
         // (lower,upper]: lower exclusive, upper inclusive.
-        helper.assertTrue(!VersionRangeMatcher.matches("(1.20,1.21]", "1.20"), "exclusive lower bound should not match");
-        helper.assertTrue(VersionRangeMatcher.matches("(1.20,1.21]", "1.21"), "inclusive upper bound should match");
+        helper.assertTrue(!VersionRangeMatcher.matches("(1.20,1.21]", "1.20"), Component.literal("exclusive lower bound should not match"));
+        helper.assertTrue(VersionRangeMatcher.matches("(1.20,1.21]", "1.21"), Component.literal("inclusive upper bound should match"));
         helper.succeed();
     }
 
@@ -71,7 +72,7 @@ public final class VersionRangeGameTestsLogic {
         // Installed version newer than every range: the stale-datapack case.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.1,1.2)"), "1.3");
         helper.assertTrue("[1.1,1.2)".equals(pick),
-                "installed above all ranges should pick the newest generation, got " + pick);
+                Component.literal("installed above all ranges should pick the newest generation, got " + pick));
         helper.succeed();
     }
 
@@ -84,7 +85,7 @@ public final class VersionRangeGameTestsLogic {
         // Installed version older than every range: the mod-downgrade case.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.1,1.2)"), "0.9");
         helper.assertTrue("[1.0,1.1)".equals(pick),
-                "installed below all ranges should pick the oldest generation, got " + pick);
+                Component.literal("installed below all ranges should pick the oldest generation, got " + pick));
         helper.succeed();
     }
 
@@ -96,7 +97,7 @@ public final class VersionRangeGameTestsLogic {
         // Version ordering has no distance metric, so a gap resolves by ordering: older neighbor wins.
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.0,1.1)", "[1.3,1.4)"), "1.2");
         helper.assertTrue("[1.0,1.1)".equals(pick),
-                "a gap between generations should resolve to the older neighbor, got " + pick);
+                Component.literal("a gap between generations should resolve to the older neighbor, got " + pick));
         helper.succeed();
     }
 
@@ -108,9 +109,9 @@ public final class VersionRangeGameTestsLogic {
         // Exact versions are point ranges; malformed declarations are skipped, as in matches().
         String pick = VersionRangeMatcher.nearestVersion(List.of("[1.20.1", "1.0.0"), "2.0");
         helper.assertTrue("1.0.0".equals(pick),
-                "an exact version should be usable and a malformed range skipped, got " + pick);
+                Component.literal("an exact version should be usable and a malformed range skipped, got " + pick));
         helper.assertTrue(VersionRangeMatcher.nearestVersion(List.of("[oops", ""), "2.0") == null,
-                "all-malformed declarations should yield no pick");
+                Component.literal("all-malformed declarations should yield no pick"));
         helper.succeed();
     }
 
@@ -123,9 +124,9 @@ public final class VersionRangeGameTestsLogic {
     public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
         // Picks the fallback's log message: below = stale datapack, not below = mod downgrade.
         helper.assertTrue(VersionRangeMatcher.isEntirelyBelow("[1.0,1.1)", "1.2"),
-                "a range wholly under the installed version is entirely below it");
+                Component.literal("a range wholly under the installed version is entirely below it"));
         helper.assertTrue(!VersionRangeMatcher.isEntirelyBelow("[1.3,1.4)", "1.2"),
-                "a range above the installed version is not entirely below it");
+                Component.literal("a range above the installed version is not entirely below it"));
         helper.succeed();
     }
 
@@ -135,8 +136,8 @@ public final class VersionRangeGameTestsLogic {
      */
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         // 1.20 and 1.20.0 compare equal (missing trailing tokens pad to zero).
-        helper.assertTrue(VersionRangeMatcher.matches("[1.20,1.21)", "1.20.0"), "1.20.0 should sit on the 1.20 lower bound");
-        helper.assertTrue(VersionRangeMatcher.matches("1.20", "1.20"), "1.20 should exactly match 1.20");
+        helper.assertTrue(VersionRangeMatcher.matches("[1.20,1.21)", "1.20.0"), Component.literal("1.20.0 should sit on the 1.20 lower bound"));
+        helper.assertTrue(VersionRangeMatcher.matches("1.20", "1.20"), Component.literal("1.20 should exactly match 1.20"));
         helper.succeed();
     }
 
@@ -147,9 +148,9 @@ public final class VersionRangeGameTestsLogic {
      */
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         helper.assertTrue("[4.12.4,4.13)".equals(VersionRangeMatcher.rangeFor("4.12.4")),
-                "an optional-mod version becomes an inclusive-to-next-minor range");
+                Component.literal("an optional-mod version becomes an inclusive-to-next-minor range"));
         helper.assertTrue("banana".equals(VersionRangeMatcher.rangeFor("banana")),
-                "an unparseable version falls back to an exact-match entry");
+                Component.literal("an unparseable version falls back to an exact-match entry"));
         helper.succeed();
     }
 }

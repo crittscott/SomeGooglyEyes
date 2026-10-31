@@ -4,11 +4,9 @@
 
 # Some Googly Eyes — code orientation
 
-Structure, ownership, state, loader seams, and invariants; `orientation-player.md` covers behavior.
-
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.4.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.5; an unreleased waypoint toward 1.21.8.
 
 `common` is transformed into all three loader artifacts.
 
@@ -24,9 +22,9 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common imports no loader types (adapters or `@ExpectPlatform`); loader packages avoid split packages.
+Common uses adapters and `@ExpectPlatform`; no loader imports.
 
-The server owns gameplay, definitions, and authorization; the client owns rendering, inspection, and picker UI.
+The server owns gameplay and authorization; the client owns rendering and picker UI.
 
 `ModContent` binds content through loader `ContentRegistrar`s. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
@@ -60,17 +58,17 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. The master switch suspends automatic reactions, ambient work, anger checks, and catch-up packets while preserving watcher bookkeeping and advancing effect expiry; explicit admin triggers remain available. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` plays the held item's idle, hurt, and heal behaviors per synced `BehaviorSettings`, caching its eligible ambient pool. Client behaviors are inactive until the first sync. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is checked per tick and sent on change and to new viewers of eyed mobs. `ClientEyeRuntime` retains received expressions and unpaused start times outside disposable pupil trackers; first rendering, replacement, and looking away preserve progress. Head trackers use position and snapshot. Entity unload/world replacement clear expressions and anger; render-cache resets retain them.
+`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. The master switch suspends automatic reactions, ambient work, anger checks, and catch-up packets while preserving watcher bookkeeping and advancing effect expiry; explicit admin triggers remain available. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` plays the held item's idle, hurt, and heal behaviors per synced `BehaviorSettings`, caching its eligible ambient pool. Client behaviors are inactive until the first sync. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger is checked per tick and sent on change or tracking start. `ClientEyeRuntime` retains expression timing across tracker replacement. Entity unload/world replacement clear expressions and anger; render-cache resets retain them.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it in `preRender`. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. `EyePlacement.orientation` serves rendering and pupil projection.
+`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone drawing tasks with state-owned eye data and copied picker drafts. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. Rendering and pupil projection share `EyePlacement.orientation`.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
-Common Mixins bracket placed-head and head-item rendering. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline. Fabric installs the picker HUD after the vanilla subtitle layer. Common Mixins bracket placed-head and head-item rendering. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
 
-Optional GeckoLib code is linked only after detection; attach failures cannot block loading.
+GeckoLib links only after detection; attach failures cannot block loading.
 
 Item definitions select `GooglyEyeItemRenderer` and `SlimyEyeIrisTint` (`layer2`). NeoForge registers them by event; Forge and Fabric use vanilla's `ID_MAPPER`s.
 
@@ -78,7 +76,7 @@ Item definitions select `GooglyEyeItemRenderer` and `SlimyEyeIrisTint` (`layer2`
 
 Six payloads carry definitions, entity eye state, expressions, anger, picker freeze, and export. `NetworkHandler` ids embed version `17`; bump on wire changes. Native loaders require that channel version; Fabric requires its `Handshake`.
 
-The eye-definition packet also carries `googlyEyesEnabled` and `BehaviorSettings`; reload size validation reserves the largest supported behavior block, including settings changed later. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set, switch, or behavior settings changed, since it resets client trackers.
+The definition packet carries `googlyEyesEnabled` and `BehaviorSettings`; reload validation reserves the largest supported behavior block. Joins receive it; `ServerServices.broadcastEyeConfigsIfChanged` resends after reload/config apply only when definitions or settings changed, because it resets client trackers.
 
 Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
 
@@ -100,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-Shared GameTests cover serialization, gameplay state, expression lifetime, disabled scheduling, and obstructed targeting. Forge/NeoForge add native config-correction and interaction/spawn-refusal tests; Fabric adds migration and TOML preservation tests. Fabric has 131 registered scenarios; Forge and NeoForge each have 129. Required-client rejection, full command UX, general protection ordering, anger delivery, and real-save migration still need manual checks.
+Fabric discovers annotated instance methods through `fabric-gametest`; Forge/NeoForge register functions paired with loader-owned test-instance JSON. Shared tests use component-valued messages and cover serialization, gameplay state, expression lifetime, disabled scheduling, and obstructed targeting. Forge/NeoForge add native config-correction and interaction/spawn-refusal tests; Fabric adds migration and TOML preservation tests. Fabric has 131 registered scenarios; Forge and NeoForge each have 129. Required-client rejection, full command UX, general protection ordering, anger delivery, and real-save migration still need manual checks.
 
 ## Operational boundaries
 

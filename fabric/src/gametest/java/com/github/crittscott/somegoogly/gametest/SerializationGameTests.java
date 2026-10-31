@@ -1,84 +1,83 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Fabric GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the
  * actual assertions.
  */
-public final class SerializationGameTests implements FabricGameTest {
+public final class SerializationGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
         SerializationGameTestsLogic.networkProtocolIdsAreVersionedAndUnique(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.appearanceOverrideSparseNbtRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.behaviorTriggerPacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void angerPacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void angerPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.angerPacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void configSyncPacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void configSyncPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.configSyncPacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
         SerializationGameTestsLogic.configSyncRejectsOversizedAndUnsafePayloads(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeColorRejectsWrongChannelCount(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeColorRejectsWrongChannelCount(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeColorRejectsOutOfRangeChannels(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeColorRejectsOutOfRangeChannels(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeDefinitionCodecRoundTripsEveryField(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeDefinitionCodecRoundTripsEveryField(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeFieldsSerializeAtFloatPrecision(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeFieldsSerializeAtFloatPrecision(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeFieldsSerializeAtFloatPrecision(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void pickerExportPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.pickerExportPacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void pickerFreezePacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void pickerFreezePacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.pickerFreezePacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeStatePacketRoundTrips(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeStatePacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRoundTrips(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRejectsNonFiniteValues(helper);
     }
 }

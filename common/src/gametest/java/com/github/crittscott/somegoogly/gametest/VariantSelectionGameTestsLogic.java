@@ -1,11 +1,12 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -48,10 +49,10 @@ public final class VariantSelectionGameTestsLogic {
     public static void cumulativeWeightBoundariesPickExpectedVariant(GameTestHelper helper) {
         // Weights 1 and 3 → total 4. Variant 0 owns roll in [0, 0.25), variant 1 owns [0.25, 1).
         RuntimeConfig config = configOf(1.0, 3.0);
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.0F) == 0, "roll 0.0 → variant 0");
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.24F) == 0, "roll just below the boundary → variant 0");
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.25F) == 1, "roll on the boundary → variant 1");
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.99F) == 1, "roll near 1.0 → last variant");
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.0F) == 0, Component.literal("roll 0.0 → variant 0"));
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.24F) == 0, Component.literal("roll just below the boundary → variant 0"));
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.25F) == 1, Component.literal("roll on the boundary → variant 1"));
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(config, 0.99F) == 1, Component.literal("roll near 1.0 → last variant"));
         helper.succeed();
     }
 
@@ -60,15 +61,15 @@ public final class VariantSelectionGameTestsLogic {
      * a definition never breaks the pick.
      */
     public static void degenerateConfigsFallToFirstVariant(GameTestHelper helper) {
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(null, 0.5F) == 0, "null config → index 0");
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(null, 0.5F) == 0, Component.literal("null config → index 0"));
 
         RuntimeConfig empty = new RuntimeConfig();
         empty.enabled = true;
         empty.variants = List.of();
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(empty, 0.5F) == 0, "no variants → index 0");
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(empty, 0.5F) == 0, Component.literal("no variants → index 0"));
 
         // All-zero weights (here a single zero-weight variant) leave nothing to pick → index 0.
-        helper.assertTrue(EyeConfigModel.chooseVariantIndex(configOf(0.0), 0.5F) == 0, "zero total weight → index 0");
+        helper.assertTrue(EyeConfigModel.chooseVariantIndex(configOf(0.0), 0.5F) == 0, Component.literal("zero total weight → index 0"));
         helper.succeed();
     }
 }

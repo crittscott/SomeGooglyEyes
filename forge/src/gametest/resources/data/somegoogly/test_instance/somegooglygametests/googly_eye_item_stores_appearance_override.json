@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:somegooglygametests/googly_eye_item_stores_appearance_override",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 20
+}

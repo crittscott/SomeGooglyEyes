@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -74,16 +75,16 @@ public final class EyeItemServiceGameTestsLogic {
         InteractionResult result = EyeItemService.interact(
                 player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
 
-        helper.assertTrue(result == InteractionResult.SUCCESS, "the Optometrist harvest consumes the interaction");
-        helper.assertTrue(!EyeState.hasEyes(cow), "the harvest clears the mob's eyes");
-        helper.assertTrue(shears.getDamageValue() == 1, "a successful harvest spends one shears durability");
+        helper.assertTrue(result == InteractionResult.SUCCESS, Component.literal("the Optometrist harvest consumes the interaction"));
+        helper.assertTrue(!EyeState.hasEyes(cow), Component.literal("the harvest clears the mob's eyes"));
+        helper.assertTrue(shears.getDamageValue() == 1, Component.literal("a successful harvest spends one shears durability"));
 
         List<ItemEntity> drops = helper.getLevel().getEntitiesOfClass(
                 ItemEntity.class, cow.getBoundingBox().inflate(4.0));
         helper.assertTrue(drops.size() == 1 && drops.get(0).getItem().is(ModContent.GOOGLY_EYE.get()),
-                "exactly one Googly Eye is dropped");
+                Component.literal("exactly one Googly Eye is dropped"));
         helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0).getItem()).iris().orElse(null)),
-                "the dropped eye carries the mob's effective iris color");
+                Component.literal("the dropped eye carries the mob's effective iris color"));
         helper.succeed();
     }
 
@@ -100,17 +101,17 @@ public final class EyeItemServiceGameTestsLogic {
         EyeState.setHasEyes(cow, true);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STICK));
         helper.assertTrue(EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
-                "a non-shears item passes");
+                Component.literal("a non-shears item passes"));
 
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         helper.assertTrue(EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
-                "plain shears pass — right-click harvest needs Optometrist");
+                Component.literal("plain shears pass — right-click harvest needs Optometrist"));
 
         ItemStack shears = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
         EyeState.setHasEyes(cow, false);
         helper.assertTrue(EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
-                "an eyeless mob passes");
+                Component.literal("an eyeless mob passes"));
 
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -118,7 +119,7 @@ public final class EyeItemServiceGameTestsLogic {
             ServerEyeConfigs.replaceAll(Map.of());
             helper.assertTrue(
                     EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
-                    "an unconfigured mob passes rather than dropping a config-less eye");
+                    Component.literal("an unconfigured mob passes rather than dropping a config-less eye"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -129,13 +130,13 @@ public final class EyeItemServiceGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             helper.assertTrue(
                     EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
-                    "googlyEyesEnabled=false passes rather than harvesting");
+                    Component.literal("googlyEyesEnabled=false passes rather than harvesting"));
         } finally {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
 
-        helper.assertTrue(shears.getDamageValue() == 0, "no passed interaction spends durability");
-        helper.assertTrue(EyeState.hasEyes(cow), "no passed interaction removes the eyes");
+        helper.assertTrue(shears.getDamageValue() == 0, Component.literal("no passed interaction spends durability"));
+        helper.assertTrue(EyeState.hasEyes(cow), Component.literal("no passed interaction removes the eyes"));
         helper.succeed();
     }
 
@@ -153,7 +154,7 @@ public final class EyeItemServiceGameTestsLogic {
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {
         Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
-        player.moveTo(at.x, at.y, at.z);
+        player.snapTo(at.x, at.y, at.z);
         player.setHealth(player.getMaxHealth());
         player.setShiftKeyDown(true);
         EyeState.setHasEyes(player, true);
@@ -163,31 +164,31 @@ public final class EyeItemServiceGameTestsLogic {
         ItemStack opto = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, opto);
         InteractionResult clean = EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(clean == InteractionResult.SUCCESS, "Optometrist self-removal succeeds");
-        helper.assertTrue(!EyeState.hasEyes(player), "the player loses their eyes");
-        helper.assertTrue(opto.getDamageValue() == 1, "one durability for the clean removal");
+        helper.assertTrue(clean == InteractionResult.SUCCESS, Component.literal("Optometrist self-removal succeeds"));
+        helper.assertTrue(!EyeState.hasEyes(player), Component.literal("the player loses their eyes"));
+        helper.assertTrue(opto.getDamageValue() == 1, Component.literal("one durability for the clean removal"));
         helper.assertTrue(player.getHealth() == player.getMaxHealth(),
-                "Optometrist self-removal deals no self-damage");
+                Component.literal("Optometrist self-removal deals no self-damage"));
         List<ItemEntity> drops = droppedEyes(helper, player);
-        helper.assertTrue(drops.size() == 1, "the clean removal drops one Googly Eye");
+        helper.assertTrue(drops.size() == 1, Component.literal("the clean removal drops one Googly Eye"));
         helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0).getItem()).iris().orElse(null)),
-                "the dropped eye carries the player's iris color");
+                Component.literal("the dropped eye carries the player's iris color"));
 
         ItemStack plain = new ItemStack(Items.SHEARS);
         player.setItemInHand(InteractionHand.MAIN_HAND, plain);
         EyeState.setHasEyes(player, true);
         InteractionResult costly = EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(costly == InteractionResult.SUCCESS, "plain-shears self-removal still succeeds");
-        helper.assertTrue(plain.getDamageValue() == 1, "one durability for the plain removal");
-        helper.assertTrue(!EyeState.hasEyes(player), "the plain-shears path also removes the eyes");
-        helper.assertTrue(droppedEyes(helper, player).size() == 2, "the plain removal drops a second Googly Eye");
+        helper.assertTrue(costly == InteractionResult.SUCCESS, Component.literal("plain-shears self-removal still succeeds"));
+        helper.assertTrue(plain.getDamageValue() == 1, Component.literal("one durability for the plain removal"));
+        helper.assertTrue(!EyeState.hasEyes(player), Component.literal("the plain-shears path also removes the eyes"));
+        helper.assertTrue(droppedEyes(helper, player).size() == 2, Component.literal("the plain removal drops a second Googly Eye"));
 
         player.setShiftKeyDown(false);
         EyeState.setHasEyes(player, true);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         helper.assertTrue(
                 EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
-                "self-removal requires sneaking");
+                Component.literal("self-removal requires sneaking"));
 
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
@@ -197,8 +198,8 @@ public final class EyeItemServiceGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             helper.assertTrue(
                     EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
-                    "googlyEyesEnabled=false blocks self-removal");
-            helper.assertTrue(EyeState.hasEyes(player), "a blocked self-removal leaves the eyes on");
+                    Component.literal("googlyEyesEnabled=false blocks self-removal"));
+            helper.assertTrue(EyeState.hasEyes(player), Component.literal("a blocked self-removal leaves the eyes on"));
         } finally {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }

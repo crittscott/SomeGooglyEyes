@@ -8,7 +8,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,8 +73,8 @@ public final class EyeState {
 
         /** Read the state keys of {@code data}; absent keys read as {@link #NONE}'s values. */
         public static Snapshot read(CompoundTag data) {
-            return new Snapshot(data.getBoolean(HAS_EYES), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
-                    data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null));
+            return new Snapshot(data.getBooleanOr(HAS_EYES, false), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
+                    data.getCompound(EYE_OVERRIDES).orElse(null)));
         }
 
         /** Write every state key into {@code data}, removing the overrides compound when there are none. */
@@ -126,7 +125,7 @@ public final class EyeState {
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
     public static boolean hasEyes(LivingEntity entity) {
-        return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
+        return EntityPersistentData.get(entity).getBooleanOr(HAS_EYES, false);
     }
 
     /**
@@ -163,7 +162,7 @@ public final class EyeState {
     @Nullable
     public static CompoundTag overridesTagOrNull(LivingEntity entity) {
         CompoundTag data = EntityPersistentData.get(entity);
-        return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+        return data.getCompound(EYE_OVERRIDES).orElse(null);
     }
 
     /**
@@ -233,7 +232,7 @@ public final class EyeState {
 
     /** The stored roll of {@code data}, clamped ({@link #clampRoll}). */
     private static float variantRoll(CompoundTag data) {
-        return clampRoll(data.getFloat(VARIANT_ROLL));
+        return clampRoll(data.getFloatOr(VARIANT_ROLL, 0.0F));
     }
 
     /** {@code roll} clamped into 0..1, with a non-finite value read as 0. */

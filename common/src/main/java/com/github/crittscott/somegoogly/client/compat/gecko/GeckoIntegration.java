@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public final class GeckoIntegration {
             return List.of();
         }
         GeoModel model = geo.getGeoModel();
-        ResourceLocation location = model.getModelResource((GeoAnimatable) living, geo);
+        ResourceLocation location = model.getModelResource((GeoRenderState) geo.createRenderState(living, 0.0F));
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }
@@ -43,7 +43,7 @@ public final class GeckoIntegration {
      * renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void compileLayers(GeoEntityRenderer<?> renderer, Consumer<GeoRenderLayer> addLayer) {
+    public static void compileLayers(GeoEntityRenderer<?, ?> renderer, Consumer<GeoRenderLayer> addLayer) {
         try {
             addLayer.accept(new GooglyGeoLayer(renderer));
         } catch (Throwable failure) {

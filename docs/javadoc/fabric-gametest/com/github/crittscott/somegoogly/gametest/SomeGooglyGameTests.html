@@ -37,7 +37,7 @@ loadScripts(document, 'script');</script>
 <p>Summary:</p>
 <ul>
 <li>Nested</li>
-<li><a href="#field-summary">Field</a></li>
+<li>Field</li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -57,7 +57,7 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -87,29 +87,15 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">com.github.crittscott.somegoogly.gametest.SomeGooglyGameTests</div>
 </div>
 <section class="class-description" id="class-description">
-<dl class="notes">
-<dt>All Implemented Interfaces:</dt>
-<dd><code>net.fabricmc.fabric.api.gametest.v1.FabricGameTest</code></dd>
-</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SomeGooglyGameTests</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Fabric GameTest entry points for the shared core and picker-spawn assertions. Listed under the
  <code>somegoogly_gametest</code> dev-mod's <code>fabric-gametest</code>
- entrypoint since Fabric, unlike Forge's <code>@GameTestHolder</code> scan, requires explicit enumeration.</div>
+ entrypoint for annotation-based discovery.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- =========== FIELD SUMMARY =========== -->
-<li>
-<section class="field-summary" id="field-summary">
-<h2>Field Summary</h2>
-<div class="inherited-list">
-<h3 id="fields-inherited-from-class-net.fabricmc.fabric.api.gametest.v1.FabricGameTest">Fields inherited from interface&nbsp;net.fabricmc.fabric.api.gametest.v1.FabricGameTest</h3>
-<code>EMPTY_STRUCTURE</code></div>
-</section>
-</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -128,58 +114,55 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#conversionKeepsEyeState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">conversionKeepsEyeState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deathHarvestRejectsNonqualifyingKills(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">deathHarvestRejectsNonqualifyingKills</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deathHarvestUsesTheSuppliedDropSink(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">deathHarvestUsesTheSuppliedDropSink</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fabricEntityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricEntityPersistentDataSurvivesSaveLoad</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#conversionKeepsEyeState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">conversionKeepsEyeState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deathHarvestRejectsNonqualifyingKills(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">deathHarvestRejectsNonqualifyingKills</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deathHarvestUsesTheSuppliedDropSink(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">deathHarvestUsesTheSuppliedDropSink</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fabricEntityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricEntityPersistentDataSurvivesSaveLoad</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fabricReleasedEntityDataMigratesOnLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricReleasedEntityDataMigratesOnLoad</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fabricReleasedEntityDataMigratesOnLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricReleasedEntityDataMigratesOnLoad</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Entity eye data saved by the previous released Fabric build loads into the current attachment and is
  not written back under the released key.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fabricUnrecognizedReleasedEntityDataIsSetAside(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricUnrecognizedReleasedEntityDataIsSetAside</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fabricUnrecognizedReleasedEntityDataIsSetAside(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">fabricUnrecognizedReleasedEntityDataIsSetAside</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Released-key data that is not a compound is kept, not discarded, and the server log names the entity.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#googlyEyeItemStoresAppearanceOverride(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">googlyEyeItemStoresAppearanceOverride</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristAcceptsOnlyShears</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#googlyEyeItemStoresAppearanceOverride(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">googlyEyeItemStoresAppearanceOverride</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristAcceptsOnlyShears</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
-<div class="inherited-list">
-<h3 id="methods-inherited-from-class-net.fabricmc.fabric.api.gametest.v1.FabricGameTest">Methods inherited from interface&nbsp;net.fabricmc.fabric.api.gametest.v1.FabricGameTest</h3>
-<code>invokeTestMethod</code></div>
 </section>
 </li>
 </ul>
@@ -208,19 +191,25 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <li>
 <section class="detail" id="commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>commandSpawnFinalizesBeforeApplyingPickerState</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">commandSpawnFinalizesBeforeApplyingPickerState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">commandSpawnFinalizesBeforeApplyingPickerState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>spawnCommandsRefuseDragonPlayersAndExcludedTypes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnCommandsRefuseDragonPlayersAndExcludedTypes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnCommandsRefuseDragonPlayersAndExcludedTypes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="fabricEntityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>fabricEntityPersistentDataSurvivesSaveLoad</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricEntityPersistentDataSurvivesSaveLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricEntityPersistentDataSurvivesSaveLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary.
  In game: see <a href="SomeGooglyGameTestsLogic.html#entityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper,java.lang.String)"><code>SomeGooglyGameTestsLogic.entityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper, java.lang.String)</code></a>.</div>
 </section>
@@ -228,7 +217,9 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <li>
 <section class="detail" id="fabricReleasedEntityDataMigratesOnLoad(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>fabricReleasedEntityDataMigratesOnLoad</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricReleasedEntityDataMigratesOnLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricReleasedEntityDataMigratesOnLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Entity eye data saved by the previous released Fabric build loads into the current attachment and is
  not written back under the released key. In game: open a world saved by the previous release that
  has an eyed mob; the mob still shows its eyes, and after saving, its entity data (seen with
@@ -238,7 +229,9 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <li>
 <section class="detail" id="fabricUnrecognizedReleasedEntityDataIsSetAside(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>fabricUnrecognizedReleasedEntityDataIsSetAside</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricUnrecognizedReleasedEntityDataIsSetAside</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fabricUnrecognizedReleasedEntityDataIsSetAside</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Released-key data that is not a compound is kept, not discarded, and the server log names the entity.
  In game: give a mob a non-compound <code>somegoogly:persistentData</code> value in a world saved by the
  previous release and open it; the log warns about setting the data aside, and <code>/data get entity</code>
@@ -248,31 +241,41 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <li>
 <section class="detail" id="conversionKeepsEyeState(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>conversionKeepsEyeState</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">conversionKeepsEyeState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">conversionKeepsEyeState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="googlyEyeItemStoresAppearanceOverride(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>googlyEyeItemStoresAppearanceOverride</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">googlyEyeItemStoresAppearanceOverride</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">googlyEyeItemStoresAppearanceOverride</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>optometristAcceptsOnlyShears</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristAcceptsOnlyShears</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristAcceptsOnlyShears</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="deathHarvestUsesTheSuppliedDropSink(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>deathHarvestUsesTheSuppliedDropSink</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deathHarvestUsesTheSuppliedDropSink</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deathHarvestUsesTheSuppliedDropSink</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="deathHarvestRejectsNonqualifyingKills(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>deathHarvestRejectsNonqualifyingKills</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deathHarvestRejectsNonqualifyingKills</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=20)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deathHarvestRejectsNonqualifyingKills</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 </ul>

@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * The component-backed appearance carried by an eye-bearing item. Shared by {@link GooglyEyeItem}
@@ -34,22 +35,22 @@ public final class EyeItemProperties {
         EyeState.Snapshot eyes = SkullEyeState.itemSnapshot(stack);
         if (eyes != null) {
             tooltip.add(Component.translatable("somegoogly.tooltip.head_eyes").withStyle(ChatFormatting.GRAY));
-            appendTooltip(eyes.properties(), tooltip);
+            appendTooltip(eyes.properties(), tooltip::add);
         }
     }
 
     /** The tooltip lines describing {@code stack}'s appearance, appended in place. */
-    public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
+    public static void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
         appendTooltip(get(stack), tooltip);
     }
 
-    private static void appendTooltip(AppearanceOverride props, List<Component> tooltip) {
+    private static void appendTooltip(AppearanceOverride props, Consumer<Component> tooltip) {
         props.iris().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
+                tooltip.accept(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
         props.cornea().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.cornea", color.toHex()).withStyle(ChatFormatting.GRAY)));
+                tooltip.accept(Component.translatable("somegoogly.tooltip.cornea", color.toHex()).withStyle(ChatFormatting.GRAY)));
         props.glow().ifPresent(glow ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.glow",
+                tooltip.accept(Component.translatable("somegoogly.tooltip.glow",
                         Component.translatable(glow ? "somegoogly.value.on" : "somegoogly.value.off"))
                         .withStyle(ChatFormatting.GRAY)));
     }

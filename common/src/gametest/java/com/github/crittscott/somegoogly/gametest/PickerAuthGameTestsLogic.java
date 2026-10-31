@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -28,13 +29,13 @@ public final class PickerAuthGameTestsLogic {
         PickerGate.onPlayerLeft(player.getUUID());
         try {
             helper.assertTrue(PickerGate.allowRequest(player),
-                    "the first request in a tick is allowed");
+                    Component.literal("the first request in a tick is allowed"));
             helper.assertTrue(!PickerGate.allowRequest(player),
-                    "a second request in the same tick is refused");
+                    Component.literal("a second request in the same tick is refused"));
 
             PickerGate.onPlayerLeft(player.getUUID());
             helper.assertTrue(PickerGate.allowRequest(player),
-                    "clearing the player's record lets the next request through");
+                    Component.literal("clearing the player's record lets the next request through"));
         } finally {
             PickerGate.onPlayerLeft(player.getUUID());
         }
@@ -51,13 +52,13 @@ public final class PickerAuthGameTestsLogic {
         MinecraftServer server = helper.getLevel().getServer();
         PickerGate.onServerStopping();
         try {
-            helper.assertTrue(PickerGate.allowSpawnAll(server), "the first spawn-all is allowed");
+            helper.assertTrue(PickerGate.allowSpawnAll(server), Component.literal("the first spawn-all is allowed"));
             helper.assertTrue(!PickerGate.allowSpawnAll(server),
-                    "a second spawn-all inside the cooldown is refused");
+                    Component.literal("a second spawn-all inside the cooldown is refused"));
 
             PickerGate.onServerStopping();
             helper.assertTrue(PickerGate.allowSpawnAll(server),
-                    "the cooldown resets when picker state is cleared");
+                    Component.literal("the cooldown resets when picker state is cleared"));
         } finally {
             PickerGate.onServerStopping();
         }

@@ -1,68 +1,67 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.gametest.framework.GameTest;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Fabric GameTest entry points for {@link PickerExportGameTestsLogic}; see that class for the actual
  * assertions.
  */
-public final class PickerExportGameTests implements FabricGameTest {
+public final class PickerExportGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void draftsRetainSpeciesAndAge(GameTestHelper helper) {
         PickerExportGameTestsLogic.draftsRetainSpeciesAndAge(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportOverlayCombinesDraftAges(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportOverlayCombinesDraftAges(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportOverlayCombinesDraftAges(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportOverlayPreservesOtherAges(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportOverlayPreservesOtherAges(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportOverlayPreservesOtherAges(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportPacketRefusesOversizedConfig(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsConfigWithNoUsableEyes(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsConfigWithNoUsableEyes(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsConfigWithNoUsableEyes(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsEmptyPayloadAsMalformed(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsEnderDragon(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsEnderDragon(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
     }
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsGarbageTypedField(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsUnknownEntityType(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
 

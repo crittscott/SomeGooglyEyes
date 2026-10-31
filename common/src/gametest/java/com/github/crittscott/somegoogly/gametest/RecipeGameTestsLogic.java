@@ -7,10 +7,10 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -55,7 +55,7 @@ public final class RecipeGameTestsLogic {
     private static ItemStack craftWithModifier(GameTestHelper helper, CraftingInput grid) {
         Optional<RecipeHolder<CraftingRecipe>> recipe = lookUp(helper, grid);
         helper.assertTrue(recipe.isPresent() && recipe.get().id().location().equals(EYE_MODIFIER),
-                "the grid should match the shipped eye_modifier recipe");
+                Component.literal("the grid should match the shipped eye_modifier recipe"));
         return recipe.get().value().assemble(grid, helper.getLevel().registryAccess());
     }
 
@@ -66,7 +66,7 @@ public final class RecipeGameTestsLogic {
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
         ItemStack tinted = GooglyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(1F, 0F, 0F)), 1);
         ItemStack result = craftWithModifier(helper, grid(tinted, new ItemStack(Items.COBWEB)));
-        helper.assertTrue(EyeItemProperties.get(result).isEmpty(), "cobweb should clear every override");
+        helper.assertTrue(EyeItemProperties.get(result).isEmpty(), Component.literal("cobweb should clear every override"));
         helper.succeed();
     }
 
@@ -79,9 +79,9 @@ public final class RecipeGameTestsLogic {
         Component customName = Component.literal("keep");
         eye.set(DataComponents.CUSTOM_NAME, customName);
         ItemStack result = craftWithModifier(helper, grid(eye, new ItemStack(Items.RED_DYE)));
-        helper.assertTrue(EyeItemProperties.get(result).iris().isPresent(), "dye should set the iris color");
+        helper.assertTrue(EyeItemProperties.get(result).iris().isPresent(), Component.literal("dye should set the iris color"));
         helper.assertTrue(customName.equals(result.get(DataComponents.CUSTOM_NAME)),
-                "an unrelated stack component should survive the edit");
+                Component.literal("an unrelated stack component should survive the edit"));
         helper.succeed();
     }
 
@@ -92,12 +92,12 @@ public final class RecipeGameTestsLogic {
     public static void glowstoneAndRedstoneToggleGlow(GameTestHelper helper) {
         ItemStack onResult = craftWithModifier(helper,
                 grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.GLOWSTONE_DUST)));
-        helper.assertTrue(EyeItemProperties.get(onResult).glow().orElse(false), "glowstone should force glow on");
+        helper.assertTrue(EyeItemProperties.get(onResult).glow().orElse(false), Component.literal("glowstone should force glow on"));
 
         ItemStack offResult = craftWithModifier(helper,
                 grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.REDSTONE)));
         AppearanceOverride off = EyeItemProperties.get(offResult);
-        helper.assertTrue(off.glow().isPresent() && !off.glow().get(), "redstone should force glow off");
+        helper.assertTrue(off.glow().isPresent() && !off.glow().get(), Component.literal("redstone should force glow off"));
         helper.succeed();
     }
 
@@ -108,7 +108,7 @@ public final class RecipeGameTestsLogic {
     public static void twoEyesDoNotMatch(GameTestHelper helper) {
         CraftingInput grid = grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
                 GooglyEyeItem.create(AppearanceOverride.EMPTY, 1));
-        helper.assertTrue(lookUp(helper, grid).isEmpty(), "two eyes and no modifier should match no recipe");
+        helper.assertTrue(lookUp(helper, grid).isEmpty(), Component.literal("two eyes and no modifier should match no recipe"));
         helper.succeed();
     }
 
@@ -128,20 +128,20 @@ public final class RecipeGameTestsLogic {
         CraftingInput grid = grid(eye, new ItemStack(Items.SLIME_BALL));
         Optional<RecipeHolder<CraftingRecipe>> recipe = lookUp(helper, grid);
 
-        helper.assertTrue(recipe.isPresent(), "an eye and a slimeball should match a crafting recipe");
+        helper.assertTrue(recipe.isPresent(), Component.literal("an eye and a slimeball should match a crafting recipe"));
 
         ItemStack result = recipe.get().value().assemble(grid, registries);
-        helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), "the result should be a slimy eye");
+        helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), Component.literal("the result should be a slimy eye"));
 
         AppearanceOverride carried = EyeItemProperties.get(result);
-        helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
-        helper.assertTrue(carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
+        helper.assertTrue(iris.equals(carried.iris().orElse(null)), Component.literal("the slimy eye should carry the eye's iris color"));
+        helper.assertTrue(carried.glow().orElse(false), Component.literal("the slimy eye should carry the eye's glow"));
         helper.assertTrue(customName.equals(result.get(DataComponents.CUSTOM_NAME)),
-                "the slimy eye should carry the eye's other components, such as its name");
+                Component.literal("the slimy eye should carry the eye's other components, such as its name"));
         helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(result) == 0xFF336699,
-                "the slimy eye should render its iris color with full alpha");
+                Component.literal("the slimy eye should render its iris color with full alpha"));
         helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(new ItemStack(ModContent.SLIMY_EYE.get())) == 0xFF000000,
-                "the slimy eye should render its default black iris with full alpha");
+                Component.literal("the slimy eye should render its default black iris with full alpha"));
         helper.succeed();
     }
 }

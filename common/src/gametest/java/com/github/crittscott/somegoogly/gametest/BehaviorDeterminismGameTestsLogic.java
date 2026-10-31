@@ -2,13 +2,14 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
@@ -79,7 +80,7 @@ public final class BehaviorDeterminismGameTestsLogic {
             BehaviorInstance a = playTo(behavior, headInfo, 8, 4242L);
             BehaviorInstance b = playTo(behavior, headInfo, 8, 4242L);
             helper.assertTrue(statesMatch(behavior, a, b, headInfo),
-                    "behavior " + behavior.id() + " must reach identical state from the same seed");
+                    Component.literal("behavior " + behavior.id() + " must reach identical state from the same seed"));
         }
         helper.succeed();
     }

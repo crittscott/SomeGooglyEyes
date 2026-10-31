@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
@@ -51,9 +52,9 @@ public final class ConfigGameTestsLogic {
             int cow = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
             int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
 
-            helper.assertTrue(zombie == 100, "exact override should win (expected 100, got " + zombie + ")");
-            helper.assertTrue(cow == 50, "wildcard override should apply to cow (expected 50, got " + cow + ")");
-            helper.assertTrue(other == 2, "unmatched id should fall back to globalPercent (expected 2, got " + other + ")");
+            helper.assertTrue(zombie == 100, Component.literal("exact override should win (expected 100, got " + zombie + ")"));
+            helper.assertTrue(cow == 50, Component.literal("wildcard override should apply to cow (expected 50, got " + cow + ")"));
+            helper.assertTrue(other == 2, Component.literal("unmatched id should fall back to globalPercent (expected 2, got " + other + ")"));
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(originalGlobal);
             ServerConfig.ENTITY_OVERRIDES.set(originalOverrides);
@@ -71,8 +72,8 @@ public final class ConfigGameTestsLogic {
         helper.assertTrue(ServerConfig.SECTION_SERVER.equals("Server Settings")
                         && ServerConfig.SECTION_BEHAVIORS.equals("Behaviors")
                         && ServerConfig.SECTION_PICKER.equals("Picker"),
-                "the server config keeps 0.8.2's section names");
-        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), "the client config keeps 0.8.2's section name");
+                Component.literal("the server config keeps 0.8.2's section names"));
+        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), Component.literal("the client config keeps 0.8.2's section name"));
         helper.succeed();
     }
 
@@ -85,9 +86,9 @@ public final class ConfigGameTestsLogic {
      */
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
         helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
-                "allowSpawnAll must default to false (spawnall is opt-in)");
+                Component.literal("allowSpawnAll must default to false (spawnall is opt-in)"));
         helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_MODS.get().equals(List.of("minecolonies", "create")),
-                "spawnExcludedMods must default to minecolonies and create");
+                Component.literal("spawnExcludedMods must default to minecolonies and create"));
         helper.succeed();
     }
 
@@ -106,14 +107,14 @@ public final class ConfigGameTestsLogic {
                 continue;
             }
             RuntimeConfigSet set = ServerEyeConfigs.all().get(id);
-            helper.assertTrue(set != null, "shipped eye definition " + id + " failed to load");
+            helper.assertTrue(set != null, Component.literal("shipped eye definition " + id + " failed to load"));
             for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
                 helper.assertTrue(config == null || usable(config),
-                        "shipped eye definition " + id + " has an unusable entry");
+                        Component.literal("shipped eye definition " + id + " has an unusable entry"));
             }
             checked++;
         }
-        helper.assertTrue(checked > 0, "no shipped Minecraft eye definitions were found");
+        helper.assertTrue(checked > 0, Component.literal("no shipped Minecraft eye definitions were found"));
         helper.succeed();
     }
 
@@ -143,12 +144,12 @@ public final class ConfigGameTestsLogic {
             new TestReloadListener().applyFiles(Map.of(id, json));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
-            helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
+            helper.assertTrue(adult != null, Component.literal("the exact Minecraft generation must be selected"));
             helper.assertTrue(adult.variants.get(0).weight == 2.0,
-                    "exact selection must pick the running version's entry (weight 2), got "
-                            + adult.variants.get(0).weight);
+                    Component.literal("exact selection must pick the running version's entry (weight 2), got "
+                            + adult.variants.get(0).weight));
             helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
-                    "the baby entry of the exact generation must be selected with it");
+                    Component.literal("the baby entry of the exact generation must be selected with it"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -176,14 +177,14 @@ public final class ConfigGameTestsLogic {
             int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
 
             helper.assertTrue(skeletonHorse == 50,
-                    "the first matching wildcard wins even when a later one also matches (expected 50, got "
-                            + skeletonHorse + ")");
+                    Component.literal("the first matching wildcard wins even when a later one also matches (expected 50, got "
+                            + skeletonHorse + ")"));
             helper.assertTrue(zombie == 10,
-                    "minecraft:* applies where the horse pattern does not (expected 10, got " + zombie + ")");
+                    Component.literal("minecraft:* applies where the horse pattern does not (expected 10, got " + zombie + ")"));
             helper.assertTrue(moddedHorse == 50,
-                    "*:*_horse spans namespaces (expected 50, got " + moddedHorse + ")");
+                    Component.literal("*:*_horse spans namespaces (expected 50, got " + moddedHorse + ")"));
             helper.assertTrue(other == 2,
-                    "an unmatched id falls back to globalPercent (expected 2, got " + other + ")");
+                    Component.literal("an unmatched id falls back to globalPercent (expected 2, got " + other + ")"));
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(originalGlobal);
             ServerConfig.ENTITY_OVERRIDES.set(originalOverrides);
@@ -224,9 +225,9 @@ public final class ConfigGameTestsLogic {
                     ServerEyeConfigs.ENDER_DRAGON, fileJson(entryJson(running(), "adult", 1.0)),
                     zombie, fileJson(entryJson(running(), "adult", 1.0))));
             helper.assertTrue(ServerEyeConfigs.get(ServerEyeConfigs.ENDER_DRAGON, false) == null,
-                    "the ender dragon config is refused at reload");
+                    Component.literal("the ender dragon config is refused at reload"));
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
-                    "other entities in the same batch still load");
+                    Component.literal("other entities in the same batch still load"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -253,12 +254,12 @@ public final class ConfigGameTestsLogic {
 
             RuntimeConfig z = ServerEyeConfigs.get(zombie, false);
             helper.assertTrue(z != null && z.variants.get(0).weight == 1.0,
-                    "a duplicate age/version entry keeps the first");
+                    Component.literal("a duplicate age/version entry keeps the first"));
             helper.assertTrue(ServerEyeConfigs.get(creeper, false) == null,
-                    "a malformed file is skipped without aborting the batch");
+                    Component.literal("a malformed file is skipped without aborting the batch"));
             RuntimeConfig s = ServerEyeConfigs.get(skeleton, false);
             helper.assertTrue(s != null && s.variants.get(0).weight == 3.0,
-                    "an invalid age is ignored while its file's valid entries still load");
+                    Component.literal("an invalid age is ignored while its file's valid entries still load"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -277,7 +278,7 @@ public final class ConfigGameTestsLogic {
             new TestReloadListener().applyFiles(Map.of(
                     zombie, fileJson(entryJson("[1.16,1.17)", "adult", 1.0))));
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
-                    "an entry that matches no loaded version falls back to its nearest generation");
+                    Component.literal("an entry that matches no loaded version falls back to its nearest generation"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }
@@ -302,12 +303,12 @@ public final class ConfigGameTestsLogic {
 
             new TestReloadListener().applyFiles(files);
             helper.assertTrue(ServerEyeConfigs.all() == afterFirst,
-                    "an identical reload does not replace the installed configs");
+                    Component.literal("an identical reload does not replace the installed configs"));
 
             ServerEyeConfigs.onServerStopping();
             new TestReloadListener().applyFiles(files);
             helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
-                    "server stop clears the installed set, so the next reload installs anew");
+                    Component.literal("server stop clears the installed set, so the next reload installs anew"));
         } finally {
             ServerEyeConfigs.replaceAll(original);
         }

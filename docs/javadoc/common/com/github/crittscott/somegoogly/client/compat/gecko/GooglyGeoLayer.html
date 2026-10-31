@@ -82,29 +82,19 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></div>
-<h1 title="Class GooglyGeoLayer" class="title">Class GooglyGeoLayer&lt;T extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</h1>
+<h1 title="Class GooglyGeoLayer" class="title">Class GooglyGeoLayer&lt;T extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr>R extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T&gt;
-<div class="inheritance">com.github.crittscott.somegoogly.client.compat.gecko.GooglyGeoLayer&lt;T&gt;</div>
+<div class="inheritance">software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr>R&gt;
+<div class="inheritance">com.github.crittscott.somegoogly.client.compat.gecko.GooglyGeoLayer&lt;T,<wbr>R&gt;</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyGeoLayer&lt;T extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</span>
-<span class="extends-implements">extends software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T&gt;</span></div>
-<div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
- <code>LayerGooglyEyes</code>). Handles both normal rendering (from synced config,
- with iris physics) and the picker preview when this entity is the picker's target.
-
- <p>The layer works through GeckoLib's <b>per-bone</b> hook, not the whole-model <a href="#render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>render(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.BakedGeoModel, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a>
- callback: GeckoLib applies the entity's body rotations and model transforms inside its own
- push/pop and has already popped them by the time <code>render</code> runs, so only
- <a href="#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>renderForBone(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.GeoBone, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> sees a pose actually positioned at the animated bone. Per-entity gating and
- bone lookup happen once in <a href="#preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>preRender(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.BakedGeoModel, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a>; <a href="#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>renderForBone(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.GeoBone, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> draws on the matching bones;
- <a href="#render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>render(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.BakedGeoModel, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> (which GeckoLib calls last) just clears the per-render state.
-
- <p>Only loaded when GeckoLib is present (referenced via <code>GeckoCompat</code>).</div>
+<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GooglyGeoLayer&lt;T extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr>R extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</span>
+<span class="extends-implements">extends software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr>R&gt;</span></div>
+<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
+ at the animated attachment bones. Loaded only when GeckoLib is present.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -125,7 +115,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(software.bernie.geckolib.renderer.GeoRenderer)" class="member-name-link">GooglyGeoLayer</a><wbr>(software.bernie.geckolib.renderer.GeoRenderer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&gt;&nbsp;renderer)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(software.bernie.geckolib.renderer.base.GeoRenderer)" class="member-name-link">GooglyGeoLayer</a><wbr>(software.bernie.geckolib.renderer.base.GeoRenderer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&nbsp;renderer)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -142,47 +132,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)" class="member-name-link">preRender</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)" class="member-name-link">addPerBoneRender</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;software.bernie.geckolib.cache.object.GeoBone,<wbr>software.bernie.geckolib.renderer.base.PerBoneRender&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&gt;&nbsp;consumer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
- software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addRenderData(T,java.lang.Void,R)" class="member-name-link">addRenderData</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&nbsp;relatedObject,
+ <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)" class="member-name-link">renderForBone</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
- software.bernie.geckolib.cache.object.GeoBone&nbsp;bone,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-software.bernie.geckolib.renderer.layer.GeoRenderLayer">Methods inherited from class&nbsp;software.bernie.geckolib.renderer.layer.GeoRenderLayer</h3>
-<code>getDefaultBakedModel, getGeoModel, getRenderer, getTextureResource</code></div>
+<code>getDefaultBakedModel, getGeoModel, getRenderer, getTextureResource, preRender, render</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -198,9 +162,9 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(software.bernie.geckolib.renderer.GeoRenderer)">
+<section class="detail" id="&lt;init&gt;(software.bernie.geckolib.renderer.base.GeoRenderer)">
 <h3>GooglyGeoLayer</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GooglyGeoLayer</span><wbr><span class="parameters">(software.bernie.geckolib.renderer.GeoRenderer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&gt;&nbsp;renderer)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GooglyGeoLayer</span><wbr><span class="parameters">(software.bernie.geckolib.renderer.base.GeoRenderer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&nbsp;renderer)</span></div>
 </section>
 </li>
 </ul>
@@ -212,59 +176,26 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="preRender(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">preRender</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">preRender</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
+<section class="detail" id="addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)">
+<h3 id="addPerBoneRender(net.minecraft.client.renderer.entity.state.EntityRenderState,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)">addPerBoneRender</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addPerBoneRender</span><wbr><span class="parameters">(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;software.bernie.geckolib.cache.object.GeoBone,<wbr>software.bernie.geckolib.renderer.base.PerBoneRender&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&gt;&nbsp;consumer)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code>preRender</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
+<dd><code>addPerBoneRender</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a> extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</code></dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="renderForBone(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">renderForBone</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderForBone</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
- software.bernie.geckolib.cache.object.GeoBone&nbsp;bone,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</span></div>
+<section class="detail" id="addRenderData(T,java.lang.Void,R)">
+<h3 id="addRenderData(net.minecraft.world.entity.Entity,java.lang.Void,net.minecraft.client.renderer.entity.state.EntityRenderState)">addRenderData</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addRenderData</span><wbr><span class="parameters">(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&nbsp;relatedObject,
+ <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code>renderForBone</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">render</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">render</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
- software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
- net.minecraft.client.renderer.RenderType&nbsp;renderType,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- float&nbsp;partialTick,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- int&nbsp;renderColor)</span></div>
-<dl class="notes">
-<dt>Overrides:</dt>
-<dd><code>render</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
+<dd><code>addRenderData</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a> extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</code></dd>
 </dl>
 </section>
 </li>
