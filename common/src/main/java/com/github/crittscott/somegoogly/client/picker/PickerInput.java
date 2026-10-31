@@ -22,7 +22,7 @@ public final class PickerInput {
     private static void message(String key, Object... args) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            mc.player.displayClientMessage(Component.translatable(key, args), true);
+            mc.player.sendOverlayMessage(Component.translatable(key, args));
         }
     }
 

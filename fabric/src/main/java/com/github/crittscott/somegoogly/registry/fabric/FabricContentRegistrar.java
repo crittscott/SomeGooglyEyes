@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.registry.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.registry.ContentRegistrar;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -51,7 +51,7 @@ public final class FabricContentRegistrar implements ContentRegistrar {
             Component title,
             Supplier<ItemStack> icon,
             CreativeModeTab.DisplayItemsGenerator displayItems) {
-        CreativeModeTab value = FabricItemGroup.builder()
+        CreativeModeTab value = FabricCreativeModeTab.builder()
                 .title(title)
                 .icon(icon)
                 .displayItems(displayItems)

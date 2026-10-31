@@ -13,12 +13,12 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
@@ -42,28 +42,28 @@ public final class FabricClientEvents {
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
-        LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
+        LivingEntityRenderLayerRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));
         if (GeckoCompat.isLoaded()) {
             FabricGeckoLayers.register();
         }
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
                 Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
                 (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
         KeyMapping.Category.register(PickerKeys.CATEGORY.id());
-        KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
-        KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);
-        KeyBindingHelper.registerKeyBinding(PickerKeys.PART_PREV);
-        KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
+        KeyMappingHelper.registerKeyMapping(PickerKeys.LOCK);
+        KeyMappingHelper.registerKeyMapping(PickerKeys.PART_NEXT);
+        KeyMappingHelper.registerKeyMapping(PickerKeys.PART_PREV);
+        KeyMappingHelper.registerKeyMapping(PickerKeys.TOGGLE);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ClientEyeRuntime.onEntityRemoved(living);
             }
         });
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
+        ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE) && client.getConnection() != null) {

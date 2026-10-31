@@ -18,7 +18,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -50,7 +50,7 @@ public final class ModContent {
      */
     public static final ContentRegistrar.Handle<CreativeModeTab> CREATIVE_TAB = new ContentRegistrar.Handle<>();
 
-    public static final ContentRegistrar.Handle<CustomRecipe.Serializer<EyeModifierRecipe>> EYE_MODIFIER_RECIPE =
+    public static final ContentRegistrar.Handle<RecipeSerializer<EyeModifierRecipe>> EYE_MODIFIER_RECIPE =
             new ContentRegistrar.Handle<>();
 
     public static final ResourceKey<Enchantment> OPTOMETRIST = ResourceKey.create(
@@ -103,7 +103,7 @@ public final class ModContent {
                 }));
 
         EYE_MODIFIER_RECIPE.bind(registrar.registerRecipeSerializer(
-                "eye_modifier", () -> new CustomRecipe.Serializer<>(EyeModifierRecipe::new)));
+                "eye_modifier", () -> new RecipeSerializer<>(EyeModifierRecipe.MAP_CODEC, EyeModifierRecipe.STREAM_CODEC)));
     }
 
     /** An enchanted book holding {@link #OPTOMETRIST} at its max level. */

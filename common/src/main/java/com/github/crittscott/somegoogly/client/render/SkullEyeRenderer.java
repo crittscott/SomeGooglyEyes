@@ -125,13 +125,12 @@ public final class SkullEyeRenderer {
     }
 
     /**
-     * Submit the current placed head's or head item's eyes, if it has any to show, with {@code pose} in the space
-     * {@code model} was just submitted in, the head's {@code packedLight}, and the head's {@code yRot} and
-     * {@code mouthAnimation}. The model is posed only when it is drawn, after submission, so it is posed here
+     * Submit the current placed head's or head item's eyes, if it has any to show, with {@code pose} in the model's
+     * submission space, its {@code packedLight}, and its extracted model state. The model is posed only when it is drawn, after submission, so it is posed here
      * the same way first.
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
-                              float yRot, float mouthAnimation) {
+                              SkullModelBase.State modelState) {
         ModelPart head = headPart(model);
         if (head == null) {
             return;
@@ -141,9 +140,6 @@ public final class SkullEyeRenderer {
         if (eyes == null && stack == null) {
             return;
         }
-        SkullModelBase.State modelState = new SkullModelBase.State();
-        modelState.yRot = yRot;
-        modelState.animationPos = mouthAnimation;
         model.setupAnim(modelState);
         if (eyes != null) {
             renderEyes(pose, collector, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,

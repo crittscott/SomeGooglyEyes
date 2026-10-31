@@ -4,12 +4,15 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.core.HolderLookup;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -26,8 +29,12 @@ import org.jspecify.annotations.Nullable;
  */
 public class EyeModifierRecipe extends CustomRecipe {
 
-    public EyeModifierRecipe(CraftingBookCategory category) {
-        super(category);
+    public static final EyeModifierRecipe INSTANCE = new EyeModifierRecipe();
+    public static final MapCodec<EyeModifierRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeModifierRecipe> STREAM_CODEC =
+            StreamCodec.unit(INSTANCE);
+
+    public EyeModifierRecipe() {
     }
 
     /** The eye and the modifier ingredient found in a grid. */
@@ -35,7 +42,7 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingInput input) {
         Match match = find(input);
         if (match == null) {
             return ItemStack.EMPTY;
@@ -44,29 +51,6 @@ public class EyeModifierRecipe extends CustomRecipe {
         ItemStack result = match.eye().copyWithCount(1);
         EyeItemProperties.set(result, modify(EyeItemProperties.get(result), match.modifierStack()));
         return result;
-    }
-
-    /**
-     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
-     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
-     * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
-     * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
-     */
-    @Nullable
-    private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {
-        if (stack.getItem() instanceof DyeItem dye) {
-            return current.withIrisColor(EyeColor.fromRgb24(dye.getDyeColor().getTextureDiffuseColor()));
-        }
-        if (stack.is(Items.GLOWSTONE_DUST)) {
-            return current.withGlow(true);
-        }
-        if (stack.is(Items.REDSTONE)) {
-            return current.withGlow(false);
-        }
-        if (stack.is(Items.COBWEB)) {
-            return AppearanceOverride.EMPTY;
-        }
-        return null;
     }
 
     @Nullable
@@ -110,4 +94,31 @@ public class EyeModifierRecipe extends CustomRecipe {
     public boolean matches(CraftingInput input, Level level) {
         return find(input) != null;
     }
+
+    /**
+     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
+     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
+     * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
+     * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
+     */
+    @Nullable
+    private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {
+        if (stack.getItem() instanceof DyeItem) {
+            DyeColor dye = stack.get(DataComponents.DYE);
+            if (dye != null) {
+                return current.withIrisColor(EyeColor.fromRgb24(dye.getTextureDiffuseColor()));
+            }
+        }
+        if (stack.is(Items.GLOWSTONE_DUST)) {
+            return current.withGlow(true);
+        }
+        if (stack.is(Items.REDSTONE)) {
+            return current.withGlow(false);
+        }
+        if (stack.is(Items.COBWEB)) {
+            return AppearanceOverride.EMPTY;
+        }
+        return null;
+    }
+
 }

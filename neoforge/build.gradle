@@ -26,17 +26,12 @@ loom {
     }
 
     runs {
-        // Dev runs load common's refmap, which maps to Fabric's intermediary names; this loader runs on the
-        // Mojang names the common Mixins are written against, so they must resolve without it.
-        configureEach {
-            property 'mixin.env.disableRefMap', 'true'
-        }
         gameTestServer {
             server()
             environment 'gametestserver'
             forgeTemplate 'gameTestServer'
             name 'Game Test Server'
-            property 'neoforge.enabledGameTestNamespaces', mod_id
+            property 'neoforge.enableGameTest', 'true'
             source sourceSets.gametest
         }
     }
@@ -65,9 +60,9 @@ dependencies {
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_compile_version"
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
-    modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    compileOnly "com.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
+    common(project(path: ':common')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 }
 
@@ -105,17 +100,24 @@ tasks.named('processGametestResources', ProcessResources).configure {
 
 shadowJar {
     configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
-    // The common refmap maps to Fabric's intermediary names; this loader runs on Mojang names, which the
-    // common Mixins already use, so they must apply without it.
-    exclude 'somegoogly-common.refmap.json'
+    archiveClassifier = null
     filesMatching('pack.mcmeta') {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
-    // NeoForge reads access transformers, not wideners; dev runs apply the widener directly.
-    atAccessWideners.add loom.accessWidenerPath.get().asFile.name
+// The bundled common output is the production artifact.
+jar {
+    archiveClassifier = 'dev'
+}
+
+tasks.named('assemble') {
+    dependsOn shadowJar
+}
+
+loom.getNeoForge().convertAccessWideners(tasks.named('shadowJar'), 'somegoogly.accesswidener')
+
+// Architectury launches common from its development JAR, including its processed resources.
+tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
+    dependsOn project(':common').tasks.named('jar')
 }

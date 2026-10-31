@@ -4,11 +4,11 @@ import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
-import software.bernie.geckolib.cache.model.BakedGeoModel;
-import software.bernie.geckolib.event.GeoRenderEvent;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.event.GeoRenderEvent;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
 
 import java.util.List;
 

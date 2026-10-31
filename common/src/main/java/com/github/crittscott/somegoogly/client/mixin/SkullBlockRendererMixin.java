@@ -3,13 +3,11 @@ package com.github.crittscott.somegoogly.client.mixin;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.object.skull.SkullModelBase;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.blockentity.state.SkullBlockRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,12 +15,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import org.jspecify.annotations.Nullable;
 
 /**
  * No loader has a block-entity renderer hook, so placed heads' eyes ride vanilla's head renderer: their eyes are
  * chosen as the head's render state is extracted, and the placed-head submission is bracketed for
- * {@link SkullEyeRenderer}, which submits the eyes right after the shared model submission.
+ * {@link SkullEyeRenderer}, which submits the eyes alongside the skull model.
  */
 @Mixin(SkullBlockRenderer.class)
 abstract class SkullBlockRendererMixin {
@@ -35,25 +34,26 @@ abstract class SkullBlockRendererMixin {
         ((SkullEyeRenderer.PlacedHolder) state).somegoogly$setEyes(SkullEyeRenderer.extract(skull), partialTick);
     }
 
-    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At("HEAD"))
     private void somegoogly$beginHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
                                       CameraRenderState camera, CallbackInfo callback) {
         SkullEyeRenderer.begin((SkullEyeRenderer.PlacedHolder) state);
     }
 
-    // The model is submitted in the skull's own pose, which is popped right after.
+    // Capture the same model state and pose that the skull submits to the collector.
     @Inject(method = "submitSkull", at = @At(value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
-    private static void somegoogly$drawEyes(@Nullable Direction direction, float yRot, float mouthAnimation,
-                                            PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                            SkullModelBase model, RenderType renderType, int outlineColor,
-                                            ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling,
-                                            CallbackInfo callback) {
-        SkullEyeRenderer.render(pose, collector, packedLight, model, yRot, mouthAnimation);
+            target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel"))
+    private static void somegoogly$drawEyes(CallbackInfo callback,
+                                            @Local(argsOnly = true) PoseStack pose,
+                                            @Local(argsOnly = true) SubmitNodeCollector collector,
+                                            @Local(argsOnly = true, ordinal = 0) int packedLight,
+                                            @Local(argsOnly = true) SkullModelBase model,
+                                            @Local SkullModelBase.State state) {
+        SkullEyeRenderer.render(pose, collector, packedLight, model, state);
     }
 
-    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V",
             at = @At("RETURN"))
     private void somegoogly$endHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
                                     CameraRenderState camera, CallbackInfo callback) {

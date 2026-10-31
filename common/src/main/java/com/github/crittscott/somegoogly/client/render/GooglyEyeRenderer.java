@@ -41,7 +41,7 @@ public final class GooglyEyeRenderer {
     // and a forward reference there is a compile error (JLS 8.3.3).
     private static final Identifier TEX = Identifier.fromNamespaceAndPath(
             SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
-    public static final RenderType RENDER_TYPE = RenderTypes.entityCutout(TEX);
+    public static final RenderType RENDER_TYPE = RenderTypes.entityCutoutCull(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderTypes.eyes(TEX);
 
     private GooglyEyeRenderer() {
