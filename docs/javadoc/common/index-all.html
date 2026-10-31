@@ -234,7 +234,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#appearanceAt(int,int)" class="member-name-link">appearanceAt(int, int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
-<div class="block">The eye's config appearance, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's config appearance.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a> - Record Class in <a href="com/github/crittscott/somegoogly/eye/state/package-summary.html">com.github.crittscott.somegoogly.eye.state</a></dt>
 <dd>
@@ -467,7 +467,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#clear()" class="member-name-link">clear()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
-<div class="block">Drop every tracker; call on client disconnect and on a resource reload.</div>
+<div class="block">Drop render simulations while retaining entity-lifetime reports.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftSession.html#clear()" class="member-name-link">clear()</a> - Method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftSession.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftSession</a></dt>
 <dd>
@@ -666,6 +666,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
  or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#copyToLoot(net.minecraft.world.level.storage.loot.LootContext,java.util.Collection)" class="member-name-link">copyToLoot(LootContext, Collection&lt;ItemStack&gt;)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">Copy an eyed head block's snapshot onto its generated head items.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#cornea()" class="member-name-link">cornea()</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>cornea</code> record component.</div>
@@ -814,7 +818,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#DEFAULTS" class="member-name-link">DEFAULTS</a> - Static variable in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
 <dd>
-<div class="block">The server's built-in defaults; what a client holds before its first sync.</div>
+<div class="block">The server's built-in defaults.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#defaultValue()" class="member-name-link">defaultValue()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
 <dd>
@@ -919,7 +923,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#duration" class="member-name-link">duration</a> - Variable in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
-<div class="block">Total play length in ticks, normalized to at least one.</div>
+<div class="block">Positive total play length in ticks, validated before playback.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html#duration()" class="member-name-link">duration()</a> - Method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></dt>
 <dd>
@@ -1272,7 +1276,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html#eyeFile(java.nio.file.Path,net.minecraft.resources.ResourceLocation)" class="member-name-link">eyeFile(Path, ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigReloadListener</a></dt>
 <dd>
-<div class="block">The file under data-pack root <code>packRoot</code> that holds <code>typeId</code>'s eye definition.</div>
+<div class="block">Construct the file path for <code>typeId</code>'s eye definition.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeInfluence.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a> - Class in <a href="com/github/crittscott/somegoogly/eye/behavior/package-summary.html">com.github.crittscott.somegoogly.eye.behavior</a></dt>
 <dd>
@@ -1486,17 +1490,17 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#getAttachToken(int)" class="member-name-link">getAttachToken(int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
-<div class="block">This head's model attachment token, or <code>null</code> when the head index is out of range.</div>
+<div class="block">The selected head's model attachment token.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html#getExamples()" class="member-name-link">getExamples()</a> - Method in class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html" title="class in com.github.crittscott.somegoogly.command">MaybeFloatArgumentType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#getEyeCount(int)" class="member-name-link">getEyeCount(int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
-<div class="block">How many eyes this head carries; 0 for an out-of-range head.</div>
+<div class="block">How many eyes the selected head carries.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#getEyeScale(int,int)" class="member-name-link">getEyeScale(int, int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
-<div class="block">The eye's placement scale, or the default scale when the requested eye is absent.</div>
+<div class="block">The selected eye's placement scale.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#getHeadCount()" class="member-name-link">getHeadCount()</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
@@ -1680,7 +1684,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior(EyeBehaviorTriggerPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
 <dd>
-<div class="block">Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored.</div>
+<div class="block">Retain a behavior for a known entity, including one that has not rendered yet.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync(EyeConfigSyncPacket)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client">ClientNetworkHandler</a></dt>
 <dd>
@@ -2098,6 +2102,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html#listSuggestions(com.mojang.brigadier.context.CommandContext,com.mojang.brigadier.suggestion.SuggestionsBuilder)" class="member-name-link">listSuggestions(CommandContext&lt;S&gt;, SuggestionsBuilder)</a> - Method in class com.github.crittscott.somegoogly.command.<a href="com/github/crittscott/somegoogly/command/MaybeFloatArgumentType.html" title="class in com.github.crittscott.somegoogly.command">MaybeFloatArgumentType</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/util/LookTarget.html#livingHitInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingHitInCrosshair(Player, double)</a> - Static method in class com.github.crittscott.somegoogly.util.<a href="com/github/crittscott/somegoogly/util/LookTarget.html" title="class in com.github.crittscott.somegoogly.util">LookTarget</a></dt>
+<dd>
+<div class="block">The nearest living-entity intersection before any blocking surface, or <code>null</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/util/LookTarget.html#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair(Player, double)</a> - Static method in class com.github.crittscott.somegoogly.util.<a href="com/github/crittscott/somegoogly/util/LookTarget.html" title="class in com.github.crittscott.somegoogly.util">LookTarget</a></dt>
 <dd>
 <div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>reach</code> blocks, or
@@ -2357,6 +2365,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html#NONE" class="member-name-link">NONE</a> - Static variable in record class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#NONE" class="member-name-link">NONE</a> - Static variable in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
+<dd>
+<div class="block">Inactive client state before server settings arrive and after disconnect.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html#NONE" class="member-name-link">NONE</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></dt>
 <dd>
 <div class="block">No eyes, the first variant, no appearance overrides; what an absent compound reads as.</div>
@@ -2447,6 +2459,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLoggedOut(ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></dt>
 <dd>
 <div class="block">The disappearing-client hook: a leaving player's frozen mob is always released.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/server/ServerServices.html#onServerConfigApplied()" class="member-name-link">onServerConfigApplied()</a> - Static method in class com.github.crittscott.somegoogly.server.<a href="com/github/crittscott/somegoogly/server/ServerServices.html" title="class in com.github.crittscott.somegoogly.server">ServerServices</a></dt>
+<dd>
+<div class="block">Record the applied world switch once at startup and whenever its effective value changes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#onServerStopping()" class="member-name-link">onServerStopping()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
@@ -2691,7 +2707,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#placementAt(int,int)" class="member-name-link">placementAt(int, int)</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
-<div class="block">The eye's placement, or the default when the requested eye is absent.</div>
+<div class="block">The selected eye's placement.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#plays()" class="member-name-link">plays()</a> - Method in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
 <dd>
@@ -3180,6 +3196,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" class="member-name-link">setBehavior(LivingEntity, EyeBehavior, int, long, int)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
+<dd>
+<div class="block">Retain the latest server expression even before this known entity has rendered.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#setCorneaColor(float,float,float)" class="member-name-link">setCorneaColor(float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
 <div class="block">Set the current draft eye's configured cornea RGB channels.</div>
@@ -3385,7 +3405,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerGate.html#SPAWN_ALL_COOLDOWN_TICKS" class="member-name-link">SPAWN_ALL_COOLDOWN_TICKS</a> - Static variable in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></dt>
 <dd>
-<div class="block">Ticks between <code>/sg spawnall</code> runs per player.</div>
+<div class="block">Server-wide interval in ticks between <code>/sg spawnall</code> runs.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#SPAWN_EXCLUDED_ENTITIES" class="member-name-link">SPAWN_EXCLUDED_ENTITIES</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>
@@ -3559,6 +3579,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Advance one tick for <code>holder</code>, or reset when there is none or it holds no Googly Eye: age the
  active behavior, start any behavior this tick's hurt, heal, or idle timer calls for under
  <code>settings</code>, and step the pupil with the behavior folded in.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#tickBehaviors()" class="member-name-link">tickBehaviors()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
+<dd>
+<div class="block">Advance received expression time once per unpaused simulation tick, even for unrendered entities.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#TICKS_MAX" class="member-name-link">TICKS_MAX</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
@@ -3884,9 +3908,13 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM_KEY" class="member-name-link">WINK_ON_AIM_KEY</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#WIRE_MAXIMUM" class="member-name-link">WIRE_MAXIMUM</a> - Static variable in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
+<dd>
+<div class="block">Largest supported behavior block, reserving space even when the server configuration later changes.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#wireSize(java.util.Map)" class="member-name-link">wireSize(Map&lt;ResourceLocation, CompoundTag&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
 <dd>
-<div class="block">The number of bytes a packet carrying <code>encoded</code> occupies on the wire.</div>
+<div class="block">Maximum packet size for <code>encoded</code>, including any supported server behavior settings.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor(EyeColor)</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>

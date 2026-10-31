@@ -191,6 +191,27 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)">
+<h3>prepareForCommandSpawn</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">prepareForCommandSpawn</span><wbr><span class="parameters">(net.minecraft.server.level.ServerLevel&nbsp;level,
+ net.minecraft.world.entity.Entity&nbsp;entity,
+ double&nbsp;x,
+ double&nbsp;y,
+ double&nbsp;z,
+ float&nbsp;yaw)</span></div>
+<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
+ the picker's frozen display state. Some modded mobs leave required persistent fields unset until
+ <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.MobSpawnType, net.minecraft.world.entity.SpawnGroupData, net.minecraft.nbt.CompoundTag)</code>; inserting a factory-created mob without this step can make it impossible
+ to save. Finalization goes through the loader's finalize-spawn event, as <code>/summon</code> does, so
+ other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
+ which lives in another module.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be added</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="refusal(net.minecraft.world.entity.EntityType)">
 <h3>refusal</h3>
 <div class="member-signature"><span class="annotations">@Nullable
@@ -222,27 +243,6 @@ loadScripts(document, 'script');</script>
  persistent, facing the player, ender dragon excluded) but never terraforms: water mobs spawn
  wherever the player aims, so aim into water to keep one alive. Fails with feedback when no block
  is targeted or the mob's bounding box doesn't fit at the target.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)">
-<h3>prepareForCommandSpawn</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">prepareForCommandSpawn</span><wbr><span class="parameters">(net.minecraft.server.level.ServerLevel&nbsp;level,
- net.minecraft.world.entity.Entity&nbsp;entity,
- double&nbsp;x,
- double&nbsp;y,
- double&nbsp;z,
- float&nbsp;yaw)</span></div>
-<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
- the picker's frozen display state. Some modded mobs leave required persistent fields unset until
- <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.MobSpawnType, net.minecraft.world.entity.SpawnGroupData, net.minecraft.nbt.CompoundTag)</code>; inserting a factory-created mob without this step can make it impossible
- to save. Finalization goes through the loader's finalize-spawn event, as <code>/summon</code> does, so
- other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
- which lives in another module.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be added</dd>
-</dl>
 </section>
 </li>
 </ul>

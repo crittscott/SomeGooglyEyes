@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -11,12 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /** Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle. */
 public final class ClientEyeRuntime {
@@ -28,15 +29,21 @@ public final class ClientEyeRuntime {
 
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
+    private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, SkullEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
+    private static long simulationTicks;
 
     private ClientEyeRuntime() {
     }
 
-    /** Drop every tracker; call on client disconnect and on a resource reload. */
+    /** Entity-lifetime expression timing, independent of any disposable render tracker. */
+    record ReceivedBehavior(EyeBehavior behavior, int duration, long seed, long startedAt) {
+    }
+
+    /** Drop render simulations while retaining entity-lifetime reports. */
     public static void clear() {
         SKULLS.clear();
         TRACKERS.clear();
@@ -63,6 +70,7 @@ public final class ClientEyeRuntime {
             tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()), ClientEyeConfigs.behaviors());
             TRACKERS.put(living, tracker);
         }
+        synchronizeBehavior(living, tracker, 0);
         return tracker;
     }
 
@@ -70,12 +78,15 @@ public final class ClientEyeRuntime {
     public static void onEntityRemoved(LivingEntity living) {
         TRACKERS.remove(living);
         ANGRY.remove(living.getId());
+        BEHAVIORS.remove(living);
     }
 
     /** Forget simulations and anger when the client replaces or unloads its level. */
     public static void onLevelChanged() {
         clear();
         clearAnger();
+        BEHAVIORS.clear();
+        simulationTicks = 0;
     }
 
     /** The live tracker for this entity, or {@code null} if none exists yet (no rebuild on mismatch). */
@@ -94,6 +105,15 @@ public final class ClientEyeRuntime {
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker != null) {
             tracker.angry = angry;
+        }
+    }
+
+    /** Retain the latest server expression even before this known entity has rendered. */
+    public static void setBehavior(LivingEntity living, EyeBehavior behavior, int duration, long seed, int elapsed) {
+        BEHAVIORS.put(living, new ReceivedBehavior(behavior, duration, seed, simulationTicks - elapsed));
+        GooglyTracker tracker = TRACKERS.get(living);
+        if (tracker != null) {
+            synchronizeBehavior(living, tracker, 0);
         }
     }
 
@@ -116,6 +136,28 @@ public final class ClientEyeRuntime {
         return eyes;
     }
 
+    private static void synchronizeBehavior(LivingEntity living, GooglyTracker tracker, int ageOffset) {
+        ReceivedBehavior received = BEHAVIORS.get(living);
+        if (received == null) {
+            return;
+        }
+        long elapsed = simulationTicks - received.startedAt();
+        if (elapsed >= received.duration()) {
+            BEHAVIORS.remove(living);
+            tracker.active = null;
+            tracker.receivedBehavior = null;
+            return;
+        }
+        if (tracker.receivedBehavior != received) {
+            tracker.active = null;
+            tracker.startBehavior(received.behavior(), received.duration(), received.seed(), (int) elapsed);
+            tracker.receivedBehavior = received;
+        }
+        if (tracker.active != null) {
+            tracker.active.age = (int) elapsed + ageOffset;
+        }
+    }
+
     /**
      * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
      * physics of those rendered this tick or last when {@code simulate} is true. The client lifecycle
@@ -127,6 +169,7 @@ public final class ClientEyeRuntime {
         if (!simulate) {
             return;
         }
+        tickBehaviors();
         ClientLevel level = Minecraft.getInstance().level;
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         Iterator<Map.Entry<BlockPos, SkullEyes>> skulls = SKULLS.entrySet().iterator();
@@ -149,8 +192,25 @@ public final class ClientEyeRuntime {
             if (idle > EVICT_IDLE_TICKS) {
                 iterator.remove();
             } else if (idle <= SIMULATE_IDLE_TICKS) {
+                synchronizeBehavior(tracker.parent, tracker, -1);
                 tracker.update(behaviors);
             }
         }
+    }
+
+    /** Advance received expression time once per unpaused simulation tick, even for unrendered entities. */
+    public static void tickBehaviors() {
+        simulationTicks++;
+        BEHAVIORS.entrySet().removeIf(entry -> {
+            boolean expired = simulationTicks - entry.getValue().startedAt() >= entry.getValue().duration();
+            if (expired) {
+                GooglyTracker tracker = TRACKERS.get(entry.getKey());
+                if (tracker != null) {
+                    tracker.active = null;
+                    tracker.receivedBehavior = null;
+                }
+            }
+            return expired;
+        });
     }
 }

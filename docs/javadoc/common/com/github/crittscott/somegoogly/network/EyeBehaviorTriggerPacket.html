@@ -89,8 +89,8 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
  same thing in lock-step. Purely transient â€” the trigger is the only thing sent; the client runs the
  animation locally.
 
- <p>The client drops the trigger if it has no tracker for the mob yet (not currently rendering it) or if
- a behavior is already playing â€” the same "one at a time, non-interruptable" rule the server enforces.</div>
+ <p>The client retains the latest trigger for a known entity independently of its render tracker and
+ derives its current age from elapsed simulation time, including when the tracker is rebuilt.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -223,23 +223,6 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="read(net.minecraft.network.FriendlyByteBuf)">
-<h3>read</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></span>&nbsp;<span class="element-name">read</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
-<div class="block">Decode and validate a received payload.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
-<h3>write</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="behaviorId()">
 <h3>behaviorId</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">behaviorId</span>()</div>
@@ -268,6 +251,23 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </section>
 </li>
 <li>
+<section class="detail" id="id()">
+<h3>id</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Payload.html#id()">id</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="read(net.minecraft.network.FriendlyByteBuf)">
+<h3>read</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></span>&nbsp;<span class="element-name">read</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<div class="block">Decode and validate a received payload.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="seed()">
 <h3>seed</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">seed</span>()</div>
@@ -275,12 +275,12 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </section>
 </li>
 <li>
-<section class="detail" id="id()">
-<h3>id</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
+<h3>write</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="Payload.html#id()">id</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
+<dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
 </dl>
 </section>
 </li>

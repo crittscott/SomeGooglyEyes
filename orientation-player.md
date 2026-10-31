@@ -8,7 +8,7 @@ What a player currently observes. `orientation-code.md` covers the code structur
 
 Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
 
-The mod adds two items, one enchantment, and one creative tab. Eye placement comes from datapacks, allowing different eye arrangements for vanilla and modded mobs.
+Two items, one enchantment, and one creative tab are added. Datapacks place eyes on vanilla and modded mobs.
 
 Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.92.11+1.20.1 or newer. Forge requires Forge 47.4.0 or newer within the 47 release line. Both loaders require Java 17; GeckoLib 4.7.4 or newer is an optional client dependency. Clients and servers need the same network version.
 
@@ -18,7 +18,7 @@ By default, eligible mobs have a 5 percent chance to receive eyes when they spaw
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
-Pupils respond to gravity, movement, and head motion. They wobble, bounce, and settle.
+Pupils wobble, bounce, and settle under gravity, movement, and head motion.
 
 Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also react when:
 
@@ -81,7 +81,7 @@ While holding either eye item, sneak and aim at a living entity or placed head t
 - supports eyes only at another life stage; or
 - has no configuration.
 
-The check reaches about 16 blocks. Client settings that hide eyes do not affect the result.
+The check reaches about 16 blocks and stops at walls. Client settings that hide eyes do not affect the result.
 
 ## Creative tab
 
@@ -106,7 +106,7 @@ Forge applies edits as soon as they reload the file; Fabric applies them at worl
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
 
-While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data is kept and reappears when the switch returns. The creative picker, an authoring tool, is exempt.
+While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data stays; automatic expressions pause, viewers refresh on resumption, and admin expressions remain available. The creative picker, an authoring tool, is exempt.
 
 Overrides use `"entity-pattern,percent"`. Exact IDs take priority; otherwise the first matching wildcard is used.
 
@@ -241,4 +241,4 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
-- Fabric has 130 dedicated-server GameTests; Forge 127. Physical-client checks cover models, expressions, item rendering, harvesting and application, head eyes, protection vetoes, picker editing and export, anger across retracking, GeckoLib, the rendering switch, and migrating a real 0.8.2 Fabric save.
+- Fabric has 133 dedicated-server GameTests; Forge 133. Physical-client checks cover models, expressions, item rendering, harvesting and application, head eyes, protection vetoes, picker editing and export, anger across retracking, GeckoLib, the rendering switch, and migrating a real 0.8.2 Fabric save.

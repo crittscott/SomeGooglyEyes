@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation;
  * same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
  * animation locally.
  *
- * <p>The client drops the trigger if it has no tracker for the mob yet (not currently rendering it) or if
- * a behavior is already playing — the same "one at a time, non-interruptable" rule the server enforces.
+ * <p>The client retains the latest trigger for a known entity independently of its render tracker and
+ * derives its current age from elapsed simulation time, including when the tracker is rebuilt.
  */
 public class EyeBehaviorTriggerPacket implements Payload {
 
@@ -36,9 +36,9 @@ public class EyeBehaviorTriggerPacket implements Payload {
         this.elapsed = elapsed;
     }
 
-    /** Decode and validate a received payload. */
-    public static EyeBehaviorTriggerPacket read(FriendlyByteBuf buffer) {
-        return new EyeBehaviorTriggerPacket(buffer);
+    /** The behavior to play. */
+    public ResourceLocation behaviorId() {
+        return behaviorId;
     }
 
     private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
@@ -50,23 +50,6 @@ public class EyeBehaviorTriggerPacket implements Payload {
         if (!validTiming(duration, elapsed)) {
             throw new DecoderException("Invalid eye behavior timing");
         }
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        if (!validTiming(duration, elapsed)) {
-            throw new EncoderException("Invalid eye behavior timing");
-        }
-        buffer.writeInt(entityId);
-        buffer.writeResourceLocation(behaviorId);
-        buffer.writeVarInt(duration);
-        buffer.writeLong(seed);
-        buffer.writeVarInt(elapsed);
-    }
-
-    /** The behavior to play. */
-    public ResourceLocation behaviorId() {
-        return behaviorId;
     }
 
     /** The behavior's total length in ticks. */
@@ -84,17 +67,34 @@ public class EyeBehaviorTriggerPacket implements Payload {
         return entityId;
     }
 
-    /** The seed that makes the behavior's randomness identical on every viewer. */
-    public long seed() {
-        return seed;
-    }
-
     @Override
     public ResourceLocation id() {
         return ID;
     }
 
+    /** Decode and validate a received payload. */
+    public static EyeBehaviorTriggerPacket read(FriendlyByteBuf buffer) {
+        return new EyeBehaviorTriggerPacket(buffer);
+    }
+
+    /** The seed that makes the behavior's randomness identical on every viewer. */
+    public long seed() {
+        return seed;
+    }
+
     private static boolean validTiming(int duration, int elapsed) {
         return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        if (!validTiming(duration, elapsed)) {
+            throw new EncoderException("Invalid eye behavior timing");
+        }
+        buffer.writeInt(entityId);
+        buffer.writeResourceLocation(behaviorId);
+        buffer.writeVarInt(duration);
+        buffer.writeLong(seed);
+        buffer.writeVarInt(elapsed);
     }
 }

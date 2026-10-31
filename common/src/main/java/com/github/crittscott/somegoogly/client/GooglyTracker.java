@@ -109,6 +109,10 @@ public class GooglyTracker {
     @Nullable
     public BehaviorInstance active;
 
+    /** The server expression this disposable simulation has initialized, if any. */
+    @Nullable
+    ClientEyeRuntime.ReceivedBehavior receivedBehavior;
+
     /**
      * Whether the server reports this entity angry in a way vanilla doesn't sync (see {@code
      * EyeAngerPacket}); kept current by {@link ClientNetworkHandler#handleAnger}.
@@ -447,12 +451,38 @@ public class GooglyTracker {
         }
     }
 
-    /** Whether this tracker was built for the same placement variant as {@code helper}. */
-    public boolean matches(HeadInfo helper) {
-        // Compare the selected variant's head list, not just the shared config: two mobs of the same
-        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
-        // shape is sized from this variant's heads/eyes).
-        return this.helper.headsRef() == helper.headsRef();
+    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
+    private static float ease(float value, boolean on, int ticks) {
+        float step = 1F / ticks;
+        return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
+    }
+
+    /**
+     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
+     * says it's angry.
+     */
+    private boolean isAngry(BehaviorSettings settings) {
+        return level(OngoingBehavior.ANGER, settings) > 0F
+                || angry && settings.enabled(OngoingBehavior.ANGER);
+    }
+
+    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
+    private boolean isLidded(BehaviorSettings settings) {
+        return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
+    }
+
+    /**
+     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
+     * lowered to ram, each while its switch is on.
+     */
+    private boolean isSquinting(BehaviorSettings settings) {
+        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
+                || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
+    }
+
+    /** How strongly {@code behavior} applies to this entity now, or 0 while its switch is off. */
+    private float level(OngoingBehavior behavior, BehaviorSettings settings) {
+        return settings.enabled(behavior) ? behavior.level(parent) : 0F;
     }
 
     /**
@@ -461,6 +491,14 @@ public class GooglyTracker {
      */
     public void markRendered(int currentClientTick) {
         lastRenderTick = currentClientTick;
+    }
+
+    /** Whether this tracker was built for the same placement variant as {@code helper}. */
+    public boolean matches(HeadInfo helper) {
+        // Compare the selected variant's head list, not just the shared config: two mobs of the same
+        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
+        // shape is sized from this variant's heads/eyes).
+        return this.helper.headsRef() == helper.headsRef();
     }
 
     /**
@@ -556,38 +594,5 @@ public class GooglyTracker {
                         INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
             }
         }
-    }
-
-    /**
-     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
-     * says it's angry.
-     */
-    private boolean isAngry(BehaviorSettings settings) {
-        return settings.enabled(OngoingBehavior.ANGER) && (angry || OngoingBehavior.ANGER.level(parent) > 0F);
-    }
-
-    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
-    private boolean isLidded(BehaviorSettings settings) {
-        return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
-    }
-
-    /**
-     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
-     * lowered to ram, each while its switch is on.
-     */
-    private boolean isSquinting(BehaviorSettings settings) {
-        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
-                || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
-    }
-
-    /** How strongly {@code behavior} applies to this entity now, or 0 while its switch is off. */
-    private float level(OngoingBehavior behavior, BehaviorSettings settings) {
-        return settings.enabled(behavior) ? behavior.level(parent) : 0F;
-    }
-
-    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
-    private static float ease(float value, boolean on, int ticks) {
-        float step = 1F / ticks;
-        return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
     }
 }

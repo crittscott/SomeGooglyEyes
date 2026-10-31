@@ -163,7 +163,7 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wireSize(java.util.Map)" class="member-name-link">wireSize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The number of bytes a packet carrying <code>encoded</code> occupies on the wire.</div>
+<div class="block">Maximum packet size for <code>encoded</code>, including any supported server behavior settings.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
@@ -232,30 +232,6 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="read(net.minecraft.network.FriendlyByteBuf)">
-<h3>read</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></span>&nbsp;<span class="element-name">read</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
-<div class="block">Decode and validate a received payload.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="wireSize(java.util.Map)">
-<h3>wireSize</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireSize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
-<div class="block">The number of bytes a packet carrying <code>encoded</code> occupies on the wire.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
-<h3>write</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="behaviors()">
 <h3>behaviors</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">behaviors</span>()</div>
@@ -283,6 +259,30 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Payload.html#id()">id</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="read(net.minecraft.network.FriendlyByteBuf)">
+<h3>read</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></span>&nbsp;<span class="element-name">read</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<div class="block">Decode and validate a received payload.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="wireSize(java.util.Map)">
+<h3>wireSize</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireSize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
+<div class="block">Maximum packet size for <code>encoded</code>, including any supported server behavior settings.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
+<h3>write</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
 </dl>
 </section>
 </li>

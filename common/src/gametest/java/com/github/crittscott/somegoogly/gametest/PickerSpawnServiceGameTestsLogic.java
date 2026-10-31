@@ -1,12 +1,17 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService.SpawnRefusal;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -14,38 +19,20 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order. */
 public final class PickerSpawnServiceGameTestsLogic {
 
     private PickerSpawnServiceGameTestsLogic() {
-    }
-
-    /**
-     * {@code /sg spawn} and {@code /sg spawnall} refuse the ender dragon, players, and config-excluded types,
-     * and {@code /sg spawn} suggests only types it accepts. In game: type {@code /sg spawn minecraft:ender}
-     * and see no ender dragon offered; add {@code "minecraft:cow"} to {@code spawnExcludedEntities}, then
-     * {@code /sg spawn minecraft:cow} reports the cow as excluded and it is no longer suggested.
-     */
-    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
-        List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
-        try {
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
-                    "The ender dragon must be refused");
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
-                    "Players must be refused as not summonable");
-            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), "A cow must be spawnable by default");
-
-            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
-                    "A config-excluded type must be refused");
-        } finally {
-            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
-        }
-        helper.succeed();
     }
 
     /**
@@ -82,6 +69,80 @@ public final class PickerSpawnServiceGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * Extended entity targeting stops at blocks. In game: stand behind a wall from an eyed cow and aim at
+     * it with an eye item or an admin command; neither inspection nor editing selects it through the wall.
+     */
+    public static void entityTargetingStopsAtWalls(GameTestHelper helper, ServerPlayer player) {
+        var originalPosition = player.position();
+        float originalYaw = player.getYRot();
+        float originalPitch = player.getXRot();
+        try {
+            BlockPos origin = helper.absolutePos(new BlockPos(2, 1, 0));
+            player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
+            helper.setBlock(new BlockPos(2, 2, 2), Blocks.AIR);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
+            helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
+                    "the unobstructed cow is selected by the extended ray");
+            helper.setBlock(new BlockPos(2, 2, 2), Blocks.STONE);
+            helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == null,
+                    "an intervening wall prevents selecting the hidden cow");
+        } finally {
+            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.
+     * The loader wrapper installs the refusing listener. In game: refuse command spawns with a listener,
+     * stand over air, and run spawnall; the command skips the mobs without replacing terrain or head data.
+     */
+    public static void refusedBulkSpawnLeavesTerrain(GameTestHelper helper, ServerPlayer player) {
+        var originalPosition = player.position();
+        float originalYaw = player.getYRot();
+        float originalPitch = player.getXRot();
+        List<String> excluded = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        List<String> excludedMods = ServerConfig.SPAWN_EXCLUDED_MODS.get();
+        try {
+            List<String> otherTypes = new ArrayList<>();
+            BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
+                if (type != EntityType.COW && type != EntityType.SQUID) {
+                    otherTypes.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                }
+            });
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
+            BlockPos origin = helper.absolutePos(new BlockPos(2, 3, 0));
+            player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            helper.setBlock(new BlockPos(2, 2, 0), Blocks.AIR);
+            helper.setBlock(new BlockPos(2, 2, 3), Blocks.SKELETON_SKULL);
+            SkullBlockEntity skull = (SkullBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 3));
+            EyeState.Snapshot eyes = new EyeState.Snapshot(true, 0.5F, AppearanceOverride.EMPTY);
+            SkullEyeState.set(skull, eyes);
+            Map<BlockPos, BlockState> before = new LinkedHashMap<>();
+            for (int x = 0; x <= 4; x++) {
+                for (int z = 1; z <= 5; z++) {
+                    for (int y = 2; y <= 10; y++) {
+                        BlockPos pos = helper.absolutePos(new BlockPos(x, y, z));
+                        before.put(pos, helper.getLevel().getBlockState(pos));
+                    }
+                }
+            }
+            PickerSpawnService.spawn(player, "minecraft");
+            before.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
+                    "refused bulk spawn must leave terrain unchanged at " + pos));
+            helper.assertTrue(helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+                            && SkullEyeState.snapshot(skull).equals(eyes),
+                    "refused terrain edits preserve the original block entity and its eye data");
+        } finally {
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
+            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+        }
+    }
+
     /** Records the lifecycle state visible to a mob's spawn finalizer. */
     private static final class TrackingCow extends Cow {
 
@@ -111,4 +172,30 @@ public final class PickerSpawnServiceGameTestsLogic {
             return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, spawnTag);
         }
     }
+
+
+    /**
+     * {@code /sg spawn} and {@code /sg spawnall} refuse the ender dragon, players, and config-excluded types,
+     * and {@code /sg spawn} suggests only types it accepts. In game: type {@code /sg spawn minecraft:ender}
+     * and see no ender dragon offered; add {@code "minecraft:cow"} to {@code spawnExcludedEntities}, then
+     * {@code /sg spawn minecraft:cow} reports the cow as excluded and it is no longer suggested.
+     */
+    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
+        List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        try {
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
+                    "The ender dragon must be refused");
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
+                    "Players must be refused as not summonable");
+            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), "A cow must be spawnable by default");
+
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
+            helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
+                    "A config-excluded type must be refused");
+        } finally {
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
+        }
+        helper.succeed();
+    }
+
 }

@@ -1,18 +1,18 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Client-side store of the resolved server eye state, populated from the server via
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class ClientEyeConfigs {
 
-    private static volatile BehaviorSettings behaviors = BehaviorSettings.DEFAULTS;
+    private static volatile BehaviorSettings behaviors = BehaviorSettings.NONE;
     private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
     // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
     private static volatile boolean googlyEyesEnabled = true;
@@ -67,15 +67,10 @@ public final class ClientEyeConfigs {
 
     /** Clear everything (e.g. on disconnect) so a previous server's configs don't leak. */
     public static void clear() {
-        behaviors = BehaviorSettings.DEFAULTS;
+        behaviors = BehaviorSettings.NONE;
         configs = Collections.emptyMap();
         googlyEyesEnabled = true;
         resolved.clear();
-    }
-
-    /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
-    public static boolean googlyEyesEnabled() {
-        return googlyEyesEnabled;
     }
 
     /** Return the entity's config for the requested age, including the age-independent fallback. */
@@ -83,6 +78,25 @@ public final class ClientEyeConfigs {
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
+    }
+
+    /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
+    public static boolean googlyEyesEnabled() {
+        return googlyEyesEnabled;
+    }
+
+    /**
+     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
+     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
+     */
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
+                                  BehaviorSettings behaviors) {
+        configs = Map.copyOf(next);
+        ClientEyeConfigs.behaviors = behaviors;
+        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
+        resolved.clear();
+        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
+                configs.size(), googlyEyesEnabled);
     }
 
     /** Resolve and cache the selected variant for the requested age, for client rendering. */
@@ -103,19 +117,5 @@ public final class ClientEyeConfigs {
     public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
         return cached(entity, false, config, SkullEyeState.variantIndex(entity, config, variantRoll));
-    }
-
-    /**
-     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
-     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
-     */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
-                                  BehaviorSettings behaviors) {
-        configs = Map.copyOf(next);
-        ClientEyeConfigs.behaviors = behaviors;
-        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
-        resolved.clear();
-        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
-                configs.size(), googlyEyesEnabled);
     }
 }

@@ -94,6 +94,13 @@ subprojects {
     }
 }
 
+// Loader production artifacts bundle common; their remapped source archives carry it as well.
+enabled_platforms.split(',').each { platform ->
+    project(":$platform").tasks.named('sourcesJar', Jar).configure {
+        from project(':common').sourceSets.main.allSource
+    }
+}
+
 def documentedGameTestProjects = enabled_platforms.split(',').collect { project(":$it") }
 def documentedProjects = [project(':common')] + documentedGameTestProjects
 

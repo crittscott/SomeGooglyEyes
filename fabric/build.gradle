@@ -68,7 +68,17 @@ configurations {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
+    // Fabric has no native config parser; both modules are nested in the production artifact.
+    implementation "com.electronwill.night-config:core:$rootProject.nightconfig_version"
+    implementation "com.electronwill.night-config:toml:$rootProject.nightconfig_version"
+    include "com.electronwill.night-config:core:$rootProject.nightconfig_version"
+    include "com.electronwill.night-config:toml:$rootProject.nightconfig_version"
+
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"

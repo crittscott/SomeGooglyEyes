@@ -80,8 +80,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
  each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops. One
  <code>SCHEMA</code> list drives the commented file and the load; its sections, keys, defaults, and comments match
- the native Forge server spec. Like Forge, a file missing any key, such as one from an earlier release, is
- rewritten with the values it holds and each missing key at its default.</div>
+ the native Forge server spec. Like those loaders, a file missing any key, such as one from an earlier release, is
+ completed with only absent keys at their defaults; existing values and comments are retained.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -125,18 +125,18 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="register()">
-<h3>register</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
-<div class="block">Load the server config at server start and each <code>/reload</code>, and reset it at server stop.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="load(java.nio.file.Path)">
 <h3>load</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">load</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path)</span></div>
 <div class="block">Load the server config at <code>path</code> into <code>ServerConfig</code>, writing the defaults there if it is absent
  and adding any keys it lacks.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="register()">
+<h3>register</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
+<div class="block">Load the server config at server start and each <code>/reload</code>, and reset it at server stop.</div>
 </section>
 </li>
 </ul>

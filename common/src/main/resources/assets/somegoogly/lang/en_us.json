@@ -173,7 +173,6 @@
   "somegoogly.validation.variant_count": "variant count %s exceeds %s",
   "somegoogly.validation.no_variants": "enabled config has no variants",
   "somegoogly.validation.invalid_weight": "variant %s has invalid weight",
-  "somegoogly.validation.weight_overflow": "variant weights overflow",
   "somegoogly.validation.no_heads": "variant %s has no heads",
   "somegoogly.validation.head_count": "variant %s head count exceeds %s",
   "somegoogly.validation.invalid_attachment": "variant %s head %s has invalid attachment token",

@@ -9,9 +9,8 @@ import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * The live eye a player holds: one {@link GooglyTracker.EyeInfo} pupil, stepped with the same physics as
@@ -32,6 +31,9 @@ public final class HeldEye {
     @Nullable
     public BehaviorInstance active;
     private int ambientCountdown;
+    private List<EyeBehavior> ambientPool = List.of();
+    @Nullable
+    private BehaviorSettings ambientSettings;
     /** The pupil, or {@code null} while no Googly Eye is held. */
     @Nullable
     public GooglyTracker.EyeInfo eye;
@@ -53,12 +55,6 @@ public final class HeldEye {
         this.rand = rand;
     }
 
-    /** Whether {@code entity} holds a Googly Eye in either hand. */
-    public static boolean holdsGooglyEye(LivingEntity entity) {
-        return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
-                || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
-    }
-
     private void begin(LivingEntity holder, BehaviorSettings settings) {
         this.holder = holder;
         eye = new GooglyTracker.EyeInfo();
@@ -70,6 +66,12 @@ public final class HeldEye {
         prevX = holder.getX();
         prevY = holder.getY();
         prevZ = holder.getZ();
+    }
+
+    /** Whether {@code entity} holds a Googly Eye in either hand. */
+    public static boolean holdsGooglyEye(LivingEntity entity) {
+        return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
+                || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
     }
 
     /** Drop the eye and anything playing on it. */
@@ -101,10 +103,12 @@ public final class HeldEye {
         if (!settings.ambient()) {
             return;
         }
-        List<EyeBehavior> pool = new ArrayList<>(settings.pool());
-        pool.remove(EyeBehavior.CROSS_EYE);
-        if (!pool.isEmpty()) {
-            start(pool.get(rand.nextInt(pool.size())));
+        if (ambientSettings != settings) {
+            ambientSettings = settings;
+            ambientPool = settings.pool().stream().filter(behavior -> behavior != EyeBehavior.CROSS_EYE).toList();
+        }
+        if (!ambientPool.isEmpty()) {
+            start(ambientPool.get(rand.nextInt(ambientPool.size())));
         }
     }
 

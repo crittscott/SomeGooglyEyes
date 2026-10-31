@@ -111,10 +111,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.phys.EntityHitResult</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingHitInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingHitInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  double&nbsp;reach)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The nearest living-entity intersection before any blocking surface, or <code>null</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+ double&nbsp;reach)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>reach</code> blocks, or
  <code>null</code>.</div>
 </div>
@@ -158,6 +164,15 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="livingHitInCrosshair(net.minecraft.world.entity.player.Player,double)">
+<h3>livingHitInCrosshair</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.phys.EntityHitResult</span>&nbsp;<span class="element-name">livingHitInCrosshair</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
+ double&nbsp;reach)</span></div>
+<div class="block">The nearest living-entity intersection before any blocking surface, or <code>null</code>.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="livingInCrosshair(net.minecraft.world.entity.player.Player,double)">
 <h3>livingInCrosshair</h3>

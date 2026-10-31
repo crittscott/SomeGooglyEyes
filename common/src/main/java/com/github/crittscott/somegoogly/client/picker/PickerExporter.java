@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -95,8 +96,12 @@ public final class PickerExporter {
         int files = 0;
         // Types whose model couldn't be resolved (so synced tokens were written verbatim, not canonicalized).
         int verbatim = 0;
+        ResourceLocation currentId = null;
+        Path currentTarget = null;
         try {
             for (ResourceLocation id : ids) {
+                currentId = id;
+                currentTarget = EyeConfigReloadListener.eyeFile(root, id);
                 Optional<String> version = ConfigFile.exportVersion(id.getNamespace());
                 if (version.isEmpty()) {
                     continue; // namespace's mod isn't loaded; can't tag a version
@@ -115,10 +120,12 @@ public final class PickerExporter {
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }
-                file.writeJson(EyeConfigReloadListener.eyeFile(root, id));
+                file.writeJson(currentTarget);
                 files++;
             }
         } catch (IOException e) {
+            SomeGooglyCommon.LOGGER.error("Bulk eye export failed for {} at {} after {} files",
+                    currentId, currentTarget, files, e);
             return Component.translatable("somegoogly.command.picker.export_all_failed", e.getMessage());
         }
         Component note = verbatim > 0
@@ -131,5 +138,4 @@ public final class PickerExporter {
                         : "somegoogly.command.picker.export_all_many_result",
                 files, root, note);
     }
-
 }

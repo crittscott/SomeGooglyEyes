@@ -22,6 +22,24 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
+    /** Record a server-reported anger change; an unknown entity is ignored. */
+    public static void handleAnger(EyeAngerPacket packet) {
+        LivingEntity living = living(packet.entityId());
+        if (living != null) {
+            ClientEyeRuntime.setAngry(living, packet.angry());
+        }
+    }
+
+    /** Retain a behavior for a known entity, including one that has not rendered yet. */
+    public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
+        EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
+        LivingEntity living = living(packet.entityId());
+        if (behavior == null || living == null) {
+            return;
+        }
+        ClientEyeRuntime.setBehavior(living, behavior, packet.duration(), packet.seed(), packet.elapsed());
+    }
+
     /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
     public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
         ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled(), packet.behaviors());
@@ -38,27 +56,6 @@ public final class ClientNetworkHandler {
         GooglyTracker tracker = ClientEyeRuntime.peek(living);
         if (tracker != null) {
             tracker.overrides = packet.snapshot().properties();
-        }
-    }
-
-    /** Start a behavior on the entity's tracker; an unknown behavior, entity, or untracked entity is ignored. */
-    public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
-        EyeBehavior behavior = EyeBehavior.byId(packet.behaviorId());
-        LivingEntity living = living(packet.entityId());
-        if (behavior == null || living == null) {
-            return;
-        }
-        GooglyTracker tracker = ClientEyeRuntime.peek(living);
-        if (tracker != null) {
-            tracker.startBehavior(behavior, packet.duration(), packet.seed(), packet.elapsed());
-        }
-    }
-
-    /** Record a server-reported anger change; an unknown entity is ignored. */
-    public static void handleAnger(EyeAngerPacket packet) {
-        LivingEntity living = living(packet.entityId());
-        if (living != null) {
-            ClientEyeRuntime.setAngry(living, packet.angry());
         }
     }
 

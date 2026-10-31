@@ -61,12 +61,6 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         super(GSON, EYE_DIRECTORY);
     }
 
-    /** The file under data-pack root {@code packRoot} that holds {@code typeId}'s eye definition. */
-    public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
-        ResourceLocation file = EYE_FILES.idToFile(typeId);
-        return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());
-    }
-
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
@@ -166,8 +160,39 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         return next;
     }
 
+    /**
+     * Construct the file path for {@code typeId}'s eye definition. Does not check filesystem containment;
+     * callers accepting a client-authored identifier must first require membership in the entity registry.
+     */
+    public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
+        ResourceLocation file = EYE_FILES.idToFile(typeId);
+        return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());
+    }
+
     /** One namespace's version fallback during a reload; reloads count files per fallback and log each once. */
     private record Fallback(String namespace, String installed, String used, boolean downgrade) {
+    }
+
+    /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */
+    private static RuntimeConfigSet select(ResourceLocation entityId, List<VersionedEntry> entries,
+                                           Predicate<VersionedEntry> versionFilter) {
+        RuntimeConfigSet set = new RuntimeConfigSet();
+        for (VersionedEntry entry : entries) {
+            if (!versionFilter.test(entry)) {
+                continue;
+            }
+
+            String age = entry.age.trim().toLowerCase(Locale.ROOT);
+            RuntimeConfig runtime = toRuntime(entry);
+            switch (age) {
+                case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);
+                case AGE_BABY -> set.baby = choose(entityId, AGE_BABY, set.baby, runtime);
+                case AGE_ANY -> set.any = choose(entityId, AGE_ANY, set.any, runtime);
+                default -> SomeGooglyCommon.LOGGER.warn(
+                        "Ignoring eye config {} with invalid age '{}'", entityId, entry.age);
+            }
+        }
+        return set;
     }
 
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded,
@@ -204,28 +229,6 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         fallbacks.merge(new Fallback(entityId.getNamespace(), loaded, nearest, downgrade), 1, Integer::sum);
         // Same-version entries fall back as one generation, so adult/baby pairs stay together.
         return select(entityId, validEntries, entry -> nearest.equals(entry.version));
-    }
-
-    /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */
-    private static RuntimeConfigSet select(ResourceLocation entityId, List<VersionedEntry> entries,
-                                           Predicate<VersionedEntry> versionFilter) {
-        RuntimeConfigSet set = new RuntimeConfigSet();
-        for (VersionedEntry entry : entries) {
-            if (!versionFilter.test(entry)) {
-                continue;
-            }
-
-            String age = entry.age.trim().toLowerCase(Locale.ROOT);
-            RuntimeConfig runtime = toRuntime(entry);
-            switch (age) {
-                case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);
-                case AGE_BABY -> set.baby = choose(entityId, AGE_BABY, set.baby, runtime);
-                case AGE_ANY -> set.any = choose(entityId, AGE_ANY, set.any, runtime);
-                default -> SomeGooglyCommon.LOGGER.warn(
-                        "Ignoring eye config {} with invalid age '{}'", entityId, entry.age);
-            }
-        }
-        return set;
     }
 
     private static RuntimeConfig toRuntime(VersionedEntry entry) {

@@ -215,6 +215,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="isAngry(net.minecraft.world.entity.LivingEntity)">
+<h3>isAngry</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAngry</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
+<div class="block">Whether <code>mob</code>'s eyes should show anger the client can't see for itself: a neutral mob (iron
+ golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
+ to be angry at. Always <code>false</code> while <code>angryEyes</code> is off.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="onEntityEvent(net.minecraft.world.entity.Entity,byte)">
 <h3>onEntityEvent</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityEvent</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
@@ -248,17 +257,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="onSheared(net.minecraft.world.entity.LivingEntity)">
-<h3>onSheared</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onSheared</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;sheep)</span></div>
-<div class="block"><code>sheep</code> was sheared: play 'grow' (if enabled).</div>
-</section>
-</li>
-<li>
 <section class="detail" id="onPlayerHurt(net.minecraft.world.entity.LivingEntity)">
 <h3>onPlayerHurt</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onPlayerHurt</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
 <div class="block">A player damaged <code>mob</code>: roll the configured chance to play 'grow'.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="onSheared(net.minecraft.world.entity.LivingEntity)">
+<h3>onSheared</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onSheared</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;sheep)</span></div>
+<div class="block"><code>sheep</code> was sheared: play 'grow' (if enabled).</div>
 </section>
 </li>
 <li>
@@ -293,15 +302,6 @@ loadScripts(document, 'script');</script>
  unwatched-and-idle mobs, and roll a fresh ambient behavior when a watched eyed mob's cooldown
  expires. Walks only <code>ACTIVE</code> â€” see the class doc â€” so an eyeless tracked mob costs nothing
  per tick; a mob evicted here is dropped from <code>STATES</code> too, keeping the two in sync.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="isAngry(net.minecraft.world.entity.LivingEntity)">
-<h3>isAngry</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAngry</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
-<div class="block">Whether <code>mob</code>'s eyes should show anger the client can't see for itself: a neutral mob (iron
- golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
- to be angry at. Always <code>false</code> while <code>angryEyes</code> is off.</div>
 </section>
 </li>
 <li>
