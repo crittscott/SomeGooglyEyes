@@ -2,10 +2,10 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
-import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
-import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -38,9 +38,9 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  * path. Owning this on the server is what lets a remote client export.
  *
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
- * (which is also the whole path-traversal defense — a valid {@link ResourceLocation} can't contain
- * {@code ..} or escape characters, so a file path built from its components stays inside the pack),
- * the ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
+ * (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
+ * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without checking it.
+ * The ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
  * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
  * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
@@ -153,5 +153,4 @@ public final class PickerExportService {
             return null;
         });
     }
-
 }

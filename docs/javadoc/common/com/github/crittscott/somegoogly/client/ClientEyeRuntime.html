@@ -109,12 +109,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop render trackers while retaining server-reported anger for loaded entities.</div>
+<div class="block">Drop render simulations while retaining entity-lifetime reports.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearAnger()" class="member-name-link">clearAnger</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Forget every server-reported anger when leaving the client level.</div>
+<div class="block">Forget every server-reported anger; call on client disconnect.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clientTicks()" class="member-name-link">clientTicks</a>()</code></div>
@@ -150,19 +150,33 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
- net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" class="member-name-link">setBehavior</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
+ int&nbsp;duration,
+ long&nbsp;seed,
+ int&nbsp;elapsed)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retain the latest server expression even before this known entity has rendered.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+ net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
  replacing any built for another kind of head at the same position; <code>null</code> when the client's
  definitions give it nothing to draw.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
  physics of those rendered this tick or last when <code>simulate</code> is true.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tickBehaviors()" class="member-name-link">tickBehaviors</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Advance received expression time once per unpaused simulation tick, even for unrendered entities.</div>
 </div>
 </div>
 </div>
@@ -185,14 +199,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="clear()">
 <h3>clear</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
-<div class="block">Drop render trackers while retaining server-reported anger for loaded entities.</div>
+<div class="block">Drop render simulations while retaining entity-lifetime reports.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="clearAnger()">
 <h3>clearAnger</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearAnger</span>()</div>
-<div class="block">Forget every server-reported anger when leaving the client level.</div>
+<div class="block">Forget every server-reported anger; call on client disconnect.</div>
 </section>
 </li>
 <li>
@@ -243,6 +257,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)">
+<h3>setBehavior</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBehavior</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
+ int&nbsp;duration,
+ long&nbsp;seed,
+ int&nbsp;elapsed)</span></div>
+<div class="block">Retain the latest server expression even before this known entity has rendered.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)">
 <h3>skullEyes</h3>
 <div class="member-signature"><span class="annotations">@Nullable
@@ -261,6 +286,13 @@ loadScripts(document, 'script');</script>
  physics of those rendered this tick or last when <code>simulate</code> is true. The client lifecycle
  disables simulation while there is no level or the game is paused. A head's eyes are also dropped
  when its eye state has changed, to be rebuilt from the new state when it next renders.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tickBehaviors()">
+<h3>tickBehaviors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tickBehaviors</span>()</div>
+<div class="block">Advance received expression time once per unpaused simulation tick, even for unrendered entities.</div>
 </section>
 </li>
 </ul>

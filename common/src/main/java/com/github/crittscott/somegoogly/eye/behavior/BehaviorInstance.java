@@ -27,7 +27,7 @@ public final class BehaviorInstance {
      */
     @Nullable
     public final HeadInfo helper;
-    /** Total play length in ticks, normalized to at least one. */
+    /** Positive total play length in ticks, validated before playback. */
     public final int duration;
     /** Deterministic random source initialized from the server-supplied seed. */
     public final RandomSource rand;
@@ -48,7 +48,7 @@ public final class BehaviorInstance {
     public BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
         this.helper = helper;
-        this.duration = Math.max(1, duration);
+        this.duration = duration;
         this.rand = RandomSource.create(seed);
     }
 }

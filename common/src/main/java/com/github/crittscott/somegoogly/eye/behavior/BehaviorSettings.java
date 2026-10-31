@@ -30,12 +30,21 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
                                int growOnHitPercent, boolean swirlOnHeal, int swirlHealCooldownTicks,
                                Set<OngoingBehavior> ongoing) {
 
-    /** The server's built-in defaults; what a client holds before its first sync. */
+    /** The server's built-in defaults. */
     public static final BehaviorSettings DEFAULTS = new BehaviorSettings(
             ServerConfig.AMBIENT_BEHAVIORS.defaultValue(), ServerConfig.AMBIENT_MIN_TICKS.defaultValue(),
             ServerConfig.AMBIENT_MAX_TICKS.defaultValue(), ServerConfig.defaultBehaviors(),
             ServerConfig.GROW_ON_HIT_PERCENT.defaultValue(), ServerConfig.SWIRL_ON_HEAL.defaultValue(),
             ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.defaultValue(), switchedOn(true));
+
+    /** Inactive client state before server settings arrive and after disconnect. */
+    public static final BehaviorSettings NONE = new BehaviorSettings(false, DEFAULTS.minTicks(), DEFAULTS.maxTicks(),
+            List.of(), 0, false, DEFAULTS.swirlHealCooldownTicks(), Set.of());
+
+    /** Largest supported behavior block, reserving space even when the server configuration later changes. */
+    public static final BehaviorSettings WIRE_MAXIMUM = new BehaviorSettings(true, ServerConfig.TICKS_MAX,
+            ServerConfig.TICKS_MAX, List.of(EyeBehavior.values()), ServerConfig.PERCENT_MAX, true,
+            ServerConfig.TICKS_MAX, EnumSet.allOf(OngoingBehavior.class));
 
     public BehaviorSettings {
         pool = List.copyOf(pool);

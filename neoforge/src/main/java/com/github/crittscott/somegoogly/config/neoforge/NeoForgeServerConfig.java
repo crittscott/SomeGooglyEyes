@@ -40,7 +40,8 @@ public final class NeoForgeServerConfig {
     private static final ModConfigSpec.BooleanValue ALLOW_SPAWN_ALL;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_MODS;
     private static final ModConfigSpec.ConfigValue<List<? extends String>> SPAWN_EXCLUDED_ENTITIES;
-    private static final ModConfigSpec SPEC;
+    /** Native schema used to load and correct this loader's world server file. */
+    public static final ModConfigSpec SPEC;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -114,12 +115,6 @@ public final class NeoForgeServerConfig {
     private NeoForgeServerConfig() {
     }
 
-    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
-    public static void register(IEventBus modBus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
-        modBus.addListener(NeoForgeServerConfig::onConfigChanged);
-    }
-
     private static void onConfigChanged(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
@@ -152,10 +147,17 @@ public final class NeoForgeServerConfig {
         ServerConfig.ALLOW_SPAWN_ALL.set(ALLOW_SPAWN_ALL.get());
         ServerConfig.SPAWN_EXCLUDED_MODS.set(new ArrayList<>(SPAWN_EXCLUDED_MODS.get()));
         ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(new ArrayList<>(SPAWN_EXCLUDED_ENTITIES.get()));
+        ServerServices.onServerConfigApplied();
         // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
             server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
         }
+    }
+
+    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
+    public static void register(IEventBus modBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
+        modBus.addListener(NeoForgeServerConfig::onConfigChanged);
     }
 }

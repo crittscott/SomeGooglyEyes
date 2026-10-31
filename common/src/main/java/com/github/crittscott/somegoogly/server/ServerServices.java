@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.server;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -19,8 +20,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
@@ -28,6 +29,9 @@ import java.util.Map;
  * {@link ServerBehaviorScheduler}).
  */
 public final class ServerServices {
+
+    @Nullable
+    private static Boolean loggedGooglyEyesEnabled;
 
     /**
      * The definitions connected clients last received, with the master switch and behavior settings below, or
@@ -39,6 +43,43 @@ public final class ServerServices {
     private static boolean sentGooglyEyesEnabled;
 
     private ServerServices() {
+    }
+
+    private static void applyGooglyDecision(LivingEntity living) {
+        boolean hasGooglyEyes = false;
+        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        RandomSource random = living.getRandom();
+
+        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()
+                && ServerEyeConfigs.canEverWearEyes(living)) {
+            int percent = ServerConfig.percentFor(entityType);
+            hasGooglyEyes = random.nextFloat() < (percent / (float) ServerConfig.PERCENT_MAX);
+        }
+
+        EyeState.initialize(living, hasGooglyEyes, random.nextFloat());
+    }
+
+    /**
+     * Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
+     * when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
+     * apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.
+     */
+    public static void broadcastEyeConfigsIfChanged(MinecraftServer server) {
+        if (sentEyeConfigs == ServerEyeConfigs.all()
+                && sentGooglyEyesEnabled == ServerConfig.GOOGLY_EYES_ENABLED.get()
+                && sentBehaviors.equals(BehaviorSettings.fromConfig())) {
+            return;
+        }
+        recordSentEyeConfigs();
+        EyeConfigSyncPacket packet = eyeConfigPacket();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            Networking.sendToPlayer(player, packet);
+        }
+    }
+
+    private static EyeConfigSyncPacket eyeConfigPacket() {
+        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded(),
+                ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
     }
 
     /**
@@ -65,12 +106,22 @@ public final class ServerServices {
         PickerGate.onPlayerLeft(player.getUUID());
     }
 
+    /** Record the applied world switch once at startup and whenever its effective value changes. */
+    public static void onServerConfigApplied() {
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        if (loggedGooglyEyesEnabled == null || loggedGooglyEyesEnabled != enabled) {
+            SomeGooglyCommon.LOGGER.info("Server configuration applied (googlyEyesEnabled={})", enabled);
+            loggedGooglyEyesEnabled = enabled;
+        }
+    }
+
     /** Clear every server-lifetime service before the server instance is discarded. */
     public static void onServerStopping(MinecraftServer server) {
         ServerBehaviorScheduler.clear();
         PickerFreezeService.onServerStopping(server);
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
+        loggedGooglyEyesEnabled = null;
         sentEyeConfigs = null;
     }
 
@@ -83,6 +134,12 @@ public final class ServerServices {
         ServerBehaviorScheduler.onStartTracking(living, player);
     }
 
+    private static void recordSentEyeConfigs() {
+        sentEyeConfigs = ServerEyeConfigs.all();
+        sentGooglyEyesEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        sentBehaviors = BehaviorSettings.fromConfig();
+    }
+
     /** Send the current resolved eye definitions, master switch, and behavior settings to a joining player. */
     public static void syncEyeConfigs(ServerPlayer player) {
         if (sentEyeConfigs == null) {
@@ -90,48 +147,5 @@ public final class ServerServices {
             recordSentEyeConfigs();
         }
         Networking.sendToPlayer(player, eyeConfigPacket());
-    }
-
-    /**
-     * Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
-     * when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
-     * apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.
-     */
-    public static void broadcastEyeConfigsIfChanged(MinecraftServer server) {
-        if (sentEyeConfigs == ServerEyeConfigs.all()
-                && sentGooglyEyesEnabled == ServerConfig.GOOGLY_EYES_ENABLED.get()
-                && sentBehaviors.equals(BehaviorSettings.fromConfig())) {
-            return;
-        }
-        recordSentEyeConfigs();
-        EyeConfigSyncPacket packet = eyeConfigPacket();
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            Networking.sendToPlayer(player, packet);
-        }
-    }
-
-    private static void recordSentEyeConfigs() {
-        sentEyeConfigs = ServerEyeConfigs.all();
-        sentGooglyEyesEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        sentBehaviors = BehaviorSettings.fromConfig();
-    }
-
-    private static EyeConfigSyncPacket eyeConfigPacket() {
-        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded(),
-                ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
-    }
-
-    private static void applyGooglyDecision(LivingEntity living) {
-        boolean hasGooglyEyes = false;
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        RandomSource random = living.getRandom();
-
-        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()
-                && ServerEyeConfigs.canEverWearEyes(living)) {
-            int percent = ServerConfig.percentFor(entityType);
-            hasGooglyEyes = random.nextFloat() < (percent / (float) ServerConfig.PERCENT_MAX);
-        }
-
-        EyeState.initialize(living, hasGooglyEyes, random.nextFloat());
     }
 }

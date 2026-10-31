@@ -8,10 +8,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 /**
  * Server-side authorization and throttling for client-driven picker operations — the two halves of the
@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 public final class PickerGate {
 
-    /** Ticks between {@code /sg spawnall} runs per player. */
+    /** Server-wide interval in ticks between {@code /sg spawnall} runs. */
     public static final int SPAWN_ALL_COOLDOWN_TICKS = 200;
 
     /** Ticks between successful exports per player (10 seconds; failed validation doesn't arm it). */
@@ -48,16 +48,6 @@ public final class PickerGate {
     private static int lastSpawnAllTick = Integer.MIN_VALUE;
 
     private PickerGate() {
-    }
-
-    /** Whether {@code player} may use the picker at all: creative mode and permission level 2. */
-    public static boolean mayUsePicker(Player player) {
-        return player.isCreative() && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
-    }
-
-    /** Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not rate-limited this tick. */
-    public static boolean authorized(ServerPlayer sender) {
-        return mayUsePicker(sender) && allowRequest(sender);
     }
 
     /** Permit at most one picker request per player in one server tick. */
@@ -75,6 +65,36 @@ public final class PickerGate {
         }
         lastSpawnAllTick = now;
         return true;
+    }
+
+    /** Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not rate-limited this tick. */
+    public static boolean authorized(ServerPlayer sender) {
+        return mayUsePicker(sender) && allowRequest(sender);
+    }
+
+    /** Arm the success cooldown after an export was written. */
+    public static void exportSucceeded(MinecraftServer server, UUID playerId) {
+        LAST_EXPORT_TICK.put(playerId, server.getTickCount());
+    }
+
+    /** Whether {@code player} may use the picker at all: creative mode and permission level 2. */
+    public static boolean mayUsePicker(Player player) {
+        return player.isCreative() && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+    }
+
+    /** Forget a player's request and export throttles; called from {@code ServerServices.onPlayerLeft}. */
+    public static void onPlayerLeft(UUID playerId) {
+        LAST_REQUEST_TICK.remove(playerId);
+        LAST_EXPORT_ATTEMPT_TICK.remove(playerId);
+        LAST_EXPORT_TICK.remove(playerId);
+    }
+
+    /** Forget every throttle, including the spawn-all cooldown; called from {@code ServerServices.onServerStopping}. */
+    public static void onServerStopping() {
+        LAST_REQUEST_TICK.clear();
+        LAST_EXPORT_ATTEMPT_TICK.clear();
+        LAST_EXPORT_TICK.clear();
+        lastSpawnAllTick = Integer.MIN_VALUE;
     }
 
     /**
@@ -97,25 +117,5 @@ public final class PickerGate {
                     : "somegoogly.command.picker.export_cooldown_many_seconds", seconds);
         }
         return null;
-    }
-
-    /** Arm the success cooldown after an export was written. */
-    public static void exportSucceeded(MinecraftServer server, UUID playerId) {
-        LAST_EXPORT_TICK.put(playerId, server.getTickCount());
-    }
-
-    /** Forget a player's request and export throttles; called from {@code ServerServices.onPlayerLeft}. */
-    public static void onPlayerLeft(UUID playerId) {
-        LAST_REQUEST_TICK.remove(playerId);
-        LAST_EXPORT_ATTEMPT_TICK.remove(playerId);
-        LAST_EXPORT_TICK.remove(playerId);
-    }
-
-    /** Forget every throttle, including the spawn-all cooldown; called from {@code ServerServices.onServerStopping}. */
-    public static void onServerStopping() {
-        LAST_REQUEST_TICK.clear();
-        LAST_EXPORT_ATTEMPT_TICK.clear();
-        LAST_EXPORT_TICK.clear();
-        lastSpawnAllTick = Integer.MIN_VALUE;
     }
 }

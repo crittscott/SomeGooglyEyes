@@ -209,6 +209,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="get(net.minecraft.resources.ResourceLocation,boolean)">
+<h3>get</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ boolean&nbsp;baby)</span></div>
+<div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="googlyEyesEnabled()">
 <h3>googlyEyesEnabled</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">googlyEyesEnabled</span>()</div>
@@ -216,12 +225,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="get(net.minecraft.resources.ResourceLocation,boolean)">
-<h3>get</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
- boolean&nbsp;baby)</span></div>
-<div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
+<section class="detail" id="replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
+<h3>replaceAll</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
+ boolean&nbsp;googlyEyesEnabled,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
+<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
+ rendering view. The supplied model values become store-owned and must not be mutated afterward.</div>
 </section>
 </li>
 <li>
@@ -249,16 +259,6 @@ loadScripts(document, 'script');</script>
  float&nbsp;variantRoll)</span></div>
 <div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows
  (<a href="../eye/state/SkullEyeState.html#variantIndex(net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
-<h3>replaceAll</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
-<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
- rendering view. The supplied model values become store-owned and must not be mutated afterward.</div>
 </section>
 </li>
 </ul>

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -31,42 +32,14 @@ public final class NeoForgeServerEvents {
     private NeoForgeServerEvents() {
     }
 
-    /** Subscribe the server listeners to the game bus; called once from the mod constructor. */
-    public static void register(IEventBus gameBus) {
-        gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
-        gameBus.addListener(EventPriority.LOWEST,
-                (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
-        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickBlock);
-        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
-        // Late enough to see the heads other mods add to the drops, such as the Heads mod's.
-        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingDrops);
-        gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
-        gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);
-        gameBus.addListener(NeoForgeServerEvents::onDatapackSync);
-        gameBus.addListener(NeoForgeServerEvents::onServerStopping);
-        gameBus.addListener(NeoForgeServerEvents::onServerTick);
-        gameBus.addListener(NeoForgeServerEvents::onStartTracking);
-        gameBus.addListener(NeoForgeServerEvents::onStopTracking);
-        gameBus.addListener(NeoForgeServerEvents::onLivingDamage);
-        gameBus.addListener(NeoForgeServerEvents::onLivingHeal);
-        gameBus.addListener(NeoForgeServerEvents::onTrade);
-        gameBus.addListener(NeoForgeServerEvents::onPlayerClone);
-        gameBus.addListener(NeoForgeServerEvents::onLivingConversion);
-    }
-
-    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
-    private static void onPlayerClone(PlayerEvent.Clone event) {
-        if (!event.isWasDeath()) {
-            EyeState.copy(event.getOriginal(), event.getEntity());
+    /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
+    private static void onDatapackSync(OnDatapackSyncEvent event) {
+        ServerPlayer player = event.getPlayer();
+        if (player != null) {
+            ServerServices.syncEyeConfigs(player);
+        } else {
+            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
         }
-    }
-
-    private static void onLivingConversion(LivingConversionEvent.Post event) {
-        EyeState.copy(event.getEntity(), event.getOutcome());
-    }
-
-    private static void onRegisterCommands(RegisterCommandsEvent event) {
-        GooglyServerCommands.register(event.getDispatcher(), event.getBuildContext());
     }
 
     /**
@@ -85,21 +58,19 @@ public final class NeoForgeServerEvents {
         }
     }
 
-    /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
-    private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        InteractionResult result = EyeItemService.useOnSkull(
-                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
-        if (result != InteractionResult.PASS) {
-            event.setCanceled(true);
-            event.setCancellationResult(result);
+    private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        if (!event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
+            ServerServices.onLivingEntityLoaded(living);
         }
     }
 
-    private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
-        if (result != InteractionResult.PASS) {
-            event.setCanceled(true);
-            event.setCancellationResult(result);
+    private static void onLivingConversion(LivingConversionEvent.Post event) {
+        EyeState.copy(event.getEntity(), event.getOutcome());
+    }
+
+    private static void onLivingDamage(LivingDamageEvent.Post event) {
+        if (event.getSource().getEntity() instanceof Player) {
+            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
         }
     }
 
@@ -116,9 +87,17 @@ public final class NeoForgeServerEvents {
         });
     }
 
-    private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
-            ServerServices.onLivingEntityLoaded(living);
+    private static void onLivingHeal(LivingHealEvent event) {
+        LivingEntity living = event.getEntity();
+        if (!living.level().isClientSide()) {
+            ServerBehaviorScheduler.onHealed(living);
+        }
+    }
+
+    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) {
+            EyeState.copy(event.getOriginal(), event.getEntity());
         }
     }
 
@@ -126,13 +105,28 @@ public final class NeoForgeServerEvents {
         ServerServices.onPlayerLeft((ServerPlayer) event.getEntity());
     }
 
-    /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
-    private static void onDatapackSync(OnDatapackSyncEvent event) {
-        ServerPlayer player = event.getPlayer();
-        if (player != null) {
-            ServerServices.syncEyeConfigs(player);
-        } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+    private static void onRegisterCommands(RegisterCommandsEvent event) {
+        GooglyServerCommands.register(event.getDispatcher(), event.getBuildContext());
+    }
+
+    /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
+    private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseItem() == TriState.FALSE) {
+            return;
+        }
+        InteractionResult result = EyeItemService.useOnSkull(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
+    private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 
@@ -156,20 +150,30 @@ public final class NeoForgeServerEvents {
         }
     }
 
-    private static void onLivingDamage(LivingDamageEvent.Post event) {
-        if (event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
-        }
-    }
-
-    private static void onLivingHeal(LivingHealEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide()) {
-            ServerBehaviorScheduler.onHealed(living);
-        }
-    }
-
     private static void onTrade(TradeWithVillagerEvent event) {
         ServerBehaviorScheduler.onTrade(event.getAbstractVillager());
+    }
+
+    /** Subscribe the server listeners to the game bus; called once from the mod constructor. */
+    public static void register(IEventBus gameBus) {
+        gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
+        gameBus.addListener(EventPriority.LOWEST,
+                (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickBlock);
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
+        // Late enough to see the heads other mods add to the drops, such as the Heads mod's.
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingDrops);
+        gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
+        gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);
+        gameBus.addListener(NeoForgeServerEvents::onDatapackSync);
+        gameBus.addListener(NeoForgeServerEvents::onServerStopping);
+        gameBus.addListener(NeoForgeServerEvents::onServerTick);
+        gameBus.addListener(NeoForgeServerEvents::onStartTracking);
+        gameBus.addListener(NeoForgeServerEvents::onStopTracking);
+        gameBus.addListener(NeoForgeServerEvents::onLivingDamage);
+        gameBus.addListener(NeoForgeServerEvents::onLivingHeal);
+        gameBus.addListener(NeoForgeServerEvents::onTrade);
+        gameBus.addListener(NeoForgeServerEvents::onPlayerClone);
+        gameBus.addListener(NeoForgeServerEvents::onLivingConversion);
     }
 }

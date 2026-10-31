@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -20,14 +21,14 @@ import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
 import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -96,115 +97,6 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
-     * "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
-     * elapses. In game: as a creative operator, look at an eyed mob and run {@code /sg admin behavior swirl},
-     * then {@code /sg admin behavior blink} while it swirls; the blink does not play. Run it again after the
-     * swirl ends and it does.
-     */
-    public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper, ServerPlayer player) {
-        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
-        ServerBehaviorScheduler.clear();
-        try {
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-            EyeState.setHasEyes(cow, true);
-            ServerBehaviorScheduler.onStartTracking(cow, player);
-
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
-                    "the first trigger starts");
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
-                    "a second trigger is dropped while one is playing");
-            advance(10);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
-                    "once the active behavior elapses a new trigger starts");
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-        }
-        helper.succeed();
-    }
-
-    /**
-     * A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
-     * is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
-     * and heal it again within {@code swirlHealCooldownTicks} (default 200) after the first heal, and they do
-     * not.
-     */
-    public static void healSwirlIsRateLimited(GameTestHelper helper, ServerPlayer player) {
-        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
-        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
-        int cooldown = ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
-        ServerBehaviorScheduler.clear();
-        try {
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            ServerConfig.SWIRL_ON_HEAL.set(true);
-            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(1000);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-            EyeState.setHasEyes(cow, true);
-            ServerBehaviorScheduler.onStartTracking(cow, player);
-
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
-                    "the first heal starts a swirl");
-
-            advance(EyeBehavior.SWIRL.defaultDuration());
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
-                    "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
-            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
-        }
-        helper.succeed();
-    }
-
-    /**
-     * {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective
-     * triggers. In game: set {@code swirlOnHeal = false}, {@code swirlOnTrade = false}, and
-     * {@code growOnHitPercent = 0} in the server config and apply it; healing an eyed cow, trading with an
-     * eyed villager, and hitting either never changes their eyes.
-     */
-    public static void gameEventTriggersRespectConfig(GameTestHelper helper, ServerPlayer player) {
-        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
-        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
-        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
-        int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
-        ServerBehaviorScheduler.clear();
-        try {
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-            EyeState.setHasEyes(cow, true);
-            ServerBehaviorScheduler.onStartTracking(cow, player);
-
-            ServerConfig.SWIRL_ON_HEAL.set(false);
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    "swirlOnHeal=false suppresses the heal swirl");
-            advance(3);
-
-            ServerConfig.SWIRL_ON_TRADE.set(false);
-            ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    "swirlOnTrade=false suppresses the trade swirl");
-            advance(3);
-
-            ServerConfig.GROW_ON_HIT_PERCENT.set(0);
-            ServerBehaviorScheduler.onPlayerHurt(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
-                    "growOnHitPercent=0 never rolls the hurt grow");
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
-            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
-            ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
-        }
-        helper.succeed();
-    }
-
-    /**
      * The vanilla affection events play love, through the server's entity-event broadcast, and only while
      * {@code loveOnAffection} is on; other entity events play nothing. In game: feed wheat to an eyed cow,
      * watch an eyed iron golem offer a villager a flower, breed eyed villagers, or tame an eyed ocelot with
@@ -251,32 +143,6 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
         }
-        helper.succeed();
-    }
-
-    /**
-     * A goat lowering its head to ram squints, still plays behaviors while it does, and opens its eyes again
-     * once the ram ends and its head comes back up. Drives the client-side {@link GooglyTracker} directly
-     * against a server goat given the ram entity events by hand, since the squint is derived from the head
-     * position vanilla sets from them rather than sent. In game: stand in front of an eyed goat until it
-     * lowers its head and charges; its eyes narrow for the charge and open again afterwards.
-     */
-    public static void rammingGoatSquints(GameTestHelper helper) {
-        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
-        GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false, ON);
-        helper.assertTrue(allSquash(tracker, 1F), "a calm goat's eyes are open");
-
-        goat.handleEntityEvent(EntityEvent.START_RAM);
-        stepGoat(goat, tracker, 1);
-        helper.assertTrue(!allSquash(tracker, 1F) && !allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y),
-                "lowering the head eases into the squint rather than snapping");
-        stepGoat(goat, tracker, GooglyTracker.SLEEP_EASE_TICKS);
-        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), "a ramming goat squints");
-        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0), "a ramming goat still plays a behavior");
-
-        goat.handleEntityEvent(EntityEvent.END_RAM);
-        stepGoat(goat, tracker, RAM_HEAD_RISE_TICKS + GooglyTracker.SLEEP_EASE_TICKS + 1);
-        helper.assertTrue(allSquash(tracker, 1F), "once the ram ends the eyes open again");
         helper.succeed();
     }
 
@@ -372,6 +238,406 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
+    private static boolean allIrisTint(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.irisTintAmount - expected) > TINT_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allLid(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.lid - expected) > SQUASH_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allPrevIrisTint(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.prevIrisTintAmount - expected) > TINT_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allPrevLid(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.prevLid - expected) > SQUASH_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allSquash(GooglyTracker tracker, float expected) {
+        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+            for (GooglyTracker.EyeInfo info : head) {
+                if (Math.abs(info.squashY - expected) > SQUASH_TOLERANCE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Server-reported anger survives renderer resets but ends with the entity or client level. In game:
+     * provoke an eyed golem, leave tracking distance, let it calm, and return; its pupils are calm.
+     * Repeat while another player stays near it, then change dimensions. Resource reload while the
+     * angry golem remains loaded must keep its red pupils. This test drives the runtime operations;
+     * real packet lookup and loader unload delivery require the connected-client reproduction.
+     */
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        zombie.setAggressive(false);
+        HeadInfo info = headInfo(helper, zombie);
+        ClientEyeRuntime.onLevelChanged();
+        BehaviorSettings originalBehaviors = ClientEyeConfigs.behaviors();
+        ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), ON);
+        try {
+            ClientEyeRuntime.setAngry(zombie, true);
+            GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(initial.angry && allIrisTint(initial, 1F),
+                    "anger received before first render initializes red pupils");
+            ClientEyeRuntime.setAngry(zombie, false);
+            helper.assertTrue(!initial.angry, "a false report updates the existing tracker");
+            stepTracker(initial, GooglyTracker.ANGER_EASE_TICKS + 1);
+            helper.assertTrue(allIrisTint(initial, 0F), "pupils return to calm after a false report");
+            ClientEyeRuntime.setAngry(zombie, true);
+            ClientEyeRuntime.clear();
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).angry,
+                    "render tracker eviction must retain anger for a loaded entity");
+            ClientEyeRuntime.onEntityRemoved(zombie);
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "entity removal deletes its tracker");
+            Zombie replacement = EntityType.ZOMBIE.create(helper.getLevel());
+            replacement.setId(zombie.getId());
+            GooglyTracker calm = ClientEyeRuntime.get(replacement, info);
+            helper.assertTrue(!calm.angry && allIrisTint(calm, 0F),
+                    "a replacement entity with the same id must not inherit unloaded anger");
+            ClientEyeRuntime.setAngry(replacement, true);
+            ClientEyeRuntime.onLevelChanged();
+            helper.assertTrue(ClientEyeRuntime.peek(replacement) == null
+                            && !ClientEyeRuntime.get(replacement, info).angry,
+                    "client world replacement drops both trackers and anger");
+        } finally {
+            ClientEyeRuntime.onLevelChanged();
+            ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * An attacking mob's pupils ease to red, stay red under a behavior, and ease back when it stops; the
+     * server's anger report does the same, and a tracker built for a mob already reported angry starts red.
+     * Drives the client-side {@link GooglyTracker} directly against a server zombie. In game: let an eyed
+     * zombie chase you and its pupils turn red; outrun it until it gives up and they fade back.
+     */
+    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        HeadInfo headInfo = headInfo(helper, zombie);
+
+        GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false, ON);
+        helper.assertTrue(allIrisTint(tracker, 0F), "a calm mob's pupils keep their color");
+
+        zombie.setAggressive(true);
+        tracker.update(ON);
+        helper.assertTrue(!allIrisTint(tracker, 0F) && !allIrisTint(tracker, 1F),
+                "turning aggressive eases toward red rather than snapping");
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS);
+        helper.assertTrue(allIrisTint(tracker, 1F), "an aggressive mob's pupils are red");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, 5, 1L, 0),
+                "anger doesn't block a behavior");
+        tracker.update(ON);
+        helper.assertTrue(allIrisTint(tracker, 1F), "the pupils stay red under a behavior");
+
+        zombie.setAggressive(false);
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
+        helper.assertTrue(allIrisTint(tracker, 0F), "calming down eases the red away");
+
+        tracker.angry = true;
+        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
+        helper.assertTrue(allIrisTint(tracker, 1F), "server-reported anger turns the pupils red");
+
+        GooglyTracker joined = new GooglyTracker(zombie, headInfo, true, ON);
+        helper.assertTrue(allIrisTint(joined, 1F) && allPrevIrisTint(joined, 1F),
+                "a tracker built for a mob already reported angry starts red");
+        helper.succeed();
+    }
+
+    /** A mob of {@code type} holding {@code weapon} in its main hand, with the given handedness. */
+    private static <T extends Mob> T armed(GameTestHelper helper, EntityType<T> type, ItemStack weapon,
+                                           boolean leftHanded, BlockPos pos) {
+        T mob = helper.spawnWithNoFreeWill(type, pos);
+        mob.setLeftHanded(leftHanded);
+        mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+        return mob;
+    }
+
+    /**
+     * A creepy enderman's pupils swell and shrink around their size, keep pulsing under a behavior, and settle
+     * when it calms down. Drives the client-side {@link GooglyTracker} directly against a server enderman made
+     * creepy by giving it a target. In game: look an eyed enderman in the face; while it screams its pupils
+     * throb, and they settle once it loses interest.
+     */
+    public static void creepyEndermanPulses(GameTestHelper helper) {
+        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(1, 2, 1));
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
+        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
+        helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
+                "a calm enderman's pupils hold their size");
+
+        enderMan.setTarget(cow);
+        helper.assertTrue(enderMan.isCreepy(), "an enderman with a target is creepy");
+        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS);
+        float[] range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
+        float amplitude = GooglyTracker.CREEPY_PULSE_AMPLITUDE;
+        helper.assertTrue(range[0] < 1F - amplitude / 2 && range[1] > 1F + amplitude / 2,
+                "a creepy enderman's pupils swell and shrink");
+        helper.assertTrue(range[0] >= 1F - amplitude - TINT_TOLERANCE
+                        && range[1] <= 1F + amplitude + TINT_TOLERANCE,
+                "the pulse stays within its amplitude");
+
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, PULSE_BEHAVIOR_TICKS, 1L, 0),
+                "a creepy enderman still plays a behavior");
+        range = irisScaleRange(tracker, PULSE_BEHAVIOR_TICKS - 1);
+        helper.assertTrue(range[1] - range[0] > amplitude / 2, "the pulse keeps going under the behavior");
+
+        enderMan.setTarget(null);
+        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS + 1);
+        range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
+        helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
+                "once it calms down the pupils settle back to their size");
+        helper.succeed();
+    }
+
+    /**
+     * Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+     * ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
+     * back on; no hidden expression is waiting, and later milking starts a new grow normally.
+     */
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper, ServerPlayer player) {
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
+        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
+        boolean milk = ServerConfig.GROW_ON_MILK.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            ServerConfig.GROW_ON_MILK.set(true);
+            ServerConfig.AMBIENT_BEHAVIORS.set(true);
+            ServerConfig.AMBIENT_MIN_TICKS.set(ServerConfig.TICKS_MIN);
+            ServerConfig.AMBIENT_MAX_TICKS.set(ServerConfig.TICKS_MIN);
+            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
+            ServerBehaviorScheduler.onMilked(cow);
+            advance(ServerConfig.TICKS_MIN + 1);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+                    "neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable");
+            advance(3);
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            ServerBehaviorScheduler.onMilked(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+                    "re-enabling resumes reactions using retained watcher bookkeeping");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.AMBIENT_MIN_TICKS.set(min);
+            ServerConfig.AMBIENT_MAX_TICKS.set(max);
+            ServerConfig.GROW_ON_MILK.set(milk);
+        }
+        helper.succeed();
+    }
+
+    private static <T extends Mob> T eyedTrackedMob(GameTestHelper helper, ServerPlayer player,
+                                                    EntityType<T> type, BlockPos pos) {
+        T mob = helper.spawnWithNoFreeWill(type, pos);
+        EyeState.setHasEyes(mob, true);
+        ServerBehaviorScheduler.onStartTracking(mob, player);
+        return mob;
+    }
+
+    /**
+     * A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
+     * since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
+     * mobs.
+     */
+    public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            ServerConfig.SWIRL_ON_TRADE.set(true);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+            EyeState.setHasEyes(cow, false);
+
+            ServerBehaviorScheduler.onHealed(cow);
+            ServerBehaviorScheduler.onTrade(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
+                    "an eyeless mob's game events never start a behavior even while it is tracked");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * {@code swirlOnHeal}, {@code swirlOnTrade}, and {@code growOnHitPercent} gate their respective
+     * triggers. In game: set {@code swirlOnHeal = false}, {@code swirlOnTrade = false}, and
+     * {@code growOnHitPercent = 0} in the server config and apply it; healing an eyed cow, trading with an
+     * eyed villager, and hitting either never changes their eyes.
+     */
+    public static void gameEventTriggersRespectConfig(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
+        int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            ServerConfig.SWIRL_ON_HEAL.set(false);
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+                    "swirlOnHeal=false suppresses the heal swirl");
+            advance(3);
+
+            ServerConfig.SWIRL_ON_TRADE.set(false);
+            ServerBehaviorScheduler.onTrade(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+                    "swirlOnTrade=false suppresses the trade swirl");
+            advance(3);
+
+            ServerConfig.GROW_ON_HIT_PERCENT.set(0);
+            ServerBehaviorScheduler.onPlayerHurt(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
+                    "growOnHitPercent=0 never rolls the hurt grow");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
+        }
+        helper.succeed();
+    }
+
+    private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        helper.assertTrue(headInfo != null, type + " has an eye config");
+        return headInfo;
+    }
+
+    /**
+     * A heal swirl is rate-limited per mob: a second heal inside the cooldown is dropped even while the mob
+     * is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
+     * and heal it again within {@code swirlHealCooldownTicks} (default 200) after the first heal, and they do
+     * not.
+     */
+    public static void healSwirlIsRateLimited(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        int cooldown = ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(1000);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
+                    "the first heal starts a swirl");
+
+            advance(EyeBehavior.SWIRL.defaultDuration());
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
+                    "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
+        }
+        helper.succeed();
+    }
+
+    /** Steps the tracker; returns the smallest and largest pupil size multiplier seen on any eye. */
+    private static float[] irisScaleRange(GooglyTracker tracker, int ticks) {
+        return irisScaleRange(tracker, ticks, ON);
+    }
+
+    private static float[] irisScaleRange(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
+        float min = Float.MAX_VALUE;
+        float max = -Float.MAX_VALUE;
+        for (int t = 0; t < ticks; t++) {
+            tracker.update(settings);
+            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+                for (GooglyTracker.EyeInfo info : head) {
+                    min = Math.min(min, info.irisScaleMul);
+                    max = Math.max(max, info.irisScaleMul);
+                }
+            }
+        }
+        return new float[]{min, max};
+    }
+
+    /** Ticks {@code creeper} and its tracker together; returns the mean per-eye pupil step per tick. */
+    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks) {
+        return meanPupilStep(creeper, tracker, ticks, ON);
+    }
+
+    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
+        float total = 0F;
+        int samples = 0;
+        for (int t = 0; t < ticks; t++) {
+            creeper.tick();
+            tracker.update(settings);
+            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
+                for (GooglyTracker.EyeInfo info : head) {
+                    float dx = info.deltaX - info.prevDeltaX;
+                    float dy = info.deltaY - info.prevDeltaY;
+                    total += (float) Math.sqrt(dx * dx + dy * dy);
+                    samples++;
+                }
+            }
+        }
+        return total / samples;
+    }
+
+    /** Use an empty bucket on {@code mob} the way a player's right-click does. */
+    private static void milk(ServerPlayer player, Mob mob) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+        mob.interact(player, InteractionHand.MAIN_HAND);
+    }
+
     /**
      * Milking a cow, mooshroom, or goat with a bucket plays grow, and only while {@code growOnMilk} is on.
      * In game: use an empty bucket on an eyed cow, mooshroom, or goat, and its eyes bulge as the bucket
@@ -411,6 +677,153 @@ public final class BehaviorSchedulerGameTestsLogic {
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
         }
         helper.succeed();
+    }
+
+    /**
+     * "One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
+     * elapses. In game: as a creative operator, look at an eyed mob and run {@code /sg admin behavior swirl},
+     * then {@code /sg admin behavior blink} while it swirls; the blink does not play. Run it again after the
+     * swirl ends and it does.
+     */
+    public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
+                    "the first trigger starts");
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
+                    "a second trigger is dropped while one is playing");
+            advance(10);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
+                    "once the active behavior elapses a new trigger starts");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+        }
+        helper.succeed();
+    }
+
+    /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */
+    private static Player playerHolding(GameTestHelper helper, ItemStack weapon, InteractionHand hand,
+                                        HumanoidArm mainArm) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setMainArm(mainArm);
+        player.setItemInHand(hand, weapon);
+        return player;
+    }
+
+    /**
+     * A goat lowering its head to ram squints, still plays behaviors while it does, and opens its eyes again
+     * once the ram ends and its head comes back up. Drives the client-side {@link GooglyTracker} directly
+     * against a server goat given the ram entity events by hand, since the squint is derived from the head
+     * position vanilla sets from them rather than sent. In game: stand in front of an eyed goat until it
+     * lowers its head and charges; its eyes narrow for the charge and open again afterwards.
+     */
+    public static void rammingGoatSquints(GameTestHelper helper) {
+        Goat goat = helper.spawnWithNoFreeWill(EntityType.GOAT, new BlockPos(2, 2, 2));
+        GooglyTracker tracker = new GooglyTracker(goat, headInfo(helper, goat), false, ON);
+        helper.assertTrue(allSquash(tracker, 1F), "a calm goat's eyes are open");
+
+        goat.handleEntityEvent(EntityEvent.START_RAM);
+        stepGoat(goat, tracker, 1);
+        helper.assertTrue(!allSquash(tracker, 1F) && !allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y),
+                "lowering the head eases into the squint rather than snapping");
+        stepGoat(goat, tracker, GooglyTracker.SLEEP_EASE_TICKS);
+        helper.assertTrue(allSquash(tracker, GooglyTracker.SLEEP_SQUASH_Y), "a ramming goat squints");
+        helper.assertTrue(tracker.startBehavior(EyeBehavior.GROW, 5, 1L, 0), "a ramming goat still plays a behavior");
+
+        goat.handleEntityEvent(EntityEvent.END_RAM);
+        stepGoat(goat, tracker, RAM_HEAD_RISE_TICKS + GooglyTracker.SLEEP_EASE_TICKS + 1);
+        helper.assertTrue(allSquash(tracker, 1F), "once the ram ends the eyes open again");
+        helper.succeed();
+    }
+
+    /**
+     * A received expression survives first-render delay and render-cache replacement and expires while
+     * offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
+     * second client mid-expression; both see the same progress. Look away and back, and it has not paused.
+     */
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        HeadInfo info = headInfo(helper, zombie);
+        try {
+            ClientEyeRuntime.onLevelChanged();
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 12, 42L, 3);
+            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "receipt must not create a drawing cache");
+            ClientEyeRuntime.tickBehaviors();
+            GooglyTracker first = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(first.active != null && first.active.age == 4,
+                    "first render catches up a previously received expression");
+            ClientEyeRuntime.clear();
+            ClientEyeRuntime.tickBehaviors();
+            GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
+            helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
+                    "replacing a render tracker preserves expression progress");
+            ClientEyeRuntime.tick(false);
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
+                    "paused client ticks do not advance expression time");
+            ClientEyeRuntime.clear();
+            for (int tick = 0; tick < 7; tick++) {
+                ClientEyeRuntime.tickBehaviors();
+            }
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "unrendered expressions expire without a tracker");
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.onEntityRemoved(zombie);
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "entity unloading removes received expression state");
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.onLevelChanged();
+            helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
+                    "world replacement removes received expression state");
+        } finally {
+            ClientEyeRuntime.onLevelChanged();
+        }
+        helper.succeed();
+    }
+
+    /**
+     * The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
+     * as angry while {@code angryEyes} is off. In game: hit an eyed iron golem and its pupils turn red even
+     * when it is not swinging at you; with {@code angryEyes = false} neither attacking nor server-only anger makes them red.
+     */
+    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
+        boolean angryEyes = ServerConfig.ANGRY_EYES.get();
+        try {
+            ServerConfig.ANGRY_EYES.set(true);
+            IronGolem golem = helper.spawnWithNoFreeWill(EntityType.IRON_GOLEM, new BlockPos(1, 2, 1));
+            Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
+
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), "a calm golem isn't angry");
+            golem.setRemainingPersistentAngerTime(100);
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), "a provoked golem is angry");
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), "a calm piglin isn't angry");
+            piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
+            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), "a piglin with an anger target is angry");
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), "a cow is never angry");
+
+            ServerConfig.ANGRY_EYES.set(false);
+            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem) && !ServerBehaviorScheduler.isAngry(piglin),
+                    "angryEyes=false shares no anger");
+        } finally {
+            ServerConfig.ANGRY_EYES.set(angryEyes);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Use shears on {@code mob} the way a player's right-click does. Goes through {@code Player#interactOn}
+     * because Forge and NeoForge shear from the shears item rather than the sheep's {@code mobInteract}.
+     */
+    private static void shear(ServerPlayer player, Mob mob) {
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+        player.interactOn(mob, InteractionHand.MAIN_HAND);
     }
 
     /**
@@ -533,6 +946,28 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
+    /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
+    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks) {
+        stepGoat(goat, tracker, ticks, ON);
+    }
+
+    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
+        for (int t = 0; t < ticks; t++) {
+            goat.tick();
+            tracker.update(settings);
+        }
+    }
+
+    private static void stepTracker(GooglyTracker tracker, int ticks) {
+        stepTracker(tracker, ticks, ON);
+    }
+
+    private static void stepTracker(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
+        for (int i = 0; i < ticks; i++) {
+            tracker.update(settings);
+        }
+    }
+
     /**
      * A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
      * rest they hang still. Drives the client-side {@link GooglyTracker} directly against a server creeper
@@ -568,154 +1003,6 @@ public final class BehaviorSchedulerGameTestsLogic {
         float settledStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
         helper.assertTrue(settledStep < CALM_PUPIL_STEP,
                 "a settled creeper's mean pupil step must be below " + CALM_PUPIL_STEP + ", got " + settledStep);
-        helper.succeed();
-    }
-
-    /**
-     * Server-reported anger survives renderer resets but ends with the entity or client level. In game:
-     * provoke an eyed golem, leave tracking distance, let it calm, and return; its pupils are calm.
-     * Repeat while another player stays near it, then change dimensions. Resource reload while the
-     * angry golem remains loaded must keep its red pupils. This test drives the runtime operations;
-     * real packet lookup and loader unload delivery require the connected-client reproduction.
-     */
-    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
-        zombie.setAggressive(false);
-        HeadInfo info = headInfo(helper, zombie);
-        ClientEyeRuntime.onLevelChanged();
-        try {
-            ClientEyeRuntime.setAngry(zombie, true);
-            GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
-            helper.assertTrue(initial.angry && allIrisTint(initial, 1F),
-                    "anger received before first render initializes red pupils");
-            ClientEyeRuntime.setAngry(zombie, false);
-            helper.assertTrue(!initial.angry, "a false report updates the existing tracker");
-            stepTracker(initial, GooglyTracker.ANGER_EASE_TICKS + 1);
-            helper.assertTrue(allIrisTint(initial, 0F), "pupils return to calm after a false report");
-            ClientEyeRuntime.setAngry(zombie, true);
-            ClientEyeRuntime.clear();
-            helper.assertTrue(ClientEyeRuntime.get(zombie, info).angry,
-                    "render tracker eviction must retain anger for a loaded entity");
-            ClientEyeRuntime.onEntityRemoved(zombie);
-            helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "entity removal deletes its tracker");
-            Zombie replacement = EntityType.ZOMBIE.create(helper.getLevel());
-            replacement.setId(zombie.getId());
-            GooglyTracker calm = ClientEyeRuntime.get(replacement, info);
-            helper.assertTrue(!calm.angry && allIrisTint(calm, 0F),
-                    "a replacement entity with the same id must not inherit unloaded anger");
-            ClientEyeRuntime.setAngry(replacement, true);
-            ClientEyeRuntime.onLevelChanged();
-            helper.assertTrue(ClientEyeRuntime.peek(replacement) == null
-                            && !ClientEyeRuntime.get(replacement, info).angry,
-                    "client world replacement drops both trackers and anger");
-        } finally {
-            ClientEyeRuntime.onLevelChanged();
-        }
-        helper.succeed();
-    }
-
-    /**
-     * An attacking mob's pupils ease to red, stay red under a behavior, and ease back when it stops; the
-     * server's anger report does the same, and a tracker built for a mob already reported angry starts red.
-     * Drives the client-side {@link GooglyTracker} directly against a server zombie. In game: let an eyed
-     * zombie chase you and its pupils turn red; outrun it until it gives up and they fade back.
-     */
-    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
-        HeadInfo headInfo = headInfo(helper, zombie);
-
-        GooglyTracker tracker = new GooglyTracker(zombie, headInfo, false, ON);
-        helper.assertTrue(allIrisTint(tracker, 0F), "a calm mob's pupils keep their color");
-
-        zombie.setAggressive(true);
-        tracker.update(ON);
-        helper.assertTrue(!allIrisTint(tracker, 0F) && !allIrisTint(tracker, 1F),
-                "turning aggressive eases toward red rather than snapping");
-        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS);
-        helper.assertTrue(allIrisTint(tracker, 1F), "an aggressive mob's pupils are red");
-        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, 5, 1L, 0),
-                "anger doesn't block a behavior");
-        tracker.update(ON);
-        helper.assertTrue(allIrisTint(tracker, 1F), "the pupils stay red under a behavior");
-
-        zombie.setAggressive(false);
-        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
-        helper.assertTrue(allIrisTint(tracker, 0F), "calming down eases the red away");
-
-        tracker.angry = true;
-        stepTracker(tracker, GooglyTracker.ANGER_EASE_TICKS + 1);
-        helper.assertTrue(allIrisTint(tracker, 1F), "server-reported anger turns the pupils red");
-
-        GooglyTracker joined = new GooglyTracker(zombie, headInfo, true, ON);
-        helper.assertTrue(allIrisTint(joined, 1F) && allPrevIrisTint(joined, 1F),
-                "a tracker built for a mob already reported angry starts red");
-        helper.succeed();
-    }
-
-    /**
-     * The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
-     * as angry while {@code angryEyes} is off. In game: hit an eyed iron golem and its pupils turn red even
-     * when it is not swinging at you; with {@code angryEyes = false} they are red only while it attacks.
-     */
-    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
-        boolean angryEyes = ServerConfig.ANGRY_EYES.get();
-        try {
-            ServerConfig.ANGRY_EYES.set(true);
-            IronGolem golem = helper.spawnWithNoFreeWill(EntityType.IRON_GOLEM, new BlockPos(1, 2, 1));
-            Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
-
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), "a calm golem isn't angry");
-            golem.setRemainingPersistentAngerTime(100);
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), "a provoked golem is angry");
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), "a calm piglin isn't angry");
-            piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), "a piglin with an anger target is angry");
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), "a cow is never angry");
-
-            ServerConfig.ANGRY_EYES.set(false);
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem) && !ServerBehaviorScheduler.isAngry(piglin),
-                    "angryEyes=false shares no anger");
-        } finally {
-            ServerConfig.ANGRY_EYES.set(angryEyes);
-        }
-        helper.succeed();
-    }
-
-    /**
-     * A creepy enderman's pupils swell and shrink around their size, keep pulsing under a behavior, and settle
-     * when it calms down. Drives the client-side {@link GooglyTracker} directly against a server enderman made
-     * creepy by giving it a target. In game: look an eyed enderman in the face; while it screams its pupils
-     * throb, and they settle once it loses interest.
-     */
-    public static void creepyEndermanPulses(GameTestHelper helper) {
-        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityType.ENDERMAN, new BlockPos(1, 2, 1));
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 3));
-        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
-        helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
-                "a calm enderman's pupils hold their size");
-
-        enderMan.setTarget(cow);
-        helper.assertTrue(enderMan.isCreepy(), "an enderman with a target is creepy");
-        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS);
-        float[] range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
-        float amplitude = GooglyTracker.CREEPY_PULSE_AMPLITUDE;
-        helper.assertTrue(range[0] < 1F - amplitude / 2 && range[1] > 1F + amplitude / 2,
-                "a creepy enderman's pupils swell and shrink");
-        helper.assertTrue(range[0] >= 1F - amplitude - TINT_TOLERANCE
-                        && range[1] <= 1F + amplitude + TINT_TOLERANCE,
-                "the pulse stays within its amplitude");
-
-        helper.assertTrue(tracker.startBehavior(EyeBehavior.CROSS_EYE, PULSE_BEHAVIOR_TICKS, 1L, 0),
-                "a creepy enderman still plays a behavior");
-        range = irisScaleRange(tracker, PULSE_BEHAVIOR_TICKS - 1);
-        helper.assertTrue(range[1] - range[0] > amplitude / 2, "the pulse keeps going under the behavior");
-
-        enderMan.setTarget(null);
-        stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS + 1);
-        range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
-        helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
-                "once it calms down the pupils settle back to their size");
         helper.succeed();
     }
 
@@ -794,118 +1081,6 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.succeed();
     }
 
-    private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
-        helper.assertTrue(headInfo != null, type + " has an eye config");
-        return headInfo;
-    }
-
-    /** Steps the tracker; returns the smallest and largest pupil size multiplier seen on any eye. */
-    private static float[] irisScaleRange(GooglyTracker tracker, int ticks) {
-        return irisScaleRange(tracker, ticks, ON);
-    }
-
-    private static float[] irisScaleRange(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
-        float min = Float.MAX_VALUE;
-        float max = -Float.MAX_VALUE;
-        for (int t = 0; t < ticks; t++) {
-            tracker.update(settings);
-            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-                for (GooglyTracker.EyeInfo info : head) {
-                    min = Math.min(min, info.irisScaleMul);
-                    max = Math.max(max, info.irisScaleMul);
-                }
-            }
-        }
-        return new float[]{min, max};
-    }
-
-    private static boolean allIrisTint(GooglyTracker tracker, float expected) {
-        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-            for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.irisTintAmount - expected) > TINT_TOLERANCE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean allPrevIrisTint(GooglyTracker tracker, float expected) {
-        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-            for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.prevIrisTintAmount - expected) > TINT_TOLERANCE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /** Ticks {@code creeper} and its tracker together; returns the mean per-eye pupil step per tick. */
-    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks) {
-        return meanPupilStep(creeper, tracker, ticks, ON);
-    }
-
-    private static float meanPupilStep(Creeper creeper, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
-        float total = 0F;
-        int samples = 0;
-        for (int t = 0; t < ticks; t++) {
-            creeper.tick();
-            tracker.update(settings);
-            for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-                for (GooglyTracker.EyeInfo info : head) {
-                    float dx = info.deltaX - info.prevDeltaX;
-                    float dy = info.deltaY - info.prevDeltaY;
-                    total += (float) Math.sqrt(dx * dx + dy * dy);
-                    samples++;
-                }
-            }
-        }
-        return total / samples;
-    }
-
-    /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
-    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks) {
-        stepGoat(goat, tracker, ticks, ON);
-    }
-
-    private static void stepGoat(Goat goat, GooglyTracker tracker, int ticks, BehaviorSettings settings) {
-        for (int t = 0; t < ticks; t++) {
-            goat.tick();
-            tracker.update(settings);
-        }
-    }
-
-    private static void stepTracker(GooglyTracker tracker, int ticks) {
-        stepTracker(tracker, ticks, ON);
-    }
-
-    private static void stepTracker(GooglyTracker tracker, int ticks, BehaviorSettings settings) {
-        for (int i = 0; i < ticks; i++) {
-            tracker.update(settings);
-        }
-    }
-
-    /** A mob of {@code type} holding {@code weapon} in its main hand, with the given handedness. */
-    private static <T extends Mob> T armed(GameTestHelper helper, EntityType<T> type, ItemStack weapon,
-                                           boolean leftHanded, BlockPos pos) {
-        T mob = helper.spawnWithNoFreeWill(type, pos);
-        mob.setLeftHanded(leftHanded);
-        mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
-        return mob;
-    }
-
-    /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */
-    private static Player playerHolding(GameTestHelper helper, ItemStack weapon, InteractionHand hand,
-                                        HumanoidArm mainArm) {
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setMainArm(mainArm);
-        player.setItemInHand(hand, weapon);
-        return player;
-    }
-
     /**
      * Whether head 0 is aim-squinting: the eye farthest to the mob's left ({@code left}) or right is fully
      * squinted for aiming, and every other eye is open. Eye positions are in head model space, where +X is
@@ -930,93 +1105,6 @@ public final class BehaviorSchedulerGameTestsLogic {
         return true;
     }
 
-    private static boolean allLid(GooglyTracker tracker, float expected) {
-        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-            for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.lid - expected) > SQUASH_TOLERANCE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean allPrevLid(GooglyTracker tracker, float expected) {
-        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-            for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.prevLid - expected) > SQUASH_TOLERANCE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean allSquash(GooglyTracker tracker, float expected) {
-        for (GooglyTracker.EyeInfo[] head : tracker.eyes) {
-            for (GooglyTracker.EyeInfo info : head) {
-                if (Math.abs(info.squashY - expected) > SQUASH_TOLERANCE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static <T extends Mob> T eyedTrackedMob(GameTestHelper helper, ServerPlayer player,
-                                                    EntityType<T> type, BlockPos pos) {
-        T mob = helper.spawnWithNoFreeWill(type, pos);
-        EyeState.setHasEyes(mob, true);
-        ServerBehaviorScheduler.onStartTracking(mob, player);
-        return mob;
-    }
-
-    /** Use an empty bucket on {@code mob} the way a player's right-click does. */
-    private static void milk(ServerPlayer player, Mob mob) {
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
-        mob.interact(player, InteractionHand.MAIN_HAND);
-    }
-
-    /**
-     * Use shears on {@code mob} the way a player's right-click does. Goes through {@code Player#interactOn}
-     * because Forge and NeoForge shear from the shears item rather than the sheep's {@code mobInteract}.
-     */
-    private static void shear(ServerPlayer player, Mob mob) {
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-        player.interactOn(mob, InteractionHand.MAIN_HAND);
-    }
-
-    /**
-     * A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
-     * since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
-     * mobs.
-     */
-    public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper, ServerPlayer player) {
-        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
-        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
-        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
-        ServerBehaviorScheduler.clear();
-        try {
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            ServerConfig.SWIRL_ON_HEAL.set(true);
-            ServerConfig.SWIRL_ON_TRADE.set(true);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-            ServerBehaviorScheduler.onStartTracking(cow, player);
-            EyeState.setHasEyes(cow, false);
-
-            ServerBehaviorScheduler.onHealed(cow);
-            ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
-                    "an eyeless mob's game events never start a behavior even while it is tracked");
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
-            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
-        }
-        helper.succeed();
-    }
-
     /** The default settings with {@code off} switched off. */
     private static BehaviorSettings without(OngoingBehavior off) {
         EnumSet<OngoingBehavior> on = EnumSet.noneOf(OngoingBehavior.class);
@@ -1025,4 +1113,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         return new BehaviorSettings(ON.ambient(), ON.minTicks(), ON.maxTicks(), ON.pool(), ON.growOnHitPercent(),
                 ON.swirlOnHeal(), ON.swirlHealCooldownTicks(), on);
     }
+
+
+
 }

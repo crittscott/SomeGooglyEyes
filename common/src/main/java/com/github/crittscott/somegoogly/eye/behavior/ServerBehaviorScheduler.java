@@ -55,6 +55,7 @@ public final class ServerBehaviorScheduler {
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
+    private static boolean suspended;
 
     private ServerBehaviorScheduler() {
     }
@@ -77,6 +78,45 @@ public final class ServerBehaviorScheduler {
         STATES.clear();
         ACTIVE.clear();
         now = 0;
+        suspended = false;
+    }
+
+    /**
+     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
+     * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
+     * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
+     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
+     */
+    private static MobState eventTarget(LivingEntity mob) {
+        MobState state = STATES.get(mob);
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || state == null || !EyeState.hasEyes(mob)) {
+            return null;
+        }
+        return state;
+    }
+
+    /**
+     * Whether {@code mob}'s eyes should show anger the client can't see for itself: a neutral mob (iron
+     * golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
+     * to be angry at. Always {@code false} while {@code angryEyes} is off.
+     */
+    public static boolean isAngry(LivingEntity mob) {
+        if (!ServerConfig.ANGRY_EYES.get()) {
+            return false;
+        }
+        if (mob instanceof NeutralMob neutral) {
+            return neutral.isAngry();
+        }
+        return mob instanceof AbstractPiglin && mob.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
+    }
+
+    private static int nextCooldown() {
+        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
+        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
+        if (max <= min) {
+            return min;
+        }
+        return min + RANDOM.nextInt(max - min);
     }
 
     /**
@@ -116,29 +156,6 @@ public final class ServerBehaviorScheduler {
         }
     }
 
-    /**
-     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
-     * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
-     * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
-     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
-     */
-    private static MobState eventTarget(LivingEntity mob) {
-        MobState state = STATES.get(mob);
-        if (state == null || !EyeState.hasEyes(mob)) {
-            return null;
-        }
-        return state;
-    }
-
-    private static int nextCooldown() {
-        int min = ServerConfig.AMBIENT_MIN_TICKS.get();
-        int max = ServerConfig.AMBIENT_MAX_TICKS.get();
-        if (max <= min) {
-            return min;
-        }
-        return min + RANDOM.nextInt(max - min);
-    }
-
     /** {@code mob} was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it. */
     public static void onHealed(LivingEntity mob) {
         if (!ServerConfig.SWIRL_ON_HEAL.get()) {
@@ -167,18 +184,6 @@ public final class ServerBehaviorScheduler {
         start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
-    /** {@code sheep} was sheared: play 'grow' (if enabled). */
-    public static void onSheared(LivingEntity sheep) {
-        if (!ServerConfig.GROW_ON_SHEAR.get()) {
-            return;
-        }
-        MobState state = eventTarget(sheep);
-        if (state == null) {
-            return;
-        }
-        start(sheep, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
-    }
-
     /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
     public static void onPlayerHurt(LivingEntity mob) {
         if (RANDOM.nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.GROW_ON_HIT_PERCENT.get()) {
@@ -189,6 +194,18 @@ public final class ServerBehaviorScheduler {
             return;
         }
         start(mob, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
+    }
+
+    /** {@code sheep} was sheared: play 'grow' (if enabled). */
+    public static void onSheared(LivingEntity sheep) {
+        if (!ServerConfig.GROW_ON_SHEAR.get()) {
+            return;
+        }
+        MobState state = eventTarget(sheep);
+        if (state == null) {
+            return;
+        }
+        start(sheep, state, EyeBehavior.GROW, EyeBehavior.GROW.defaultDuration(), RANDOM.nextLong());
     }
 
     /**
@@ -208,6 +225,11 @@ public final class ServerBehaviorScheduler {
         // promote immediately. A mid-life gain while already tracked comes through onEyesGained instead.
         if (EyeState.hasEyes(mob)) {
             ACTIVE.putIfAbsent(mob, state);
+        }
+
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+            suspended = true;
+            return;
         }
 
         if (EyeState.hasEyes(mob)) {
@@ -266,6 +288,9 @@ public final class ServerBehaviorScheduler {
      */
     public static void serverTick() {
         now++;
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        boolean resuming = suspended && enabled;
+        suspended = !enabled;
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         Iterator<Map.Entry<LivingEntity, MobState>> it = ACTIVE.entrySet().iterator();
         while (it.hasNext()) {
@@ -291,10 +316,19 @@ public final class ServerBehaviorScheduler {
                 STATES.remove(mob);
                 continue;
             }
+            if (!enabled) {
+                continue;
+            }
+            // Watchers added while disabled received no catch-up packets; resume every current viewer.
+            if (resuming && state.busyUntil != 0) {
+                Networking.sendTrackingAndSelf(mob, new EyeBehaviorTriggerPacket(mob.getId(), state.activeId,
+                        state.activeDuration, state.activeSeed, (int) (now - state.startedAt)));
+            }
             // Anger changes are rare, so a packet goes out only when one happens. An eyeless mob's anger
             // stays unsent; it's picked up on the first tick after the mob gains eyes.
             boolean angry = isAngry(mob);
-            if (angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
+            if (resuming && EyeState.hasEyes(mob)
+                    || angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
             }
@@ -308,21 +342,6 @@ public final class ServerBehaviorScheduler {
                 }
             }
         }
-    }
-
-    /**
-     * Whether {@code mob}'s eyes should show anger the client can't see for itself: a neutral mob (iron
-     * golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
-     * to be angry at. Always {@code false} while {@code angryEyes} is off.
-     */
-    public static boolean isAngry(LivingEntity mob) {
-        if (!ServerConfig.ANGRY_EYES.get()) {
-            return false;
-        }
-        if (mob instanceof NeutralMob neutral) {
-            return neutral.isAngry();
-        }
-        return mob instanceof AbstractPiglin && mob.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
     private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, int duration, long seed) {

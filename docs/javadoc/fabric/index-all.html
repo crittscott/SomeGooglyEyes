@@ -92,11 +92,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/server/fabric/package-summary.html">com.github.crittscott.somegoogly.server.fabric</a> - package com.github.crittscott.somegoogly.server.fabric</dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#completeIfMissing(java.nio.file.Path,java.util.Map,java.util.Collection,java.lang.String)" class="member-name-link">completeIfMissing(Path, Map&lt;String, Object&gt;, Collection&lt;String&gt;, String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#completeIfMissing(java.nio.file.Path,com.electronwill.nightconfig.core.CommentedConfig,java.lang.String)" class="member-name-link">completeIfMissing(Path, CommentedConfig, String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
-<div class="block">Rewrite the file at <code>path</code> as <code>rendered</code> when <code>values</code>, read from it, lack any of
- <code>keys</code>, as Forge and NeoForge correct their own config files: <code>rendered</code> must carry the values just read,
- so the file keeps them and gains each missing key at its default, with its comment.</div>
+<div class="block">Add only absent schema values, retaining existing values, unknown keys, and parsed comments.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/item/fabric/GooglyEyeItemFactoryImpl.html#create(net.minecraft.world.item.Item.Properties)" class="member-name-link">create(Item.Properties)</a> - Static method in class com.github.crittscott.somegoogly.item.fabric.<a href="com/github/crittscott/somegoogly/item/fabric/GooglyEyeItemFactoryImpl.html" title="class in com.github.crittscott.somegoogly.item.fabric">GooglyEyeItemFactoryImpl</a></dt>
 <dd>&nbsp;</dd>
@@ -245,7 +243,7 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#readOrCreate(java.nio.file.Path,java.lang.String)" class="member-name-link">readOrCreate(Path, String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
-<div class="block">Parse the file at <code>path</code> into key/value pairs, first writing <code>defaults</code> there if it is missing.</div>
+<div class="block">Parse a whole file before applying any runtime values; a parse failure leaves its text untouched.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/fabric/FabricClientEvents.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.client.fabric.<a href="com/github/crittscott/somegoogly/client/fabric/FabricClientEvents.html" title="class in com.github.crittscott.somegoogly.client.fabric">FabricClientEvents</a></dt>
 <dd>
@@ -288,6 +286,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#section(com.electronwill.nightconfig.core.UnmodifiableConfig,java.lang.String)" class="member-name-link">section(UnmodifiableConfig, String)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dd>
+<div class="block">Values from exactly the schema's declared table; similarly named keys elsewhere do not apply.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer(ServerPlayer, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">NetworkingImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/ClientNetworkingImpl.html#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/ClientNetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">ClientNetworkingImpl</a></dt>
@@ -327,7 +329,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a> - Class in <a href="com/github/crittscott/somegoogly/config/fabric/package-summary.html">com.github.crittscott.somegoogly.config.fabric</a></dt>
 <dd>
-<div class="block">Narrow TOML reader for the boolean, integer, and string-list schemas of Fabric's config files.</div>
+<div class="block">Fabric configuration lifecycle and schema conversions over NightConfig's TOML parser.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#toString()" class="member-name-link">toString()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
 <dd>

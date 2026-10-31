@@ -18,14 +18,44 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
+    public static void affectionEventsPlayLove(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void healSwirlIsRateLimited(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
+    public static void aimingArcherWinks(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.aimingArcherWinks(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void aimingPlayerWinks(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.aimingPlayerWinks(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.angryMobsHaveRedPupils(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void creepyEndermanPulses(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
@@ -36,14 +66,8 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
-                helper, helper.makeMockServerPlayerInLevel());
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void affectionEventsPlayLove(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
+    public static void healSwirlIsRateLimited(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
@@ -51,6 +75,27 @@ public final class BehaviorSchedulerGameTests {
     public static void milkingPlaysGrow(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
+                helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void rammingGoatSquints(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.serverOnlyAngerIsShared(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
@@ -73,41 +118,6 @@ public final class BehaviorSchedulerGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void swellingCreeperRattles(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.swellingCreeperRattles(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void angerFollowsEntityLifetime(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.angerFollowsEntityLifetime(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void angryMobsHaveRedPupils(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.angryMobsHaveRedPupils(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void serverOnlyAngerIsShared(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.serverOnlyAngerIsShared(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void creepyEndermanPulses(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void rammingGoatSquints(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void aimingArcherWinks(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.aimingArcherWinks(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void aimingPlayerWinks(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.aimingPlayerWinks(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

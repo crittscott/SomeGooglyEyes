@@ -26,17 +26,17 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 Common imports no loader type (adapters or `@ExpectPlatform`); loader packages avoid split packages.
 
-The server owns gameplay, definitions, and picker authorization; the client owns rendering, inspection, and picker UI.
+The server owns gameplay and authorization; the client owns rendering and picker UI.
 
 `ModContent` binds two items, the appearance and head-eyes components, creative tab, and recipe serializers through each loader's `ContentRegistrar`. Optometrist and `self_shear` are data-driven enchantment and damage-type definitions.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge/NeoForge use native CLIENT/SERVER specs and reset SERVER values on unload. Fabric's `TomlConfig` reads both files, reloads server values at start and `/reload`, and resets on stop. Fabric, like the native specs, fills in missing keys; sections keep 0.8.2's names.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge/NeoForge use native CLIENT/SERVER specs and reset SERVER values on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves authored raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricConfigMigration` quotes released spaced headers. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` logs the effective master switch at startup and changes.
 
 Server key order must match across the three loaders' server configs.
 
-Datapack definitions at `data/<namespace>/eyes/*.json` use `EyeConfigModel`. Reload resolves versions, validates, encodes to NBT, and swaps `ServerEyeConfigs` only when the encoding changes, keeping the old set on failure. Reload, export, and network decode share geometry limits; reload also checks sync size. `EyeConfigLimits.Issue` gives translated and log diagnostics. `EyeColor` codecs reject out-of-range channels.
+Datapack definitions at `data/<namespace>/eyes/*.json` use `EyeConfigModel`. Reload resolves versions, validates, encodes to NBT, and swaps `ServerEyeConfigs` only when the encoding changes, keeping the old set on failure. Reload, export, and network decode share geometry limits; reload reserves the maximum supported behavior block in its sync budget. `EyeConfigLimits.Issue` gives translated and log diagnostics. `EyeColor` codecs reject out-of-range channels.
 
 ## Entity and item state
 
@@ -48,11 +48,11 @@ Mutations flush one full snapshot. Rolls read clamped; eye state and roll initia
 
 Eye items carry only `AppearanceOverride` in the synced `somegoogly:eye_properties` component. Harvesting copies the first eye's effective appearance; modifier recipes change that component. The Slimy Eye recipe copies every component.
 
-`SkullEyeState` keeps a placed head's `Snapshot` (one `read`/`write`) in a compound the common `SkullBlockEntityDataMixin` adds, saved as `somegoogly:data` and replaced on every load, so it rides the update tag; a head item carries it as the `somegoogly:head_eyes` component, taken and given as an implicit block-entity component. A head borrows its mob's adult definition, rolling among variants with eyes on the part it copies (`HEAD_PART_TOKENS`, else the head part). Vanilla heads map by type, the Heads mod's by block id alone (`HEADS_MOBS`), a soft dependency; other mods' heads have none. Mutations end in a block update.
+`SkullEyeState` stores a placed head's snapshot in Mixin-owned `somegoogly:data`, replaced on load and included in update tags. Head items use the `somegoogly:head_eyes` component, exchanged implicitly by the block entity. Heads borrow adult variants with eyes on their copied part (`HEAD_PART_TOKENS`, else head). Vanilla types and Heads block IDs (`HEADS_MOBS`) map to mobs without linking that optional mod. Mutations send a block update. Native loot adapters delegate to `copyToLoot`.
 
 For 1.20.1 saves, `EyeItemMigration` converts `EyeProperties` custom data during `verifyComponentsAfterLoad`: current components win; undecodable data stays and is logged.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after default protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase); head use also checks `mayInteract`/`mayUseItemAt`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier`, data in `common`; Fabric `LootTableEvents.MODIFY` adding `copy_components`). Fabric's adapter refuses spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after default protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase); head use honors native item-use denial and checks `mayInteract`/`mayUseItemAt`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier`, data in each native loader; Fabric `LootTableEvents.MODIFY` adding `copy_components`). Fabric's adapter refuses spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), successful harvests `GameEvent.SHEAR`; refusals emit neither.
 
@@ -60,13 +60,13 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` starts the held item's idle, hurt, and heal behaviors per the synced `BehaviorSettings`. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is sent on change and to each new viewer. `ClientEyeRuntime` holds transient pupil and behavior state for rendered entities and heads (by position, rebuilt when their snapshot changes). Entity unload, level replacement, and disconnect drop trackers and anger; renderer reload keeps anger.
+`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` starts the held item's idle, hurt, and heal behaviors per the synced `BehaviorSettings`. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is sent on change and to each new viewer. `ClientEyeRuntime` owns entity-lifetime received expressions and anger independently of disposable pupil trackers; expression age advances on unpaused ticks even offscreen. Render resets retain reports; entity removal drops its reports, and level replacement/disconnect clears all. Head simulations are cached by position. Automatic scheduling pauses under the master switch, preserving watchers and expiring effects; resumption refreshes viewers. Explicit authoring triggers remain available. Client behavior settings start and clear inactive until synchronization.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` once per living renderer rebuild; GeckoLib uses `CompileRenderLayers`. The eye layer precedes slime's outer layer. Both use `EyeRenderData` and draw picker previews. `ClientEyeConfigs` caches views. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` every simulated one; `ClientLifecycle` ticks `HeldEye`, drawn live in first person only. `EyePlacement.orientation` defines rendering and pupil-plane rotation.
+`ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` ticks the first-person held eye. `EyePlacement.orientation` owns rendering and pupil-plane rotation.
 
-Resolvers cache by model identity, clear on renderer or runtime reset, and replay `ThirdPartyModelWraps` first. `Resolvers` picks a family per model: `HierarchicalResolver`, `AgeableListResolver` (replaying baby transforms), `RabbitLlamaResolver`, `TwilightForestResolver`, and the reflected `AdvancedModelBoxResolver` and `LLibraryResolver`, with `ChildMapResolver` as an explicit non-null fallback.
+Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
 
 Common client Mixins (`somegoogly-common.mixins.json`) bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin` on the built-in item renderer); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
 
@@ -82,13 +82,13 @@ Six `CustomPacketPayload` classes: eye definitions, entity eye state, behavior t
 
 The eye-definition packet also carries `googlyEyesEnabled` and `BehaviorSettings`. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set, switch, or behavior settings changed, since it resets client trackers.
 
-Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check authorization; the client refuses a picker export over vanilla's serverbound cap. Eye state follows the entity's spawn, carrying only its id.
+`Networking`/`ClientNetworking` use `@ExpectPlatform`; clientbound handlers link `ClientNetworkHandler` only in lambdas. Serverbound handlers recheck authorization; client export enforces vanilla's payload cap. Eye state follows entity spawn by ID.
 
 ## Picker and commands
 
 The client owns picker drafts and previews; the server owns freezing, spawning, movement, and export. `PickerState.DraftSession` keeps drafts by species and age; export-all gets separate adult and baby replacements. `ModelPartVocabulary` supplies one attachment grammar to live editing and bulk export.
 
-`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/permission-level-2 authorization and throttles. `PickerSpawnService` uses loader finalization via `MobSpawning`, honors cancellation, then sets persistence, `NoAI`, and rotation; its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory. Both use `ConfigFile.exportVersion` and `overlay`, replacing authored age buckets while retaining untouched definitions, including disabled ones. Bulk export canonicalizes copied base tokens.
+`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization and throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection compares actual hit locations. `PickerSpawnService` finalizes through `MobSpawning`, inserts each entity/passenger with checked results, discards partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures. Both use `ConfigFile.exportVersion` and `overlay`, replacing authored ages while retaining untouched definitions, including disabled ones; copied tokens are canonicalized.
 
 Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards those server branches explicitly; its client root would capture them.
 
@@ -102,7 +102,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge kee
 
 ## Automated verification
 
-`common/src/gametest/java` holds 136 shared tests, with persistence, plus 9 for the 1.20.1 item migration; NeoForge wraps all but one head-drop test, Fabric and Forge also skip the 2 placing Heads heads, and Fabric adds 5 migration and TOML tests. Protection vetoes, packet delivery, client unload, export feedback, required-client rejection, server commands, picker gating, self-shear damage, and real-save migration are manual.
+Loader GameTest entry points: Fabric 142, Forge 140, Neoforge 142. Review regressions have scenarios; visuals, connections, artifacts, and released saves require manual checks.
 
 ## Operational boundaries
 

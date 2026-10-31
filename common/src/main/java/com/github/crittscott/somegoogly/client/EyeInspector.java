@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 /** Client action-bar verdict for whether the aimed entity or placed mob head can currently receive googly eyes. */
@@ -24,28 +25,6 @@ public final class EyeInspector {
     private static final double REACH = 16.0D;
 
     private EyeInspector() {
-    }
-
-    /**
-     * Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
-     * the aimed placed head when it is nearer, on the action bar.
-     */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null || minecraft.level == null || minecraft.isPaused()
-                || !player.isShiftKeyDown() || !holdingEye(player)) {
-            return;
-        }
-        LivingEntity target = LookTarget.livingInCrosshair(player, REACH);
-        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
-                && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
-                        < player.getEyePosition().distanceToSqr(target.position()))) {
-            player.displayClientMessage(verdict(skull), true);
-        } else if (target != null) {
-            player.displayClientMessage(verdict(target), true);
-        }
     }
 
     private static Component alreadyHas() {
@@ -66,6 +45,28 @@ public final class EyeInspector {
 
     private static boolean isEye(ItemStack stack) {
         return stack.is(ModContent.GOOGLY_EYE.get()) || stack.is(ModContent.SLIMY_EYE.get());
+    }
+
+    /**
+     * Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
+     * the aimed placed head when it is nearer, on the action bar.
+     */
+    public static void tick() {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null || minecraft.level == null || minecraft.isPaused()
+                || !player.isShiftKeyDown() || !holdingEye(player)) {
+            return;
+        }
+        EntityHitResult target = LookTarget.livingHitInCrosshair(player, REACH);
+        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
+                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
+                && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
+                        < player.getEyePosition().distanceToSqr(target.getLocation()))) {
+            player.displayClientMessage(verdict(skull), true);
+        } else if (target != null) {
+            player.displayClientMessage(verdict((LivingEntity) target.getEntity()), true);
+        }
     }
 
     private static Component verdict(LivingEntity target) {

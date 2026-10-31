@@ -218,9 +218,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#configSectionsMatchReleasedFiles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSectionsMatchReleasedFiles(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
 <dd>
-<div class="block">The config files keep the section names the released 0.8.2 files use, since Forge and NeoForge drop whatever their spec
- doesn't name when they correct a file: renaming a section would reset every value in it to its default
- on upgrade.</div>
+<div class="block">Shared schema constants name the sections used by the immediately preceding release.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -301,6 +299,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A missing, empty, or zero-weight definition picks the first variant.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#deniedItemUseLeavesHeadsUntouched(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player,java.util.function.BiConsumer)" class="member-name-link">deniedItemUseLeavesHeadsUntouched(GameTestHelper, Player, BiConsumer&lt;BlockHitResult, Boolean&gt;)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">A native item-use denial prevents both applying and harvesting head eyes, without consuming the
+ item, damaging shears, or spawning a drop.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">disabledEyesSuspendAutomaticBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">disabledEyesSuspendAutomaticBehaviors(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
+<dd>
+<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+ ready to resume.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTests.html#draftsRetainSpeciesAndAge(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">draftsRetainSpeciesAndAge(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerExportGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTestsLogic.html#draftsRetainSpeciesAndAge(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">draftsRetainSpeciesAndAge(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerExportGameTestsLogic</a></dt>
@@ -344,6 +354,12 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html#entityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper,java.lang.String)" class="member-name-link">entityPersistentDataSurvivesSaveLoad(GameTestHelper, String)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestsLogic</a></dt>
 <dd>
 <div class="block">Eye state survives an entity save and load through the loader's own persistent-data store.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTests.html#entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">entityTargetingStopsAtWalls(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerAuthGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html#entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">entityTargetingStopsAtWalls(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerSpawnServiceGameTestsLogic</a></dt>
+<dd>
+<div class="block">Extended entity targeting stops at blocks.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorDeterminismGameTests.html#everyBehaviorIsSeedDeterministicOverItsRun(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorDeterminismGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorDeterminismGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -913,6 +929,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Square brackets include a bound and parentheses exclude it.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
+<dd>
+<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
+ offscreen.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
 <div class="block">Fabric GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>RecipeGameTestsLogic</code></a>; see that class for the actual
@@ -928,6 +951,10 @@ loadScripts(document, 'script');</script>
  
    <code>eye_modifier</code> — one googly eye plus one recognized modifier transforms the eye's
        <code>AppearanceOverride</code>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html#refusedBulkSpawnLeavesTerrain(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">refusedBulkSpawnLeavesTerrain(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerSpawnServiceGameTestsLogic</a></dt>
+<dd>
+<div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#releasedServerTomlKeepsItsValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">releasedServerTomlKeepsItsValues(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
 <dd>
@@ -989,10 +1016,10 @@ loadScripts(document, 'script');</script>
 <div class="block">The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
  as angry while <code>angryEyes</code> is off.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#serverTomlReadsLiteralStringsAndSkipsUnreadableValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlReadsLiteralStringsAndSkipsUnreadableValues(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#serverTomlReadsLiteralStringsAndRejectsWrongTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlReadsLiteralStringsAndRejectsWrongTypes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
 <dd>
 <div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>, and
- falls back to the default for a value it cannot read.</div>
+ uses the integer default for a value of the wrong type.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
 <dd>
@@ -1184,6 +1211,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:T">T</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#tomlCompletionPreservesAuthoredContent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">tomlCompletionPreservesAuthoredContent(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dd>
+<div class="block">Valid TOML syntax and table identity survive completion; malformed input is preserved.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html#twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">twoEyesDoNotMatch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html#twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">twoEyesDoNotMatch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTestsLogic</a></dt>

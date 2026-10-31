@@ -85,6 +85,8 @@ dependencies {
 
 // Expands ${...} placeholders in neoforge.mods.toml (this module's own resource).
 tasks.named('processResources', ProcessResources).configure {
+    // Loader-owned loot declarations must also form a valid data pack in development.
+    from project(':common').file('src/main/resources/pack.mcmeta')
     var replaceProperties = rootProject.sharedModProperties + [
             minecraft_version_range: minecraft_version_range,
             neoforge_version_range: neoforge_version_range,
@@ -114,6 +116,9 @@ tasks.named('processGametestResources', ProcessResources).configure {
 }
 
 shadowJar {
+    filesMatching('pack.mcmeta') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
     // The common refmap maps to Fabric's intermediary names; this loader runs on Mojang names, which the

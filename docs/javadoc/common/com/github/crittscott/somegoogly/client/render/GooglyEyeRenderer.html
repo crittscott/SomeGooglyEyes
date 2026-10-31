@@ -235,20 +235,6 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)">
-<h3>renderPreviewEye</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderPreviewEye</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
- <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- int&nbsp;packedLight,
- int&nbsp;overlay,
- <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</span></div>
-<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
- the caller has already moved into the draft's attachment space. Used by both the vanilla and the
- GeckoLib eye layers.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)">
 <h3>drawAnimatedEye</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">drawAnimatedEye</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -310,6 +296,20 @@ loadScripts(document, 'script');</script>
  and the active behavior. The pose is expected to already sit in the head's attachment space; this method
  applies the eye's own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it
  found it.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)">
+<h3>renderPreviewEye</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderPreviewEye</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
+ net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
+ int&nbsp;packedLight,
+ int&nbsp;overlay,
+ <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</span></div>
+<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
+ the caller has already moved into the draft's attachment space. Used by both the vanilla and the
+ GeckoLib eye layers.</div>
 </section>
 </li>
 </ul>

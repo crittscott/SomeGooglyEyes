@@ -198,11 +198,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>networkProtocolIdsAreVersionedAndUnique</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreVersionedAndUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every payload id is unique and carries the network version. No in-game form; guards that a client and
- server with different network versions refuse each other instead of misreading packets.</div>
+<section class="detail" id="angerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>angerPacketRoundTrips</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The anger report survives the wire. No in-game form; guards that every client sees the anger the
+ server shares.</div>
 </section>
 </li>
 <li>
@@ -224,14 +224,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="angerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>angerPacketRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The anger report survives the wire. No in-game form; guards that every client sees the anger the
- server shares.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -249,20 +241,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeColorRejectsWrongChannelCount</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsWrongChannelCount</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A color must have exactly three channels. In game: a datapack eye definition with
- <code>"irisColors": [0.5, 0.5]</code> is ignored on <code>/reload</code>, with an error in the log.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="eyeColorRejectsOutOfRangeChannels(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>eyeColorRejectsOutOfRangeChannels</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsOutOfRangeChannels</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Both color codecs reject a channel outside <code>0..1</code> or non-finite on decode. In-game,
  <code>/give @s somegoogly:googly_eye[somegoogly:eye_properties={irisColor:[2f,0f,0f]}]</code> fails to
  parse instead of producing an eye item.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeColorRejectsWrongChannelCount</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsWrongChannelCount</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A color must have exactly three channels. In game: a datapack eye definition with
+ <code>"irisColors": [0.5, 0.5]</code> is ignored on <code>/reload</code>, with an error in the log.</div>
 </section>
 </li>
 <li>
@@ -287,6 +279,30 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeStatePacketRejectsNonFiniteValues</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
+ unmodified server; guards clients against a malicious server.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeStatePacketRoundTrips</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
+ every watching client sees a mob's eyes, placement, and colors as the server has them.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>networkProtocolIdsAreVersionedAndUnique</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreVersionedAndUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every payload id is unique and carries the network version. No in-game form; guards that a client and
+ server with different network versions refuse each other instead of misreading packets.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>pickerExportPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerExportPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -300,22 +316,6 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerFreezePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Picker choose and release requests survive the wire. No in-game form; guards that <code>V</code> in the
  picker freezes and releases the intended mob.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeStatePacketRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
- every watching client sees a mob's eyes, placement, and colors as the server has them.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeStatePacketRejectsNonFiniteValues</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
- unmodified server; guards clients against a malicious server.</div>
 </section>
 </li>
 </ul>

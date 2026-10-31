@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.eye.state;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -20,12 +20,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob does,
@@ -78,6 +81,8 @@ public final class SkullEyeState {
     private SkullEyeState() {
     }
 
+
+
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
@@ -103,6 +108,20 @@ public final class SkullEyeState {
             }
         }
         return false;
+    }
+
+    /** Copy an eyed head block's snapshot onto its generated head items. */
+    public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
+        if (context.getParamOrNull(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
+            Snapshot state = snapshot(skull);
+            if (state.hasEyes()) {
+                for (ItemStack stack : generatedLoot) {
+                    if (entityFor(stack) != null) {
+                        stampItem(stack, state);
+                    }
+                }
+            }
+        }
     }
 
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */

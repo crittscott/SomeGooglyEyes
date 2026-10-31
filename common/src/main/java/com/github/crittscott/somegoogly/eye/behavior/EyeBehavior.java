@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * The eight named one-shot eye expressions a mob can play, keyed by a {@link ResourceLocation} id; the
@@ -53,7 +53,7 @@ public enum EyeBehavior {
     BLINK("blink", 8) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
-            if (i.mask != null && head < i.mask.length && eye < i.mask[head].length && i.mask[head][eye]) {
+            if (i.mask[head][eye]) {
                 out.squashY = 1f - BLINK_SQUASH * sinPulse((float) i.age / i.duration);
             }
         }
@@ -72,9 +72,6 @@ public enum EyeBehavior {
                 int eyes = i.helper.getEyeCount(h);
                 i.mask[h] = new boolean[eyes];
                 total += eyes;
-            }
-            if (total <= 0) {
-                return;
             }
             // Pick k ∈ [1, total] eyes at random to participate (k = 1 is a wink).
             int k = 1 + i.rand.nextInt(total);
@@ -191,8 +188,8 @@ public enum EyeBehavior {
             }
             EyePlacement self = i.helper.placementAt(head, eye);
             int targetIdx = self.crossTarget();
-            // No partner, self-reference, or a stale/out-of-range index → this eye stays neutral.
-            if (targetIdx < 0 || targetIdx == eye || targetIdx >= i.helper.getEyeCount(head)) {
+            // An eye without a configured partner stays neutral.
+            if (targetIdx == EyePlacement.NO_CROSS_TARGET) {
                 return;
             }
 
@@ -262,14 +259,15 @@ public enum EyeBehavior {
         return BY_ID.get(id);
     }
 
-    /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
-    public ResourceLocation id() {
-        return id;
-    }
-
     /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
     public int defaultDuration() {
         return defaultDuration;
+    }
+
+    /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */
+    private static float ease(float t) {
+        t = Mth.clamp(t, 0f, 1f);
+        return t * t * (3f - 2f * t);
     }
 
     /**
@@ -279,14 +277,13 @@ public enum EyeBehavior {
      */
     public abstract void influence(BehaviorInstance instance, int head, int eye, EyeInfluence out);
 
-    /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
-    public void onStart(BehaviorInstance instance) {
+    /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
+    public ResourceLocation id() {
+        return id;
     }
 
-    /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */
-    private static float ease(float t) {
-        t = Mth.clamp(t, 0f, 1f);
-        return t * t * (3f - 2f * t);
+    /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
+    public void onStart(BehaviorInstance instance) {
     }
 
     /** 0 → 1 → 0 over t ∈ [0,1] (a single smooth pulse). */

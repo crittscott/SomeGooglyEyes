@@ -6,13 +6,13 @@
 
 `<world>/serverconfig/somegoogly-server.toml`
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment. Fabric uses NightConfig TOML, preserves existing raw values, unknown keys, and parsed comments when adding absent defaults, and saves the original text in a sibling `.bak` before rewriting. Invalid syntax leaves the file and loaded settings intact.
 
 ### Spawn settings
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `googlyEyesEnabled` | `true` | Master switch for the whole mod. Turning it off stops *new* mobs from being given eyes, hides every eye (old and new) on every client, and refuses hand-applying or harvesting eyes. Existing eye data on entities is left untouched and reappears as soon as this is turned back on. |
+| `googlyEyesEnabled` | `true` | Master switch for the whole mod. Turning it off stops *new* mobs from being given eyes, hides every eye (old and new) on every client, and refuses hand-applying or harvesting eyes. Existing eye data stays intact and reappears when enabled. Automatic reactions, anger checks, and ambient scheduling pause while disabled; explicit admin expressions remain available. Current viewers receive a state refresh on resumption. |
 | `globalPercent` | `5` | Default percent chance (0–100) for an eligible mob to spawn with eyes. |
 | `harvestOnKillPercent` | `25` | Percent chance that an eyed mob killed by a player's direct shears blow drops its eye. The Optometrist enchantment bypasses this with a guaranteed, non-lethal right-click harvest. |
 | `entityOverrides` | empty | Per-mob spawn chances, one entry per line as `"entity,percent"`. |
@@ -55,7 +55,7 @@ Eyes have two kinds of behavior. **Expressions** are one-shot animations (`stare
 | `swirlOnHeal` | `true` | An eyed mob being healed, or the holder of a Googly Eye healing, plays `swirl`. |
 | `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob or held eye, so regeneration doesn't loop it. |
 
-The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` ships in neither and is only reachable via the admin command.
+The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` is absent from the default pool but can be added to `ambientBehaviorPool` or triggered by an admin command.
 
 #### Ongoing behaviors
 

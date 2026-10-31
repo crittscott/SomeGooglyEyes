@@ -88,14 +88,14 @@ public final class SkullEyes {
     }
 
     /** Start the expression of the slot holding {@code gameTime}, if that is when it plays, caught up to it. */
-    private void startAmbient(long gameTime, BehaviorSettings ambient) {
-        if (!ambient.plays()) {
+    private void startAmbient(long gameTime, BehaviorSettings behaviors) {
+        if (!behaviors.plays()) {
             return;
         }
-        int slotTicks = ambient.meanTicks();
+        int slotTicks = behaviors.meanTicks();
         long slot = Math.floorDiv(gameTime, slotTicks);
         RandomSource slotRand = RandomSource.create(seed ^ slot * SLOT_SEED_STEP);
-        EyeBehavior behavior = ambient.pool().get(slotRand.nextInt(ambient.pool().size()));
+        EyeBehavior behavior = behaviors.pool().get(slotRand.nextInt(behaviors.pool().size()));
         int duration = behavior.defaultDuration();
         long start = slot * slotTicks + slotRand.nextInt(Math.max(1, slotTicks - duration));
         long elapsed = gameTime - start;
@@ -112,7 +112,7 @@ public final class SkullEyes {
      * Advance one client tick at level {@code gameTime}: retire a finished expression, start the slot's when it is
      * due, and step every drawn eye with the expression folded in.
      */
-    void tick(long gameTime, BehaviorSettings ambient) {
+    void tick(long gameTime, BehaviorSettings behaviors) {
         if (active != null) {
             active.age++;
             if (active.age >= active.duration) {
@@ -120,7 +120,7 @@ public final class SkullEyes {
             }
         }
         if (active == null) {
-            startAmbient(gameTime, ambient);
+            startAmbient(gameTime, behaviors);
         }
         for (int head : parts) {
             for (int eye = 0; eye < eyes[head].length; eye++) {
