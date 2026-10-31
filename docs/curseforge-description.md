@@ -10,7 +10,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 ![A field of mobs wearing googly eyes](https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.4/docs/googlyeyes-splash-0.8.2.png)
 
-![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1, 1.21.4](https://img.shields.io/badge/Minecraft-1.20.1%2C%201.21.1%2C%201.21.4-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
@@ -24,6 +24,8 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
+**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again.
+
 ## Eye potential
 
 Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
@@ -33,7 +35,7 @@ Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see w
 - **Server settings** (`<world>/serverconfig/somegoogly-server.toml`): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
 - **Client settings** (`config/somegoogly-client.toml`): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.
 
-See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/configuration.md) for the full list.
+See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/docs/configuration.md) for the full reference.
 
 ## Pack and mod authors
 
@@ -69,10 +71,10 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4, 1.21.1, and 1.20.1.
+Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.20.1, 1.21.1, and 1.21.4 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for Minecraft 1.21.4 with new physics, behaviors, and more.
 
 License: [**GPL-3.0**](https://github.com/crittscott/SomeGooglyEyes/blob/1.21.4/LICENSE).
