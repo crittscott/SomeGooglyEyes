@@ -27,8 +27,8 @@ public final class HeadEyesLootModifier extends LootModifier {
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> SERIALIZERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
 
-    public HeadEyesLootModifier(LootItemCondition[] conditions) {
-        super(conditions);
+    public HeadEyesLootModifier(LootItemCondition[] conditions, int priority) {
+        super(conditions, priority);
     }
 
     /** Register the modifier's codec on the mod bus; called once from the mod constructor. */

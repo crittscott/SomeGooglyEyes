@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.1.1.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.1.2.
 
 `common` is bundled in all three loader artifacts.
 
@@ -60,7 +60,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 ## Rendering and attachment
 
-Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; Fabric/NeoForge use GeckoLib’s `CompileRenderLayers` event. `LayerGooglyEyes` poses its parent model before resolving. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` submission tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer.drawEye` submits every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. Rendering and pupil projection share `EyePlacement.orientation`.
+Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib renderers get it through `CompileRenderLayers`. `LayerGooglyEyes` poses its parent model before resolving. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` submission tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer.drawEye` submits every eye, `drawAnimatedEye` simulated ones. `ClientLifecycle` ticks the first-person `HeldEye`. Rendering and pupil projection share `EyePlacement.orientation`.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers.
 

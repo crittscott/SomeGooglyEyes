@@ -25,9 +25,9 @@ Each copy sits at `build-env/` followed by its active path.
 
 ## Build shape
 
-This checkout targets Minecraft 26.1.1. The Groovy-DSL Gradle build has `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root applies Architectury Loom’s `dev.architectury.loom-no-remap` plugin and the Architectury plugin to each subproject. Minecraft is unobfuscated, so there are no mapping dependencies or remapping tasks. Each loader bundles Architectury-transformed common output into its production Shadow JAR; the loader-only JAR has the `dev` classifier. `assemble` includes the production JAR, and loader sources JARs include common’s source files. Architectury is build-time only, supplying `@ExpectPlatform` transformation without a runtime Architectury API dependency. No Maven publication is declared.
+This checkout targets Minecraft 26.1.2. The Groovy-DSL Gradle build has `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root applies Architectury Loom’s `dev.architectury.loom-no-remap` plugin and the Architectury plugin to each subproject. Minecraft is unobfuscated, so there are no mapping dependencies or remapping tasks. Each loader bundles Architectury-transformed common output into its production Shadow JAR; the loader-only JAR has the `dev` classifier. `assemble` includes the production JAR, and loader sources JARs include common’s source files. Architectury is build-time only, supplying `@ExpectPlatform` transformation without a runtime Architectury API dependency. No Maven publication is declared.
 
-`common` uses Fabric Loader and MixinExtras as compile-only annotation/injection dependencies. GeckoLib is compile-only in common, Fabric, and NeoForge, using `com.geckolib:geckolib-<module>-26.1:5.5` from its Cloudsmith Maven. It is optional at runtime and is not bundled. The publisher lists no exact-26.1.1 release. The 26.1/5.5 API variants have no transitive dependencies and target Java 25; these are compile-only dependencies, and runtime compatibility on 26.1.1 is unverified. Forge has no GeckoLib listener or dependency.
+`common` uses Fabric Loader and MixinExtras as compile-only annotation/injection dependencies. GeckoLib is compile-only in common and every loader, using `com.geckolib:geckolib-<module>-26.1.2:5.5.2` from its Cloudsmith Maven. It is optional at runtime and is not bundled.
 
 Fabric bundles NightConfig core and TOML as nested dependencies through Loom's `include` configuration; the parser is an implementation dependency during development. Every module declares Maven Central; Fabric uses it for these modules as well as the shared annotation dependency.
 
@@ -54,12 +54,12 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Architectury Gradle plugin | `3.5.170` | Common/Fabric/Forge/NeoForge project organization and `@ExpectPlatform` |
 | GradleUp Shadow plugin | `9.4.3` | Bundles transformed common output into loader JARs |
 | Java toolchain level | `25` | Compilation, Javadoc, and Java execution |
-| Minecraft | `26.1.1` | Compile and runtime target |
-| Forge | `net.minecraftforge:forge:26.1.1-63.0.2` | Exact Forge compile and development-run baseline |
-| NeoForge | `net.neoforged:neoforge:26.1.1.15-beta` | Exact NeoForge compile and development-run baseline |
+| Minecraft | `26.1.2` | Compile and runtime target |
+| Forge | `net.minecraftforge:forge:26.1.2-64.1.5` | Exact Forge compile and development-run baseline |
+| NeoForge | `net.neoforged:neoforge:26.1.2.109` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.19.5` | Fabric loader dependency; also supplies the common annotation dependency |
-| Fabric API | `net.fabricmc.fabric-api:fabric-api:0.145.4+26.1.1` | Fabric runtime and development API |
-| GeckoLib | `com.geckolib:geckolib-{common,fabric,neoforge}-26.1:5.5` | Compile-only optional render integration in common, Fabric, and NeoForge; built for Minecraft 26.1 |
+| Fabric API | `net.fabricmc.fabric-api:fabric-api:0.155.3+26.1.2` | Fabric runtime and development API |
+| GeckoLib | `com.geckolib:geckolib-{common,fabric,forge,neoforge}-26.1.2:5.5.2` | Compile-only optional render integration in common and every loader |
 | NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` | Bundled Fabric TOML parser |
 | MixinExtras | `io.github.llamalad7:mixinextras-common:0.5.3` | Compile-only context and operation injection API; loaders provide runtime support |
 | JSpecify annotations | `org.jspecify:jspecify:1.0.0` | Compile-only nullability annotations, declared once for every module |
@@ -76,15 +76,15 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | --- | --- |
 | Some Googly Eyes artifact | `0.8.3` |
 | Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
-| Minecraft compatibility | exactly `26.1.1`; Forge and NeoForge syntax `[26.1.1]`, Fabric syntax `=26.1.1` |
-| Forge compatibility | `[63.0.2,64)` |
-| Forge JavaFML loader compatibility | `[63,64)` |
-| NeoForge compatibility | `[26.1.1.15-beta,26.1.2)` |
+| Minecraft compatibility | exactly `26.1.2`; Forge and NeoForge syntax `[26.1.2]`, Fabric syntax `=26.1.2` |
+| Forge compatibility | `[64.1.5,65)` |
+| Forge JavaFML loader compatibility | `[64,65)` |
+| NeoForge compatibility | `[26.1.2.109,26.1.3)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
 | Fabric Loader compatibility | `>=0.19.5` |
 | Fabric Java compatibility | `>=25` |
-| Fabric API runtime declaration | `>=0.145.4+26.1.1`; compilation uses `0.145.4+26.1.1` |
-| GeckoLib | metadata permits optional `5.5` or newer on Fabric and NeoForge; runtime compatibility on 26.1.1 is unverified |
+| Fabric API runtime declaration | `>=0.155.3+26.1.2`; compilation uses `0.155.3+26.1.2` |
+| GeckoLib | metadata permits optional `5.5.2` or newer on every loader |
 
 ## Resolution and version authorities
 
