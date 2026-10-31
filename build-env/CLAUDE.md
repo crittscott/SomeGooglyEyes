@@ -1,4 +1,4 @@
-###### v17
+###### v19
 
 YOU ARE NOT TO DECOMPILE OR UNARCHIVE ANYTHING, EVER. NO EXCEPTIONS. YOU ARE NOT TO TREAT EVERY TASK AS OF WORLD-ENDING IMPORTANCE TO GET RIGHT. YOU ARE NOT TO SEARCH THE ENTIRE INTERNET IN AN ATTEMPT TO MAKE SURE YOU HAVE AN IRREFUTABLE PROOF THAT EVERY WORD OF YOUR AS YET UNWRITTEN ANSWER IS PERFECTLY CORRECT. DO NOT CHECK EVERY THING YOU DID MULTIPLE TIMES. DO IT AND MOVE ON.
 
@@ -42,6 +42,15 @@ You are a programmer; you write code. Do not build unless asked. Everything not 
 # Markdown
 
 - Do not hard-wrap prose in Markdown files: write each paragraph or list item as one line and let the editor wrap it. Tables and code blocks are unaffected.
+
+# Release documentation and build files
+
+- The mod is released for Minecraft 1.20.1, 1.21.1, 1.21.4, 1.21.8, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2, and 26.3, each from the branch named for its Minecraft version. Other version checkouts are unreleased waypoints.
+- `README.md` is identical in every checkout and covers every release.
+- `docs/curseforge-description.md` describes only this checkout's Minecraft version and links absolutely to this version's branch; `docs/curseforge-description.html` is its HTML rendering. Change them together.
+- A release checkout carries exactly one changelog, `CHANGELOG-<previous release>-<this release>.md` (versions written without the leading `1.`, e.g. `CHANGELOG-21.8-21.11.md`); earlier releases' changelogs live only in their own checkouts.
+- `.gitignore`, `.gitattributes`, `gradlews.ps1`, the wrapper, and the agent instruction files are identical in every checkout. Gradle files differ between checkouts only where the Minecraft version requires it; every version number lives in `gradle.properties`, and values derivable from it are derived in the build scripts.
+- `build-env/` is the snapshot described in `orientation-build.md`; update it whenever a file it covers changes.
 
 # Development and Verification
 
