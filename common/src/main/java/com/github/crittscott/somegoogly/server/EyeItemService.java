@@ -110,7 +110,7 @@ public final class EyeItemService {
             return InteractionResult.FAIL;
         }
         if (target instanceof Player victim && victim != player) {
-            if (!player.serverLevel().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
+            if (!player.level().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
                 return InteractionResult.FAIL;
             }
         }
@@ -160,7 +160,7 @@ public final class EyeItemService {
                 || !mayAlter(player, pos, face, shears)) {
             return InteractionResult.PASS;
         }
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         EyeState.Snapshot state = SkullEyeState.snapshot(skull);
         HeadInfo helper = ServerEyeConfigs.resolveHead(entity, state.variantRoll());
         int[] parts = SkullEyeState.headParts(helper);

@@ -9,9 +9,8 @@ import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -23,16 +22,16 @@ public final class SomeGoogly {
     public SomeGoogly(FMLJavaModLoadingContext context) {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
-        IEventBus modEventBus = context.getModEventBus();
+        BusGroup modBusGroup = context.getModBusGroup();
         ForgeContentRegistrar registrar = new ForgeContentRegistrar();
         SomeGooglyCommon.init(registrar);
-        registrar.register(modEventBus);
-        HeadEyesLootModifier.register(modEventBus);
+        registrar.register(modBusGroup);
+        HeadEyesLootModifier.register(modBusGroup);
         ForgeNetworkTransport.register();
         ForgeServerConfig.register(context);
 
-        ForgeServerEvents.register(MinecraftForge.EVENT_BUS);
-        MinecraftForge.EVENT_BUS.addListener(SomeGoogly::addReloadListeners);
+        ForgeServerEvents.register();
+        AddReloadListenerEvent.BUS.addListener(SomeGoogly::addReloadListeners);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ForgeClientBootstrap.register(context);

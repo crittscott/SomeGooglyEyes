@@ -11,7 +11,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.function.Function;
@@ -61,11 +61,11 @@ public final class ForgeContentRegistrar implements ContentRegistrar {
                 .build());
     }
 
-    /** Attach every deferred register to the mod bus. */
-    public void register(IEventBus modBus) {
-        dataComponents.register(modBus);
-        items.register(modBus);
-        creativeTabs.register(modBus);
-        recipeSerializers.register(modBus);
+    /** Attach every deferred register to the mod's bus group. */
+    public void register(BusGroup modBusGroup) {
+        dataComponents.register(modBusGroup);
+        items.register(modBusGroup);
+        creativeTabs.register(modBusGroup);
+        recipeSerializers.register(modBusGroup);
     }
 }

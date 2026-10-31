@@ -62,7 +62,7 @@ public final class PickerGate {
 
     /** Permit at most one picker request per player in one server tick. */
     public static boolean allowRequest(ServerPlayer player) {
-        int now = player.serverLevel().getServer().getTickCount();
+        int now = player.level().getServer().getTickCount();
         Integer last = LAST_REQUEST_TICK.put(player.getUUID(), now);
         return last == null || last != now;
     }

@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -32,10 +32,10 @@ public final class HeadEyesLootModifier extends LootModifier {
         super(conditions);
     }
 
-    /** Register the modifier's codec on the mod bus; called once from the mod constructor. */
-    public static void register(IEventBus modBus) {
+    /** Register the modifier's codec with the mod's bus group; called once from the mod constructor. */
+    public static void register(BusGroup modBusGroup) {
         SERIALIZERS.register("head_eyes", () -> CODEC);
-        SERIALIZERS.register(modBus);
+        SERIALIZERS.register(modBusGroup);
     }
 
     @Override

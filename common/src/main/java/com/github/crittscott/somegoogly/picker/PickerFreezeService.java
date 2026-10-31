@@ -143,7 +143,7 @@ public final class PickerFreezeService {
 
     /** The disappearing-client hook: a leaving player's frozen mob is always released. */
     public static void onPlayerLoggedOut(ServerPlayer player) {
-        unfreeze(player.serverLevel().getServer(), player.getUUID());
+        unfreeze(player.level().getServer(), player.getUUID());
     }
 
     /**

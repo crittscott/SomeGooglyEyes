@@ -128,10 +128,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#migrate(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)" class="member-name-link">migrate</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
- net.minecraft.nbt.CompoundTag&nbsp;tag)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#migrate(net.minecraft.world.entity.Entity,net.minecraft.world.level.storage.ValueInput)" class="member-name-link">migrate</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
+ net.minecraft.world.level.storage.ValueInput&nbsp;input)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Called at the end of <code>Entity.load</code> with the tag the entity was loaded from.</div>
+<div class="block">Called at the end of <code>Entity.load</code> with the input the entity was loaded from.</div>
 </div>
 </div>
 </div>
@@ -187,11 +187,12 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="migrate(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)">
+<section class="detail" id="migrate(net.minecraft.world.entity.Entity,net.minecraft.world.level.storage.ValueInput)">
 <h3>migrate</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">migrate</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
- net.minecraft.nbt.CompoundTag&nbsp;tag)</span></div>
-<div class="block">Called at the end of <code>Entity.load</code> with the tag the entity was loaded from.</div>
+ net.minecraft.world.level.storage.ValueInput&nbsp;input)</span></div>
+<div class="block">Called at the end of <code>Entity.load</code> with the input the entity was loaded from. The released value is
+ read as any tag, so one that is not a compound reaches the set-aside path instead of failing to decode.</div>
 </section>
 </li>
 </ul>

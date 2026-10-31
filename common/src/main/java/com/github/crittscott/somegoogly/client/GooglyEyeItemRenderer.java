@@ -16,8 +16,10 @@ import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
@@ -95,6 +97,16 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
     @Override
     public AppearanceOverride extractArgument(ItemStack stack) {
         return EyeItemProperties.get(stack);
+    }
+
+    /** The inventory view, the largest of the static views: the eye centered in the item box at GUI scale. */
+    @Override
+    public void getExtents(Set<Vector3f> output) {
+        PoseStack pose = new PoseStack();
+        pose.translate(0.5, 0.5, 0.5);
+        pose.mulPose(Axis.XP.rotationDegrees(180));
+        pose.scale(GUI_SCALE, GUI_SCALE, GUI_SCALE * ModelGooglyEye.BASE_DEPTH);
+        ModelGooglyEye.addExtents(pose.last().pose(), output);
     }
 
     @Override

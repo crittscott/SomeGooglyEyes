@@ -142,23 +142,42 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#moveIris(float,float,float)" class="member-name-link">moveIris</a><wbr>(float&nbsp;normX,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addExtents(org.joml.Matrix4f,java.util.Set)" class="member-name-link">addExtents</a><wbr>(org.joml.Matrix4f&nbsp;pose,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;org.joml.Vector3f&gt;&nbsp;output)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>pose</code>, for
+ vanilla's item extents.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#moveIris(float,float,float)" class="member-name-link">moveIris</a><wbr>(float&nbsp;normX,
  float&nbsp;normY,
  float&nbsp;pupilSize)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Position the iris from a unit-disk pupil position <code>(normX, normY)</code> in [-1,1], mapped
  linearly onto the full travel circle so the iris edge just kisses the cornea rim at
  <code>|norm| = 1</code>.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderCornea(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
+ int&nbsp;packedLight,
+ int&nbsp;packedOverlay,
+ float&nbsp;red,
+ float&nbsp;green,
+ float&nbsp;blue,
+ float&nbsp;alpha)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Draw the cornea cylinder in the given color.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderCornea(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderIris(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderIris</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
  int&nbsp;packedLight,
  int&nbsp;packedOverlay,
@@ -167,22 +186,10 @@ loadScripts(document, 'script');</script>
  float&nbsp;blue,
  float&nbsp;alpha)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Draw the cornea cylinder in the given color.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderIris(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderIris</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
- int&nbsp;packedLight,
- int&nbsp;packedOverlay,
- float&nbsp;red,
- float&nbsp;green,
- float&nbsp;blue,
- float&nbsp;alpha)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Draw the iris cylinder in the given color, offset by the current pupil position.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderLids(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderLids(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  com.mojang.blaze3d.vertex.VertexConsumer&nbsp;buffer,
  int&nbsp;packedLight,
  int&nbsp;packedOverlay,
@@ -191,7 +198,7 @@ loadScripts(document, 'script');</script>
  float&nbsp;blue,
  float&nbsp;alpha,
  float&nbsp;coverage)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
  (0 none, at most half), in the given color.</div>
 </div>
@@ -268,6 +275,15 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="addExtents(org.joml.Matrix4f,java.util.Set)">
+<h3>addExtents</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addExtents</span><wbr><span class="parameters">(org.joml.Matrix4f&nbsp;pose,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;org.joml.Vector3f&gt;&nbsp;output)</span></div>
+<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>pose</code>, for
+ vanilla's item extents.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="moveIris(float,float,float)">
 <h3>moveIris</h3>

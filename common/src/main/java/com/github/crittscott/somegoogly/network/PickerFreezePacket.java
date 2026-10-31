@@ -77,18 +77,18 @@ public class PickerFreezePacket implements CustomPacketPayload {
             if (!PickerGate.authorized(sender)) {
                 return;
             }
-            Entity target = sender.serverLevel().getEntity(packet.mobId);
+            Entity target = sender.level().getEntity(packet.mobId);
             if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
                         Component.translatable("somegoogly.command.picker.freeze_too_far")));
                 return;
             }
-            Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
+            Component error = PickerFreezeService.freeze(sender.level(), sender.getUUID(), packet.mobId);
             if (error != null) {
                 sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
             }
         } else {
-            PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());
+            PickerFreezeService.unfreeze(sender.level().getServer(), sender.getUUID());
         }
     }
 

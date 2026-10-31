@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -22,9 +23,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.listener.Priority;
 
 /** Forge event wiring for the loader-neutral authoritative server services. */
 public final class ForgeServerEvents {
@@ -32,26 +31,38 @@ public final class ForgeServerEvents {
     private ForgeServerEvents() {
     }
 
-    /** Subscribe the server listeners to the game bus; called once from the mod constructor. */
-    public static void register(IEventBus gameBus) {
-        gameBus.addListener(ForgeServerEvents::onRegisterCommands);
-        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
-        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickBlock);
-        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
+    /** Subscribe the server listeners to their game events' buses; called once from the mod constructor. */
+    public static void register() {
+        RegisterCommandsEvent.BUS.addListener(ForgeServerEvents::onRegisterCommands);
+        PlayerInteractEvent.EntityInteract.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteract);
+        PlayerInteractEvent.RightClickBlock.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickBlock);
+        PlayerInteractEvent.RightClickItem.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops.
-        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingDrops);
-        gameBus.addListener(ForgeServerEvents::onEntityJoinLevel);
-        gameBus.addListener(ForgeServerEvents::onPlayerLoggedOut);
-        gameBus.addListener(ForgeServerEvents::onDatapackSync);
-        gameBus.addListener(ForgeServerEvents::onServerStopping);
-        gameBus.addListener(ForgeServerEvents::onServerTick);
-        gameBus.addListener(ForgeServerEvents::onStartTracking);
-        gameBus.addListener(ForgeServerEvents::onStopTracking);
-        gameBus.addListener(ForgeServerEvents::onLivingDamage);
-        gameBus.addListener(ForgeServerEvents::onLivingHeal);
-        gameBus.addListener(ForgeServerEvents::onTrade);
-        gameBus.addListener(ForgeServerEvents::onPlayerClone);
-        gameBus.addListener(ForgeServerEvents::onLivingConversion);
+        LivingDropsEvent.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onLivingDrops);
+        EntityJoinLevelEvent.BUS.addListener(ForgeServerEvents::onEntityJoinLevel);
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(ForgeServerEvents::onPlayerLoggedOut);
+        OnDatapackSyncEvent.BUS.addListener(ForgeServerEvents::onDatapackSync);
+        ServerStoppingEvent.BUS.addListener(ForgeServerEvents::onServerStopping);
+        TickEvent.ServerTickEvent.Post.BUS.addListener(ForgeServerEvents::onServerTick);
+        PlayerEvent.StartTracking.BUS.addListener(ForgeServerEvents::onStartTracking);
+        PlayerEvent.StopTracking.BUS.addListener(ForgeServerEvents::onStopTracking);
+        LivingDamageEvent.BUS.addListener(ForgeServerEvents::onLivingDamage);
+        LivingHealEvent.BUS.addListener(ForgeServerEvents::onLivingHeal);
+        TradeWithVillagerEvent.BUS.addListener(ForgeServerEvents::onTrade);
+        PlayerEvent.Clone.BUS.addListener(ForgeServerEvents::onPlayerClone);
+        LivingConversionEvent.Post.BUS.addListener(ForgeServerEvents::onLivingConversion);
+    }
+
+    /**
+     * Record a handled interaction's result and report whether to cancel the event, so the vanilla interaction
+     * does not run after ours.
+     */
+    private static boolean consumed(PlayerInteractEvent event, InteractionResult result) {
+        if (result == InteractionResult.PASS) {
+            return false;
+        }
+        event.setCancellationResult(result);
+        return true;
     }
 
     /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
@@ -71,39 +82,30 @@ public final class ForgeServerEvents {
 
     /**
      * Lowest priority so a land-claim or region-protection mod that cancels the entity interaction
-     * gets first refusal — this handler consumes the event as soon as it acts.
+     * gets first refusal — this handler cancels the event as soon as it acts.
      */
-    private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+    private static boolean onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         if (!(event.getTarget() instanceof LivingEntity living)) {
-            return;
+            return false;
         }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), living);
-        if (result != InteractionResult.PASS) {
-            event.setCanceled(true);
-            event.setCancellationResult(result);
-        }
+        return consumed(event, result);
     }
 
     /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
-    private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseItem() == Event.Result.DENY) {
-            return;
+    private static boolean onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getUseItem() == Result.DENY) {
+            return false;
         }
         InteractionResult result = EyeItemService.useOnSkull(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
-        if (result != InteractionResult.PASS) {
-            event.setCanceled(true);
-            event.setCancellationResult(result);
-        }
+        return consumed(event, result);
     }
 
-    private static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+    private static boolean onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
-        if (result != InteractionResult.PASS) {
-            event.setCanceled(true);
-            event.setCancellationResult(result);
-        }
+        return consumed(event, result);
     }
 
     private static void onLivingDrops(LivingDropsEvent event) {

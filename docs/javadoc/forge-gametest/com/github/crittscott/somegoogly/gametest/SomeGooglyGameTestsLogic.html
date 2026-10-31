@@ -134,10 +134,21 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A Googly Eye stack carries its appearance.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristAcceptsOnlyShears</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>(package private) static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadEntity(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)" class="member-name-link">loadEntity</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
+ net.minecraft.nbt.CompoundTag&nbsp;saved)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Load <code>entity</code> from <code>saved</code> the way a world load does, logging any problems reading it.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristAcceptsOnlyShears</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Optometrist goes only on shears and is treasure-only.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>(package private) static net.minecraft.nbt.CompoundTag</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveEntity(net.minecraft.world.entity.Entity)" class="member-name-link">saveEntity</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The data a world save writes for <code>entity</code>, logging any problems writing it.</div>
 </div>
 </div>
 </div>
@@ -183,6 +194,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="loadEntity(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)">
+<h3>loadEntity</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">loadEntity</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
+ net.minecraft.nbt.CompoundTag&nbsp;saved)</span></div>
+<div class="block">Load <code>entity</code> from <code>saved</code> the way a world load does, logging any problems reading it.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>optometristAcceptsOnlyShears</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristAcceptsOnlyShears</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -210,6 +229,13 @@ loadScripts(document, 'script');</script>
  an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
  player, an eyed cow shot by a player holding shears, or an eyed cow with shears while <code>harvestOnKillPercent = 0</code> or
  <code>googlyEyesEnabled = false</code>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="saveEntity(net.minecraft.world.entity.Entity)">
+<h3>saveEntity</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">net.minecraft.nbt.CompoundTag</span>&nbsp;<span class="element-name">saveEntity</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
+<div class="block">The data a world save writes for <code>entity</code>, logging any problems writing it.</div>
 </section>
 </li>
 </ul>

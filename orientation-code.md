@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.5; an unreleased waypoint toward 1.21.8.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.6; an unreleased waypoint toward 1.21.8.
 
 `common` is transformed into all three loader artifacts.
 
@@ -66,7 +66,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
-The picker gizmo uses a registered no-depth render pipeline. Fabric installs the picker HUD after the vanilla subtitle layer. Common Mixins bracket placed-head and head-item rendering. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and ends Forge's HUD draw via Mixin. Common Mixins bracket placed-head and head-item rendering and key head items' GUI identity on eyes. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
 
 GeckoLib links only after detection; attach failures cannot block loading.
 

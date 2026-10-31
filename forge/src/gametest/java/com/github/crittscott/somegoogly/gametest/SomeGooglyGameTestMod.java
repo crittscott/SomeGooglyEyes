@@ -145,6 +145,6 @@ public final class SomeGooglyGameTestMod {
         functions.register("versionrangegametests/optional_mod_version_range_synthesis", () -> VersionRangeGameTests::optionalModVersionRangeSynthesis);
         functions.register("versionrangegametests/range_bounds_respect_inclusivity", () -> VersionRangeGameTests::rangeBoundsRespectInclusivity);
         functions.register("versionrangegametests/shorter_version_pads_with_zero", () -> VersionRangeGameTests::shorterVersionPadsWithZero);
-        functions.register(context.getModEventBus());
+        functions.register(context.getModBusGroup());
     }
 }

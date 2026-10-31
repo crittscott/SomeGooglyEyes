@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.config.forge;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,7 +40,10 @@ public final class ForgeClientConfig {
     /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
-        context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
+        BusGroup modBusGroup = context.getModBusGroup();
+        ModConfigEvent.Loading.getBus(modBusGroup).addListener(ForgeClientConfig::onConfigChanged);
+        ModConfigEvent.Reloading.getBus(modBusGroup).addListener(ForgeClientConfig::onConfigChanged);
+        ModConfigEvent.Unloading.getBus(modBusGroup).addListener(ForgeClientConfig::onConfigChanged);
     }
 
     private static void onConfigChanged(ModConfigEvent event) {

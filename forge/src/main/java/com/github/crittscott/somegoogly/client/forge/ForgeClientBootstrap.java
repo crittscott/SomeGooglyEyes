@@ -1,13 +1,11 @@
 package com.github.crittscott.somegoogly.client.forge;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
-import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
@@ -17,20 +15,17 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
@@ -57,10 +52,7 @@ public final class ForgeClientBootstrap {
         }
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         ClientLifecycle.tick();
     }
 
@@ -86,36 +78,27 @@ public final class ForgeClientBootstrap {
 
     /** Register the client config and every client-side Forge listener. */
     public static void register(FMLJavaModLoadingContext context) {
-        IEventBus modBus = context.getModEventBus();
-        IEventBus gameBus = MinecraftForge.EVENT_BUS;
+        BusGroup modBusGroup = context.getModBusGroup();
 
         ForgeClientConfig.register(context);
         registerItemModelTypes();
 
-        modBus.addListener(ForgeClientBootstrap::addRendererLayers);
-        modBus.addListener(ForgeClientBootstrap::registerGuiLayers);
-        modBus.addListener(ForgeClientBootstrap::registerKeyMappings);
+        EntityRenderersEvent.AddLayers.getBus(modBusGroup).addListener(ForgeClientBootstrap::addRendererLayers);
+        RegisterKeyMappingsEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::registerKeyMappings);
 
-        gameBus.addListener(ForgeClientBootstrap::registerClientCommands);
-        gameBus.addListener(ForgeClientBootstrap::onClientTick);
-        gameBus.addListener(ForgeClientBootstrap::onLoggingOut);
-        gameBus.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
-        gameBus.addListener(ForgeClientBootstrap::onItemTooltip);
-        gameBus.addListener(ForgeClientBootstrap::onLevelUnload);
+        RegisterClientCommandsEvent.BUS.addListener(ForgeClientBootstrap::registerClientCommands);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(ForgeClientBootstrap::onClientTick);
+        ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(ForgeClientBootstrap::onLoggingOut);
+        EntityLeaveLevelEvent.BUS.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
+        ItemTooltipEvent.BUS.addListener(ForgeClientBootstrap::onItemTooltip);
+        LevelEvent.Unload.BUS.addListener(ForgeClientBootstrap::onLevelUnload);
         if (GeckoCompat.isLoaded()) {
-            ForgeGeckoLayers.register(gameBus);
+            ForgeGeckoLayers.register();
         }
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
         GooglyClientCommands.register(event.getDispatcher());
-    }
-
-    private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {
-        event.getLayeredDraw().add(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
-                (graphics, partialTick) -> PickerHud.render(
-                        graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 
     /**

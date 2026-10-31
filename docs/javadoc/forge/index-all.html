@@ -158,17 +158,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Build the channel and register every payload; called once from the mod constructor, before any send.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html#register(net.minecraftforge.eventbus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Method in class com.github.crittscott.somegoogly.registry.forge.<a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.server.forge.<a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html" title="class in com.github.crittscott.somegoogly.server.forge">ForgeServerEvents</a></dt>
 <dd>
-<div class="block">Attach every deferred register to the mod bus.</div>
+<div class="block">Subscribe the server listeners to their game events' buses; called once from the mod constructor.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html#register(net.minecraftforge.eventbus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Static method in class com.github.crittscott.somegoogly.server.forge.<a href="com/github/crittscott/somegoogly/server/forge/ForgeServerEvents.html" title="class in com.github.crittscott.somegoogly.server.forge">ForgeServerEvents</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html#register(net.minecraftforge.eventbus.api.bus.BusGroup)" class="member-name-link">register(BusGroup)</a> - Method in class com.github.crittscott.somegoogly.registry.forge.<a href="com/github/crittscott/somegoogly/registry/forge/ForgeContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.forge">ForgeContentRegistrar</a></dt>
 <dd>
-<div class="block">Subscribe the server listeners to the game bus; called once from the mod constructor.</div>
+<div class="block">Attach every deferred register to the mod's bus group.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/server/forge/HeadEyesLootModifier.html#register(net.minecraftforge.eventbus.api.IEventBus)" class="member-name-link">register(IEventBus)</a> - Static method in class com.github.crittscott.somegoogly.server.forge.<a href="com/github/crittscott/somegoogly/server/forge/HeadEyesLootModifier.html" title="class in com.github.crittscott.somegoogly.server.forge">HeadEyesLootModifier</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/server/forge/HeadEyesLootModifier.html#register(net.minecraftforge.eventbus.api.bus.BusGroup)" class="member-name-link">register(BusGroup)</a> - Static method in class com.github.crittscott.somegoogly.server.forge.<a href="com/github/crittscott/somegoogly/server/forge/HeadEyesLootModifier.html" title="class in com.github.crittscott.somegoogly.server.forge">HeadEyesLootModifier</a></dt>
 <dd>
-<div class="block">Register the modifier's codec on the mod bus; called once from the mod constructor.</div>
+<div class="block">Register the modifier's codec with the mod's bus group; called once from the mod constructor.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html#register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext)" class="member-name-link">register(FMLJavaModLoadingContext)</a> - Static method in class com.github.crittscott.somegoogly.client.forge.<a href="com/github/crittscott/somegoogly/client/forge/ForgeClientBootstrap.html" title="class in com.github.crittscott.somegoogly.client.forge">ForgeClientBootstrap</a></dt>
 <dd>

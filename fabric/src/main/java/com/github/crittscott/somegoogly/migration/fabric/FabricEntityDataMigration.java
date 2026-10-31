@@ -4,8 +4,10 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.fabric.EntityPersistentDataImpl;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.ValueInput;
 
 /**
  * Converts entity data saved by the previous released Fabric build (Minecraft 1.21.1) as the entity loads.
@@ -21,9 +23,12 @@ public final class FabricEntityDataMigration {
     private FabricEntityDataMigration() {
     }
 
-    /** Called at the end of {@code Entity.load} with the tag the entity was loaded from. */
-    public static void migrate(Entity entity, CompoundTag tag) {
-        Tag released = tag.get(RELEASED_KEY);
+    /**
+     * Called at the end of {@code Entity.load} with the input the entity was loaded from. The released value is
+     * read as any tag, so one that is not a compound reaches the set-aside path instead of failing to decode.
+     */
+    public static void migrate(Entity entity, ValueInput input) {
+        Tag released = input.read(RELEASED_KEY, ExtraCodecs.NBT).orElse(null);
         if (released == null) {
             return;
         }

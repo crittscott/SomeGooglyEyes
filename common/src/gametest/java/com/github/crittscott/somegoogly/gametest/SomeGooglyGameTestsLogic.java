@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -19,7 +20,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
@@ -30,6 +33,8 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -60,9 +65,9 @@ public final class SomeGooglyGameTestsLogic {
         EyeState.initialize(original, true, 0.375F);
         EyeState.setIrisTint(original, iris);
 
-        CompoundTag saved = original.saveWithoutId(new CompoundTag());
+        CompoundTag saved = saveEntity(original);
         Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        restored.load(saved);
+        loadEntity(restored, saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), Component.literal(loader + " should restore the has-eyes flag"));
         helper.assertTrue(EyeState.getVariantRoll(restored) == 0.375F,
@@ -115,6 +120,14 @@ public final class SomeGooglyGameTestsLogic {
         helper.assertTrue(stack.getCount() == 3, Component.literal("Expected created eye stack count to be preserved"));
         helper.assertTrue(roundTrip.equals(appearance), Component.literal("Expected eye item appearance component to round-trip"));
         helper.succeed();
+    }
+
+    /** Load {@code entity} from {@code saved} the way a world load does, logging any problems reading it. */
+    static void loadEntity(Entity entity, CompoundTag saved) {
+        try (ProblemReporter.ScopedCollector problems =
+                     new ProblemReporter.ScopedCollector(entity.problemPath(), SomeGooglyCommon.LOGGER)) {
+            entity.load(TagValueInput.create(problems, entity.registryAccess(), saved));
+        }
     }
 
     /**
@@ -220,5 +233,15 @@ public final class SomeGooglyGameTestsLogic {
         helper.assertTrue(drops.isEmpty(), Component.literal("Nonqualifying death harvests should emit no eye stacks"));
         helper.assertTrue(shears.getDamageValue() == 0, Component.literal("Nonqualifying death harvests should not damage shears"));
         helper.succeed();
+    }
+
+    /** The data a world save writes for {@code entity}, logging any problems writing it. */
+    static CompoundTag saveEntity(Entity entity) {
+        try (ProblemReporter.ScopedCollector problems =
+                     new ProblemReporter.ScopedCollector(entity.problemPath(), SomeGooglyCommon.LOGGER)) {
+            TagValueOutput output = TagValueOutput.createWithContext(problems, entity.registryAccess());
+            entity.saveWithoutId(output);
+            return output.buildResult();
+        }
     }
 }

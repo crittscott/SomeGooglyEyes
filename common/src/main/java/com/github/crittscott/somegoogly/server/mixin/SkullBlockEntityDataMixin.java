@@ -3,11 +3,12 @@ package com.github.crittscott.somegoogly.server.mixin;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -66,19 +67,19 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
     }
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
-    private void somegoogly$load(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo callback) {
-        somegoogly$data = tag.getCompound(SkullEyeState.DATA_KEY).orElse(null);
+    private void somegoogly$load(ValueInput input, CallbackInfo callback) {
+        somegoogly$data = input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null);
     }
 
     @Inject(method = "removeComponentsFromTag", at = @At("TAIL"))
-    private void somegoogly$removeComponents(CompoundTag tag, CallbackInfo callback) {
-        tag.remove(SkullEyeState.DATA_KEY);
+    private void somegoogly$removeComponents(ValueOutput output, CallbackInfo callback) {
+        output.discard(SkullEyeState.DATA_KEY);
     }
 
     @Inject(method = "saveAdditional", at = @At("TAIL"))
-    private void somegoogly$save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo callback) {
+    private void somegoogly$save(ValueOutput output, CallbackInfo callback) {
         if (somegoogly$data != null) {
-            tag.put(SkullEyeState.DATA_KEY, somegoogly$data.copy());
+            output.store(SkullEyeState.DATA_KEY, CompoundTag.CODEC, somegoogly$data.copy());
         }
     }
 }

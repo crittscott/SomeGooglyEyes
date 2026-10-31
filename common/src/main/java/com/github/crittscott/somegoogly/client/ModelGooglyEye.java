@@ -2,6 +2,10 @@ package com.github.crittscott.somegoogly.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.util.Set;
 
 /**
  * Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
@@ -62,6 +66,22 @@ public final class ModelGooglyEye {
             double angle = Math.PI * 2.0 * i / SIDES;
             RING_X[i] = (float) Math.cos(angle);
             RING_Y[i] = (float) Math.sin(angle);
+        }
+    }
+
+    /**
+     * Add the corners of the box enclosing the whole eye, lids included, transformed by {@code pose}, for
+     * vanilla's item extents.
+     */
+    public static void addExtents(Matrix4f pose, Set<Vector3f> output) {
+        float r = LID_RADIUS * MODEL_UNIT;
+        float front = LID_FRONT_Z * MODEL_UNIT;
+        for (float x : new float[]{-r, r}) {
+            for (float y : new float[]{-r, r}) {
+                for (float z : new float[]{0F, front}) {
+                    output.add(pose.transformPosition(x, y, z, new Vector3f()));
+                }
+            }
         }
     }
 

@@ -53,19 +53,19 @@ public final class SomeGooglyGameTests {
     public void fabricReleasedEntityDataMigratesOnLoad(GameTestHelper helper) {
         // Never added to the level, so it carries no attachment and the tag holds only the released format.
         Cow source = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        CompoundTag saved = source.saveWithoutId(new CompoundTag());
+        CompoundTag saved = SomeGooglyGameTestsLogic.saveEntity(source);
         CompoundTag released = new CompoundTag();
         released.putBoolean(EyeState.HAS_EYES, true);
         released.putFloat(EyeState.VARIANT_ROLL, 0.625F);
         saved.put(RELEASED_PERSISTENT_DATA_KEY, released);
 
         Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        restored.load(saved);
+        SomeGooglyGameTestsLogic.loadEntity(restored, saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), Component.literal("Released has-eyes flag should migrate"));
         helper.assertTrue(EyeState.getVariantRoll(restored) == 0.625F,
                 Component.literal("Released placement-variant roll should migrate"));
-        helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
+        helper.assertTrue(!SomeGooglyGameTestsLogic.saveEntity(restored).contains(RELEASED_PERSISTENT_DATA_KEY),
                 Component.literal("Migrated data should not be written under the released key"));
         helper.succeed();
     }
@@ -79,17 +79,17 @@ public final class SomeGooglyGameTests {
     @GameTest(structure = TEMPLATE, maxTicks = 20)
     public void fabricUnrecognizedReleasedEntityDataIsSetAside(GameTestHelper helper) {
         Cow source = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        CompoundTag saved = source.saveWithoutId(new CompoundTag());
+        CompoundTag saved = SomeGooglyGameTestsLogic.saveEntity(source);
         saved.putString(RELEASED_PERSISTENT_DATA_KEY, "not a compound");
 
         Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.LOAD));
-        restored.load(saved);
+        SomeGooglyGameTestsLogic.loadEntity(restored, saved);
 
         helper.assertTrue(!EyeState.hasEyes(restored), Component.literal("Unrecognized released data must not grant eyes"));
         helper.assertTrue("not a compound".equals(EntityPersistentData.get(restored)
                         .getStringOr(FabricEntityDataMigration.SET_ASIDE_KEY, "")),
                 Component.literal("Unrecognized released data should be set aside in the attachment"));
-        helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
+        helper.assertTrue(!SomeGooglyGameTestsLogic.saveEntity(restored).contains(RELEASED_PERSISTENT_DATA_KEY),
                 Component.literal("Set-aside data should not be written under the released key"));
         helper.succeed();
     }

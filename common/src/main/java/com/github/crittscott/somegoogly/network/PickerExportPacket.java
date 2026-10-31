@@ -82,7 +82,7 @@ public class PickerExportPacket implements CustomPacketPayload {
         }
         UUID playerId = sender.getUUID();
         Component result = PickerExportService.export(
-                sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
+                sender.level().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
         sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
     }
 

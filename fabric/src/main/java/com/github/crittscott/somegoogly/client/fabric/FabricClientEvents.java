@@ -18,12 +18,11 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.network.chat.Component;
@@ -81,13 +80,9 @@ public final class FabricClientEvents {
             }
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
-        HudLayerRegistrationCallback.EVENT.register(layers -> layers.attachLayerAfter(
-                IdentifiedLayer.SUBTITLES,
-                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
-                    minecraft.getWindow().getGuiScaledHeight());
-        }));
+        HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES,
+                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
+                        PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
 
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->
                 EyeItemProperties.appendHeadTooltip(stack, lines));

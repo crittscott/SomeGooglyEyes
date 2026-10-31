@@ -82,7 +82,7 @@ public final class GooglyServerCommands {
     /** The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}. */
     private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
         return Commands.literal("admin")
-                .requires(src -> src.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("eyes")
                         .then(Commands.argument("value", BoolArgumentType.bool())
                                 .executes(ctx -> {
@@ -163,7 +163,7 @@ public final class GooglyServerCommands {
                     Component.translatable("somegoogly.command.picker.spawnall_invalid_mod", modFilter)));
             return 0;
         }
-        if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
+        if (!PickerGate.allowSpawnAll(player.level().getServer())) {
             tell(player, "somegoogly.command.picker.spawnall_cooldown");
             return 0;
         }
@@ -216,7 +216,7 @@ public final class GooglyServerCommands {
             tell(player, "somegoogly.command.picker.mob_not_chosen");
             return null;
         }
-        Entity entity = player.serverLevel().getEntity(mobId);
+        Entity entity = player.level().getEntity(mobId);
         if (!(entity instanceof LivingEntity living)) {
             tell(player, "somegoogly.command.picker.mob_not_found");
             return null;

@@ -163,7 +163,7 @@ public final class PickerSpawnServiceGameTestsLogic {
         helper.assertTrue(cow.getYRot() == yaw && cow.getYHeadRot() == yaw && cow.yBodyRot == yaw,
                 Component.literal("Picker facing must override rotations assigned during spawn finalization"));
 
-        CompoundTag saved = cow.saveWithoutId(new CompoundTag());
+        CompoundTag saved = SomeGooglyGameTestsLogic.saveEntity(cow);
         helper.assertTrue(!saved.isEmpty(), Component.literal("A prepared picker mob must serialize successfully"));
         helper.succeed();
     }

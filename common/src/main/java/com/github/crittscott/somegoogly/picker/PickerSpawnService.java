@@ -226,7 +226,7 @@ public final class PickerSpawnService {
      *                  dropped and why — a debugging aid for mods whose mobs don't appear.
      */
     public static void spawn(ServerPlayer player, String modFilter) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
 
         boolean filtering = modFilter != null && !modFilter.isBlank();
         // When narrowed to one mod, note every living-ish type we couldn't place and why, since the point of
@@ -406,7 +406,7 @@ public final class PickerSpawnService {
      * is targeted or the mob's bounding box doesn't fit at the target.
      */
     public static void spawnOne(ServerPlayer player, EntityType<?> type) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         SpawnRefusal refusal = refusal(type);
         if (refusal != null) {

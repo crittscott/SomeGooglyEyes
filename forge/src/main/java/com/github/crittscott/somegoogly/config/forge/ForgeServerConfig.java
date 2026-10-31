@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -117,7 +118,10 @@ public final class ForgeServerConfig {
     /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
-        context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
+        BusGroup modBusGroup = context.getModBusGroup();
+        ModConfigEvent.Loading.getBus(modBusGroup).addListener(ForgeServerConfig::onConfigChanged);
+        ModConfigEvent.Reloading.getBus(modBusGroup).addListener(ForgeServerConfig::onConfigChanged);
+        ModConfigEvent.Unloading.getBus(modBusGroup).addListener(ForgeServerConfig::onConfigChanged);
     }
 
     private static void onConfigChanged(ModConfigEvent event) {

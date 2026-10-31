@@ -61,7 +61,7 @@ public final class PickerExportService {
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
+            """.formatted(SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA));
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {

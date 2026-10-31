@@ -3,9 +3,8 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Forge GameTest entry points for {@link SkullEyeGameTestsLogic}; see that class for the actual assertions.
@@ -48,11 +47,11 @@ public final class SkullEyeGameTests {
             var event = new PlayerInteractEvent.RightClickBlock(
                     player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
             if (denied) {
-                event.setUseItem(Event.Result.DENY);
+                event.setUseItem(Result.DENY);
             }
-            MinecraftForge.EVENT_BUS.post(event);
+            boolean cancelled = PlayerInteractEvent.RightClickBlock.BUS.post(event);
             if (denied) {
-                helper.assertTrue(!event.isCanceled(), Component.literal("the adapter must preserve a noncanceled item denial"));
+                helper.assertTrue(!cancelled, Component.literal("the adapter must preserve a noncanceled item denial"));
             }
         });
     }

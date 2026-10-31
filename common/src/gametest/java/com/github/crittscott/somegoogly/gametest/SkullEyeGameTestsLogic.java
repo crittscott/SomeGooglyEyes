@@ -238,10 +238,9 @@ public final class SkullEyeGameTestsLogic {
     /** Kill {@code mob} with a fresh charged creeper's explosion, the kill that makes it drop its head. */
     private static void blowUpWithChargedCreeper(GameTestHelper helper, Skeleton mob) {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
-        CompoundTag data = new CompoundTag();
-        creeper.saveWithoutId(data);
+        CompoundTag data = SomeGooglyGameTestsLogic.saveEntity(creeper);
         data.putBoolean("powered", true);
-        creeper.load(data);
+        SomeGooglyGameTestsLogic.loadEntity(creeper, data);
         mob.hurtServer(helper.getLevel(), helper.getLevel().damageSources().explosion(creeper, creeper), LETHAL_DAMAGE);
         creeper.discard();
     }
