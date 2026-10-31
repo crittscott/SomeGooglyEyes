@@ -1,22 +1,22 @@
 # Some Googly Eyes
 
-A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes). (Also look to [Regoogly eyes](https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes) by EmeryTheModder if you want a pure port of the original.)
+A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes). (Also look to [Regoogly Eyes](https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes) by EmeryTheModder if you want a pure port of the original.)
 
 Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
-Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball and stick them on other mobs, or yourself.
+Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: In-game configuration tool for adding and configuring eyes and exporting as a datapack.
+Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![Googly Eyes splash](docs/googlyeyes-splash-0.8.2.png)
 
-![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1 to 26.3](https://img.shields.io/badge/Minecraft-1.20.1%20to%2026.3-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 
 **Dispatch the mob with a direct shears blow**: there's a chance to drop a googly eye.
 
-**Find the Optometrist enchantment**: Put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.
+**Find the Optometrist enchantment**: put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.
 
 **Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.
 
@@ -24,9 +24,10 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
-**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed on NeoForge, most of its mob heads work the same way.
+**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed (1.20.1 on Forge, 1.21.1 on NeoForge), most of its mob heads work the same way.
 
 ## Eye potential
+
 Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
 
 ## Configuration
@@ -70,10 +71,27 @@ Ships with predefined eye configs for:
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
 
-Available for Fabric, NeoForge, and Forge on Minecraft 1.21.4.
+## Releases
+
+Each release is built from the branch named for its Minecraft version.
+
+| Minecraft | Loaders | Notes |
+| --- | --- | --- |
+| [1.20.1](../../tree/1.20.1) | Fabric, Forge | No NeoForge build. Heads mod support on Forge. |
+| [1.21.1](../../tree/1.21.1) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
+| [1.21.4](../../tree/1.21.4) | Fabric, NeoForge, Forge |  |
+| [1.21.8](../../tree/1.21.8) | Fabric, NeoForge, Forge |  |
+| [1.21.11](../../tree/1.21.11) | Fabric, NeoForge, Forge |  |
+| [26.1](../../tree/26.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
+| [26.1.1](../../tree/26.1.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
+| [26.1.2](../../tree/26.1.2) | Fabric, NeoForge, Forge |  |
+| [26.2](../../tree/26.2) | Fabric, NeoForge, Forge |  |
+| [26.3](../../tree/26.3) | Fabric, NeoForge, Forge |  |
+
+GeckoLib is optional on every loader. Each Minecraft version's build migrates worlds saved by the release before it in this table; skip no release when updating a world.
 
 ## Credits and license
 
-A port of iChun's **Googly Eyes**, rebuilt for 1.21.4 with new physics, behaviors, and more.
+A port of iChun's **Googly Eyes**, rebuilt for Minecraft 1.20.1 through 26.3 with new physics, behaviors, and more.
 
 License: [**GPL-3.0**](LICENSE).
