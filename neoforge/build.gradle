@@ -62,7 +62,7 @@ configurations {
 }
 
 dependencies {
-    neoForge "net.neoforged:neoforge:$rootProject.neoforge_compile_version"
+    neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"

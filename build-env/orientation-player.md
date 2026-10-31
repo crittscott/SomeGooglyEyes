@@ -3,21 +3,39 @@
 <!-- END FIXED HEADER -->
 
 # Some Googly Eyes — player-facing behavior
+
 ## Mobs with eyes
+
 ## Obtaining eyes
+
 ### Killing with shears
+
 ### Optometrist
+
 ## Googly Eyes and Slimy Eyes
+
 ## Mob heads
+
 ## Checking a target
+
 ## Creative tab
+
 ## Configuration
+
 ### Spawn and harvest
+
 ### Behaviors
+
 ### Client display
+
 ## Datapacks and compatibility
+
 ## Creative eye picker
+
 ### Workflow
+
 ### Test mobs
+
 ## Admin commands
+
 ## Limitations

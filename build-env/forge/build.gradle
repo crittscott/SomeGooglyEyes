@@ -63,7 +63,7 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:$rootProject.forge_compile_version"
+    forge "net.minecraftforge:forge:$rootProject.minecraft_version-$rootProject.forge_version"
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     modCompileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"

@@ -3,8 +3,13 @@
 <!-- END FIXED HEADER -->
 
 # Some Googly Eyes — build orientation
+
 ## Snapshot contents
+
 ## Build shape
+
 ## Exact build versions
+
 ## Artifact and runtime version declarations
+
 ## Resolution and version authorities
