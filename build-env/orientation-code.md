@@ -3,13 +3,23 @@
 <!-- END FIXED HEADER -->
 
 # Some Googly Eyes — code orientation
+
 ## Project shape
+
 ## Configuration and eye definitions
+
 ## Entity and item state
+
 ## Eligibility and behaviors
+
 ## Rendering and attachment
+
 ## Networking
+
 ## Picker and commands
+
 ## Loader integration
+
 ## Automated verification
+
 ## Operational boundaries
