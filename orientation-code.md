@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.2.
+Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 25, Minecraft 26.3.
 
 `common` is bundled in all three loader artifacts.
 
@@ -28,7 +28,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch at startup and changes.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge uses native CLIENT/SERVER specs and NeoForge CLIENT/SYNCED, resetting server values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch at startup and changes.
 
 Server config keys have the same order across loaders.
 

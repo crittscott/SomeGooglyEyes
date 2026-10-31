@@ -87,7 +87,7 @@ public final class SkullEyeState {
 
     /** Copy an eyed head block's snapshot onto its generated head items. */
     public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
-        if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
+        if (context.getOptional(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
             Snapshot state = snapshot(skull);
             if (state.hasEyes()) {
                 for (ItemStack stack : generatedLoot) {

@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -13,6 +14,8 @@ import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+import java.util.Optional;
 
 /**
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
@@ -27,8 +30,8 @@ public final class HeadEyesLootModifier extends LootModifier {
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> SERIALIZERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
 
-    public HeadEyesLootModifier(LootItemCondition[] conditions, int priority) {
-        super(conditions, priority);
+    public HeadEyesLootModifier(Optional<Holder<LootItemCondition>> condition, int priority) {
+        super(condition, priority);
     }
 
     /** Register the modifier's codec on the mod bus; called once from the mod constructor. */

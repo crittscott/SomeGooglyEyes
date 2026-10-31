@@ -115,9 +115,9 @@ public final class NeoForgeServerConfig {
     private NeoForgeServerConfig() {
     }
 
-    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
+    /** Register the SYNCED config spec and copy its values into {@link ServerConfig} on load and reload. */
     public static void register(IEventBus modBus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, SPEC, ServerConfig.FILE_NAME);
         modBus.addListener(NeoForgeServerConfig::onConfigChanged);
     }
 

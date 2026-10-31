@@ -83,7 +83,7 @@ public final class GooglyEyeRenderer {
                                         EyeDraft eye) {
         pose.pushPose();
         pose.translate(eye.position[0], eye.position[1], eye.position[2]);
-        pose.mulPose(EyePlacement.orientation(eye.inclination, eye.azimuth));
+        pose.rotate(EyePlacement.orientation(eye.inclination, eye.azimuth));
         float scale = eye.eyeScale;
         pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
         drawEye(pose, collector, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale, 0F, 0F,
@@ -202,7 +202,7 @@ public final class GooglyEyeRenderer {
         // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its center.
         Vec3 position = placement.position();
         pose.translate(position.x, position.y, position.z);
-        pose.mulPose(placement.orientation());
+        pose.rotate(placement.orientation());
 
         // The pose now sits in this eye's pupil plane (post offset + aim, pre-scale): capture which way
         // world-down points here, for the next tick's gravity. This is the one spot that knows the eye's

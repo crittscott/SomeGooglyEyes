@@ -16,7 +16,7 @@ accessible	field	net/minecraft/client/renderer/special/SpecialModelRenderers	ID_
 accessible	field	net/minecraft/client/model/object/skull/SkullModel	head	Lnet/minecraft/client/model/geom/ModelPart;
 accessible	field	net/minecraft/client/model/object/skull/PiglinHeadModel	head	Lnet/minecraft/client/model/geom/ModelPart;
 
-accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
-accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/renderpearl/api/pipeline/RenderPipeline$Snippet;
+accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;)Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;
 
 accessible	class	net/minecraft/world/item/CreativeModeTab$Output

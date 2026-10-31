@@ -85,7 +85,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
     public void getExtents(Consumer<Vector3fc> output) {
         PoseStack pose = new PoseStack();
         pose.translate(0.5, 0.5, 0.5);
-        pose.mulPose(Axis.XP.rotationDegrees(180));
+        pose.rotateDegrees(Axis.XP, 180);
         pose.scale(GUI_SCALE, GUI_SCALE, GUI_SCALE * ModelGooglyEye.BASE_DEPTH);
         ModelGooglyEye.addExtents(pose.last().pose(), output);
     }
@@ -119,7 +119,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
         // frame (FIXED) mounts the eye facing the other way, so that same flip buries the iris behind the
         // cornea; the unflipped model already aims the pupil out of the frame at the viewer.
         if (ctx != ItemDisplayContext.FIXED) {
-            pose.mulPose(Axis.XP.rotationDegrees(180));
+            pose.rotateDegrees(Axis.XP, 180);
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
         GooglyTracker.EyeInfo held = isFirstPersonHand(ctx) ? HELD.eye : null;

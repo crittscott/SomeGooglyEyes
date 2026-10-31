@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
@@ -65,7 +65,7 @@ public enum OngoingBehavior {
     CREEPY_PULSE("creepy_pulse", ServerConfig.PULSE_WHEN_CREEPY) {
         @Override
         public float level(LivingEntity entity) {
-            return on(entity instanceof EnderMan enderMan && enderMan.isCreepy());
+            return on(entity instanceof Enderman enderman && enderman.isCreepy());
         }
     },
 

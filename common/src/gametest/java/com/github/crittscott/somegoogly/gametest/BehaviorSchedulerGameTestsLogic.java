@@ -12,6 +12,7 @@ import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -34,16 +35,22 @@ import net.minecraft.world.entity.animal.feline.Ocelot;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
@@ -440,14 +447,14 @@ public final class BehaviorSchedulerGameTestsLogic {
      * throb, and they settle once it loses interest.
      */
     public static void creepyEndermanPulses(GameTestHelper helper) {
-        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(1, 2, 1));
+        Enderman enderman = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(1, 2, 1));
         Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(3, 2, 3));
-        GooglyTracker tracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, ON);
+        GooglyTracker tracker = new GooglyTracker(enderman, headInfo(helper, enderman), false, ON);
         helper.assertTrue(irisScaleRange(tracker, PULSE_SAMPLE_TICKS)[1] <= 1F + TINT_TOLERANCE,
                 Component.literal("a calm enderman's pupils hold their size"));
 
-        enderMan.setTarget(cow);
-        helper.assertTrue(enderMan.isCreepy(), Component.literal("an enderman with a target is creepy"));
+        enderman.setTarget(cow);
+        helper.assertTrue(enderman.isCreepy(), Component.literal("an enderman with a target is creepy"));
         stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS);
         float[] range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
         float amplitude = GooglyTracker.CREEPY_PULSE_AMPLITUDE;
@@ -462,7 +469,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         range = irisScaleRange(tracker, PULSE_BEHAVIOR_TICKS - 1);
         helper.assertTrue(range[1] - range[0] > amplitude / 2, Component.literal("the pulse keeps going under the behavior"));
 
-        enderMan.setTarget(null);
+        enderman.setTarget(null);
         stepTracker(tracker, GooglyTracker.CREEPY_EASE_TICKS + 1);
         range = irisScaleRange(tracker, PULSE_SAMPLE_TICKS);
         helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
@@ -877,7 +884,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_TRADE.set(true);
             ServerConfig.LOVE_ON_AFFECTION.set(true);
             Villager villager = eyedTrackedMob(helper, player, EntityTypes.VILLAGER, new BlockPos(2, 2, 2));
-            villager.startSleeping(villager.blockPosition());
+            sleepInBed(helper, villager, new BlockPos(2, 2, 2));
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
                     Component.literal("a trigger on a sleeping mob is dropped"));
@@ -919,7 +926,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
         helper.assertTrue(allLid(tracker, 0F), Component.literal("an awake villager has no lids"));
 
-        villager.startSleeping(villager.blockPosition());
+        sleepInBed(helper, villager, new BlockPos(2, 2, 2));
         tracker.update(ON);
         helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
                 Component.literal("falling asleep slides the lids closed rather than snapping them shut"));
@@ -938,6 +945,20 @@ public final class BehaviorSchedulerGameTestsLogic {
         stepTracker(tracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1);
         helper.assertTrue(allLid(tracker, 0F), Component.literal("waking slides the lids back open out of sight"));
         helper.succeed();
+    }
+
+    /**
+     * Puts {@code sleeper} to bed in a red bed whose head is at {@code relativeHead}, with its foot one block
+     * south; vanilla sleep requires a bed, and lying down moves the sleeper onto it.
+     */
+    private static void sleepInBed(GameTestHelper helper, LivingEntity sleeper, BlockPos relativeHead) {
+        BlockPos head = helper.absolutePos(relativeHead);
+        BlockState bed = Blocks.BED.pick(DyeColor.RED).defaultBlockState();
+        helper.getLevel().setBlock(head.south(), bed
+                .setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.FOOT), Block.UPDATE_CLIENTS);
+        helper.getLevel().setBlock(head, bed
+                .setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD), Block.UPDATE_CLIENTS);
+        helper.assertTrue(sleeper.startSleeping(head), Component.literal("the sleeper falls asleep in its bed"));
     }
 
     /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
@@ -1015,7 +1036,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         Villager villager = helper.spawnWithNoFreeWill(EntityTypes.VILLAGER, new BlockPos(1, 2, 1));
         BehaviorSettings noSleep = without(OngoingBehavior.SLEEP_SQUINT);
         GooglyTracker villagerTracker = new GooglyTracker(villager, headInfo(helper, villager), false, noSleep);
-        villager.startSleeping(villager.blockPosition());
+        sleepInBed(helper, villager, new BlockPos(1, 2, 1));
         stepTracker(villagerTracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1, noSleep);
         helper.assertTrue(allLid(villagerTracker, 0F) && allSquash(villagerTracker, 1F),
                 Component.literal("squintOnSleep=false: a sleeping villager shows no lids"));
@@ -1024,7 +1045,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
         Player sleeper = helper.makeMockPlayer(GameType.SURVIVAL);
         GooglyTracker sleeperTracker = new GooglyTracker(sleeper, headInfo(helper, sleeper), false, ON);
-        sleeper.startSleeping(sleeper.blockPosition());
+        sleepInBed(helper, sleeper, new BlockPos(3, 2, 1));
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
         helper.assertTrue(allSquash(sleeperTracker, GooglyTracker.SLEEP_SQUASH_Y), Component.literal("a sleeping player squints"));
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noSleep);
@@ -1058,15 +1079,15 @@ public final class BehaviorSchedulerGameTestsLogic {
                 Component.literal("rattleOnSwell=false: a swelling creeper's pupils hang still"));
         creeper.setSwellDir(-1);
 
-        EnderMan enderMan = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(2, 2, 2));
+        Enderman enderman = helper.spawnWithNoFreeWill(EntityTypes.ENDERMAN, new BlockPos(2, 2, 2));
         Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 3));
         BehaviorSettings noPulse = without(OngoingBehavior.CREEPY_PULSE);
-        GooglyTracker enderTracker = new GooglyTracker(enderMan, headInfo(helper, enderMan), false, noPulse);
-        enderMan.setTarget(cow);
+        GooglyTracker enderTracker = new GooglyTracker(enderman, headInfo(helper, enderman), false, noPulse);
+        enderman.setTarget(cow);
         float[] range = irisScaleRange(enderTracker, PULSE_SAMPLE_TICKS, noPulse);
         helper.assertTrue(range[0] >= 1F - TINT_TOLERANCE && range[1] <= 1F + TINT_TOLERANCE,
                 Component.literal("pulseWhenCreepy=false: a creepy enderman's pupils hold their size"));
-        enderMan.setTarget(null);
+        enderman.setTarget(null);
 
         Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(2, 2, 1));
         BehaviorSettings noAnger = without(OngoingBehavior.ANGER);
