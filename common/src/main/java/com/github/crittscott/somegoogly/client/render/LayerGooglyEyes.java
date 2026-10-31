@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
@@ -10,7 +9,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -28,20 +27,20 @@ import java.util.List;
  * eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
  * is what matters there.
  *
+ * <p>Vanilla poses its shared entity model only when the submitted model is drawn, after every layer has
+ * submitted, so the layer poses the parent model for this render state itself before walking its parts.
+ *
  * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which makes the same split from GeckoLib's
  * per-bone callback.
  */
 public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
         extends RenderLayer<S, M> {
-    private final ModelGooglyEye modelGooglyEye;
-
     public LayerGooglyEyes(RenderLayerParent<S, M> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, S state,
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, S state,
                        float yRot, float xRot) {
         EyeRenderData data = EyeRenderData.of(state);
         if (!data.pickerTarget() && data.helper() == null) {
@@ -50,17 +49,18 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
 
         // Resolve the part-tree strategy for this model family (string names / stable indices).
         M model = this.getParentModel();
+        model.setupAnim(state);
         EyeAttachmentResolver resolver = Resolvers.forModel(model);
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
 
         if (data.pickerTarget()) {
-            renderPreview(poseStack, bufferSource, packedLight, overlay, state, model, resolver);
+            renderPreview(poseStack, collector, packedLight, overlay, state, model, resolver);
         } else {
-            renderEyes(poseStack, bufferSource, packedLight, overlay, state, model, resolver, data);
+            renderEyes(poseStack, collector, packedLight, overlay, state, model, resolver, data);
         }
     }
 
-    private void renderEyes(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
+    private void renderEyes(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
                             S state, M model, EyeAttachmentResolver resolver, EyeRenderData data) {
         HeadInfo helper = data.helper();
         GooglyTracker tracker = data.tracker();
@@ -78,7 +78,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
                 int eyeCount = helper.getEyeCount(headIndex);
                 for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
                     if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
-                        GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
+                        GooglyEyeRenderer.renderEye(poseStack, collector, packedLight, overlay,
                                 tracker.eyes[headIndex][eyeIndex], helper, overrides, headIndex, eyeIndex,
                                 partialTicks);
                     }
@@ -88,7 +88,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         }
     }
 
-    private void renderPreview(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
+    private void renderPreview(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
                                S state, M model, EyeAttachmentResolver resolver) {
         // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
         List<PickerState.ListedEye> eyes = PickerState.currentEyes();
@@ -99,8 +99,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
             }
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, listed.part, state.isBaby)) {
-                GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                        listed.eye);
+                GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
         }
@@ -111,10 +110,10 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token, state.isBaby)) {
-                Gizmo.draw(poseStack, bufferSource);
+                Gizmo.draw(poseStack, collector);
                 if (PickerState.currentEye() != null) {
-                    GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight,
-                            overlay, PickerState.currentEye());
+                    GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, overlay,
+                            PickerState.currentEye());
                 }
             }
             poseStack.popPose();

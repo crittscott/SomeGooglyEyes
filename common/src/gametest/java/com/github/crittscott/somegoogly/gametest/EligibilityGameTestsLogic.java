@@ -25,6 +25,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,9 @@ public final class EligibilityGameTestsLogic {
      * cow with it {@code true} (the cow gains red-iris eyes and one Slimy Eye is used).
      */
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper, Player player) {
+        // The loader's shared fake player takes the server's default game mode, and creative skips both the
+        // consumption and the durability cost this test checks.
+        ((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeColor red = new EyeColor(1F, 0F, 0F);
         // The spawn itself may have naturally rolled eyes under whatever configs were live at the time;

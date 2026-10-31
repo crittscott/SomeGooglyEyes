@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -28,7 +28,7 @@ abstract class ItemModelResolverMixin {
     @Inject(method = "appendItemLayers", at = @At("HEAD"))
     private void somegoogly$recordItem(ItemStackRenderState renderState, ItemStack stack,
                                        ItemDisplayContext displayContext, @Nullable Level level,
-                                       @Nullable LivingEntity entity, int seed, CallbackInfo callback) {
+                                       @Nullable ItemOwner owner, int seed, CallbackInfo callback) {
         ((SkullEyeRenderer.ItemHolder) renderState).somegoogly$setItem(stack);
         EyeState.Snapshot headEyes = stack.get(ModContent.HEAD_EYES.get());
         if (headEyes != null) {

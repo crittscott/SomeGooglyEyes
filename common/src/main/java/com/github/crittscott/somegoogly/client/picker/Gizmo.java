@@ -6,10 +6,10 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
@@ -45,41 +45,42 @@ public final class Gizmo {
     private Gizmo() {
     }
 
-    private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
+    private static void axis(PoseStack.Pose pose, VertexConsumer vc, float x, float y, float z,
                              EyeColor color) {
         float r = color.r(), g = color.g(), b = color.b();
-        line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(ps, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
+        line(pose, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
+        line(pose, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
     }
 
-    private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
+    private static void cube(PoseStack.Pose pose, VertexConsumer vc, float cx, float cy, float cz,
                              float h, EyeColor color) {
-        ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
+        ShapeRenderer.renderLineBox(pose, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
     }
 
-    /** Draw the axis gizmo at the current pose origin. */
-    public static void draw(PoseStack poseStack, MultiBufferSource buffers) {
-        VertexConsumer vc = buffers.getBuffer(GIZMO_LINES);
+    /** Submit the axis gizmo at the current pose origin. */
+    public static void draw(PoseStack poseStack, SubmitNodeCollector collector) {
+        collector.submitCustomGeometry(poseStack, GIZMO_LINES, Gizmo::emit);
+    }
 
+    private static void emit(PoseStack.Pose pose, VertexConsumer vc) {
         // Axes: bright toward +, dim toward - (the + end also gets a cube as the only label).
-        axis(poseStack, vc, AXIS_LEN, 0, 0, X_COLOR); // X red
-        axis(poseStack, vc, 0, AXIS_LEN, 0, Y_COLOR); // Y green
-        axis(poseStack, vc, 0, 0, AXIS_LEN, Z_COLOR); // Z blue
+        axis(pose, vc, AXIS_LEN, 0, 0, X_COLOR); // X red
+        axis(pose, vc, 0, AXIS_LEN, 0, Y_COLOR); // Y green
+        axis(pose, vc, 0, 0, AXIS_LEN, Z_COLOR); // Z blue
 
         // Positive-end cubes.
-        cube(poseStack, vc, AXIS_LEN, 0, 0, END_CUBE, X_COLOR);
-        cube(poseStack, vc, 0, AXIS_LEN, 0, END_CUBE, Y_COLOR);
-        cube(poseStack, vc, 0, 0, AXIS_LEN, END_CUBE, Z_COLOR);
+        cube(pose, vc, AXIS_LEN, 0, 0, END_CUBE, X_COLOR);
+        cube(pose, vc, 0, AXIS_LEN, 0, END_CUBE, Y_COLOR);
+        cube(pose, vc, 0, 0, AXIS_LEN, END_CUBE, Z_COLOR);
 
         // Origin marker.
-        cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
+        cube(pose, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
     }
 
-    private static void line(PoseStack ps, VertexConsumer vc,
+    private static void line(PoseStack.Pose pose, VertexConsumer vc,
                              float x1, float y1, float z1, float x2, float y2, float z2,
                              float r, float g, float b) {
-        Matrix4f m = ps.last().pose();
-        PoseStack.Pose pose = ps.last();
+        Matrix4f m = pose.pose();
         float nx = x2 - x1, ny = y2 - y1, nz = z2 - z1;
         float len = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
         if (len > 1.0e-5f) {

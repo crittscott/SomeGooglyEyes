@@ -168,7 +168,7 @@ public final class EyeItemService {
             Block.popResource(level, pos, buildEyeDrop(helper, parts[0], state.properties()));
         }
         SkullEyeState.set(skull, EyeState.Snapshot.NONE);
-        shears.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+        shears.hurtAndBreak(1, player, hand.asEquipmentSlot());
         level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.SHEAR, pos);
         return InteractionResult.SUCCESS;
@@ -259,7 +259,7 @@ public final class EyeItemService {
             target.spawnAtLocation(level, drop);
         }
         EyeState.disableAndClearProperties(target);
-        actor.getItemInHand(hand).hurtAndBreak(1, actor, LivingEntity.getSlotForHand(hand));
+        actor.getItemInHand(hand).hurtAndBreak(1, actor, hand.asEquipmentSlot());
         playShearSound(target);
         target.gameEvent(GameEvent.SHEAR, actor);
     }

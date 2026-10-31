@@ -10,8 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -52,14 +51,12 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     private static final HeldEye HELD = new HeldEye();
 
-    private ModelGooglyEye model;
-
     /** The unbaked form named by the item definition; it has no fields. */
     public record Unbaked() implements SpecialModelRenderer.Unbaked {
         public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(new Unbaked());
 
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet modelSet) {
+        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
             return new GooglyEyeItemRenderer();
         }
 
@@ -87,13 +84,6 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
                 || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
     }
 
-    private ModelGooglyEye model() {
-        if (model == null) {
-            model = new ModelGooglyEye();
-        }
-        return model;
-    }
-
     @Override
     public AppearanceOverride extractArgument(ItemStack stack) {
         return EyeItemProperties.get(stack);
@@ -110,14 +100,13 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
     }
 
     @Override
-    public void render(@Nullable AppearanceOverride argument, ItemDisplayContext ctx, PoseStack pose,
-                       MultiBufferSource buffer, int light, int overlay, boolean hasFoil) {
+    public void submit(@Nullable AppearanceOverride argument, ItemDisplayContext ctx, PoseStack pose,
+                       SubmitNodeCollector collector, int light, int overlay, boolean hasFoil, int outlineColor) {
         AppearanceOverride props = argument != null ? argument : AppearanceOverride.EMPTY;
         EyeColor cornea = props.cornea().orElse(EyeColor.WHITE);
         EyeColor iris = props.iris().orElse(EyeColor.BLACK);
         boolean glow = props.glow().orElse(false);
 
-        ModelGooglyEye m = model();
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // Face the pupil (model -Z) at the viewer; winding-safe (pure rotation). Hand/GUI/ground view the
@@ -131,12 +120,12 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         GooglyTracker.EyeInfo held = isFirstPersonHand(ctx) ? HELD.eye : null;
         if (held != null) {
             // The live eye keeps eye-local down for gravity: this pose is relative to the camera, not the world.
-            GooglyEyeRenderer.drawAnimatedEye(pose, m, buffer, light, overlay, held, MODEL_SCALE, 1F, cornea, iris,
+            GooglyEyeRenderer.drawAnimatedEye(pose, collector, light, overlay, held, MODEL_SCALE, 1F, cornea, iris,
                     IRIS_SCALE, glow, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
             pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
-            GooglyEyeRenderer.drawEye(pose, m, buffer, light, overlay, cornea.toArray(), iris.toArray(), IRIS_SCALE,
+            GooglyEyeRenderer.drawEye(pose, collector, light, overlay, cornea.toArray(), iris.toArray(), IRIS_SCALE,
                     0F, 0F, glow);
         }
         pose.popPose();

@@ -5,7 +5,7 @@
   "item.somegoogly.googly_eye": "Googly Eye",
   "item.somegoogly.slimy_eye": "Slimy Eye",
   "itemGroup.somegoogly": "Some Googly Eyes",
-  "key.categories.somegoogly": "Some Googly Eyes",
+  "key.category.somegoogly.picker": "Some Googly Eyes",
   "key.somegoogly.lock": "Choose/release mob",
   "key.somegoogly.part_next": "Next model part",
   "key.somegoogly.part_prev": "Previous model part",

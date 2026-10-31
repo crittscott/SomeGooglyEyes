@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 /**
  * Holds the stack an item render state was filled from ({@link SkullEyeRenderer.ItemHolder}) and brackets the
- * state's draw with it, so a head item's eyes are drawn when its layer reaches the head-model draw.
+ * state's submission with it, so a head item's eyes are submitted when its layer reaches the head-model submission.
  */
 @Mixin(ItemStackRenderState.class)
 abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder {
@@ -40,15 +40,15 @@ abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder 
         somegoogly$item = null;
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
-    private void somegoogly$beginItem(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
-                                      int packedOverlay, CallbackInfo callback) {
+    @Inject(method = "submit", at = @At("HEAD"))
+    private void somegoogly$beginItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                      int packedOverlay, int outlineColor, CallbackInfo callback) {
         SkullEyeRenderer.beginItem(somegoogly$item);
     }
 
-    @Inject(method = "render", at = @At("RETURN"))
-    private void somegoogly$endItem(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
-                                    int packedOverlay, CallbackInfo callback) {
+    @Inject(method = "submit", at = @At("RETURN"))
+    private void somegoogly$endItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                    int packedOverlay, int outlineColor, CallbackInfo callback) {
         SkullEyeRenderer.end();
     }
 }

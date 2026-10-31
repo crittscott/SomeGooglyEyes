@@ -168,6 +168,6 @@ public final class PickerFreezeService {
 
     private static String nameOf(MinecraftServer server, UUID playerId) {
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
-        return player != null ? player.getGameProfile().getName() : playerId.toString();
+        return player != null ? player.getGameProfile().name() : playerId.toString();
     }
 }

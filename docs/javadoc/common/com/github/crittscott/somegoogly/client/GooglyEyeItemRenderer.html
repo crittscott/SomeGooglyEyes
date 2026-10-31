@@ -108,7 +108,7 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
  <code>assets/somegoogly/items/googly_eye.json</code>; each loader puts <a href="GooglyEyeItemRenderer.Unbaked.html#MAP_CODEC"><code>GooglyEyeItemRenderer.Unbaked.MAP_CODEC</code></a> under
  <a href="#ID"><code>ID</code></a>.
 
- <p>Draws through <a href="render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>, so the item and the mob eyes share one drawing
+ <p>Draws through <a href="render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>, so the item and the mob eyes share one drawing
  path, texture, and pair of render types.</div>
 </section>
 <section class="summary">
@@ -128,6 +128,9 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <div class="block">The unbaked form named by the item definition; it has no fields.</div>
 </div>
 </div>
+<div class="inherited-list">
+<h2 id="nested-classes-inherited-from-class-net.minecraft.client.renderer.special.SpecialModelRenderer">Nested classes/interfaces inherited from interface&nbsp;net.minecraft.client.renderer.special.SpecialModelRenderer</h2>
+<code>net.minecraft.client.renderer.special.SpecialModelRenderer.BakingContext</code></div>
 </section>
 </li>
 <!-- =========== FIELD SUMMARY =========== -->
@@ -177,20 +180,21 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The inventory view, the largest of the static views: the eye centered in the item box at GUI scale.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,boolean)" class="member-name-link">render</a><wbr>(<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;argument,
- net.minecraft.world.item.ItemDisplayContext&nbsp;ctx,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
- int&nbsp;light,
- int&nbsp;overlay,
- boolean&nbsp;hasFoil)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop held-eye state when leaving a world or server.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#submit(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)" class="member-name-link">submit</a><wbr>(<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;argument,
+ net.minecraft.world.item.ItemDisplayContext&nbsp;ctx,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;light,
+ int&nbsp;overlay,
+ boolean&nbsp;hasFoil,
+ int&nbsp;outlineColor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -277,19 +281,20 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 </section>
 </li>
 <li>
-<section class="detail" id="render(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,boolean)">
-<h3>render</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">render</span><wbr><span class="parameters">(@Nullable
+<section class="detail" id="submit(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)">
+<h3>submit</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">submit</span><wbr><span class="parameters">(@Nullable
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;argument,
  net.minecraft.world.item.ItemDisplayContext&nbsp;ctx,
  com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;light,
  int&nbsp;overlay,
- boolean&nbsp;hasFoil)</span></div>
+ boolean&nbsp;hasFoil,
+ int&nbsp;outlineColor)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>render</code>&nbsp;in interface&nbsp;<code>net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;</code></dd>
+<dd><code>submit</code>&nbsp;in interface&nbsp;<code>net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;</code></dd>
 </dl>
 </section>
 </li>

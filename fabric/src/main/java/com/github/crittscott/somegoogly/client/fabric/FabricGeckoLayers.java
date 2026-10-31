@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.client.compat.gecko.GeckoIntegration;
-import software.bernie.geckolib.event.GeoRenderEvent;
+import software.bernie.geckolib.event.entity.CompileEntityRenderLayersEvent;
 
 /** Adds the googly-eye layer to GeckoLib entity renderers; registered only when GeckoLib is present. */
 final class FabricGeckoLayers {
@@ -10,7 +10,6 @@ final class FabricGeckoLayers {
     }
 
     static void register() {
-        GeoRenderEvent.Entity.CompileRenderLayers.EVENT.register(
-                event -> GeckoIntegration.compileLayers(event.getRenderer(), event::addLayer));
+        CompileEntityRenderLayersEvent.EVENT.register(GeckoIntegration::compileLayers);
     }
 }

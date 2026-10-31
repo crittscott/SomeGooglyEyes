@@ -12,14 +12,15 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -29,7 +30,6 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
@@ -45,8 +45,9 @@ public final class ForgeClientBootstrap {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            ClientRenderLayers.install(event.getPlayerSkin(skin));
+        for (PlayerModelType modelType : event.getModelTypes()) {
+            ClientRenderLayers.install(event.getPlayerRenderer(modelType));
+            ClientRenderLayers.install(event.getMannequinRenderer(modelType));
         }
         for (EntityType entityType : BuiltInRegistries.ENTITY_TYPE) {
             EntityRenderer<?, ?> renderer = event.getEntityRenderer(entityType);
@@ -89,14 +90,12 @@ public final class ForgeClientBootstrap {
 
     /** Register the client config and every client-side Forge listener. */
     public static void register(FMLJavaModLoadingContext context) {
-        BusGroup modBusGroup = context.getModBusGroup();
-
         ForgeClientConfig.register(context);
         registerItemModelTypes();
 
-        EntityRenderersEvent.AddLayers.getBus(modBusGroup).addListener(ForgeClientBootstrap::addRendererLayers);
-        AddGuiOverlayLayersEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::addGuiLayers);
-        RegisterKeyMappingsEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::registerKeyMappings);
+        EntityRenderersEvent.AddLayers.BUS.addListener(ForgeClientBootstrap::addRendererLayers);
+        AddGuiOverlayLayersEvent.BUS.addListener(ForgeClientBootstrap::addGuiLayers);
+        RegisterKeyMappingsEvent.BUS.addListener(ForgeClientBootstrap::registerKeyMappings);
 
         RegisterClientCommandsEvent.BUS.addListener(ForgeClientBootstrap::registerClientCommands);
         TickEvent.ClientTickEvent.Post.BUS.addListener(ForgeClientBootstrap::onClientTick);
@@ -124,6 +123,7 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        KeyMapping.Category.register(PickerKeys.CATEGORY.id());
         event.register(PickerKeys.LOCK);
         event.register(PickerKeys.PART_NEXT);
         event.register(PickerKeys.PART_PREV);

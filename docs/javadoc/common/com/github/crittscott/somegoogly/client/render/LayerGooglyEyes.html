@@ -102,6 +102,9 @@ loadScripts(document, 'script');</script>
  eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
  is what matters there.
 
+ <p>Vanilla poses its shared entity model only when the submitted model is drawn, after every layer has
+ submitted, so the layer poses the parent model for this render state itself before walking its parts.
+
  <p>The GeckoLib counterpart is <code>GooglyGeoLayer</code>, which makes the same split from GeckoLib's
  per-bone callback.</div>
 </section>
@@ -132,8 +135,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,S,float,float)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,S,float,float)" class="member-name-link">submit</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  <a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a>&nbsp;state,
  float&nbsp;yRot,
@@ -174,17 +177,17 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,S,float,float)">
-<h3 id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.renderer.entity.state.LivingEntityRenderState,float,float)">render</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">render</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
+<section class="detail" id="submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,S,float,float)">
+<h3 id="submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.renderer.entity.state.LivingEntityRenderState,float,float)">submit</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">submit</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  <a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a>&nbsp;state,
  float&nbsp;yRot,
  float&nbsp;xRot)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>render</code>&nbsp;in class&nbsp;<code>net.minecraft.client.renderer.entity.layers.RenderLayer&lt;<a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a> extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState,<wbr><a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">M</a> extends net.minecraft.client.model.EntityModel&lt;? super <a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a>&gt;&gt;</code></dd>
+<dd><code>submit</code>&nbsp;in class&nbsp;<code>net.minecraft.client.renderer.entity.layers.RenderLayer&lt;<a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a> extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState,<wbr><a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">M</a> extends net.minecraft.client.model.EntityModel&lt;? super <a href="LayerGooglyEyes.html" title="type parameter in LayerGooglyEyes">S</a>&gt;&gt;</code></dd>
 </dl>
 </section>
 </li>

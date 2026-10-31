@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GooglyGeoLayer&lt;T extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr>R extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</span>
 <span class="extends-implements">extends software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr>R&gt;</span></div>
-<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
+<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers submission tasks
  at the animated attachment bones. Loaded only when GeckoLib is present.</div>
 </section>
 <section class="summary">
@@ -132,21 +132,23 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)" class="member-name-link">addPerBoneRender</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,boolean,java.util.function.BiConsumer)" class="member-name-link">addPerBoneRender</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
+ boolean&nbsp;didRenderModel,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;software.bernie.geckolib.cache.object.GeoBone,<wbr>software.bernie.geckolib.renderer.base.PerBoneRender&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&gt;&nbsp;consumer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addRenderData(T,java.lang.Void,R)" class="member-name-link">addRenderData</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addRenderData(T,java.lang.Void,R,float)" class="member-name-link">addRenderData</a><wbr>(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&nbsp;relatedObject,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState)</code></div>
+ <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
+ float&nbsp;partialTick)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-software.bernie.geckolib.renderer.layer.GeoRenderLayer">Methods inherited from class&nbsp;software.bernie.geckolib.renderer.layer.GeoRenderLayer</h3>
-<code>getDefaultBakedModel, getGeoModel, getRenderer, getTextureResource, preRender, render</code></div>
+<code>getDefaultBakedModel, getGeoModel, getRenderer, getTextureResource, preRender, submitRenderTask</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -176,10 +178,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)">
-<h3 id="addPerBoneRender(net.minecraft.client.renderer.entity.state.EntityRenderState,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)">addPerBoneRender</h3>
+<section class="detail" id="addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,boolean,java.util.function.BiConsumer)">
+<h3 id="addPerBoneRender(net.minecraft.client.renderer.entity.state.EntityRenderState,software.bernie.geckolib.cache.object.BakedGeoModel,boolean,java.util.function.BiConsumer)">addPerBoneRender</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addPerBoneRender</span><wbr><span class="parameters">(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
+ boolean&nbsp;didRenderModel,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;software.bernie.geckolib.cache.object.GeoBone,<wbr>software.bernie.geckolib.renderer.base.PerBoneRender&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&gt;&gt;&nbsp;consumer)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
@@ -188,11 +191,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addRenderData(T,java.lang.Void,R)">
-<h3 id="addRenderData(net.minecraft.world.entity.Entity,java.lang.Void,net.minecraft.client.renderer.entity.state.EntityRenderState)">addRenderData</h3>
+<section class="detail" id="addRenderData(T,java.lang.Void,R,float)">
+<h3 id="addRenderData(net.minecraft.world.entity.Entity,java.lang.Void,net.minecraft.client.renderer.entity.state.EntityRenderState,float)">addRenderData</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addRenderData</span><wbr><span class="parameters">(<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&nbsp;relatedObject,
- <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState)</span></div>
+ <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a>&nbsp;renderState,
+ float&nbsp;partialTick)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code>addRenderData</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>,<wbr><a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">R</a> extends net.minecraft.client.renderer.entity.state.EntityRenderState &amp; software.bernie.geckolib.renderer.base.GeoRenderState&gt;</code></dd>

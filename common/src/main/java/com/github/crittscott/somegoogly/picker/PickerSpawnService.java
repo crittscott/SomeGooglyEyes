@@ -387,7 +387,7 @@ public final class PickerSpawnService {
         Component skippedNote = finalSkipped > 0
                 ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
         SomeGooglyCommon.LOGGER.info("{} ran /sg spawnall (scope={}): spawned {}, skipped {}",
-                player.getGameProfile().getName(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
+                player.getGameProfile().name(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
         tell(player, "somegoogly.command.spawnall.result",
                 finalSpawned, scope, platformNote, finalRows, skippedNote);
         if (filtering && !dropped.isEmpty()) {

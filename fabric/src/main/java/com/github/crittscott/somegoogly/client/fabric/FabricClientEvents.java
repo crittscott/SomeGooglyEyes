@@ -21,14 +21,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -48,19 +48,11 @@ public final class FabricClientEvents {
         if (GeckoCompat.isLoaded()) {
             FabricGeckoLayers.register();
         }
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
-                new SimpleSynchronousResourceReloadListener() {
-                    @Override
-                    public ResourceLocation getFabricId() {
-                        return ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches");
-                    }
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(
+                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
+                (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
-                    @Override
-                    public void onResourceManagerReload(ResourceManager manager) {
-                        ClientRenderLayers.clearCaches();
-                    }
-                });
-
+        KeyMapping.Category.register(PickerKeys.CATEGORY.id());
         KeyBindingHelper.registerKeyBinding(PickerKeys.LOCK);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_NEXT);
         KeyBindingHelper.registerKeyBinding(PickerKeys.PART_PREV);

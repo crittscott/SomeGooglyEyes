@@ -54,14 +54,17 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public final class PickerExportService {
 
+    private static final int PACK_FORMAT =
+            SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).major();
     private static final String PACK_MCMETA = """
             {
               "pack": {
-                "pack_format": %d,
+                "min_format": %d,
+                "max_format": %d,
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA));
+            """.formatted(PACK_FORMAT, PACK_FORMAT);
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -128,7 +131,7 @@ public final class PickerExportService {
         PickerGate.exportSucceeded(server, playerId);
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
         SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {} — forcing datapack reload",
-                player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
+                player != null ? player.getGameProfile().name() : "unknown", playerId, typeId);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         reloadDatapacks(server);
         return Component.translatable("somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);

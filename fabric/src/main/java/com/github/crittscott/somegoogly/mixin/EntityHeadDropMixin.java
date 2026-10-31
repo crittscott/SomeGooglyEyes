@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Fabric has no drop-collection event, and a mob's head reaches the world two ways the death-loot hook in
- * {@link LivingEntityDeathLootMixin} doesn't see: a charged-creeper kill spawns it after that hook runs, and a
- * loot-table head (the wither skeleton's) never passes through it. Both end in {@code spawnAtLocation}, so a
+ * Fabric has no drop-collection event, and a mob's head reaches the world from loot tables the death-loot hook
+ * in {@link LivingEntityDeathLootMixin} doesn't see: the charged-creeper explosion table and the mob's own table
+ * (the wither skeleton's). Both end in {@code spawnAtLocation}, so a
  * dying living entity's drops are offered to {@link EyeItemService#markHeadDrop} there, the counterpart of
  * Forge's {@code LivingDropsEvent} collection. Both offset forms are hooked, so a drop is seen whichever one a
  * caller uses; a stack passing through both is stamped once.

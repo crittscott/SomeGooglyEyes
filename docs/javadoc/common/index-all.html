@@ -73,9 +73,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>pose</code>, for
  vanilla's item extents.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,java.util.function.BiConsumer)" class="member-name-link">addPerBoneRender(R, BakedGeoModel, BiConsumer&lt;GeoBone, PerBoneRender&lt;R&gt;&gt;)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#addPerBoneRender(R,software.bernie.geckolib.cache.object.BakedGeoModel,boolean,java.util.function.BiConsumer)" class="member-name-link">addPerBoneRender(R, BakedGeoModel, boolean, BiConsumer&lt;GeoBone, PerBoneRender&lt;R&gt;&gt;)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#addRenderData(T,java.lang.Void,R)" class="member-name-link">addRenderData(T, Void, R)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#addRenderData(T,java.lang.Void,R,float)" class="member-name-link">addRenderData(T, Void, R, float)</a> - Method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#adult" class="member-name-link">adult</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a></dt>
 <dd>
@@ -337,19 +337,19 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>baby</code> record component.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.Unbaked.html#bake(net.minecraft.client.model.geom.EntityModelSet)" class="member-name-link">bake(EntityModelSet)</a> - Method in record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.Unbaked.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer.Unbaked</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.Unbaked.html#bake(net.minecraft.client.renderer.special.SpecialModelRenderer.BakingContext)" class="member-name-link">bake(SpecialModelRenderer.BakingContext)</a> - Method in record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.Unbaked.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer.Unbaked</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#BASE_DEPTH" class="member-name-link">BASE_DEPTH</a> - Static variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
 <dd>
 <div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width).</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)" class="member-name-link">begin(SkullBlockEntity, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)" class="member-name-link">begin(SkullEyeRenderer.PlacedHolder)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
 <dd>
-<div class="block">A placed head's draw starts.</div>
+<div class="block">A placed head's submission starts.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#beginItem(net.minecraft.world.item.ItemStack)" class="member-name-link">beginItem(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
 <dd>
-<div class="block">An item's draw starts; any but a head item's is ignored, since it never reaches <a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>SkullEyeRenderer.render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a>.</div>
+<div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)"><code>SkullEyeRenderer.render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.SkullModelBase, float, float)</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#behavior" class="member-name-link">behavior</a> - Variable in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
@@ -446,6 +446,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken(EntityModel&lt;?&gt;, String)</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">RootModelResolver</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html#CATEGORY" class="member-name-link">CATEGORY</a> - Static variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerKeys</a></dt>
+<dd>
+<div class="block">The Controls-menu category, labeled by <code>key.category.somegoogly.picker</code>; each loader registers it with
+ the keys.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.html#chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)" class="member-name-link">chooseVariantIndex(EyeConfigModel.RuntimeConfig, float)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel</a></dt>
 <dd>
 <div class="block">Resolve a stable 0..1 roll through a runtime config's cumulative variant weights.</div>
@@ -622,7 +627,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/util/package-summary.html">com.github.crittscott.somegoogly.util</a> - package com.github.crittscott.somegoogly.util</dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html#compileLayers(software.bernie.geckolib.renderer.GeoEntityRenderer,java.util.function.Consumer)" class="member-name-link">compileLayers(GeoEntityRenderer&lt;?, ?&gt;, Consumer&lt;GeoRenderLayer&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html#compileLayers(software.bernie.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers)" class="member-name-link">compileLayers(GeoRenderEvent.Entity.CompileRenderLayers)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeckoIntegration</a></dt>
 <dd>
 <div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
  renderer.</div>
@@ -898,16 +903,16 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html#%3Cinit%3E()" class="member-name-link">DraftVariant()</a> - Constructor for class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/picker/Gizmo.html#draw(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource)" class="member-name-link">draw(PoseStack, MultiBufferSource)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/Gizmo.html" title="class in com.github.crittscott.somegoogly.client.picker">Gizmo</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/picker/Gizmo.html#draw(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector)" class="member-name-link">draw(PoseStack, SubmitNodeCollector)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/Gizmo.html" title="class in com.github.crittscott.somegoogly.client.picker">Gizmo</a></dt>
 <dd>
-<div class="block">Draw the axis gizmo at the current pose origin.</div>
+<div class="block">Submit the axis gizmo at the current pose origin.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, GooglyTracker.EyeInfo, float, float, EyeColor, EyeColor, float, boolean, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye(PoseStack, SubmitNodeCollector, int, int, GooglyTracker.EyeInfo, float, float, EyeColor, EyeColor, float, boolean, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
 <div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
  configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>irisScale</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye(PoseStack, SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
 <div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
  <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when <code>glow</code> is
@@ -967,7 +972,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#end()" class="member-name-link">end()</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
 <dd>
-<div class="block">The placed head's or head item's draw ends.</div>
+<div class="block">The placed head's or head item's submission ends.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.SpawnRefusal.html#ENDER_DRAGON" class="member-name-link">ENDER_DRAGON</a> - Enum constant in enum class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></dt>
 <dd>&nbsp;</dd>
@@ -1144,6 +1149,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html#extract(net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">extract(LivingEntity, float)</a> - Static method in record class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a></dt>
 <dd>
 <div class="block">Take this frame's decision for <code>living</code>; marks its tracker rendered when eyes will draw.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">extract(SkullBlockEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
+<dd>
+<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
+ its render state is extracted.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#extractArgument(net.minecraft.world.item.ItemStack)" class="member-name-link">extractArgument(ItemStack)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
 <dd>&nbsp;</dd>
@@ -1608,7 +1618,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
  and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
- <a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
+ <a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html#googlyEyesEnabled()" class="member-name-link">googlyEyesEnabled()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></dt>
 <dd>
@@ -1620,7 +1630,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T,<wbr>R&gt;</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/gecko/package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></dt>
 <dd>
-<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
+<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers submission tasks
  at the animated attachment bones.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html#%3Cinit%3E(software.bernie.geckolib.renderer.base.GeoRenderer)" class="member-name-link">GooglyGeoLayer(GeoRenderer&lt;T, Void, R&gt;)</a> - Constructor for class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer</a></dt>
@@ -2275,8 +2285,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#%3Cinit%3E()" class="member-name-link">ModelGooglyEye()</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo&lt;K,<wbr>V&gt;</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/resolver/package-summary.html">com.github.crittscott.somegoogly.client.render.resolver</a></dt>
 <dd>
 <div class="block">Memoizes a value per (model instance, attach token), misses included.</div>
@@ -2318,12 +2326,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.html#motionZ" class="member-name-link">motionZ</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></dt>
 <dd>
 <div class="block">The entity's position change over the last <a href="com/github/crittscott/somegoogly/client/GooglyTracker.html#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>GooglyTracker.update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)</code></a>.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#moveIris(float,float,float)" class="member-name-link">moveIris(float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
-<dd>
-<div class="block">Position the iris from a unit-disk pupil position <code>(normX, normY)</code> in [-1,1], mapped
- linearly onto the full travel circle so the iris edge just kisses the cornea rim at
- <code>|norm| = 1</code>.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:N">N</h2>
@@ -2865,15 +2867,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.html#registerRecipeSerializer(java.lang.String,java.util.function.Supplier)" class="member-name-link">registerRecipeSerializer(String, Supplier&lt;T&gt;)</a> - Method in interface com.github.crittscott.somegoogly.registry.<a href="com/github/crittscott/somegoogly/registry/ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry">ContentRegistrar</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#render(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,boolean)" class="member-name-link">render(AppearanceOverride, ItemDisplayContext, PoseStack, MultiBufferSource, int, int, boolean)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)" class="member-name-link">render(PoseStack, MultiBufferSource, int, SkullModelBase)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)" class="member-name-link">render(PoseStack, SubmitNodeCollector, int, SkullModelBase, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
 <dd>
-<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
- <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
+ <code>model</code> was just submitted in, the head's <code>packedLight</code>, and the head's <code>yRot</code> and
+ <code>mouthAnimation</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,S,float,float)" class="member-name-link">render(PoseStack, MultiBufferSource, int, S, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html#render(net.minecraft.client.gui.GuiGraphics,int,int)" class="member-name-link">render(GuiGraphics, int, int)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerHud</a></dt>
 <dd>
 <div class="block">Draw the picker HUD while the picker is active.</div>
@@ -2882,25 +2881,27 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#RENDER_TYPE_EYES" class="member-name-link">RENDER_TYPE_EYES</a> - Static variable in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderCornea(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea(PoseStack, VertexConsumer, int, int, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderCornea(com.mojang.blaze3d.vertex.PoseStack.Pose,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea(PoseStack.Pose, VertexConsumer, int, int, float, float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
 <dd>
 <div class="block">Draw the cornea cylinder in the given color.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#renderEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" class="member-name-link">renderEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, GooglyTracker.EyeInfo, HeadInfo, AppearanceOverride, int, int, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#renderEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" class="member-name-link">renderEye(PoseStack, SubmitNodeCollector, int, int, GooglyTracker.EyeInfo, HeadInfo, AppearanceOverride, int, int, float)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
 <div class="block">Draw a single eye, simulated by <code>eyeInfo</code>, applying both the per-mob (or per-head) <code>overrides</code>
  and the active behavior.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderIris(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderIris(PoseStack, VertexConsumer, int, int, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderIris(com.mojang.blaze3d.vertex.PoseStack.Pose,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float,float,float)" class="member-name-link">renderIris(PoseStack.Pose, VertexConsumer, int, int, float, float, float, float, float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
 <dd>
-<div class="block">Draw the iris cylinder in the given color, offset by the current pupil position.</div>
+<div class="block">Draw the iris cylinder in the given color at the unit-disk pupil position <code>(normX, normY)</code> in
+ [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses the cornea rim at
+ <code>|norm| = 1</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderLids(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids(PoseStack, VertexConsumer, int, int, float, float, float, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html#renderLids(com.mojang.blaze3d.vertex.PoseStack.Pose,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids(PoseStack.Pose, VertexConsumer, int, int, float, float, float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a></dt>
 <dd>
 <div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
  (0 none, at most half), in the given color.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye(PoseStack, ModelGooglyEye, MultiBufferSource, int, int, EyeDraft)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye(PoseStack, SubmitNodeCollector, int, int, EyeDraft)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
 <div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
  the caller has already moved into the draft's attachment space.</div>
@@ -3224,11 +3225,15 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/package-summary.html">com.github.crittscott.somegoogly.client.render</a></dt>
 <dd>
-<div class="block">Draws the eyes of placed mob heads and head items.</div>
+<div class="block">Submits the eyes of placed mob heads and head items.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.ItemHolder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.ItemHolder</a> - Interface in <a href="com/github/crittscott/somegoogly/client/render/package-summary.html">com.github.crittscott.somegoogly.client.render</a></dt>
 <dd>
 <div class="block">An item render state's link to the stack it was last filled from, added by a Mixin.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a> - Interface in <a href="com/github/crittscott/somegoogly/client/render/package-summary.html">com.github.crittscott.somegoogly.client.render</a></dt>
+<dd>
+<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a Mixin.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.ResourceLocation)" class="member-name-link">skullEyes(SkullBlockEntity, ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
@@ -3316,6 +3321,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.Holder.html#somegoogly$eyeData()" class="member-name-link">somegoogly$eyeData()</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.Holder.html" title="interface in com.github.crittscott.somegoogly.client.render">EyeRenderData.Holder</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html#somegoogly$eyes()" class="member-name-link">somegoogly$eyes()</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></dt>
+<dd>
+<div class="block">The eyes to draw, or <code>null</code> when the head shows none.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.Holder.html#somegoogly$find()" class="member-name-link">somegoogly$find()</a> - Method in interface com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.Holder.html" title="interface in com.github.crittscott.somegoogly.eye.state">SkullEyeState.Holder</a></dt>
 <dd>
 <div class="block">The compound, or <code>null</code> if the head has none; read it, don't write it.</div>
@@ -3328,7 +3337,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The stack, or <code>null</code> when the state is clear.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html#somegoogly$partialTick()" class="member-name-link">somegoogly$partialTick()</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.Holder.html#somegoogly$setEyeData(com.github.crittscott.somegoogly.client.render.EyeRenderData)" class="member-name-link">somegoogly$setEyeData(EyeRenderData)</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/EyeRenderData.Holder.html" title="interface in com.github.crittscott.somegoogly.client.render">EyeRenderData.Holder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html#somegoogly$setEyes(com.github.crittscott.somegoogly.client.SkullEyes,float)" class="member-name-link">somegoogly$setEyes(SkullEyes, float)</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.ItemHolder.html#somegoogly$setItem(net.minecraft.world.item.ItemStack)" class="member-name-link">somegoogly$setItem(ItemStack)</a> - Method in interface com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.ItemHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.ItemHolder</a></dt>
 <dd>&nbsp;</dd>
@@ -3445,6 +3458,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Create a string-list value whose default and every subsequently assigned list are filtered by
  <code>valid</code> and stored as an immutable copy.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html#submit(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)" class="member-name-link">submit(AppearanceOverride, ItemDisplayContext, PoseStack, SubmitNodeCollector, int, int, boolean, int)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html#submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,S,float,float)" class="member-name-link">submit(PoseStack, SubmitNodeCollector, int, S, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/OngoingBehavior.html#SWELL_RATTLE" class="member-name-link">SWELL_RATTLE</a> - Enum constant in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a></dt>
 <dd>
 <div class="block">A swelling creeper's pupils rattle, harder the further the swell has gone.</div>

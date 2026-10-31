@@ -5,13 +5,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * GeckoLib-referencing entry points, reached only via {@code GeckoCompat} or from loader listeners registered
@@ -43,9 +42,10 @@ public final class GeckoIntegration {
      * renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void compileLayers(GeoEntityRenderer<?, ?> renderer, Consumer<GeoRenderLayer> addLayer) {
+    public static void compileLayers(GeoRenderEvent.Entity.CompileRenderLayers event) {
+        GeoEntityRenderer<?, ?> renderer = event.getRenderer();
         try {
-            addLayer.accept(new GooglyGeoLayer(renderer));
+            event.addLayer(geoRenderer -> new GooglyGeoLayer((GeoEntityRenderer) geoRenderer));
         } catch (Throwable failure) {
             ClientIntegrationFailures.warnOnce(
                     "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);

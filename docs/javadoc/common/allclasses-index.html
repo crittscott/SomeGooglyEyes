@@ -311,11 +311,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
  and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
- <a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
+ <a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/gecko/GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GooglyGeoLayer&lt;T,<wbr>R&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
+<div class="block">Captures eye and picker data during GeckoLib render-state extraction, then registers submission tasks
  at the animated attachment bones.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/command/GooglyServerCommands.html" title="class in com.github.crittscott.somegoogly.command">GooglyServerCommands</a></div>
@@ -511,45 +511,49 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Draws the eyes of placed mob heads and head items.</div>
+<div class="block">Submits the eyes of placed mob heads and head items.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.ItemHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.ItemHolder</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">An item render state's link to the stack it was last filled from, added by a Mixin.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a Mixin.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The live eyes of one placed mob head: a <a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil per configured eye, stepped with
  the same physics as mob eyes for a head that never moves, plus the expression playing on them.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Eye state of a placed mob head and of a head item.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.Holder.html" title="interface in com.github.crittscott.somegoogly.eye.state">SkullEyeState.Holder</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.Holder.html" title="interface in com.github.crittscott.somegoogly.eye.state">SkullEyeState.Holder</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">The head block entity's side of the eye-state compound, added by a Mixin.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/client/SlimyEyeIrisTint.html" title="class in com.github.crittscott.somegoogly.client">SlimyEyeIrisTint</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/client/SlimyEyeIrisTint.html" title="class in com.github.crittscott.somegoogly.client">SlimyEyeIrisTint</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">The Slimy Eye iris tint: the stack's stored iris color.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A googly eye bedded in a slimeball: the applicator.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/SomeGooglyCommon.html" title="class in com.github.crittscott.somegoogly">SomeGooglyCommon</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/SomeGooglyCommon.html" title="class in com.github.crittscott.somegoogly">SomeGooglyCommon</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Mod identity shared by every platform.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Compensates for whole-model render transforms that supported third-party mob models apply <i>outside</i>
  their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
  own <code>renderToBuffer</code>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config">VersionRangeMatcher</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html" title="class in com.github.crittscott.somegoogly.config">VersionRangeMatcher</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
  nearest-generation fallback pick (<a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html#nearestVersion(java.util.Collection,java.lang.String)"><code>nearestVersion(java.util.Collection&lt;java.lang.String&gt;, java.lang.String)</code></a>) used when no entry matches at all and
  the range synthesis (<a href="com/github/crittscott/somegoogly/config/VersionRangeMatcher.html#rangeFor(java.lang.String)"><code>rangeFor(java.lang.String)</code></a>) used when exporting definitions for optional mods.</div>

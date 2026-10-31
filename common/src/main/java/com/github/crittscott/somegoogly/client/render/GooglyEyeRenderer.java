@@ -10,9 +10,8 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -31,7 +30,9 @@ import org.joml.Vector3f;
  * behavior logic on the render thread.
  *
  * <p>The caller is responsible only for moving the pose into the head's animated attachment space;
- * this class handles everything from the eye's own offset/rotation inward.
+ * this class handles everything from the eye's own offset/rotation inward. Each part is submitted as
+ * custom geometry at its finished pose, with its colors and pupil position copied into the callback,
+ * because the callbacks run only after the whole frame has been submitted.
  */
 public final class GooglyEyeRenderer {
 
@@ -45,12 +46,13 @@ public final class GooglyEyeRenderer {
     private GooglyEyeRenderer() {
     }
 
-    // Scratch space reused by captureGravity across every eye, every frame: the render thread is
-    // single-threaded and one call finishes before the next starts (mirrors GooglyTracker's static
-    // INFLUENCE), so mutating these in place instead of allocating fresh JOML objects is safe.
+    // Scratch space reused by captureGravity across every eye, every frame: submission runs on the render
+    // thread and one call finishes before the next starts (mirrors GooglyTracker's static INFLUENCE), so
+    // mutating these in place instead of allocating fresh JOML objects is safe.
     private static final Matrix3f GRAVITY_POSE = new Matrix3f();
     private static final Vector3f GRAVITY_DOWN = new Vector3f();
-    // Per-eye color scratch for renderEye, under the same single-threaded reasoning.
+    // Per-eye color scratch for drawAnimatedEye, under the same reasoning; drawEye copies the colors before
+    // anything is submitted.
     private static final float[] CORNEA = new float[3];
     private static final float[] IRIS = new float[3];
 
@@ -76,15 +78,15 @@ public final class GooglyEyeRenderer {
      * the caller has already moved into the draft's attachment space. Used by both the vanilla and the
      * GeckoLib eye layers.
      */
-    public static void renderPreviewEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                                        int packedLight, int overlay, EyeDraft eye) {
+    public static void renderPreviewEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+                                        EyeDraft eye) {
         pose.pushPose();
         pose.translate(eye.position[0], eye.position[1], eye.position[2]);
         pose.mulPose(EyePlacement.orientation(eye.inclination, eye.azimuth));
         float scale = eye.eyeScale;
         pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
-        drawEye(pose, model, bufferSource, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale,
-                0F, 0F, eye.glows);
+        drawEye(pose, collector, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale, 0F, 0F,
+                eye.glows);
         pose.popPose();
     }
 
@@ -96,8 +98,8 @@ public final class GooglyEyeRenderer {
      * its colors, love and the creepy pulse swell the pupil, and a sleeping villager's lids are drawn over it
      * last. Leaves the pose stack as it found it.
      */
-    public static void drawAnimatedEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                                       int packedLight, int overlay, GooglyTracker.EyeInfo eyeInfo,
+    public static void drawAnimatedEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+                                       GooglyTracker.EyeInfo eyeInfo,
                                        float eyeScale, float depth, EyeColor cornea, EyeColor iris,
                                        float irisScale, boolean glow, float partialTicks) {
         pose.pushPose();
@@ -137,15 +139,15 @@ public final class GooglyEyeRenderer {
         // configured size.
         float irisScaleMul = Mth.lerp(partialTicks, eyeInfo.prevIrisScaleMul, eyeInfo.irisScaleMul);
         float pupilScale = Math.min(irisScale * irisScaleMul, Math.max(irisScale, ModelGooglyEye.MAX_PUPIL_SIZE));
-        drawEye(pose, model, bufferSource, packedLight, overlay, CORNEA, IRIS, pupilScale, irisX, irisY, glow);
+        drawEye(pose, collector, packedLight, overlay, CORNEA, IRIS, pupilScale, irisX, irisY, glow);
 
         // A sleeping villager's lids close over the eye from above and below. They never glow: drawn only in
         // the cutout pass, they hide the glow behind them by depth.
         float lid = Mth.lerp(partialTicks, eyeInfo.prevLid, eyeInfo.lid);
         if (lid > 0F) {
             float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
-            model.renderLids(pose, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay,
-                    lidColor[0], lidColor[1], lidColor[2], 1F, lid);
+            collector.submitCustomGeometry(pose, RENDER_TYPE, (eyePose, buffer) -> ModelGooglyEye.renderLids(
+                    eyePose, buffer, packedLight, overlay, lidColor[0], lidColor[1], lidColor[2], 1F, lid));
         }
 
         pose.popPose();
@@ -157,23 +159,27 @@ public final class GooglyEyeRenderer {
      * set, the same two parts again in the emissive render type. Every eye the mod draws (mob, picker
      * preview, item) comes through here.
      */
-    public static void drawEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                               int packedLight, int overlay, float[] cornea, float[] iris, float irisScale,
-                               float irisX, float irisY, boolean glow) {
-        model.moveIris(irisX, irisY, irisScale);
-        drawPass(pose, model, bufferSource.getBuffer(RENDER_TYPE), packedLight, overlay, cornea, iris, irisScale);
+    public static void drawEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+                               float[] cornea, float[] iris, float irisScale, float irisX, float irisY,
+                               boolean glow) {
+        float[] corneaColor = cornea.clone();
+        float[] irisColor = iris.clone();
+        drawPass(pose, collector, RENDER_TYPE, packedLight, overlay, corneaColor, irisColor, irisScale, irisX, irisY);
         if (glow) {
-            drawPass(pose, model, bufferSource.getBuffer(RENDER_TYPE_EYES), packedLight, overlay, cornea, iris,
-                    irisScale);
+            drawPass(pose, collector, RENDER_TYPE_EYES, packedLight, overlay, corneaColor, irisColor, irisScale,
+                    irisX, irisY);
         }
     }
 
-    private static void drawPass(PoseStack pose, ModelGooglyEye model, VertexConsumer buffer, int packedLight,
-                                 int overlay, float[] cornea, float[] iris, float irisScale) {
-        model.renderCornea(pose, buffer, packedLight, overlay, cornea[0], cornea[1], cornea[2], 1F);
+    private static void drawPass(PoseStack pose, SubmitNodeCollector collector, RenderType renderType,
+                                 int packedLight, int overlay, float[] cornea, float[] iris, float irisScale,
+                                 float irisX, float irisY) {
+        collector.submitCustomGeometry(pose, renderType, (eyePose, buffer) -> ModelGooglyEye.renderCornea(
+                eyePose, buffer, packedLight, overlay, cornea[0], cornea[1], cornea[2], 1F));
         pose.pushPose();
         pose.scale(irisScale, irisScale, 1F);
-        model.renderIris(pose, buffer, packedLight, overlay, iris[0], iris[1], iris[2], 1F);
+        collector.submitCustomGeometry(pose, renderType, (eyePose, buffer) -> ModelGooglyEye.renderIris(
+                eyePose, buffer, packedLight, overlay, iris[0], iris[1], iris[2], 1F, irisX, irisY, irisScale));
         pose.popPose();
     }
 
@@ -183,8 +189,8 @@ public final class GooglyEyeRenderer {
      * applies the eye's own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it
      * found it.
      */
-    public static void renderEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                                 int packedLight, int overlay, GooglyTracker.EyeInfo eyeInfo, HeadInfo helper,
+    public static void renderEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+                                 GooglyTracker.EyeInfo eyeInfo, HeadInfo helper,
                                  AppearanceOverride overrides, int headIndex, int eyeIndex, float partialTicks) {
         pose.pushPose();
 
@@ -202,7 +208,7 @@ public final class GooglyEyeRenderer {
         // fully-animated orientation.
         captureGravity(pose, eyeInfo);
 
-        drawAnimatedEye(pose, model, bufferSource, packedLight, overlay, eyeInfo, placement.eyeScale(),
+        drawAnimatedEye(pose, collector, packedLight, overlay, eyeInfo, placement.eyeScale(),
                 placement.depth(), look.cornea(), look.iris(), placement.irisScale(), look.glow(), partialTicks);
 
         pose.popPose();

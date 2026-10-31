@@ -91,11 +91,12 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SkullEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with <a href="#begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)"><code>begin(net.minecraft.world.level.block.entity.SkullBlockEntity, float)</code></a>
- and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after
- the head model is drawn, in the model's space. A placed head's eyes are live (<a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>SkullEyes</code></a>); an item's
- are drawn at rest, pupils centered, like the Googly Eye item's. Worn heads share the model draw without
- either bracket, so they draw no eyes.
+<div class="block">Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
+ is extracted (<a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>extract(net.minecraft.world.level.block.entity.SkullBlockEntity)</code></a>) and kept on that state (<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render"><code>SkullEyeRenderer.PlacedHolder</code></a>). Mixins bracket a placed head's
+ submission with <a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)"><code>begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and
+ call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.SkullModelBase, float, float)</code></a> right after the head model is submitted, in the model's space. A placed head's eyes are
+ live (<a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>SkullEyes</code></a>); an item's are drawn at rest, pupils centered, like the Googly Eye item's. Worn
+ heads share the model submission without either bracket, so they draw no eyes.
 
  <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
  definition places them as they are. Honors the client display settings by the head's mob and the server's
@@ -117,6 +118,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">An item render state's link to the stack it was last filled from, added by a Mixin.</div>
 </div>
+<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="SkullEyeRenderer.PlacedHolder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a Mixin.</div>
+</div>
 </div>
 </section>
 </li>
@@ -132,29 +138,37 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)" class="member-name-link">begin</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
- float&nbsp;partialTick)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)" class="member-name-link">begin</a><wbr>(<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a>&nbsp;state)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A placed head's draw starts.</div>
+<div class="block">A placed head's submission starts.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginItem(net.minecraft.world.item.ItemStack)" class="member-name-link">beginItem</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An item's draw starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a>.</div>
+<div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.SkullModelBase, float, float)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#end()" class="member-name-link">end</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The placed head's or head item's draw ends.</div>
+<div class="block">The placed head's or head item's submission ends.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
- int&nbsp;packedLight,
- net.minecraft.client.model.SkullModelBase&nbsp;model)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
- <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
+<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
+ its render state is extracted.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ net.minecraft.client.model.SkullModelBase&nbsp;model,
+ float&nbsp;yRot,
+ float&nbsp;mouthAnimation)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
+ <code>model</code> was just submitted in, the head's <code>packedLight</code>, and the head's <code>yRot</code> and
+ <code>mouthAnimation</code>.</div>
 </div>
 </div>
 </div>
@@ -174,11 +188,19 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)">
+<section class="detail" id="extract(net.minecraft.world.level.block.entity.SkullBlockEntity)">
+<h3>extract</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></span>&nbsp;<span class="element-name">extract</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</span></div>
+<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
+ its render state is extracted.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)">
 <h3>begin</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">begin</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
- float&nbsp;partialTick)</span></div>
-<div class="block">A placed head's draw starts.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">begin</span><wbr><span class="parameters">(<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a>&nbsp;state)</span></div>
+<div class="block">A placed head's submission starts.</div>
 </section>
 </li>
 <li>
@@ -186,25 +208,29 @@ loadScripts(document, 'script');</script>
 <h3>beginItem</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginItem</span><wbr><span class="parameters">(@Nullable
  net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">An item's draw starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a>.</div>
+<div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.SkullModelBase, float, float)</code></a>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="end()">
 <h3>end</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">end</span>()</div>
-<div class="block">The placed head's or head item's draw ends.</div>
+<div class="block">The placed head's or head item's submission ends.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)">
+<section class="detail" id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.SkullModelBase,float,float)">
 <h3>render</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">render</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
- net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
- net.minecraft.client.model.SkullModelBase&nbsp;model)</span></div>
-<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
- <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
+ net.minecraft.client.model.SkullModelBase&nbsp;model,
+ float&nbsp;yRot,
+ float&nbsp;mouthAnimation)</span></div>
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
+ <code>model</code> was just submitted in, the head's <code>packedLight</code>, and the head's <code>yRot</code> and
+ <code>mouthAnimation</code>. The model is posed only when it is drawn, after submission, so it is posed here
+ the same way first.</div>
 </section>
 </li>
 </ul>

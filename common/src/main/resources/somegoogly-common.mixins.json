@@ -9,7 +9,8 @@
     "ItemStackRenderStateMixin",
     "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
-    "SkullBlockRendererMixin"
+    "SkullBlockRendererMixin",
+    "SkullBlockRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

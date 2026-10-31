@@ -109,8 +109,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compileLayers(software.bernie.geckolib.renderer.GeoEntityRenderer,java.util.function.Consumer)" class="member-name-link">compileLayers</a><wbr>(software.bernie.geckolib.renderer.GeoEntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;software.bernie.geckolib.renderer.layer.GeoRenderLayer&gt;&nbsp;addLayer)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compileLayers(software.bernie.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers)" class="member-name-link">compileLayers</a><wbr>(software.bernie.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers&nbsp;event)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
  renderer.</div>
@@ -149,10 +148,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="compileLayers(software.bernie.geckolib.renderer.GeoEntityRenderer,java.util.function.Consumer)">
+<section class="detail" id="compileLayers(software.bernie.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers)">
 <h3>compileLayers</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">compileLayers</span><wbr><span class="parameters">(software.bernie.geckolib.renderer.GeoEntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;software.bernie.geckolib.renderer.layer.GeoRenderLayer&gt;&nbsp;addLayer)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">compileLayers</span><wbr><span class="parameters">(software.bernie.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers&nbsp;event)</span></div>
 <div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
  renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.</div>
 </section>

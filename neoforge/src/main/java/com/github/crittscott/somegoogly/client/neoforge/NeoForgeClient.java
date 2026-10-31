@@ -12,10 +12,10 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -38,8 +38,8 @@ public final class NeoForgeClient {
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            ClientRenderLayers.install(event.getSkin(skin));
+        for (PlayerModelType skin : event.getSkins()) {
+            ClientRenderLayers.install(event.getPlayerRenderer(skin));
         }
         for (EntityType<?> entityType : event.getEntityTypes()) {
             ClientRenderLayers.install(event.getRenderer(entityType));
@@ -107,6 +107,7 @@ public final class NeoForgeClient {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        event.registerCategory(PickerKeys.CATEGORY);
         event.register(PickerKeys.LOCK);
         event.register(PickerKeys.PART_NEXT);
         event.register(PickerKeys.PART_PREV);

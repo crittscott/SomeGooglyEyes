@@ -200,7 +200,7 @@ public enum EyeBehavior {
 
             float t = (float) i.age / i.duration;
             float mag = CROSS_EYE_AMOUNT * slide(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
-            // Negate: ModelGooglyEye#moveIris renders the pupil at -(normX, normY) (render space is -Y up /
+            // Negate: ModelGooglyEye#renderIris renders the pupil at -(normX, normY) (render space is -Y up /
             // -X right), so the pupil coordinate that visually points toward the target is the negated
             // projection. Without this the pupil rolls away from its partner instead of toward it.
             if (len > 1e-4f) {

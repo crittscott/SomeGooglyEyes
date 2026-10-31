@@ -107,7 +107,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
  and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
- <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
+ <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a>&lt;S extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState,<wbr>M extends net.minecraft.client.model.EntityModel&lt;? super S&gt;&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -115,11 +115,15 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Draws the eyes of placed mob heads and head items.</div>
+<div class="block">Submits the eyes of placed mob heads and head items.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab1"><a href="SkullEyeRenderer.ItemHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.ItemHolder</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab1">
 <div class="block">An item render state's link to the stack it was last filled from, added by a Mixin.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a Mixin.</div>
 </div>
 </div>
 </div>

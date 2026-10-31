@@ -15,6 +15,9 @@ import java.util.Set;
  * front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
  * inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also draw upper and
  * lower eyelids in front of both.
+ *
+ * <p>Each part is emitted from a submitted custom-geometry callback, which runs after every eye has been
+ * submitted, so the geometry holds no per-eye state: everything an eye needs arrives as arguments.
  */
 public final class ModelGooglyEye {
 
@@ -51,15 +54,12 @@ public final class ModelGooglyEye {
     private static final int SIDES = 16;
     private static final float[] RING_X = new float[SIDES];
     private static final float[] RING_Y = new float[SIDES];
-    // Lid rim scratch reused by every renderLids call: rendering is single-threaded and one call finishes
-    // before the next starts.
+    // Lid rim scratch reused by every renderLids call: callbacks run one at a time on the render thread, and
+    // one call finishes before the next starts.
     private static final float[] LID_X = new float[LID_SEGMENTS + 1];
     private static final float[] LID_Y = new float[LID_SEGMENTS + 1];
     private static final float[] LID_NX = new float[LID_SEGMENTS + 1];
     private static final float[] LID_NY = new float[LID_SEGMENTS + 1];
-
-    private float irisOffsetX;
-    private float irisOffsetY;
 
     static {
         for (int i = 0; i < SIDES; i++) {
@@ -67,6 +67,9 @@ public final class ModelGooglyEye {
             RING_X[i] = (float) Math.cos(angle);
             RING_Y[i] = (float) Math.sin(angle);
         }
+    }
+
+    private ModelGooglyEye() {
     }
 
     /**
@@ -97,41 +100,17 @@ public final class ModelGooglyEye {
                 .setNormal(pose, normalX, normalY, normalZ);
     }
 
-    /**
-     * Position the iris from a unit-disk pupil position {@code (normX, normY)} in [-1,1], mapped
-     * linearly onto the full travel circle so the iris edge just kisses the cornea rim at
-     * {@code |norm| = 1}. The renderer applies the {@code pupilSize} (irisScale) on the pose, so the
-     * offset is expressed in the iris's own pre-scale units (hence the {@code / pupilSize}).
-     */
-    public void moveIris(float normX, float normY, float pupilSize) {
-        if (pupilSize <= 0F) {
-            irisOffsetX = 0F;
-            irisOffsetY = 0F;
-            return;
-        }
-
-        // Max cornea-unit travel of the iris CENTER that keeps the iris disk inside the cornea.
-        float maxCenter = CORNEA_RADIUS - IRIS_RADIUS * pupilSize;
-        float preScale = maxCenter / pupilSize;
-        // Render space is -Y up / -X right, so a physics +Y (up) pupil must render toward -Y.
-        // Without this flip the pupil rests at the top and falls upward.
-        irisOffsetX = -normX * preScale;
-        irisOffsetY = -normY * preScale;
-    }
-
     /** Draw the cornea cylinder in the given color. */
-    public void renderCornea(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                              float red, float green, float blue, float alpha) {
-        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+    public static void renderCornea(PoseStack.Pose pose, VertexConsumer buffer, int packedLight, int packedOverlay,
+                                    float red, float green, float blue, float alpha) {
+        renderCylinder(pose, buffer, packedLight, packedOverlay, red, green, blue, alpha,
                 0F, 0F, CORNEA_RADIUS, CORNEA_FRONT_Z, CORNEA_BACK_Z, true);
     }
 
-    private static void renderCylinder(PoseStack poseStack, VertexConsumer buffer, int packedLight,
+    private static void renderCylinder(PoseStack.Pose pose, VertexConsumer buffer, int packedLight,
                                        int packedOverlay, float red, float green, float blue, float alpha,
                                        float centerX, float centerY, float radius, float frontZ, float backZ,
                                        boolean backCap) {
-        PoseStack.Pose pose = poseStack.last();
-
         // Entity-cutout buffers draw quads; ring points 0, i, i+1, i+2 span two fan triangles of the cap,
         // so SIDES - 2 triangles take (SIDES - 2) / 2 quads. The front cap faces -Z, so it winds backward.
         for (int i = 1; i < SIDES - 1; i += 2) {
@@ -177,11 +156,28 @@ public final class ModelGooglyEye {
                 normalX, normalY, normalZ, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    /** Draw the iris cylinder in the given color, offset by the current pupil position. */
-    public void renderIris(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                            float red, float green, float blue, float alpha) {
-        renderCylinder(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                irisOffsetX, irisOffsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z, false);
+    /**
+     * Draw the iris cylinder in the given color at the unit-disk pupil position {@code (normX, normY)} in
+     * [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses the cornea rim at
+     * {@code |norm| = 1}. The caller applies the {@code pupilSize} (irisScale) on the pose, so the offset is
+     * expressed in the iris's own pre-scale units (hence the {@code / pupilSize}).
+     */
+    public static void renderIris(PoseStack.Pose pose, VertexConsumer buffer, int packedLight, int packedOverlay,
+                                  float red, float green, float blue, float alpha,
+                                  float normX, float normY, float pupilSize) {
+        float offsetX = 0F;
+        float offsetY = 0F;
+        if (pupilSize > 0F) {
+            // Max cornea-unit travel of the iris CENTER that keeps the iris disk inside the cornea.
+            float maxCenter = CORNEA_RADIUS - IRIS_RADIUS * pupilSize;
+            float preScale = maxCenter / pupilSize;
+            // Render space is -Y up / -X right, so a physics +Y (up) pupil must render toward -Y.
+            // Without this flip the pupil rests at the top and falls upward.
+            offsetX = -normX * preScale;
+            offsetY = -normY * preScale;
+        }
+        renderCylinder(pose, buffer, packedLight, packedOverlay, red, green, blue, alpha,
+                offsetX, offsetY, IRIS_RADIUS, IRIS_FRONT_Z, IRIS_BACK_Z, false);
     }
 
     /**
@@ -191,12 +187,11 @@ public final class ModelGooglyEye {
      * side; its front face sits ahead of the iris, which shows only between the two edges. Neither has a
      * back face, which would face only the head.
      */
-    public void renderLids(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                           float red, float green, float blue, float alpha, float coverage) {
+    public static void renderLids(PoseStack.Pose pose, VertexConsumer buffer, int packedLight, int packedOverlay,
+                                  float red, float green, float blue, float alpha, float coverage) {
         if (coverage <= 0F) {
             return;
         }
-        PoseStack.Pose pose = poseStack.last();
 
         // The upper lid's shape. Render space is -Y up, so it spans y <= edge. Its rim runs by increasing
         // angle (the cornea ring's direction) from one end of the edge over the top to the other.

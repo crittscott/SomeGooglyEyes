@@ -34,6 +34,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -88,7 +89,7 @@ public final class FabricServerEvents {
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (headLootTables().contains(key)) {
                 tableBuilder.modifyPools(pool -> pool.apply(
-                        CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                        CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                                 .include(ModContent.HEAD_EYES.get())));
             }
         });
@@ -117,7 +118,7 @@ public final class FabricServerEvents {
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             if (!ServerConfigurationNetworking.canSend(handler, FabricNetworkTransport.Handshake.TYPE)) {
                 SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
-                        handler.getOwner().getName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
+                        handler.getOwner().name(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
                 handler.disconnect(Component.translatable("somegoogly.network.required_client"));
             }
         });
