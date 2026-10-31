@@ -26,7 +26,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,7 +49,7 @@ public final class FabricClientEvents {
             FabricGeckoLayers.register();
         }
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
+                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
                 (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
         KeyMapping.Category.register(PickerKeys.CATEGORY.id());
@@ -73,7 +73,7 @@ public final class FabricClientEvents {
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES,
-                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
+                Identifier.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
                         PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
 
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->

@@ -13,12 +13,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -118,7 +118,7 @@ public final class EyeItemServiceGameTestsLogic {
         helper.assertTrue(EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
                 Component.literal("an eyeless mob passes"));
 
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             EyeState.setHasEyes(cow, true);
             ServerEyeConfigs.replaceAll(Map.of());

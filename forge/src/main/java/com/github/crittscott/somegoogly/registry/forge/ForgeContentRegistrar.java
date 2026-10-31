@@ -6,7 +6,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ public final class ForgeContentRegistrar implements ContentRegistrar {
     @Override
     public <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM,
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name));
+                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name));
         return items.register(name, () -> factory.apply(new Item.Properties().setId(key)));
     }
 

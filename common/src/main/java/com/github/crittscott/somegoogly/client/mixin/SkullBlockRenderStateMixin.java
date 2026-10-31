@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.blockentity.state.SkullBlockRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /** Carries a placed head's eyes from render-state extraction to its submission. */
 @Mixin(SkullBlockRenderState.class)

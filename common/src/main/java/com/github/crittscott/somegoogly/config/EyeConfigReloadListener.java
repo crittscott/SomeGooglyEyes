@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -43,7 +43,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
     /** The listener's identity for loaders that key reload listeners by id. */
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
 
     /** Where eye definitions live inside a data pack: {@code data/<namespace>/eyes/<path>.json}. */
     public static final FileToIdConverter EYE_FILES = FileToIdConverter.json("eyes");
@@ -60,19 +60,19 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
      * Construct the file path for {@code typeId}'s eye definition. Does not check filesystem containment;
      * callers accepting a client-authored identifier must first require membership in the entity registry.
      */
-    public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
-        ResourceLocation file = EYE_FILES.idToFile(typeId);
+    public static Path eyeFile(Path packRoot, Identifier typeId) {
+        Identifier file = EYE_FILES.idToFile(typeId);
         return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
-        Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
+    protected void apply(Map<Identifier, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
+        Map<Identifier, RuntimeConfigSet> selected = new HashMap<>();
         int skippedModNotInstalled = 0;
         int failedParse = 0;
         int rejected = 0;
         Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
-        for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
+        for (Map.Entry<Identifier, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
             if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
                 SomeGooglyCommon.LOGGER.warn(
@@ -138,7 +138,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                     aggregateError.diagnostic());
             return;
         }
-        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
+        Map<Identifier, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
         int wireSize = EyeConfigSyncPacket.wireSize(encoded);
         if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
             SomeGooglyCommon.LOGGER.error(
@@ -156,7 +156,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                 selected.size(), files.size(), skippedModNotInstalled, failedParse, rejected, fallbackTotal);
     }
 
-    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
+    private static RuntimeConfig choose(Identifier entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
         if (existing != null) {
             SomeGooglyCommon.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
             return existing;
@@ -168,7 +168,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     private record Fallback(String namespace, String installed, String used, boolean downgrade) {
     }
 
-    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded,
+    private static RuntimeConfigSet selectForLoadedVersion(Identifier entityId, ConfigFile file, String loaded,
                                                            Map<Fallback, Integer> fallbacks) {
         List<VersionedEntry> validEntries = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
@@ -205,7 +205,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     }
 
     /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */
-    private static RuntimeConfigSet select(ResourceLocation entityId, List<VersionedEntry> entries,
+    private static RuntimeConfigSet select(Identifier entityId, List<VersionedEntry> entries,
                                            Predicate<VersionedEntry> versionFilter) {
         RuntimeConfigSet set = new RuntimeConfigSet();
         for (VersionedEntry entry : entries) {

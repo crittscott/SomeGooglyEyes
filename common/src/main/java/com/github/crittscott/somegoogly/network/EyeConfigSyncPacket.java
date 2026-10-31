@@ -12,7 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,13 +33,13 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::new);
 
     private final BehaviorSettings behaviors;
-    private final Map<ResourceLocation, RuntimeConfigSet> configs;
-    private final Map<ResourceLocation, CompoundTag> encoded;
+    private final Map<Identifier, RuntimeConfigSet> configs;
+    private final Map<Identifier, CompoundTag> encoded;
     private final boolean googlyEyesEnabled;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
-    public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
-                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled,
+    public EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs,
+                               Map<Identifier, CompoundTag> encoded, boolean googlyEyesEnabled,
                                BehaviorSettings behaviors) {
         this.configs = configs;
         this.encoded = encoded;
@@ -55,10 +55,10 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
-        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
-        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
+        Map<Identifier, RuntimeConfigSet> configs = new HashMap<>();
+        Map<Identifier, CompoundTag> encoded = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            ResourceLocation id = buffer.readResourceLocation();
+            Identifier id = buffer.readIdentifier();
             if (configs.containsKey(id)) {
                 throw new DecoderException("Duplicate synced eye config for " + id);
             }
@@ -86,7 +86,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
     }
 
     /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
-    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
+    public static int wireSize(Map<Identifier, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
             writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
@@ -96,11 +96,11 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         }
     }
 
-    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
+    private static void writeBody(FriendlyByteBuf buffer, Map<Identifier, CompoundTag> encoded,
                                   boolean googlyEyesEnabled, BehaviorSettings behaviors) {
         buffer.writeVarInt(encoded.size());
-        for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
-            buffer.writeResourceLocation(entry.getKey());
+        for (Map.Entry<Identifier, CompoundTag> entry : encoded.entrySet()) {
+            buffer.writeIdentifier(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
         buffer.writeBoolean(googlyEyesEnabled);
@@ -123,7 +123,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
     }
 
     /** The resolved eye definitions, by entity type. */
-    public Map<ResourceLocation, RuntimeConfigSet> configs() {
+    public Map<Identifier, RuntimeConfigSet> configs() {
         return configs;
     }
 

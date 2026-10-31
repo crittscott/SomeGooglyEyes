@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /** Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle. */
 public final class ClientEyeRuntime {
@@ -123,7 +123,7 @@ public final class ClientEyeRuntime {
      * definitions give it nothing to draw.
      */
     @Nullable
-    public static SkullEyes skullEyes(SkullBlockEntity skull, ResourceLocation entity) {
+    public static SkullEyes skullEyes(SkullBlockEntity skull, Identifier entity) {
         SkullEyes eyes = SKULLS.get(skull.getBlockPos());
         if (eyes == null || !eyes.entity.equals(entity)) {
             eyes = SkullEyes.create(skull.getBlockPos(), entity, SkullEyeState.snapshot(skull));

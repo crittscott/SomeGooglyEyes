@@ -170,13 +170,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateRuntimeConfig(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)" class="member-name-link">validateRuntimeConfig</a><wbr>(<a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return a structured validation issue, or <code>null</code> when one runtime config is safe.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateSync(java.util.Map)" class="member-name-link">validateSync</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateSync(java.util.Map)" class="member-name-link">validateSync</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return a structured validation issue, or <code>null</code> when the complete sync is safe.</div>
 </div>
@@ -313,16 +313,14 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="validateRuntimeConfig(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)">
 <h3>validateRuntimeConfig</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">validateRuntimeConfig</span><wbr><span class="parameters">(<a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">validateRuntimeConfig</span><wbr><span class="parameters">(<a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</span></div>
 <div class="block">Return a structured validation issue, or <code>null</code> when one runtime config is safe.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="validateSync(java.util.Map)">
 <h3>validateSync</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">validateSync</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">validateSync</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</span></div>
 <div class="block">Return a structured validation issue, or <code>null</code> when the complete sync is safe.</div>
 </section>
 </li>

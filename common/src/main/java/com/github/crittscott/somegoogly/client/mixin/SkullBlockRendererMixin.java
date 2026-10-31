@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.SkullModelBase;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.model.object.skull.SkullModelBase;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.blockentity.state.SkullBlockRenderState;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * No loader has a block-entity renderer hook, so placed heads' eyes ride vanilla's head renderer: their eyes are
@@ -30,7 +30,7 @@ abstract class SkullBlockRendererMixin {
     @Inject(method = "extractRenderState(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;FLnet/minecraft/world/phys/Vec3;Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
             at = @At("TAIL"))
     private void somegoogly$extractEyes(SkullBlockEntity skull, SkullBlockRenderState state, float partialTick,
-                                        Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay crumbling,
+                                        Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling,
                                         CallbackInfo callback) {
         ((SkullEyeRenderer.PlacedHolder) state).somegoogly$setEyes(SkullEyeRenderer.extract(skull), partialTick);
     }
@@ -48,7 +48,7 @@ abstract class SkullBlockRendererMixin {
     private static void somegoogly$drawEyes(@Nullable Direction direction, float yRot, float mouthAnimation,
                                             PoseStack pose, SubmitNodeCollector collector, int packedLight,
                                             SkullModelBase model, RenderType renderType, int outlineColor,
-                                            @Nullable ModelFeatureRenderer.CrumblingOverlay crumbling,
+                                            ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling,
                                             CallbackInfo callback) {
         SkullEyeRenderer.render(pose, collector, packedLight, model, yRot, mouthAnimation);
     }

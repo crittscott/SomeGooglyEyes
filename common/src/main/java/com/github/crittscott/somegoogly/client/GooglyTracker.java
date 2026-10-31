@@ -14,10 +14,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
@@ -110,8 +110,7 @@ public class GooglyTracker {
     public BehaviorInstance active;
 
     /** The server expression this disposable simulation has initialized, if any. */
-    @Nullable
-    ClientEyeRuntime.ReceivedBehavior receivedBehavior;
+    ClientEyeRuntime.@Nullable ReceivedBehavior receivedBehavior;
 
     /**
      * Whether the server reports this entity angry in a way vanilla doesn't sync (see {@code
@@ -145,8 +144,8 @@ public class GooglyTracker {
      * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded;
      * {@code settings} says which ongoing behaviors are on.
      */
-    public GooglyTracker(@Nonnull LivingEntity parent, @Nonnull HeadInfo helper, boolean angry,
-                         @Nonnull BehaviorSettings settings) {
+    public GooglyTracker(@NonNull LivingEntity parent, @NonNull HeadInfo helper, boolean angry,
+                         @NonNull BehaviorSettings settings) {
         this.parent = parent;
         this.helper = helper;
         this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
@@ -476,7 +475,7 @@ public class GooglyTracker {
      * mid-effect sees the same state as everyone else: the seeded {@code onStart} plus the age fully
      * determine each behavior's influence.
      */
-    public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
+    public boolean startBehavior(@NonNull EyeBehavior behavior, int duration, long seed, int elapsed) {
         if (active != null || parent.isSleeping()) {
             return false;
         }

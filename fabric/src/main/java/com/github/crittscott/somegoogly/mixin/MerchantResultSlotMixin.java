@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.mixin;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
-import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.MerchantResultSlot;
 import net.minecraft.world.item.trading.Merchant;

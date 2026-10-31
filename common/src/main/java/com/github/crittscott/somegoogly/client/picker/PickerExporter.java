@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,7 +52,7 @@ public final class PickerExporter {
      * all real validation — and the authoritative feedback — is the server's ({@code PickerExportService}).
      */
     public static Component export() {
-        ResourceLocation type = PickerState.targetType();
+        Identifier type = PickerState.targetType();
         if (type == null || PickerState.totalEyeCount() == 0) {
             return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
@@ -80,8 +80,8 @@ public final class PickerExporter {
      * original entry's declared range isn't preserved in the runtime config, so it can't be recovered.
      */
     public static Component exportAll() {
-        Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
-        Map<ResourceLocation, Map<String, RuntimeConfig>> drafts = PickerState.authoredConfigs();
+        Map<Identifier, RuntimeConfigSet> synced = ClientEyeConfigs.all();
+        Map<Identifier, Map<String, RuntimeConfig>> drafts = PickerState.authoredConfigs();
         if (synced.isEmpty() && drafts.isEmpty()) {
             return Component.translatable("somegoogly.command.picker.export_all_none_loaded");
         }
@@ -89,17 +89,17 @@ public final class PickerExporter {
         // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker drafts.
         // A draft replaces only its authored age in the synced state, so a mob saved-but-never-exported still
         // gets written — this is what makes exportall "export all", not just the last reloaded mob.
-        Set<ResourceLocation> ids = new LinkedHashSet<>(synced.keySet());
+        Set<Identifier> ids = new LinkedHashSet<>(synced.keySet());
         ids.addAll(drafts.keySet());
 
         Path root = Minecraft.getInstance().gameDirectory.toPath().resolve(DUMP_DIR);
         int files = 0;
         // Types whose model couldn't be resolved (so synced tokens were written verbatim, not canonicalized).
         int verbatim = 0;
-        ResourceLocation currentId = null;
+        Identifier currentId = null;
         Path currentTarget = null;
         try {
-            for (ResourceLocation id : ids) {
+            for (Identifier id : ids) {
                 currentId = id;
                 currentTarget = EyeConfigReloadListener.eyeFile(root, id);
                 Optional<String> version = ConfigFile.exportVersion(id.getNamespace());

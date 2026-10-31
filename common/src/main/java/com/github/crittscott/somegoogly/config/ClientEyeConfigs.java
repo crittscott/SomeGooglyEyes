@@ -6,13 +6,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Client-side store of the resolved server eye state, populated from the server via
@@ -28,12 +28,12 @@ import javax.annotation.Nullable;
 public final class ClientEyeConfigs {
 
     private static volatile BehaviorSettings behaviors = BehaviorSettings.NONE;
-    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
+    private static volatile Map<Identifier, RuntimeConfigSet> configs = Collections.emptyMap();
     // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
     private static volatile boolean googlyEyesEnabled = true;
     // Nested by entity then a packed (variant, baby) key, mirroring ModelMemo's per-frame-allocation-free
     // pattern: a compound key object would have to be allocated on every call just to probe the cache.
-    private static final Map<ResourceLocation, Map<Integer, HeadInfo>> resolved = new HashMap<>();
+    private static final Map<Identifier, Map<Integer, HeadInfo>> resolved = new HashMap<>();
 
     private ClientEyeConfigs() {
     }
@@ -42,7 +42,7 @@ public final class ClientEyeConfigs {
      * The immutable synced map, by entity. Callers may retain the snapshot across replacements but must
      * not mutate its {@link RuntimeConfigSet} values.
      */
-    public static Map<ResourceLocation, RuntimeConfigSet> all() {
+    public static Map<Identifier, RuntimeConfigSet> all() {
         return configs;
     }
 
@@ -52,7 +52,7 @@ public final class ClientEyeConfigs {
     }
 
     /** The cached view of {@code config}'s {@code variant} for {@code entity}, created on first use. */
-    private static HeadInfo cached(ResourceLocation entity, boolean baby, @Nullable RuntimeConfig config,
+    private static HeadInfo cached(Identifier entity, boolean baby, @Nullable RuntimeConfig config,
                                    int variant) {
         int key = (variant << 1) | (baby ? 1 : 0);
         Map<Integer, HeadInfo> byVariant = resolved.computeIfAbsent(entity, e -> new HashMap<>());
@@ -80,19 +80,19 @@ public final class ClientEyeConfigs {
 
     /** Return the entity's config for the requested age, including the age-independent fallback. */
     @Nullable
-    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
+    public static RuntimeConfig get(Identifier entity, boolean baby) {
         RuntimeConfigSet set = configs.get(entity);
         return set == null ? null : set.get(baby);
     }
 
     /** Resolve and cache the selected variant for the requested age, for client rendering. */
-    public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
+    public static HeadInfo resolve(Identifier entity, boolean baby, float variantRoll) {
         RuntimeConfig config = get(entity, baby);
         return cached(entity, baby, config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
     /** Resolve and cache the selected variant for {@code living}'s current age. */
-    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
+    public static HeadInfo resolve(Identifier entity, LivingEntity living, float variantRoll) {
         return resolve(entity, living.isBaby(), variantRoll);
     }
 
@@ -100,7 +100,7 @@ public final class ClientEyeConfigs {
      * Resolve and cache the variant a placed head of {@code entity}'s kind shows
      * ({@link SkullEyeState#variantIndex}), for client rendering.
      */
-    public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
+    public static HeadInfo resolveHead(Identifier entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
         return cached(entity, false, config, SkullEyeState.variantIndex(config, variantRoll));
     }
@@ -109,7 +109,7 @@ public final class ClientEyeConfigs {
      * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
      * rendering view. The supplied model values become store-owned and must not be mutated afterward.
      */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
+    public static void replaceAll(Map<Identifier, RuntimeConfigSet> next, boolean googlyEyesEnabled,
                                   BehaviorSettings behaviors) {
         configs = Map.copyOf(next);
         ClientEyeConfigs.behaviors = behaviors;

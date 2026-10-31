@@ -97,7 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">EyeBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span></div>
-<div class="block">The eight named one-shot eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id; the
+<div class="block">The eight named one-shot eye expressions a mob can play, keyed by a <code>Identifier</code> id; the
  behaviors that last as long as a mob stays in some state are the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s. These are
  code-defined client animations, and both sides only need the ids to agree: the server names a
  behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
@@ -181,8 +181,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#byId(net.minecraft.resources.ResourceLocation)" class="member-name-link">byId</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;id)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#byId(net.minecraft.resources.Identifier)" class="member-name-link">byId</a><wbr>(net.minecraft.resources.Identifier&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Look up a behavior by id, or <code>null</code> for an unregistered identifier.</div>
 </div>
@@ -191,7 +191,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Default length in ticks when triggered without an explicit duration (ambient uses this).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.Identifier</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The id (e.g.</div>
@@ -352,17 +352,16 @@ not permitted.)</div>
 </section>
 </li>
 <li>
-<section class="detail" id="byId(net.minecraft.resources.ResourceLocation)">
+<section class="detail" id="byId(net.minecraft.resources.Identifier)">
 <h3>byId</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">byId</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;id)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">byId</span><wbr><span class="parameters">(net.minecraft.resources.Identifier&nbsp;id)</span></div>
 <div class="block">Look up a behavior by id, or <code>null</code> for an unregistered identifier.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="id()">
 <h3>id</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.Identifier</span>&nbsp;<span class="element-name">id</span>()</div>
 <div class="block">The id (e.g. <code>somegoogly:stare</code>); used on the wire and as the config key.</div>
 </section>
 </li>

@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -70,7 +70,7 @@ public final class EyeInspector {
     }
 
     private static Component verdict(LivingEntity target) {
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
         boolean baby = target.isBaby();
         if (RuntimeConfig.isUsable(ClientEyeConfigs.get(type, baby))) {
             return EyeState.hasEyes(target) ? alreadyHas() : canHave();
@@ -85,7 +85,7 @@ public final class EyeInspector {
 
     /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
     private static Component verdict(SkullBlockEntity skull) {
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (entity == null || !SkullEyeState.canHaveEyes(entity, ClientEyeConfigs.get(entity, false))) {
             return cannot();
         }

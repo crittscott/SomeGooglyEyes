@@ -133,13 +133,13 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Positive total play length in ticks, validated before playback.</div>
 </div>
-<div class="col-first even-row-color"><code>final <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
+<div class="col-first even-row-color"><code>final @Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second even-row-color"><code><a href="#helper" class="member-name-link">helper</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
  eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 </div>
-<div class="col-first odd-row-color"><code>boolean[][]</code></div>
+<div class="col-first odd-row-color"><code>boolean[] @Nullable []</code></div>
 <div class="col-second odd-row-color"><code><a href="#mask" class="member-name-link">mask</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other behaviors.</div>
@@ -149,7 +149,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Deterministic random source initialized from the server-supplied seed.</div>
 </div>
-<div class="col-first odd-row-color"><code>float[]</code></div>
+<div class="col-first odd-row-color"><code>float @Nullable []</code></div>
 <div class="col-second odd-row-color"><code><a href="#tintColor" class="member-name-link">tintColor</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Color-change target, or <code>null</code> until a color-change behavior initializes it.</div>
@@ -166,7 +166,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,com.github.crittscott.somegoogly.eye.HeadInfo,int,long)" class="member-name-link">BehaviorInstance</a><wbr>(<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
- <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
+ @Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  int&nbsp;duration,
  long&nbsp;seed)</code></div>
 <div class="col-last even-row-color">
@@ -203,8 +203,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="helper">
 <h3>helper</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">helper</span></div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">helper</span></div>
 <div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
  eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 </section>
@@ -233,8 +232,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="tintColor">
 <h3>tintColor</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">float[]</span>&nbsp;<span class="element-name">tintColor</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float @Nullable []</span>&nbsp;<span class="element-name">tintColor</span></div>
 <div class="block">Color-change target, or <code>null</code> until a color-change behavior initializes it.</div>
 </section>
 </li>
@@ -248,8 +246,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="mask">
 <h3>mask</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean[][]</span>&nbsp;<span class="element-name">mask</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean[] @Nullable []</span>&nbsp;<span class="element-name">mask</span></div>
 <div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other behaviors.</div>
 </section>
 </li>
@@ -265,8 +262,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,com.github.crittscott.somegoogly.eye.HeadInfo,int,long)">
 <h3>BehaviorInstance</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">BehaviorInstance</span><wbr><span class="parameters">(<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
- @Nullable
- <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
+ @Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  int&nbsp;duration,
  long&nbsp;seed)</span></div>
 <div class="block">Create unstarted per-play state; the caller next invokes <a href="EyeBehavior.html#onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)"><code>EyeBehavior.onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)</code></a>.</div>

@@ -7,13 +7,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
@@ -189,12 +189,12 @@ public final class EyeConfigLimits {
 
     /** Return a structured validation issue, or {@code null} when the complete sync is safe. */
     @Nullable
-    public static Issue validateSync(Map<ResourceLocation, RuntimeConfigSet> configs) {
+    public static Issue validateSync(Map<Identifier, RuntimeConfigSet> configs) {
         if (configs.size() > MAX_CONFIGS_PER_SYNC) {
             return issue("config_count", "entity config count %s exceeds %s", configs.size(), MAX_CONFIGS_PER_SYNC);
         }
         Budget budget = new Budget();
-        for (Map.Entry<ResourceLocation, RuntimeConfigSet> entry : configs.entrySet()) {
+        for (Map.Entry<Identifier, RuntimeConfigSet> entry : configs.entrySet()) {
             Issue error = validateConfigSet(entry.getValue(), budget);
             if (error != null) {
                 return issue("entity_context", "%s: %s", entry.getKey().toString(), error);

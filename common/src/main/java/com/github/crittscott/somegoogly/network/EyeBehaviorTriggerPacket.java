@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Server → client: "play behavior {@code behaviorId} on entity {@code entityId} for {@code duration}
@@ -28,13 +28,13 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
 
     private static final int MAX_DURATION_TICKS = 1_200;
 
-    private final ResourceLocation behaviorId;
+    private final Identifier behaviorId;
     private final int duration;
     private final int elapsed;
     private final int entityId;
     private final long seed;
 
-    public EyeBehaviorTriggerPacket(int entityId, ResourceLocation behaviorId, int duration, long seed, int elapsed) {
+    public EyeBehaviorTriggerPacket(int entityId, Identifier behaviorId, int duration, long seed, int elapsed) {
         this.entityId = entityId;
         this.behaviorId = behaviorId;
         this.duration = duration;
@@ -44,7 +44,7 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
 
     private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
         this.entityId = buffer.readInt();
-        this.behaviorId = buffer.readResourceLocation();
+        this.behaviorId = buffer.readIdentifier();
         this.duration = buffer.readVarInt();
         this.seed = buffer.readLong();
         this.elapsed = buffer.readVarInt();
@@ -58,14 +58,14 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
             throw new EncoderException("Invalid eye behavior timing");
         }
         buffer.writeInt(entityId);
-        buffer.writeResourceLocation(behaviorId);
+        buffer.writeIdentifier(behaviorId);
         buffer.writeVarInt(duration);
         buffer.writeLong(seed);
         buffer.writeVarInt(elapsed);
     }
 
     /** The behavior to play. */
-    public ResourceLocation behaviorId() {
+    public Identifier behaviorId() {
         return behaviorId;
     }
 

@@ -3,7 +3,7 @@ accessWidener	v2	named
 accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layers	Ljava/util/List;
 accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
 
-accessible	method	net/minecraft/client/renderer/RenderType	create	(Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+accessible	method	net/minecraft/client/renderer/rendertype/RenderType	create	(Ljava/lang/String;Lnet/minecraft/client/renderer/rendertype/RenderSetup;)Lnet/minecraft/client/renderer/rendertype/RenderType;
 
 accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
 
@@ -13,13 +13,8 @@ accessible	field	net/minecraft/client/renderer/entity/AgeableMobRenderer	babyMod
 # Forge has no special model renderer registration event; see ForgeClientBootstrap.
 accessible	field	net/minecraft/client/renderer/special/SpecialModelRenderers	ID_MAPPER	Lnet/minecraft/util/ExtraCodecs$LateBoundIdMapper;
 
-accessible	field	net/minecraft/client/model/SkullModel	head	Lnet/minecraft/client/model/geom/ModelPart;
-accessible	field	net/minecraft/client/model/PiglinHeadModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/object/skull/SkullModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/object/skull/PiglinHeadModel	head	Lnet/minecraft/client/model/geom/ModelPart;
 
 accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
-accessible	class	net/minecraft/client/renderer/RenderType$CompositeState
-accessible	class	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState	builder	()Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible	class	net/minecraft/client/renderer/RenderType$OutlineProperty
-accessible	method	net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder	createCompositeState	(Lnet/minecraft/client/renderer/RenderType$OutlineProperty;)Lnet/minecraft/client/renderer/RenderType$CompositeState;

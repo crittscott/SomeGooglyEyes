@@ -32,7 +32,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
@@ -60,16 +60,16 @@ public final class SerializationGameTestsLogic {
      */
     public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
         String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
-        List<ResourceLocation> gameplay = List.of(
+        List<Identifier> gameplay = List.of(
                 NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
                 NetworkHandler.EYE_ANGER, NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
-        for (ResourceLocation id : gameplay) {
+        for (Identifier id : gameplay) {
             helper.assertTrue(id.getPath().startsWith(prefix),
                     Component.literal("gameplay channel " + id + " must carry protocol prefix " + prefix));
         }
         helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
                 Component.literal("every gameplay payload must have a unique channel id"));
-        List<ResourceLocation> typedPayloads = List.of(
+        List<Identifier> typedPayloads = List.of(
                 EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeBehaviorTriggerPacket.TYPE.id(),
                 EyeAngerPacket.TYPE.id(), PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
         helper.assertTrue(typedPayloads.equals(gameplay),
@@ -155,7 +155,7 @@ public final class SerializationGameTestsLogic {
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         EyeBehaviorTriggerPacket packet =
                 new EyeBehaviorTriggerPacket(7,
-                        ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
+                        Identifier.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
         roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC, packet, "EyeBehaviorTriggerPacket");
         helper.succeed();
     }
@@ -177,8 +177,8 @@ public final class SerializationGameTestsLogic {
      * the held eye's expressions from the server's settings.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
-        Map<ResourceLocation, RuntimeConfigSet> configs =
-                Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
+        Map<Identifier, RuntimeConfigSet> configs =
+                Map.of(Identifier.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
         BehaviorSettings behaviors = new BehaviorSettings(true, 300, 100,
                 List.of(EyeBehavior.BLINK, EyeBehavior.CROSS_EYE), 40, false, 60,
                 EnumSet.of(OngoingBehavior.ANGER, OngoingBehavior.SWELL_RATTLE));
@@ -187,7 +187,7 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), Component.literal("the googlyEyesEnabled flag should survive the round-trip"));
         helper.assertTrue(decoded.behaviors().equals(behaviors), Component.literal("the behavior settings should survive the round-trip"));
-        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
+        Map<Identifier, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
         int budget = EyeConfigSyncPacket.wireSize(encoded);
         EyeConfigSyncPacket maximum = new EyeConfigSyncPacket(configs, encoded, true, BehaviorSettings.WIRE_MAXIMUM);
         helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, maximum).length == budget,
@@ -249,7 +249,7 @@ public final class SerializationGameTestsLogic {
     private static RegistryFriendlyByteBuf singleConfigPayload(GameTestHelper helper, RuntimeConfigSet set) {
         RegistryFriendlyByteBuf buffer = buffer(helper);
         buffer.writeVarInt(1);
-        buffer.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        buffer.writeIdentifier(Identifier.fromNamespaceAndPath("minecraft", "cow"));
         buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
                 .result().orElseThrow());
         buffer.writeBoolean(true);
@@ -340,11 +340,11 @@ public final class SerializationGameTestsLogic {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
         roundTrip(helper, PickerExportPacket.STREAM_CODEC,
-                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
+                new PickerExportPacket(Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
                 "PickerExportPacket with a config");
 
         RegistryFriendlyByteBuf noConfig = buffer(helper);
-        noConfig.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        noConfig.writeIdentifier(Identifier.fromNamespaceAndPath("minecraft", "cow"));
         noConfig.writeUtf(AGE_ADULT);
         noConfig.writeNbt(null);
         helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(noConfig)),

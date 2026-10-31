@@ -7,9 +7,9 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -115,7 +115,7 @@ public final class EyeConfigModel {
          */
         public static Optional<String> exportVersion(String namespace) {
             return ModVersionLookup.versionForNamespace(namespace)
-                    .map(version -> ResourceLocation.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
+                    .map(version -> Identifier.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
         }
 
         /**

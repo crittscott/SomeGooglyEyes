@@ -4,8 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
@@ -76,13 +77,13 @@ public final class ModelGooglyEye {
      * Add the corners of the box enclosing the whole eye, lids included, transformed by {@code pose}, for
      * vanilla's item extents.
      */
-    public static void addExtents(Matrix4f pose, Set<Vector3f> output) {
+    public static void addExtents(Matrix4f pose, Consumer<Vector3fc> output) {
         float r = LID_RADIUS * MODEL_UNIT;
         float front = LID_FRONT_Z * MODEL_UNIT;
         for (float x : new float[]{-r, r}) {
             for (float y : new float[]{-r, r}) {
                 for (float z : new float[]{0F, front}) {
-                    output.add(pose.transformPosition(x, y, z, new Vector3f()));
+                    output.accept(pose.transformPosition(x, y, z, new Vector3f()));
                 }
             }
         }

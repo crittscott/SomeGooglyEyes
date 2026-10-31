@@ -184,7 +184,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.network.chat.Component</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -291,8 +291,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)">
 <h3>tryExport</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">tryExport</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">tryExport</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
 <div class="block">Arm the export attempt throttle and check both export limits. Returns <code>null</code> when the export
  may proceed, or the feedback explaining why it may not.</div>

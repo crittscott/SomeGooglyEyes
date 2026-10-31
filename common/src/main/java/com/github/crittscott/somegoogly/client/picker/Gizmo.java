@@ -7,10 +7,10 @@ import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 
 /**
@@ -25,7 +25,7 @@ public final class Gizmo {
     private static final float END_CUBE = 0.10f;
     private static final RenderPipeline GIZMO_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
-                    .withLocation(ResourceLocation.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
+                    .withLocation(Identifier.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
                     .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
                     .withDepthWrite(false)
                     .withBlend(BlendFunction.TRANSLUCENT)
@@ -33,8 +33,8 @@ public final class Gizmo {
                     .build());
     // The render type depends on the pipeline initialized above.
     private static final RenderType GIZMO_LINES = RenderType.create(
-            "somegoogly_gizmo_lines", 256, false, false, GIZMO_PIPELINE,
-            RenderType.CompositeState.builder().createCompositeState(RenderType.OutlineProperty.NONE));
+            "somegoogly_gizmo_lines", RenderSetup.builder(GIZMO_PIPELINE).bufferSize(256).createRenderSetup());
+    private static final float LINE_WIDTH = 1.0f;
     private static final float NEGATIVE_AXIS_BRIGHTNESS = 0.4f;
     private static final float ORIGIN_CUBE = 0.06f;
 
@@ -54,7 +54,15 @@ public final class Gizmo {
 
     private static void cube(PoseStack.Pose pose, VertexConsumer vc, float cx, float cy, float cz,
                              float h, EyeColor color) {
-        ShapeRenderer.renderLineBox(pose, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
+        float r = color.r(), g = color.g(), b = color.b();
+        for (int first = -1; first <= 1; first += 2) {
+            for (int second = -1; second <= 1; second += 2) {
+                float a = first * h, c = second * h;
+                line(pose, vc, cx - h, cy + a, cz + c, cx + h, cy + a, cz + c, r, g, b);
+                line(pose, vc, cx + a, cy - h, cz + c, cx + a, cy + h, cz + c, r, g, b);
+                line(pose, vc, cx + a, cy + c, cz - h, cx + a, cy + c, cz + h, r, g, b);
+            }
+        }
     }
 
     /** Submit the axis gizmo at the current pose origin. */
@@ -88,8 +96,8 @@ public final class Gizmo {
             ny /= len;
             nz /= len;
         }
-        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        vc.addVertex(m, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz).setLineWidth(LINE_WIDTH);
+        vc.addVertex(m, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz).setLineWidth(LINE_WIDTH);
     }
 
 }

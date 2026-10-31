@@ -12,13 +12,13 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import javax.annotation.Nullable;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOverride> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "googly_eye");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "googly_eye");
 
     /**
      * Inventory size is set HERE, not in the model json: the inventory needs about eight times the
@@ -91,7 +91,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     /** The inventory view, the largest of the static views: the eye centered in the item box at GUI scale. */
     @Override
-    public void getExtents(Set<Vector3f> output) {
+    public void getExtents(Consumer<Vector3fc> output) {
         PoseStack pose = new PoseStack();
         pose.translate(0.5, 0.5, 0.5);
         pose.mulPose(Axis.XP.rotationDegrees(180));

@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 
 import java.util.List;
@@ -48,9 +48,9 @@ public final class ConfigGameTestsLogic {
             // an unmatched id must fall through to globalPercent.
             ServerConfig.ENTITY_OVERRIDES.set(List.of("minecraft:zombie,100", "minecraft:*,50"));
 
-            int zombie = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
-            int cow = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
-            int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
+            int zombie = ServerConfig.percentFor(Identifier.fromNamespaceAndPath("minecraft", "zombie"));
+            int cow = ServerConfig.percentFor(Identifier.fromNamespaceAndPath("minecraft", "cow"));
+            int other = ServerConfig.percentFor(Identifier.fromNamespaceAndPath("examplemod", "thing"));
 
             helper.assertTrue(zombie == 100, Component.literal("exact override should win (expected 100, got " + zombie + ")"));
             helper.assertTrue(cow == 50, Component.literal("wildcard override should apply to cow (expected 50, got " + cow + ")"));
@@ -98,12 +98,12 @@ public final class ConfigGameTestsLogic {
      * and every one of them has eyes; the server log reports no invalid or unsafe eye config.
      */
     public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
-        Map<ResourceLocation, Resource> files = helper.getLevel().getServer().getResourceManager()
+        Map<Identifier, Resource> files = helper.getLevel().getServer().getResourceManager()
                 .listResources("eyes", path -> path.getPath().endsWith(".json"));
         int checked = 0;
-        for (ResourceLocation file : files.keySet()) {
-            ResourceLocation id = EyeConfigReloadListener.EYE_FILES.fileToId(file);
-            if (!ResourceLocation.DEFAULT_NAMESPACE.equals(id.getNamespace())) {
+        for (Identifier file : files.keySet()) {
+            Identifier id = EyeConfigReloadListener.EYE_FILES.fileToId(file);
+            if (!Identifier.DEFAULT_NAMESPACE.equals(id.getNamespace())) {
                 continue;
             }
             RuntimeConfigSet set = ServerEyeConfigs.all().get(id);
@@ -120,7 +120,7 @@ public final class ConfigGameTestsLogic {
 
     /** Exposes the protected datapack {@code apply} so a test can feed synthetic files through real selection. */
     private static final class TestReloadListener extends EyeConfigReloadListener {
-        void applyFiles(Map<ResourceLocation, JsonElement> files) {
+        void applyFiles(Map<Identifier, JsonElement> files) {
             apply(files, null, null);
         }
     }
@@ -133,13 +133,13 @@ public final class ConfigGameTestsLogic {
      * baby zombies spawn with red irises.
      */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
+        Identifier id = Identifier.fromNamespaceAndPath("minecraft", "zombie");
         JsonElement json = fileJson(
                 entryJson("[1.20,1.21)", "adult", 1.0),
                 entryJson(running(), "adult", 2.0),
                 entryJson(running(), "baby", 2.0),
                 entryJson("[99.0,100.0)", "adult", 3.0));
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(id, json));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
@@ -170,11 +170,11 @@ public final class ConfigGameTestsLogic {
             ServerConfig.ENTITY_OVERRIDES.set(List.of("*:*_horse,50", "minecraft:*,10"));
 
             int skeletonHorse = ServerConfig.percentFor(
-                    ResourceLocation.fromNamespaceAndPath("minecraft", "skeleton_horse"));
-            int zombie = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
+                    Identifier.fromNamespaceAndPath("minecraft", "skeleton_horse"));
+            int zombie = ServerConfig.percentFor(Identifier.fromNamespaceAndPath("minecraft", "zombie"));
             int moddedHorse = ServerConfig.percentFor(
-                    ResourceLocation.fromNamespaceAndPath("examplemod", "fancy_horse"));
-            int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
+                    Identifier.fromNamespaceAndPath("examplemod", "fancy_horse"));
+            int other = ServerConfig.percentFor(Identifier.fromNamespaceAndPath("examplemod", "thing"));
 
             helper.assertTrue(skeletonHorse == 50,
                     Component.literal("the first matching wildcard wins even when a later one also matches (expected 50, got "
@@ -199,7 +199,7 @@ public final class ConfigGameTestsLogic {
 
     /** The running Minecraft version, so synthetic entries select exactly rather than by fallback. */
     private static String running() {
-        return ModVersionLookup.versionForNamespace(ResourceLocation.DEFAULT_NAMESPACE).orElseThrow();
+        return ModVersionLookup.versionForNamespace(Identifier.DEFAULT_NAMESPACE).orElseThrow();
     }
 
     private static String entryJson(String version, String age, double weight) {
@@ -218,8 +218,8 @@ public final class ConfigGameTestsLogic {
      * reports the dragon file refused.
      */
     public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
-        ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Identifier zombie = Identifier.fromNamespaceAndPath("minecraft", "zombie");
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(
                     ServerEyeConfigs.ENDER_DRAGON, fileJson(entryJson(running(), "adult", 1.0)),
@@ -242,10 +242,10 @@ public final class ConfigGameTestsLogic {
      * zombies and skeletons still get eyes, the zombies from the first entry.
      */
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
-        ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        ResourceLocation creeper = ResourceLocation.fromNamespaceAndPath("minecraft", "creeper");
-        ResourceLocation skeleton = ResourceLocation.fromNamespaceAndPath("minecraft", "skeleton");
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Identifier zombie = Identifier.fromNamespaceAndPath("minecraft", "zombie");
+        Identifier creeper = Identifier.fromNamespaceAndPath("minecraft", "creeper");
+        Identifier skeleton = Identifier.fromNamespaceAndPath("minecraft", "skeleton");
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(
                     zombie, fileJson(entryJson(running(), "adult", 1.0), entryJson(running(), "adult", 2.0)),
@@ -272,8 +272,8 @@ public final class ConfigGameTestsLogic {
      * {@code "[1.16,1.17)"}, run {@code /reload}, and zombies still spawn with those eyes.
      */
     public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
-        ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Identifier zombie = Identifier.fromNamespaceAndPath("minecraft", "zombie");
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(
                     zombie, fileJson(entryJson("[1.16,1.17)", "adult", 1.0))));
@@ -292,14 +292,14 @@ public final class ConfigGameTestsLogic {
      * eye resets to the new definition.
      */
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
-        ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Identifier zombie = Identifier.fromNamespaceAndPath("minecraft", "zombie");
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            Map<ResourceLocation, JsonElement> files = Map.of(
+            Map<Identifier, JsonElement> files = Map.of(
                     zombie, fileJson(entryJson(running(), "adult", 1.0)));
 
             new TestReloadListener().applyFiles(files);
-            Map<ResourceLocation, RuntimeConfigSet> afterFirst = ServerEyeConfigs.all();
+            Map<Identifier, RuntimeConfigSet> afterFirst = ServerEyeConfigs.all();
 
             new TestReloadListener().applyFiles(files);
             helper.assertTrue(ServerEyeConfigs.all() == afterFirst,

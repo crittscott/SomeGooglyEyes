@@ -2,12 +2,12 @@ package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.ModelMemo;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when GeckoLib
@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
  * misses the entity's body rotations (see {@link GooglyGeoLayer}). So lookup returns the {@link GeoBone}
  * itself, matched by identity at render time.
  *
- * <p>The adapter requires {@link BakedGeoModel#topLevelBones()}, {@link GeoBone#getName()}, and
- * {@link GeoBone#getChildBones()}; those methods are its complete GeckoLib bone-enumeration boundary.
+ * <p>The adapter requires {@link BakedGeoModel#topLevelBones()}, {@link GeoBone#name()}, and
+ * {@link GeoBone#children()}; those methods are its complete GeckoLib bone-enumeration boundary.
  */
 public final class GeoBones {
 
@@ -40,10 +40,10 @@ public final class GeoBones {
     }
 
     private static void collect(GeoBone bone, List<String> out) {
-        if (bone.getName() != null && !bone.getName().isEmpty()) {
-            out.add(bone.getName());
+        if (!bone.name().isEmpty()) {
+            out.add(bone.name());
         }
-        for (GeoBone child : bone.getChildBones()) {
+        for (GeoBone child : bone.children()) {
             collect(child, out);
         }
     }
@@ -81,12 +81,12 @@ public final class GeoBones {
 
     @Nullable
     private static GeoBone search(GeoBone bone, String parentPath, String token) {
-        String name = bone.getName() == null ? "" : bone.getName();
+        String name = bone.name();
         String path = parentPath.isEmpty() ? name : parentPath + "/" + name;
         if (EyeAttachmentResolver.pathMatches(token, path)) {
             return bone;
         }
-        for (GeoBone child : bone.getChildBones()) {
+        for (GeoBone child : bone.children()) {
             GeoBone found = search(child, path, token);
             if (found != null) {
                 return found;

@@ -12,7 +12,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
@@ -97,7 +97,7 @@ public final class NeoForgeClient {
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
                 (graphics, partialTick) -> PickerHud.render(
                         graphics, graphics.guiWidth(), graphics.guiHeight()));
     }

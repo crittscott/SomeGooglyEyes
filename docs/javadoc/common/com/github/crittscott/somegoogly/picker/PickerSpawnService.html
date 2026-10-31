@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
  (<a href="../config/ServerEyeConfigs.html#ENDER_DRAGON"><code>ServerEyeConfigs.ENDER_DRAGON</code></a>) is skipped: it's hard-excluded from eyes, and NoAi
  doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
  Both verbs also skip any type an admin listed in the server config's <code>spawnExcludedMods</code> /
- <code>spawnExcludedEntities</code> (<a href="../config/ServerConfig.html#isSpawnExcluded(net.minecraft.resources.ResourceLocation)"><code>ServerConfig.isSpawnExcluded(net.minecraft.resources.ResourceLocation)</code></a>).
+ <code>spawnExcludedEntities</code> (<a href="../config/ServerConfig.html#isSpawnExcluded(net.minecraft.resources.Identifier)"><code>ServerConfig.isSpawnExcluded(net.minecraft.resources.Identifier)</code></a>).
 
  <p>The server-owned <code>/sg spawn</code> and <code>/sg spawnall</code> commands call
  <a href="#spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)"><code>spawn(ServerPlayer, String)</code></a> / <a href="#spawnOne(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(ServerPlayer, EntityType)</code></a> on the server
@@ -162,7 +162,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
  the picker's frozen display state.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusal(net.minecraft.world.entity.EntityType)" class="member-name-link">refusal</a><wbr>(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
@@ -207,8 +207,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="refusal(net.minecraft.world.entity.EntityType)">
 <h3>refusal</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></span>&nbsp;<span class="element-name">refusal</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></span>&nbsp;<span class="element-name">refusal</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
 <div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
 </section>
 </li>

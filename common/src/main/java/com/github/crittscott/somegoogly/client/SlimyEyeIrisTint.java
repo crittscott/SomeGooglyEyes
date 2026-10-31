@@ -5,11 +5,11 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The Slimy Eye iris tint: the stack's stored iris color. Registered as the
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  */
 public record SlimyEyeIrisTint() implements ItemTintSource {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye_iris");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye_iris");
     public static final MapCodec<SlimyEyeIrisTint> MAP_CODEC = MapCodec.unit(new SlimyEyeIrisTint());
 
     @Override

@@ -3,11 +3,11 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.goat.Goat;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,7 +94,7 @@ public enum OngoingBehavior {
         }
     };
 
-    private static final Map<ResourceLocation, OngoingBehavior> BY_ID = new HashMap<>();
+    private static final Map<Identifier, OngoingBehavior> BY_ID = new HashMap<>();
 
     static {
         for (OngoingBehavior behavior : values()) {
@@ -102,22 +102,22 @@ public enum OngoingBehavior {
         }
     }
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final ConfigValue<Boolean> setting;
 
     OngoingBehavior(String name, ConfigValue<Boolean> setting) {
-        this.id = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.id = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
         this.setting = setting;
     }
 
     /** Look up a behavior by id, or {@code null} for an unregistered identifier. */
     @Nullable
-    public static OngoingBehavior byId(ResourceLocation id) {
+    public static OngoingBehavior byId(Identifier id) {
         return BY_ID.get(id);
     }
 
     /** The id (e.g. {@code somegoogly:sleep_squint}); used on the wire. */
-    public ResourceLocation id() {
+    public Identifier id() {
         return id;
     }
 

@@ -12,7 +12,7 @@ import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -77,7 +77,7 @@ public final class PickerState {
     }
 
     /** The species and life stage whose placements a draft describes. */
-    public record DraftKey(ResourceLocation type, boolean baby) {
+    public record DraftKey(Identifier type, boolean baby) {
         /** The datapack age selector for this draft. */
         public String age() {
             return baby ? AGE_BABY : AGE_ADULT;
@@ -101,8 +101,8 @@ public final class PickerState {
         }
 
         /** Committed nonempty arrangements grouped by entity type and authored age. */
-        public Map<ResourceLocation, Map<String, RuntimeConfig>> exports() {
-            Map<ResourceLocation, Map<String, RuntimeConfig>> out = new LinkedHashMap<>();
+        public Map<Identifier, Map<String, RuntimeConfig>> exports() {
+            Map<Identifier, Map<String, RuntimeConfig>> out = new LinkedHashMap<>();
             for (Draft draft : authored.values()) {
                 RuntimeConfig config = toConfig(draft.variants());
                 if (!config.variants.isEmpty()) {
@@ -131,7 +131,7 @@ public final class PickerState {
         }
 
         /** Select this species and age, seeding its arrangement only on its first selection. */
-        public Draft select(ResourceLocation type, boolean baby, Supplier<List<DraftVariant>> seed) {
+        public Draft select(Identifier type, boolean baby, Supplier<List<DraftVariant>> seed) {
             DraftKey key = new DraftKey(type, baby);
             current = authored.computeIfAbsent(key, identity -> new Draft(identity, seed.get()));
             return current;
@@ -213,7 +213,7 @@ public final class PickerState {
     }
 
     /** Committed drafts grouped by species and age for age-preserving bulk export. */
-    public static Map<ResourceLocation, Map<String, RuntimeConfig>> authoredConfigs() {
+    public static Map<Identifier, Map<String, RuntimeConfig>> authoredConfigs() {
         return DRAFTS.exports();
     }
 
@@ -390,7 +390,7 @@ public final class PickerState {
             return Component.translatable("somegoogly.command.picker.choose_unsupported_model");
         }
 
-        ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        Identifier newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);
@@ -486,7 +486,7 @@ public final class PickerState {
      * the model's enumeration vocabulary (e.g. a bare {@code "head"} snaps to its full path {@code "root/head"}),
      * so the seeded draft, HUD, and export all speak the same token the part picker shows.
      */
-    private static List<DraftVariant> seedDraft(ResourceLocation type, boolean baby,
+    private static List<DraftVariant> seedDraft(Identifier type, boolean baby,
                                                 ModelPartVocabulary vocabulary) {
         RuntimeConfig config = ClientEyeConfigs.get(type, baby);
         List<DraftVariant> seeded = new ArrayList<>();
@@ -674,7 +674,7 @@ public final class PickerState {
     }
 
     /** The selected draft's entity type, or {@code null} before any mob has been chosen. */
-    public static ResourceLocation targetType() {
+    public static Identifier targetType() {
         Draft draft = DRAFTS.current();
         return draft == null ? null : draft.key().type();
     }

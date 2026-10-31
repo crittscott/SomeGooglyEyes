@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.config;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.SharedConstants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ public final class ModVersionLookup {
 
     /** The running Minecraft version for {@code minecraft}, otherwise the version of the loaded mod with that id. */
     public static Optional<String> versionForNamespace(String namespace) {
-        if (ResourceLocation.DEFAULT_NAMESPACE.equals(namespace)) {
+        if (Identifier.DEFAULT_NAMESPACE.equals(namespace)) {
             return Optional.of(SharedConstants.getCurrentVersion().name());
         }
         return modVersion(namespace);

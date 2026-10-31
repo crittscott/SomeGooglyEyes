@@ -10,7 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The live eye a player holds: one {@link GooglyTracker.EyeInfo} pupil, stepped with the same physics as
@@ -35,8 +35,7 @@ public final class HeldEye {
     @Nullable
     private BehaviorSettings ambientSettings;
     /** The pupil, or {@code null} while no Googly Eye is held. */
-    @Nullable
-    public GooglyTracker.EyeInfo eye;
+    public GooglyTracker.@Nullable EyeInfo eye;
     private int healCooldown;
     @Nullable
     private LivingEntity holder;

@@ -10,7 +10,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -35,8 +35,8 @@ import java.util.Optional;
  */
 public final class RecipeGameTestsLogic {
 
-    private static final ResourceLocation EYE_MODIFIER =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
+    private static final Identifier EYE_MODIFIER =
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
 
     private RecipeGameTestsLogic() {
     }
@@ -54,7 +54,7 @@ public final class RecipeGameTestsLogic {
     /** Crafts {@code grid}, asserting that the shipped {@code eye_modifier} recipe is the one that matched. */
     private static ItemStack craftWithModifier(GameTestHelper helper, CraftingInput grid) {
         Optional<RecipeHolder<CraftingRecipe>> recipe = lookUp(helper, grid);
-        helper.assertTrue(recipe.isPresent() && recipe.get().id().location().equals(EYE_MODIFIER),
+        helper.assertTrue(recipe.isPresent() && recipe.get().id().identifier().equals(EYE_MODIFIER),
                 Component.literal("the grid should match the shipped eye_modifier recipe"));
         return recipe.get().value().assemble(grid, helper.getLevel().registryAccess());
     }

@@ -10,7 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
@@ -39,17 +39,17 @@ public class PickerExportPacket implements CustomPacketPayload {
             StreamCodec.ofMember(PickerExportPacket::write, PickerExportPacket::new);
 
     private final CompoundTag configNbt;
-    private final ResourceLocation typeId;
+    private final Identifier typeId;
     private final String age;
 
-    public PickerExportPacket(ResourceLocation typeId, String age, CompoundTag configNbt) {
+    public PickerExportPacket(Identifier typeId, String age, CompoundTag configNbt) {
         this.typeId = typeId;
         this.age = age;
         this.configNbt = configNbt;
     }
 
     private PickerExportPacket(FriendlyByteBuf buffer) {
-        this.typeId = buffer.readResourceLocation();
+        this.typeId = buffer.readIdentifier();
         this.age = buffer.readUtf(MAX_AGE_LENGTH);
         CompoundTag configNbt = buffer.readNbt();
         if (configNbt == null) {
@@ -70,7 +70,7 @@ public class PickerExportPacket implements CustomPacketPayload {
     }
 
     private void write(FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(typeId);
+        buffer.writeIdentifier(typeId);
         buffer.writeUtf(age, MAX_AGE_LENGTH);
         buffer.writeNbt(configNbt);
     }

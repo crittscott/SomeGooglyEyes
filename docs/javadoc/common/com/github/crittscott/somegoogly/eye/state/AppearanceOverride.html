@@ -175,7 +175,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromNbt(net.minecraft.nbt.Tag)" class="member-name-link">fromNbt</a><wbr>(net.minecraft.nbt.Tag&nbsp;tag)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromNbt(net.minecraft.nbt.Tag)" class="member-name-link">fromNbt</a><wbr>(@Nullable net.minecraft.nbt.Tag&nbsp;tag)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Decode an override, returning <a href="#EMPTY"><code>EMPTY</code></a> when <code>tag</code> is <code>null</code> or cannot be
  decoded by <a href="#CODEC"><code>CODEC</code></a>.</div>
@@ -216,17 +216,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor</a><wbr>(<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the field.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGlow(java.lang.Boolean)" class="member-name-link">withGlow</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGlow(java.lang.Boolean)" class="member-name-link">withGlow</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the field.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withIrisColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withIrisColor</a><wbr>(<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withIrisColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withIrisColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the field.</div>
 </div>
@@ -300,8 +300,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="fromNbt(net.minecraft.nbt.Tag)">
 <h3>fromNbt</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">fromNbt</span><wbr><span class="parameters">(@Nullable
- net.minecraft.nbt.Tag&nbsp;tag)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">fromNbt</span><wbr><span class="parameters">(@Nullable net.minecraft.nbt.Tag&nbsp;tag)</span></div>
 <div class="block">Decode an override, returning <a href="#EMPTY"><code>EMPTY</code></a> when <code>tag</code> is <code>null</code> or cannot be
  decoded by <a href="#CODEC"><code>CODEC</code></a>.</div>
 </section>
@@ -330,24 +329,21 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)">
 <h3>withCorneaColor</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withCorneaColor</span><wbr><span class="parameters">(@Nullable
- <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withCorneaColor</span><wbr><span class="parameters">(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</span></div>
 <div class="block"><code>null</code> clears the field.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="withGlow(java.lang.Boolean)">
 <h3>withGlow</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withGlow</span><wbr><span class="parameters">(@Nullable
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withGlow</span><wbr><span class="parameters">(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</span></div>
 <div class="block"><code>null</code> clears the field.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="withIrisColor(com.github.crittscott.somegoogly.eye.state.EyeColor)">
 <h3>withIrisColor</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withIrisColor</span><wbr><span class="parameters">(@Nullable
- <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">withIrisColor</span><wbr><span class="parameters">(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</span></div>
 <div class="block"><code>null</code> clears the field.</div>
 </section>
 </li>

@@ -26,13 +26,13 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Server-owned {@code /sg} commands. Both kinds require creative mode and permission level 2: the
@@ -242,8 +242,8 @@ public final class GooglyServerCommands {
             EyeBehavior[] pool = EyeBehavior.values();
             behavior = pool[target.getRandom().nextInt(pool.length)];
         } else {
-            ResourceLocation key = id.indexOf(':') >= 0 ? ResourceLocation.tryParse(id)
-                    : ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, id);
+            Identifier key = id.indexOf(':') >= 0 ? Identifier.tryParse(id)
+                    : Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, id);
             behavior = key == null ? null : EyeBehavior.byId(key);
         }
         if (behavior == null) {

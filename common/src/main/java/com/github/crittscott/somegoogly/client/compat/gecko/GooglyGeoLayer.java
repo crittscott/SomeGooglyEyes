@@ -13,17 +13,20 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -57,13 +60,14 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
     }
 
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel bakedModel, boolean didRenderModel,
+    public void addPerBoneRender(RenderPassInfo<R> renderPassInfo,
                                  BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        Frame frame = renderState.getGeckolibData(FRAME);
+        Frame frame = renderPassInfo.getGeckolibData(FRAME);
         if (frame == null) {
             return;
         }
-        Set<GeoBone> bones = new LinkedHashSet<>();
+        BakedGeoModel bakedModel = renderPassInfo.model();
+        Set<GeoBone> bones = Collections.newSetFromMap(new IdentityHashMap<>());
         if (frame.preview) {
             frame.savedEyeBones = new GeoBone[frame.savedEyes.size()];
             for (int i = 0; i < frame.savedEyes.size(); i++) {
@@ -86,18 +90,20 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
         }
         bones.remove(null);
         for (GeoBone bone : bones) {
-            consumer.accept(bone, (state, pose, attachment, collector, camera, light, overlay, color) -> {
+            consumer.accept(bone, (pass, attachment, collector) -> {
                 if (frame.preview) {
-                    renderPreviewAt(pose, attachment, frame, collector, light, overlay);
+                    renderPreviewAt(pass.poseStack(), attachment, frame, collector,
+                            pass.packedLight(), pass.packedOverlay());
                 } else {
-                    renderEyesAt(pose, attachment, frame, collector, light, overlay, frame.partialTick);
+                    renderEyesAt(pass.poseStack(), attachment, frame, collector,
+                            pass.packedLight(), pass.packedOverlay(), frame.partialTick);
                 }
             });
         }
     }
 
     @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState, float partialTick) {
+    public void addRenderData(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         Frame frame = null;
         if (animatable instanceof LivingEntity living) {
             EyeRenderData data = EyeRenderData.extract(living, partialTick);

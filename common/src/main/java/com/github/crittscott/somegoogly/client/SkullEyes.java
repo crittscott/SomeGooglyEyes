@@ -9,11 +9,11 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The live eyes of one placed mob head: a {@link GooglyTracker.EyeInfo} pupil per configured eye, stepped with
@@ -36,7 +36,7 @@ public final class SkullEyes {
     @Nullable
     public BehaviorInstance active;
     /** The mob whose definition the head uses. */
-    public final ResourceLocation entity;
+    public final Identifier entity;
     /** Per head and eye of {@link #helper}; the heads outside {@link #parts} sit unused. */
     public final GooglyTracker.EyeInfo[][] eyes;
     /** The head's placement view: its mob's adult definition, at the head's variant roll. */
@@ -52,7 +52,7 @@ public final class SkullEyes {
     /** The eye state this tracker was built from; a change replaces the tracker. */
     public final Snapshot snapshot;
 
-    private SkullEyes(BlockPos pos, ResourceLocation entity, Snapshot snapshot, HeadInfo helper, int[] parts) {
+    private SkullEyes(BlockPos pos, Identifier entity, Snapshot snapshot, HeadInfo helper, int[] parts) {
         this.entity = entity;
         this.snapshot = snapshot;
         this.helper = helper;
@@ -73,7 +73,7 @@ public final class SkullEyes {
      * the client's definitions give that head nothing to draw.
      */
     @Nullable
-    static SkullEyes create(BlockPos pos, ResourceLocation entity, Snapshot snapshot) {
+    static SkullEyes create(BlockPos pos, Identifier entity, Snapshot snapshot) {
         HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
         if (!helper.hasConfig()) {
             return null;

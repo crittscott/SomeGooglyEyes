@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
 
  <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
  (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
- filesystem containment; <a href="../config/EyeConfigReloadListener.html#eyeFile(java.nio.file.Path,net.minecraft.resources.ResourceLocation)"><code>EyeConfigReloadListener.eyeFile(java.nio.file.Path, net.minecraft.resources.ResourceLocation)</code></a> constructs a path without checking it.
+ filesystem containment; <a href="../config/EyeConfigReloadListener.html#eyeFile(java.nio.file.Path,net.minecraft.resources.Identifier)"><code>EyeConfigReloadListener.eyeFile(java.nio.file.Path, net.minecraft.resources.Identifier)</code></a> constructs a path without checking it.
  The ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
  decode through <code>RuntimeConfig.CODEC</code> — whose fields are all required, so a malformed or
  wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
@@ -125,9 +125,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#export(net.minecraft.server.MinecraftServer,java.util.UUID,net.minecraft.resources.ResourceLocation,java.lang.String,net.minecraft.nbt.CompoundTag)" class="member-name-link">export</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#export(net.minecraft.server.MinecraftServer,java.util.UUID,net.minecraft.resources.Identifier,java.lang.String,net.minecraft.nbt.CompoundTag)" class="member-name-link">export</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
- net.minecraft.resources.ResourceLocation&nbsp;typeId,
+ net.minecraft.resources.Identifier&nbsp;typeId,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;age,
  net.minecraft.nbt.CompoundTag&nbsp;configNbt)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -151,11 +151,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="export(net.minecraft.server.MinecraftServer,java.util.UUID,net.minecraft.resources.ResourceLocation,java.lang.String,net.minecraft.nbt.CompoundTag)">
+<section class="detail" id="export(net.minecraft.server.MinecraftServer,java.util.UUID,net.minecraft.resources.Identifier,java.lang.String,net.minecraft.nbt.CompoundTag)">
 <h3>export</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">export</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
- net.minecraft.resources.ResourceLocation&nbsp;typeId,
+ net.minecraft.resources.Identifier&nbsp;typeId,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;age,
  net.minecraft.nbt.CompoundTag&nbsp;configNbt)</span></div>
 <div class="block">Validate and perform one export. Returns localized feedback for the requesting player; the

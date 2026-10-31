@@ -12,7 +12,7 @@ import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
@@ -38,7 +38,7 @@ public final class ServerServices {
      * {@code null} before the first send since server start. Read and written on the server thread only.
      */
     @Nullable
-    private static Map<ResourceLocation, RuntimeConfigSet> sentEyeConfigs;
+    private static Map<Identifier, RuntimeConfigSet> sentEyeConfigs;
     private static BehaviorSettings sentBehaviors = BehaviorSettings.DEFAULTS;
     private static boolean sentGooglyEyesEnabled;
 
@@ -137,7 +137,7 @@ public final class ServerServices {
 
     private static void applyGooglyDecision(LivingEntity living) {
         boolean hasGooglyEyes = false;
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        Identifier entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         RandomSource random = living.getRandom();
 
         if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()

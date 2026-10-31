@@ -1,17 +1,17 @@
 package com.github.crittscott.somegoogly.picker;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Server-side authorization and throttling for client-driven picker operations — the two halves of the
@@ -52,7 +52,7 @@ public final class PickerGate {
 
     /** Whether {@code player} may use the picker at all: creative mode and permission level 2. */
     public static boolean mayUsePicker(Player player) {
-        return player.isCreative() && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+        return player.isCreative() && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
     }
 
     /** Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not rate-limited this tick. */

@@ -17,7 +17,7 @@ import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
@@ -60,7 +60,7 @@ public final class ForgeClientBootstrap {
     /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
     private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
                 (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 

@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Set;
@@ -27,9 +27,9 @@ public final class ClientConfig {
     public static final String DISABLED_MODS_COMMENT = "Mod namespaces whose entities should not display googly eyes";
 
     public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = ConfigValue.bool(DISABLE_GOOGLY_EYES_DEFAULT);
-    public static final ConfigValue.Parsed<Set<ResourceLocation>> DISABLED_ENTITIES = ConfigValue.parsedStrings(
-            DISABLED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation,
-            entries -> entries.stream().map(ResourceLocation::parse).collect(Collectors.toUnmodifiableSet()));
+    public static final ConfigValue.Parsed<Set<Identifier>> DISABLED_ENTITIES = ConfigValue.parsedStrings(
+            DISABLED_ENTITIES_DEFAULT, ServerConfig::validateIdentifier,
+            entries -> entries.stream().map(Identifier::parse).collect(Collectors.toUnmodifiableSet()));
     public static final ConfigValue.Parsed<Set<String>> DISABLED_MODS = ConfigValue.parsedStrings(
             DISABLED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
 
@@ -37,7 +37,7 @@ public final class ClientConfig {
     }
 
     /** Whether the client hides eyes on this entity type, by its id or its namespace. */
-    public static boolean isEntityDisabled(ResourceLocation entityType) {
+    public static boolean isEntityDisabled(Identifier entityType) {
         return DISABLED_MODS.parsed().contains(entityType.getNamespace())
                 || DISABLED_ENTITIES.parsed().contains(entityType);
     }

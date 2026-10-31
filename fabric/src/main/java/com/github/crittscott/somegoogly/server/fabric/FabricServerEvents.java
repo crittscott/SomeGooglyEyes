@@ -28,7 +28,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
@@ -36,7 +36,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.world.entity.player.Player;
@@ -48,8 +48,8 @@ public final class FabricServerEvents {
      * Late phase for eye-item entity interactions and self-shearing. Default-phase protection
      * callbacks can veto before either action mutates state.
      */
-    private static final ResourceLocation LATE_PHASE =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
+    private static final Identifier LATE_PHASE =
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
 
     /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
     @Nullable

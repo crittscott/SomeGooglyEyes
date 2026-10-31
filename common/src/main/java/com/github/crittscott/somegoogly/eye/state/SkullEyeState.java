@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob does,
@@ -72,7 +72,7 @@ public final class SkullEyeState {
      * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
      * has a weighted variant with eyes on its head part.
      */
-    public static boolean canHaveEyes(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
+    public static boolean canHaveEyes(@Nullable Identifier entity, @Nullable RuntimeConfig config) {
         if (entity == null || !RuntimeConfig.isUsable(config)) {
             return false;
         }
@@ -100,7 +100,7 @@ public final class SkullEyeState {
 
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
     @Nullable
-    public static ResourceLocation entityFor(Block block) {
+    public static Identifier entityFor(Block block) {
         if (block instanceof AbstractSkullBlock skull) {
             EntityType<?> type = MOBS.get(skull.getType());
             return type == null ? null : EntityType.getKey(type);
@@ -110,7 +110,7 @@ public final class SkullEyeState {
 
     /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
     @Nullable
-    public static ResourceLocation entityFor(ItemStack stack) {
+    public static Identifier entityFor(ItemStack stack) {
         return stack.getItem() instanceof BlockItem item ? entityFor(item.getBlock()) : null;
     }
 

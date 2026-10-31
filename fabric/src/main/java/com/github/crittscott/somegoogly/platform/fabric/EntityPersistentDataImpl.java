@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -16,7 +16,7 @@ public final class EntityPersistentDataImpl {
     private static final AttachmentType<CompoundTag> TYPE = AttachmentRegistry.<CompoundTag>builder()
             .persistent(CompoundTag.CODEC)
             .initializer(CompoundTag::new)
-            .buildAndRegister(ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "persistent_data"));
+            .buildAndRegister(Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "persistent_data"));
 
     private EntityPersistentDataImpl() {
     }

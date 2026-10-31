@@ -15,7 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /** Loader-neutral implementation of applying and harvesting googly-eye items. */
@@ -110,7 +110,7 @@ public final class EyeItemService {
             return InteractionResult.FAIL;
         }
         if (target instanceof Player victim && victim != player) {
-            if (!player.level().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
+            if (!player.level().isPvpAllowed() || !player.canHarmPlayer(victim)) {
                 return InteractionResult.FAIL;
             }
         }
@@ -155,7 +155,7 @@ public final class EyeItemService {
                                                  Direction face) {
         ItemStack shears = player.getItemInHand(hand);
         BlockPos pos = skull.getBlockPos();
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || entity == null || !SkullEyeState.hasEyes(skull)
                 || !mayAlter(player, pos, face, shears)) {
             return InteractionResult.PASS;
@@ -184,7 +184,7 @@ public final class EyeItemService {
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || mob instanceof Player || !EyeState.hasEyes(mob)) {
             return;
         }
-        ResourceLocation entity = SkullEyeState.entityFor(stack);
+        Identifier entity = SkullEyeState.entityFor(stack);
         if (entity != null && entity.equals(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))
                 && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false))
                 && SkullEyeState.itemSnapshot(stack) == null) {
@@ -271,7 +271,7 @@ public final class EyeItemService {
 
     /** Whether the placed head's mob has an adult definition to borrow with eyes the head shows. */
     private static boolean canHeadHaveEyes(SkullBlockEntity skull) {
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         return entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
     }
 
@@ -288,7 +288,7 @@ public final class EyeItemService {
     }
 
     private static HeadInfo helperFor(LivingEntity mob) {
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         return ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
     }
 

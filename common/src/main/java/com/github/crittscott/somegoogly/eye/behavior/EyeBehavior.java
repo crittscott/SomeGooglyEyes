@@ -3,16 +3,16 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
- * The eight named one-shot eye expressions a mob can play, keyed by a {@link ResourceLocation} id; the
+ * The eight named one-shot eye expressions a mob can play, keyed by a {@link Identifier} id; the
  * behaviors that last as long as a mob stays in some state are the {@link OngoingBehavior}s. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
  * behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
@@ -237,7 +237,7 @@ public enum EyeBehavior {
     /** Fraction of a color change spent blending in, and again blending out. */
     private static final float COLOR_CHANGE_RAMP_FRAC = 0.2f;
 
-    private static final Map<ResourceLocation, EyeBehavior> BY_ID = new HashMap<>();
+    private static final Map<Identifier, EyeBehavior> BY_ID = new HashMap<>();
 
     static {
         for (EyeBehavior behavior : values()) {
@@ -245,22 +245,22 @@ public enum EyeBehavior {
         }
     }
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final int defaultDuration;
 
     EyeBehavior(String name, int defaultDuration) {
-        this.id = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.id = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
         this.defaultDuration = defaultDuration;
     }
 
     /** Look up a behavior by id, or {@code null} for an unregistered identifier. */
     @Nullable
-    public static EyeBehavior byId(ResourceLocation id) {
+    public static EyeBehavior byId(Identifier id) {
         return BY_ID.get(id);
     }
 
     /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
-    public ResourceLocation id() {
+    public Identifier id() {
         return id;
     }
 

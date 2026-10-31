@@ -3,9 +3,9 @@ package com.github.crittscott.somegoogly.config;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import net.minecraft.SharedConstants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -168,7 +168,7 @@ public class ServerConfig {
     public static final ConfigValue<Boolean> ANGRY_EYES = ConfigValue.bool(ANGRY_EYES_DEFAULT);
     /** Behavior ids idle mobs choose from, parsed to the registered behaviors they name. */
     public static final ConfigValue.Parsed<List<EyeBehavior>> AMBIENT_BEHAVIOR_POOL = ConfigValue.parsedStrings(
-            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool);
+            AMBIENT_BEHAVIOR_POOL_DEFAULT, ServerConfig::validateIdentifier, ServerConfig::parseBehaviorPool);
     /** Whether eyed mobs play idle expressions. */
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS = ConfigValue.bool(AMBIENT_BEHAVIORS_DEFAULT);
     /** Longest wait in ticks between one mob's idle expressions. */
@@ -203,7 +203,7 @@ public class ServerConfig {
     public static final ConfigValue<Boolean> RATTLE_ON_SWELL = ConfigValue.bool(RATTLE_ON_SWELL_DEFAULT);
     /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = ConfigValue.parsedStrings(
-            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateResourceLocation, Set::copyOf);
+            SPAWN_EXCLUDED_ENTITIES_DEFAULT, ServerConfig::validateIdentifier, Set::copyOf);
     /** Namespaces the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_MODS = ConfigValue.parsedStrings(
             SPAWN_EXCLUDED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
@@ -305,7 +305,7 @@ public class ServerConfig {
      * The configured eye chance (0–100) for the given entity: an exact override if one matches, else
      * the first matching wildcard override, else {@link #GLOBAL_PERCENT}.
      */
-    public static int percentFor(ResourceLocation entityType) {
+    public static int percentFor(Identifier entityType) {
         String id = entityType.toString();
         SpawnOverride firstWildcard = null;
         for (SpawnOverride o : ENTITY_OVERRIDES.parsed()) {
@@ -325,7 +325,7 @@ public class ServerConfig {
      * listed in {@link #SPAWN_EXCLUDED_ENTITIES}, or its namespace in {@link #SPAWN_EXCLUDED_MODS}. Purely
      * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
      */
-    public static boolean isSpawnExcluded(ResourceLocation entityType) {
+    public static boolean isSpawnExcluded(Identifier entityType) {
         return SPAWN_EXCLUDED_MODS.parsed().contains(entityType.getNamespace())
                 || SPAWN_EXCLUDED_ENTITIES.parsed().contains(entityType.toString());
     }
@@ -359,11 +359,11 @@ public class ServerConfig {
     }
 
     /**
-     * Whether a config string parses as a {@link ResourceLocation}; the entry guard for
+     * Whether a config string parses as a {@link Identifier}; the entry guard for
      * {@link #AMBIENT_BEHAVIOR_POOL}, {@link #SPAWN_EXCLUDED_ENTITIES}, and the client's {@code disabledEntities}.
      */
-    public static boolean validateResourceLocation(String value) {
-        return ResourceLocation.tryParse(value) != null;
+    public static boolean validateIdentifier(String value) {
+        return Identifier.tryParse(value) != null;
     }
 
     /**
@@ -371,7 +371,7 @@ public class ServerConfig {
      * {@link #SPAWN_EXCLUDED_MODS}, the client's {@code disabledMods}, and the {@code /sg spawnall} filter.
      */
     public static boolean validateNamespace(String value) {
-        return !value.isEmpty() && ResourceLocation.isValidNamespace(value);
+        return !value.isEmpty() && Identifier.isValidNamespace(value);
     }
 
     /** Whether a config string is a well-formed override line ({@link #parse}); the entry guard for {@link #ENTITY_OVERRIDES}. */

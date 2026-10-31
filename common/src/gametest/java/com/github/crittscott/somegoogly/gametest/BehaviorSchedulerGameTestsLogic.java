@@ -15,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityEvent;
@@ -26,19 +26,19 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.animal.MushroomCow;
-import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
+import net.minecraft.world.entity.animal.feline.Ocelot;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Pillager;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.piglin.Piglin;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -553,7 +553,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
         helper.assertTrue(headInfo != null, Component.literal(type + " has an eye config"));
         return headInfo;
@@ -794,7 +794,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
 
             helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), Component.literal("a calm golem isn't angry"));
-            golem.setRemainingPersistentAngerTime(100);
+            golem.setTimeToRemainAngry(100);
             helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), Component.literal("a provoked golem is angry"));
             helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), Component.literal("a calm piglin isn't angry"));
             piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
@@ -911,7 +911,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, Component.literal("villagers have an eye config"));
 
@@ -972,7 +972,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
         creeper.setNoGravity(true);
         creeper.setDeltaMovement(Vec3.ZERO);
-        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
         HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
         helper.assertTrue(headInfo.hasConfig(), Component.literal("creepers have a usable eye config"));
 

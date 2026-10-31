@@ -9,10 +9,10 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Per-frame eye decision for one living entity, taken while its render state is extracted and read back
@@ -52,7 +52,7 @@ public record EyeRenderData(boolean pickerTarget, @Nullable HeadInfo helper, @Nu
      */
     @Nullable
     private static HeadInfo helperToRender(LivingEntity living) {
-        ResourceLocation entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        Identifier entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         if (ClientConfig.DISABLE_GOOGLY_EYES.get() || ClientConfig.isEntityDisabled(entityType)) {
             return null;
         }

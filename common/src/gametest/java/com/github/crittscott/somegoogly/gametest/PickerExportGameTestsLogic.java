@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.Vec3;
 
@@ -100,8 +100,8 @@ public final class PickerExportGameTestsLogic {
      */
     public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
         PickerState.DraftSession session = new PickerState.DraftSession();
-        ResourceLocation cow = ResourceLocation.withDefaultNamespace("cow");
-        ResourceLocation sheep = ResourceLocation.withDefaultNamespace("sheep");
+        Identifier cow = Identifier.withDefaultNamespace("cow");
+        Identifier sheep = Identifier.withDefaultNamespace("sheep");
         PickerState.Draft adult = session.select(cow, false, () -> draft(1F));
         adult.variants().getFirst().eyes.getFirst().eye.position[0] = 4F;
         PickerState.Draft baby = session.select(cow, true, () -> draft(2F));
@@ -113,7 +113,7 @@ public final class PickerExportGameTestsLogic {
         helper.assertTrue(session.select(cow, true, () -> draft(99F)) == baby,
                 Component.literal("returning to a baby reuses only its baby draft"));
         helper.assertTrue(session.current().key().age().equals(AGE_BABY), Component.literal("baby draft keeps its age"));
-        Map<ResourceLocation, Map<String, RuntimeConfig>> exports = session.exports();
+        Map<Identifier, Map<String, RuntimeConfig>> exports = session.exports();
         helper.assertTrue(exports.size() == 2 && exports.get(cow).size() == 2,
                 Component.literal("export retains both cow ages and the other species"));
         helper.assertTrue(exports.get(cow).get(AGE_ADULT).variants.getFirst().heads.getFirst()
@@ -203,7 +203,7 @@ public final class PickerExportGameTestsLogic {
      * disconnecting you, while an ordinary config exports normally.
      */
     public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
-        ResourceLocation cow = ResourceLocation.fromNamespaceAndPath("minecraft", "cow");
+        Identifier cow = Identifier.fromNamespaceAndPath("minecraft", "cow");
         CompoundTag small = new CompoundTag();
         small.putBoolean("enabled", true);
         helper.assertTrue(new PickerExportPacket(cow, AGE_ADULT, small).fitsServerbound(),
@@ -225,7 +225,7 @@ public final class PickerExportGameTestsLogic {
         Tag empty = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, new RuntimeConfig())
                 .result().orElseThrow();
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) empty);
+                Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) empty);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_no_usable_eyes")),
                 Component.literal("a config with nothing to draw must be rejected, got: " + result.getString()));
@@ -237,7 +237,7 @@ public final class PickerExportGameTestsLogic {
      */
     public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, new CompoundTag());
+                Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
                 Component.literal("a payload with no fields must be refused as malformed, got: " + result.getString()));
@@ -250,7 +250,7 @@ public final class PickerExportGameTestsLogic {
      */
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
+                Identifier.fromNamespaceAndPath("minecraft", "ender_dragon"), AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_ender_dragon")),
                 Component.literal("the ender dragon must be refused at export, got: " + result.getString()));
@@ -268,7 +268,7 @@ public final class PickerExportGameTestsLogic {
         garbage.putBoolean("enabled", true);
         garbage.putString("variants", "not a list");
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, garbage);
+                Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, garbage);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_malformed_payload")),
                 Component.literal("a garbage-typed variants field must be refused as malformed, got: " + result.getString()));
@@ -280,7 +280,7 @@ public final class PickerExportGameTestsLogic {
      * exports only mobs that exist; guards the server against a forged export packet.
      */
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
-        ResourceLocation type = ResourceLocation.fromNamespaceAndPath("somegoogly", "not_a_real_mob");
+        Identifier type = Identifier.fromNamespaceAndPath("somegoogly", "not_a_real_mob");
         Component result = PickerExportService.export(
                 server(helper), UUID.randomUUID(), type, AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
@@ -313,7 +313,7 @@ public final class PickerExportGameTestsLogic {
         Tag encoded = RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
         Component result = PickerExportService.export(server(helper), UUID.randomUUID(),
-                ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) encoded);
+                Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, (CompoundTag) encoded);
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unsafe_payload", error.message())),
                 Component.literal("non-finite exported geometry must be rejected, got: " + result.getString()));

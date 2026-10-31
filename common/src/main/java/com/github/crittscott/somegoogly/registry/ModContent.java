@@ -12,7 +12,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -55,7 +55,7 @@ public final class ModContent {
 
     public static final ResourceKey<Enchantment> OPTOMETRIST = ResourceKey.create(
             Registries.ENCHANTMENT,
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "optometrist"));
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "optometrist"));
 
     /**
      * The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
@@ -63,7 +63,7 @@ public final class ModContent {
      */
     public static final ResourceKey<DamageType> SELF_SHEAR = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "self_shear"));
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "self_shear"));
 
     /**
      * Items that harvest eyes as shears: vanilla shears plus the conventional {@code c:tools/shear} tag,
@@ -71,7 +71,7 @@ public final class ModContent {
      */
     public static final TagKey<Item> SHEARS = TagKey.create(
             Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "shears"));
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "shears"));
 
     private ModContent() {
     }

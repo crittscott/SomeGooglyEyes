@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Server-owned picker mob freezing: a picker-targeted mob is held {@code NoAi=true} while edited and

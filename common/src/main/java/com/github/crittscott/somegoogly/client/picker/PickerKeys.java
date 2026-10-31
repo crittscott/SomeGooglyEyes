@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 /** Keybindings for the in-world part picker. All rebindable in Options → Controls. */
@@ -13,7 +13,7 @@ public final class PickerKeys {
      * the keys.
      */
     public static final KeyMapping.Category CATEGORY =
-            new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"));
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"));
 
     // The keyboard picker is navigation + a live view only; all eye editing is done via the /sg CLI.
     // The one thing the keyboard keeps because it's far quicker than typing is choosing the mob and

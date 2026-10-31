@@ -63,6 +63,7 @@ subprojects {
     }
 
     repositories {
+        mavenCentral()
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     }
@@ -78,9 +79,8 @@ subprojects {
             parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
         }
 
-        // Every module's source uses javax.annotation.Nullable. Minecraft ships JSR 305 at runtime, but
-        // Loom does not put it on common's compile classpath, so declare it for all modules here.
-        compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+        // Declare the nullability annotations explicitly for common as well as the loader modules.
+        compileOnly 'org.jspecify:jspecify:1.0.0'
     }
 
     java {

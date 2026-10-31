@@ -151,9 +151,9 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Drop every entry.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(K,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)" class="member-name-link">get</a><wbr>(<a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(K,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)" class="member-name-link">get</a><wbr>(@Nullable <a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
  <a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;<a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>,<wbr><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a>&gt;&nbsp;resolver)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The value for <code>token</code> in <code>model</code>, resolving and caching it on first ask.</div>
@@ -199,11 +199,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="get(K,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)">
 <h3 id="get(java.lang.Object,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)">get</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(@Nullable
- <a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
- @Nullable
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(@Nullable <a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
  <a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;<a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>,<wbr><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a>&gt;&nbsp;resolver)</span></div>
 <div class="block">The value for <code>token</code> in <code>model</code>, resolving and caching it on first ask. A <code>null</code>
  model or token resolves to <code>null</code> without consulting <code>resolver</code>.

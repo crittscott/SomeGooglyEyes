@@ -17,12 +17,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -87,9 +87,9 @@ public final class EligibilityGameTestsLogic {
      */
     public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
 
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
@@ -121,7 +121,7 @@ public final class EligibilityGameTestsLogic {
         // force the deterministic eyeless starting point this test assumes.
         EyeState.setHasEyes(cow, false);
 
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             // Unconfigured: refused outright, and the eye stays in hand.
@@ -165,7 +165,7 @@ public final class EligibilityGameTestsLogic {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeColor red = new EyeColor(1F, 0F, 0F);
 
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
@@ -198,7 +198,7 @@ public final class EligibilityGameTestsLogic {
     public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
 
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
@@ -230,8 +230,8 @@ public final class EligibilityGameTestsLogic {
      */
     public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet adultOnly = new RuntimeConfigSet();
             adultOnly.adult = usableConfig();
@@ -264,8 +264,8 @@ public final class EligibilityGameTestsLogic {
      * the same places.
      */
     public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
-        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
-        Map<ResourceLocation, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
+        Identifier cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
+        Map<Identifier, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         int originalPercent = ServerConfig.GLOBAL_PERCENT.get();
         try {
@@ -305,7 +305,7 @@ public final class EligibilityGameTestsLogic {
     public static void slimyEyeCreativeApplicationDoesNotConsume(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         boolean instabuild = player.getAbilities().instabuild;
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
@@ -332,7 +332,7 @@ public final class EligibilityGameTestsLogic {
      * the air, and you have eyes (visible in third person) and the Slimy Eye is used.
      */
     public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper, Player player) {
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        Map<Identifier, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();

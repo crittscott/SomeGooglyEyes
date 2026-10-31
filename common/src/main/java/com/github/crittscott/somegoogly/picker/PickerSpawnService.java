@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -19,7 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
@@ -103,7 +103,7 @@ public final class PickerSpawnService {
     /** The first reason the authoring spawn commands refuse {@code type}, or {@code null} if they don't. */
     @Nullable
     public static SpawnRefusal refusal(EntityType<?> type) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             return SpawnRefusal.ENDER_DRAGON;
         }
@@ -121,7 +121,7 @@ public final class PickerSpawnService {
     }
 
     /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
-    private record Candidate(ResourceLocation id, Entity entity) {
+    private record Candidate(Identifier id, Entity entity) {
     }
 
     /** Insert the mob and its riders, honoring each insertion result and removing partial additions on refusal. */
@@ -240,7 +240,7 @@ public final class PickerSpawnService {
         // utility entities (seats, holograms, boss parts) that happen to extend LivingEntity out of the grid.
         List<Candidate> candidates = new ArrayList<>();
         for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
-            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+            Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
             if (filtering && !id.getNamespace().equals(modFilter)) {
                 continue;
             }
@@ -407,7 +407,7 @@ public final class PickerSpawnService {
      */
     public static void spawnOne(ServerPlayer player, EntityType<?> type) {
         ServerLevel level = player.level();
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         SpawnRefusal refusal = refusal(type);
         if (refusal != null) {
             tell(player, refusal.spawnKey, id.toString());

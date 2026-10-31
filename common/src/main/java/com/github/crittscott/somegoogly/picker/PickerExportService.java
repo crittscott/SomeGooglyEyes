@@ -11,7 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
@@ -54,17 +54,19 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public final class PickerExportService {
 
-    private static final int PACK_FORMAT =
+    private static final int PACK_FORMAT_MAJOR =
             SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).major();
+    private static final int PACK_FORMAT_MINOR =
+            SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).minor();
     private static final String PACK_MCMETA = """
             {
               "pack": {
-                "min_format": %d,
-                "max_format": %d,
+                "min_format": [%d, %d],
+                "max_format": [%d, %d],
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(PACK_FORMAT, PACK_FORMAT);
+            """.formatted(PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR);
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -74,7 +76,7 @@ public final class PickerExportService {
      * Validate and perform one export. Returns localized feedback for the requesting player; the
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
-    public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
+    public static Component export(MinecraftServer server, UUID playerId, Identifier typeId,
                                    String age, CompoundTag configNbt) {
         Component throttled = PickerGate.tryExport(server, playerId);
         if (throttled != null) {

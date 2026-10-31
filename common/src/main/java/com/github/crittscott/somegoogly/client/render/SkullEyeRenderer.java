@@ -10,17 +10,17 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.PiglinHeadModel;
-import net.minecraft.client.model.SkullModel;
-import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.model.object.skull.PiglinHeadModel;
+import net.minecraft.client.model.object.skull.SkullModel;
+import net.minecraft.client.model.object.skull.SkullModelBase;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
@@ -78,7 +78,7 @@ public final class SkullEyeRenderer {
      */
     @Nullable
     public static SkullEyes extract(SkullBlockEntity skull) {
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
             return null;
         }
@@ -119,7 +119,7 @@ public final class SkullEyeRenderer {
     }
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
-    private static boolean mayShow(@Nullable ResourceLocation entity) {
+    private static boolean mayShow(@Nullable Identifier entity) {
         return entity != null && !ClientConfig.DISABLE_GOOGLY_EYES.get() && ClientEyeConfigs.googlyEyesEnabled()
                 && !ClientConfig.isEntityDisabled(entity);
     }
@@ -149,7 +149,7 @@ public final class SkullEyeRenderer {
             renderEyes(pose, collector, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
                     eyes.snapshot.properties(), partialTick);
         } else {
-            ResourceLocation entity = SkullEyeState.entityFor(stack);
+            Identifier entity = SkullEyeState.entityFor(stack);
             Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
             if (snapshot == null || !mayShow(entity)) {
                 return;
@@ -167,7 +167,7 @@ public final class SkullEyeRenderer {
      * entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
      */
     private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight, ModelPart head,
-                                   HeadInfo helper, int[] parts, @Nullable GooglyTracker.EyeInfo[][] eyes,
+                                   HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);

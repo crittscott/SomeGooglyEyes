@@ -70,7 +70,7 @@ public final class NeoForgeServerConfig {
         AMBIENT_BEHAVIOR_POOL = builder.comment(ServerConfig.AMBIENT_BEHAVIOR_POOL_COMMENT.split("\n"))
                 .defineList(
                         ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, ServerConfig.AMBIENT_BEHAVIOR_POOL_DEFAULT, () -> "",
-                        value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
+                        value -> value instanceof String string && ServerConfig.validateIdentifier(string));
         GROW_ON_HIT_PERCENT = builder.comment(ServerConfig.GROW_ON_HIT_PERCENT_COMMENT.split("\n"))
                 .defineInRange(ServerConfig.GROW_ON_HIT_PERCENT_KEY,
                         ServerConfig.GROW_ON_HIT_PERCENT_DEFAULT, ServerConfig.PERCENT_MIN, ServerConfig.PERCENT_MAX);
@@ -107,7 +107,7 @@ public final class NeoForgeServerConfig {
                         value -> value instanceof String string && ServerConfig.validateNamespace(string));
         SPAWN_EXCLUDED_ENTITIES = builder.comment(ServerConfig.SPAWN_EXCLUDED_ENTITIES_COMMENT.split("\n"))
                 .defineList(ServerConfig.SPAWN_EXCLUDED_ENTITIES_KEY, ServerConfig.SPAWN_EXCLUDED_ENTITIES_DEFAULT,
-                        () -> "", value -> value instanceof String string && ServerConfig.validateResourceLocation(string));
+                        () -> "", value -> value instanceof String string && ServerConfig.validateIdentifier(string));
         builder.pop();
         SPEC = builder.build();
     }

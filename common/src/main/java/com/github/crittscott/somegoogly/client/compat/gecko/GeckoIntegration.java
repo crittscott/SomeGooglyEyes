@@ -2,9 +2,9 @@ package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -32,7 +32,7 @@ public final class GeckoIntegration {
             return List.of();
         }
         GeoModel model = geo.getGeoModel();
-        ResourceLocation location = model.getModelResource((GeoRenderState) geo.createRenderState(living, 0.0F));
+        Identifier location = model.getModelResource((GeoRenderState) geo.createRenderState(living, 0.0F));
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }

@@ -174,7 +174,7 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <div class="block">Whether <code>candidatePath</code> ends with <code>storedToken</code> (a normalized <b>suffix</b> match over
  path segments).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -294,8 +294,7 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <li>
 <section class="detail" id="resolve(net.minecraft.client.model.EntityModel,java.lang.String)">
 <h3>resolve</h3>
-<div class="member-signature"><span class="annotations">@Nullable
-</span><span class="return-type"><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+<div class="member-signature"><span class="return-type">@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
 <div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
  the model has no such part (an unknown token, or a model whose worn variant lacks it).

@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.platform.Networking;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -64,7 +64,7 @@ public final class ServerBehaviorScheduler {
     private static final class MobState {
         int activeDuration;
         boolean angry;                // the anger last sent to this mob's trackers
-        ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
+        Identifier activeId;    // the playing behavior (for mid-join catch-up)
         long activeSeed;
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
         long busyUntil;               // scheduler tick the active behavior ends (0 = idle)

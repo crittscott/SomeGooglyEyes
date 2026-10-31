@@ -64,10 +64,6 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     // Fabric has no native config parser. Bundle both NightConfig modules in the loader artifact.
     implementation "com.electronwill.night-config:core:$rootProject.nightconfig_version"

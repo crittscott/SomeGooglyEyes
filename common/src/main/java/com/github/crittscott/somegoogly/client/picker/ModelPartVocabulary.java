@@ -11,12 +11,12 @@ import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -69,7 +69,7 @@ public final class ModelPartVocabulary {
 
     /** Resolve a type through a throwaway client entity so export-all does not depend on nearby mobs. */
     @Nullable
-    public static ModelPartVocabulary forType(ResourceLocation id) {
+    public static ModelPartVocabulary forType(Identifier id) {
         LivingEntity sample = sampleFor(id);
         return sample == null ? null : forEntity(sample);
     }
@@ -104,7 +104,7 @@ public final class ModelPartVocabulary {
     }
 
     @Nullable
-    private static LivingEntity sampleFor(ResourceLocation id) {
+    private static LivingEntity sampleFor(Identifier id) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
             return minecraft.player;

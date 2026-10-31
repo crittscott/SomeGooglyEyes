@@ -10,9 +10,10 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
@@ -38,10 +39,10 @@ public final class GooglyEyeRenderer {
 
     // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3).
-    private static final ResourceLocation TEX = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier TEX = Identifier.fromNamespaceAndPath(
             SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
-    public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
-    public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
+    public static final RenderType RENDER_TYPE = RenderTypes.entityCutout(TEX);
+    public static final RenderType RENDER_TYPE_EYES = RenderTypes.eyes(TEX);
 
     private GooglyEyeRenderer() {
     }

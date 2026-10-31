@@ -95,7 +95,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         }
         List<EyeBehavior> pool = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            EyeBehavior behavior = EyeBehavior.byId(buffer.readResourceLocation());
+            EyeBehavior behavior = EyeBehavior.byId(buffer.readIdentifier());
             if (behavior == null) {
                 throw new DecoderException("Unknown ambient behavior");
             }
@@ -113,7 +113,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         }
         EnumSet<OngoingBehavior> ongoing = EnumSet.noneOf(OngoingBehavior.class);
         for (int i = 0; i < count; i++) {
-            OngoingBehavior behavior = OngoingBehavior.byId(buffer.readResourceLocation());
+            OngoingBehavior behavior = OngoingBehavior.byId(buffer.readIdentifier());
             if (behavior == null) {
                 throw new DecoderException("Unknown ongoing behavior");
             }
@@ -148,14 +148,14 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         buffer.writeVarInt(maxTicks);
         buffer.writeVarInt(pool.size());
         for (EyeBehavior behavior : pool) {
-            buffer.writeResourceLocation(behavior.id());
+            buffer.writeIdentifier(behavior.id());
         }
         buffer.writeVarInt(growOnHitPercent);
         buffer.writeBoolean(swirlOnHeal);
         buffer.writeVarInt(swirlHealCooldownTicks);
         buffer.writeVarInt(ongoing.size());
         for (OngoingBehavior behavior : ongoing) {
-            buffer.writeResourceLocation(behavior.id());
+            buffer.writeIdentifier(behavior.id());
         }
     }
 }

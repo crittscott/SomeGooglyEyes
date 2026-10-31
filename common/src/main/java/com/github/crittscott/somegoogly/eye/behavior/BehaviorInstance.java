@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import net.minecraft.util.RandomSource;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
@@ -36,13 +36,11 @@ public final class BehaviorInstance {
     public int age;
 
     /** Color-change target, or {@code null} until a color-change behavior initializes it. */
-    @Nullable
-    public float[] tintColor;
+    public float @Nullable [] tintColor;
     /** Seeded side-eye direction: {@code -1} or {@code +1} after side-eye initialization. */
     public int dirSign;
     /** Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other behaviors. */
-    @Nullable
-    public boolean[][] mask;
+    public boolean @Nullable [][] mask;
 
     /** Create unstarted per-play state; the caller next invokes {@link EyeBehavior#onStart}. */
     public BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
