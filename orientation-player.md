@@ -45,7 +45,7 @@ The harvested eye keeps the mob's effective iris color, cornea color, and glow, 
 
 A Googly Eye held in first person is live: its pupil moves, and it plays idle, hurt (bulge), and heal (swirl) expressions under the server's expression settings. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
 
-Worlds saved by the 1.21.4 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 1.21.4 release.
+Worlds saved by the 26.1.1 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 26.1.1 release.
 
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
@@ -236,5 +236,5 @@ Color channels range from 0 to 1.
 
 - A harvested eye keeps one appearance, not each eye's.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, and loading real 1.21.4 saves.
+- Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, and loading real 26.1.1 saves.
 - The modifier recipe may be absent from recipe viewers.
