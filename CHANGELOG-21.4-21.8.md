@@ -5,6 +5,7 @@
 ### Added
 - Minecraft 1.21.8 builds: Fabric (Loader 0.16.14+, Fabric API 0.136.1+), NeoForge 21.8.57+, and Forge 58.1.26+. GeckoLib 5.2.2+ remains optional.
 - Eye definition for the happy ghast, matching the ghast's placement.
+- Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
 ### Changed
 - On Forge, the picker HUD is registered as a Forge HUD layer.
