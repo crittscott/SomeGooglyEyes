@@ -170,7 +170,7 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 
 Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Caverns & Chasms, Critters and Companions, Ecologics, Environmental, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Upgrade Aquatic, Variants & Ventures, and WilderNature. Apart from Ice and Fire Community Edition's, they are unverified against 1.21.8 releases of those mods.
 
-The 78 bundled Minecraft definitions all select 1.21.4 and are enabled, including the player and armor stand. Axolotl, endermite, happy ghast, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. Unmatched versions use the nearest declared generation. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
+The 79 bundled Minecraft definitions are all enabled, including the player and armor stand. The happy ghast's selects `[1.21.6,)`, the witch's `[1.20.1,)`, and the rest 1.21.4; unmatched versions use the nearest declared generation. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition.
 
 Resource packs replace textures and item models.
 
@@ -237,7 +237,7 @@ Color channels range from 0 to 1.
 ## Limitations
 
 - A harvested eye keeps one appearance, not each eye's.
-- Axolotl, endermite, happy ghast, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
+- Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
 - Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, GeckoLib, and loading real 1.21.4 saves.
 - The dynamic modifier recipe may not display in recipe viewers.
