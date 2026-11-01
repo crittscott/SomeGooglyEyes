@@ -8,11 +8,11 @@
 
 Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.11.
 
-`common` is transformed into all three loader artifacts.
+`common` feeds all three loaders.
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration |
+| `common/src/main/java` | Gameplay, state, codecs, networking, rendering, picker, GeckoLib |
 | `common/src/main/resources` | Assets, recipes, eye definitions, language |
 | `common/src/gametest` | Shared GameTest assertions and the structure fixture |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
@@ -36,7 +36,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 ## Entity and item state
 
-`EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric.
+`EyeState` also persists and synchronizes boat eyes without living scheduling or natural rolls. `EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric.
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
@@ -68,7 +68,7 @@ The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, w
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
-`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects hull/raft geometry by entity type; `BoatEyeAnimations` owns cached world-clock pupils. Boat Mixins extract state and draw in the composed hull pose. `ItemEyes` supplies layouts, ambient expressions, world gravity, and owner motion. `HandEyeAnimations` keys world-timed simulations by holder and hand. GUI uses UI time; frames use triple diameter. Item animation adds no saved fields or packets.
 
 ## Networking
 
@@ -96,7 +96,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 153, Forge 154, NeoForge 154. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
+GameTest scenarios: Fabric 168, Forge 169, NeoForge 169. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, and real saves need manual checks.
 
 ## Operational boundaries
 

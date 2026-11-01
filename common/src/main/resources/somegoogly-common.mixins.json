@@ -5,17 +5,19 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "somegoogly-common.refmap.json",
   "client": [
+    "BoatRenderStateMixin",
+    "BoatRendererMixin",
     "ContainerItemEyesMixin",
     "GuiItemEyesMixin",
     "HotbarItemEyesMixin",
+    "ItemFrameRenderStateMixin",
+    "ItemFrameRendererMixin",
     "ItemModelResolverMixin",
     "ItemStackRenderStateMixin",
-    "ItemFrameRendererMixin",
-    "ItemFrameRenderStateMixin",
-    "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
-    "SkullBlockRendererMixin",
-    "SkullBlockRenderStateMixin"
+    "LivingEntityRendererMixin",
+    "SkullBlockRenderStateMixin",
+    "SkullBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

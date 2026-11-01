@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:boateyegametests/boats_begin_eyeless_and_select_geometry",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 100
+}

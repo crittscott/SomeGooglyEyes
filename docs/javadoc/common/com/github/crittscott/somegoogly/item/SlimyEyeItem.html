@@ -114,7 +114,7 @@ loadScripts(document, 'script');</script>
  <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
  single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
 
- <p>The application itself is <a href="../server/EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.LivingEntity)"><code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.LivingEntity)</code></a>. The mob path is dispatched from
+ <p>The application itself is <a href="../server/EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.Entity)"><code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.Entity)</code></a>. The mob path is dispatched from
  each loader's entity-interact adapter — which claims the right-click before the target's own
  interaction can consume it — not through <code>Item#interactLivingEntity</code>; only the sneak
  self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)"><code>use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code></a>) is dispatched through this class.</div>

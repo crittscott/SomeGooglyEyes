@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:boateyegametests/boats_require_matching_enabled_attachments",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 100
+}
