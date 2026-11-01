@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:boateyegametests/boats_evict_idle_and_pause_simulations",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 100
+}

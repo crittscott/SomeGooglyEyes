@@ -4,17 +4,19 @@
   "package": "com.github.crittscott.somegoogly.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "BoatRenderStateMixin",
+    "BoatRendererMixin",
     "ContainerItemEyesMixin",
     "GuiItemEyesMixin",
     "HotbarItemEyesMixin",
+    "ItemFrameRenderStateMixin",
+    "ItemFrameRendererMixin",
     "ItemModelResolverMixin",
     "ItemStackRenderStateMixin",
-    "ItemFrameRendererMixin",
-    "ItemFrameRenderStateMixin",
-    "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
-    "SkullBlockRendererMixin",
+    "LivingEntityRendererMixin",
     "SkullBlockRenderStateMixin",
+    "SkullBlockRendererMixin",
     "SpecialModelWrapperMixin"
   ],
   "injectors": {

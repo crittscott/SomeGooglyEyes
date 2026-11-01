@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:handitemeyegametests/hand_eyes_react_to_holder_motion",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 100
+}

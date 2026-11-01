@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:boateyegametests/boats_save_and_synchronize_snapshots",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 100
+}

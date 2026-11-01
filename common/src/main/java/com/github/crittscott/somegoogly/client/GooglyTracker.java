@@ -15,7 +15,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
-
+import org.joml.Matrix3f;
+import org.joml.Matrix3fc;
+import org.joml.Quaternionfc;
+import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -256,7 +259,7 @@ public class GooglyTracker {
         /** See {@link #gravX}. */
         public float gravY = -1F;
 
-        /** Mounted head items remove display scale from the gravity direction captured at render. */
+        /** World item and boat eyes remove display scale and project owner acceleration through their captured pose. */
         public boolean itemGravity;
 
         /** GUI coordinates grow downward; captured gravity follows the icon instead of the world. */
@@ -284,6 +287,12 @@ public class GooglyTracker {
         public float irisTintAmount, prevIrisTintAmount;
         /** This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step. */
         public float creepyPhaseOffset;
+
+        private boolean capturedPose;
+        private final Matrix3f inversePose = new Matrix3f();
+        /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
+        private final Vector3f worldRight = new Vector3f();
+        private final Vector3f worldUp = new Vector3f();
 
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
         private double prevMotionX;
@@ -324,12 +333,36 @@ public class GooglyTracker {
             irisTintAmount = irisTint;
         }
 
+        /** Capture an eye pose; supply camera rotation only when the pose already includes the view transform. */
+        public void capturePose(Matrix3fc pose, @Nullable Quaternionfc cameraOrientation) {
+            if (cameraOrientation == null) {
+                inversePose.set(pose).invert();
+            } else {
+                inversePose.rotation(cameraOrientation).mul(pose).invert();
+            }
+            worldRight.set(inversePose.m00(), inversePose.m10(), inversePose.m20());
+            worldUp.set(inversePose.m01(), inversePose.m11(), inversePose.m21());
+            if (itemGravity || guiGravity) {
+                worldRight.normalize();
+                worldUp.normalize();
+            }
+            float sign = guiGravity ? -1F : 1F;
+            gravX = sign * worldRight.y;
+            gravY = sign * worldUp.y;
+            capturedPose = true;
+        }
+
+        /** Re-prime input differentiation after an owner change or a gap in simulation. */
+        public void resetMotion() {
+            primed = false;
+        }
+
         /**
          * Advance the pupil simulation by one tick and update its previous/current render positions.
          * Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.
          *
          * @param rand      randomness source (per-tracker / per-held-eye)
-         * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
+         * @param headYaw   the living holder's head yaw, or the boat's yaw, this tick
          * @param headPitch the holder's pitch this tick ({@code getXRot})
          * @param motionX   the holder's X position delta this tick
          * @param motionY   the holder's Y position delta this tick
@@ -389,9 +422,15 @@ public class GooglyTracker {
             // as the eye turns to face up/down (world-down leaves the pupil plane). The pseudo-forces stay
             // eye-local — only gravity's resting direction is a world-frame quantity. Default (0, -1) =
             // eye-local down.
-            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel - R_K_LIN * horizRight
+            float linearX = itemGravity && capturedPose
+                    ? R_K_LIN * worldRight.dot((float) laccx, (float) laccy, (float) laccz)
+                    : -R_K_LIN * horizRight;
+            float linearY = itemGravity && capturedPose
+                    ? R_K_VERT * worldUp.dot((float) laccx, (float) laccy, (float) laccz)
+                    : -R_K_VERT * (float) laccy;
+            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel + linearX
                     + (float) rand.nextGaussian() * R_NOISE;
-            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy
+            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel + linearY
                     + (float) rand.nextGaussian() * R_NOISE;
             fx = Mth.clamp(fx, -R_FORCE_CLAMP, R_FORCE_CLAMP);
             fy = Mth.clamp(fy, -R_FORCE_CLAMP, R_FORCE_CLAMP);
@@ -456,12 +495,38 @@ public class GooglyTracker {
         }
     }
 
-    /** Whether this tracker was built for the same placement variant as {@code helper}. */
-    public boolean matches(HeadInfo helper) {
-        // Compare the selected variant's head list, not just the shared config: two mobs of the same
-        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
-        // shape is sized from this variant's heads/eyes).
-        return this.helper.headsRef() == helper.headsRef();
+    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
+    private static float ease(float value, boolean on, int ticks) {
+        float step = 1F / ticks;
+        return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
+    }
+
+    /**
+     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
+     * says it's angry.
+     */
+    private boolean isAngry(BehaviorSettings settings) {
+        return level(OngoingBehavior.ANGER, settings) > 0F
+                || angry && settings.enabled(OngoingBehavior.ANGER);
+    }
+
+    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
+    private boolean isLidded(BehaviorSettings settings) {
+        return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
+    }
+
+    /**
+     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
+     * lowered to ram, each while its switch is on.
+     */
+    private boolean isSquinting(BehaviorSettings settings) {
+        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
+                || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
+    }
+
+    /** How strongly {@code behavior} applies to this entity now, or 0 while its switch is off. */
+    private float level(OngoingBehavior behavior, BehaviorSettings settings) {
+        return settings.enabled(behavior) ? behavior.level(parent) : 0F;
     }
 
     /**
@@ -470,6 +535,14 @@ public class GooglyTracker {
      */
     public void markRendered(int currentClientTick) {
         lastRenderTick = currentClientTick;
+    }
+
+    /** Whether this tracker was built for the same placement variant as {@code helper}. */
+    public boolean matches(HeadInfo helper) {
+        // Compare the selected variant's head list, not just the shared config: two mobs of the same
+        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
+        // shape is sized from this variant's heads/eyes).
+        return this.helper.headsRef() == helper.headsRef();
     }
 
     /**
@@ -565,39 +638,5 @@ public class GooglyTracker {
                         INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
             }
         }
-    }
-
-    /**
-     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
-     * says it's angry.
-     */
-    private boolean isAngry(BehaviorSettings settings) {
-        return level(OngoingBehavior.ANGER, settings) > 0F
-                || angry && settings.enabled(OngoingBehavior.ANGER);
-    }
-
-    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
-    private boolean isLidded(BehaviorSettings settings) {
-        return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
-    }
-
-    /**
-     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
-     * lowered to ram, each while its switch is on.
-     */
-    private boolean isSquinting(BehaviorSettings settings) {
-        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
-                || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
-    }
-
-    /** How strongly {@code behavior} applies to this entity now, or 0 while its switch is off. */
-    private float level(OngoingBehavior behavior, BehaviorSettings settings) {
-        return settings.enabled(behavior) ? behavior.level(parent) : 0F;
-    }
-
-    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
-    private static float ease(float value, boolean on, int ticks) {
-        float step = 1F / ticks;
-        return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
     }
 }

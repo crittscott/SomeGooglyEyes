@@ -6,7 +6,7 @@
 
 `orientation-code.md` covers code structure.
 
-Some Googly Eyes adds animated eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
+Some Googly Eyes adds animated eyes to mobs, players, heads, and vanilla boats. Harvest eyes, customize their appearance, and apply them with slime.
 
 This checkout targets Minecraft 26.1.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.19.5+ and Fabric API 0.145.4+26.1.1+. NeoForge requires NeoForge 26.1.1.15-beta+ below 26.1.2. Forge requires Forge 63.0.2+ within the 63 line. All loaders require Java 25. GeckoLib integration is optional on Fabric and NeoForge and compiles against the published 26.1/5.5 API; no exact-26.1.1 release is listed by the publisher, and runtime compatibility is unverified. Clients and servers need the same network version.
 
@@ -16,7 +16,7 @@ By default, eligible mobs have a 5 percent chance to receive eyes when they spaw
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
-Pupils wobble, bounce, and settle under gravity, movement, and head motion.
+Pupils respond to gravity, movement, and head motion.
 
 A sheared sheep's body eyes sit on its bare body until the wool regrows.
 
@@ -45,7 +45,7 @@ Harvested eyes keep effective iris/cornea colors and glow, not species or placem
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+First-person loose eyes react to movement/hurt/heal; third-person eyes use world gravity and holder motion. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
 Worlds saved by the 26.1 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 26.1 release.
 
@@ -58,11 +58,11 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 | Redstone dust | Forces glow off |
 | Cobweb | Clears all appearance overrides |
 
-Modifiers stack across crafts. Googly Eyes have no creation recipe; they must be harvested or taken from the creative menu.
+Modifiers stack. Googly Eyes come from harvesting or creative.
 
-Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
+Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
 
-An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
+Eyed or ineligible mobs refuse application; harvest before restyling. Sneak-use on air applies to yourself. Other-player application requires server PvP and team permission.
 
 To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
@@ -72,9 +72,11 @@ Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can 
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
+Vanilla boats, chest boats, and bamboo rafts start eyeless. Slimy Eyes apply two outward-facing eyes, one per side; Optometrist shears remove them and drop one eye for one durability. Eyes and applied appearance survive saves, not breaking into items. Successful use consumes boarding/cargo interaction. Boats use world gravity, owner motion, and ambient expressions; bundled eyes do not cross. Boat picker/admin editing and modded boats are unsupported.
+
 ## Checking a target
 
-While holding either eye item, sneak and aim at a living entity or placed head to see whether it:
+While holding either eye item, sneak and aim at a living entity, vanilla boat, or placed head to see whether it:
 
 - can receive eyes now;
 - already has eyes;
@@ -106,7 +108,7 @@ NeoForge and Forge apply edits as soon as they reload the file; Fabric applies t
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
 
-While `googlyEyesEnabled` is `false`, no mob rolls eyes, no client renders eyes on any mob or head, and eyes can't be applied or harvested. Eye data is kept and reappears when the switch returns. Automatic mob expressions and anger checks also stop while disabled. The creative picker, an authoring tool, is exempt.
+While `googlyEyesEnabled` is `false`, natural rolls, rendering, application, harvest, automatic expressions, and anger checks stop. Saved eyes return when enabled. The creative picker is exempt.
 
 Overrides use `"entity-pattern,percent"`. Exact IDs take priority; otherwise the first matching wildcard is used.
 
@@ -238,5 +240,5 @@ Color channels range from 0 to 1.
 
 - A harvested eye keeps one appearance, not each eye's.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 128 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, and loading real 26.1 saves.
+- GameTest totals are in `orientation-code.md`. Rendering, interactions, boats, protection, exports, retracking, GeckoLib, and real-save migration require client checks.
 - The modifier recipe may be absent from recipe viewers.
