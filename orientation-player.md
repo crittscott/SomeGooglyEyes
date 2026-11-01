@@ -6,7 +6,7 @@
 
 `orientation-code.md` covers the code structure.
 
-Some Googly Eyes adds animated googly eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
+Some Googly Eyes animates eyes on living entities, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
 
 Two items, one enchantment, and one creative tab are added. Datapacks place eyes on vanilla and modded mobs.
 
@@ -43,13 +43,13 @@ Kill an eyed mob with a direct melee blow from shears for a default 25 percent c
 
 Optometrist is a one-level, treasure-only shears enchantment. Right-click an eyed mob with Optometrist shears to remove its eyes without harming it. One Googly Eye drops, the shears lose one durability, and the standard shearing sound plays. Plain shears retain their usual interactions.
 
-The harvested eye keeps the mob's effective iris color, cornea color, and glow, but not its species or eye placement.
+Harvested eyes keep effective iris/cornea colors and glow, not species or placement.
 
 ## Googly Eyes and Slimy Eyes
 
-A Googly Eye held in first person is live: its pupil moves, and it plays idle, hurt (bulge), and heal (swirl) expressions under the server's expression settings. Every other view shows it at rest. Its tooltip shows stored colors in hexadecimal and its glow setting.
+First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
-Worlds saved by the 1.20.1 release open with their eyed mobs, eye items, and settings intact.
+1.20.1 worlds retain eyed mobs, eye items, and settings.
 
 The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
 
@@ -72,7 +72,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. So can the Heads mod's heads on NeoForge, fitted to each head's shape, except its axolotl, endermite, silverfish, squid, glow squid, slime, and magma cube heads. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
 
-A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike. Head items show their eyes at rest; worn heads show none.
+A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
 ## Checking a target
 
@@ -243,5 +243,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 142 dedicated-server GameTests, NeoForge 142, Forge 140. Physical-client checks are manual: attachments, expressions, items, head eyes, protection vetoes, picker exports, anger retracking, reload cleanup, GeckoLib, and 1.20.1 save migration.
+- Loader GameTest totals are listed in `orientation-code.md`. Physical-client checks are manual: attachments, expressions, items, head eyes, protection vetoes, picker exports, anger retracking, reload cleanup, GeckoLib, and 1.20.1 save migration.
 - The modifier recipe may not show in recipe viewers.

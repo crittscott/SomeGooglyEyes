@@ -60,7 +60,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient behaviors for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` starts the held item's idle, hurt, and heal behaviors per the synced `BehaviorSettings`. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger (`NeutralMob`, piglin `ANGRY_AT`) is sent on change and to each new viewer. `ClientEyeRuntime` owns entity-lifetime received expressions and anger independently of disposable pupil trackers; expression age advances on unpaused ticks even offscreen. Render resets retain reports; entity removal drops its reports, and level replacement/disconnect clears all. Head simulations are cached by position. Automatic scheduling pauses under the master switch, preserving watchers and expiring effects; resumption refreshes viewers. Explicit authoring triggers remain available. Client behavior settings start and clear inactive until synchronization.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` ongoing states. `ServerBehaviorScheduler` handles watched mobs and gameplay triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states; `HeldEye` runs held idle/hurt/heal effects. Heads use position/time-seeded ambient slots; item presentations use seeded slots with paired cross-eye. `ClientEyeRuntime` retains mob reports separately from disposable simulations, ages effects offscreen, simulates recently rendered trackers, and evicts idle ones. Head caches use position, frame caches entity identity; contents and level changes invalidate them. The master switch pauses mob scheduling while retaining watchers and expiring effects. Authoring triggers remain available. Client behaviors start inactive until sync.
 
 ## Rendering and attachment
 
@@ -74,7 +74,7 @@ The common `somegoogly.accesswidener` serves common compilation and every loader
 
 GeckoLib is optional: common compiles against compile-only `geckolib-common`, touching `client.compat.gecko` only once `GeckoCompat` finds it; a failed attach can't block load.
 
-`GooglyEyeItemRenderer` draws the 3D Googly Eye; `SLIMY_EYE_IRIS_TINT_INDEX` must match the Slimy Eye model's `layer2`.
+`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -102,7 +102,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge kee
 
 ## Automated verification
 
-Loader GameTest entry points: Fabric 142, Forge 140, Neoforge 142. Review regressions have scenarios; visuals, connections, artifacts, and released saves require manual checks.
+GameTest scenarios: Fabric 167, Forge 165, NeoForge 167. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
 
 ## Operational boundaries
 

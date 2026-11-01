@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.SkullEyes;
@@ -48,7 +50,7 @@ import java.util.Optional;
  * Draws the eyes of placed mob heads and head items. Each loader's Mixins bracket a placed head's draw with
  * {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
- * ({@link SkullEyes}); an item's are drawn at rest, pupils centered, like the Googly Eye item's. Worn heads
+ * ({@link SkullEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  * share the model draw without either bracket, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part. A vanilla head model shares that part with its mob, so the mob's
@@ -75,7 +77,7 @@ public final class SkullEyeRenderer {
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
-    /** A head item's eyes: never simulated, so the pupil stays centered. */
+    /** Rest pose for head items drawn outside frames. */
     private static final GooglyTracker.EyeInfo REST = rest();
 
     /** The placed head being drawn, or {@code null} outside a placed head's draw. */
@@ -303,10 +305,14 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            ItemEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
+                    : framed.helper;
             if (helper.hasConfig()) {
                 renderEyes(pose, bufferSource, packedLight, model, head, isHeadsMod(item.getBlock()), entity, helper,
-                        SkullEyeState.headParts(entity, helper), null, snapshot.properties(), 0F);
+                        SkullEyeState.headParts(entity, helper), framed == null ? null : framed.eyes,
+                        snapshot.properties(),
+                        framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
             }
         }
     }
