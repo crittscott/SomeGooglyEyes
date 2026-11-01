@@ -8,7 +8,7 @@
 
 Some Googly Eyes adds animated eyes to living entities. Mobs may appear with eyes, react with expressions, and yield a collectible Googly Eye. Players can customize an eye, embed it in slime, and apply it to a mob or themselves.
 
-This checkout targets Minecraft 26.1.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.19.5 or newer and Fabric API 0.145.4+26.1.1 or newer. NeoForge requires NeoForge 26.1.1.15-beta or newer below 26.1.2. Forge requires Forge 63.0.2 or newer within the 63 release line. All loaders require Java 25. GeckoLib integration is optional on Fabric and NeoForge and compiles against the published 26.1/5.5 API; no exact-26.1.1 release is listed by the publisher, and runtime compatibility is unverified. Clients and servers need the same network version.
+This checkout targets Minecraft 26.1.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.19.5+ and Fabric API 0.145.4+26.1.1+. NeoForge requires NeoForge 26.1.1.15-beta+ below 26.1.2. Forge requires Forge 63.0.2+ within the 63 line. All loaders require Java 25. GeckoLib integration is optional on Fabric and NeoForge and compiles against the published 26.1/5.5 API; no exact-26.1.1 release is listed by the publisher, and runtime compatibility is unverified. Clients and servers need the same network version.
 
 ## Mobs with eyes
 
@@ -16,7 +16,9 @@ By default, eligible mobs have a 5 percent chance to receive eyes when they spaw
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
-Pupils respond to gravity, movement, and head motion. They wobble, bounce, and settle.
+Pupils wobble, bounce, and settle under gravity, movement, and head motion.
+
+A sheared sheep's body eyes sit on its bare body until the wool regrows.
 
 Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also react when:
 

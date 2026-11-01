@@ -4,6 +4,7 @@
 
 ### Added
 - Minecraft 26.1.1 builds: Fabric (Loader 0.19.5+, Fabric API 0.145.4+), NeoForge 26.1.1.15-beta+, and Forge 63.0.2+. GeckoLib remains optional on Fabric and NeoForge; GeckoLib has no 26.1.1 release, so its 26.1 build (5.5+) is the one to try.
+- Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
 ### Compatibility
 - Worlds saved with the 26.1 release load with their eyed mobs, eye items, heads, and settings intact. Worlds from earlier versions must first be opened with the 26.1 release.
