@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -25,28 +27,6 @@ public final class EyeInspector {
     private static final double REACH = 16.0D;
 
     private EyeInspector() {
-    }
-
-    /**
-     * Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
-     * the aimed placed head when it is nearer, on the action bar.
-     */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null || minecraft.level == null || minecraft.isPaused()
-                || !player.isShiftKeyDown() || !holdingEye(player)) {
-            return;
-        }
-        EntityHitResult target = LookTarget.livingHitInCrosshair(player, REACH);
-        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
-                && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
-                        < player.getEyePosition().distanceToSqr(target.getLocation()))) {
-            player.sendOverlayMessage(verdict(skull));
-        } else if (target != null) {
-            player.sendOverlayMessage(verdict((LivingEntity) target.getEntity()));
-        }
     }
 
     private static Component alreadyHas() {
@@ -67,6 +47,38 @@ public final class EyeInspector {
 
     private static boolean isEye(ItemStack stack) {
         return stack.is(ModContent.GOOGLY_EYE.get()) || stack.is(ModContent.SLIMY_EYE.get());
+    }
+
+    /**
+     * Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
+     * the aimed placed head when it is nearer, on the action bar.
+     */
+    public static void tick() {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null || minecraft.level == null || minecraft.isPaused()
+                || !player.isShiftKeyDown() || !holdingEye(player)) {
+            return;
+        }
+        EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
+                entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
+        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
+                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
+                && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
+                        < player.getEyePosition().distanceToSqr(target.getLocation()))) {
+            player.sendOverlayMessage(verdict(skull));
+        } else if (target != null) {
+            player.sendOverlayMessage(target.getEntity() instanceof AbstractBoat boat
+                    ? verdict(boat) : verdict((LivingEntity) target.getEntity()));
+        }
+    }
+
+    private static Component verdict(AbstractBoat boat) {
+        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
+        if (!BoatEyeLayout.isEligible(boat, ClientEyeConfigs.get(type, false))) {
+            return cannot();
+        }
+        return EyeState.hasEyes(boat) ? alreadyHas() : canHave();
     }
 
     private static Component verdict(LivingEntity target) {

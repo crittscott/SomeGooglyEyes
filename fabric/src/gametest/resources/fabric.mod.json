@@ -26,7 +26,8 @@
       "com.github.crittscott.somegoogly.gametest.HeldEyeGameTests",
       "com.github.crittscott.somegoogly.gametest.FramedEyeGameTests",
       "com.github.crittscott.somegoogly.gametest.SkullEyeGameTests",
-      "com.github.crittscott.somegoogly.gametest.HandItemEyeGameTests"
+      "com.github.crittscott.somegoogly.gametest.HandItemEyeGameTests",
+      "com.github.crittscott.somegoogly.gametest.BoatEyeGameTests"
     ]
   },
   "depends": {

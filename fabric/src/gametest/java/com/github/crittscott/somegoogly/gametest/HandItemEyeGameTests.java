@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
@@ -12,27 +13,37 @@ public final class HandItemEyeGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
+    public void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
+        HandItemEyeGameTestsLogic.handEyesFollowWorldGravityAcrossViews(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void handEyesReactToHolderMotion(GameTestHelper helper) {
+        HandItemEyeGameTestsLogic.handEyesReactToHolderMotion(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    public void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesReplaceContentsAndHonorGates(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public static void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
+    public void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesRetireUnloadedAndHiddenHolders(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public static void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
+    public void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesSeparateHoldersAndHands(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public static void handEyesUseWorldClockAndPause(GameTestHelper helper) {
+    public void handEyesUseWorldClockAndPause(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesUseWorldClockAndPause(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public static void handHeadUsesConfiguredLayout(GameTestHelper helper) {
+    public void handHeadUsesConfiguredLayout(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handHeadUsesConfiguredLayout(helper);
     }
 }

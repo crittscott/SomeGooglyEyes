@@ -56,17 +56,19 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#boatEyes(net.minecraft.world.entity.vehicle.boat.AbstractBoat)" tabindex="0">boatEyes(AbstractBoat)</a></li>
 <li><a href="#clear()" tabindex="0">clear()</a></li>
 <li><a href="#clearAnger()" tabindex="0">clearAnger()</a></li>
 <li><a href="#clientTicks()" tabindex="0">clientTicks()</a></li>
+<li><a href="#frameEye(net.minecraft.world.entity.decoration.ItemFrame)" tabindex="0">frameEye(ItemFrame)</a></li>
 <li><a href="#get(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" tabindex="0">get(LivingEntity, HeadInfo)</a></li>
-<li><a href="#onEntityRemoved(net.minecraft.world.entity.LivingEntity)" tabindex="0">onEntityRemoved(LivingEntity)</a></li>
+<li><a href="#onEntityRemoved(net.minecraft.world.entity.Entity)" tabindex="0">onEntityRemoved(Entity)</a></li>
 <li><a href="#onLevelChanged()" tabindex="0">onLevelChanged()</a></li>
 <li><a href="#peek(net.minecraft.world.entity.LivingEntity)" tabindex="0">peek(LivingEntity)</a></li>
 <li><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" tabindex="0">setAngry(LivingEntity, boolean)</a></li>
 <li><a href="#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" tabindex="0">setBehavior(LivingEntity, EyeBehavior, int, long, int)</a></li>
 <li><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.Identifier)" tabindex="0">skullEyes(SkullBlockEntity, Identifier)</a></li>
-<li><a href="#tick(boolean)" tabindex="0">tick(boolean)</a></li>
+<li><a href="#tick(net.minecraft.world.level.Level,boolean)" tabindex="0">tick(Level, boolean)</a></li>
 <li><a href="#tickBehaviors()" tabindex="0">tickBehaviors()</a></li>
 </ol>
 </li>
@@ -85,7 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientEyeRuntime</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle.</div>
+<div class="block">Loader-neutral owner of mob, boat, placed-head, and framed-item eye simulations and their lifecycle.</div>
 </div>
 </section>
 <section class="summary">
@@ -101,20 +103,30 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatEyes(net.minecraft.world.entity.vehicle.boat.AbstractBoat)" class="member-name-link">boatEyes</a><wbr>(net.minecraft.world.entity.vehicle.boat.AbstractBoat&nbsp;boat)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop render simulations while retaining entity-lifetime reports.</div>
+<div class="block">The current boat layout, rebuilt only when its state, geometry, or definition changes.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearAnger()" class="member-name-link">clearAnger</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop render simulations while retaining entity-lifetime reports.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearAnger()" class="member-name-link">clearAnger</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Forget every server-reported anger; call on client disconnect.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clientTicks()" class="member-name-link">clientTicks</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clientTicks()" class="member-name-link">clientTicks</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The client-tick counter this runtime advances once per <a href="#tick(net.minecraft.world.level.Level,boolean)"><code>tick(Level, boolean)</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#frameEye(net.minecraft.world.entity.decoration.ItemFrame)" class="member-name-link">frameEye</a><wbr>(net.minecraft.world.entity.decoration.ItemFrame&nbsp;frame)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The client-tick counter this runtime advances once per <a href="#tick(boolean)"><code>tick(boolean)</code></a>.</div>
+<div class="block">The rendered frame's eye, or none while its item or the global switches disallow animation.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">get</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
@@ -125,7 +137,7 @@ existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github
 variant or age change cannot reuse the old tracker).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEntityRemoved(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onEntityRemoved</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onEntityRemoved(net.minecraft.world.entity.Entity)" class="member-name-link">onEntityRemoved</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Forget a removed entity's simulation and server-reported anger.</div>
 </div>
@@ -163,7 +175,8 @@ replacing any built for another kind of head at the same position; <code>null</c
 definitions give it nothing to draw.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(boolean)" class="member-name-link">tick</a><wbr>(boolean&nbsp;simulate)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.level.Level,boolean)" class="member-name-link">tick</a><wbr>(@Nullable net.minecraft.world.level.Level&nbsp;level,
+ boolean&nbsp;simulate)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
 physics of those rendered this tick or last when <code>simulate</code> is true.</div>
@@ -191,6 +204,15 @@ physics of those rendered this tick or last when <code>simulate</code> is true.<
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="boatEyes(net.minecraft.world.entity.vehicle.boat.AbstractBoat)">
+<h3>boatEyes</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">boatEyes</span><wbr><span class="parameters">(net.minecraft.world.entity.vehicle.boat.AbstractBoat&nbsp;boat)</span></div>
+<div class="block">The current boat layout, rebuilt only when its state, geometry, or definition changes.</div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="clear()">
 <h3>clear</h3>
 <div class="horizontal-scroll">
@@ -213,7 +235,16 @@ physics of those rendered this tick or last when <code>simulate</code> is true.<
 <h3>clientTicks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">clientTicks</span>()</div>
-<div class="block">The client-tick counter this runtime advances once per <a href="#tick(boolean)"><code>tick(boolean)</code></a>.</div>
+<div class="block">The client-tick counter this runtime advances once per <a href="#tick(net.minecraft.world.level.Level,boolean)"><code>tick(Level, boolean)</code></a>.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="frameEye(net.minecraft.world.entity.decoration.ItemFrame)">
+<h3>frameEye</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">frameEye</span><wbr><span class="parameters">(net.minecraft.world.entity.decoration.ItemFrame&nbsp;frame)</span></div>
+<div class="block">The rendered frame's eye, or none while its item or the global switches disallow animation.</div>
 </div>
 </section>
 </li>
@@ -230,10 +261,10 @@ variant or age change cannot reuse the old tracker).</div>
 </section>
 </li>
 <li>
-<section class="detail" id="onEntityRemoved(net.minecraft.world.entity.LivingEntity)">
+<section class="detail" id="onEntityRemoved(net.minecraft.world.entity.Entity)">
 <h3>onEntityRemoved</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityRemoved</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityRemoved</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
 <div class="block">Forget a removed entity's simulation and server-reported anger.</div>
 </div>
 </section>
@@ -292,10 +323,11 @@ definitions give it nothing to draw.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="tick(boolean)">
+<section class="detail" id="tick(net.minecraft.world.level.Level,boolean)">
 <h3>tick</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span><wbr><span class="parameters">(boolean&nbsp;simulate)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span><wbr><span class="parameters">(@Nullable net.minecraft.world.level.Level&nbsp;level,
+ boolean&nbsp;simulate)</span></div>
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
 physics of those rendered this tick or last when <code>simulate</code> is true. The client lifecycle
 disables simulation while there is no level or the game is paused. A head's eyes are also dropped
