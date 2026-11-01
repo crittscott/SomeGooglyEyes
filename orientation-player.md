@@ -18,6 +18,8 @@ A mob must have an enabled eye definition for its type and current life stage. A
 
 Pupils respond to gravity, movement, and head motion. They wobble, bounce, and settle.
 
+A sheared sheep's body eyes sit on its bare body until the wool regrows.
+
 Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also react when:
 
 - damaged by a player: 20 percent default chance to bulge;
