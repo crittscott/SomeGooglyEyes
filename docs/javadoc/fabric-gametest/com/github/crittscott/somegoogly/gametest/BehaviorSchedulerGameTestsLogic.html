@@ -60,16 +60,16 @@ loadScripts(document, 'script');</script>
 <li><a href="#aimingArcherWinks(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">aimingArcherWinks(GameTestHelper)</a></li>
 <li><a href="#aimingPlayerWinks(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">aimingPlayerWinks(GameTestHelper)</a></li>
 <li><a href="#angerFollowsEntityLifetime(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">angerFollowsEntityLifetime(GameTestHelper)</a></li>
-<li><a href="#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">receivedExpressionsOutliveRenderTrackers(GameTestHelper)</a></li>
 <li><a href="#angryMobsHaveRedPupils(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">angryMobsHaveRedPupils(GameTestHelper)</a></li>
 <li><a href="#creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">creepyEndermanPulses(GameTestHelper)</a></li>
+<li><a href="#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">disabledEyesSuspendAutomaticBehaviors(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">eyelessTrackedMobIgnoresGameEvents(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">gameEventTriggersRespectConfig(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">healSwirlIsRateLimited(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#milkingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">milkingPlaysGrow(GameTestHelper, ServerPlayer)</a></li>
-<li><a href="#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">disabledEyesSuspendAutomaticBehaviors(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">oneBehaviorAtATimeUntilItElapses(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#rammingGoatSquints(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">rammingGoatSquints(GameTestHelper)</a></li>
+<li><a href="#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">receivedExpressionsOutliveRenderTrackers(GameTestHelper)</a></li>
 <li><a href="#serverOnlyAngerIsShared(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">serverOnlyAngerIsShared(GameTestHelper)</a></li>
 <li><a href="#shearingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">shearingPlaysGrow(GameTestHelper, ServerPlayer)</a></li>
 <li><a href="#sleepingMobPlaysNoBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">sleepingMobPlaysNoBehaviors(GameTestHelper, ServerPlayer)</a></li>
@@ -322,17 +322,6 @@ real packet lookup and loader unload delivery require the connected-client repro
 </section>
 </li>
 <li>
-<section class="detail" id="receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>receivedExpressionsOutliveRenderTrackers</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">receivedExpressionsOutliveRenderTrackers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
-offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
-second client mid-expression; both see the same progress. Look away and back, and it has not paused.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="angryMobsHaveRedPupils(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>angryMobsHaveRedPupils</h3>
 <div class="horizontal-scroll">
@@ -353,6 +342,18 @@ zombie chase you and its pupils turn red; outrun it until it gives up and they f
 when it calms down. Drives the client-side <code>GooglyTracker</code> directly against a server enderman made
 creepy by giving it a target. In game: look an eyed enderman in the face; while it screams its pupils
 throb, and they settle once it loses interest.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>disabledEyesSuspendAutomaticBehaviors</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disabledEyesSuspendAutomaticBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
+back on; no hidden expression is waiting, and later milking starts a new grow normally.</div>
 </div>
 </section>
 </li>
@@ -407,18 +408,6 @@ fills. With <code>growOnMilk = false</code> they do not.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>disabledEyesSuspendAutomaticBehaviors</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disabledEyesSuspendAutomaticBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
-ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
-back on; no hidden expression is waiting, and later milking starts a new grow normally.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>oneBehaviorAtATimeUntilItElapses</h3>
 <div class="horizontal-scroll">
@@ -441,6 +430,17 @@ once the ram ends and its head comes back up. Drives the client-side <code>Googl
 against a server goat given the ram entity events by hand, since the squint is derived from the head
 position vanilla sets from them rather than sent. In game: stand in front of an eyed goat until it
 lowers its head and charges; its eyes narrow for the charge and open again afterwards.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>receivedExpressionsOutliveRenderTrackers</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">receivedExpressionsOutliveRenderTrackers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
+offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
+second client mid-expression; both see the same progress. Look away and back, and it has not paused.</div>
 </div>
 </section>
 </li>

@@ -94,8 +94,8 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)" tabindex="0">matches(HeadInfo)</a></li>
 <li><a href="#markRendered(int)" tabindex="0">markRendered(int)</a></li>
+<li><a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)" tabindex="0">matches(HeadInfo)</a></li>
 <li><a href="#startBehavior(com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" tabindex="0">startBehavior(EyeBehavior, int, long, int)</a></li>
 <li><a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" tabindex="0">update(BehaviorSettings)</a></li>
 </ol>
@@ -740,21 +740,21 @@ tracker built for an angry mob starts red, as one built for a sleeping mob start
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="matches(com.github.crittscott.somegoogly.eye.HeadInfo)">
-<h3>matches</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(<a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
-<div class="block">Whether this tracker was built for the same placement variant as <code>helper</code>.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="markRendered(int)">
 <h3>markRendered</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">markRendered</span><wbr><span class="parameters">(int&nbsp;currentClientTick)</span></div>
 <div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
 <a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="matches(com.github.crittscott.somegoogly.eye.HeadInfo)">
+<h3>matches</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(<a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
+<div class="block">Whether this tracker was built for the same placement variant as <code>helper</code>.</div>
 </div>
 </section>
 </li>

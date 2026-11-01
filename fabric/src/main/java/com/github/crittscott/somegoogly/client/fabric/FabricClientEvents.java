@@ -12,8 +12,8 @@ import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -29,7 +29,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, eyed head
@@ -59,9 +58,7 @@ public final class FabricClientEvents {
         KeyMappingHelper.registerKeyMapping(PickerKeys.TOGGLE);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
-            if (entity instanceof LivingEntity living) {
-                ClientEyeRuntime.onEntityRemoved(living);
-            }
+            ClientEyeRuntime.onEntityRemoved(entity);
         });
         ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());

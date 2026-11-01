@@ -75,6 +75,14 @@ actual assertions.</div>
 <div class="block">Server-side coverage for <code>ServerBehaviorScheduler</code> — the authority for which behavior a mob is
 playing and when.</div>
 </div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Loader entry points for boat state, application, and ambient animation checks.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">AbstractBoat state and ambient checks; composed poses, event ordering, and remote tracking need client checks.</div>
+</div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">NeoForge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>ConfigGameTestsLogic</code></a>; see that class for the actual
@@ -116,7 +124,7 @@ assertions.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTestsLogic</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block"><code>EyeItemService.interact(Player, Level, InteractionHand, LivingEntity)</code> (the Optometrist right-click harvest) and
+<div class="block"><code>EyeItemService.interact(Player, Level, InteractionHand, Entity)</code> (the Optometrist right-click harvest) and
 <code>EyeItemService.selfRemoveWithShears(Player, InteractionHand)</code> (sneak + shears on air).</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></div>
@@ -129,6 +137,33 @@ actual assertions.</div>
 <div class="block">The <code>EyeState</code> appearance-override mutations behind <code>/sg admin</code>: sparse overrides, atomic
 tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping the override so eyes fall back
 to per-eye config glow.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">NeoForge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>FramedEyeGameTestsLogic</code></a>; see that class for the actual
+assertions.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Drives the mounted eye simulation without a client renderer.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">NeoForge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>GuiItemEyeGameTestsLogic</code></a>; see that class for the actual
+assertions.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">GUI ownership and clock tests; actual icon drawing and atlas behavior need the client checklist.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">NeoForge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>HandItemEyeGameTestsLogic</code></a>; see that class for the actual
+assertions.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Hand simulation checks; holder attachment and extracted draws need the client checklist.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
