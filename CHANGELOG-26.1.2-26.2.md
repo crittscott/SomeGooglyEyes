@@ -5,6 +5,7 @@
 ### Added
 - Minecraft 26.2 builds: Fabric (Loader 0.19.5+, Fabric API 0.161.0+), NeoForge 26.2.0.57+, and Forge 65.1.5+. GeckoLib 5.5.5+ remains optional.
 - Eye definitions for the sulfur cube, adult and baby.
+- Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
 ### Compatibility
 - Worlds saved with the 26.1.2 release load with their eyed mobs, eye items, heads, and settings intact. Worlds from earlier versions must first be opened with the 26.1.2 release.
