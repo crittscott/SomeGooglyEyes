@@ -64,11 +64,11 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` ticks the first-person held eye. `EyePlacement.orientation` owns rendering and pupil-plane rotation.
+`ClientRenderLayers` installs eye layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews via `EyeRenderData`. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` ticks the first-person held eye. `EyePlacement.orientation` orients rendering and pupils.
 
 Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
 
-Common client Mixins (`somegoogly-common.mixins.json`) bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin` on the built-in item renderer); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
+Common client Mixins (`somegoogly-common.mixins.json`) bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin`); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 

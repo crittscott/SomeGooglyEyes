@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
 
 import java.util.List;
 
@@ -32,6 +33,11 @@ import java.util.List;
  * per-bone callback.
  */
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+    /** Attachment part whose eyes sit on a sheep's wool. */
+    private static final String SHEEP_BODY_PART = "body";
+    /** Thickness of the adult sheep's wool beyond its body, in blocks (1.75 model pixels). */
+    private static final float SHEEP_WOOL_DEPTH = 1.75F / 16.0F;
+
     private final ModelGooglyEye modelGooglyEye;
 
     public LayerGooglyEyes(RenderLayerParent<T, M> renderer) {
@@ -56,12 +62,12 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         if (data.pickerTarget()) {
             renderPreview(poseStack, bufferSource, packedLight, overlay, model, resolver);
         } else {
-            renderEyes(poseStack, bufferSource, packedLight, overlay, model, resolver, data);
+            renderEyes(poseStack, bufferSource, packedLight, overlay, living, model, resolver, data);
         }
     }
 
     private void renderEyes(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
-                            M model, EyeAttachmentResolver resolver, EyeRenderData data) {
+                            T living, M model, EyeAttachmentResolver resolver, EyeRenderData data) {
         HeadInfo helper = data.helper();
         GooglyTracker tracker = data.tracker();
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
@@ -75,6 +81,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             poseStack.pushPose();
             // Move into this head's animated space, by the configured string part name.
             if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex))) {
+                insetShearedSheepBody(poseStack, living, helper.getAttachToken(headIndex));
                 int eyeCount = helper.getEyeCount(headIndex);
                 for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
                     if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
@@ -85,6 +92,18 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
                 }
             }
             poseStack.popPose();
+        }
+    }
+
+    /**
+     * Sheep body eyes are authored on the wool's surface, which the separate wool layer draws around the
+     * body. A sheared adult shows no wool, so its body eyes move in along the body's length by the wool's
+     * thickness to sit on the bare body. Lambs are never sheared.
+     */
+    private static void insetShearedSheepBody(PoseStack poseStack, LivingEntity living, String part) {
+        if (living instanceof Sheep sheep && sheep.isSheared() && !sheep.isBaby()
+                && SHEEP_BODY_PART.equals(part)) {
+            poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
         }
     }
 
