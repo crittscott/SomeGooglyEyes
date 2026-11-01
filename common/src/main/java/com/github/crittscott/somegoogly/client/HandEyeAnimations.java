@@ -3,13 +3,13 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /** Disposable ambient simulations, independent for each holder's main hand and offhand. */
@@ -27,11 +27,13 @@ public final class HandEyeAnimations {
 
     private static final class Entry {
         final ItemEyes eyes;
+        final LivingEntity holder;
         long lastShown;
         final AppearanceOverride properties;
 
-        Entry(ItemEyes eyes, AppearanceOverride properties) {
+        Entry(ItemEyes eyes, LivingEntity holder, AppearanceOverride properties) {
             this.eyes = eyes;
+            this.holder = holder;
             this.properties = properties;
         }
     }
@@ -42,17 +44,18 @@ public final class HandEyeAnimations {
 
     /** Stack copies and counts retain state; eye layout and appearance changes replace it. */
     @Nullable
-    public ItemEyes get(UUID holder, InteractionHand hand, ItemStack stack, boolean enabled) {
-        Key key = new Key(holder, hand);
-        if (!enabled || !ItemEyes.supports(stack)) {
+    public ItemEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack, boolean enabled) {
+        Key key = new Key(holder.getUUID(), hand);
+        if (!enabled || holder.isRemoved() || !ItemEyes.supports(stack)) {
             entries.remove(key);
             return null;
         }
         AppearanceOverride properties = EyeItemProperties.get(stack);
         Entry entry = entries.get(key);
-        if (entry == null || !entry.eyes.matches(stack) || !entry.properties.equals(properties)) {
-            UUID seed = hand == InteractionHand.MAIN_HAND ? holder
-                    : new UUID(holder.getMostSignificantBits() ^ OFFHAND_SEED, holder.getLeastSignificantBits());
+        if (entry == null || entry.holder != holder || !entry.eyes.matches(stack) || !entry.properties.equals(properties)) {
+            UUID uuid = holder.getUUID();
+            UUID seed = hand == InteractionHand.MAIN_HAND ? uuid
+                    : new UUID(uuid.getMostSignificantBits() ^ OFFHAND_SEED, uuid.getLeastSignificantBits());
             ItemEyes eyes = ItemEyes.create(seed, stack);
             if (eyes == null) {
                 entries.remove(key);
@@ -63,7 +66,7 @@ public final class HandEyeAnimations {
                     pupil.itemGravity = true;
                 }
             }
-            entry = new Entry(eyes, properties);
+            entry = new Entry(eyes, holder, properties);
             entries.put(key, entry);
         }
         entry.lastShown = ticks;
@@ -77,18 +80,18 @@ public final class HandEyeAnimations {
 
     /** World time determines expressions; pause stops simulation and recently unseen hands expire. */
     public void tick(long gameTime, boolean simulate, BehaviorSettings settings) {
-        ticks++;
         if (!simulate) {
             return;
         }
+        ticks++;
         Iterator<Entry> iterator = entries.values().iterator();
         while (iterator.hasNext()) {
             Entry entry = iterator.next();
             long idle = ticks - entry.lastShown;
-            if (idle > EVICT_IDLE_TICKS) {
+            if (idle > EVICT_IDLE_TICKS || entry.holder.isRemoved()) {
                 iterator.remove();
             } else if (idle <= SIMULATE_IDLE_TICKS) {
-                entry.eyes.tick(gameTime, settings);
+                entry.eyes.tick(gameTime, settings, entry.holder);
             }
         }
     }
