@@ -4,8 +4,13 @@
   "package": "com.github.crittscott.somegoogly.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ContainerItemEyesMixin",
+    "GuiItemEyesMixin",
+    "HotbarItemEyesMixin",
     "ItemModelResolverMixin",
     "ItemStackRenderStateMixin",
+    "ItemFrameRendererMixin",
+    "ItemFrameRenderStateMixin",
     "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
     "SkullBlockRendererMixin",

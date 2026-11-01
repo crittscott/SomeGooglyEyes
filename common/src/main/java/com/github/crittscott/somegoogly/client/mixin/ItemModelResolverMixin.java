@@ -1,11 +1,14 @@
 package com.github.crittscott.somegoogly.client.mixin;
 
+import com.github.crittscott.somegoogly.client.GuiItemEyes;
+import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.ItemOwner;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -30,6 +33,14 @@ abstract class ItemModelResolverMixin {
                                        ItemDisplayContext displayContext, @Nullable Level level,
                                        @Nullable ItemOwner owner, int seed, CallbackInfo callback) {
         ((SkullEyeRenderer.ItemHolder) renderState).somegoogly$setItem(stack);
+        GuiItemEyes.Context gui = displayContext == ItemDisplayContext.GUI ? GuiItemEyes.current() : GuiItemEyes.EMPTY;
+        ((GuiItemEyes.Holder) renderState).somegoogly$setGuiEyes(gui);
+        ((HandItemEyes.Holder) renderState).somegoogly$setHandEyes(HandItemEyes.context(
+                owner instanceof LivingEntity living ? living : null, stack, displayContext));
+        if (gui.eyes() != null) {
+            renderState.setAnimated();
+            renderState.appendModelIdentityElement(gui.identity());
+        }
         EyeState.Snapshot headEyes = stack.get(ModContent.HEAD_EYES.get());
         if (headEyes != null) {
             renderState.appendModelIdentityElement(headEyes);
