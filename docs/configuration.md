@@ -36,6 +36,8 @@ namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling ey
 eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with
 a Slimy Eye.
 
+Vanilla boats and rafts acquire eyes only through Slimy Eye application; spawn-chance settings do not give boats eyes. Their expressions use the ambient settings below, without living-entity reactions. The master switch also gates boat rendering and eye application/removal. Client entity filters use `minecraft:boat` and `minecraft:chest_boat`, covering every wood of each kind.
+
 ### Behavior settings
 
 Eyes have two kinds of behavior. **Expressions** are one-shot animations (`stare`, `blink`, `side_eye`, `cross_eye`, `grow`, `love`, `swirl`, `color_change`, all under the `somegoogly:` namespace); a mob plays at most one at a time, and overlapping triggers are dropped, never queued. **Ongoing behaviors** last as long as the mob stays in some state, and sit on top of whatever expression plays.

@@ -102,8 +102,8 @@ loadScripts(document, 'script');</script>
 
  <p>When the local player holds the item, its first-person view is a live eye, the <a href="HeldEye.html" title="class in com.github.crittscott.somegoogly.client"><code>HeldEye</code></a> stepped
  from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
- own behaviors. Every other view (inventory, item frame, ground, and any player's hand in third person,
- since an item renderer is not told who holds the item) is static, pupil centered.
+ own behaviors. Framed eyes have independent pupil physics and ambient expressions, with their frame
+ context supplied by the frame renderer. GUI and third-person hand presentations have independent ambient animation; ground views are static.
 
  <p>Each loader attaches it as the Googly Eye's custom item renderer; <code>models/item/googly_eye.json</code>
  selects the builtin entity model that hands rendering to it.
@@ -146,6 +146,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemEyes(net.minecraft.world.item.ItemStack)" class="member-name-link">itemEyes</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemPartialTick()" class="member-name-link">itemPartialTick</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderByItem(net.minecraft.world.item.ItemStack,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int)" class="member-name-link">renderByItem</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
  net.minecraft.world.item.ItemDisplayContext&nbsp;ctx,
@@ -155,13 +165,28 @@ loadScripts(document, 'script');</script>
  int&nbsp;overlay)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderInFrame(net.minecraft.client.renderer.entity.ItemRenderer,net.minecraft.world.item.ItemStack,net.minecraft.world.item.ItemDisplayContext,int,int,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,net.minecraft.world.level.Level,int,net.minecraft.world.entity.decoration.ItemFrame,float)" class="member-name-link">renderInFrame</a><wbr>(net.minecraft.client.renderer.entity.ItemRenderer&nbsp;renderer,
+ net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.world.item.ItemDisplayContext&nbsp;context,
+ int&nbsp;light,
+ int&nbsp;overlay,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
+ net.minecraft.world.level.Level&nbsp;level,
+ int&nbsp;seed,
+ net.minecraft.world.entity.decoration.ItemFrame&nbsp;frame,
+ float&nbsp;partialTick)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop held-eye state when leaving a world or server.</div>
+<div class="block">Draw the frame's item with scoped context, restoring an enclosing draw even if rendering fails.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop held-eye state and scoped frame context when leaving a world or server.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </div>
 </div>
@@ -205,17 +230,18 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="tick()">
-<h3>tick</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
-<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
+<section class="detail" id="itemEyes(net.minecraft.world.item.ItemStack)">
+<h3>itemEyes</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">itemEyes</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="reset()">
-<h3>reset</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
-<div class="block">Drop held-eye state when leaving a world or server.</div>
+<section class="detail" id="itemPartialTick()">
+<h3>itemPartialTick</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">itemPartialTick</span>()</div>
+<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
 </section>
 </li>
 <li>
@@ -231,6 +257,37 @@ loadScripts(document, 'script');</script>
 <dt>Overrides:</dt>
 <dd><code>renderByItem</code>&nbsp;in class&nbsp;<code>net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer</code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="renderInFrame(net.minecraft.client.renderer.entity.ItemRenderer,net.minecraft.world.item.ItemStack,net.minecraft.world.item.ItemDisplayContext,int,int,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,net.minecraft.world.level.Level,int,net.minecraft.world.entity.decoration.ItemFrame,float)">
+<h3>renderInFrame</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderInFrame</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.ItemRenderer&nbsp;renderer,
+ net.minecraft.world.item.ItemStack&nbsp;stack,
+ net.minecraft.world.item.ItemDisplayContext&nbsp;context,
+ int&nbsp;light,
+ int&nbsp;overlay,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
+ net.minecraft.world.level.Level&nbsp;level,
+ int&nbsp;seed,
+ net.minecraft.world.entity.decoration.ItemFrame&nbsp;frame,
+ float&nbsp;partialTick)</span></div>
+<div class="block">Draw the frame's item with scoped context, restoring an enclosing draw even if rendering fails.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reset()">
+<h3>reset</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
+<div class="block">Drop held-eye state and scoped frame context when leaving a world or server.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tick()">
+<h3>tick</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
+<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </section>
 </li>
 </ul>

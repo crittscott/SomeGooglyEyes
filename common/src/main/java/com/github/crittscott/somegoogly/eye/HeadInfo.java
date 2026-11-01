@@ -21,6 +21,14 @@ public final class HeadInfo {
         this.heads = headsOfVariant(config, variantIndex);
     }
 
+    /** Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes. */
+    public HeadInfo(RuntimeConfig config, int variantIndex, String attachToken) {
+        this.entityConfig = config;
+        List<HeadConfig> selected = headsOfVariant(config, variantIndex);
+        this.heads = selected == null ? null : selected.stream()
+                .filter(head -> attachToken.equals(head.attachPoint)).toList();
+    }
+
     /** The selected eye's config appearance. */
     public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
         return eyeAt(headIndex, eyeIndex).appearance();

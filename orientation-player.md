@@ -6,19 +6,19 @@
 
 `orientation-code.md` covers the code structure.
 
-Some Googly Eyes animates eyes on living entities, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
+Some Googly Eyes animates eyes on living entities, vanilla boats, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
 
-Two items, one enchantment, and one creative tab are added. Datapacks place eyes on vanilla and modded mobs.
+Two items, one enchantment, one creative tab; datapacks place eyes on mobs.
 
-Artifacts target Minecraft 1.21.1 on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.16.14+ and Fabric API 0.102.1+1.21.1+. NeoForge requires NeoForge 21.1.34+ within the 21.1 line. Forge requires Forge 52.1.2+ within the 52 line. All loaders require Java 21; GeckoLib 4.7.4+ is an optional client dependency. Clients and servers need the same network version.
+Targets Minecraft 1.21.1: Fabric, NeoForge, Forge. Fabric requires Fabric Loader 0.16.14+ and Fabric API 0.102.1+1.21.1+. NeoForge requires NeoForge 21.1.34+ within the 21.1 line. Forge requires Forge 52.1.2+ within the 52 line. All loaders require Java 21; GeckoLib 4.7.4+ is an optional client dependency. Clients and servers need the same network version.
 
 ## Mobs with eyes
 
-By default, eligible mobs have a 5 percent chance to receive eyes when they spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
+Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
-A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
+A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may show eyes as an adult.
 
-Pupils wobble, bounce, and settle under gravity, movement, and head motion.
+Pupils respond to gravity, movement, and head motion.
 
 A sheared sheep's body eyes sit on its bare body until the wool regrows.
 
@@ -43,11 +43,11 @@ Kill an eyed mob with a direct melee blow from shears for a default 25 percent c
 
 Optometrist is a one-level, treasure-only shears enchantment. Right-click an eyed mob with Optometrist shears to remove its eyes without harming it. One Googly Eye drops, the shears lose one durability, and the standard shearing sound plays. Plain shears retain their usual interactions.
 
-Harvested eyes keep effective iris/cornea colors and glow, not species or placement.
+Harvests keep effective colors/glow, not species/placement.
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; boat/hand pupils use world gravity and owner motion; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
 1.20.1 worlds retain eyed mobs, eye items, and settings.
 
@@ -74,9 +74,11 @@ Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can 
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
+Vanilla boats, chest boats, and bamboo rafts start eyeless. Slimy Eyes apply two outward-facing eyes, one per side; Optometrist shears remove them and drop one eye for one durability. Eyes and applied appearance survive saves, not breaking into items. Successful use consumes boarding/cargo interaction. Boats play ambient expressions; bundled eyes do not cross. Boat picker/admin editing and modded boats are unsupported.
+
 ## Checking a target
 
-While holding either eye item, sneak and aim at a living entity or placed head to see whether it:
+While holding either eye item, sneak and aim at a living entity, vanilla boat, or placed head to see whether it:
 
 - can receive eyes now;
 - already has eyes;
@@ -87,7 +89,7 @@ The check reaches about 16 blocks and stops at walls. Client settings that hide 
 
 ## Creative tab
 
-The Some Googly Eyes tab contains a Googly Eye, a Slimy Eye, and an Optometrist enchanted book. Creative eye items have no appearance overrides.
+The creative tab contains a Googly Eye, a Slimy Eye, and an Optometrist book. Creative eyes have no appearance overrides.
 
 ## Configuration
 
@@ -97,7 +99,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. `googlyEyesEnabled` changes reach connected players immediately.
 
 ### Spawn and harvest
 
@@ -124,7 +126,7 @@ entityOverrides = [
 
 | Key | Default | Effect |
 | --- | --- | --- |
-| `ambientBehaviors` | `true` | Enables idle expressions, on mobs and heads |
+| `ambientBehaviors` | `true` | Enables idle expressions on mobs, heads, and boats |
 | `ambientMinTicks` | `200` | Minimum idle interval |
 | `ambientMaxTicks` | `800` | Maximum idle interval |
 | `ambientBehaviorPool` | blink, cross-eye, side-eye, stare | Idle expression choices |
@@ -174,13 +176,13 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 
 Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Apart from Ice and Fire Community Edition's, they are unverified against 1.21.1 releases of those mods. Their definitions may need adjusting when their models change.
 
-The 77 bundled Minecraft definitions all select 1.21.1 and are enabled, including the player and armor stand. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
+The 79 bundled Minecraft definitions all select 1.21.1 and are enabled, including the player, armor stand, boat, and chest boat. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
-Resource packs can replace eye textures and item models.
+Resource packs replace eye textures/item models.
 
 ## Creative eye picker
 
-The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
+Picker and `/sg` require creative/operator level 2; rebind keys under **Options > Controls > Some Googly Eyes**.
 
 | Key | Action |
 | --- | --- |
@@ -211,7 +213,7 @@ Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching
 <game directory>/somegoogly-export/data/<namespace>/eyes/<entity path>.json
 ```
 
-It does not change the world. Both exports replace only the authored ages and preserve the other loaded age entries, including disabled entries; export-all includes both adult and baby drafts when both have saved eyes. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
+It does not change the world. Both exports preserve untouched ages, including disabled entries; export-all includes saved adult and baby drafts. Both exports declare Minecraft definitions with the exact game version and other mods' definitions with a range spanning that mod's current minor release.
 
 ### Test mobs
 
@@ -240,8 +242,8 @@ Color channels range from 0 to 1.
 
 ## Limitations
 
-- A harvested eye keeps one appearance, not each eye's.
+- Harvests keep one appearance.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Loader GameTest totals are listed in `orientation-code.md`. Physical-client checks are manual: attachments, expressions, items, head eyes, protection vetoes, picker exports, anger retracking, reload cleanup, GeckoLib, and 1.20.1 save migration.
-- The modifier recipe may not show in recipe viewers.
+- Loader GameTest totals are listed in `orientation-code.md`. Manual client checks cover attachments, expressions, items/heads/boats, protection, picker exports, retracking/reloads, GeckoLib, and save migration.
+- Recipe viewers may omit modifiers.

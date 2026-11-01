@@ -16,7 +16,6 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -35,6 +34,51 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public final class ForgeClientBootstrap {
 
     private ForgeClientBootstrap() {
+    }
+
+    /**
+     * Forge's event exposes renderers per type but not the set of types that have one, so walk the
+     * entity-type registry. The getter's living bound is generic only; non-living renderers come back too.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
+        ClientRenderLayers.clearCaches();
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            ClientRenderLayers.install(event.getPlayerSkin(skin));
+        }
+        for (EntityType entityType : BuiltInRegistries.ENTITY_TYPE) {
+            EntityRenderer<?> renderer = event.getEntityRenderer(entityType);
+            if (renderer != null) {
+                ClientRenderLayers.install(renderer);
+            }
+        }
+    }
+
+    private static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        ClientLifecycle.tick();
+    }
+
+    private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onEntityRemoved(event.getEntity());
+        }
+    }
+
+    private static void onItemTooltip(ItemTooltipEvent event) {
+        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
+    }
+
+    private static void onLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onLevelChanged();
+        }
+    }
+
+    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientLifecycle.onDisconnect();
     }
 
     /** Register the client config and every client-side Forge listener. */
@@ -60,31 +104,8 @@ public final class ForgeClientBootstrap {
         }
     }
 
-    /**
-     * Forge's event exposes renderers per type but not the set of types that have one, so walk the
-     * entity-type registry. The getter's living bound is generic only; non-living renderers come back too.
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
-        ClientRenderLayers.clearCaches();
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            ClientRenderLayers.install(event.getPlayerSkin(skin));
-        }
-        for (EntityType entityType : BuiltInRegistries.ENTITY_TYPE) {
-            EntityRenderer<?> renderer = event.getEntityRenderer(entityType);
-            if (renderer != null) {
-                ClientRenderLayers.install(renderer);
-            }
-        }
-    }
-
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
         GooglyClientCommands.register(event.getDispatcher());
-    }
-
-    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
-                ModContent.SLIMY_EYE.get());
     }
 
     private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {
@@ -94,37 +115,15 @@ public final class ForgeClientBootstrap {
                         graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 
+    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
+                ModContent.SLIMY_EYE.get());
+    }
+
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(PickerKeys.LOCK);
         event.register(PickerKeys.PART_NEXT);
         event.register(PickerKeys.PART_PREV);
         event.register(PickerKeys.TOGGLE);
-    }
-
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
-        ClientLifecycle.tick();
-    }
-
-    private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
-            ClientEyeRuntime.onEntityRemoved(living);
-        }
-    }
-
-    private static void onItemTooltip(ItemTooltipEvent event) {
-        EyeItemProperties.appendHeadTooltip(event.getItemStack(), event.getToolTip());
-    }
-
-    private static void onLevelUnload(LevelEvent.Unload event) {
-        if (event.getLevel().isClientSide()) {
-            ClientEyeRuntime.onLevelChanged();
-        }
-    }
-
-    private static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        ClientLifecycle.onDisconnect();
     }
 }

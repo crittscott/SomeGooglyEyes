@@ -6,12 +6,13 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-/** Loader-neutral owner of mob, placed-head, and framed-item eye simulations and their lifecycle. */
+/** Loader-neutral owner of mob, boat, placed-head, and framed-item eye simulations and their lifecycle. */
 public final class ClientEyeRuntime {
 
     /** Evict a tracker once it has gone unrendered for more than this many client ticks. */
@@ -32,6 +33,7 @@ public final class ClientEyeRuntime {
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
     private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
+    private static final BoatEyeAnimations BOATS = new BoatEyeAnimations();
     private static final Map<ItemFrame, ItemEyes> FRAMES = new HashMap<>();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, SkullEyes> SKULLS = new HashMap<>();
@@ -46,10 +48,17 @@ public final class ClientEyeRuntime {
     record ReceivedBehavior(EyeBehavior behavior, int duration, long seed, long startedAt) {
     }
 
+    /** The current boat layout, rebuilt only when its state, geometry, or definition changes. */
+    @Nullable
+    public static ItemEyes boatEyes(Boat boat) {
+        return BOATS.get(boat);
+    }
+
     /** Drop render simulations while retaining entity-lifetime reports. */
     public static void clear() {
         GuiItemEyes.clear();
         HandItemEyes.clear();
+        BOATS.clear();
         FRAMES.clear();
         SKULLS.clear();
         TRACKERS.clear();
@@ -60,7 +69,7 @@ public final class ClientEyeRuntime {
         ANGRY.clear();
     }
 
-    /** The client-tick counter this runtime advances once per {@link #tick(boolean)}. */
+    /** The client-tick counter this runtime advances once per {@link #tick(Level, boolean)}. */
     public static int clientTicks() {
         return clientTicks;
     }
@@ -105,11 +114,12 @@ public final class ClientEyeRuntime {
     }
 
     /** Forget a removed entity's simulation and server-reported anger. */
-    public static void onEntityRemoved(LivingEntity living) {
-        HandItemEyes.remove(living.getUUID());
-        TRACKERS.remove(living);
-        ANGRY.remove(living.getId());
-        BEHAVIORS.remove(living);
+    public static void onEntityRemoved(Entity entity) {
+        BOATS.remove(entity);
+        HandItemEyes.remove(entity.getUUID());
+        TRACKERS.remove(entity);
+        ANGRY.remove(entity.getId());
+        BEHAVIORS.remove(entity);
     }
 
     /** Forget simulations and anger when the client replaces or unloads its level. */
@@ -195,17 +205,17 @@ public final class ClientEyeRuntime {
      * disables simulation while there is no level or the game is paused. A head's eyes are also dropped
      * when its eye state has changed, to be rebuilt from the new state when it next renders.
      */
-    public static void tick(boolean simulate) {
+    public static void tick(@Nullable Level level, boolean simulate) {
         clientTicks++;
-        if (!simulate) {
+        if (!simulate || level == null) {
             return;
         }
         tickBehaviors();
-        ClientLevel level = Minecraft.getInstance().level;
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         if (!frameAnimationEnabled()) {
             FRAMES.clear();
         }
+        BOATS.tick(level, level.getGameTime(), true, behaviors);
         Iterator<Map.Entry<ItemFrame, ItemEyes>> frames = FRAMES.entrySet().iterator();
         while (frames.hasNext()) {
             Map.Entry<ItemFrame, ItemEyes> entry = frames.next();

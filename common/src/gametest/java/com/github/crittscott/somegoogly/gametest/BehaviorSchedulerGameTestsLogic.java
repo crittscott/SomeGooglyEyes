@@ -764,7 +764,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
                     "replacing a render tracker preserves expression progress");
-            ClientEyeRuntime.tick(false);
+            ClientEyeRuntime.tick(helper.getLevel(), false);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
                     "paused client ticks do not advance expression time");
             ClientEyeRuntime.clear();

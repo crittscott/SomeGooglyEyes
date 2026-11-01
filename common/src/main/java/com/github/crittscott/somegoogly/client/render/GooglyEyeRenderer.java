@@ -11,13 +11,13 @@ import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 /**
  * The mod's one eye-drawing path: mob eyes for both render layers (the vanilla {@link LayerGooglyEyes}
@@ -35,6 +35,11 @@ import org.joml.Vector3f;
  */
 public final class GooglyEyeRenderer {
 
+    // Reused on the render thread; each eye finishes its draw before the next one starts.
+    private static final float[] CORNEA = new float[3];
+    private static final Matrix3f GRAVITY_POSE = new Matrix3f();
+    private static final float[] IRIS = new float[3];
+
     // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3).
     private static final ResourceLocation TEX = ResourceLocation.fromNamespaceAndPath(
@@ -45,44 +50,20 @@ public final class GooglyEyeRenderer {
     private GooglyEyeRenderer() {
     }
 
-    // Scratch space reused by captureGravity across every eye, every frame: the render thread is
-    // single-threaded and one call finishes before the next starts (mirrors GooglyTracker's static
-    // INFLUENCE), so mutating these in place instead of allocating fresh JOML objects is safe.
-    private static final Matrix3f GRAVITY_POSE = new Matrix3f();
-    private static final Vector3f GRAVITY_DOWN = new Vector3f();
-    // Per-eye color scratch for renderEye, under the same single-threaded reasoning.
-    private static final float[] CORNEA = new float[3];
-    private static final float[] IRIS = new float[3];
-
     /**
      * Record world-down in this eye's pupil plane for the next physics tick, using the eye's fully
      * composed animated pose. The result is independent of camera orientation and uses the tracker
      * simulation's coordinate convention.
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
-        // The entity pose here is local → world (the view/camera rotation lives in RenderSystem's
-        // model-view matrix, not the entity pose stack), so world-down maps into the eye's pupil
-        // plane straight through the pose's inverse.
         GRAVITY_POSE.set(pose.last().pose());
-        GRAVITY_POSE.invert();
-        GRAVITY_DOWN.set(0F, eyeInfo.guiGravity ? 1F : -1F, 0F);
-        GRAVITY_POSE.transform(GRAVITY_DOWN);
-        if (eyeInfo.itemGravity || eyeInfo.guiGravity) {
-            GRAVITY_DOWN.normalize();
-        }
-        eyeInfo.gravX = -GRAVITY_DOWN.x;
-        eyeInfo.gravY = -GRAVITY_DOWN.y;
+        eyeInfo.capturePose(GRAVITY_POSE, eyeInfo.guiGravity ? null
+                : Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
     }
 
-    /**
-     * Capture mounted-item gravity before expression scaling. Normalize the full down vector to remove
-     * the item's uniform display scale while retaining a horizontal eye's zero in-plane gravity.
-     */
+    /** Capture a mounted item's pose before expression scaling, removing its display scale. */
     public static void captureItemGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         captureGravity(pose, eyeInfo);
-        GRAVITY_DOWN.normalize();
-        eyeInfo.gravX = -GRAVITY_DOWN.x;
-        eyeInfo.gravY = -GRAVITY_DOWN.y;
     }
 
     /**

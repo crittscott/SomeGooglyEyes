@@ -2,23 +2,25 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
-import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 /**
- * One item presentation's loose eye or configured head-eye layout and ambient expressions. Its identity and
+ * One presentation's loose eye or configured eye layout and ambient expressions. Its identity and
  * supplied clock determine expression age; physics is local and disposable. The renderer supplies gravity.
  */
 public final class ItemEyes {
@@ -38,7 +40,11 @@ public final class ItemEyes {
     public final HeadInfo helper;
     private final EyeInfluence influence = new EyeInfluence();
     int lastRenderTick;
+    private long motionTick = Long.MIN_VALUE;
+    @Nullable
+    private Entity owner;
     public final int[] parts;
+    private double prevX, prevY, prevZ;
     private List<EyeBehavior> pool = List.of();
     private final RandomSource rand;
     private long scheduledSlot = Long.MIN_VALUE;
@@ -53,18 +59,19 @@ public final class ItemEyes {
     private long startsAt;
 
     public ItemEyes(UUID uuid) {
-        this(uuid, null, null, null);
+        this(uuid, null, null, null, new int[]{0});
     }
 
     private ItemEyes(UUID uuid, @Nullable ResourceLocation entity, @Nullable Snapshot snapshot,
-                       @Nullable HeadInfo helper) {
+                       @Nullable HeadInfo helper, int[] parts) {
         seed = uuid.getMostSignificantBits() ^ Long.rotateLeft(uuid.getLeastSignificantBits(), 1);
         rand = RandomSource.create(seed);
         this.entity = entity;
         this.snapshot = snapshot;
         this.helper = helper;
         eye.prevDeltaY = eye.deltaY = 0F;
-        parts = helper == null ? new int[]{0} : SkullEyeState.headParts(entity, helper);
+        eye.itemGravity = true;
+        this.parts = parts.clone();
         if (helper == null) {
             eyes = new GooglyTracker.EyeInfo[][]{{eye}};
         } else {
@@ -96,7 +103,16 @@ public final class ItemEyes {
         if (!helper.hasConfig() || SkullEyeState.headParts(entity, helper).length == 0) {
             return null;
         }
-        return new ItemEyes(uuid, entity, snapshot, helper);
+        return new ItemEyes(uuid, entity, snapshot, helper, SkullEyeState.headParts(entity, helper));
+    }
+
+    /** Build a validated, enabled layout without item or skull eligibility assumptions. */
+    public static ItemEyes create(UUID uuid, ResourceLocation entity, Snapshot snapshot, HeadInfo helper) {
+        if (!helper.hasConfig()) {
+            throw new IllegalArgumentException("An ambient layout must contain eyes");
+        }
+        return new ItemEyes(uuid, entity, snapshot, helper,
+                IntStream.range(0, helper.getHeadCount()).toArray());
     }
 
     /** Item changes that affect layout or appearance replace a head simulation. */
@@ -116,14 +132,37 @@ public final class ItemEyes {
      * slots are at least the longest expression, so even very short configured intervals cannot overlap.
      */
     public void tick(long gameTime, BehaviorSettings behaviors) {
+        tick(gameTime, behaviors, null);
+    }
+
+    /** Step with the world's actual owner motion; render poses supply gravity and the eye-plane basis. */
+    public void tick(long gameTime, BehaviorSettings behaviors, @Nullable Entity owner) {
+        boolean resetMotion = this.owner != owner || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;
+        this.owner = owner;
+        motionTick = gameTime;
+        double mx = owner == null || resetMotion ? 0D : owner.getX() - prevX;
+        double my = owner == null || resetMotion ? 0D : owner.getY() - prevY;
+        double mz = owner == null || resetMotion ? 0D : owner.getZ() - prevZ;
+        float yaw = owner instanceof LivingEntity living ? living.getYHeadRot() : owner == null ? 0F : owner.getYRot();
+        float pitch = owner == null ? 0F : owner.getXRot();
+        if (owner != null) {
+            prevX = owner.getX();
+            prevY = owner.getY();
+            prevZ = owner.getZ();
+        }
         if (settings != behaviors) {
             settings = behaviors;
-            int count = 0;
-            for (int part : parts) {
-                count += eyes[part].length;
+            boolean paired = false;
+            if (helper != null) {
+                for (int part : parts) {
+                    for (int index = 0; index < eyes[part].length; index++) {
+                        int target = helper.placementAt(part, index).crossTarget();
+                        paired |= target >= 0 && target < eyes[part].length && target != index;
+                    }
+                }
             }
-            boolean paired = count > 1;
-            pool = behaviors.pool().stream().filter(b -> paired || b != EyeBehavior.CROSS_EYE).toList();
+            boolean hasPartner = paired;
+            pool = behaviors.pool().stream().filter(b -> hasPartner || b != EyeBehavior.CROSS_EYE).toList();
             slotTicks = Math.max(behaviors.meanTicks(), pool.stream()
                     .mapToInt(EyeBehavior::defaultDuration).max().orElse(1));
             scheduledSlot = Long.MIN_VALUE;
@@ -161,7 +200,10 @@ public final class ItemEyes {
                 }
                 GooglyTracker.EyeInfo pupil = eyes[part][index];
                 pupil.applyOverlays(influence, 1F, 1F, 0F, 0F);
-                pupil.update(rand, 0F, 0F, 0D, 0D, 0D,
+                if (resetMotion) {
+                    pupil.resetMotion();
+                }
+                pupil.update(rand, yaw, pitch, mx, my, mz,
                         influence.anchorX, influence.anchorY, influence.stiffness, 0F);
             }
         }

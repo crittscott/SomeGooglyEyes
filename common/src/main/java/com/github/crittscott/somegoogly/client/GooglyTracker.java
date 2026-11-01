@@ -8,6 +8,8 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -15,9 +17,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.joml.Matrix3f;
+import org.joml.Matrix3fc;
+import org.joml.Quaternionfc;
+import org.joml.Vector3f;
 
 /**
  * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
@@ -257,7 +260,7 @@ public class GooglyTracker {
         /** See {@link #gravX}. */
         public float gravY = -1F;
 
-        /** Mounted head items remove display scale from the gravity direction captured at render. */
+        /** World item and boat eyes remove display scale and project owner acceleration through their captured pose. */
         public boolean itemGravity;
 
         /** GUI coordinates grow downward; captured gravity follows the icon instead of the world. */
@@ -285,6 +288,12 @@ public class GooglyTracker {
         public float irisTintAmount, prevIrisTintAmount;
         /** This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step. */
         public float creepyPhaseOffset;
+
+        private boolean capturedPose;
+        private final Matrix3f inversePose = new Matrix3f();
+        /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
+        private final Vector3f worldRight = new Vector3f();
+        private final Vector3f worldUp = new Vector3f();
 
         // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
         private double prevMotionX;
@@ -325,12 +334,36 @@ public class GooglyTracker {
             irisTintAmount = irisTint;
         }
 
+        /** Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera. */
+        public void capturePose(Matrix3fc pose, @Nullable Quaternionfc cameraOrientation) {
+            if (cameraOrientation == null) {
+                inversePose.set(pose).invert();
+            } else {
+                inversePose.rotation(cameraOrientation).mul(pose).invert();
+            }
+            worldRight.set(inversePose.m00(), inversePose.m10(), inversePose.m20());
+            worldUp.set(inversePose.m01(), inversePose.m11(), inversePose.m21());
+            if (itemGravity || guiGravity) {
+                worldRight.normalize();
+                worldUp.normalize();
+            }
+            float sign = guiGravity ? -1F : 1F;
+            gravX = sign * worldRight.y;
+            gravY = sign * worldUp.y;
+            capturedPose = true;
+        }
+
+        /** Re-prime input differentiation after an owner change or a gap in simulation. */
+        public void resetMotion() {
+            primed = false;
+        }
+
         /**
          * Advance the pupil simulation by one tick and update its previous/current render positions.
          * Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.
          *
          * @param rand      randomness source (per-tracker / per-held-eye)
-         * @param headYaw   the holder's head yaw this tick ({@code getYHeadRot})
+         * @param headYaw   the living holder's head yaw, or the boat's yaw, this tick
          * @param headPitch the holder's pitch this tick ({@code getXRot})
          * @param motionX   the holder's X position delta this tick
          * @param motionY   the holder's Y position delta this tick
@@ -390,9 +423,15 @@ public class GooglyTracker {
             // as the eye turns to face up/down (world-down leaves the pupil plane). The pseudo-forces stay
             // eye-local — only gravity's resting direction is a world-frame quantity. Default (0, -1) =
             // eye-local down.
-            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel - R_K_LIN * horizRight
+            float linearX = itemGravity && capturedPose
+                    ? R_K_LIN * worldRight.dot((float) laccx, (float) laccy, (float) laccz)
+                    : -R_K_LIN * horizRight;
+            float linearY = itemGravity && capturedPose
+                    ? R_K_VERT * worldUp.dot((float) laccx, (float) laccy, (float) laccz)
+                    : -R_K_VERT * (float) laccy;
+            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel + linearX
                     + (float) rand.nextGaussian() * R_NOISE;
-            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel - R_K_VERT * (float) laccy
+            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel + linearY
                     + (float) rand.nextGaussian() * R_NOISE;
             fx = Mth.clamp(fx, -R_FORCE_CLAMP, R_FORCE_CLAMP);
             fy = Mth.clamp(fy, -R_FORCE_CLAMP, R_FORCE_CLAMP);
