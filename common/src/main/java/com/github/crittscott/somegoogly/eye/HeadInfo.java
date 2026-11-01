@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.eye;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-
 import java.util.List;
 
 /**
@@ -21,14 +20,21 @@ public final class HeadInfo {
         this.heads = headsOfVariant(config, variantIndex);
     }
 
+    /** Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes. */
+    public HeadInfo(RuntimeConfig config, int variantIndex, String attachToken) {
+        this.entityConfig = config;
+        List<HeadConfig> selected = headsOfVariant(config, variantIndex);
+        this.heads = selected == null ? null : selected.stream()
+                .filter(head -> attachToken.equals(head.attachPoint)).toList();
+    }
+
     /** The selected eye's config appearance. */
     public EyeAppearance appearanceAt(int headIndex, int eyeIndex) {
         return eyeAt(headIndex, eyeIndex).appearance();
     }
 
-    /** Whether this view contains a usable enabled placement variant. */
-    public boolean hasConfig() {
-        return entityConfig != null && entityConfig.enabled && heads != null && !heads.isEmpty();
+    private EyeDefinition eyeAt(int headIndex, int eyeIndex) {
+        return heads.get(headIndex).eyes.get(eyeIndex);
     }
 
     /** The selected head's model attachment token. */
@@ -51,6 +57,18 @@ public final class HeadInfo {
         return hasConfig() ? heads.size() : 0;
     }
 
+    /** Whether this view contains a usable enabled placement variant. */
+    public boolean hasConfig() {
+        return entityConfig != null && entityConfig.enabled && heads != null && !heads.isEmpty();
+    }
+
+    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
+        if (config == null || config.variants.isEmpty()) {
+            return null;
+        }
+        return config.variants.get(variantIndex).heads;
+    }
+
     /** The selected variant's head list; its identity invalidates per-mob trackers. */
     public List<HeadConfig> headsRef() {
         return heads;
@@ -59,16 +77,5 @@ public final class HeadInfo {
     /** The selected eye's placement. */
     public EyePlacement placementAt(int headIndex, int eyeIndex) {
         return eyeAt(headIndex, eyeIndex).placement();
-    }
-
-    private EyeDefinition eyeAt(int headIndex, int eyeIndex) {
-        return heads.get(headIndex).eyes.get(eyeIndex);
-    }
-
-    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
-        if (config == null || config.variants.isEmpty()) {
-            return null;
-        }
-        return config.variants.get(variantIndex).heads;
     }
 }

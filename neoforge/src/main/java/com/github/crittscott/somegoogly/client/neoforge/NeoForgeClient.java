@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -15,10 +15,6 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -29,6 +25,9 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
 /** Physical-client registration for NeoForge client services. */
 public final class NeoForgeClient {
@@ -51,8 +50,8 @@ public final class NeoForgeClient {
     }
 
     private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
-            ClientEyeRuntime.onEntityRemoved(living);
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onEntityRemoved(event.getEntity());
         }
     }
 

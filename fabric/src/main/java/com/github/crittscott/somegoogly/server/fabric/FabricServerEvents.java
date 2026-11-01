@@ -10,16 +10,19 @@ import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
+import java.util.HashSet;
+import java.util.Set;
+import javax.annotation.Nullable;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
@@ -31,14 +34,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
-
-import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
-import net.minecraft.world.entity.player.Player;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -77,8 +76,8 @@ public final class FabricServerEvents {
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         // Fabric's use callbacks fire before vanilla's spectator check, so callers must make it themselves.
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
-                !player.isSpectator() && entity instanceof LivingEntity living
-                        ? EyeItemService.interact(player, level, hand, living)
+                !player.isSpectator()
+                        ? EyeItemService.interact(player, level, hand, entity)
                         : InteractionResult.PASS);
         UseBlockCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
@@ -131,9 +130,7 @@ public final class FabricServerEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
-            if (entity instanceof LivingEntity living) {
-                ServerServices.onStartTracking(living, player);
-            }
+            ServerServices.onStartTracking(entity, player);
         });
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity living) {

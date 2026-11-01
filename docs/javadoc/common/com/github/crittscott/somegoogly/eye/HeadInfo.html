@@ -108,6 +108,12 @@ loadScripts(document, 'script');</script>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int)" class="member-name-link">HeadInfo</a><wbr>(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
  int&nbsp;variantIndex)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int,java.lang.String)" class="member-name-link">HeadInfo</a><wbr>(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ int&nbsp;variantIndex,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attachToken)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
+</div>
 </div>
 </section>
 </li>
@@ -189,6 +195,15 @@ loadScripts(document, 'script');</script>
  int&nbsp;variantIndex)</span></div>
 </section>
 </li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int,java.lang.String)">
+<h3>HeadInfo</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">HeadInfo</span><wbr><span class="parameters">(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ int&nbsp;variantIndex,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attachToken)</span></div>
+<div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -203,13 +218,6 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></span>&nbsp;<span class="element-name">appearanceAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
 <div class="block">The selected eye's config appearance.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="hasConfig()">
-<h3>hasConfig</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasConfig</span>()</div>
-<div class="block">Whether this view contains a usable enabled placement variant.</div>
 </section>
 </li>
 <li>
@@ -239,6 +247,13 @@ loadScripts(document, 'script');</script>
 <h3>getHeadCount</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getHeadCount</span>()</div>
 <div class="block">How many heads the selected variant places eyes on; 0 when <a href="#hasConfig()"><code>hasConfig()</code></a> is false.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="hasConfig()">
+<h3>hasConfig</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasConfig</span>()</div>
+<div class="block">Whether this view contains a usable enabled placement variant.</div>
 </section>
 </li>
 <li>
