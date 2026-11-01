@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -58,15 +60,25 @@ public final class EyeInspector {
                 || !player.isShiftKeyDown() || !holdingEye(player)) {
             return;
         }
-        EntityHitResult target = LookTarget.livingHitInCrosshair(player, REACH);
+        EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
+                entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
         if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
                 && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
             player.displayClientMessage(verdict(skull), true);
         } else if (target != null) {
-            player.displayClientMessage(verdict((LivingEntity) target.getEntity()), true);
+            player.displayClientMessage(target.getEntity() instanceof Boat boat
+                    ? verdict(boat) : verdict((LivingEntity) target.getEntity()), true);
         }
+    }
+
+    private static Component verdict(Boat boat) {
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
+        if (!BoatEyeLayout.isEligible(boat, ClientEyeConfigs.get(type, false))) {
+            return cannot();
+        }
+        return EyeState.hasEyes(boat) ? alreadyHas() : canHave();
     }
 
     private static Component verdict(LivingEntity target) {

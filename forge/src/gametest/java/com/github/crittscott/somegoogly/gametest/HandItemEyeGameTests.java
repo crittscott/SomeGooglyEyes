@@ -20,6 +20,16 @@ public final class HandItemEyeGameTests {
     }
 
     @GameTest(template = TEMPLATE)
+    public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
+        HandItemEyeGameTestsLogic.handEyesFollowWorldGravityAcrossViews(helper);
+    }
+
+    @GameTest(template = TEMPLATE)
+    public static void handEyesReactToHolderMotion(GameTestHelper helper) {
+        HandItemEyeGameTestsLogic.handEyesReactToHolderMotion(helper);
+    }
+
+    @GameTest(template = TEMPLATE)
     public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesReplaceContentsAndHonorGates(helper);
     }

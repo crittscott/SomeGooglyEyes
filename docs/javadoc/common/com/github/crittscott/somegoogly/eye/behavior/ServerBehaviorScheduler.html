@@ -238,7 +238,7 @@ loadScripts(document, 'script');</script>
 <h3>onEyesGained</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEyesGained</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
 <div class="block">Promote <code>mob</code> into the per-tick-walked <code>ACTIVE</code> set now that it's known to have eyes.
- A no-op if nobody is currently tracking it (no <code>ServerBehaviorScheduler.MobState</code> to promote) â€” <a href="#onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)"><code>onStartTracking(net.minecraft.world.entity.LivingEntity, net.minecraft.server.level.ServerPlayer)</code></a> independently checks <a href="../state/EyeState.html#hasEyes(net.minecraft.world.entity.LivingEntity)"><code>EyeState.hasEyes(net.minecraft.world.entity.LivingEntity)</code></a> for that case. Called from
+ A no-op if nobody is currently tracking it (no <code>ServerBehaviorScheduler.MobState</code> to promote) â€” <a href="#onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)"><code>onStartTracking(net.minecraft.world.entity.LivingEntity, net.minecraft.server.level.ServerPlayer)</code></a> independently checks <a href="../state/EyeState.html#hasEyes(net.minecraft.world.entity.Entity)"><code>EyeState.hasEyes(net.minecraft.world.entity.Entity)</code></a> for that case. Called from
  <a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a> wherever the persisted has-eyes flag turns on.</div>
 </section>
 </li>

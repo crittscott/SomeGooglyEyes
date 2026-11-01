@@ -4,8 +4,6 @@
 
 # Some Googly Eyes — code orientation
 
-`orientation-player.md` covers player behavior.
-
 ## Project shape
 
 Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 17, Minecraft 1.20.1.
@@ -23,9 +21,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, metadata |
 | `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common uses loader adapters or `@ExpectPlatform`; loader packages avoid split packages.
-
-The server owns gameplay and authorization; the client owns rendering and picker UI.
+Server owns gameplay/authorization; client owns rendering/picker UI.
 
 `ModContent` binds items, Optometrist, a creative tab, and recipe serializers via loader registrars. `SlimyEyeRecipe` copies eye NBT.
 
@@ -37,7 +33,7 @@ Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload by res
 
 ## Entity and item state
 
-`EyeState` is the entity-eye-state boundary; its `Snapshot` is the whole unit for transitions, sync, and packet application, never partial. NBT access goes through `EntityPersistentData`: Forge's native persistent compound, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the `somegoogly:persistentData` compound the 0.8.2 Fabric release saved into it; a non-compound value is set aside there and logged.
+`EyeState` serves living entities and supported vanilla boats; its `Snapshot` is the whole unit for transitions, sync, and packet application, never partial. NBT access goes through `EntityPersistentData`: Forge's native persistent compound, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the `somegoogly:persistentData` compound the 0.8.2 Fabric release saved into it; a non-compound value is set aside there and logged.
 
 Persistent entity keys:
 
@@ -69,9 +65,9 @@ Resolvers cache by model identity, clear on renderer/runtime reset, and replay `
 
 The common `somegoogly.accesswidener` serves common and both loaders; Forge remaps it to an access transformer.
 
-GeckoLib is optional: `gecko/src/main/java` is `srcDir`-ed into each loader against its compile-only GeckoLib; common enumerates bones through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones` only once GeckoLib is found; a failed attach can't block load.
+Optional GeckoLib: `gecko/src/main/java` is `srcDir`-ed into each loader against its compile-only GeckoLib; common enumerates bones through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones` only once GeckoLib is found; a failed attach can't block load.
 
-`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. Loader boat Mixins draw before the hull pose is popped. `ItemEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -83,11 +79,11 @@ Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworkin
 
 ## Picker and commands
 
-The client owns picker drafts and previews; the server owns freezing, spawning, movement, export. `ModelPartVocabulary` supplies one attachment grammar to editing and bulk export. `PickerState.DraftSession` keeps drafts by type and age, seeded once; both exports `ConfigFile.overlay` authored ages onto untouched ones (disabled buckets included), canonicalizing only copied base tokens. `EyeConfigLimits.Issue` gives translatable feedback and log diagnostics.
+Client owns picker drafts/previews; server owns freezing/spawning/movement/export. `ModelPartVocabulary` supplies one attachment grammar to editing and bulk export. `PickerState.DraftSession` keeps drafts by type and age, seeded once; both exports `ConfigFile.overlay` authored ages onto untouched ones (disabled buckets included), canonicalizing only copied base tokens. `EyeConfigLimits.Issue` gives translatable feedback and log diagnostics.
 
-`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization and throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection compares actual hit locations. `PickerSpawnService` finalizes through `MobSpawning`, inserts each entity/passenger with checked results, discards partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures. Both use `ConfigFile.exportVersion` and `overlay`, replacing authored ages while retaining untouched definitions, including disabled ones; copied tokens are canonicalized.
+`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization and throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection compares actual hit locations. `PickerSpawnService` finalizes through `MobSpawning`, inserts each entity/passenger with checked results, discards partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
 
-Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side; Fabric forwards them explicitly, since its client root would capture them.
+`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards server branches explicitly.
 
 ## Loader integration
 
@@ -97,7 +93,7 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-GameTest scenarios: Fabric 158, Forge 158. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
+GameTest scenarios: Fabric 172, Forge 172. Item coverage: twelve frame, seven GUI, seven hand scenarios; thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
 
 ## Operational boundaries
 

@@ -16,6 +16,7 @@
     "SkullBlockEntityDataMixin"
   ],
   "client": [
+    "BoatRendererMixin",
     "ClientLevelLifecycleMixin",
     "ContainerItemEyesMixin",
     "GuiItemEyesMixin",

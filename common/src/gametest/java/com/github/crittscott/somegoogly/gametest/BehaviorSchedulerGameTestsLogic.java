@@ -11,6 +11,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -40,8 +41,6 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.util.EnumSet;
 
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
@@ -760,7 +759,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
                     "replacing a render tracker preserves expression progress");
-            ClientEyeRuntime.tick(false);
+            ClientEyeRuntime.tick(helper.getLevel(), false);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
                     "paused client ticks do not advance expression time");
             ClientEyeRuntime.clear();

@@ -26,9 +26,11 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed on Forge, most of its mob heads work the same way.
 
+**Decorate your boat**: Vanilla boats and chest boats, including bamboo rafts, can receive a Slimy Eye and play ambient expressions. Optometrist shears remove their eyes. Eyes survive world saves, but breaking and replacing a boat resets them.
+
 ## Eye potential
 
-Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see whether that mob can have eyes at all.
+Don't waste your slimy eye: hold an eye and sneak while targeting a mob or vanilla boat to see whether it can have eyes at all.
 
 ## Configuration
 

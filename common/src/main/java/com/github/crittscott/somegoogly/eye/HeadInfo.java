@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.eye;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
-
 import java.util.List;
 
 /**
@@ -19,6 +18,14 @@ public final class HeadInfo {
     public HeadInfo(RuntimeConfig config, int variantIndex) {
         this.entityConfig = config;
         this.heads = headsOfVariant(config, variantIndex);
+    }
+
+    /** Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes. */
+    public HeadInfo(RuntimeConfig config, int variantIndex, String attachToken) {
+        this.entityConfig = config;
+        List<HeadConfig> selected = headsOfVariant(config, variantIndex);
+        this.heads = selected == null ? null : selected.stream()
+                .filter(head -> attachToken.equals(head.attachPoint)).toList();
     }
 
     /** The selected eye's config appearance. */

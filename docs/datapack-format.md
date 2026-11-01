@@ -35,6 +35,8 @@ A head groups eyes onto one model part:
 
 The easiest way to discover a mob's part names is the picker (`/sg list parts` on a chosen mob).
 
+Vanilla boats use `boat.json` and `chest_boat.json`, each covering every wood. Exact attachment tokens are `hull` for wooden boats and `raft` for bamboo, in composed hull-model space. Weighted selection considers matching geometry only. Bundled layouts have two outward-facing eyes, one per side, without cross-eye partners. Boats accept Slimy Eyes rather than rolling spawn chance; their layouts are edited as JSON, not through the picker.
+
 ## Eye fields
 
 Every field, here and in entries, variants, and heads, is required; a file missing one is rejected and logged. The values shown are what a new picker eye starts with. All of placement and default appearance lives here — the eye *item* carries appearance overrides only, and reuses this placement when applied.

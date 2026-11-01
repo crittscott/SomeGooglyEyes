@@ -28,7 +28,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, the Slimy
@@ -66,9 +65,7 @@ public final class FabricClientEvents {
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
-            if (entity instanceof LivingEntity living) {
-                ClientEyeRuntime.onEntityRemoved(living);
-            }
+            ClientEyeRuntime.onEntityRemoved(entity);
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {

@@ -4,21 +4,21 @@
 
 # Some Googly Eyes — player-facing behavior
 
-What a player currently observes. `orientation-code.md` covers the code structure.
+`orientation-code.md` covers code structure.
 
-Some Googly Eyes animates eyes on living entities, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
+Some Googly Eyes animates eyes on living entities, vanilla boats, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
 
-Two items, one enchantment, and one creative tab are added. Datapacks place eyes on vanilla and modded mobs.
+Two items, one enchantment, one creative tab; datapacks place eyes on mobs.
 
 Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.92.11+1.20.1 or newer. Forge requires Forge 47.4.0 or newer within the 47 release line. Both loaders require Java 17; GeckoLib 4.7.4 or newer is an optional client dependency. Clients and servers need the same network version.
 
 ## Mobs with eyes
 
-By default, eligible mobs have a 5 percent chance to receive eyes when they spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
+Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
-Pupils wobble, bounce, and settle under gravity, movement, and head motion.
+Pupils respond to gravity, movement, and head motion.
 
 A sheared sheep's body eyes sit on its bare body until the wool regrows.
 
@@ -27,7 +27,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
 - sheared (sheep): bulge;
-- showing affection (an animal entering love mode, villagers breeding, an iron golem offering a flower, an ocelot gaining trust): love, the pupils swelling to twice their size, up to the rim;
+- showing affection (love mode, villager breeding, golem flowers, ocelot trust): pupils swell;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
@@ -47,7 +47,7 @@ Harvested eyes keep effective iris/cornea colors and glow, not species or placem
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+First-person loose eyes react to movement/hurt/heal; third-person eyes use world gravity and holder motion. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
 Worlds saved by the 0.8.2 release for Minecraft 1.20.1 open with their eyed mobs, eye items, and settings intact.
 
@@ -74,9 +74,11 @@ Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can 
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
+Vanilla boats, chest boats, and bamboo rafts start eyeless. Slimy Eyes apply two outward-facing eyes, one per side; Optometrist shears remove them and drop one eye for one durability. Eyes and applied appearance survive saves, not breaking into items. Successful use consumes boarding/cargo interaction. Boats use world gravity, owner motion, and ambient expressions; bundled eyes do not cross. Boat picker/admin editing and modded boats are unsupported.
+
 ## Checking a target
 
-While holding either eye item, sneak and aim at a living entity or placed head to see whether it:
+While holding either eye item, sneak and aim at a living entity, vanilla boat, or placed head to see whether it:
 
 - can receive eyes now;
 - already has eyes;
@@ -87,7 +89,7 @@ The check reaches about 16 blocks and stops at walls. Client settings that hide 
 
 ## Creative tab
 
-The Some Googly Eyes tab contains a Googly Eye, a Slimy Eye, and an Optometrist enchanted book. Creative eye items have no appearance overrides.
+The creative tab contains a Googly Eye, a Slimy Eye, and an Optometrist book. Creative eyes have no appearance overrides.
 
 ## Configuration
 
@@ -97,7 +99,7 @@ World settings are stored in:
 <world>/serverconfig/somegoogly-server.toml
 ```
 
-Forge applies edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away.
+Forge applies edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. `googlyEyesEnabled` changes reach connected players immediately.
 
 ### Spawn and harvest
 
@@ -176,11 +178,11 @@ Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Adventu
 
 74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; armadillo, bogged, and breeze target later versions, and the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
-Resource packs can replace eye textures and item models. There is no JEI plugin.
+Resource packs replace eye textures/item models. There is no JEI plugin.
 
 ## Creative eye picker
 
-The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
+Picker and `/sg` require creative/operator level 2; rebind keys under **Options > Controls > Some Googly Eyes**.
 
 | Key | Action |
 | --- | --- |
@@ -243,4 +245,4 @@ Color channels range from 0 to 1.
 - Applied player eyes are lost on death.
 - Harvested items keep one appearance shared by all eyes, not each eye's separate appearance.
 - Baby scaling, changing model variants, or updated third-party models may cause misplaced or missing eyes until their definitions are adjusted.
-- Fabric has 133 dedicated-server GameTests; Forge 133. Physical-client checks cover models, expressions, item rendering, harvesting and application, head eyes, protection vetoes, picker editing and export, anger across retracking, GeckoLib, the rendering switch, and migrating a real 0.8.2 Fabric save.
+- GameTest totals are in `orientation-code.md`. Models, expressions, items/boats/heads, protection, exports, retracking, GeckoLib, and real-save migration require client checks.

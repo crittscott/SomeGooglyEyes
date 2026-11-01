@@ -3,15 +3,14 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 
 /**
  * Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
@@ -23,27 +22,6 @@ public final class ClientRenderLayers {
             Collections.newSetFromMap(new WeakHashMap<>());
 
     private ClientRenderLayers() {
-    }
-
-    /**
-     * Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed by model, so
-     * before or after it.
-     */
-    public static void clearCaches() {
-        Resolvers.clearCaches();
-        SkullEyeRenderer.clearCaches();
-    }
-
-    /**
-     * Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
-     * ignored. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
-     * layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.
-     */
-    @SuppressWarnings("rawtypes")
-    public static void install(EntityRenderer<?> renderer) {
-        if (renderer instanceof LivingEntityRenderer livingRenderer) {
-            addLiving(livingRenderer);
-        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -60,5 +38,27 @@ public final class ClientRenderLayers {
             }
         }
         renderer.addLayer(eyes);
+    }
+
+    /**
+     * Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed by model, so
+     * before or after it.
+     */
+    public static void clearCaches() {
+        ClientEyeRuntime.clear();
+        Resolvers.clearCaches();
+        SkullEyeRenderer.clearCaches();
+    }
+
+    /**
+     * Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
+     * ignored. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
+     * layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.
+     */
+    @SuppressWarnings("rawtypes")
+    public static void install(EntityRenderer<?> renderer) {
+        if (renderer instanceof LivingEntityRenderer livingRenderer) {
+            addLiving(livingRenderer);
+        }
     }
 }

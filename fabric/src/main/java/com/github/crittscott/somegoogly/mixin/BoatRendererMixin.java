@@ -1,0 +1,24 @@
+package com.github.crittscott.somegoogly.mixin;
+
+import com.github.crittscott.somegoogly.client.render.BoatEyeRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.BoatRenderer;
+import net.minecraft.world.entity.vehicle.Boat;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+/** Draw hull-mounted eyes before vanilla restores the boat's composed model pose. */
+@Mixin(BoatRenderer.class)
+abstract class BoatRendererMixin {
+
+    @Inject(method = "render(Lnet/minecraft/world/entity/vehicle/Boat;FFLcom/mojang/blaze3d/vertex/PoseStack;"
+            + "Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 0))
+    private void somegoogly$drawBoatEyes(Boat boat, float yaw, float partialTick, PoseStack pose,
+                                         MultiBufferSource buffers, int light, CallbackInfo callback) {
+        BoatEyeRenderer.render(boat, partialTick, pose, buffers, light);
+    }
+}

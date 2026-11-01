@@ -122,15 +122,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">See <a href="#gravX"><code>gravX</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#irisScaleMul" class="member-name-link">irisScaleMul</a></code></div>
+<div class="col-first odd-row-color"><code>boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#guiGravity" class="member-name-link">guiGravity</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Love pupil size times the creepy pulse; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+<div class="block">GUI coordinates grow downward; captured gravity follows the icon instead of the world.</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#irisTintAmount" class="member-name-link">irisTintAmount</a></code></div>
+<div class="col-second even-row-color"><code><a href="#irisScaleMul" class="member-name-link">irisScaleMul</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Love pupil size times the creepy pulse; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#irisTintAmount" class="member-name-link">irisTintAmount</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">How far the pupil is blended toward <a href="GooglyTracker.html#ANGER_IRIS_COLOR"><code>GooglyTracker.ANGER_IRIS_COLOR</code></a>; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
+<div class="col-first even-row-color"><code>boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#itemGravity" class="member-name-link">itemGravity</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">World item and boat eyes remove display scale and project owner acceleration through their captured pose.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#lid" class="member-name-link">lid</a></code></div>
@@ -268,6 +278,17 @@ loadScripts(document, 'script');</script>
  caller derives on top of it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#capturePose(org.joml.Matrix3fc,org.joml.Quaternionfc)" class="member-name-link">capturePose</a><wbr>(org.joml.Matrix3fc&nbsp;pose,
+ org.joml.Quaternionfc&nbsp;cameraOrientation)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetMotion()" class="member-name-link">resetMotion</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Re-prime input differentiation after an owner change or a gap in simulation.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" class="member-name-link">update</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand,
  float&nbsp;headYaw,
  float&nbsp;headPitch,
@@ -383,6 +404,20 @@ loadScripts(document, 'script');</script>
 <h3>gravY</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">gravY</span></div>
 <div class="block">See <a href="#gravX"><code>gravX</code></a>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemGravity">
+<h3>itemGravity</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">itemGravity</span></div>
+<div class="block">World item and boat eyes remove display scale and project owner acceleration through their captured pose.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="guiGravity">
+<h3>guiGravity</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">guiGravity</span></div>
+<div class="block">GUI coordinates grow downward; captured gravity follows the icon instead of the world.</div>
 </section>
 </li>
 <li>
@@ -535,6 +570,22 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="capturePose(org.joml.Matrix3fc,org.joml.Quaternionfc)">
+<h3>capturePose</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">capturePose</span><wbr><span class="parameters">(org.joml.Matrix3fc&nbsp;pose,
+ @Nullable
+ org.joml.Quaternionfc&nbsp;cameraOrientation)</span></div>
+<div class="block">Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="resetMotion()">
+<h3>resetMotion</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetMotion</span>()</div>
+<div class="block">Re-prime input differentiation after an owner change or a gap in simulation.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)">
 <h3>update</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span><wbr><span class="parameters">(net.minecraft.util.RandomSource&nbsp;rand,
@@ -552,7 +603,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>rand</code> - randomness source (per-tracker / per-held-eye)</dd>
-<dd><code>headYaw</code> - the holder's head yaw this tick (<code>getYHeadRot</code>)</dd>
+<dd><code>headYaw</code> - the living holder's head yaw, or the boat's yaw, this tick</dd>
 <dd><code>headPitch</code> - the holder's pitch this tick (<code>getXRot</code>)</dd>
 <dd><code>motionX</code> - the holder's X position delta this tick</dd>
 <dd><code>motionY</code> - the holder's Y position delta this tick</dd>

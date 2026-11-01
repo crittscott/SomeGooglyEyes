@@ -47,11 +47,8 @@ public final class ForgeServerEvents {
      * gets first refusal — this handler consumes the event as soon as it acts.
      */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!(event.getTarget() instanceof LivingEntity living)) {
-            return;
-        }
         InteractionResult result = EyeItemService.interact(
-                event.getEntity(), event.getLevel(), event.getHand(), living);
+                event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
@@ -142,9 +139,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onStartTracking(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerServices.onStartTracking(living, (ServerPlayer) event.getEntity());
-        }
+        ServerServices.onStartTracking(event.getTarget(), (ServerPlayer) event.getEntity());
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {

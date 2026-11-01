@@ -122,7 +122,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#captureItemGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" class="member-name-link">captureItemGravity</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Capture a mounted item's pose before expression scaling, removing its display scale.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
@@ -135,12 +141,12 @@ loadScripts(document, 'script');</script>
  float&nbsp;irisScale,
  boolean&nbsp;glow,
  float&nbsp;partialTicks)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
  configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>irisScale</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
@@ -151,13 +157,13 @@ loadScripts(document, 'script');</script>
  float&nbsp;irisX,
  float&nbsp;irisY,
  boolean&nbsp;glow)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
  <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when <code>glow</code> is
  set, the same two parts again in the emissive render type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" class="member-name-link">renderEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" class="member-name-link">renderEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
@@ -168,18 +174,18 @@ loadScripts(document, 'script');</script>
  int&nbsp;headIndex,
  int&nbsp;eyeIndex,
  float&nbsp;partialTicks)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw a single eye, simulated by <code>eyeInfo</code>, applying both the per-mob (or per-head) <code>overrides</code>
  and the active behavior.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a>&nbsp;model,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  int&nbsp;overlay,
  <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
  the caller has already moved into the draft's attachment space.</div>
 </div>
@@ -220,6 +226,14 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="captureItemGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)">
+<h3>captureItemGravity</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">captureItemGravity</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo)</span></div>
+<div class="block">Capture a mounted item's pose before expression scaling, removing its display scale.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)">
 <h3>drawAnimatedEye</h3>
