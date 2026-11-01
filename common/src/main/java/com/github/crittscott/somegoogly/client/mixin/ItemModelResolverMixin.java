@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.client.mixin;
 
+import com.github.crittscott.somegoogly.client.GuiItemEyes;
+import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -30,6 +32,14 @@ abstract class ItemModelResolverMixin {
                                        ItemDisplayContext displayContext, @Nullable Level level,
                                        @Nullable LivingEntity entity, int seed, CallbackInfo callback) {
         ((SkullEyeRenderer.ItemHolder) renderState).somegoogly$setItem(stack);
+        GuiItemEyes.Context gui = displayContext == ItemDisplayContext.GUI ? GuiItemEyes.current() : GuiItemEyes.EMPTY;
+        ((GuiItemEyes.Holder) renderState).somegoogly$setGuiEyes(gui);
+        ((HandItemEyes.Holder) renderState).somegoogly$setHandEyes(HandItemEyes.context(
+                entity, stack, displayContext));
+        if (gui.eyes() != null) {
+            renderState.setAnimated();
+            renderState.appendModelIdentityElement(gui.identity());
+        }
         EyeState.Snapshot headEyes = stack.get(ModContent.HEAD_EYES.get());
         if (headEyes != null) {
             renderState.appendModelIdentityElement(headEyes);

@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +28,8 @@ import java.util.Set;
  *
  * <p>When the local player holds the item, its first-person view is a live eye, the {@link HeldEye} stepped
  * from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
- * own behaviors. Every other view (inventory, item frame, ground, and any player's hand in third person, since a special model
- * renderer is not told who holds the item) is static, pupil centered.
+ * own behaviors. Framed eyes have independent mounted pupil physics and ambient expressions, supplied
+ * by the frame's extracted render state. GUI and third-person hand presentations have independent ambient animation; ground views are static.
  *
  * <p>Registered as the {@code somegoogly:googly_eye} special model type and selected by
  * {@code assets/somegoogly/items/googly_eye.json}; each loader puts {@link Unbaked#MAP_CODEC} under
@@ -41,16 +42,17 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "googly_eye");
 
-    /**
-     * Inventory size is set HERE, not in the model json: the inventory needs about eight times the
-     * base scale, and vanilla caps a display transform's scale at 4.
-     */
+    /** Mounted diameter multiplier; eye thickness is unchanged. */
+    private static final float FRAME_DIAMETER_MULTIPLIER = 3F;
     private static final float GUI_SCALE = 1.8F;
     private static final float IRIS_SCALE = 0.6F;
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
 
     private static final HeldEye HELD = new HeldEye();
+
+    @Nullable
+    private static ItemEyes.FrameData frameContext;
 
     private ModelGooglyEye model;
 
@@ -79,12 +81,39 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     /** Drop held-eye state when leaving a world or server. */
     public static void reset() {
+        frameContext = null;
         HELD.reset();
     }
 
     private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
         return ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
                 || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+    }
+
+    /** Animation for a head item in the current GUI, hand, or frame draw, if its state still matches. */
+    @Nullable
+    public static ItemEyes itemEyes(ItemStack stack) {
+        ItemEyes gui = GuiItemEyes.current().eyes();
+        if (gui != null && gui.matches(stack)) {
+            return gui;
+        }
+        ItemEyes hand = HandItemEyes.current().eyes();
+        if (hand != null && hand.matches(stack)) {
+            return hand;
+        }
+        ItemEyes eye = frameContext == null ? null : frameContext.eye();
+        return eye != null && eye.matches(stack) ? eye : null;
+    }
+
+    /** Partial tick supplied by the current GUI, hand, or frame presentation. */
+    public static float itemPartialTick() {
+        if (GuiItemEyes.current().eyes() != null) {
+            return GuiItemEyes.current().partialTick();
+        }
+        if (HandItemEyes.current().eyes() != null) {
+            return HandItemEyes.current().partialTick();
+        }
+        return frameContext == null ? 0F : frameContext.partialTick();
     }
 
     private ModelGooglyEye model() {
@@ -99,7 +128,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         return EyeItemProperties.get(stack);
     }
 
-    /** The inventory view, the largest of the static views: the eye centered in the item box at GUI scale. */
+    /** Bounds of the inventory eye centered in the item box at GUI scale. */
     @Override
     public void getExtents(Set<Vector3f> output) {
         PoseStack pose = new PoseStack();
@@ -128,11 +157,27 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        GooglyTracker.EyeInfo held = isFirstPersonHand(ctx) ? HELD.eye : null;
-        if (held != null) {
-            // The live eye keeps eye-local down for gravity: this pose is relative to the camera, not the world.
-            GooglyEyeRenderer.drawAnimatedEye(pose, m, buffer, light, overlay, held, MODEL_SCALE, 1F, cornea, iris,
-                    IRIS_SCALE, glow, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
+        ItemEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
+        ItemEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+                || ctx == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND ? HandItemEyes.current().eyes() : null;
+        ItemEyes.FrameData frame = ctx == ItemDisplayContext.FIXED ? frameContext : null;
+        ItemEyes framed = frame == null ? null : frame.eye();
+        GooglyTracker.EyeInfo animated = gui != null ? gui.eye
+                : hand != null ? hand.eye : framed != null ? framed.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
+        if (gui != null || hand != null || framed != null) {
+            GooglyEyeRenderer.captureItemGravity(pose, animated);
+        }
+        if (ctx == ItemDisplayContext.FIXED) {
+            pose.scale(FRAME_DIAMETER_MULTIPLIER, FRAME_DIAMETER_MULTIPLIER, 1F);
+        }
+        if (animated != null) {
+            float partialTick = gui != null ? GuiItemEyes.current().partialTick()
+                    : hand != null ? HandItemEyes.current().partialTick()
+                    : framed != null ? frame.partialTick()
+                    : Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+            GooglyEyeRenderer.drawAnimatedEye(pose, m, buffer, light, overlay, animated,
+                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, 1F, cornea, iris,
+                    IRIS_SCALE, glow, partialTick);
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
             pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
@@ -140,5 +185,17 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
                     0F, 0F, glow);
         }
         pose.popPose();
+    }
+
+    /** Scope animation to this item-state draw and restore any enclosing context even on failure. */
+    public static void renderInFrame(ItemStackRenderState item, PoseStack pose, MultiBufferSource buffer,
+                                     int light, int overlay, @Nullable ItemEyes.FrameData frame) {
+        ItemEyes.FrameData previous = frameContext;
+        frameContext = frame;
+        try {
+            item.render(pose, buffer, light, overlay);
+        } finally {
+            frameContext = previous;
+        }
     }
 }

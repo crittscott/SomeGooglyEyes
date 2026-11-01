@@ -1,0 +1,12 @@
+# Third-person hand eyes: client verification
+
+Run on Minecraft 1.21.8 with Fabric, Forge, and NeoForge. `HandItemEyeGameTestsLogic` covers independent hand simulations, replacement, eligibility, world timing, pause, cleanup, and configured head layouts. Actual attachment and render-state propagation need these client checks.
+
+1. **F5 and both hands.** Hold loose Googly Eyes in main hand and offhand. Check both third-person camera modes, switching the dominant arm, swinging, sneaking, walking, and swimming. Each hand animates independently at its normal item size. Pupil down follows the composed hand pose and gravity.
+2. **Other holders.** Observe another player and an equipped mob carrying eligible items, including a left-handed holder. Neither borrows the local player's first-person simulation. Main/offhand expressions can differ; clients simulate ambient behavior locally.
+3. **Head layouts.** Repeat with eye-bearing vanilla heads and supported Heads-mod heads. Verify placements, appearance, glow, blink, and paired cross-eye. Plain heads, Slimy Eyes, unrelated items, and worn heads retain their existing rendering.
+4. **Replacement and lifecycle.** Swap hands, change selected slot, split/merge counts, replace colors/glow or head variants, empty the hands, leave render range, unload/reload the holder, reload resources, and reconnect. No old layout or appearance persists. Other holders keep their own simulations.
+5. **Pause and settings.** With shortened ambient intervals, pause in F5 and resume: world hand animation freezes, while GUI previews keep their UI clock. Ambient-off or an empty pool stops expressions while pupil physics remains. Master/client switches gate animation. Restore normal settings afterward.
+6. **Context isolation.** Switch repeatedly between first and third person while inventory and frames contain matching copies. First-person loose eyes retain movement, hurt, and heal reactions; first-person head items keep resting pupils. GUI and frame simulations remain independent. Ground item views remain static. Follow `inventory-eyes-testing.md` and `framed-eyes-testing.md` for regressions.
+
+Hand animation adds no saved item fields, identifiers, or packets. It uses holder identity and logical hand on the client, and expires unseen simulations.
