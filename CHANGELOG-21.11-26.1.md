@@ -8,7 +8,8 @@
 ### Changed
 - Java 25 is now required.
 - On Forge, GeckoLib-based mobs get no eyes: GeckoLib has no Forge build for Minecraft 26.1.
+- Baby mobs whose models Minecraft 26.1 redesigned get eye placements fitted to the new models, scaled from each mob's adult placement. Baby chickens, which no longer have a separate head, carry their eyes on the body above the beak.
 
 ### Compatibility
 - Worlds saved with the 1.21.11 release load with their eyed mobs, eye items, heads, and settings intact. Worlds from earlier versions must first be opened with the 1.21.11 release.
-- Bundled Minecraft eye definitions select 1.21.4 and apply through the nearest-version fallback. The mod's data pack declares formats 84.0 through 101.1. Optional-mod definitions keep their earlier version selectors and have not been verified against 26.1 releases of those mods.
+- Bundled Minecraft eye definitions for mobs whose babies Minecraft 26.1 redesigned select 26.1 and later, with baby placements fitted to the 26.1 baby models; definitions for mobs added after 1.21.4 select the release that introduced the mob and later; the other bundled Minecraft definitions select 1.21.4 and apply through the nearest-version fallback. The mod's data pack declares formats 84.0 through 101.1. Optional-mod definitions keep their earlier version selectors and have not been verified against 26.1 releases of those mods.
