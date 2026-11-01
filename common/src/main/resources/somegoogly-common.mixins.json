@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "somegoogly-common.refmap.json",
   "client": [
+    "BoatRendererMixin",
+    "BoatRenderStateMixin",
     "ContainerItemEyesMixin",
     "GuiItemEyesMixin",
     "HotbarItemEyesMixin",

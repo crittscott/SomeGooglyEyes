@@ -7,18 +7,18 @@ import com.github.crittscott.somegoogly.platform.Networking;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
-
 /**
- * Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
+ * Persistent, mutable entity eye state — the override layer that sits on top of the
  * shared datapack config ({@link com.github.crittscott.somegoogly.config.EyeConfigModel}).
  *
  * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
@@ -50,7 +50,7 @@ public final class EyeState {
     }
 
     /**
-     * The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+     * The full portable eye state of one supported entity or placed mob head, and its one NBT form: the three
      * keys above in a mod-owned compound. A head item carries it as a data component instead, through
      * {@link #CODEC} and {@link #STREAM_CODEC}.
      */
@@ -86,6 +86,22 @@ public final class EyeState {
         }
     }
 
+    /** Install a synchronized snapshot on the client without broadcasting it. */
+    public static void applySnapshot(Entity entity, Snapshot snapshot) {
+        snapshot.write(EntityPersistentData.get(entity));
+    }
+
+    /** {@code roll} clamped into 0..1, with a non-finite value read as 0. */
+    private static float clampRoll(float roll) {
+        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
+    }
+
+    /** Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts. */
+    public static void clearTints(Entity entity) {
+        AppearanceOverride properties = readProperties(entity);
+        setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
+    }
+
     /**
      * Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
      * or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh. Copying
@@ -103,15 +119,25 @@ public final class EyeState {
         sync(target);
     }
 
-    /** Install a synchronized snapshot on the client without broadcasting it. */
-    public static void applySnapshot(LivingEntity entity, Snapshot snapshot) {
-        snapshot.write(EntityPersistentData.get(entity));
+    /** Disable eyes and clear their entity-wide appearance with one synchronization. */
+    public static void disableAndClearProperties(Entity entity) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, false);
+        writeProperties(data, AppearanceOverride.EMPTY);
+        sync(entity);
     }
 
-    /** Drop both tint overrides so the mob's eyes fall back to their config colors; broadcasts. */
-    public static void clearTints(LivingEntity entity) {
-        AppearanceOverride properties = readProperties(entity);
-        setProperties(entity, properties.withIrisColor(null).withCorneaColor(null));
+    /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
+    public static void enableWithProperties(Entity entity, AppearanceOverride properties) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        float roll = (entity instanceof LivingEntity living ? living.getRandom() : entity.level().random).nextFloat();
+        data.putFloat(VARIANT_ROLL, roll);
+        writeProperties(data, properties);
+        data.putBoolean(HAS_EYES, true);
+        if (entity instanceof LivingEntity living) {
+            ServerBehaviorScheduler.onEyesGained(living);
+        }
+        sync(entity);
     }
 
     /**
@@ -120,13 +146,30 @@ public final class EyeState {
      * Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
      * clamped into range, and a non-finite one as 0.
      */
-    public static float getVariantRoll(LivingEntity entity) {
+    public static float getVariantRoll(Entity entity) {
         return variantRoll(EntityPersistentData.get(entity));
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
-    public static boolean hasEyes(LivingEntity entity) {
+    public static boolean hasEyes(Entity entity) {
         return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
+    }
+
+    /**
+     * Store the one-time natural-eye decision and placement roll. Broadcasts to current trackers only when
+     * the decision turned eyes on, since an eyeless entity already matches every client's default; later
+     * trackers get the state from the start-tracking sync.
+     */
+    public static void initialize(Entity entity, boolean hasEyes, float variantRoll) {
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, hasEyes);
+        data.putFloat(VARIANT_ROLL, variantRoll);
+        if (hasEyes) {
+            if (entity instanceof LivingEntity living) {
+                ServerBehaviorScheduler.onEyesGained(living);
+            }
+            sync(entity);
+        }
     }
 
     /**
@@ -135,35 +178,24 @@ public final class EyeState {
      * in this case; a mid-life mutation always sends, because the client may then hold a snapshot
      * that has to be transitioned back to the default.
      */
-    public static boolean isDefaultState(LivingEntity entity) {
+    public static boolean isDefaultState(Entity entity) {
         return !hasEyes(entity) && readProperties(entity).isEmpty();
     }
 
     /** Whether the server has made this entity's one-time natural-eye decision. */
-    public static boolean isInitialized(LivingEntity entity) {
+    public static boolean isInitialized(Entity entity) {
         return EntityPersistentData.get(entity).contains(HAS_EYES);
-    }
-
-    /**
-     * Store the one-time natural-eye decision and placement roll. Broadcasts to current trackers only when
-     * the decision turned eyes on, since an eyeless entity already matches every client's default; later
-     * trackers get the state from the start-tracking sync.
-     */
-    public static void initialize(LivingEntity entity, boolean hasEyes, float variantRoll) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        data.putBoolean(HAS_EYES, hasEyes);
-        data.putFloat(VARIANT_ROLL, variantRoll);
-        if (hasEyes) {
-            ServerBehaviorScheduler.onEyesGained(entity);
-            sync(entity);
-        }
     }
 
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */
     @Nullable
-    public static CompoundTag overridesTagOrNull(LivingEntity entity) {
+    public static CompoundTag overridesTagOrNull(Entity entity) {
         CompoundTag data = EntityPersistentData.get(entity);
         return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+    }
+
+    private static EyeStatePacket packet(Entity entity) {
+        return new EyeStatePacket(entity.getId(), snapshot(entity));
     }
 
     /**
@@ -171,54 +203,43 @@ public final class EyeState {
      * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
      * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
      */
-    public static AppearanceOverride readProperties(LivingEntity entity) {
+    public static AppearanceOverride readProperties(Entity entity) {
         return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
     }
 
-    /** Read all synchronized fields as one coherent value. */
-    public static Snapshot snapshot(LivingEntity entity) {
-        return Snapshot.read(EntityPersistentData.get(entity));
-    }
-
-    /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
-    public static void enableWithProperties(LivingEntity entity, AppearanceOverride properties) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        data.putFloat(VARIANT_ROLL, entity.getRandom().nextFloat());
-        writeProperties(data, properties);
-        data.putBoolean(HAS_EYES, true);
-        ServerBehaviorScheduler.onEyesGained(entity);
-        sync(entity);
-    }
-
-    /** Disable eyes and clear their entity-wide appearance with one synchronization. */
-    public static void disableAndClearProperties(LivingEntity entity) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        data.putBoolean(HAS_EYES, false);
-        writeProperties(data, AppearanceOverride.EMPTY);
-        sync(entity);
+    /**
+     * Send one newly tracking player the entity's snapshot, unless it equals the client default
+     * ({@link #isDefaultState}).
+     */
+    public static void sendTo(Entity entity, ServerPlayer player) {
+        if (!isDefaultState(entity)) {
+            Networking.sendToPlayer(player, packet(entity));
+        }
     }
 
     /** Override the cornea color for every one of the mob's eyes; broadcasts. */
-    public static void setCorneaTint(LivingEntity entity, EyeColor color) {
+    public static void setCorneaTint(Entity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withCorneaColor(color));
     }
 
     /** {@code null} clears the override (eyes fall back to per-eye config glow). */
-    public static void setGlow(LivingEntity entity, @Nullable Boolean glow) {
+    public static void setGlow(Entity entity, @Nullable Boolean glow) {
         setProperties(entity, readProperties(entity).withGlow(glow));
     }
 
     /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
-    public static void setHasEyes(LivingEntity entity, boolean hasEyes) {
+    public static void setHasEyes(Entity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
         if (hasEyes) {
-            ServerBehaviorScheduler.onEyesGained(entity);
+            if (entity instanceof LivingEntity living) {
+                ServerBehaviorScheduler.onEyesGained(living);
+            }
         }
         sync(entity);
     }
 
     /** Override the iris color for every one of the mob's eyes; broadcasts. */
-    public static void setIrisTint(LivingEntity entity, EyeColor color) {
+    public static void setIrisTint(Entity entity, EyeColor color) {
         setProperties(entity, readProperties(entity).withIrisColor(color));
     }
 
@@ -226,19 +247,23 @@ public final class EyeState {
      * Replace the mob's whole appearance override (used by the slimy eye and harvest). Writes the
      * {@link AppearanceOverride} as the {@code somegoogly:eyeOverrides} compound and broadcasts.
      */
-    public static void setProperties(LivingEntity entity, AppearanceOverride properties) {
+    public static void setProperties(Entity entity, AppearanceOverride properties) {
         writeProperties(EntityPersistentData.get(entity), properties);
         sync(entity);
+    }
+
+    /** Read all synchronized fields as one coherent value. */
+    public static Snapshot snapshot(Entity entity) {
+        return Snapshot.read(EntityPersistentData.get(entity));
+    }
+
+    private static void sync(Entity entity) {
+        Networking.sendTrackingAndSelf(entity, packet(entity));
     }
 
     /** The stored roll of {@code data}, clamped ({@link #clampRoll}). */
     private static float variantRoll(CompoundTag data) {
         return clampRoll(data.getFloat(VARIANT_ROLL));
-    }
-
-    /** {@code roll} clamped into 0..1, with a non-finite value read as 0. */
-    private static float clampRoll(float roll) {
-        return Float.isFinite(roll) ? Mth.clamp(roll, 0.0F, 1.0F) : 0.0F;
     }
 
     private static void writeProperties(CompoundTag data, AppearanceOverride properties) {
@@ -247,23 +272,5 @@ public final class EyeState {
         } else {
             data.put(EYE_OVERRIDES, properties.toNbt());
         }
-    }
-
-    /**
-     * Send one newly tracking player the entity's snapshot, unless it equals the client default
-     * ({@link #isDefaultState}).
-     */
-    public static void sendTo(LivingEntity entity, ServerPlayer player) {
-        if (!isDefaultState(entity)) {
-            Networking.sendToPlayer(player, packet(entity));
-        }
-    }
-
-    private static void sync(LivingEntity entity) {
-        Networking.sendTrackingAndSelf(entity, packet(entity));
-    }
-
-    private static EyeStatePacket packet(LivingEntity entity) {
-        return new EyeStatePacket(entity.getId(), snapshot(entity));
     }
 }

@@ -11,13 +11,13 @@ import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 /**
  * The mod's one eye-drawing path: mob eyes for both render layers (the vanilla {@link LayerGooglyEyes}
@@ -42,17 +42,16 @@ public final class GooglyEyeRenderer {
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 
-    private GooglyEyeRenderer() {
-    }
-
     // Scratch space reused by captureGravity across every eye, every frame: the render thread is
     // single-threaded and one call finishes before the next starts (mirrors GooglyTracker's static
     // INFLUENCE), so mutating these in place instead of allocating fresh JOML objects is safe.
     private static final Matrix3f GRAVITY_POSE = new Matrix3f();
-    private static final Vector3f GRAVITY_DOWN = new Vector3f();
     // Per-eye color scratch for renderEye, under the same single-threaded reasoning.
     private static final float[] CORNEA = new float[3];
     private static final float[] IRIS = new float[3];
+
+    private GooglyEyeRenderer() {
+    }
 
     /**
      * Record world-down in this eye's pupil plane for the next physics tick, using the eye's fully
@@ -60,46 +59,14 @@ public final class GooglyEyeRenderer {
      * simulation's coordinate convention.
      */
     private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
-        // The entity pose here is local → world (the view/camera rotation lives in RenderSystem's
-        // model-view matrix, not the entity pose stack), so world-down maps into the eye's pupil
-        // plane straight through the pose's inverse.
         GRAVITY_POSE.set(pose.last().pose());
-        GRAVITY_POSE.invert();
-        GRAVITY_DOWN.set(0F, eyeInfo.guiGravity ? 1F : -1F, 0F);
-        GRAVITY_POSE.transform(GRAVITY_DOWN);
-        if (eyeInfo.itemGravity || eyeInfo.guiGravity) {
-            GRAVITY_DOWN.normalize();
-        }
-        eyeInfo.gravX = -GRAVITY_DOWN.x;
-        eyeInfo.gravY = -GRAVITY_DOWN.y;
+        eyeInfo.capturePose(GRAVITY_POSE, eyeInfo.guiGravity ? null
+                : Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
     }
 
-    /**
-     * Capture mounted-item gravity before expression scaling. Normalize the full down vector to remove
-     * the item's uniform display scale while retaining a horizontal eye's zero in-plane gravity.
-     */
+    /** Capture a mounted item's pose before expression scaling, removing its display scale. */
     public static void captureItemGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         captureGravity(pose, eyeInfo);
-        GRAVITY_DOWN.normalize();
-        eyeInfo.gravX = -GRAVITY_DOWN.x;
-        eyeInfo.gravY = -GRAVITY_DOWN.y;
-    }
-
-    /**
-     * Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
-     * the caller has already moved into the draft's attachment space. Used by both the vanilla and the
-     * GeckoLib eye layers.
-     */
-    public static void renderPreviewEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
-                                        int packedLight, int overlay, EyeDraft eye) {
-        pose.pushPose();
-        pose.translate(eye.position[0], eye.position[1], eye.position[2]);
-        pose.mulPose(EyePlacement.orientation(eye.inclination, eye.azimuth));
-        float scale = eye.eyeScale;
-        pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
-        drawEye(pose, model, bufferSource, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale,
-                0F, 0F, eye.glows);
-        pose.popPose();
     }
 
     /**
@@ -219,6 +186,23 @@ public final class GooglyEyeRenderer {
         drawAnimatedEye(pose, model, bufferSource, packedLight, overlay, eyeInfo, placement.eyeScale(),
                 placement.depth(), look.cornea(), look.iris(), placement.irisScale(), look.glow(), partialTicks);
 
+        pose.popPose();
+    }
+
+    /**
+     * Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
+     * the caller has already moved into the draft's attachment space. Used by both the vanilla and the
+     * GeckoLib eye layers.
+     */
+    public static void renderPreviewEye(PoseStack pose, ModelGooglyEye model, MultiBufferSource bufferSource,
+                                        int packedLight, int overlay, EyeDraft eye) {
+        pose.pushPose();
+        pose.translate(eye.position[0], eye.position[1], eye.position[2]);
+        pose.mulPose(EyePlacement.orientation(eye.inclination, eye.azimuth));
+        float scale = eye.eyeScale;
+        pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
+        drawEye(pose, model, bufferSource, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale,
+                0F, 0F, eye.glows);
         pose.popPose();
     }
 }

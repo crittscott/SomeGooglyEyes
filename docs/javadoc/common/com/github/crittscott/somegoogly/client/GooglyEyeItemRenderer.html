@@ -101,8 +101,8 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 
  <p>When the local player holds the item, its first-person view is a live eye, the <a href="HeldEye.html" title="class in com.github.crittscott.somegoogly.client"><code>HeldEye</code></a> stepped
  from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
- own behaviors. Every other view (inventory, item frame, ground, and any player's hand in third person, since a special model
- renderer is not told who holds the item) is static, pupil centered.
+ own behaviors. Framed eyes have independent mounted pupil physics and ambient expressions, supplied
+ by the frame's extracted render state. GUI and third-person hand presentations have independent ambient animation; ground views are static.
 
  <p>Registered as the <code>somegoogly:googly_eye</code> special model type and selected by
  <code>assets/somegoogly/items/googly_eye.json</code>; each loader puts <a href="GooglyEyeItemRenderer.Unbaked.html#MAP_CODEC"><code>GooglyEyeItemRenderer.Unbaked.MAP_CODEC</code></a> under
@@ -172,6 +172,16 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#extractArgument(net.minecraft.world.item.ItemStack)" class="member-name-link">extractArgument</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemEyes(net.minecraft.world.item.ItemStack)" class="member-name-link">itemEyes</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#itemPartialTick()" class="member-name-link">itemPartialTick</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,boolean)" class="member-name-link">render</a><wbr>(<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;argument,
  net.minecraft.world.item.ItemDisplayContext&nbsp;ctx,
@@ -182,13 +192,23 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
  boolean&nbsp;hasFoil)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderInFrame(net.minecraft.client.renderer.item.ItemStackRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.ItemEyes.FrameData)" class="member-name-link">renderInFrame</a><wbr>(net.minecraft.client.renderer.item.ItemStackRenderState&nbsp;item,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
+ int&nbsp;light,
+ int&nbsp;overlay,
+ <a href="ItemEyes.FrameData.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes.FrameData</a>&nbsp;frame)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop held-eye state when leaving a world or server.</div>
+<div class="block">Scope animation to this item-state draw and restore any enclosing context even on failure.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop held-eye state when leaving a world or server.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </div>
 </div>
@@ -251,6 +271,21 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 </section>
 </li>
 <li>
+<section class="detail" id="itemEyes(net.minecraft.world.item.ItemStack)">
+<h3>itemEyes</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">itemEyes</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemPartialTick()">
+<h3>itemPartialTick</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">itemPartialTick</span>()</div>
+<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="extractArgument(net.minecraft.world.item.ItemStack)">
 <h3>extractArgument</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">extractArgument</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
@@ -275,6 +310,19 @@ implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href
 <dt>Specified by:</dt>
 <dd><code>render</code>&nbsp;in interface&nbsp;<code>net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&gt;</code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="renderInFrame(net.minecraft.client.renderer.item.ItemStackRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.ItemEyes.FrameData)">
+<h3>renderInFrame</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderInFrame</span><wbr><span class="parameters">(net.minecraft.client.renderer.item.ItemStackRenderState&nbsp;item,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.MultiBufferSource&nbsp;buffer,
+ int&nbsp;light,
+ int&nbsp;overlay,
+ @Nullable
+ <a href="ItemEyes.FrameData.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes.FrameData</a>&nbsp;frame)</span></div>
+<div class="block">Scope animation to this item-state draw and restore any enclosing context even on failure.</div>
 </section>
 </li>
 </ul>

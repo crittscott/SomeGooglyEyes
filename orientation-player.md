@@ -14,11 +14,11 @@ Artifacts target Minecraft 1.21.4 on Fabric, NeoForge, and Forge. Fabric require
 
 ## Mobs with eyes
 
-By default, eligible mobs have a 5 percent chance to receive eyes when they spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
+Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
-Pupils wobble, bounce, and settle under gravity, movement, and head motion.
+Pupils respond to gravity, movement, and head motion.
 
 A sheared sheep's body eyes sit on its bare body until the wool regrows.
 
@@ -47,7 +47,7 @@ Harvested eyes keep effective iris/cornea colors and glow, not species or placem
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+First-person loose eyes react to movement/hurt/heal; third-person eyes use world gravity and holder motion. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
 Worlds saved by the 1.21.1 release open with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.
 
@@ -74,9 +74,11 @@ Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can 
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
+Vanilla boats, chest boats, and bamboo rafts start eyeless. Slimy Eyes apply two outward-facing eyes, one per side; Optometrist shears remove them and drop one eye for one durability. Eyes and applied appearance survive saves, not breaking into items. Successful use consumes boarding/cargo interaction. Boats use world gravity, owner motion, and ambient expressions; bundled eyes do not cross. Boat picker/admin editing and modded boats are unsupported.
+
 ## Checking a target
 
-While holding either eye item, sneak and aim at a living entity or placed head to see whether it:
+While holding either eye item, sneak and aim at a living entity, vanilla boat, or placed head to see whether it:
 
 - can receive eyes now;
 - already has eyes;
@@ -87,7 +89,7 @@ The check reaches about 16 blocks. Client settings that hide eyes do not affect 
 
 ## Creative tab
 
-The Some Googly Eyes tab contains a Googly Eye, a Slimy Eye, and an Optometrist enchanted book. Creative eye items have no appearance overrides.
+The creative tab contains a Googly Eye, a Slimy Eye, and an Optometrist book. Creative eyes have no appearance overrides.
 
 ## Configuration
 
@@ -180,7 +182,7 @@ Resource packs can replace eye textures and item models.
 
 ## Creative eye picker
 
-The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
+Picker and `/sg` require creative/operator level 2; rebind keys under **Options > Controls > Some Googly Eyes**.
 
 | Key | Action |
 | --- | --- |
@@ -189,7 +191,7 @@ The picker is an in-world authoring tool for operators (permission level 2) in c
 | `[` | Select previous model part |
 | `]` | Select next model part |
 
-While the picker is active, configured mobs display eyes regardless of spawn chance. A chosen mob is frozen, and the HUD and axis gizmo show the current editing state. Preview eyes show their colors and glow, with pupils centered. Releasing it or leaving the server restores its previous AI state. Only one player may edit a mob at a time.
+Picker mode shows configured eyes regardless of spawn chance. Chosen mobs freeze and show the editing HUD/gizmo. Preview pupils are centered. Release/disconnect restores prior AI; one editor per mob.
 
 ### Workflow
 
@@ -219,7 +221,7 @@ It does not change the world. Both exports replace authored ages and preserve th
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world.
 
-Both spawn commands skip the ender dragon, entities that cannot be summoned, and any entity whose id or namespace is listed in the server config's `spawnExcludedEntities` / `spawnExcludedMods`. A spawn another mod's listener cancels is not placed, and a refused bulk spawn does not change its cell's terrain. A namespace-restricted `/sg spawnall` reports each type it skipped and why, and `/sg spawn` suggests only types it would spawn.
+Spawn commands exclude the dragon, unsummonable entities, and configured `spawnExcludedEntities`/`spawnExcludedMods`. Canceled spawns place nothing and leave bulk cells unchanged. Scoped `/sg spawnall` reports skipped types/reasons; `/sg spawn` suggests only allowed types.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
@@ -243,5 +245,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- Fabric contains 131 dedicated-server GameTests; NeoForge and Forge each contain 129. Physical checks cover production artifacts, rendering, interactions, picker export, reloads, GeckoLib, and real-save migration.
+- GameTest totals are in `orientation-code.md`. Models, expressions, items/boats/heads, protection, exports, retracking, GeckoLib, and real-save migration require client checks.
 - The dynamic modifier recipe may not display in recipe viewers.

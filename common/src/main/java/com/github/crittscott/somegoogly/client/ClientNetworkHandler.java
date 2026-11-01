@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
@@ -22,22 +23,11 @@ public final class ClientNetworkHandler {
     private ClientNetworkHandler() {
     }
 
-    /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
-    public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
-        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled(), packet.behaviors());
-        ClientEyeRuntime.clear();
-    }
-
-    /** Apply a full eye-state snapshot to a known living entity; an unknown id is ignored. */
-    public static void handleEyeState(EyeStatePacket packet) {
+    /** Record a server-reported anger change; an unknown entity is ignored. */
+    public static void handleAnger(EyeAngerPacket packet) {
         LivingEntity living = living(packet.entityId());
-        if (living == null) {
-            return;
-        }
-        EyeState.applySnapshot(living, packet.snapshot());
-        GooglyTracker tracker = ClientEyeRuntime.peek(living);
-        if (tracker != null) {
-            tracker.overrides = packet.snapshot().properties();
+        if (living != null) {
+            ClientEyeRuntime.setAngry(living, packet.angry());
         }
     }
 
@@ -51,11 +41,25 @@ public final class ClientNetworkHandler {
         ClientEyeRuntime.setBehavior(living, behavior, packet.duration(), packet.seed(), packet.elapsed());
     }
 
-    /** Record a server-reported anger change; an unknown entity is ignored. */
-    public static void handleAnger(EyeAngerPacket packet) {
-        LivingEntity living = living(packet.entityId());
-        if (living != null) {
-            ClientEyeRuntime.setAngry(living, packet.angry());
+    /** Replace the client's eye definitions and master switch, and drop every tracker built from the old set. */
+    public static void handleEyeConfigSync(EyeConfigSyncPacket packet) {
+        ClientEyeConfigs.replaceAll(packet.configs(), packet.googlyEyesEnabled(), packet.behaviors());
+        ClientEyeRuntime.clear();
+    }
+
+    /** Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored. */
+    public static void handleEyeState(EyeStatePacket packet) {
+        ClientLevel level = Minecraft.getInstance().level;
+        Entity entity = level == null ? null : level.getEntity(packet.entityId());
+        if (!(entity instanceof LivingEntity) && !BoatEyeLayout.supports(entity)) {
+            return;
+        }
+        EyeState.applySnapshot(entity, packet.snapshot());
+        if (entity instanceof LivingEntity living) {
+            GooglyTracker tracker = ClientEyeRuntime.peek(living);
+            if (tracker != null) {
+                tracker.overrides = packet.snapshot().properties();
+            }
         }
     }
 

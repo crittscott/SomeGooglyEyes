@@ -24,7 +24,7 @@ public final class ClientLifecycle {
         Minecraft minecraft = Minecraft.getInstance();
         GuiItemEyes.tick();
         HandItemEyes.tick();
-        ClientEyeRuntime.tick(minecraft.level != null && !minecraft.isPaused());
+        ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused());
         GooglyEyeItemRenderer.tick();
         EyeInspector.tick();
         PickerInput.consumePendingKeys();

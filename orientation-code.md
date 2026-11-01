@@ -4,8 +4,6 @@
 
 # Some Googly Eyes — code orientation
 
-Structure, ownership, state, loader seams, and invariants; `orientation-player.md` covers behavior.
-
 ## Project shape
 
 Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.4.
@@ -40,7 +38,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 ## Entity and item state
 
-`EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the 1.21.1 release's `somegoogly:persistentData` compound into it; a non-compound value is set aside there and logged.
+`EyeState.Snapshot` is the unit for entity-state transitions, tracking sync, and packet application. NBT access goes through `EntityPersistentData`: native persistent compounds on NeoForge and Forge, a persistent attachment on Fabric. On load, `FabricEntityDataMigration` moves the 1.21.1 release's `somegoogly:persistentData` compound into it; a non-compound value is set aside there and logged. Boat tracking and item actions use the same snapshots, without natural rolls or living scheduling.
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
@@ -72,15 +70,15 @@ Common Mixins bracket placed-head and head-item rendering. `SkullEyeRenderer` dr
 
 Optional GeckoLib code is linked only after detection; attach failures cannot block loading.
 
-`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects geometry by vanilla boat/raft entity type. `BoatEyeAnimations` owns world-clock simulations. `BoatRendererMixin` extracts eyes onto `BoatRenderState` and draws before the hull pose is popped. `ItemEyes` supplies layouts, ambient expressions, and owner motion. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
 Six payloads carry definitions, entity eye state, expressions, anger, picker freeze, and export. `NetworkHandler` ids embed version `17`; bump on wire changes. Native loaders require that channel version; Fabric requires its `Handshake`.
 
-The eye-definition packet also carries `googlyEyesEnabled` and `BehaviorSettings`; reload size validation reserves the largest supported behavior block, including settings changed later. Joins always receive it; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeConfigsIfChanged` resends it only if the set, switch, or behavior settings changed, since it resets client trackers.
+Eye-definition sync includes `googlyEyesEnabled`/`BehaviorSettings`; validation reserves the maximum behavior block. Joins always receive it. Reload/config apply calls `broadcastEyeConfigsIfChanged`; unchanged data sends nothing and retains client motion.
 
-Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
+`@ExpectPlatform` networking bridges send payloads; clientbound lambdas isolate client handlers. Serverbound requests recheck authorization; exports obey the payload cap. Entity eye snapshots follow entity spawn.
 
 ## Picker and commands
 
@@ -100,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 156, Forge 154, NeoForge 154. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
+GameTest scenarios: Fabric 170, Forge 168, NeoForge 168. Item coverage: twelve frame, seven GUI, seven hand scenarios; thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
 
 ## Operational boundaries
 

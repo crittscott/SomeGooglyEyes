@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
@@ -29,7 +29,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, eyed head
@@ -67,9 +66,7 @@ public final class FabricClientEvents {
         KeyBindingHelper.registerKeyBinding(PickerKeys.TOGGLE);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
-            if (entity instanceof LivingEntity living) {
-                ClientEyeRuntime.onEntityRemoved(living);
-            }
+            ClientEyeRuntime.onEntityRemoved(entity);
         });
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());

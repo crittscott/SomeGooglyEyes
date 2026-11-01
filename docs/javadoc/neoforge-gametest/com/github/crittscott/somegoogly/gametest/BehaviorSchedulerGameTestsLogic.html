@@ -310,15 +310,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>receivedExpressionsOutliveRenderTrackers</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">receivedExpressionsOutliveRenderTrackers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
- offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
- second client mid-expression; both see the same progress. Look away and back, and it has not paused.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="angryMobsHaveRedPupils(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>angryMobsHaveRedPupils</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angryMobsHaveRedPupils</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -336,6 +327,16 @@ loadScripts(document, 'script');</script>
  when it calms down. Drives the client-side <code>GooglyTracker</code> directly against a server enderman made
  creepy by giving it a target. In game: look an eyed enderman in the face; while it screams its pupils
  throb, and they settle once it loses interest.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>disabledEyesSuspendAutomaticBehaviors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disabledEyesSuspendAutomaticBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
+ ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
+ back on; no hidden expression is waiting, and later milking starts a new grow normally.</div>
 </section>
 </li>
 <li>
@@ -381,16 +382,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>disabledEyesSuspendAutomaticBehaviors</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disabledEyesSuspendAutomaticBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
- ready to resume. In game: turn googlyEyesEnabled off near an eyed cow, milk it, and turn the switch
- back on; no hidden expression is waiting, and later milking starts a new grow normally.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="oneBehaviorAtATimeUntilItElapses(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>oneBehaviorAtATimeUntilItElapses</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">oneBehaviorAtATimeUntilItElapses</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -410,6 +401,15 @@ loadScripts(document, 'script');</script>
  against a server goat given the ram entity events by hand, since the squint is derived from the head
  position vanilla sets from them rather than sent. In game: stand in front of an eyed goat until it
  lowers its head and charges; its eyes narrow for the charge and open again afterwards.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>receivedExpressionsOutliveRenderTrackers</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">receivedExpressionsOutliveRenderTrackers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A received expression survives first-render delay and render-cache replacement and expires while
+ offscreen. In game: watch an eyed cow with another client, trigger a swirl, and approach it on the
+ second client mid-expression; both see the same progress. Look away and back, and it has not paused.</div>
 </section>
 </li>
 <li>
