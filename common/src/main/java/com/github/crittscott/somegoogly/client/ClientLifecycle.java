@@ -22,6 +22,8 @@ public final class ClientLifecycle {
     /** Advance the pupil/behavior runtime, held-eye pupil, inspector, and picker key input. */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
+        GuiItemEyes.tick();
+        HandItemEyes.tick();
         ClientEyeRuntime.tick(minecraft.level != null && !minecraft.isPaused());
         GooglyEyeItemRenderer.tick();
         EyeInspector.tick();

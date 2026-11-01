@@ -5,8 +5,13 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "somegoogly-common.refmap.json",
   "client": [
+    "ContainerItemEyesMixin",
+    "GuiItemEyesMixin",
+    "HotbarItemEyesMixin",
     "ItemModelResolverMixin",
     "ItemStackRenderStateMixin",
+    "ItemFrameRendererMixin",
+    "ItemFrameRenderStateMixin",
     "LivingEntityRendererMixin",
     "LivingEntityRenderStateMixin",
     "SkullBlockRendererMixin",

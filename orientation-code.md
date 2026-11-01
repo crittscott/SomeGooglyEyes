@@ -56,7 +56,7 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. The master switch suspends automatic reactions, ambient work, anger checks, and catch-up packets while preserving watcher bookkeeping and advancing effect expiry; explicit admin triggers remain available. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` plays the held item's idle, hurt, and heal behaviors per synced `BehaviorSettings`, caching its eligible ambient pool. Client behaviors are inactive until the first sync. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. Server-only anger is checked per tick and sent on change or tracking start. `ClientEyeRuntime` retains expression timing across tracker replacement. Entity unload/world replacement clear expressions and anger; render-cache resets retain them.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. `HeldEye` runs first-person idle/hurt/heal expressions. `SkullEyes` seeds ambient slots by position; `ItemEyes` uses seeded time slots for loose eyes or head layouts; only paired layouts cross-eye. Frame slots last the synced mean interval or longest eligible expression, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` retains mob reports independently of disposable simulations and ages expressions offscreen. Only recently rendered trackers simulate; idle trackers expire. Heads cache by position, frames by entity; removed/changed frame contents invalidate them. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Client behaviors start inactive until sync.
 
 ## Rendering and attachment
 
@@ -68,7 +68,7 @@ The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, w
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
-Item definitions select `GooglyEyeItemRenderer` and `SlimyEyeIrisTint` (`layer2`). NeoForge registers them by event; Forge and Fabric use vanilla's `ID_MAPPER`s.
+`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -96,7 +96,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-Fabric discovers annotated instance methods through `fabric-gametest`; Forge/NeoForge register functions paired with loader-owned test-instance JSON. Shared tests cover serialization, gameplay, expression lifetime, disabled scheduling, and obstructed targeting. Forge/NeoForge add native config-correction and interaction/spawn-refusal tests; Fabric adds TOML preservation tests. Fabric has 128 registered scenarios; Forge and NeoForge each have 129. Required-client rejection, full command UX, general protection ordering, anger delivery, and loading real 1.21.4 saves still need manual checks.
+GameTest scenarios: Fabric 153, Forge 154, NeoForge 154. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
 
 ## Operational boundaries
 
