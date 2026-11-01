@@ -1,7 +1,7 @@
 {
   "entries": [
     {
-      "version": "1.21.4",
+      "version": "[26.1,)",
       "age": "any",
       "enabled": true,
       "variants": [
@@ -100,6 +100,129 @@
                     0.32
                   ],
                   "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 90.0,
+                  "crossTarget": 0,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "[26.1,)",
+      "age": "baby",
+      "enabled": true,
+      "variants": [
+        {
+          "weight": 1.0,
+          "heads": [
+            {
+              "attachPoint": "head_parts",
+              "eyes": [
+                {
+                  "position": [
+                    -0.244,
+                    -0.403,
+                    -0.35
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 180.0,
+                  "crossTarget": 1,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                },
+                {
+                  "position": [
+                    0.119,
+                    -0.403,
+                    -0.35
+                  ],
+                  "eyeScale": 0.6,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 0.0,
+                  "crossTarget": 0,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "weight": 0.02,
+          "heads": [
+            {
+              "attachPoint": "body",
+              "eyes": [
+                {
+                  "position": [
+                    -0.223,
+                    -0.068,
+                    0.442
+                  ],
+                  "eyeScale": 0.45,
+                  "irisScale": 0.6,
+                  "depth": 1.0,
+                  "inclination": 90.0,
+                  "azimuth": 90.0,
+                  "crossTarget": 1,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": false
+                },
+                {
+                  "position": [
+                    0.097,
+                    -0.068,
+                    0.442
+                  ],
+                  "eyeScale": 0.45,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
