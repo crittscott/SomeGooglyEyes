@@ -12,7 +12,12 @@
     "SkullBlockEntityDataMixin"
   ],
   "client": [
+    "ContainerItemEyesMixin",
+    "GuiItemEyesMixin",
+    "HandItemEyesMixin",
     "HeadItemRendererMixin",
+    "HotbarItemEyesMixin",
+    "ItemFrameRendererMixin",
     "SkullBlockRendererMixin"
   ],
   "injectors": {

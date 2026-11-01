@@ -59,7 +59,7 @@ Application emits `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harves
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs one-shot expressions; `OngoingBehavior` the ongoing states, each with its server switch and vanilla trigger. A `BehaviorInstance` (id, duration, seed, elapsed) is the only per-behavior state sent; clients derive the animation. `ServerBehaviorScheduler` schedules ambient play for watched eyed mobs and takes damage, heal, trade, milking, shearing, and entity-event triggers; it starts nothing on a sleeper. Its tick sends anger (`NeutralMob`, piglin `ANGRY_AT`) on change. `GooglyTracker` folds in each switched-on `OngoingBehavior`; only sleep blocks behaviors, switch or not. `HeldEye` starts the held item's idle, hurt, and heal behaviors per the synced `BehaviorSettings`. `SkullEyes` derives a head's ambient behaviors on each client from its position and game time, in slots of the synced ambient mean. `ClientEyeRuntime` owns entity-lifetime received expressions and anger independently of disposable pupil trackers; expression age advances on unpaused ticks even offscreen. Render resets retain reports; entity removal drops its reports, and level replacement/disconnect clears all. Head simulations are cached by position. Automatic scheduling pauses under the master switch, preserving watchers and expiring effects; resumption refreshes viewers. Explicit authoring triggers remain available. Client behavior settings start and clear inactive until synchronization.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. `HeldEye` runs first-person idle/hurt/heal expressions. `SkullEyes` seeds ambient slots by position; `ItemEyes` uses seeded time slots for loose eyes or head layouts; only paired layouts cross-eye. Frame slots last the synced mean interval or longest eligible expression, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` retains mob reports independently of disposable simulations and ages expressions offscreen. Only recently rendered trackers simulate; idle trackers expire. Heads cache by position, frames by entity; removed/changed frame contents invalidate them. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Client behaviors start inactive until sync.
 
 ## Rendering and attachment
 
@@ -71,7 +71,7 @@ The common `somegoogly.accesswidener` serves common and both loaders; Forge rema
 
 GeckoLib is optional: `gecko/src/main/java` is `srcDir`-ed into each loader against its compile-only GeckoLib; common enumerates bones through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones` only once GeckoLib is found; a failed attach can't block load.
 
-`GooglyEyeItemRenderer` draws the 3D Googly Eye; the Slimy Eye tint index matches model `layer2`.
+`ItemEyes` supplies frame/GUI/hand layouts and ambient expressions. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -97,7 +97,7 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-Loader GameTest entry points: Fabric 133, Forge 133. Review regressions have scenarios; visuals, connections, artifacts, and released saves require manual checks.
+GameTest scenarios: Fabric 158, Forge 158. Shared item coverage includes twelve frame, seven GUI, and five hand scenarios. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, and `docs/third-person-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
 
 ## Operational boundaries
 

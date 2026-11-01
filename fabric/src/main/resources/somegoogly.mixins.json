@@ -17,7 +17,12 @@
   ],
   "client": [
     "ClientLevelLifecycleMixin",
+    "ContainerItemEyesMixin",
+    "GuiItemEyesMixin",
+    "HandItemEyesMixin",
     "HeadItemRendererMixin",
+    "HotbarItemEyesMixin",
+    "ItemFrameRendererMixin",
     "SkullBlockRendererMixin"
   ],
   "injectors": {
