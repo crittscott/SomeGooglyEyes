@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.SheepRenderState;
 
 import java.util.List;
 
@@ -33,6 +34,11 @@ import java.util.List;
  */
 public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
         extends RenderLayer<S, M> {
+    /** Attachment part whose eyes sit on a sheep's wool. */
+    private static final String SHEEP_BODY_PART = "body";
+    /** Thickness of the adult sheep's wool beyond its body, in blocks (1.75 model pixels). */
+    private static final float SHEEP_WOOL_DEPTH = 1.75F / 16.0F;
+
     private final ModelGooglyEye modelGooglyEye;
 
     public LayerGooglyEyes(RenderLayerParent<S, M> renderer) {
@@ -75,6 +81,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
             poseStack.pushPose();
             // Move into this head's animated space, by the configured string part name.
             if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex), state.isBaby)) {
+                insetShearedSheepBody(poseStack, state, helper.getAttachToken(headIndex));
                 int eyeCount = helper.getEyeCount(headIndex);
                 for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
                     if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
@@ -85,6 +92,18 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
                 }
             }
             poseStack.popPose();
+        }
+    }
+
+    /**
+     * Sheep body eyes are authored on the wool's surface, which the separate wool layer draws around the
+     * body. A sheared adult shows no wool, so its body eyes move in along the body's length by the wool's
+     * thickness to sit on the bare body. Lambs are never sheared.
+     */
+    private static void insetShearedSheepBody(PoseStack poseStack, LivingEntityRenderState state, String part) {
+        if (state instanceof SheepRenderState sheep && sheep.isSheared && !sheep.isBaby
+                && SHEEP_BODY_PART.equals(part)) {
+            poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
         }
     }
 

@@ -10,6 +10,7 @@
 - Shears from other mods in the `c:tools/shear` tag work wherever vanilla shears do, through the new `#somegoogly:shears` tag.
 - Every server config key is written with an explanatory comment.
 - Picker hints and HUD show your current key bindings instead of the default keys.
+- Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
 ### Changed
 - The creative eye picker and all its `/sg` commands now require operator permission level 2 as well as creative mode, because picker edits don't fire protection events.
