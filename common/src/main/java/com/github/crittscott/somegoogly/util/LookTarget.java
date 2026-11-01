@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.util;
 
+import java.util.function.Predicate;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -7,7 +9,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,9 +24,9 @@ public final class LookTarget {
     private LookTarget() {
     }
 
-    /** The nearest living-entity intersection before any blocking surface, or {@code null}. */
+    /** The nearest accepted entity before any blocking surface, or {@code null}. */
     @Nullable
-    public static EntityHitResult livingHitInCrosshair(Player player, double reach) {
+    public static EntityHitResult hitInCrosshair(Player player, double reach, Predicate<Entity> accepts) {
         Vec3 eye = player.getEyePosition(1.0F);
         Vec3 look = player.getViewVector(1.0F);
         Vec3 end = eye.add(look.scale(reach));
@@ -34,7 +35,13 @@ public final class LookTarget {
                 ? eye.distanceToSqr(block.getLocation()) : reach * reach;
         AABB search = player.getBoundingBox().expandTowards(look.scale(reach)).inflate(1.0D);
         return ProjectileUtil.getEntityHitResult(player, eye, end, search,
-                e -> e instanceof LivingEntity && e.isPickable() && !e.isSpectator(), distance);
+                e -> accepts.test(e) && e.isPickable() && !e.isSpectator(), distance);
+    }
+
+    /** The nearest living-entity intersection before any blocking surface, or {@code null}. */
+    @Nullable
+    public static EntityHitResult livingHitInCrosshair(Player player, double reach) {
+        return hitInCrosshair(player, reach, entity -> entity instanceof LivingEntity);
     }
 
     /**

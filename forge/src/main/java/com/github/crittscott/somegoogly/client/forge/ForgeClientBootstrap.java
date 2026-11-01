@@ -1,11 +1,11 @@
 package com.github.crittscott.somegoogly.client.forge;
 
-import com.github.crittscott.somegoogly.client.ClientLifecycle;
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerKeys;
 import com.github.crittscott.somegoogly.command.GooglyClientCommands;
@@ -18,23 +18,29 @@ import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
 public final class ForgeClientBootstrap {
 
     private ForgeClientBootstrap() {
+    }
+
+    /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
+    private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
+        event.getLayeredDraw().add(
+                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
     }
 
     /**
@@ -56,20 +62,13 @@ public final class ForgeClientBootstrap {
         }
     }
 
-    /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
-    private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
-        event.getLayeredDraw().add(
-                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
-                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
-    }
-
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         ClientLifecycle.tick();
     }
 
     private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity living) {
-            ClientEyeRuntime.onEntityRemoved(living);
+        if (event.getLevel().isClientSide()) {
+            ClientEyeRuntime.onEntityRemoved(event.getEntity());
         }
     }
 

@@ -56,10 +56,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)" tabindex="0">handleAnger(EyeAngerPacket)</a></li>
+<li><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" tabindex="0">handleBehavior(EyeBehaviorTriggerPacket)</a></li>
 <li><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" tabindex="0">handleEyeConfigSync(EyeConfigSyncPacket)</a></li>
 <li><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" tabindex="0">handleEyeState(EyeStatePacket)</a></li>
-<li><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" tabindex="0">handleBehavior(EyeBehaviorTriggerPacket)</a></li>
-<li><a href="#handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)" tabindex="0">handleAnger(EyeAngerPacket)</a></li>
 </ol>
 </li>
 </ol>
@@ -113,7 +113,7 @@ payload arrives rather than when the handler is registered.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
+<div class="block">Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored.</div>
 </div>
 </div>
 </div>
@@ -133,20 +133,11 @@ payload arrives rather than when the handler is registered.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
-<h3>handleEyeConfigSync</h3>
+<section class="detail" id="handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)">
+<h3>handleAnger</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeConfigSync</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</span></div>
-<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)">
-<h3>handleEyeState</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeState</span><wbr><span class="parameters">(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</span></div>
-<div class="block">Apply a full eye-state snapshot to a known living entity; an unknown id is ignored.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleAnger</span><wbr><span class="parameters">(<a href="../network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a>&nbsp;packet)</span></div>
+<div class="block">Record a server-reported anger change; an unknown entity is ignored.</div>
 </div>
 </section>
 </li>
@@ -160,11 +151,20 @@ payload arrives rather than when the handler is registered.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="handleAnger(com.github.crittscott.somegoogly.network.EyeAngerPacket)">
-<h3>handleAnger</h3>
+<section class="detail" id="handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
+<h3>handleEyeConfigSync</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleAnger</span><wbr><span class="parameters">(<a href="../network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a>&nbsp;packet)</span></div>
-<div class="block">Record a server-reported anger change; an unknown entity is ignored.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeConfigSync</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</span></div>
+<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)">
+<h3>handleEyeState</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeState</span><wbr><span class="parameters">(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</span></div>
+<div class="block">Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored.</div>
 </div>
 </section>
 </li>

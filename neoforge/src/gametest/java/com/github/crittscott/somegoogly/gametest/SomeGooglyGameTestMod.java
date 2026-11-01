@@ -1,12 +1,11 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import java.util.function.Consumer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Consumer;
 
 /** Registers dev-only test functions consumed by the test-instance datapack resources. */
 @Mod(SomeGooglyGameTestMod.MOD_ID)
@@ -16,6 +15,21 @@ public final class SomeGooglyGameTestMod {
     public SomeGooglyGameTestMod(IEventBus modBus) {
         DeferredRegister<Consumer<GameTestHelper>> functions =
                 DeferredRegister.create(BuiltInRegistries.TEST_FUNCTION, "somegoogly");
+        functions.register("handitemeyegametests/hand_eyes_react_to_holder_motion", () -> HandItemEyeGameTests::handEyesReactToHolderMotion);
+        functions.register("handitemeyegametests/hand_eyes_follow_world_gravity_across_views", () -> HandItemEyeGameTests::handEyesFollowWorldGravityAcrossViews);
+        functions.register("boateyegametests/boats_save_and_synchronize_snapshots", () -> BoatEyeGameTests::boatsSaveAndSynchronizeSnapshots);
+        functions.register("boateyegametests/boats_require_matching_enabled_attachments", () -> BoatEyeGameTests::boatsRequireMatchingEnabledAttachments);
+        functions.register("boateyegametests/boats_replace_and_clear_simulations", () -> BoatEyeGameTests::boatsReplaceAndClearSimulations);
+        functions.register("boateyegametests/boats_refuse_spectator_mutation", () -> BoatEyeGameTests::boatsRefuseSpectatorMutation);
+        functions.register("boateyegametests/boats_receive_appearance_and_refuse_restyling", () -> BoatEyeGameTests::boatsReceiveAppearanceAndRefuseRestyling);
+        functions.register("boateyegametests/boats_honor_interaction_gates", () -> BoatEyeGameTests::boatsHonorInteractionGates);
+        functions.register("boateyegametests/boats_honor_creative_consumption", () -> BoatEyeGameTests::boatsHonorCreativeConsumption);
+        functions.register("boateyegametests/boats_have_independent_ambient_and_physics", () -> BoatEyeGameTests::boatsHaveIndependentAmbientAndPhysics);
+        functions.register("boateyegametests/boats_harvest_one_eye", () -> BoatEyeGameTests::boatsHarvestOneEye);
+        functions.register("boateyegametests/boats_follow_gravity_and_owner_motion", () -> BoatEyeGameTests::boatsFollowGravityAndOwnerMotion);
+        functions.register("boateyegametests/boats_evict_idle_and_pause_simulations", () -> BoatEyeGameTests::boatsEvictIdleAndPauseSimulations);
+        functions.register("boateyegametests/boats_cross_only_with_configured_partners", () -> BoatEyeGameTests::boatsCrossOnlyWithConfiguredPartners);
+        functions.register("boateyegametests/boats_begin_eyeless_and_select_geometry", () -> BoatEyeGameTests::boatsBeginEyelessAndSelectGeometry);
         functions.register("behaviordeterminismgametests/every_behavior_is_seed_deterministic_over_its_run", () -> BehaviorDeterminismGameTests::everyBehaviorIsSeedDeterministicOverItsRun);
         functions.register("behaviorschedulergametests/affection_events_play_love", () -> BehaviorSchedulerGameTests::affectionEventsPlayLove);
         functions.register("behaviorschedulergametests/aiming_archer_winks", () -> BehaviorSchedulerGameTests::aimingArcherWinks);

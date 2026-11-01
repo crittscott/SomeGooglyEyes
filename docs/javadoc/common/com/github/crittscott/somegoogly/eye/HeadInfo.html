@@ -58,16 +58,17 @@ loadScripts(document, 'script');</script>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
 <li><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int)" tabindex="0">HeadInfo(EyeConfigModel.RuntimeConfig, int)</a></li>
+<li><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int,java.lang.String)" tabindex="0">HeadInfo(EyeConfigModel.RuntimeConfig, int, String)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#appearanceAt(int,int)" tabindex="0">appearanceAt(int, int)</a></li>
-<li><a href="#hasConfig()" tabindex="0">hasConfig()</a></li>
 <li><a href="#getAttachToken(int)" tabindex="0">getAttachToken(int)</a></li>
 <li><a href="#getEyeCount(int)" tabindex="0">getEyeCount(int)</a></li>
 <li><a href="#getEyeScale(int,int)" tabindex="0">getEyeScale(int, int)</a></li>
 <li><a href="#getHeadCount()" tabindex="0">getHeadCount()</a></li>
+<li><a href="#hasConfig()" tabindex="0">hasConfig()</a></li>
 <li><a href="#headsRef()" tabindex="0">headsRef()</a></li>
 <li><a href="#placementAt(int,int)" tabindex="0">placementAt(int, int)</a></li>
 </ol>
@@ -105,6 +106,12 @@ domains; this class only exposes the selected heads and eyes to consumers.</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int)" class="member-name-link">HeadInfo</a><wbr>(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
  int&nbsp;variantIndex)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int,java.lang.String)" class="member-name-link">HeadInfo</a><wbr>(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ int&nbsp;variantIndex,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attachToken)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
+</div>
 </div>
 </section>
 </li>
@@ -188,6 +195,17 @@ domains; this class only exposes the selected heads and eyes to consumers.</div>
 </div>
 </section>
 </li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,int,java.lang.String)">
+<h3>HeadInfo</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">HeadInfo</span><wbr><span class="parameters">(<a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
+ int&nbsp;variantIndex,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attachToken)</span></div>
+<div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
+</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -203,15 +221,6 @@ domains; this class only exposes the selected heads and eyes to consumers.</div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></span>&nbsp;<span class="element-name">appearanceAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
 <div class="block">The selected eye's config appearance.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="hasConfig()">
-<h3>hasConfig</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasConfig</span>()</div>
-<div class="block">Whether this view contains a usable enabled placement variant.</div>
 </div>
 </section>
 </li>
@@ -249,6 +258,15 @@ domains; this class only exposes the selected heads and eyes to consumers.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getHeadCount</span>()</div>
 <div class="block">How many heads the selected variant places eyes on; 0 when <a href="#hasConfig()"><code>hasConfig()</code></a> is false.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="hasConfig()">
+<h3>hasConfig</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasConfig</span>()</div>
+<div class="block">Whether this view contains a usable enabled placement variant.</div>
 </div>
 </section>
 </li>
