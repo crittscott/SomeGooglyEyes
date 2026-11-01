@@ -22,8 +22,11 @@
       "com.github.crittscott.somegoogly.gametest.EyeItemServiceGameTests",
       "com.github.crittscott.somegoogly.gametest.BehaviorSchedulerGameTests",
       "com.github.crittscott.somegoogly.gametest.PickerAuthGameTests",
+      "com.github.crittscott.somegoogly.gametest.GuiItemEyeGameTests",
       "com.github.crittscott.somegoogly.gametest.HeldEyeGameTests",
-      "com.github.crittscott.somegoogly.gametest.SkullEyeGameTests"
+      "com.github.crittscott.somegoogly.gametest.FramedEyeGameTests",
+      "com.github.crittscott.somegoogly.gametest.SkullEyeGameTests",
+      "com.github.crittscott.somegoogly.gametest.HandItemEyeGameTests"
     ]
   },
   "depends": {

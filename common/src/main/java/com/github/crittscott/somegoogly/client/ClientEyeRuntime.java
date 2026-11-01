@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -10,6 +11,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 
 import java.util.HashMap;
@@ -19,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
-/** Loader-neutral owner of client eye trackers, for mobs and placed heads, and their simulation lifecycle. */
+/** Loader-neutral owner of mob, placed-head, and framed-item eye simulations and their lifecycle. */
 public final class ClientEyeRuntime {
 
     /** Evict a tracker once it has gone unrendered for more than this many client ticks. */
@@ -30,6 +32,7 @@ public final class ClientEyeRuntime {
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
     private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
+    private static final Map<ItemFrame, ItemEyes> FRAMES = new HashMap<>();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, SkullEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
@@ -45,6 +48,9 @@ public final class ClientEyeRuntime {
 
     /** Drop render simulations while retaining entity-lifetime reports. */
     public static void clear() {
+        GuiItemEyes.clear();
+        HandItemEyes.clear();
+        FRAMES.clear();
         SKULLS.clear();
         TRACKERS.clear();
     }
@@ -57,6 +63,30 @@ public final class ClientEyeRuntime {
     /** The client-tick counter this runtime advances once per {@link #tick(boolean)}. */
     public static int clientTicks() {
         return clientTicks;
+    }
+
+    private static boolean frameAnimationEnabled() {
+        return ClientEyeConfigs.googlyEyesEnabled() && !ClientConfig.DISABLE_GOOGLY_EYES.get();
+    }
+
+    /** The rendered frame's eye, or none while its item or the global switches disallow animation. */
+    @Nullable
+    public static ItemEyes frameEye(ItemFrame frame) {
+        if (!frameAnimationEnabled() || frame.isRemoved() || !ItemEyes.supports(frame.getItem())) {
+            FRAMES.remove(frame);
+            return null;
+        }
+        ItemEyes eye = FRAMES.get(frame);
+        if (eye == null || !eye.matches(frame.getItem())) {
+            eye = ItemEyes.create(frame.getUUID(), frame.getItem());
+            if (eye == null) {
+                FRAMES.remove(frame);
+                return null;
+            }
+            FRAMES.put(frame, eye);
+        }
+        eye.lastRenderTick = clientTicks;
+        return eye;
     }
 
     /**
@@ -76,6 +106,7 @@ public final class ClientEyeRuntime {
 
     /** Forget a removed entity's simulation and server-reported anger. */
     public static void onEntityRemoved(LivingEntity living) {
+        HandItemEyes.remove(living.getUUID());
         TRACKERS.remove(living);
         ANGRY.remove(living.getId());
         BEHAVIORS.remove(living);
@@ -172,6 +203,22 @@ public final class ClientEyeRuntime {
         tickBehaviors();
         ClientLevel level = Minecraft.getInstance().level;
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
+        if (!frameAnimationEnabled()) {
+            FRAMES.clear();
+        }
+        Iterator<Map.Entry<ItemFrame, ItemEyes>> frames = FRAMES.entrySet().iterator();
+        while (frames.hasNext()) {
+            Map.Entry<ItemFrame, ItemEyes> entry = frames.next();
+            ItemFrame frame = entry.getKey();
+            ItemEyes eye = entry.getValue();
+            int idle = clientTicks - eye.lastRenderTick;
+            if (idle > EVICT_IDLE_TICKS || frame.isRemoved() || frame.level() != level
+                    || !eye.matches(frame.getItem())) {
+                frames.remove();
+            } else if (idle <= SIMULATE_IDLE_TICKS) {
+                eye.tick(level.getGameTime(), behaviors);
+            }
+        }
         Iterator<Map.Entry<BlockPos, SkullEyes>> skulls = SKULLS.entrySet().iterator();
         while (skulls.hasNext()) {
             Map.Entry<BlockPos, SkullEyes> entry = skulls.next();
