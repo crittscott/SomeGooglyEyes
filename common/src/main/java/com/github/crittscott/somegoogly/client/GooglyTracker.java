@@ -257,6 +257,12 @@ public class GooglyTracker {
         /** See {@link #gravX}. */
         public float gravY = -1F;
 
+        /** Mounted head items remove display scale from the gravity direction captured at render. */
+        public boolean itemGravity;
+
+        /** GUI coordinates grow downward; captured gravity follows the icon instead of the world. */
+        public boolean guiGravity;
+
         /**
          * Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
          * and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the

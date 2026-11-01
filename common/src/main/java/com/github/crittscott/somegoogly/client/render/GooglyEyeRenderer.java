@@ -65,8 +65,22 @@ public final class GooglyEyeRenderer {
         // plane straight through the pose's inverse.
         GRAVITY_POSE.set(pose.last().pose());
         GRAVITY_POSE.invert();
-        GRAVITY_DOWN.set(0F, -1F, 0F);
+        GRAVITY_DOWN.set(0F, eyeInfo.guiGravity ? 1F : -1F, 0F);
         GRAVITY_POSE.transform(GRAVITY_DOWN);
+        if (eyeInfo.itemGravity || eyeInfo.guiGravity) {
+            GRAVITY_DOWN.normalize();
+        }
+        eyeInfo.gravX = -GRAVITY_DOWN.x;
+        eyeInfo.gravY = -GRAVITY_DOWN.y;
+    }
+
+    /**
+     * Capture mounted-item gravity before expression scaling. Normalize the full down vector to remove
+     * the item's uniform display scale while retaining a horizontal eye's zero in-plane gravity.
+     */
+    public static void captureItemGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
+        captureGravity(pose, eyeInfo);
+        GRAVITY_DOWN.normalize();
         eyeInfo.gravX = -GRAVITY_DOWN.x;
         eyeInfo.gravY = -GRAVITY_DOWN.y;
     }

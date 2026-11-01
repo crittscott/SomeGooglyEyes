@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.SkullEyes;
@@ -38,7 +40,7 @@ public final class SkullEyeRenderer {
 
     // Like the mob layers' model, one instance whose iris is moved before each draw on the render thread.
     private static final ModelGooglyEye MODEL = new ModelGooglyEye();
-    /** A head item's eyes: never simulated, so the pupil stays centered. */
+    /** Rest pose for head items drawn outside frames. */
     private static final GooglyTracker.EyeInfo REST = rest();
 
     /** The placed head being drawn, or {@code null} outside a placed head's draw. */
@@ -125,10 +127,13 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            ItemEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
+                    : framed.helper;
             if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, head, helper, SkullEyeState.headParts(helper), null,
-                        snapshot.properties(), 0F);
+                renderEyes(pose, bufferSource, packedLight, head, helper, SkullEyeState.headParts(helper),
+                        framed == null ? null : framed.eyes, snapshot.properties(),
+                        framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
             }
         }
     }
