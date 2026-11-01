@@ -7,4 +7,4 @@
 
 ### Compatibility
 - Worlds saved with the 26.2 release load with their eyed mobs, eye items, heads, and settings intact. Worlds from earlier versions must first be opened with the 26.2 release.
-- Bundled Minecraft eye definitions select 1.21.4 and apply through the nearest-version fallback. The mod's data pack declares formats 97.1 through 121.0. Optional-mod definitions have not been verified against 26.3 releases of those mods.
+- Bundled Minecraft eye definitions for mobs whose babies Minecraft 26.1 redesigned select 26.1 and later, with baby placements fitted to the 26.1 baby models; definitions for mobs added after 1.21.4 select the release that introduced the mob and later; the other bundled Minecraft definitions select 1.21.4 and apply through the nearest-version fallback. The mod's data pack declares formats 97.1 through 121.0. Optional-mod definitions have not been verified against 26.3 releases of those mods.
