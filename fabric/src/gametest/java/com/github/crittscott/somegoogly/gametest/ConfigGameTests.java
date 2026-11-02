@@ -242,6 +242,7 @@ public final class ConfigGameTests implements FabricGameTest {
         }
         helper.succeed();
     }
+
     /**
      * Valid TOML syntax and table identity survive completion; malformed input is preserved. In game:
      * quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then reload. The value

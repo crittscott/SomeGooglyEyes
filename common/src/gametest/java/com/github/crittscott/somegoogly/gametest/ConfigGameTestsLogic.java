@@ -97,8 +97,8 @@ public final class ConfigGameTestsLogic {
      * and every one of them has eyes; the server log reports no invalid or unsafe eye config.
      */
     public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
-        Map<ResourceLocation, Resource> files = helper.getLevel().getServer().getResourceManager()
-                .listResources("eyes", path -> path.getPath().endsWith(".json"));
+        Map<ResourceLocation, Resource> files = EyeConfigReloadListener.EYE_FILES
+                .listMatchingResources(helper.getLevel().getServer().getResourceManager());
         int checked = 0;
         for (ResourceLocation file : files.keySet()) {
             ResourceLocation id = EyeConfigReloadListener.EYE_FILES.fileToId(file);
