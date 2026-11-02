@@ -39,6 +39,7 @@ public final class NeoForgeClient {
         ClientRenderLayers.clearCaches();
         for (PlayerModelType skin : event.getSkins()) {
             ClientRenderLayers.install(event.getPlayerRenderer(skin));
+            ClientRenderLayers.install(event.getMannequinRenderer(skin));
         }
         for (EntityType<?> entityType : event.getEntityTypes()) {
             ClientRenderLayers.install(event.getRenderer(entityType));

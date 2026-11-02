@@ -55,7 +55,8 @@ public final class ForgeServerEvents {
 
     /**
      * Lowest priority so a land-claim or region-protection mod that cancels the entity interaction
-     * gets first refusal — this handler cancels the event as soon as it acts.
+     * gets first refusal — this handler cancels the event as soon as it acts. Forge has no plain
+     * {@code EntityInteract} event, so this listens to {@code EntityInteractSpecific}.
      */
     private static boolean onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         InteractionResult result = EyeItemService.interact(
