@@ -35,13 +35,6 @@ abstract class SkullBlockRendererMixin {
         ((SkullEyeRenderer.PlacedHolder) state).somegoogly$setEyes(SkullEyeRenderer.extract(skull), partialTick);
     }
 
-    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
-            at = @At("HEAD"))
-    private void somegoogly$beginHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
-                                      CameraRenderState camera, CallbackInfo callback) {
-        SkullEyeRenderer.begin((SkullEyeRenderer.PlacedHolder) state);
-    }
-
     // The model is submitted in the skull's own pose, which is popped right after.
     @Inject(method = "submitSkull", at = @At(value = "INVOKE",
             target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
@@ -58,5 +51,12 @@ abstract class SkullBlockRendererMixin {
     private void somegoogly$endHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
                                     CameraRenderState camera, CallbackInfo callback) {
         SkullEyeRenderer.end();
+    }
+
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
+            at = @At("HEAD"))
+    private void somegoogly$beginHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
+                                      CameraRenderState camera, CallbackInfo callback) {
+        SkullEyeRenderer.begin((SkullEyeRenderer.PlacedHolder) state);
     }
 }

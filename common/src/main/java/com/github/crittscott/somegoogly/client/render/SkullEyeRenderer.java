@@ -81,6 +81,8 @@ public final class SkullEyeRenderer {
     @Nullable
     private static ItemStack currentItem;
     private static float partialTick;
+    /** Head items can submit an additional wool model; their eyes belong to the first model only. */
+    private static boolean itemEyesSubmitted;
 
     private SkullEyeRenderer() {
     }
@@ -179,6 +181,7 @@ public final class SkullEyeRenderer {
     /** An item's submission starts; any but a head item's is ignored, since it never reaches {@link #render}. */
     public static void beginItem(@Nullable ItemStack stack) {
         currentItem = stack;
+        itemEyesSubmitted = false;
     }
 
     /** Drop fits when renderer rebuilds replace the head and mob models. */
@@ -190,6 +193,7 @@ public final class SkullEyeRenderer {
     public static void end() {
         current = null;
         currentItem = null;
+        itemEyesSubmitted = false;
     }
 
     /**
@@ -316,7 +320,7 @@ public final class SkullEyeRenderer {
         }
         SkullEyes eyes = current;
         ItemStack stack = currentItem;
-        if (eyes == null && stack == null) {
+        if (eyes == null && (stack == null || itemEyesSubmitted)) {
             return;
         }
         SkullModelBase.State modelState = new SkullModelBase.State();
@@ -337,6 +341,7 @@ public final class SkullEyeRenderer {
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
+                itemEyesSubmitted = true;
                 renderEyes(pose, collector, packedLight, model, head,
                         stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock()),
                         entity, helper, SkullEyeState.headParts(entity, helper),

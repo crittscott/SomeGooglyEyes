@@ -28,6 +28,14 @@ public final class SkullEyeGameTests {
         SkullEyeGameTestsLogic.headEyesSurviveSaveLoad(helper);
     }
 
+    public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
+    }
+
+    public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModMobsHaveHeadEyes(helper);
+    }
+
     public static void optometristHarvestsAPlacedHead(GameTestHelper helper) {
         SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }

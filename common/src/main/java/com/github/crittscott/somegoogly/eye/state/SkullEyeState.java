@@ -85,8 +85,6 @@ public final class SkullEyeState {
     private SkullEyeState() {
     }
 
-
-
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
@@ -226,7 +224,6 @@ public final class SkullEyeState {
         mobs.put("ocelot_head", EntityType.OCELOT);
         mobs.put("pig_head", EntityType.PIG);
         mobs.put("piglin_brute_head", EntityType.PIGLIN_BRUTE);
-        mobs.put("piglin_head", EntityType.PIGLIN);
         mobs.put("pillager_head", EntityType.PILLAGER);
         mobs.put("red_mooshroom_head", EntityType.MOOSHROOM);
         mobs.put("salmon_head", EntityType.SALMON);

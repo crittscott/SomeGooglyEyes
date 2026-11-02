@@ -158,6 +158,8 @@ public final class SomeGooglyGameTestMod {
         functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
         functions.register("skulleyegametests/denied_item_use_leaves_heads_untouched", () -> SkullEyeGameTests::deniedItemUseLeavesHeadsUntouched);
         functions.register("skulleyegametests/head_eyes_survive_save_load", () -> SkullEyeGameTests::headEyesSurviveSaveLoad);
+        functions.register("skulleyegametests/heads_mod_blocks_map_to_their_mobs", () -> SkullEyeGameTests::headsModBlocksMapToTheirMobs);
+        functions.register("skulleyegametests/heads_mod_mobs_have_head_eyes", () -> SkullEyeGameTests::headsModMobsHaveHeadEyes);
         functions.register("skulleyegametests/optometrist_harvests_a_placed_head", () -> SkullEyeGameTests::optometristHarvestsAPlacedHead);
         functions.register("skulleyegametests/slimy_eye_gives_a_placed_head_eyes", () -> SkullEyeGameTests::slimyEyeGivesAPlacedHeadEyes);
         functions.register("skulleyegametests/slimy_eye_refuses_unconfigured_heads_and_the_switch", () -> SkullEyeGameTests::slimyEyeRefusesUnconfiguredHeadsAndTheSwitch);

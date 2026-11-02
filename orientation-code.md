@@ -96,7 +96,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 168, Forge 169, NeoForge 172. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
+GameTest scenarios: Fabric 169, Forge 171, NeoForge 173. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
 
 ## Operational boundaries
 
