@@ -243,5 +243,5 @@ Color channels range from 0 to 1.
 - A harvested eye keeps one appearance, not each eye's.
 - Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish do not have bundled eye definitions.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- GameTest totals are in `orientation-code.md`. Rendering, interactions, boats, protection, exports, retracking, GeckoLib, and real-save migration require client checks.
+- GameTest totals are in `orientation-code.md`. Rendering, interactions, boats, protection, exports, retracking, and GeckoLib require client checks.
 - The dynamic modifier recipe may not display in recipe viewers.
