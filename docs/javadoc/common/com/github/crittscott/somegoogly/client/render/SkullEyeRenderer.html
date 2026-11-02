@@ -99,7 +99,8 @@ loadScripts(document, 'script');</script>
  heads share the model submission without either bracket, so they draw no eyes.
 
  <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
- definition places them as they are. Honors the client display settings by the head's mob and the server's
+ definition places them as they are. Heads-mod models use a cached cube fit to carry eyes to their
+ rebuilt head parts. Honors the client display settings by the head's mob and the server's
  <code>googlyEyesEnabled</code> switch.</div>
 </section>
 <section class="summary">
@@ -148,24 +149,29 @@ loadScripts(document, 'script');</script>
 <div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,float,float)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.object.skull.SkullModelBase, float, float)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#end()" class="member-name-link">end</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop fits when renderer rebuilds replace the head and mob models.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#end()" class="member-name-link">end</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The placed head's or head item's submission ends.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
  its render state is extracted.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,float,float)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,float,float)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  net.minecraft.client.model.object.skull.SkullModelBase&nbsp;model,
  float&nbsp;yRot,
  float&nbsp;mouthAnimation)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
  <code>model</code> was just submitted in, the head's <code>packedLight</code>, and the head's <code>yRot</code> and
  <code>mouthAnimation</code>.</div>
@@ -207,6 +213,13 @@ loadScripts(document, 'script');</script>
 <h3>beginItem</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginItem</span><wbr><span class="parameters">(@Nullable net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
 <div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,float,float)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.SubmitNodeCollector, int, net.minecraft.client.model.object.skull.SkullModelBase, float, float)</code></a>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="clearCaches()">
+<h3>clearCaches</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
+<div class="block">Drop fits when renderer rebuilds replace the head and mob models.</div>
 </section>
 </li>
 <li>

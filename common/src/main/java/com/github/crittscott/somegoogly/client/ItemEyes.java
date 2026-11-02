@@ -112,10 +112,10 @@ public final class ItemEyes {
             return null;
         }
         HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-        if (!helper.hasConfig() || SkullEyeState.headParts(helper).length == 0) {
+        if (!helper.hasConfig() || SkullEyeState.headParts(entity, helper).length == 0) {
             return null;
         }
-        return new ItemEyes(uuid, entity, snapshot, helper, SkullEyeState.headParts(helper));
+        return new ItemEyes(uuid, entity, snapshot, helper, SkullEyeState.headParts(entity, helper));
     }
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */

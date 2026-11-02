@@ -37,6 +37,8 @@ public final class SkullEyes {
     public BehaviorInstance active;
     /** The mob whose definition the head uses. */
     public final Identifier entity;
+    /** Whether this head uses the Heads mod's fitted model placement. */
+    public final boolean headsMod;
     /** Per head and eye of {@link #helper}; the heads outside {@link #parts} sit unused. */
     public final GooglyTracker.EyeInfo[][] eyes;
     /** The head's placement view: its mob's adult definition, at the head's variant roll. */
@@ -52,8 +54,9 @@ public final class SkullEyes {
     /** The eye state this tracker was built from; a change replaces the tracker. */
     public final Snapshot snapshot;
 
-    private SkullEyes(BlockPos pos, Identifier entity, Snapshot snapshot, HeadInfo helper, int[] parts) {
+    private SkullEyes(BlockPos pos, Identifier entity, Snapshot snapshot, HeadInfo helper, int[] parts, boolean headsMod) {
         this.entity = entity;
+        this.headsMod = headsMod;
         this.snapshot = snapshot;
         this.helper = helper;
         this.parts = parts;
@@ -73,13 +76,13 @@ public final class SkullEyes {
      * the client's definitions give that head nothing to draw.
      */
     @Nullable
-    static SkullEyes create(BlockPos pos, Identifier entity, Snapshot snapshot) {
+    static SkullEyes create(BlockPos pos, Identifier entity, Snapshot snapshot, boolean headsMod) {
         HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
         if (!helper.hasConfig()) {
             return null;
         }
-        int[] parts = SkullEyeState.headParts(helper);
-        return parts.length == 0 ? null : new SkullEyes(pos.immutable(), entity, snapshot, helper, parts);
+        int[] parts = SkullEyeState.headParts(entity, helper);
+        return parts.length == 0 ? null : new SkullEyes(pos.immutable(), entity, snapshot, helper, parts, headsMod);
     }
 
     /** Stamp these eyes as rendered during {@code currentClientTick}. */

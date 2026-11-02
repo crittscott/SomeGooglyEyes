@@ -18,3 +18,6 @@ accessible	field	net/minecraft/client/model/object/skull/PiglinHeadModel	head	Ln
 
 accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+
+# Heads integration fits mob eyes to head-model cubes.
+accessible	field	net/minecraft/client/model/geom/ModelPart	cubes	Ljava/util/List;

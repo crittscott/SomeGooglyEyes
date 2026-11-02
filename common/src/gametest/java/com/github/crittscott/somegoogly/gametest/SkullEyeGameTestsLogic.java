@@ -1,6 +1,11 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.HeadInfo;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import java.util.Map;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
@@ -249,6 +254,87 @@ public final class SkullEyeGameTestsLogic {
     private static List<ItemEntity> drops(GameTestHelper helper, BlockPos source, Item item) {
         return helper.getLevel().getEntitiesOfClass(ItemEntity.class,
                 new AABB(helper.absolutePos(source)).inflate(DROP_SEARCH_RADIUS), drop -> drop.getItem().is(item));
+    }
+
+    /**
+     * The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts. Runs with
+     * or without that mod. In game, with Heads installed: sneak with a Googly Eye at a placed Heads cow head, then
+     * at a wall-mounted one; both report that they can have eyes. A Heads squid head reports no configuration.
+     */
+    public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        Map<String, EntityType<?>> expected = Map.of(
+                "cow_head", EntityType.COW,
+                "cow_wall_head", EntityType.COW,
+                "cat_british_shorthair_wall_head", EntityType.CAT,
+                "horse_undead_head", EntityType.ZOMBIE_HORSE,
+                "light_blue_sheep_head", EntityType.SHEEP,
+                "zombified_piglin_wall_skull", EntityType.ZOMBIFIED_PIGLIN);
+        expected.forEach((path, type) -> helper.assertTrue(
+                EntityType.getKey(type).equals(SkullEyeState.entityFor(headsId(path))), Component.literal(path + " maps to its mob")));
+        helper.assertTrue(SkullEyeState.entityFor(headsId("squid_head")) == null, Component.literal("a squid head has no mob"));
+        helper.assertTrue(SkullEyeState.entityFor(Identifier.fromNamespaceAndPath("minecraft", "cow_head")) == null, Component.literal("another namespace's cow_head is not the Heads mod's"));
+        helper.succeed();
+    }
+
+    /**
+     * A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
+     * shears, as a vanilla head does. Needs the Heads mod. In game, with Heads installed: place a Heads cow head
+     * and repeat {@link #slimyEyeGivesAPlacedHeadEyes}, {@link #brokenHeadKeepsItsEyes}, and
+     * {@link #optometristHarvestsAPlacedHead} on it.
+     */
+    public static void headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper helper, Player player) {
+        Block cowHead = headsBlock(helper, "cow_head");
+        SkullBlockEntity skull = placeHead(helper, cowHead);
+        ItemStack slimy = purpleSlimyEye();
+        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, Component.literal("a Slimy Eye applies to a cow head"));
+        Snapshot eyes = SkullEyeState.snapshot(skull);
+        helper.assertTrue(eyes.hasEyes() && IRIS.equals(eyes.properties().iris().orElse(null)), Component.literal("the cow head has the Slimy Eye's eyes"));
+
+        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
+        List<ItemEntity> heads = drops(helper, HEAD, cowHead.asItem());
+        helper.assertTrue(heads.size() == 1, Component.literal("the broken cow head drops itself"));
+        ItemStack item = heads.get(0).getItem();
+        helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(item)), Component.literal("the dropped cow head carries its eyes"));
+        heads.get(0).discard();
+        SkullBlockEntity placed = placeHead(helper, cowHead);
+        placed.applyComponentsFromItemStack(item);
+        helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), Component.literal("placing the cow head restores its eyes"));
+
+        ItemStack shears = optometristShears(helper);
+        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        helper.assertTrue(use(helper, player, placed) == InteractionResult.SUCCESS, Component.literal("Optometrist shears harvest"));
+        helper.assertTrue(!SkullEyeState.hasEyes(placed), Component.literal("the harvest clears the cow head's eyes"));
+        helper.assertTrue(drops(helper, HEAD, ModContent.GOOGLY_EYE.get()).size() == 1, Component.literal("one Googly Eye pops out"));
+        helper.succeed();
+    }
+
+    /**
+     * Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
+     * variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
+     * (a cow's on its body). Runs with or without that mod. In game, with Heads installed: apply Slimy Eyes to
+     * several Heads cow heads; every one shows eyes on its face.
+     */
+    public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeState.HEADS_MOBS.forEach((path, type) -> {
+            Identifier entity = EntityType.getKey(type);
+            helper.assertTrue(SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false)), Component.literal(path + " can have eyes"));
+            for (float roll : new float[] {0F, 0.25F, 0.5F, 0.75F, Math.nextDown(1F)}) {
+                HeadInfo info = ServerEyeConfigs.resolveHead(entity, roll);
+                helper.assertTrue(SkullEyeState.headParts(entity, info).length > 0, Component.literal(path + " shows some of its mob's eyes at roll " + roll));
+            }
+        });
+        helper.succeed();
+    }
+
+    private static Identifier headsId(String path) {
+        return Identifier.fromNamespaceAndPath(SkullEyeState.HEADS_NAMESPACE, path);
+    }
+
+    private static Block headsBlock(GameTestHelper helper, String path) {
+        Identifier id = headsId(path);
+        helper.assertTrue(BuiltInRegistries.BLOCK.containsKey(id), Component.literal("Heads is loaded and has " + id));
+        return BuiltInRegistries.BLOCK.getValue(id);
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {

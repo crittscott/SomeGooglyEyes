@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
+import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +44,7 @@ public final class ClientRenderLayers {
     public static void clearCaches() {
         ClientEyeRuntime.clear();
         Resolvers.clearCaches();
+        SkullEyeRenderer.clearCaches();
     }
 
     /**

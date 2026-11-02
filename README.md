@@ -24,7 +24,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
-**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed (1.20.1 on Forge, 1.21.1 on NeoForge), most of its mob heads work the same way.
+**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed (1.20.1 on Forge, 1.21.1, 1.21.11, and 26.1.2 on NeoForge), most of its mob heads work the same way.
 
 ## Eye potential
 
@@ -81,10 +81,10 @@ Each release is built from the branch named for its Minecraft version.
 | [1.21.1](../../tree/1.21.1) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
 | [1.21.4](../../tree/1.21.4) | Fabric, NeoForge, Forge |  |
 | [1.21.8](../../tree/1.21.8) | Fabric, NeoForge, Forge |  |
-| [1.21.11](../../tree/1.21.11) | Fabric, NeoForge, Forge |  |
+| [1.21.11](../../tree/1.21.11) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
 | [26.1](../../tree/26.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
 | [26.1.1](../../tree/26.1.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
-| [26.1.2](../../tree/26.1.2) | Fabric, NeoForge, Forge |  |
+| [26.1.2](../../tree/26.1.2) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
 | [26.2](../../tree/26.2) | Fabric, NeoForge, Forge |  |
 | [26.3](../../tree/26.3) | Fabric, NeoForge, Forge |  |
 

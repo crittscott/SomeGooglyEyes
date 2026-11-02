@@ -9,6 +9,14 @@ architectury {
 
 repositories {
     maven { url = 'https://maven.neoforged.net/releases/' }
+    exclusiveContent {
+        forRepository {
+            maven { url = 'https://api.modrinth.com/maven' }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
 }
 
 rootProject.configureGameTests(project)
@@ -63,6 +71,9 @@ configurations {
 
 dependencies {
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
+
+    // Optional Heads integration: development runs and GameTests only; never bundled.
+    modLocalRuntime "maven.modrinth:heads:$rootProject.heads_version"
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"

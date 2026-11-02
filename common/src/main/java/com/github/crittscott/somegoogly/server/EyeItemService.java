@@ -130,7 +130,7 @@ public final class EyeItemService {
         ServerLevel level = player.level();
         EyeState.Snapshot state = SkullEyeState.snapshot(skull);
         HeadInfo helper = ServerEyeConfigs.resolveHead(entity, state.variantRoll());
-        int[] parts = SkullEyeState.headParts(helper);
+        int[] parts = SkullEyeState.headParts(entity, helper);
         if (parts.length > 0) {
             Block.popResource(level, pos, buildEyeDrop(helper, parts[0], state.properties()));
         }

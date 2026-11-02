@@ -166,7 +166,8 @@ public final class ClientEyeRuntime {
     public static SkullEyes skullEyes(SkullBlockEntity skull, Identifier entity) {
         SkullEyes eyes = SKULLS.get(skull.getBlockPos());
         if (eyes == null || !eyes.entity.equals(entity)) {
-            eyes = SkullEyes.create(skull.getBlockPos(), entity, SkullEyeState.snapshot(skull));
+            eyes = SkullEyes.create(skull.getBlockPos(), entity, SkullEyeState.snapshot(skull),
+                    SkullEyeState.isHeadsMod(skull.getBlockState().getBlock()));
             if (eyes == null) {
                 SKULLS.remove(skull.getBlockPos());
                 return null;

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:skulleyegametests/heads_mod_mobs_have_head_eyes",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 40
+}

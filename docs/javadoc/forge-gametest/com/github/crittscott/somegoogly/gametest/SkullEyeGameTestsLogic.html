@@ -136,21 +136,40 @@ loadScripts(document, 'script');</script>
 <div class="block">A head's eyes survive saving and loading its block entity.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristHarvestsAPlacedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModBlocksMapToTheirMobs</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them.</div>
+<div class="block">The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">headsModHeadTakesKeepsAndGivesUpEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+<div class="block">A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
+ shears, as a vanilla head does.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModMobsHaveHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
+ variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
+ (a cow's on its body).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristHarvestsAPlacedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A head without a definition, or any head while the switch is off, refuses a Slimy Eye.</div>
 </div>
 </div>
@@ -242,6 +261,36 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headEyesSurviveSaveLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A head's eyes survive saving and loading its block entity. In game: give a placed skeleton skull purple eyes,
  leave and rejoin the world; the eyes are still there.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>headsModBlocksMapToTheirMobs</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headsModBlocksMapToTheirMobs</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts. Runs with
+ or without that mod. In game, with Heads installed: sneak with a Googly Eye at a placed Heads cow head, then
+ at a wall-mounted one; both report that they can have eyes. A Heads squid head reports no configuration.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)">
+<h3>headsModHeadTakesKeepsAndGivesUpEyes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headsModHeadTakesKeepsAndGivesUpEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
+<div class="block">A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
+ shears, as a vanilla head does. Needs the Heads mod. In game, with Heads installed: place a Heads cow head
+ and repeat <a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>, <a href="#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>, and
+ <a href="#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a> on it.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>headsModMobsHaveHeadEyes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headsModMobsHaveHeadEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
+ variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
+ (a cow's on its body). Runs with or without that mod. In game, with Heads installed: apply Slimy Eyes to
+ several Heads cow heads; every one shows eyes on its face.</div>
 </section>
 </li>
 </ul>

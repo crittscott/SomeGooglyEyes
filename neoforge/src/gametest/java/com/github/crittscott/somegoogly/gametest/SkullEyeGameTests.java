@@ -13,6 +13,18 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  */
 public final class SkullEyeGameTests {
 
+    public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
+    }
+
+    public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModMobsHaveHeadEyes(helper);
+    }
+
+    public static void headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModHeadTakesKeepsAndGivesUpEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
     private SkullEyeGameTests() {
     }
 
