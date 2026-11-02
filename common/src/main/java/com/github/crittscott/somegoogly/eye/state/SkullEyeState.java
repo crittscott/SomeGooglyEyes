@@ -7,10 +7,12 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
@@ -23,6 +25,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
@@ -34,8 +38,11 @@ import org.jspecify.annotations.Nullable;
  * as an implicit component, as vanilla's head does its profile: placing the item hands it to the new block
  * entity, and the head's loot copies it back onto the dropped item.
  *
- * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to its model's head
- * part ({@link #headParts}). A head with no mob here (the dragon, other mods' heads) never has eyes.
+ * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to the part of its mob
+ * that the head model reproduces ({@link #headParts}). Vanilla head types are matched by type, the Heads mod's
+ * by block id ({@link #entityFor(Identifier)}), so that mod is never referenced and its absence changes
+ * nothing. A head with no mob here (the dragon, other mods' heads, Heads' heads whose mob's eyes sit on a part
+ * the head doesn't reproduce) never has eyes.
  *
  * <p>Server mutations end in a block update, which resends the block entity's data to every client in
  * range; clients only read the compound.
@@ -46,6 +53,27 @@ public final class SkullEyeState {
     public static final String DATA_KEY = "somegoogly:data";
     /** The last segment of an attachment token that names a model's head part. */
     private static final String HEAD_PART = "head";
+    /**
+     * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
+     * every other mob's head shows the eyes on parts named {@value #HEAD_PART}.
+     */
+    private static final Map<Identifier, String> HEAD_PART_TOKENS = Map.of(
+            EntityType.getKey(EntityType.BEE), "bone",
+            EntityType.getKey(EntityType.CHICKEN), "beak",
+            EntityType.getKey(EntityType.DONKEY), "head_parts",
+            EntityType.getKey(EntityType.GHAST), "root/body",
+            EntityType.getKey(EntityType.HORSE), "head_parts",
+            EntityType.getKey(EntityType.MULE), "head_parts",
+            EntityType.getKey(EntityType.ZOMBIE_HORSE), "head_parts");
+    /**
+     * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
+     * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
+     * endermite, silverfish) and those whose mob's eyes sit on a part the head model doesn't reproduce (squid,
+     * glow squid, slime, magma cube).
+     */
+    public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
+    /** The Heads mod's namespace. */
+    public static final String HEADS_NAMESPACE = "heads";
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -56,6 +84,8 @@ public final class SkullEyeState {
 
     private SkullEyeState() {
     }
+
+
 
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
@@ -70,14 +100,14 @@ public final class SkullEyeState {
 
     /**
      * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
-     * has a weighted variant with eyes on its head part.
+     * has a weighted variant with eyes the head shows.
      */
     public static boolean canHaveEyes(@Nullable Identifier entity, @Nullable RuntimeConfig config) {
         if (entity == null || !RuntimeConfig.isUsable(config)) {
             return false;
         }
         for (Variant variant : config.variants) {
-            if (variant.weight > 0 && showsOnHead(variant)) {
+            if (variant.weight > 0 && showsOnHead(entity, variant)) {
                 return true;
             }
         }
@@ -103,7 +133,7 @@ public final class SkullEyeState {
     public static Identifier entityFor(Block block) {
         if (block instanceof AbstractSkullBlock skull) {
             EntityType<?> type = MOBS.get(skull.getType());
-            return type == null ? null : EntityType.getKey(type);
+            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
         }
         return null;
     }
@@ -114,6 +144,24 @@ public final class SkullEyeState {
         return stack.getItem() instanceof BlockItem item ? entityFor(item.getBlock()) : null;
     }
 
+    /**
+     * The mob whose eye definition the Heads mod's head block {@code blockId} (floor or wall) uses, or {@code null}
+     * for any other block id.
+     */
+    @Nullable
+    public static Identifier entityFor(Identifier blockId) {
+        if (!blockId.getNamespace().equals(HEADS_NAMESPACE)) {
+            return null;
+        }
+        EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace("_wall_", "_"));
+        return type == null ? null : EntityType.getKey(type);
+    }
+
+    /** Whether this block belongs to the optional Heads mod. */
+    public static boolean isHeadsMod(Block block) {
+        return BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(HEADS_NAMESPACE);
+    }
+
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(SkullBlockEntity skull) {
         CompoundTag data = ((Holder) skull).somegoogly$find();
@@ -121,23 +169,91 @@ public final class SkullEyeState {
     }
 
     /**
-     * The indexes of {@code helper}'s heads that a head shows, in order: those attached to the model's head part
-     * (an attachment token whose last segment is {@value #HEAD_PART}).
+     * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
+     * order: those attached to the part the head reproduces, by default the model's head part (an attachment
+     * token whose last segment is {@value #HEAD_PART}).
      */
-    public static int[] headParts(HeadInfo helper) {
+    public static int[] headParts(Identifier entity, HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
         int count = 0;
         for (int head = 0; head < parts.length; head++) {
-            if (isHeadPart(helper.getAttachToken(head))) {
+            if (isShownPart(entity, helper.getAttachToken(head))) {
                 parts[count++] = head;
             }
         }
         return Arrays.copyOf(parts, count);
     }
 
-    /** Whether eyes attached at {@code token} sit on the model's head part, the part a head shows. */
-    private static boolean isHeadPart(@Nullable String token) {
-        return token != null && token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART);
+    private static Map<String, EntityType<?>> headsMobs() {
+        Map<String, EntityType<?>> mobs = new HashMap<>();
+        for (String variant : List.of("all_black", "black", "british_shorthair", "calico", "jellie", "persian",
+                "ragdoll", "red", "siamese", "tabby", "white")) {
+            mobs.put("cat_" + variant + "_head", EntityType.CAT);
+        }
+        for (String variant : List.of("black", "brown", "chestnut", "creamy", "darkbrown", "gray", "white")) {
+            mobs.put("horse_" + variant + "_head", EntityType.HORSE);
+        }
+        for (DyeColor color : DyeColor.values()) {
+            if (color != DyeColor.WHITE) {
+                mobs.put(color.getName() + "_sheep_head", EntityType.SHEEP);
+            }
+        }
+        mobs.put("allay_head", EntityType.ALLAY);
+        mobs.put("bat_head", EntityType.BAT);
+        mobs.put("bee_head", EntityType.BEE);
+        mobs.put("blaze_head", EntityType.BLAZE);
+        mobs.put("brown_mooshroom_head", EntityType.MOOSHROOM);
+        mobs.put("cave_spider_head", EntityType.CAVE_SPIDER);
+        mobs.put("chicken_head", EntityType.CHICKEN);
+        mobs.put("cod_head", EntityType.COD);
+        mobs.put("cow_head", EntityType.COW);
+        mobs.put("dolphin_head", EntityType.DOLPHIN);
+        mobs.put("donkey_head", EntityType.DONKEY);
+        mobs.put("drowned_head", EntityType.DROWNED);
+        mobs.put("enderman_head", EntityType.ENDERMAN);
+        mobs.put("evoker_head", EntityType.EVOKER);
+        mobs.put("fox_head", EntityType.FOX);
+        mobs.put("fox_snow_head", EntityType.FOX);
+        mobs.put("ghast_head", EntityType.GHAST);
+        mobs.put("goat_head", EntityType.GOAT);
+        mobs.put("hoglin_head", EntityType.HOGLIN);
+        mobs.put("horse_skeleton_head", EntityType.SKELETON_HORSE);
+        mobs.put("horse_undead_head", EntityType.ZOMBIE_HORSE);
+        mobs.put("husk_head", EntityType.HUSK);
+        mobs.put("illusioner_head", EntityType.ILLUSIONER);
+        mobs.put("iron_golem_head", EntityType.IRON_GOLEM);
+        mobs.put("mule_head", EntityType.MULE);
+        mobs.put("ocelot_head", EntityType.OCELOT);
+        mobs.put("pig_head", EntityType.PIG);
+        mobs.put("piglin_brute_head", EntityType.PIGLIN_BRUTE);
+        mobs.put("pillager_head", EntityType.PILLAGER);
+        mobs.put("red_mooshroom_head", EntityType.MOOSHROOM);
+        mobs.put("salmon_head", EntityType.SALMON);
+        mobs.put("sheep_head", EntityType.SHEEP);
+        mobs.put("sheep_shaven_head", EntityType.SHEEP);
+        mobs.put("snow_golem_head", EntityType.SNOW_GOLEM);
+        mobs.put("spider_head", EntityType.SPIDER);
+        mobs.put("stray_head", EntityType.STRAY);
+        mobs.put("turtle_head", EntityType.TURTLE);
+        mobs.put("villager_head", EntityType.VILLAGER);
+        mobs.put("vindicator_head", EntityType.VINDICATOR);
+        mobs.put("wandering_trader_head", EntityType.WANDERING_TRADER);
+        mobs.put("witch_head", EntityType.WITCH);
+        mobs.put("wolf_head", EntityType.WOLF);
+        mobs.put("zoglin_head", EntityType.ZOGLIN);
+        mobs.put("zombie_villager_head", EntityType.ZOMBIE_VILLAGER);
+        mobs.put("zombified_piglin_skull", EntityType.ZOMBIFIED_PIGLIN);
+        return Map.copyOf(mobs);
+    }
+
+    /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
+    private static boolean isShownPart(Identifier entity, @Nullable String token) {
+        if (token == null) {
+            return false;
+        }
+        String partToken = HEAD_PART_TOKENS.get(entity);
+        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART)
+                : token.equals(partToken);
     }
 
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
@@ -161,10 +277,10 @@ public final class SkullEyeState {
         }
     }
 
-    /** Whether {@code variant} has eyes on the model's head part, the ones a head shows. */
-    private static boolean showsOnHead(Variant variant) {
+    /** Whether {@code variant} of {@code entity}'s definition has eyes a head of that mob shows. */
+    private static boolean showsOnHead(Identifier entity, Variant variant) {
         for (HeadConfig head : variant.heads) {
-            if (isHeadPart(head.attachPoint)) {
+            if (isShownPart(entity, head.attachPoint)) {
                 return true;
             }
         }
@@ -183,11 +299,11 @@ public final class SkullEyeState {
     }
 
     /**
-     * The index of the variant of a mob's adult {@code config} that a head with {@code variantRoll} shows: the roll
-     * chooses among the variants with eyes on the head part, so a variant with eyes only elsewhere never leaves a
-     * head blank.
+     * The index of the variant of {@code entity}'s adult {@code config} that a head with {@code variantRoll} shows:
+     * the roll chooses among the variants with eyes on the part the head reproduces, so a mob's variant with eyes
+     * only elsewhere (a cow's on its body) never leaves a head blank.
      */
-    public static int variantIndex(@Nullable RuntimeConfig config, float variantRoll) {
-        return EyeConfigModel.chooseVariantIndex(config, variantRoll, SkullEyeState::showsOnHead);
+    public static int variantIndex(Identifier entity, @Nullable RuntimeConfig config, float variantRoll) {
+        return EyeConfigModel.chooseVariantIndex(config, variantRoll, variant -> showsOnHead(entity, variant));
     }
 }

@@ -68,7 +68,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 ## Mob heads
 
-Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. With Heads on NeoForge, most of its floor and wall heads work too. Dragon heads, unsupported Heads models, and other mods' heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike, but don't otherwise react. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
@@ -240,5 +240,5 @@ Color channels range from 0 to 1.
 
 - A harvested eye keeps one appearance, not each eye's.
 - Baby scaling, model variants, or updated third-party models may misplace eyes until their definitions are adjusted.
-- GameTest totals are in `orientation-code.md`. Rendering, interactions, boats, protection, exports, retracking, GeckoLib, and real-save migration require client checks.
+- GameTest totals are in `orientation-code.md`. Rendering, interactions, boats, protection, exports, retracking, and GeckoLib require client checks.
 - The modifier recipe may be absent from recipe viewers.

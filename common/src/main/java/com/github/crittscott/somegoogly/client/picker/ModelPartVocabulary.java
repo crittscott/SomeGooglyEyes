@@ -60,7 +60,7 @@ public final class ModelPartVocabulary {
      * and baby models and only selects one while rendering, so its current model reflects whichever
      * entity it drew last.
      */
-    private static EntityModel<?> modelFor(LivingEntityRenderer<?, ?, ?> renderer, LivingEntity living) {
+    public static EntityModel<?> modelFor(LivingEntityRenderer<?, ?, ?> renderer, LivingEntity living) {
         if (renderer instanceof AgeableMobRenderer<?, ?, ?> ageable) {
             return living.isBaby() ? ageable.babyModel : ageable.adultModel;
         }
@@ -103,8 +103,9 @@ public final class ModelPartVocabulary {
         return match != null ? match : storedToken;
     }
 
+    /** A client entity for inspecting a type's model, or null when no sample can be created. */
     @Nullable
-    private static LivingEntity sampleFor(Identifier id) {
+    public static LivingEntity sampleFor(Identifier id) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
             return minecraft.player;

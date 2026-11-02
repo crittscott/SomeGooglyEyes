@@ -11,6 +11,24 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
+import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
+import com.github.crittscott.somegoogly.client.render.resolver.RootModelResolver;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.BlockItem;
+import org.joml.Quaternionf;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.object.skull.PiglinHeadModel;
 import net.minecraft.client.model.object.skull.SkullModel;
@@ -33,11 +51,26 @@ import org.jspecify.annotations.Nullable;
  * heads share the model submission without either bracket, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
- * definition places them as they are. Honors the client display settings by the head's mob and the server's
+ * definition places them as they are. Heads-mod models use a cached cube fit to carry eyes to their
+ * rebuilt head parts. Honors the client display settings by the head's mob and the server's
  * {@code googlyEyesEnabled} switch.
  */
 public final class SkullEyeRenderer {
 
+    /**
+     * The part whose cubes stand for a mob's eye part, for mobs whose eyes attach to a part sharing its pivot with
+     * a larger one (the chicken's beak, beside its head); any other mob's eye part stands for itself.
+     */
+    private static final Map<Identifier, String> CUBE_TOKENS = Map.of(
+            EntityType.getKey(EntityType.CHICKEN), "head");
+    /** The field name the Heads mod's head models keep their head part in. */
+    private static final String HEAD_FIELD = "head";
+    /** Each Heads-mod model class's field holding its head part, or empty when it has none. */
+    private static final Map<Class<?>, Optional<Field>> HEAD_FIELDS = new HashMap<>();
+    private static final float PIXELS_PER_BLOCK = 16F;
+    /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
+    private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
+            new IdentityHashMap<>();
     /** Rest pose for head items drawn outside frames. */
     private static final GooglyTracker.EyeInfo REST = rest();
 
@@ -48,8 +81,56 @@ public final class SkullEyeRenderer {
     @Nullable
     private static ItemStack currentItem;
     private static float partialTick;
+    /** Head items can submit an additional wool model; their eyes belong to the first model only. */
+    private static boolean itemEyesSubmitted;
 
     private SkullEyeRenderer() {
+    }
+
+    /** A cube and the parts below a searched part that lead to it, outermost first. */
+    private record FoundCube(ModelPart.Cube cube, ModelPart[] chain) {
+
+        float depth() {
+            return cube.maxZ - cube.minZ;
+        }
+
+        float height() {
+            return cube.maxY - cube.minY;
+        }
+
+        float volume() {
+            return width() * height() * depth();
+        }
+
+        float width() {
+            return cube.maxX - cube.minX;
+        }
+    }
+
+    /**
+     * How a Heads-mod head model carries eyes authored for its mob's part: from the head part, down
+     * {@code headsChain} to the head's main cube, then the mob's main cube mapped onto it (front-face centers
+     * matched, scaled by the smaller of the width and height ratios), then back up {@code mobChain} to the mob's
+     * eye part.
+     */
+    private record Placement(ModelPart[] headsChain, float headsX, float headsY, float headsZ, float scale,
+                             float mobX, float mobY, float mobZ, ModelPart[] mobChain) {
+
+        void apply(PoseStack pose) {
+            for (ModelPart part : headsChain) {
+                part.translateAndRotate(pose);
+            }
+            pose.translate(headsX, headsY, headsZ);
+            pose.scale(scale, scale, scale);
+            pose.translate(-mobX, -mobY, -mobZ);
+            for (int i = mobChain.length - 1; i >= 0; i--) {
+                ModelPart part = mobChain[i];
+                if (part.xRot != 0F || part.yRot != 0F || part.zRot != 0F) {
+                    pose.mulPose(new Quaternionf().rotationZYX(part.zRot, part.yRot, part.xRot).invert());
+                }
+                pose.translate(-part.x / PIXELS_PER_BLOCK, -part.y / PIXELS_PER_BLOCK, -part.z / PIXELS_PER_BLOCK);
+            }
+        }
     }
 
     /** An item render state's link to the stack it was last filled from, added by a Mixin. */
@@ -100,12 +181,67 @@ public final class SkullEyeRenderer {
     /** An item's submission starts; any but a head item's is ignored, since it never reaches {@link #render}. */
     public static void beginItem(@Nullable ItemStack stack) {
         currentItem = stack;
+        itemEyesSubmitted = false;
+    }
+
+    /** Drop fits when renderer rebuilds replace the head and mob models. */
+    public static void clearCaches() {
+        PLACEMENTS.clear();
     }
 
     /** The placed head's or head item's submission ends. */
     public static void end() {
         current = null;
         currentItem = null;
+        itemEyesSubmitted = false;
+    }
+
+    /**
+     * Fit eyes authored on {@code entity}'s part {@code token} to the Heads-mod head part {@code head}, or
+     * {@code null} when either model lacks what the fit needs.
+     */
+    @Nullable
+    private static Placement fit(ModelPart head, Identifier entity, String token) {
+        LivingEntity sample = ModelPartVocabulary.sampleFor(entity);
+        EntityRenderer<?, ?> renderer = sample == null ? null
+                : Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(sample);
+        if (!(renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer)) {
+            return null;
+        }
+        EntityModel<?> mobModel = ModelPartVocabulary.modelFor(livingRenderer, sample);
+        ModelPart mobPart = RootModelResolver.part(mobModel, CUBE_TOKENS.getOrDefault(entity, token));
+        FoundCube mob = mobPart == null ? null : largestCube(mobPart, new ArrayList<>());
+        FoundCube heads = largestCube(head, new ArrayList<>());
+        if (mob == null || heads == null || mob.width() <= 0F || mob.height() <= 0F) {
+            return null;
+        }
+        float scale = Math.min(heads.width() / mob.width(), heads.height() / mob.height());
+        return new Placement(heads.chain(),
+                (heads.cube().minX + heads.cube().maxX) / 2F / PIXELS_PER_BLOCK,
+                (heads.cube().minY + heads.cube().maxY) / 2F / PIXELS_PER_BLOCK,
+                heads.cube().minZ / PIXELS_PER_BLOCK, scale,
+                (mob.cube().minX + mob.cube().maxX) / 2F / PIXELS_PER_BLOCK,
+                (mob.cube().minY + mob.cube().maxY) / 2F / PIXELS_PER_BLOCK,
+                mob.cube().minZ / PIXELS_PER_BLOCK, mob.chain());
+    }
+
+    /** {@code type}'s nearest {@value #HEAD_FIELD} field holding a {@link ModelPart}, made accessible. */
+    private static Optional<Field> headField(Class<?> type) {
+        for (Class<?> c = type; c != null && c != SkullModelBase.class; c = c.getSuperclass()) {
+            try {
+                Field field = c.getDeclaredField(HEAD_FIELD);
+                if (field.getType() == ModelPart.class) {
+                    field.setAccessible(true);
+                    return Optional.of(field);
+                }
+            } catch (NoSuchFieldException ignored) {
+                // Look in the superclass.
+            } catch (RuntimeException failure) {
+                ClientIntegrationFailures.warnOnce("Heads", "head part lookup", type.getName(), failure);
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
     }
 
     /** The head part of a model eyes can attach to, or {@code null} for any other head model (the dragon's). */
@@ -117,7 +253,37 @@ public final class SkullEyeRenderer {
         if (model instanceof PiglinHeadModel piglin) {
             return piglin.head;
         }
-        return null;
+        Optional<Field> field = HEAD_FIELDS.computeIfAbsent(model.getClass(), SkullEyeRenderer::headField);
+        try {
+            return field.isPresent() ? (ModelPart) field.get().get(model) : null;
+        } catch (ReflectiveOperationException failure) {
+            ClientIntegrationFailures.warnOnce("Heads", "head part lookup", model.getClass().getName(), failure);
+            return null;
+        }
+    }
+
+    /**
+     * The largest cube in {@code part} and its descendants, with the parts below {@code part} that lead to it;
+     * {@code path} holds those leading to {@code part} itself.
+     */
+    @Nullable
+    private static FoundCube largestCube(ModelPart part, List<ModelPart> path) {
+        FoundCube best = null;
+        for (ModelPart.Cube cube : part.cubes) {
+            FoundCube found = new FoundCube(cube, path.toArray(new ModelPart[0]));
+            if (best == null || found.volume() > best.volume()) {
+                best = found;
+            }
+        }
+        for (ModelPart child : part.children.values()) {
+            path.add(child);
+            FoundCube found = largestCube(child, path);
+            path.remove(path.size() - 1);
+            if (found != null && (best == null || found.volume() > best.volume())) {
+                best = found;
+            }
+        }
+        return best;
     }
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
@@ -126,9 +292,23 @@ public final class SkullEyeRenderer {
                 && !ClientConfig.isEntityDisabled(entity);
     }
 
+    /** The cached fit for eyes on {@code entity}'s part {@code token} drawn by the Heads-mod head {@code model}. */
+    @Nullable
+    private static Placement placement(SkullModelBase model, ModelPart head, Identifier entity,
+                                       String token) {
+        return PLACEMENTS.computeIfAbsent(model, m -> new HashMap<>()).computeIfAbsent(token, t -> {
+            Placement fitted = fit(head, entity, t);
+            if (fitted == null) {
+                ClientIntegrationFailures.warnOnce("Heads", "eye placement", entity + " " + t,
+                        new IllegalStateException("no cube to fit eyes by"));
+            }
+            return Optional.ofNullable(fitted);
+        }).orElse(null);
+    }
+
     /**
-     * Submit the current placed head's or head item's eyes, if it has any to show, with {@code pose} in the model's
-     * submission space, its {@code packedLight}, and its extracted model state. The model is posed only when it is drawn, after submission, so it is posed here
+     * Submit the current placed head's or head item's eyes, if it has any to show, with {@code pose} in the space
+     * {@code model} was just submitted in, the head's {@code packedLight}, and its extracted model state. The model is posed only when it is drawn, after submission, so it is posed here
      * the same way first.
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
@@ -139,12 +319,13 @@ public final class SkullEyeRenderer {
         }
         SkullEyes eyes = current;
         ItemStack stack = currentItem;
-        if (eyes == null && stack == null) {
+        if (eyes == null && (stack == null || itemEyesSubmitted)) {
             return;
         }
         model.setupAnim(modelState);
         if (eyes != null) {
-            renderEyes(pose, collector, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
+            renderEyes(pose, collector, packedLight, model, head, eyes.headsMod,
+                    eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
                     eyes.snapshot.properties(), partialTick);
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
@@ -156,7 +337,10 @@ public final class SkullEyeRenderer {
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
-                renderEyes(pose, collector, packedLight, head, helper, SkullEyeState.headParts(helper),
+                itemEyesSubmitted = true;
+                renderEyes(pose, collector, packedLight, model, head,
+                        stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock()),
+                        entity, helper, SkullEyeState.headParts(entity, helper),
                         framed == null ? null : framed.eyes, snapshot.properties(),
                         framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
             }
@@ -167,12 +351,23 @@ public final class SkullEyeRenderer {
      * Submit the eyes of {@code helper}'s heads {@code parts} on the model's {@code head} part, each simulated by its
      * entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
      */
-    private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight, ModelPart head,
-                                   HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
+    private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                   SkullModelBase model, ModelPart head, boolean headsMod, Identifier entity, HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
         for (int part : parts) {
+            Placement placement = null;
+            if (headsMod) {
+                placement = placement(model, head, entity, helper.getAttachToken(part));
+                if (placement == null) {
+                    continue;
+                }
+            }
+            pose.pushPose();
+            if (placement != null) {
+                placement.apply(pose);
+            }
             int eyeCount = helper.getEyeCount(part);
             for (int eye = 0; eye < eyeCount; eye++) {
                 if (helper.getEyeScale(part, eye) > 0F) {
@@ -180,6 +375,7 @@ public final class SkullEyeRenderer {
                             eyes == null ? REST : eyes[part][eye], helper, overrides, part, eye, partialTick);
                 }
             }
+            pose.popPose();
         }
         pose.popPose();
     }

@@ -472,7 +472,7 @@ when any of them differs from what clients last received.</div>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#canHaveEyes(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)" class="member-name-link">canHaveEyes(Identifier, EyeConfigModel.RuntimeConfig)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
 <dd>
 <div class="block">Whether a head of <code>entity</code>'s kind can have eyes under that mob's adult <code>config</code>: it is usable and
-has a weighted variant with eyes on its head part.</div>
+has a weighted variant with eyes the head shows.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#canonicalize(java.lang.String)" class="member-name-link">canonicalize(String)</a> - Method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
 <dd>
@@ -566,6 +566,10 @@ tags then recover from on next load (<a href="com/github/crittscott/somegoogly/p
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html#clearCaches()" class="member-name-link">clearCaches()</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></dt>
 <dd>
 <div class="block">Drop every model-keyed cache.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#clearCaches()" class="member-name-link">clearCaches()</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
+<dd>
+<div class="block">Drop fits when renderer rebuilds replace the head and mob models.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#clearDraft()" class="member-name-link">clearDraft()</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
@@ -1108,6 +1112,11 @@ walkable part tree, so eyes can never render on it.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ENTITY_OVERRIDES_KEY" class="member-name-link">ENTITY_OVERRIDES_KEY</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#entityFor(net.minecraft.resources.Identifier)" class="member-name-link">entityFor(Identifier)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">The mob whose eye definition the Heads mod's head block <code>blockId</code> (floor or wall) uses, or <code>null</code>
+for any other block id.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#entityFor(net.minecraft.world.item.ItemStack)" class="member-name-link">entityFor(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
 <dd>
 <div class="block">The mob whose eye definition the head item <code>stack</code> uses, or <code>null</code> for any other item.</div>
@@ -2134,14 +2143,27 @@ carrying the head's effective appearance pops out of the block, the head loses i
 <dd>
 <div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#headParts(com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts(HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#headParts(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts(Identifier, HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
 <dd>
-<div class="block">The indexes of <code>helper</code>'s heads that a head shows, in order: those attached to the model's head part
-(an attachment token whose last segment is "head").</div>
+<div class="block">The indexes of <code>helper</code>'s heads, from <code>entity</code>'s definition, that a head of that mob shows, in
+order: those attached to the part the head reproduces, by default the model's head part (an attachment
+token whose last segment is "head").</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html#heads" class="member-name-link">heads</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a></dt>
 <dd>
 <div class="block">Required attachment groups; an installed variant contains at least one nonempty head.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#HEADS_MOBS" class="member-name-link">HEADS_MOBS</a> - Static variable in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">The Heads mod's heads by floor-block id path: the mob whose definition each borrows.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#HEADS_NAMESPACE" class="member-name-link">HEADS_NAMESPACE</a> - Static variable in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">The Heads mod's namespace.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#headsMod" class="member-name-link">headsMod</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
+<dd>
+<div class="block">Whether this head uses the Heads mod's fitted model placement.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html#headsRef()" class="member-name-link">headsRef()</a> - Method in class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></dt>
 <dd>
@@ -2328,6 +2350,10 @@ config that is enabled and has at least one head.</div>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientConfig.html#isEntityDisabled(net.minecraft.resources.Identifier)" class="member-name-link">isEntityDisabled(Identifier)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientConfig.html" title="class in com.github.crittscott.somegoogly.config">ClientConfig</a></dt>
 <dd>
 <div class="block">Whether the client hides eyes on this entity type, by its id or its namespace.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#isHeadsMod(net.minecraft.world.level.block.Block)" class="member-name-link">isHeadsMod(Block)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">Whether this block belongs to the optional Heads mod.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#isInitialized(net.minecraft.world.entity.Entity)" class="member-name-link">isInitialized(Entity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
 <dd>
@@ -2621,6 +2647,10 @@ the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator)
 component both carry, the eye-state component of a mob head item, the mod's creative tab, and the
 eye-modifier recipe serializer.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#modelFor(net.minecraft.client.renderer.entity.LivingEntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">modelFor(LivingEntityRenderer, LivingEntity)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
+<dd>
+<div class="block">The model <code>renderer</code> draws <code>living</code> with.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ModelGooglyEye.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">ModelGooglyEye</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
 <dd>
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
@@ -2905,6 +2935,10 @@ accepted entries, rebuilt on every assignment and reset, for lists read far more
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html#part" class="member-name-link">part</a> - Variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html#part(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">part(EntityModel, String)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/RootModelResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">RootModelResolver</a></dt>
+<dd>
+<div class="block">The part named by a token, using the same search as attachment resolution, or null if absent.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html#PART_NEXT" class="member-name-link">PART_NEXT</a> - Static variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerKeys</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html#PART_PREV" class="member-name-link">PART_PREV</a> - Static variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerKeys.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerKeys</a></dt>
@@ -3247,8 +3281,8 @@ when none).</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)" class="member-name-link">render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></dt>
 <dd>
-<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the model's
-submission space, its <code>packedLight</code>, and its extracted model state.</div>
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
+<code>model</code> was just submitted in, the head's <code>packedLight</code>, and its extracted model state.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html#render(net.minecraft.client.gui.GuiGraphicsExtractor,int,int)" class="member-name-link">render(GuiGraphicsExtractor, int, int)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerHud.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerHud</a></dt>
 <dd>
@@ -3378,11 +3412,11 @@ the model has no such part (an unknown token, or a model whose worn variant lack
 <dt><a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html#resolveHead(net.minecraft.resources.Identifier,float)" class="member-name-link">resolveHead(Identifier, float)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></dt>
 <dd>
 <div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows
-(<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
+(<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(Identifier, EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#resolveHead(net.minecraft.resources.Identifier,float)" class="member-name-link">resolveHead(Identifier, float)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
-<div class="block">Resolve the variant a placed head of <code>entity</code>'s kind shows (<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>).</div>
+<div class="block">Resolve the variant a placed head of <code>entity</code>'s kind shows (<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(Identifier, EyeConfigModel.RuntimeConfig, float)</code></a>).</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/resolver/package-summary.html">com.github.crittscott.somegoogly.client.render.resolver</a></dt>
 <dd>
@@ -3414,6 +3448,10 @@ any third-party model built the vanilla way.</div>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#sampleFor(net.minecraft.resources.Identifier)" class="member-name-link">sampleFor(Identifier)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
+<dd>
+<div class="block">A client entity for inspecting a type's model, or null when no sample can be created.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#save()" class="member-name-link">save()</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
 <div class="block">Save the current eye: overwrite the selected slot in place, or append a new one if none is
@@ -4324,11 +4362,11 @@ the order they are declared.</div>
 <dd>
 <div class="block">Index into <a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#variants()"><code>PickerState.variants()</code></a> of the variant being edited.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)" class="member-name-link">variantIndex(EyeConfigModel.RuntimeConfig, float)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#variantIndex(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)" class="member-name-link">variantIndex(Identifier, EyeConfigModel.RuntimeConfig, float)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
 <dd>
-<div class="block">The index of the variant of a mob's adult <code>config</code> that a head with <code>variantRoll</code> shows: the roll
-chooses among the variants with eyes on the head part, so a variant with eyes only elsewhere never leaves a
-head blank.</div>
+<div class="block">The index of the variant of <code>entity</code>'s adult <code>config</code> that a head with <code>variantRoll</code> shows:
+the roll chooses among the variants with eyes on the part the head reproduces, so a mob's variant with eyes
+only elsewhere (a cow's on its body) never leaves a head blank.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html#variantRoll()" class="member-name-link">variantRoll()</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></dt>
 <dd>

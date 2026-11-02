@@ -102,7 +102,7 @@ public final class ClientEyeConfigs {
      */
     public static HeadInfo resolveHead(Identifier entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
-        return cached(entity, false, config, SkullEyeState.variantIndex(config, variantRoll));
+        return cached(entity, false, config, SkullEyeState.variantIndex(entity, config, variantRoll));
     }
 
     /**

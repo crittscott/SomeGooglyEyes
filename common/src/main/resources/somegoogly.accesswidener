@@ -20,3 +20,6 @@ accessible	field	net/minecraft/client/renderer/RenderPipelines	LINES_SNIPPET	Lco
 accessible	method	net/minecraft/client/renderer/RenderPipelines	register	(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 
 accessible	class	net/minecraft/world/item/CreativeModeTab$Output
+
+# Heads integration fits mob eyes to head-model cubes.
+accessible	field	net/minecraft/client/model/geom/ModelPart	cubes	Ljava/util/List;

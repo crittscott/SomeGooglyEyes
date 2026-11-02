@@ -67,6 +67,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#enumerateParts(net.minecraft.client.model.EntityModel)" tabindex="0">enumerateParts(EntityModel)</a></li>
 <li><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" tabindex="0">canonicalToken(EntityModel, String)</a></li>
 <li><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" tabindex="0">resolve(EntityModel, String)</a></li>
+<li><a href="#part(net.minecraft.client.model.EntityModel,java.lang.String)" tabindex="0">part(EntityModel, String)</a></li>
 </ol>
 </li>
 </ol>
@@ -134,7 +135,7 @@ pivot/group parts, so eyes can attach to a named empty joint.
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -158,10 +159,16 @@ and exported configs all speak.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether this resolver knows how to walk the given model's part tree.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.client.model.geom.ModelPart</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#part(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">part</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The part named by a token, using the same search as attachment resolution, or null if absent.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
 the model has no such part (an unknown token, or a model whose worn variant lacks it).</div>
 </div>
@@ -276,6 +283,16 @@ may allocate and walk freely.</div>
 <dt>Returns:</dt>
 <dd>the resolved value, or <code>null</code> when the token names nothing in the model.</dd>
 </dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="part(net.minecraft.client.model.EntityModel,java.lang.String)">
+<h3>part</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable net.minecraft.client.model.geom.ModelPart</span>&nbsp;<span class="element-name">part</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
+<div class="block">The part named by a token, using the same search as attachment resolution, or null if absent.</div>
 </div>
 </section>
 </li>

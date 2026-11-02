@@ -82,6 +82,13 @@ public class RootModelResolver implements EyeAttachmentResolver {
                 : null;
     }
 
+    /** The part named by a token, using the same search as attachment resolution, or null if absent. */
+    @Nullable
+    public static ModelPart part(EntityModel<?> model, String partToken) {
+        ArrayDeque<ModelPart> chain = new ArrayDeque<>();
+        return search("", ROOT, model.root(), partToken, chain) ? chain.getLast() : null;
+    }
+
     /**
      * Depth-first pre-order over the {@code children} map, in the same order and the same path spelling
      * {@link #enumerate} uses, so a token attaches to the part {@link #canonicalToken} names. A matching

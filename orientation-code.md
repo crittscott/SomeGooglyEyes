@@ -44,7 +44,7 @@ Mutations send one full snapshot; stored rolls read clamped to 0..1. Eye state a
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
-`SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
+`SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants on the part the head reproduces. Heads-mod floor/wall blocks map by registry id; bee, chicken, ghast, and equines use specific attachment tokens. Mutations send block updates.
 
 Saved data from the 26.1.1 release is already in current form; nothing migrates.
 
@@ -64,7 +64,7 @@ Each eye part is submitted as custom geometry at its finished pose, values copie
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers.
 
-The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, with line width supplied per vertex. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key head items' GUI identity on eyes. The skull hook shares the submitted model state and pose. `SkullEyeRenderer` poses the `SkullModel`/`PiglinHeadModel` and submits on its head part. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline and `RenderSetup`, with line width supplied per vertex. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key head items' GUI identity on eyes. The skull hook shares the submitted model state and pose. `SkullEyeRenderer` poses vanilla and Heads models using the submitted state. Heads placements use cached cube fits; item eyes submit once across face/wool passes. Fits clear on renderer rebuild. Worn heads get no eyes.
 
 `BoatEyeLayout` selects hull/raft geometry by entity type; `BoatEyeAnimations` owns cached world-clock pupils. Boat Mixins extract state and draw in the composed hull pose. `ItemEyes` supplies layouts, ambient expressions, world gravity, and owner motion. `HandEyeAnimations` keys world-timed simulations by holder and hand. GUI uses UI time; frames use triple diameter. Item animation adds no saved fields or packets.
 
@@ -94,7 +94,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 168, Forge 169, NeoForge 169. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, and real saves need manual checks.
+GameTest scenarios: Fabric 168, Forge 169, NeoForge 172. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals, connections, protection ordering, and real saves need manual checks.
 
 ## Operational boundaries
 

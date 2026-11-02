@@ -101,7 +101,7 @@ public final class ServerEyeConfigs {
     /** Resolve the variant a placed head of {@code entity}'s kind shows ({@link SkullEyeState#variantIndex}). */
     public static HeadInfo resolveHead(Identifier entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
-        return new HeadInfo(config, SkullEyeState.variantIndex(config, variantRoll));
+        return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
     }
 
     /**
