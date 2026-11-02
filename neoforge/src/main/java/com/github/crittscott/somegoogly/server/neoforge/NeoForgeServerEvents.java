@@ -47,9 +47,6 @@ public final class NeoForgeServerEvents {
      * gets first refusal — this handler consumes the event as soon as it acts.
      */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!(event.getTarget() instanceof LivingEntity living)) {
-            return;
-        }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
@@ -159,7 +156,7 @@ public final class NeoForgeServerEvents {
                 (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
-        // Late enough to see the heads other mods add to the drops.
+        // Late enough to see the heads other mods add to the drops, such as the Heads mod's.
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);

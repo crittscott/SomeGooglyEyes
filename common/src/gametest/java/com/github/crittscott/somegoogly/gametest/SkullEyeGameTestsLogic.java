@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
@@ -254,6 +255,27 @@ public final class SkullEyeGameTestsLogic {
     private static List<ItemEntity> drops(GameTestHelper helper, BlockPos source, Item item) {
         return helper.getLevel().getEntitiesOfClass(ItemEntity.class,
                 new AABB(helper.absolutePos(source)).inflate(DROP_SEARCH_RADIUS), drop -> drop.getItem().is(item));
+    }
+
+    /**
+     * An eyed mob's own Heads-mod head inherits the mob's eyes; another mob's head doesn't. Needs the Heads mod. In
+     * game, with Heads installed: give a cow purple eyes with {@code /sg admin eyes true} and
+     * {@code /sg admin tint iris 0.6 0.1 0.8}, raise Heads' cow drop rate to 1 in its config, and kill the cow; its
+     * dropped cow head lists googly eyes and the iris color.
+     */
+    public static void eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper helper) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, MOB);
+        EyeState.setHasEyes(cow, true);
+        EyeState.setIrisTint(cow, IRIS);
+        ItemStack cowHead = new ItemStack(headsBlock(helper, "cow_head"));
+        ItemStack pigHead = new ItemStack(headsBlock(helper, "pig_head"));
+
+        EyeItemService.markHeadDrop(cow, cowHead);
+        EyeItemService.markHeadDrop(cow, pigHead);
+        helper.assertTrue(EyeState.snapshot(cow).equals(SkullEyeState.itemSnapshot(cowHead)),
+                Component.literal("the eyed cow's own head carries its eyes"));
+        helper.assertTrue(SkullEyeState.itemSnapshot(pigHead) == null, Component.literal("another mob's head stays plain"));
+        helper.succeed();
     }
 
     /**

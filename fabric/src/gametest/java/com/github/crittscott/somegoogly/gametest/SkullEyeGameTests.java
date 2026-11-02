@@ -29,6 +29,16 @@ public final class SkullEyeGameTests {
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headsModMobsHaveHeadEyes(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void optometristHarvestsAPlacedHead(GameTestHelper helper) {
         SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(helper, FakePlayer.get(helper.getLevel()));
     }

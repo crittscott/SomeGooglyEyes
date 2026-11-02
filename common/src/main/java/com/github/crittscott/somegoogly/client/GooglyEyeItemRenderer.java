@@ -71,24 +71,18 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
         }
     }
 
-    @Override
-    public Frame extractArgument(ItemStack stack) {
-        return extractArgument(stack, ItemDisplayContext.NONE);
+    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
+    public static void tick() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.isPaused()) {
+            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
+        }
     }
 
-    /** Capture the display context with the appearance before deferred submission. */
-    public Frame extractArgument(ItemStack stack, ItemDisplayContext context) {
-        return new Frame(EyeItemProperties.get(stack), context);
-    }
-
-    /** Bounds of the inventory eye centered in the item box at GUI scale. */
-    @Override
-    public void getExtents(Consumer<Vector3fc> output) {
-        PoseStack pose = new PoseStack();
-        pose.translate(0.5, 0.5, 0.5);
-        pose.mulPose(Axis.XP.rotationDegrees(180));
-        pose.scale(GUI_SCALE, GUI_SCALE, GUI_SCALE * ModelGooglyEye.BASE_DEPTH);
-        ModelGooglyEye.addExtents(pose.last().pose(), output);
+    /** Drop held-eye state when leaving a world or server. */
+    public static void reset() {
+        frameContext = null;
+        HELD.reset();
     }
 
     private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
@@ -122,10 +116,24 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
         return frameContext == null ? 0F : frameContext.partialTick();
     }
 
-    /** Drop held-eye state when leaving a world or server. */
-    public static void reset() {
-        frameContext = null;
-        HELD.reset();
+    @Override
+    public Frame extractArgument(ItemStack stack) {
+        return extractArgument(stack, ItemDisplayContext.NONE);
+    }
+
+    /** Capture the display context with the appearance before deferred submission. */
+    public Frame extractArgument(ItemStack stack, ItemDisplayContext context) {
+        return new Frame(EyeItemProperties.get(stack), context);
+    }
+
+    /** Bounds of the inventory eye centered in the item box at GUI scale. */
+    @Override
+    public void getExtents(Consumer<Vector3fc> output) {
+        PoseStack pose = new PoseStack();
+        pose.translate(0.5, 0.5, 0.5);
+        pose.mulPose(Axis.XP.rotationDegrees(180));
+        pose.scale(GUI_SCALE, GUI_SCALE, GUI_SCALE * ModelGooglyEye.BASE_DEPTH);
+        ModelGooglyEye.addExtents(pose.last().pose(), output);
     }
 
     @Override
@@ -178,14 +186,6 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
                     0F, 0F, glow);
         }
         pose.popPose();
-    }
-
-    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (!minecraft.isPaused()) {
-            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
-        }
     }
 
     /** Scope animation to this item-state draw and restore any enclosing context even on failure. */

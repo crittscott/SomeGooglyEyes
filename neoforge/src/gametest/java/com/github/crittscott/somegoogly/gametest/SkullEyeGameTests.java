@@ -13,6 +13,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  */
 public final class SkullEyeGameTests {
 
+    public static void eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyedMobsHeadsModHeadInheritsItsEyes(helper);
+    }
+
     public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
         SkullEyeGameTestsLogic.headsModBlocksMapToTheirMobs(helper);
     }

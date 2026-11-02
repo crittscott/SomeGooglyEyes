@@ -1,18 +1,18 @@
 # Configuration reference
 
- **Server** config controls gameplay (who gets eyes, harvesting, expressions). **Client** config controls only what *you* see.
+**Server** config controls gameplay (who gets eyes, harvesting, expressions). **Client** config controls only what *you* see.
 
 ## Server config
 
 `<world>/serverconfig/somegoogly-server.toml`
 
-NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment.
+NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment. Fabric uses NightConfig TOML, preserves existing raw values, unknown keys, and parsed comments when adding absent defaults, and saves the original text in a sibling `.bak` before rewriting. Invalid syntax leaves the file and loaded settings intact.
 
 ### Spawn settings
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `googlyEyesEnabled` | `true` | Master switch for the whole mod. Turning it off stops *new* mobs from being given eyes, hides every eye (old and new) on every client, and refuses hand-applying or harvesting eyes. Existing eye data on entities is left untouched and reappears as soon as this is turned back on. |
+| `googlyEyesEnabled` | `true` | Master switch for the whole mod. Turning it off stops *new* mobs from being given eyes, hides every eye (old and new) on every client, and refuses hand-applying or harvesting eyes. Existing eye data stays intact and reappears when enabled. Automatic reactions, anger checks, and ambient scheduling pause while disabled; explicit admin expressions remain available. Current viewers receive a state refresh on resumption. |
 | `globalPercent` | `5` | Default percent chance (0–100) for an eligible mob to spawn with eyes. |
 | `harvestOnKillPercent` | `25` | Percent chance that an eyed mob killed by a player's direct shears blow drops its eye. The Optometrist enchantment bypasses this with a guaranteed, non-lethal right-click harvest. |
 | `entityOverrides` | empty | Per-mob spawn chances, one entry per line as `"entity,percent"`. |
@@ -31,10 +31,9 @@ Resolution order: an exact (wildcard-free) id always wins; otherwise the **first
 
 A mob's eyes-or-not decision is made **once, at first spawn**, and stored on the mob for life. Changing these settings affects newly spawned mobs only. Existing mobs never reroll.
 
-A percent of `0` is how you turn eyes off for a specific entity or, with a wildcard, an entire mod's
-namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling eyes. It doesn't strip
-eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with
-a Slimy Eye.
+A percent of `0` is how you turn eyes off for a specific entity or, with a wildcard, an entire mod's namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling eyes. It doesn't strip eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with a Slimy Eye.
+
+Vanilla boats and rafts acquire eyes only through Slimy Eye application; spawn-chance settings do not give boats eyes. Their expressions use the ambient settings below, without living-entity reactions. The master switch also gates boat rendering and eye application/removal. Client entity filters use per-wood ids, such as `minecraft:oak_boat`, `minecraft:oak_chest_boat`, and `minecraft:bamboo_raft`.
 
 ### Behavior settings
 
@@ -55,7 +54,7 @@ Eyes have two kinds of behavior. **Expressions** are one-shot animations (`stare
 | `swirlOnHeal` | `true` | An eyed mob being healed, or the holder of a Googly Eye healing, plays `swirl`. |
 | `swirlHealCooldownTicks` | `200` | Minimum ticks between heal-triggered swirls on one mob or held eye, so regeneration doesn't loop it. |
 
-The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` is not in the default pool; it can be added to the pool or triggered by the admin command.
+The event-driven expressions (`grow`, `love`, `swirl`) are controlled by their own settings above and are not in the ambient pool by default; `color_change` is absent from the default pool but can be added to `ambientBehaviorPool` or triggered by an admin command.
 
 #### Ongoing behaviors
 
@@ -88,10 +87,6 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only).
 | `disabledEntities` | empty | Entity ids that should not display eyes, e.g. `"minecraft:zombie"`. |
 | `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. |
 
-These are personal preferences: the mob still *has* eyes (other players see them, and they can still
-be harvested); you just don't render them. NeoForge and Forge apply edits as soon as they reload the
-file; on Fabric, restart the client.
+These are personal preferences: the mob still *has* eyes (other players see them, and they can still be harvested); you just don't render them. NeoForge and Forge apply edits as soon as they reload the file; on Fabric, restart the client.
 
-The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for
-anyone regardless of these client settings, and eyes can't be applied or harvested either. The
-creative eye picker ignores `googlyEyesEnabled`.
+The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for anyone regardless of these client settings, and eyes can't be applied or harvested either. The creative eye picker ignores `googlyEyesEnabled`.

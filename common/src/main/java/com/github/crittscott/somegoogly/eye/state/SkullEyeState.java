@@ -85,8 +85,6 @@ public final class SkullEyeState {
     private SkullEyeState() {
     }
 
-
-
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
