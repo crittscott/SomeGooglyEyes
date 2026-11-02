@@ -50,11 +50,6 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
-    }
-
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
@@ -90,11 +85,6 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
-    }
-
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void serverOnlyAngerIsShared(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.serverOnlyAngerIsShared(helper);
@@ -125,5 +115,15 @@ public final class BehaviorSchedulerGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.switchedOffOngoingBehaviorsStayNeutral(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

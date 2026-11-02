@@ -35,17 +35,17 @@ import org.joml.Matrix3f;
  */
 public final class GooglyEyeRenderer {
 
-    // Reused on the render thread; each eye finishes its draw before the next one starts.
-    private static final float[] CORNEA = new float[3];
-    private static final Matrix3f GRAVITY_POSE = new Matrix3f();
-    private static final float[] IRIS = new float[3];
-
     // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3).
     private static final ResourceLocation TEX = new ResourceLocation(
             SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
+
+    private static final Matrix3f GRAVITY_POSE = new Matrix3f();
+    // Reused on the render thread; each eye finishes its draw before the next one starts.
+    private static final float[] CORNEA = new float[3];
+    private static final float[] IRIS = new float[3];
 
     private GooglyEyeRenderer() {
     }

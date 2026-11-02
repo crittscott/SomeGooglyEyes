@@ -95,6 +95,35 @@ public final class PickerSpawnService {
         }
     }
 
+    /** Whether the authoring spawn commands may create {@code type}; the filter for their suggestions too. */
+    public static boolean isSpawnable(EntityType<?> type) {
+        return refusal(type) == null;
+    }
+
+    /** The first reason the authoring spawn commands refuse {@code type}, or {@code null} if they don't. */
+    @Nullable
+    public static SpawnRefusal refusal(EntityType<?> type) {
+        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            return SpawnRefusal.ENDER_DRAGON;
+        }
+        if (!type.canSummon()) {
+            return SpawnRefusal.NOT_SUMMONABLE;
+        }
+        if (ServerConfig.isSpawnExcluded(id)) {
+            return SpawnRefusal.EXCLUDED;
+        }
+        return null;
+    }
+
+    /** A terrain edit held until both finalization and entity insertion have accepted the spawn. */
+    private record BlockChange(BlockPos pos, BlockState state) {
+    }
+
+    /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
+    private record Candidate(ResourceLocation id, Entity entity) {
+    }
+
     /** Insert the mob and its riders, honoring each insertion result and removing partial additions on refusal. */
     private static boolean addCommandEntity(ServerLevel level, Entity entity) {
         List<Entity> members = new ArrayList<>();
@@ -123,19 +152,6 @@ public final class PickerSpawnService {
                 }
             }
         }
-    }
-
-    /** Whether the authoring spawn commands may create {@code type}; the filter for their suggestions too. */
-    public static boolean isSpawnable(EntityType<?> type) {
-        return refusal(type) == null;
-    }
-
-    /** A terrain edit held until both finalization and entity insertion have accepted the spawn. */
-    private record BlockChange(BlockPos pos, BlockState state) {
-    }
-
-    /** A living entity built and waiting to be placed, with its registry id for sorting/grouping. */
-    private record Candidate(ResourceLocation id, Entity entity) {
     }
 
     /**
@@ -185,56 +201,6 @@ public final class PickerSpawnService {
                         center ? Blocks.GLOWSTONE.defaultBlockState() : Blocks.SANDSTONE.defaultBlockState()));
             }
         }
-    }
-
-    /**
-     * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
-     * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
-     * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
-     * to save. Finalization goes through the loader's finalize-spawn event, as {@code /summon} does, so
-     * other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
-     * which lives in another module.
-     *
-     * @return false when a finalize-spawn listener cancelled the spawn; the entity must then not be added
-     */
-    public static boolean prepareForCommandSpawn(
-            ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
-        entity.moveTo(x, y, z, yaw, 0.0F);
-        if (entity instanceof Mob mob) {
-            if (!MobSpawning.finalizeSpawn(mob, level, MobSpawnType.COMMAND)) {
-                return false;
-            }
-            // Freeze finalize-spawned riders (spider jockeys) with their mount.
-            for (Entity rider : mob.getIndirectPassengers()) {
-                if (rider instanceof Mob riderMob) {
-                    riderMob.setNoAi(true);
-                    riderMob.setPersistenceRequired();
-                }
-            }
-            mob.setNoAi(true);
-            // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.
-            mob.setPersistenceRequired();
-            mob.setYRot(yaw);
-            mob.setYHeadRot(yaw);
-            mob.setYBodyRot(yaw);
-        }
-        return true;
-    }
-
-    /** The first reason the authoring spawn commands refuse {@code type}, or {@code null} if they don't. */
-    @Nullable
-    public static SpawnRefusal refusal(EntityType<?> type) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
-            return SpawnRefusal.ENDER_DRAGON;
-        }
-        if (!type.canSummon()) {
-            return SpawnRefusal.NOT_SUMMONABLE;
-        }
-        if (ServerConfig.isSpawnExcluded(id)) {
-            return SpawnRefusal.EXCLUDED;
-        }
-        return null;
     }
 
     /**
@@ -505,6 +471,40 @@ public final class PickerSpawnService {
         } else {
             tell(player, "somegoogly.command.spawn.refused", id.toString());
         }
+    }
+
+    /**
+     * Put an entity at its destination and complete the normal command-spawn lifecycle before applying
+     * the picker's frozen display state. Some modded mobs leave required persistent fields unset until
+     * {@link Mob#finalizeSpawn}; inserting a factory-created mob without this step can make it impossible
+     * to save. Finalization goes through the loader's finalize-spawn event, as {@code /summon} does, so
+     * other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
+     * which lives in another module.
+     *
+     * @return false when a finalize-spawn listener cancelled the spawn; the entity must then not be added
+     */
+    public static boolean prepareForCommandSpawn(
+            ServerLevel level, Entity entity, double x, double y, double z, float yaw) {
+        entity.moveTo(x, y, z, yaw, 0.0F);
+        if (entity instanceof Mob mob) {
+            if (!MobSpawning.finalizeSpawn(mob, level, MobSpawnType.COMMAND)) {
+                return false;
+            }
+            // Freeze finalize-spawned riders (spider jockeys) with their mount.
+            for (Entity rider : mob.getIndirectPassengers()) {
+                if (rider instanceof Mob riderMob) {
+                    riderMob.setNoAi(true);
+                    riderMob.setPersistenceRequired();
+                }
+            }
+            mob.setNoAi(true);
+            // NoAi mobs still run checkDespawn(); persistence keeps distant grid cells populated.
+            mob.setPersistenceRequired();
+            mob.setYRot(yaw);
+            mob.setYHeadRot(yaw);
+            mob.setYBodyRot(yaw);
+        }
+        return true;
     }
 
     /** Picker feedback to {@code player}, under the shared picker prefix. */

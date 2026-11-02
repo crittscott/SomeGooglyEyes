@@ -55,6 +55,12 @@ public final class HeldEye {
         this.rand = rand;
     }
 
+    /** Whether {@code entity} holds a Googly Eye in either hand. */
+    public static boolean holdsGooglyEye(LivingEntity entity) {
+        return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
+                || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
+    }
+
     private void begin(LivingEntity holder, BehaviorSettings settings) {
         this.holder = holder;
         eye = new GooglyTracker.EyeInfo();
@@ -66,12 +72,6 @@ public final class HeldEye {
         prevX = holder.getX();
         prevY = holder.getY();
         prevZ = holder.getZ();
-    }
-
-    /** Whether {@code entity} holds a Googly Eye in either hand. */
-    public static boolean holdsGooglyEye(LivingEntity entity) {
-        return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
-                || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
     }
 
     /** Drop the eye and anything playing on it. */

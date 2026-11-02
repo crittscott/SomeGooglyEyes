@@ -36,11 +36,6 @@ public class EyeBehaviorTriggerPacket implements Payload {
         this.elapsed = elapsed;
     }
 
-    /** The behavior to play. */
-    public ResourceLocation behaviorId() {
-        return behaviorId;
-    }
-
     private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
         this.entityId = buffer.readInt();
         this.behaviorId = buffer.readResourceLocation();
@@ -50,6 +45,23 @@ public class EyeBehaviorTriggerPacket implements Payload {
         if (!validTiming(duration, elapsed)) {
             throw new DecoderException("Invalid eye behavior timing");
         }
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        if (!validTiming(duration, elapsed)) {
+            throw new EncoderException("Invalid eye behavior timing");
+        }
+        buffer.writeInt(entityId);
+        buffer.writeResourceLocation(behaviorId);
+        buffer.writeVarInt(duration);
+        buffer.writeLong(seed);
+        buffer.writeVarInt(elapsed);
+    }
+
+    /** The behavior to play. */
+    public ResourceLocation behaviorId() {
+        return behaviorId;
     }
 
     /** The behavior's total length in ticks. */
@@ -84,17 +96,5 @@ public class EyeBehaviorTriggerPacket implements Payload {
 
     private static boolean validTiming(int duration, int elapsed) {
         return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        if (!validTiming(duration, elapsed)) {
-            throw new EncoderException("Invalid eye behavior timing");
-        }
-        buffer.writeInt(entityId);
-        buffer.writeResourceLocation(behaviorId);
-        buffer.writeVarInt(duration);
-        buffer.writeLong(seed);
-        buffer.writeVarInt(elapsed);
     }
 }

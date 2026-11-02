@@ -44,11 +44,6 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.creepyEndermanPulses(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
-    }
-
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.eyelessTrackedMobIgnoresGameEvents(
@@ -84,11 +79,6 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.rammingGoatSquints(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
-    }
-
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void serverOnlyAngerIsShared(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.serverOnlyAngerIsShared(helper);
@@ -119,5 +109,15 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void switchedOffOngoingBehaviorsStayNeutral(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.switchedOffOngoingBehaviorsStayNeutral(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void receivedExpressionsOutliveRenderTrackers(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
     }
 }

@@ -19,6 +19,11 @@ public final class PickerExportGameTests {
     private PickerExportGameTests() {
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
+        PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
         PickerExportGameTestsLogic.draftsRetainSpeciesAndAge(helper);
@@ -35,28 +40,8 @@ public final class PickerExportGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsEnderDragon(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportPacketRefusesOversizedConfig(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsEmptyPayloadAsMalformed(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -65,12 +50,27 @@ public final class PickerExportGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
-        PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
+    public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsEmptyPayloadAsMalformed(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
-        PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
+    public static void exportRejectsEnderDragon(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsUnknownEntityType(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
 }

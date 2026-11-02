@@ -1,12 +1,12 @@
 # Configuration reference
 
- **Server** config controls gameplay (who gets eyes, harvesting, expressions). **Client** config controls only what *you* see.
+**Server** config controls gameplay (who gets eyes, harvesting, expressions). **Client** config controls only what *you* see.
 
 ## Server config
 
 `<world>/serverconfig/somegoogly-server.toml`
 
-Forge applies edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment. Fabric uses NightConfig TOML, preserves existing raw values, unknown keys, and parsed comments when adding absent defaults, and saves the original text in a sibling `.bak` before rewriting. Invalid syntax leaves the file and loaded settings intact.
+Forge applies edits as soon as it reloads the file; Fabric applies them at world start and on `/reload`. Every key is written with an explanatory comment. Fabric uses NightConfig TOML, preserves existing raw values, unknown keys, and parsed comments when adding absent defaults, and saves the original text in a sibling `.bak` before rewriting. Invalid syntax leaves the file and loaded settings intact.
 
 ### Spawn settings
 
@@ -31,12 +31,9 @@ Resolution order: an exact (wildcard-free) id always wins; otherwise the **first
 
 A mob's eyes-or-not decision is made **once, at first spawn**, and stored on the mob for life. Changing these settings affects newly spawned mobs only. Existing mobs never reroll.
 
-A percent of `0` is how you turn eyes off for a specific entity or, with a wildcard, an entire mod's
-namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling eyes. It doesn't strip
-eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with
-a Slimy Eye.
+A percent of `0` is how you turn eyes off for a specific entity or, with a wildcard, an entire mod's namespace (e.g. `"alexsmobs:*,0"`). This only stops *new* spawns from rolling eyes. It doesn't strip eyes from mobs that already have them, and a player can still give one of these mobs eyes by hand with a Slimy Eye.
 
-Vanilla boats receive eyes only through Slimy Eyes; spawn chances do not apply. Boat expressions use ambient settings, and the master switch gates their rendering/application/removal. Client entity filters use `minecraft:boat` and `minecraft:chest_boat` for every wood.
+Vanilla boats and rafts acquire eyes only through Slimy Eye application; spawn-chance settings do not give boats eyes. Their expressions use the ambient settings below, without living-entity reactions. The master switch also gates boat rendering and eye application/removal. Client entity filters use `minecraft:boat` and `minecraft:chest_boat`, covering every wood of each kind.
 
 ### Behavior settings
 
@@ -90,10 +87,6 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only).
 | `disabledEntities` | empty | Entity ids that should not display eyes, e.g. `"minecraft:zombie"`. |
 | `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. |
 
-These are personal preferences: the mob still *has* eyes (other players see them, and they can still
-be harvested); you just don't render them. Forge applies edits as soon as they reload the
-file; on Fabric, restart the client.
+These are personal preferences: the mob still *has* eyes (other players see them, and they can still be harvested); you just don't render them. Forge applies edits as soon as it reloads the file; on Fabric, restart the client.
 
-The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for
-anyone regardless of these client settings, and eyes can't be applied or harvested either. The
-creative eye picker ignores `googlyEyesEnabled`.
+The server's `googlyEyesEnabled` is a separate, stronger switch: when it's off, nothing renders for anyone regardless of these client settings, and eyes can't be applied or harvested either. The creative eye picker ignores `googlyEyesEnabled`.

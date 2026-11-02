@@ -33,6 +33,12 @@ public final class HeadEyesLootModifier extends LootModifier {
         super(conditions);
     }
 
+    /** Register the modifier's codec on the mod bus; called once from the mod constructor. */
+    public static void register(IEventBus modBus) {
+        SERIALIZERS.register("head_eyes", CODEC);
+        SERIALIZERS.register(modBus);
+    }
+
     @Override
     public Codec<? extends IGlobalLootModifier> codec() {
         return CODEC.get();
@@ -42,11 +48,5 @@ public final class HeadEyesLootModifier extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         SkullEyeState.copyToLoot(context, generatedLoot);
         return generatedLoot;
-    }
-
-    /** Register the modifier's codec on the mod bus; called once from the mod constructor. */
-    public static void register(IEventBus modBus) {
-        SERIALIZERS.register("head_eyes", CODEC);
-        SERIALIZERS.register(modBus);
     }
 }

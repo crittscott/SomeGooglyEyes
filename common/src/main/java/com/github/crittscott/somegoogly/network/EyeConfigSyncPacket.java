@@ -41,11 +41,6 @@ public class EyeConfigSyncPacket implements Payload {
         this.behaviors = behaviors;
     }
 
-    /** The server's behavior settings. */
-    public BehaviorSettings behaviors() {
-        return behaviors;
-    }
-
     private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
         if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
@@ -84,6 +79,44 @@ public class EyeConfigSyncPacket implements Payload {
         this.behaviors = BehaviorSettings.read(buffer);
     }
 
+    /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
+    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
+            return buffer.writerIndex();
+        } finally {
+            buffer.release();
+        }
+    }
+
+    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
+                                  boolean googlyEyesEnabled, BehaviorSettings behaviors) {
+        buffer.writeVarInt(encoded.size());
+        for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
+            buffer.writeResourceLocation(entry.getKey());
+            buffer.writeNbt(entry.getValue());
+        }
+        buffer.writeBoolean(googlyEyesEnabled);
+        behaviors.write(buffer);
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        int start = buffer.writerIndex();
+        writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
+        int written = buffer.writerIndex() - start;
+        if (written > MAX_PAYLOAD_BYTES) {
+            throw new EncoderException("Eye config sync payload is " + written
+                    + " bytes, exceeding the safe " + MAX_PAYLOAD_BYTES + "-byte limit");
+        }
+    }
+
+    /** The server's behavior settings. */
+    public BehaviorSettings behaviors() {
+        return behaviors;
+    }
+
     /** The resolved eye definitions, by entity type. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
@@ -102,38 +135,5 @@ public class EyeConfigSyncPacket implements Payload {
     /** Decode and validate a received payload. */
     public static EyeConfigSyncPacket read(FriendlyByteBuf buffer) {
         return new EyeConfigSyncPacket(buffer);
-    }
-
-    /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
-    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        try {
-            writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
-            return buffer.writerIndex();
-        } finally {
-            buffer.release();
-        }
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        int start = buffer.writerIndex();
-        writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
-        int written = buffer.writerIndex() - start;
-        if (written > MAX_PAYLOAD_BYTES) {
-            throw new EncoderException("Eye config sync payload is " + written
-                    + " bytes, exceeding the safe " + MAX_PAYLOAD_BYTES + "-byte limit");
-        }
-    }
-
-    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
-                                  boolean googlyEyesEnabled, BehaviorSettings behaviors) {
-        buffer.writeVarInt(encoded.size());
-        for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
-            buffer.writeResourceLocation(entry.getKey());
-            buffer.writeNbt(entry.getValue());
-        }
-        buffer.writeBoolean(googlyEyesEnabled);
-        behaviors.write(buffer);
     }
 }

@@ -184,6 +184,7 @@ public final class EyeItemService {
         shearEyes(mob, player, hand, buildEyeDrop(helper, 0, EyeState.readProperties(mob)));
         return InteractionResult.SUCCESS;
     }
+
     /** Vanilla boat use, after the loader's normal protection listeners have accepted the interaction. */
     private static InteractionResult interactBoat(Player player, Level level, InteractionHand hand, Boat boat) {
         ItemStack stack = player.getItemInHand(hand);

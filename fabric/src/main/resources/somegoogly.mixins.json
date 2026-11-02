@@ -17,13 +17,13 @@
   ],
   "client": [
     "BoatRendererMixin",
-    "ClientLevelLifecycleMixin",
     "ContainerItemEyesMixin",
     "GuiItemEyesMixin",
     "HandItemEyesMixin",
     "HeadItemRendererMixin",
     "HotbarItemEyesMixin",
     "ItemFrameRendererMixin",
+    "MinecraftLevelMixin",
     "SkullBlockRendererMixin"
   ],
   "injectors": {

@@ -30,8 +30,6 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
  */
 public final class ModContent {
 
-    public static final ContentRegistrar.Handle<Enchantment> OPTOMETRIST = new ContentRegistrar.Handle<>();
-
     public static final ContentRegistrar.Handle<GooglyEyeItem> GOOGLY_EYE = new ContentRegistrar.Handle<>();
     public static final ContentRegistrar.Handle<SlimyEyeItem> SLIMY_EYE = new ContentRegistrar.Handle<>();
 
@@ -46,6 +44,8 @@ public final class ModContent {
             EYE_MODIFIER_RECIPE = new ContentRegistrar.Handle<>();
     public static final ContentRegistrar.Handle<SlimyEyeRecipe.Serializer> SLIMY_EYE_RECIPE =
             new ContentRegistrar.Handle<>();
+
+    public static final ContentRegistrar.Handle<Enchantment> OPTOMETRIST = new ContentRegistrar.Handle<>();
 
     /**
      * The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
