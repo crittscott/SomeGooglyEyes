@@ -90,5 +90,4 @@ public final class Gizmo {
         vc.addVertex(m, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
         vc.addVertex(m, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
     }
-
 }

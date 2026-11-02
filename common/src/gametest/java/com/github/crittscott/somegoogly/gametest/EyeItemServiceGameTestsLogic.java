@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -64,6 +66,9 @@ public final class EyeItemServiceGameTestsLogic {
      * eyes vanish, one Googly Eye with that iris color drops, and the shears lose one durability.
      */
     public static void optometristInteractHarvestsEyesForOneDurability(GameTestHelper helper, Player player) {
+        // The loader's shared fake player takes the server's default game mode, and creative skips both the
+        // consumption and the durability cost this test checks.
+        ((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeColor iris = new EyeColor(0.2F, 0.6F, 0.9F);
         EyeState.setHasEyes(cow, true);
@@ -153,6 +158,9 @@ public final class EyeItemServiceGameTestsLogic {
      * check needs a connected client and the loader's item-use event; the service test below bypasses it.
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {
+        // The loader's shared fake player takes the server's default game mode, and creative skips both the
+        // consumption and the durability cost this test checks.
+        ((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
         Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
         player.snapTo(at.x, at.y, at.z);
         player.setHealth(player.getMaxHealth());
