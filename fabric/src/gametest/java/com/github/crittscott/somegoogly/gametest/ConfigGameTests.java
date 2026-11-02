@@ -25,8 +25,18 @@ public final class ConfigGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesExactBeforeWildcard(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
         ConfigGameTestsLogic.configSectionsMatchReleasedFiles(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void spawnAllDefaultsOff(GameTestHelper helper) {
+        ConfigGameTestsLogic.spawnAllDefaultsOff(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -40,13 +50,81 @@ public final class ConfigGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
-        ConfigGameTestsLogic.percentForResolvesExactBeforeWildcard(helper);
+    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
-        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
+    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
+    }
+
+    /**
+     * {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it.
+     * In game: open a new world and {@code serverconfig/somegoogly-server.toml} appears with every key at its
+     * default; set {@code globalPercent = 17}, run {@code /reload}, and the file still says 17.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void serverTomlRoundTrips(GameTestHelper helper) {
+        String defaults = """
+                [server]
+                googlyEyesEnabled = false
+                globalPercent = 17
+                entityOverrides = [
+                    "minecraft:zombie,100",
+                    "*:*_horse,50"
+                ]
+                """;
+        try {
+            Path dir = Files.createTempDirectory("somegoogly-toml-test");
+            Path file = dir.resolve("server.toml");
+            try {
+                Map<String, Object> written = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+                helper.assertTrue(Files.exists(file), "readOrCreate writes the defaults when the file is absent");
+                helper.assertTrue(!TomlConfig.bool(written, "googlyEyesEnabled", true), "a boolean round-trips");
+                helper.assertTrue(TomlConfig.integer(written, "globalPercent", 5) == 17, "an integer round-trips");
+                helper.assertTrue(
+                        TomlConfig.strings(written, "entityOverrides", List.of())
+                                .equals(List.of("minecraft:zombie,100", "*:*_horse,50")),
+                        "a quoted string list round-trips with colons and wildcards intact");
+
+                Files.writeString(file, """
+                        [server]
+                        googlyEyesEnabled = true
+                        globalPercent = 3
+                        entityOverrides = []
+                        """);
+                Map<String, Object> reread = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+                helper.assertTrue(TomlConfig.bool(reread, "googlyEyesEnabled", false),
+                        "an existing file is re-read, not overwritten by the defaults");
+                helper.assertTrue(TomlConfig.integer(reread, "globalPercent", 5) == 3,
+                        "the re-read picks up the edited value");
+                helper.assertTrue(TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
+                        "an empty list parses as empty");
+            } finally {
+                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
+                Files.deleteIfExists(file);
+                Files.deleteIfExists(dir);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("TOML round-trip raised an IOException", e);
+        }
+        helper.succeed();
     }
 
     /**
@@ -121,31 +199,6 @@ public final class ConfigGameTests implements FabricGameTest {
         helper.succeed();
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
-    }
-
-    private static <T> Runnable restoreValue(ConfigValue<T> value) {
-        T original = value.get();
-        return () -> value.set(original);
-    }
-
     /**
      * {@link TomlConfig} reads single-quoted literal strings, keeps quoted {@code #} and {@code ]}, and
      * uses the integer default for a value of the wrong type. In game: on a Fabric server, write
@@ -188,80 +241,6 @@ public final class ConfigGameTests implements FabricGameTest {
             throw new RuntimeException("TOML literal-string read raised an IOException", e);
         }
         helper.succeed();
-    }
-
-
-    /**
-     * {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it.
-     * In game: open a new world and {@code serverconfig/somegoogly-server.toml} appears with every key at its
-     * default; set {@code globalPercent = 17}, run {@code /reload}, and the file still says 17.
-     */
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void serverTomlRoundTrips(GameTestHelper helper) {
-        String defaults = """
-                [server]
-                googlyEyesEnabled = false
-                globalPercent = 17
-                entityOverrides = [
-                    "minecraft:zombie,100",
-                    "*:*_horse,50"
-                ]
-                """;
-        try {
-            Path dir = Files.createTempDirectory("somegoogly-toml-test");
-            Path file = dir.resolve("server.toml");
-            try {
-                Map<String, Object> written = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(Files.exists(file), "readOrCreate writes the defaults when the file is absent");
-                helper.assertTrue(!TomlConfig.bool(written, "googlyEyesEnabled", true), "a boolean round-trips");
-                helper.assertTrue(TomlConfig.integer(written, "globalPercent", 5) == 17, "an integer round-trips");
-                helper.assertTrue(
-                        TomlConfig.strings(written, "entityOverrides", List.of())
-                                .equals(List.of("minecraft:zombie,100", "*:*_horse,50")),
-                        "a quoted string list round-trips with colons and wildcards intact");
-
-                Files.writeString(file, """
-                        [server]
-                        googlyEyesEnabled = true
-                        globalPercent = 3
-                        entityOverrides = []
-                        """);
-                Map<String, Object> reread = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(TomlConfig.bool(reread, "googlyEyesEnabled", false),
-                        "an existing file is re-read, not overwritten by the defaults");
-                helper.assertTrue(TomlConfig.integer(reread, "globalPercent", 5) == 3,
-                        "the re-read picks up the edited value");
-                helper.assertTrue(TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
-                        "an empty list parses as empty");
-            } finally {
-                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
-                Files.deleteIfExists(file);
-                Files.deleteIfExists(dir);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("TOML round-trip raised an IOException", e);
-        }
-        helper.succeed();
-    }
-
-    /** Capture each shared runtime value without changing the native server configuration. */
-    private static List<Runnable> snapshotServerConfig() {
-        List<Runnable> restore = new ArrayList<>();
-        try {
-            for (var field : ServerConfig.class.getFields()) {
-                if (field.get(null) instanceof ConfigValue<?> value) {
-                    restore.add(restoreValue(value));
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new AssertionError(e);
-        }
-        return restore;
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void spawnAllDefaultsOff(GameTestHelper helper) {
-        ConfigGameTestsLogic.spawnAllDefaultsOff(helper);
     }
 
     /**
@@ -327,5 +306,25 @@ public final class ConfigGameTests implements FabricGameTest {
             }
         }
         helper.succeed();
+    }
+
+    /** Capture each shared runtime value without changing the native server configuration. */
+    private static List<Runnable> snapshotServerConfig() {
+        List<Runnable> restore = new ArrayList<>();
+        try {
+            for (var field : ServerConfig.class.getFields()) {
+                if (field.get(null) instanceof ConfigValue<?> value) {
+                    restore.add(restoreValue(value));
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
+        }
+        return restore;
+    }
+
+    private static <T> Runnable restoreValue(ConfigValue<T> value) {
+        T original = value.get();
+        return () -> value.set(original);
     }
 }

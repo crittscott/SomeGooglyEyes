@@ -27,14 +27,19 @@ public final class PickerAuthGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
-        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
         PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -74,10 +79,5 @@ public final class PickerAuthGameTests {
         } finally {
             NeoForge.EVENT_BUS.unregister(refusal);
         }
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
     }
 }

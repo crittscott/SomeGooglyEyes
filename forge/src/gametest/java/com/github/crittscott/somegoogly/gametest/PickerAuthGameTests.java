@@ -24,14 +24,19 @@ public final class PickerAuthGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
-        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, SomeGooglyGameTests.survivalPlayer(helper));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
         PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
                 helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -71,10 +76,5 @@ public final class PickerAuthGameTests {
         } finally {
             MinecraftForge.EVENT_BUS.unregister(refusal);
         }
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
     }
 }

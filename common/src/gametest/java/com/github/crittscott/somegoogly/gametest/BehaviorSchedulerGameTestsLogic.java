@@ -12,6 +12,7 @@ import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +42,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
@@ -861,6 +867,21 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
+     * Puts {@code sleeper} to bed in a red bed whose head is at {@code relativeHead}, with its foot one block
+     * south; lying down moves the sleeper onto it.
+     */
+    private static void sleepInBed(GameTestHelper helper, LivingEntity sleeper, BlockPos relativeHead) {
+        BlockPos head = helper.absolutePos(relativeHead);
+        BlockState bed = Blocks.RED_BED.defaultBlockState();
+        helper.getLevel().setBlock(head.south(), bed
+                .setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.FOOT), Block.UPDATE_CLIENTS);
+        helper.getLevel().setBlock(head, bed
+                .setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD), Block.UPDATE_CLIENTS);
+        sleeper.startSleeping(head);
+        helper.assertTrue(sleeper.isSleeping(), "the sleeper falls asleep in its bed");
+    }
+
+    /**
      * A sleeping mob plays nothing: the admin trigger, heal, trade, affection, and ambient rolls are all
      * dropped until it wakes. In game: as an operator at night, look at a sleeping eyed villager and run
      * {@code /sg admin behavior swirl}; it reports the behavior dropped. Hit the villager to wake it and run
@@ -883,7 +904,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_TRADE.set(true);
             ServerConfig.LOVE_ON_AFFECTION.set(true);
             Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(2, 2, 2));
-            villager.startSleeping(villager.blockPosition());
+            sleepInBed(helper, villager, new BlockPos(2, 2, 2));
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
                     "a trigger on a sleeping mob is dropped");
@@ -925,7 +946,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
         helper.assertTrue(allLid(tracker, 0F), "an awake villager has no lids");
 
-        villager.startSleeping(villager.blockPosition());
+        sleepInBed(helper, villager, new BlockPos(2, 2, 2));
         tracker.update(ON);
         helper.assertTrue(!allLid(tracker, 0F) && !allLid(tracker, GooglyTracker.SLEEP_LID_COVERAGE),
                 "falling asleep slides the lids closed rather than snapping them shut");
@@ -1021,7 +1042,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(1, 2, 1));
         BehaviorSettings noSleep = without(OngoingBehavior.SLEEP_SQUINT);
         GooglyTracker villagerTracker = new GooglyTracker(villager, headInfo(helper, villager), false, noSleep);
-        villager.startSleeping(villager.blockPosition());
+        sleepInBed(helper, villager, new BlockPos(1, 2, 1));
         stepTracker(villagerTracker, GooglyTracker.SLEEP_LID_EASE_TICKS + 1, noSleep);
         helper.assertTrue(allLid(villagerTracker, 0F) && allSquash(villagerTracker, 1F),
                 "squintOnSleep=false: a sleeping villager shows no lids");
@@ -1030,7 +1051,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
         Player sleeper = helper.makeMockPlayer(GameType.SURVIVAL);
         GooglyTracker sleeperTracker = new GooglyTracker(sleeper, headInfo(helper, sleeper), false, ON);
-        sleeper.startSleeping(sleeper.blockPosition());
+        sleepInBed(helper, sleeper, new BlockPos(3, 2, 1));
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1);
         helper.assertTrue(allSquash(sleeperTracker, GooglyTracker.SLEEP_SQUASH_Y), "a sleeping player squints");
         stepTracker(sleeperTracker, GooglyTracker.SLEEP_EASE_TICKS + 1, noSleep);
@@ -1113,7 +1134,4 @@ public final class BehaviorSchedulerGameTestsLogic {
         return new BehaviorSettings(ON.ambient(), ON.minTicks(), ON.maxTicks(), ON.pool(), ON.growOnHitPercent(),
                 ON.swirlOnHeal(), ON.swirlHealCooldownTicks(), on);
     }
-
-
-
 }

@@ -53,6 +53,17 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
         }
     }
 
+    private void write(FriendlyByteBuf buffer) {
+        if (!validTiming(duration, elapsed)) {
+            throw new EncoderException("Invalid eye behavior timing");
+        }
+        buffer.writeInt(entityId);
+        buffer.writeResourceLocation(behaviorId);
+        buffer.writeVarInt(duration);
+        buffer.writeLong(seed);
+        buffer.writeVarInt(elapsed);
+    }
+
     /** The behavior to play. */
     public ResourceLocation behaviorId() {
         return behaviorId;
@@ -85,16 +96,5 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
 
     private static boolean validTiming(int duration, int elapsed) {
         return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        if (!validTiming(duration, elapsed)) {
-            throw new EncoderException("Invalid eye behavior timing");
-        }
-        buffer.writeInt(entityId);
-        buffer.writeResourceLocation(behaviorId);
-        buffer.writeVarInt(duration);
-        buffer.writeLong(seed);
-        buffer.writeVarInt(elapsed);
     }
 }

@@ -115,6 +115,12 @@ public final class NeoForgeServerConfig {
     private NeoForgeServerConfig() {
     }
 
+    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
+    public static void register(IEventBus modBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
+        modBus.addListener(NeoForgeServerConfig::onConfigChanged);
+    }
+
     private static void onConfigChanged(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
@@ -153,11 +159,5 @@ public final class NeoForgeServerConfig {
         if (event instanceof ModConfigEvent.Reloading && server != null) {
             server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
         }
-    }
-
-    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
-    public static void register(IEventBus modBus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
-        modBus.addListener(NeoForgeServerConfig::onConfigChanged);
     }
 }

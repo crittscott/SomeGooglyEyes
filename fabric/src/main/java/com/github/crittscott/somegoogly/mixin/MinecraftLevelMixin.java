@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Clear outgoing-world eye state when Fabric's client replaces its level. */
+/** Clear outgoing-world eye state when the client replaces its level, for which Fabric API has no event. */
 @Mixin(Minecraft.class)
 abstract class MinecraftLevelMixin {
 

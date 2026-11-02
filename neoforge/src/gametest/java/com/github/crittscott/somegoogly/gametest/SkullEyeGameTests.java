@@ -29,34 +29,6 @@ public final class SkullEyeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper) {
-        var player = FakePlayerFactory.getMinecraft(helper.getLevel());
-        SkullEyeGameTestsLogic.deniedItemUseLeavesHeadsUntouched(helper, player, (hit, denied) -> {
-            var event = new PlayerInteractEvent.RightClickBlock(
-                    player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
-            if (denied) {
-                event.setUseItem(TriState.FALSE);
-            }
-            NeoForge.EVENT_BUS.post(event);
-            if (denied) {
-                helper.assertTrue(!event.isCanceled(), "the adapter must preserve a noncanceled item denial");
-            }
-        });
-    }
-
-    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an eyed mob's
-    // head keeps its eyes in game; disabled until the cause is found.
-    // @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    // public static void eyedMobDropsAnEyedHead(GameTestHelper helper) {
-    //     SkullEyeGameTestsLogic.eyedMobDropsAnEyedHead(helper);
-    // }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.eyedMobsHeadsModHeadInheritsItsEyes(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void headEyesSurviveSaveLoad(GameTestHelper helper) {
         SkullEyeGameTestsLogic.headEyesSurviveSaveLoad(helper);
     }
@@ -92,5 +64,33 @@ public final class SkullEyeGameTests {
     public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
         SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper) {
+        var player = FakePlayerFactory.getMinecraft(helper.getLevel());
+        SkullEyeGameTestsLogic.deniedItemUseLeavesHeadsUntouched(helper, player, (hit, denied) -> {
+            var event = new PlayerInteractEvent.RightClickBlock(
+                    player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
+            if (denied) {
+                event.setUseItem(TriState.FALSE);
+            }
+            NeoForge.EVENT_BUS.post(event);
+            if (denied) {
+                helper.assertTrue(!event.isCanceled(), "the adapter must preserve a noncanceled item denial");
+            }
+        });
+    }
+
+    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an eyed mob's
+    // head keeps its eyes in game; disabled until the cause is found.
+    // @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    // public static void eyedMobDropsAnEyedHead(GameTestHelper helper) {
+    //     SkullEyeGameTestsLogic.eyedMobDropsAnEyedHead(helper);
+    // }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyedMobsHeadsModHeadInheritsItsEyes(helper);
     }
 }

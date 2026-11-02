@@ -70,39 +70,6 @@ public final class SkullEyeGameTestsLogic {
     private SkullEyeGameTestsLogic() {
     }
 
-    /** Kill {@code mob} with a fresh charged creeper's explosion, the kill that makes it drop its head. */
-    private static void blowUpWithChargedCreeper(GameTestHelper helper, Skeleton mob) {
-        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
-        CompoundTag data = new CompoundTag();
-        creeper.saveWithoutId(data);
-        data.putBoolean("powered", true);
-        creeper.load(data);
-        mob.hurt(helper.getLevel().damageSources().explosion(creeper, creeper), LETHAL_DAMAGE);
-        creeper.discard();
-    }
-
-    /**
-     * Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
-     * a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
-     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement.
-     */
-    public static void brokenHeadKeepsItsEyes(GameTestHelper helper, Player player) {
-        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
-        Snapshot eyes = purpleEyes();
-        SkullEyeState.set(skull, eyes);
-
-        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
-        List<ItemEntity> heads = drops(helper, HEAD, Items.SKELETON_SKULL);
-        helper.assertTrue(heads.size() == 1, "the broken head drops itself");
-        ItemStack item = heads.get(0).getItem();
-        helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(item)), "the dropped head carries its eyes");
-
-        SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
-        placed.applyComponentsFromItemStack(item);
-        helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), "placing the head restores its eyes");
-        helper.succeed();
-    }
-
     /**
      * A native item-use denial prevents both applying and harvesting head eyes, without consuming the
      * item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
@@ -132,10 +99,103 @@ public final class SkullEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** The {@code item} drops lying around the test-relative block {@code source}. */
-    private static List<ItemEntity> drops(GameTestHelper helper, BlockPos source, Item item) {
-        return helper.getLevel().getEntitiesOfClass(ItemEntity.class,
-                new AABB(helper.absolutePos(source)).inflate(DROP_SEARCH_RADIUS), drop -> drop.getItem().is(item));
+    /**
+     * A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another. In game:
+     * dye a Googly Eye purple, craft it into a Slimy Eye, place a skeleton skull, and right-click the skull with
+     * it in survival; the skull gains purple googly eyes, a squelch plays, and the Slimy Eye is used up.
+     * Right-click the same skull with a second Slimy Eye; nothing happens and it is kept.
+     */
+    public static void slimyEyeGivesAPlacedHeadEyes(GameTestHelper helper, Player player) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        ItemStack slimy = purpleSlimyEye();
+        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "a Slimy Eye applies to a head");
+        helper.assertTrue(SkullEyeState.hasEyes(skull), "the head has eyes");
+        helper.assertTrue(IRIS.equals(SkullEyeState.snapshot(skull).properties().iris().orElse(null)),
+                "the head's eyes carry the Slimy Eye's iris color");
+        helper.assertTrue(slimy.isEmpty(), "a survival application uses up the Slimy Eye");
+
+        ItemStack second = purpleSlimyEye();
+        player.setItemInHand(InteractionHand.MAIN_HAND, second);
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, "an eyed head refuses another eye");
+        helper.assertTrue(second.getCount() == 1, "a refused application keeps the Slimy Eye");
+        helper.succeed();
+    }
+
+    /**
+     * A head without a definition, or any head while the switch is off, refuses a Slimy Eye. In game: right-click
+     * a placed dragon head with a Slimy Eye; nothing happens and the Slimy Eye is kept. Set
+     * {@code googlyEyesEnabled = false} and right-click a skeleton skull; nothing happens either.
+     */
+    public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper, Player player) {
+        ItemStack slimy = purpleSlimyEye();
+        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+
+        SkullBlockEntity dragon = placeHead(helper, Blocks.DRAGON_HEAD);
+        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, "a dragon head refuses eyes");
+        helper.assertTrue(!SkullEyeState.hasEyes(dragon), "the dragon head stays eyeless");
+
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        try {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL,
+                    "googlyEyesEnabled=false refuses the application");
+            helper.assertTrue(!SkullEyeState.hasEyes(skull), "the head stays eyeless");
+        } finally {
+            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+        }
+        helper.assertTrue(slimy.getCount() == 1, "no refusal uses up the Slimy Eye");
+        helper.succeed();
+    }
+
+    /**
+     * Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them. In game: give a skeleton
+     * skull purple eyes with a Slimy Eye, right-click it with plain shears (nothing happens), then with Optometrist
+     * shears; the eyes vanish, a purple Googly Eye pops out, the shearing sound plays, and the shears lose one
+     * durability.
+     */
+    public static void optometristHarvestsAPlacedHead(GameTestHelper helper, Player player) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        SkullEyeState.set(skull, purpleEyes());
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, "plain shears pass");
+        helper.assertTrue(SkullEyeState.hasEyes(skull), "plain shears leave the eyes on");
+
+        ItemStack shears = optometristShears(helper);
+        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "Optometrist shears harvest");
+        helper.assertTrue(!SkullEyeState.hasEyes(skull), "the harvest clears the head's eyes");
+        helper.assertTrue(shears.getDamageValue() == 1, "the harvest spends one shears durability");
+        List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
+        helper.assertTrue(eyes.size() == 1, "exactly one Googly Eye pops out");
+        helper.assertTrue(IRIS.equals(EyeItemProperties.get(eyes.get(0).getItem()).iris().orElse(null)),
+                "the Googly Eye carries the head's iris color");
+        helper.succeed();
+    }
+
+    /**
+     * Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
+     * a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
+     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement.
+     */
+    public static void brokenHeadKeepsItsEyes(GameTestHelper helper, Player player) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        Snapshot eyes = purpleEyes();
+        SkullEyeState.set(skull, eyes);
+
+        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
+        List<ItemEntity> heads = drops(helper, HEAD, Items.SKELETON_SKULL);
+        helper.assertTrue(heads.size() == 1, "the broken head drops itself");
+        ItemStack item = heads.get(0).getItem();
+        helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(item)), "the dropped head carries its eyes");
+
+        SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
+        placed.applyComponentsFromItemStack(item);
+        helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), "placing the head restores its eyes");
+        helper.succeed();
     }
 
     /**
@@ -293,30 +353,21 @@ public final class SkullEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /**
-     * Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them. In game: give a skeleton
-     * skull purple eyes with a Slimy Eye, right-click it with plain shears (nothing happens), then with Optometrist
-     * shears; the eyes vanish, a purple Googly Eye pops out, the shearing sound plays, and the shears lose one
-     * durability.
-     */
-    public static void optometristHarvestsAPlacedHead(GameTestHelper helper, Player player) {
-        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
-        SkullEyeState.set(skull, purpleEyes());
+    /** Kill {@code mob} with a fresh charged creeper's explosion, the kill that makes it drop its head. */
+    private static void blowUpWithChargedCreeper(GameTestHelper helper, Skeleton mob) {
+        Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
+        CompoundTag data = new CompoundTag();
+        creeper.saveWithoutId(data);
+        data.putBoolean("powered", true);
+        creeper.load(data);
+        mob.hurt(helper.getLevel().damageSources().explosion(creeper, creeper), LETHAL_DAMAGE);
+        creeper.discard();
+    }
 
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, "plain shears pass");
-        helper.assertTrue(SkullEyeState.hasEyes(skull), "plain shears leave the eyes on");
-
-        ItemStack shears = optometristShears(helper);
-        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "Optometrist shears harvest");
-        helper.assertTrue(!SkullEyeState.hasEyes(skull), "the harvest clears the head's eyes");
-        helper.assertTrue(shears.getDamageValue() == 1, "the harvest spends one shears durability");
-        List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
-        helper.assertTrue(eyes.size() == 1, "exactly one Googly Eye pops out");
-        helper.assertTrue(IRIS.equals(EyeItemProperties.get(eyes.get(0).getItem()).iris().orElse(null)),
-                "the Googly Eye carries the head's iris color");
-        helper.succeed();
+    /** The {@code item} drops lying around the test-relative block {@code source}. */
+    private static List<ItemEntity> drops(GameTestHelper helper, BlockPos source, Item item) {
+        return helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+                new AABB(helper.absolutePos(source)).inflate(DROP_SEARCH_RADIUS), drop -> drop.getItem().is(item));
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {
@@ -342,61 +393,9 @@ public final class SkullEyeGameTestsLogic {
         return slimy;
     }
 
-    /**
-     * A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another. In game:
-     * dye a Googly Eye purple, craft it into a Slimy Eye, place a skeleton skull, and right-click the skull with
-     * it in survival; the skull gains purple googly eyes, a squelch plays, and the Slimy Eye is used up.
-     * Right-click the same skull with a second Slimy Eye; nothing happens and it is kept.
-     */
-    public static void slimyEyeGivesAPlacedHeadEyes(GameTestHelper helper, Player player) {
-        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
-        ItemStack slimy = purpleSlimyEye();
-        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
-
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "a Slimy Eye applies to a head");
-        helper.assertTrue(SkullEyeState.hasEyes(skull), "the head has eyes");
-        helper.assertTrue(IRIS.equals(SkullEyeState.snapshot(skull).properties().iris().orElse(null)),
-                "the head's eyes carry the Slimy Eye's iris color");
-        helper.assertTrue(slimy.isEmpty(), "a survival application uses up the Slimy Eye");
-
-        ItemStack second = purpleSlimyEye();
-        player.setItemInHand(InteractionHand.MAIN_HAND, second);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, "an eyed head refuses another eye");
-        helper.assertTrue(second.getCount() == 1, "a refused application keeps the Slimy Eye");
-        helper.succeed();
-    }
-
-    /**
-     * A head without a definition, or any head while the switch is off, refuses a Slimy Eye. In game: right-click
-     * a placed dragon head with a Slimy Eye; nothing happens and the Slimy Eye is kept. Set
-     * {@code googlyEyesEnabled = false} and right-click a skeleton skull; nothing happens either.
-     */
-    public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper, Player player) {
-        ItemStack slimy = purpleSlimyEye();
-        player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
-
-        SkullBlockEntity dragon = placeHead(helper, Blocks.DRAGON_HEAD);
-        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, "a dragon head refuses eyes");
-        helper.assertTrue(!SkullEyeState.hasEyes(dragon), "the dragon head stays eyeless");
-
-        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
-        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        try {
-            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL,
-                    "googlyEyesEnabled=false refuses the application");
-            helper.assertTrue(!SkullEyeState.hasEyes(skull), "the head stays eyeless");
-        } finally {
-            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
-        }
-        helper.assertTrue(slimy.getCount() == 1, "no refusal uses up the Slimy Eye");
-        helper.succeed();
-    }
-
     private static InteractionResult use(GameTestHelper helper, Player player, SkullBlockEntity skull) {
         BlockPos pos = skull.getBlockPos();
         return EyeItemService.useOnSkull(player, helper.getLevel(), InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
     }
-
 }

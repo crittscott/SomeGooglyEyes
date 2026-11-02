@@ -73,30 +73,16 @@ public final class ClientEyeConfigs {
         resolved.clear();
     }
 
-    /** Return the entity's config for the requested age, including the age-independent fallback. */
-    @Nullable
-    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
-        RuntimeConfigSet set = configs.get(entity);
-        return set == null ? null : set.get(baby);
-    }
-
     /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
     public static boolean googlyEyesEnabled() {
         return googlyEyesEnabled;
     }
 
-    /**
-     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
-     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
-     */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
-                                  BehaviorSettings behaviors) {
-        configs = Map.copyOf(next);
-        ClientEyeConfigs.behaviors = behaviors;
-        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
-        resolved.clear();
-        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
-                configs.size(), googlyEyesEnabled);
+    /** Return the entity's config for the requested age, including the age-independent fallback. */
+    @Nullable
+    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
+        RuntimeConfigSet set = configs.get(entity);
+        return set == null ? null : set.get(baby);
     }
 
     /** Resolve and cache the selected variant for the requested age, for client rendering. */
@@ -117,5 +103,19 @@ public final class ClientEyeConfigs {
     public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
         return cached(entity, false, config, SkullEyeState.variantIndex(entity, config, variantRoll));
+    }
+
+    /**
+     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
+     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
+     */
+    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next, boolean googlyEyesEnabled,
+                                  BehaviorSettings behaviors) {
+        configs = Map.copyOf(next);
+        ClientEyeConfigs.behaviors = behaviors;
+        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
+        resolved.clear();
+        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
+                configs.size(), googlyEyesEnabled);
     }
 }

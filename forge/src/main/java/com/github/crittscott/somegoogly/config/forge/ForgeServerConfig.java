@@ -114,6 +114,12 @@ public final class ForgeServerConfig {
     private ForgeServerConfig() {
     }
 
+    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
+    public static void register(FMLJavaModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
+        context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
+    }
+
     private static void onConfigChanged(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
@@ -152,11 +158,5 @@ public final class ForgeServerConfig {
         if (event instanceof ModConfigEvent.Reloading && server != null) {
             server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
         }
-    }
-
-    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
-    public static void register(FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
-        context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);
     }
 }

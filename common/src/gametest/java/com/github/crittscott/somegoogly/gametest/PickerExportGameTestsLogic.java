@@ -231,6 +231,7 @@ public final class PickerExportGameTestsLogic {
                 "a config with nothing to draw must be rejected, got: " + result.getString());
         helper.succeed();
     }
+
     /**
      * An empty compound is missing required fields, so it never reaches the usable-eyes check. No in-game
      * form with an unmodified client; guards the server against a forged export packet.
@@ -329,5 +330,4 @@ public final class PickerExportGameTestsLogic {
     private static MinecraftServer server(GameTestHelper helper) {
         return helper.getLevel().getServer();
     }
-
 }

@@ -22,5 +22,4 @@ public final class PickerKeys {
     private static KeyMapping make(String name, int key) {
         return new KeyMapping("key.somegoogly." + name, key, CATEGORY);
     }
-
 }

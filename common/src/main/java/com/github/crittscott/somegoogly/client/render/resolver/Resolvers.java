@@ -68,5 +68,4 @@ public final class Resolvers {
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
     }
-
 }

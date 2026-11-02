@@ -37,16 +37,16 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     /** Enlarge the mounted eye's diameter without changing its thickness. */
     private static final float FRAME_DIAMETER_MULTIPLIER = 3F;
-
     /**
      * Inventory size is set HERE, not in the model json: the GUI render path ignores a BEWLR's
      * {@code gui} display transform (the other contexts honor theirs), so this is the inventory knob.
      */
     private static final float GUI_SCALE = 1.8F;
-    private static final HeldEye HELD = new HeldEye();
     private static final float IRIS_SCALE = 0.6F;
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
+
+    private static final HeldEye HELD = new HeldEye();
 
     @Nullable
     private static FrameContext frameContext;
@@ -60,6 +60,19 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     private record FrameContext(ItemFrame frame, float partialTick) {
     }
 
+    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
+    public static void tick() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.isPaused()) {
+            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
+        }
+    }
+
+    /** Drop held-eye state and scoped frame context when leaving a world or server. */
+    public static void reset() {
+        frameContext = null;
+        HELD.reset();
+    }
 
     private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
         return ctx == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
@@ -161,20 +174,6 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             renderer.renderStatic(stack, context, light, overlay, pose, buffer, level, seed);
         } finally {
             frameContext = previous;
-        }
-    }
-
-    /** Drop held-eye state and scoped frame context when leaving a world or server. */
-    public static void reset() {
-        frameContext = null;
-        HELD.reset();
-    }
-
-    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (!minecraft.isPaused()) {
-            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
         }
     }
 }

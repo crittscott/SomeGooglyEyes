@@ -210,6 +210,13 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="register(net.neoforged.bus.api.IEventBus)">
+<h3>register</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(net.neoforged.bus.api.IEventBus&nbsp;modBus)</span></div>
+<div class="block">Register the modifier's codec on the mod bus; called once from the mod constructor.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="codec()">
 <h3>codec</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.mojang.serialization.MapCodec&lt;? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier&gt;</span>&nbsp;<span class="element-name">codec</span>()</div>
@@ -224,13 +231,6 @@ loadScripts(document, 'script');</script>
 <dt>Specified by:</dt>
 <dd><code>doApply</code>&nbsp;in class&nbsp;<code>net.neoforged.neoforge.common.loot.LootModifier</code></dd>
 </dl>
-</section>
-</li>
-<li>
-<section class="detail" id="register(net.neoforged.bus.api.IEventBus)">
-<h3>register</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(net.neoforged.bus.api.IEventBus&nbsp;modBus)</span></div>
-<div class="block">Register the modifier's codec on the mod bus; called once from the mod constructor.</div>
 </section>
 </li>
 </ul>

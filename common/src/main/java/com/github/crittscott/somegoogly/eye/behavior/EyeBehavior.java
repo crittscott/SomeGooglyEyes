@@ -259,15 +259,14 @@ public enum EyeBehavior {
         return BY_ID.get(id);
     }
 
+    /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
+    public ResourceLocation id() {
+        return id;
+    }
+
     /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
     public int defaultDuration() {
         return defaultDuration;
-    }
-
-    /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */
-    private static float ease(float t) {
-        t = Mth.clamp(t, 0f, 1f);
-        return t * t * (3f - 2f * t);
     }
 
     /**
@@ -277,13 +276,14 @@ public enum EyeBehavior {
      */
     public abstract void influence(BehaviorInstance instance, int head, int eye, EyeInfluence out);
 
-    /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
-    public ResourceLocation id() {
-        return id;
-    }
-
     /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
     public void onStart(BehaviorInstance instance) {
+    }
+
+    /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */
+    private static float ease(float t) {
+        t = Mth.clamp(t, 0f, 1f);
+        return t * t * (3f - 2f * t);
     }
 
     /** 0 → 1 → 0 over t ∈ [0,1] (a single smooth pulse). */

@@ -104,16 +104,12 @@ public final class FabricServerConfig {
     private FabricServerConfig() {
     }
 
-    private static Entry bool(String section, String key, String comment,
-                             boolean defaultValue, ConfigValue<Boolean> target) {
-        return new Entry(section, key, comment, String.valueOf(defaultValue),
-                values -> target.set(TomlConfig.bool(values, key, defaultValue)));
-    }
-
-    private static Entry integer(String section, String key, String comment,
-                                 int defaultValue, ConfigValue<Integer> target) {
-        return new Entry(section, key, comment, String.valueOf(defaultValue),
-                values -> TomlConfig.assign(target, key, TomlConfig.integer(values, key, defaultValue)));
+    /** Load the server config at server start and each {@code /reload}, and reset it at server stop. */
+    public static void register() {
+        ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
+        // Before the reload's eye-config broadcast, so clients receive the re-read master switch.
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
     }
 
     private static void load(MinecraftServer server) {
@@ -142,14 +138,6 @@ public final class FabricServerConfig {
         }
     }
 
-    /** Load the server config at server start and each {@code /reload}, and reset it at server stop. */
-    public static void register() {
-        ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
-        // Before the reload's eye-config broadcast, so clients receive the re-read master switch.
-        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
-    }
-
     private static String render() {
         StringBuilder toml = new StringBuilder();
         String section = null;
@@ -169,6 +157,18 @@ public final class FabricServerConfig {
             toml.append(entry.key()).append(" = ").append(entry.toml()).append('\n');
         }
         return toml.toString();
+    }
+
+    private static Entry bool(String section, String key, String comment,
+                             boolean defaultValue, ConfigValue<Boolean> target) {
+        return new Entry(section, key, comment, String.valueOf(defaultValue),
+                values -> target.set(TomlConfig.bool(values, key, defaultValue)));
+    }
+
+    private static Entry integer(String section, String key, String comment,
+                                 int defaultValue, ConfigValue<Integer> target) {
+        return new Entry(section, key, comment, String.valueOf(defaultValue),
+                values -> TomlConfig.assign(target, key, TomlConfig.integer(values, key, defaultValue)));
     }
 
     private static Entry strings(String section, String key, String comment,

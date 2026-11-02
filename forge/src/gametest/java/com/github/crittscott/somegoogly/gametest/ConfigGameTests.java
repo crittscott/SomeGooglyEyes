@@ -24,8 +24,18 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesExactBeforeWildcard(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
         ConfigGameTestsLogic.configSectionsMatchReleasedFiles(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void spawnAllDefaultsOff(GameTestHelper helper) {
+        ConfigGameTestsLogic.spawnAllDefaultsOff(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
@@ -39,13 +49,28 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
-        ConfigGameTestsLogic.percentForResolvesExactBeforeWildcard(helper);
+    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
+        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
-        ConfigGameTestsLogic.percentForResolvesWildcardsInListOrder(helper);
+    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
 
     /**
@@ -61,30 +86,5 @@ public final class ConfigGameTests {
         helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP_KEY)),
                 "native correction supplies an absent behavior key");
         helper.succeed();
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadFallsBackToNearestGeneration(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
-        ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
-    public static void spawnAllDefaultsOff(GameTestHelper helper) {
-        ConfigGameTestsLogic.spawnAllDefaultsOff(helper);
     }
 }
