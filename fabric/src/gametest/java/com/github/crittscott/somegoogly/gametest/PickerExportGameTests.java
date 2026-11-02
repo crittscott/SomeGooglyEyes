@@ -50,6 +50,7 @@ public final class PickerExportGameTests {
     public void exportRejectsEnderDragon(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
     }
+
     @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void exportRejectsGarbageTypedField(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
@@ -64,5 +65,4 @@ public final class PickerExportGameTests {
     public void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
-
 }
