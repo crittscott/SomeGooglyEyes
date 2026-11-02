@@ -85,5 +85,4 @@ abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder,
     public void somegoogly$setItem(@Nullable ItemStack stack) {
         somegoogly$item = stack;
     }
-
 }
