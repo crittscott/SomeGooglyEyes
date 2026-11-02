@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.render.BoatEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;

@@ -9,22 +9,10 @@
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
     "MerchantResultSlotMixin",
-    "MilkingMixin",
-    "MushroomCowShearMixin",
-    "ServerLevelEntityEventMixin",
-    "ShearingMixin",
-    "SkullBlockEntityDataMixin"
+    "MushroomCowShearMixin"
   ],
   "client": [
-    "BoatRendererMixin",
-    "ContainerItemEyesMixin",
-    "GuiItemEyesMixin",
-    "HandItemEyesMixin",
-    "HeadItemRendererMixin",
-    "HotbarItemEyesMixin",
-    "ItemFrameRendererMixin",
-    "MinecraftLevelMixin",
-    "SkullBlockRendererMixin"
+    "MinecraftLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

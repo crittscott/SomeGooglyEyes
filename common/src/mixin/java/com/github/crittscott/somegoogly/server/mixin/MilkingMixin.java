@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.server.mixin;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import net.minecraft.world.InteractionHand;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Reports a cow or goat being milked with a bucket, which Fabric API has no event for. Filling the bucket is
+ * Reports a cow or goat being milked with a bucket, which no loader has an event for. Filling the bucket is
  * the one place each {@code mobInteract} calls {@code ItemUtils.createFilledResult}, so it marks a
  * successful milking. Mooshrooms and modded cows reach it through {@code Cow#mobInteract}.
  */

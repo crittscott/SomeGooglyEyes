@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.forge;
+package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.mojang.blaze3d.vertex.PoseStack;

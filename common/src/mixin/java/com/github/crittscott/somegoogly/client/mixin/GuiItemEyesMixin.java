@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import net.minecraft.client.gui.GuiGraphics;

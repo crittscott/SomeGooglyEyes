@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nullable;
 
 /**
- * Fabric has no block-entity renderer hook, so placed heads' eyes ride vanilla's head renderer: the placed-head
- * draw is bracketed for {@link SkullEyeRenderer}, which draws the eyes right after the shared model draw. Forge
- * carries the same mixin.
+ * No loader has a block-entity renderer hook, so placed heads' eyes ride vanilla's head renderer: the
+ * placed-head draw is bracketed for {@link SkullEyeRenderer}, which draws the eyes right after the shared
+ * model draw.
  */
 @Mixin(SkullBlockRenderer.class)
 abstract class SkullBlockRendererMixin {

@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Head items draw through vanilla's built-in item renderer, which reaches the same head-model draw as placed
- * heads; bracketing every item it draws lets {@link SkullEyeRenderer} give a head item its eyes. Forge carries
- * the same Mixin.
+ * heads; bracketing every item it draws lets {@link SkullEyeRenderer} give a head item its eyes.
  */
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 abstract class HeadItemRendererMixin {

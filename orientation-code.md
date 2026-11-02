@@ -14,6 +14,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | --- | --- |
 | `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib gate |
 | `gecko/src/main/java` | GeckoLib-typed layer and bone code, compiled by each loader |
+| `common/src/mixin/java` | Shared Mixins, compiled by each loader |
 | `common/src/main/resources` | Assets, recipes, eye definitions, language |
 | `common/src/gametest` | Shared GameTest assertions and the structure fixture |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
@@ -43,7 +44,7 @@ Persistent entity keys:
 
 The eye-state key and roll are initialized together only when absent, keeping the natural-eyes decision. `initialize` and `sendTo` skip a default snapshot; mid-life mutations always send. Loader hooks call `EyeState.copy` on mob conversion and non-death respawn; a player joining a level gets their own snapshot.
 
-`SkullEyeState` keeps a placed head's `Snapshot` (one `read`/`write`) in a field each loader's `SkullBlockEntityDataMixin` adds, saved as `somegoogly:data` and replaced on every `load` (neither loader's own store is), so it rides the update tag and a head item's `BlockEntityTag`. A head borrows its mob's adult definition, rolling among variants with eyes on the part it copies (`HEAD_PART_TOKENS`, else the head part). Vanilla heads map by type, the Heads mod's by block id alone (`HEADS_MOBS`), a soft dependency; other mods' heads have none. Mutations end in a block update.
+`SkullEyeState` keeps a placed head's `Snapshot` (one `read`/`write`) in a field the shared `SkullBlockEntityDataMixin` adds, saved as `somegoogly:data` and replaced on every `load` (neither loader's own store is), so it rides the update tag and a head item's `BlockEntityTag`. A head borrows its mob's adult definition, rolling among variants with eyes on the part it copies (`HEAD_PART_TOKENS`, else the head part). Vanilla heads map by type, the Heads mod's by block id alone (`HEADS_MOBS`), a soft dependency; other mods' heads have none. Mutations end in a block update.
 
 Eye items carry `AppearanceOverride` as the `EyeProperties` compound (`EyeItemProperties`), never geometry; harvesting copies the first eye's effective appearance, and the modifier recipe changes only that compound.
 
@@ -67,7 +68,7 @@ The common `somegoogly.accesswidener` serves common and both loaders; Forge rema
 
 Optional GeckoLib: `gecko/src/main/java` is `srcDir`-ed into each loader against its compile-only GeckoLib; common enumerates bones through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones` only once GeckoLib is found; a failed attach can't block load.
 
-`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. Loader boat Mixins draw before the hull pose is popped. `ItemEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. The boat Mixin draws before the hull pose is popped. `ItemEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -87,7 +88,7 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 ## Loader integration
 
-Fabric Mixins cover data migration, hurt and heal, trades, shears-kill and head drops, milking, sheep shearing, and server-broadcast entity events; both loaders' Mixins hold and draw head eyes; the mooshroom shear, milking, sheep shearing, and entity events have Forge Mixins too, since Forge has no event for them. Mixins target the pinned Minecraft version; each loader writes its own fixed refmap.
+Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes; each loader compiles them into its own refmap. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes; each loader has a mooshroom-shear Mixin, Forge's also targeting `shearInternal`.
 
 Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus. Forge GameTests use the unprefixed `empty` template.
 
@@ -98,4 +99,4 @@ GameTest scenarios: Fabric 172, Forge 172. Item coverage: twelve frame, seven GU
 ## Operational boundaries
 
 - Optional renderers log failures once.
-- `build-env/` is not a build input but a snapshot (see `orientation-build.md`); mirror every edit to a file it covers.
+- `build-env/` mirrors build inputs (see `orientation-build.md`); update it with them.

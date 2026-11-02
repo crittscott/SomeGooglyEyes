@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.forge;
+package com.github.crittscott.somegoogly.server.mixin;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import net.minecraft.world.entity.animal.Sheep;
@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Reports a sheep being sheared, which Forge has no event for. Shears used by a player or a dispenser end
- * in {@code setSheared(true)} whether vanilla or Forge's {@code IForgeShearable#onSheared} does the
- * shearing, so its change from unsheared marks a shearing.
+ * Reports a sheep being sheared, which no loader has an event for. Shears used by a player or a dispenser
+ * end in {@code setSheared(true)} whether vanilla or the loader's shearable hook does the shearing, so its
+ * change from unsheared marks a shearing.
  */
 @Mixin(Sheep.class)
 abstract class ShearingMixin {

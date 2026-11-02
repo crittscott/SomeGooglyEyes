@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.forge;
+package com.github.crittscott.somegoogly.server.mixin;
 
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.nbt.CompoundTag;
@@ -15,8 +15,7 @@ import javax.annotation.Nullable;
 /**
  * Gives the head block entity its eye-state compound ({@link SkullEyeState.Holder}), saved under
  * {@link SkullEyeState#DATA_KEY} with its own data and replaced on every load, so the server's save, the
- * clients' update packets, and a placed head item all carry it. A load without the key clears it. Fabric
- * carries the same Mixin.
+ * clients' update packets, and a placed head item all carry it. A load without the key clears it.
  */
 @Mixin(SkullBlockEntity.class)
 abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
