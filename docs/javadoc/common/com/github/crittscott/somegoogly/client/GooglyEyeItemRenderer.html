@@ -69,14 +69,14 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#tick()" tabindex="0">tick()</a></li>
+<li><a href="#reset()" tabindex="0">reset()</a></li>
+<li><a href="#itemEyes(net.minecraft.world.item.ItemStack)" tabindex="0">itemEyes(ItemStack)</a></li>
+<li><a href="#itemPartialTick()" tabindex="0">itemPartialTick()</a></li>
 <li><a href="#extractArgument(net.minecraft.world.item.ItemStack)" tabindex="0">extractArgument(ItemStack)</a></li>
 <li><a href="#extractArgument(net.minecraft.world.item.ItemStack,net.minecraft.world.item.ItemDisplayContext)" tabindex="0">extractArgument(ItemStack, ItemDisplayContext)</a></li>
 <li><a href="#getExtents(java.util.function.Consumer)" tabindex="0">getExtents(Consumer)</a></li>
-<li><a href="#itemEyes(net.minecraft.world.item.ItemStack)" tabindex="0">itemEyes(ItemStack)</a></li>
-<li><a href="#itemPartialTick()" tabindex="0">itemPartialTick()</a></li>
-<li><a href="#reset()" tabindex="0">reset()</a></li>
 <li><a href="#submit(com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer.Frame,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)" tabindex="0">submit(GooglyEyeItemRenderer.Frame, PoseStack, SubmitNodeCollector, int, int, boolean, int)</a></li>
-<li><a href="#tick()" tabindex="0">tick()</a></li>
 <li><a href="#renderInFrame(net.minecraft.client.renderer.item.ItemStackRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,int,com.github.crittscott.somegoogly.client.ItemEyes.FrameData)" tabindex="0">renderInFrame(ItemStackRenderState, PoseStack, SubmitNodeCollector, int, int, int, ItemEyes.FrameData)</a></li>
 </ol>
 </li>
@@ -286,6 +286,42 @@ path, texture, and pair of render types.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="tick()">
+<h3>tick</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
+<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reset()">
+<h3>reset</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
+<div class="block">Drop held-eye state when leaving a world or server.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemEyes(net.minecraft.world.item.ItemStack)">
+<h3>itemEyes</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">itemEyes</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="itemPartialTick()">
+<h3>itemPartialTick</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">itemPartialTick</span>()</div>
+<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="extractArgument(net.minecraft.world.item.ItemStack)">
 <h3>extractArgument</h3>
 <div class="horizontal-scroll">
@@ -321,33 +357,6 @@ path, texture, and pair of render types.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="itemEyes(net.minecraft.world.item.ItemStack)">
-<h3>itemEyes</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></span>&nbsp;<span class="element-name">itemEyes</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="itemPartialTick()">
-<h3>itemPartialTick</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">itemPartialTick</span>()</div>
-<div class="block">Partial tick supplied by the current GUI, hand, or frame presentation.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="reset()">
-<h3>reset</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
-<div class="block">Drop held-eye state when leaving a world or server.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="submit(com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer.Frame,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)">
 <h3>submit</h3>
 <div class="horizontal-scroll">
@@ -362,15 +371,6 @@ path, texture, and pair of render types.</div>
 <dt>Specified by:</dt>
 <dd><code>submit</code>&nbsp;in interface&nbsp;<code>net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href="GooglyEyeItemRenderer.Frame.html" title="class in com.github.crittscott.somegoogly.client">GooglyEyeItemRenderer.Frame</a>&gt;</code></dd>
 </dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="tick()">
-<h3>tick</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tick</span>()</div>
-<div class="block">Advance the local player's held eye one tick, unless the game is paused; called from the client tick.</div>
 </div>
 </section>
 </li>

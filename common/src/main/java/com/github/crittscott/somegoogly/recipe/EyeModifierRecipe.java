@@ -53,6 +53,32 @@ public class EyeModifierRecipe extends CustomRecipe {
         return result;
     }
 
+    /**
+     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
+     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
+     * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
+     * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
+     */
+    @Nullable
+    private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {
+        if (stack.getItem() instanceof DyeItem) {
+            DyeColor dye = stack.get(DataComponents.DYE);
+            if (dye != null) {
+                return current.withIrisColor(EyeColor.fromRgb24(dye.getTextureDiffuseColor()));
+            }
+        }
+        if (stack.is(Items.GLOWSTONE_DUST)) {
+            return current.withGlow(true);
+        }
+        if (stack.is(Items.REDSTONE)) {
+            return current.withGlow(false);
+        }
+        if (stack.is(Items.COBWEB)) {
+            return AppearanceOverride.EMPTY;
+        }
+        return null;
+    }
+
     @Nullable
     private static Match find(CraftingInput input) {
         ItemStack eye = ItemStack.EMPTY;
@@ -94,31 +120,4 @@ public class EyeModifierRecipe extends CustomRecipe {
     public boolean matches(CraftingInput input, Level level) {
         return find(input) != null;
     }
-
-    /**
-     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
-     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
-     * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
-     * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
-     */
-    @Nullable
-    private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {
-        if (stack.getItem() instanceof DyeItem) {
-            DyeColor dye = stack.get(DataComponents.DYE);
-            if (dye != null) {
-                return current.withIrisColor(EyeColor.fromRgb24(dye.getTextureDiffuseColor()));
-            }
-        }
-        if (stack.is(Items.GLOWSTONE_DUST)) {
-            return current.withGlow(true);
-        }
-        if (stack.is(Items.REDSTONE)) {
-            return current.withGlow(false);
-        }
-        if (stack.is(Items.COBWEB)) {
-            return AppearanceOverride.EMPTY;
-        }
-        return null;
-    }
-
 }

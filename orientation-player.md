@@ -94,7 +94,8 @@ The Some Googly Eyes tab contains a Googly Eye, a Slimy Eye, and an Optometrist 
 World settings are stored in:
 
 ```text
-<world>/serverconfig/somegoogly-server.toml
+<world>/serverconfig/somegoogly-server.toml   (Fabric, Forge)
+config/somegoogly-server.toml                 (NeoForge; <world>/syncedconfig/somegoogly-server.toml overrides it)
 ```
 
 NeoForge and Forge apply edits as soon as they reload the file; Fabric applies them at world start and on `/reload`. A changed `googlyEyesEnabled` reaches connected players right away. Fabric preserves malformed TOML files and adds missing keys without replacing existing values, saving original text as `.bak`.

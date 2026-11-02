@@ -32,7 +32,7 @@ Don't waste your slimy eye: hold an eye and sneak while targeting a mob to see w
 
 ## Configuration
 
-- **Server settings** (`<world>/serverconfig/somegoogly-server.toml`): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
+- **Server settings** (`<world>/serverconfig/somegoogly-server.toml`; on NeoForge, `config/somegoogly-server.toml`, which `<world>/syncedconfig/somegoogly-server.toml` overrides): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.
 - **Client settings** (`config/somegoogly-client.toml`): turn eye rendering off entirely, or hide it for specific mobs or whole mods; purely visual, per-player.
 
 See [the configuration reference](https://github.com/crittscott/SomeGooglyEyes/blob/26.3/docs/configuration.md) for the full reference.

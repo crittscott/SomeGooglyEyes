@@ -716,6 +716,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         }
         helper.succeed();
     }
+
     /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */
     private static Player playerHolding(GameTestHelper helper, ItemStack weapon, InteractionHand hand,
                                         HumanoidArm mainArm) {
