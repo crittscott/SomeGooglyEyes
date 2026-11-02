@@ -57,6 +57,7 @@ public final class ConfigGameTests {
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
         ConfigGameTestsLogic.reloadReplacesConfigsOnlyOnContentChange(helper);
     }
+
     /**
      * Native file correction retains released values and adds absent keys. In game: open a world saved
      * by the 1.21.4 release with globalPercent set to 17 and the squintOnSleep line deleted; correction

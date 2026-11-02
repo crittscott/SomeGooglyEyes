@@ -42,6 +42,7 @@ public final class PickerExportGameTests {
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsEnderDragon(helper);
     }
+
     public static void exportRejectsGarbageTypedField(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsGarbageTypedField(helper);
     }
@@ -53,6 +54,4 @@ public final class PickerExportGameTests {
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
-
 }
-

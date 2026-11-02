@@ -47,9 +47,6 @@ public final class NeoForgeServerEvents {
      * gets first refusal — this handler consumes the event as soon as it acts.
      */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!(event.getTarget() instanceof LivingEntity living)) {
-            return;
-        }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
