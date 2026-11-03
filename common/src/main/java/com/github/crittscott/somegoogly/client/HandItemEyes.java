@@ -25,7 +25,7 @@ public final class HandItemEyes {
     private HandItemEyes() {
     }
 
-    public record Context(@Nullable ItemEyes eyes, float partialTick) {
+    public record Context(@Nullable PresentationEyes eyes, float partialTick) {
     }
 
     public interface Holder {
@@ -54,7 +54,7 @@ public final class HandItemEyes {
         InteractionHand hand = arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
         boolean enabled = minecraft.level != null && !holder.isRemoved()
                 && ClientEyeConfigs.googlyEyesEnabled() && !ClientConfig.DISABLE_GOOGLY_EYES.get();
-        ItemEyes eyes = SIMULATIONS.get(holder, hand, stack, enabled);
+        PresentationEyes eyes = SIMULATIONS.get(holder, hand, stack, enabled);
         return eyes == null ? EMPTY : new Context(eyes, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
     }
 

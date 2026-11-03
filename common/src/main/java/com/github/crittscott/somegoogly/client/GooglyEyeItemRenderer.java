@@ -81,12 +81,12 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     /** Animation for a head item in the current GUI, hand, or frame draw, if its state still matches. */
     @Nullable
-    public static ItemEyes itemEyes(ItemStack stack) {
-        ItemEyes gui = GuiItemEyes.current().eyes();
+    public static PresentationEyes itemEyes(ItemStack stack) {
+        PresentationEyes gui = GuiItemEyes.current().eyes();
         if (gui != null && gui.matches(stack)) {
             return gui;
         }
-        ItemEyes hand = HandItemEyes.current().eyes();
+        PresentationEyes hand = HandItemEyes.current().eyes();
         if (hand != null && hand.matches(stack)) {
             return hand;
         }
@@ -133,15 +133,15 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        ItemEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
-        ItemEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+        PresentationEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
+        PresentationEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                 || ctx == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND ? HandItemEyes.current().eyes() : null;
-        ItemEyes framed = ctx == ItemDisplayContext.FIXED && frameContext != null
+        PresentationEyes framed = ctx == ItemDisplayContext.FIXED && frameContext != null
                 && stack == frameContext.frame().getItem() ? ClientEyeRuntime.frameEye(frameContext.frame()) : null;
         GooglyTracker.EyeInfo animated = gui != null ? gui.eye
                 : hand != null ? hand.eye : framed != null ? framed.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
         if (gui != null || hand != null || framed != null) {
-            GooglyEyeRenderer.captureItemGravity(pose, animated);
+            GooglyEyeRenderer.captureGravity(pose, animated);
         }
         if (ctx == ItemDisplayContext.FIXED) {
             pose.scale(FRAME_DIAMETER_MULTIPLIER, FRAME_DIAMETER_MULTIPLIER, 1F);

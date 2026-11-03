@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -34,9 +35,9 @@ public final class ClientEyeRuntime {
     private static final Set<Integer> ANGRY = new HashSet<>();
     private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
     private static final BoatEyeAnimations BOATS = new BoatEyeAnimations();
-    private static final Map<ItemFrame, ItemEyes> FRAMES = new HashMap<>();
+    private static final Map<ItemFrame, PresentationEyes> FRAMES = new HashMap<>();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
-    private static final Map<BlockPos, SkullEyes> SKULLS = new HashMap<>();
+    private static final Map<BlockPos, PresentationEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
     private static long simulationTicks;
@@ -50,7 +51,7 @@ public final class ClientEyeRuntime {
 
     /** The current boat layout, rebuilt only when its state, geometry, or definition changes. */
     @Nullable
-    public static ItemEyes boatEyes(Boat boat) {
+    public static PresentationEyes boatEyes(Boat boat) {
         return BOATS.get(boat);
     }
 
@@ -80,14 +81,14 @@ public final class ClientEyeRuntime {
 
     /** The rendered frame's eye, or none while its item or the global switches disallow animation. */
     @Nullable
-    public static ItemEyes frameEye(ItemFrame frame) {
-        if (!frameAnimationEnabled() || frame.isRemoved() || !ItemEyes.supports(frame.getItem())) {
+    public static PresentationEyes frameEye(ItemFrame frame) {
+        if (!frameAnimationEnabled() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
             FRAMES.remove(frame);
             return null;
         }
-        ItemEyes eye = FRAMES.get(frame);
+        PresentationEyes eye = FRAMES.get(frame);
         if (eye == null || !eye.matches(frame.getItem())) {
-            eye = ItemEyes.create(frame.getUUID(), frame.getItem());
+            eye = PresentationEyes.create(frame.getUUID(), frame.getItem());
             if (eye == null) {
                 FRAMES.remove(frame);
                 return null;
@@ -164,14 +165,17 @@ public final class ClientEyeRuntime {
      * definitions give it nothing to draw.
      */
     @Nullable
-    public static SkullEyes skullEyes(SkullBlockEntity skull, ResourceLocation entity) {
-        SkullEyes eyes = SKULLS.get(skull.getBlockPos());
+    public static PresentationEyes skullEyes(SkullBlockEntity skull, ResourceLocation entity) {
+        PresentationEyes eyes = SKULLS.get(skull.getBlockPos());
         if (eyes == null || !eyes.entity.equals(entity)) {
-            eyes = SkullEyes.create(skull.getBlockPos(), entity, SkullEyeState.snapshot(skull));
-            if (eyes == null) {
+            var snapshot = SkullEyeState.snapshot(skull);
+            var layout = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            int[] parts = SkullEyeState.headParts(entity, layout);
+            if (parts.length == 0) {
                 SKULLS.remove(skull.getBlockPos());
                 return null;
             }
+            eyes = PresentationEyes.placedHead(Mth.getSeed(skull.getBlockPos()), entity, snapshot, layout, parts);
             SKULLS.put(skull.getBlockPos().immutable(), eyes);
         }
         return eyes;
@@ -216,11 +220,11 @@ public final class ClientEyeRuntime {
             FRAMES.clear();
         }
         BOATS.tick(level, level.getGameTime(), true, behaviors);
-        Iterator<Map.Entry<ItemFrame, ItemEyes>> frames = FRAMES.entrySet().iterator();
+        Iterator<Map.Entry<ItemFrame, PresentationEyes>> frames = FRAMES.entrySet().iterator();
         while (frames.hasNext()) {
-            Map.Entry<ItemFrame, ItemEyes> entry = frames.next();
+            Map.Entry<ItemFrame, PresentationEyes> entry = frames.next();
             ItemFrame frame = entry.getKey();
-            ItemEyes eye = entry.getValue();
+            PresentationEyes eye = entry.getValue();
             int idle = clientTicks - eye.lastRenderTick;
             if (idle > EVICT_IDLE_TICKS || frame.isRemoved() || frame.level() != level
                     || !eye.matches(frame.getItem())) {
@@ -229,10 +233,10 @@ public final class ClientEyeRuntime {
                 eye.tick(level.getGameTime(), behaviors);
             }
         }
-        Iterator<Map.Entry<BlockPos, SkullEyes>> skulls = SKULLS.entrySet().iterator();
+        Iterator<Map.Entry<BlockPos, PresentationEyes>> skulls = SKULLS.entrySet().iterator();
         while (skulls.hasNext()) {
-            Map.Entry<BlockPos, SkullEyes> entry = skulls.next();
-            SkullEyes eyes = entry.getValue();
+            Map.Entry<BlockPos, PresentationEyes> entry = skulls.next();
+            PresentationEyes eyes = entry.getValue();
             int idle = clientTicks - eyes.lastRenderTick;
             if (idle > EVICT_IDLE_TICKS || level == null
                     || !(level.getBlockEntity(entry.getKey()) instanceof SkullBlockEntity skull)

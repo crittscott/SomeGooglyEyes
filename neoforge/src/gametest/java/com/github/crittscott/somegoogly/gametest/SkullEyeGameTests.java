@@ -24,6 +24,11 @@ public final class SkullEyeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.placedHeadUsesSharedAmbientSlots(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper) {
         SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
