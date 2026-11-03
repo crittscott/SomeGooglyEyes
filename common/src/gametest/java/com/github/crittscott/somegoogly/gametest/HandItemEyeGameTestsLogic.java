@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.client.HandEyeAnimations;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -50,7 +50,7 @@ public final class HandItemEyeGameTestsLogic {
         var camera = new Quaternionf().rotationYXZ(0.7F, -0.4F, 0.2F);
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
         var viewPose = new Matrix3f().rotation(new Quaternionf(camera).conjugate()).mul(localToWorld);
-        var rotated = new ItemEyes(FIRST);
+        var rotated = new PresentationEyes(FIRST);
         rotated.eye.capturePose(viewPose, camera);
         helper.assertTrue(Math.abs(rotated.eye.gravX - 1F) < PHYSICS_TOLERANCE
                         && Math.abs(rotated.eye.gravY) < PHYSICS_TOLERANCE,
@@ -60,7 +60,7 @@ public final class HandItemEyeGameTestsLogic {
         }
         helper.assertTrue(rotated.eye.deltaX > 0.5F && Math.abs(rotated.eye.deltaY) < 0.1F,
                 "the pupil falls along projected world-down");
-        var horizontal = new ItemEyes(FIRST);
+        var horizontal = new PresentationEyes(FIRST);
         horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), new Quaternionf());
         helper.assertTrue(Math.abs(horizontal.eye.gravX) < PHYSICS_TOLERANCE
                         && Math.abs(horizontal.eye.gravY) < PHYSICS_TOLERANCE,

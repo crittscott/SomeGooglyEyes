@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.mixin;
 
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -8,20 +8,20 @@ import javax.annotation.Nullable;
 
 /** Carries the frame's selected animation through render-state extraction. */
 @Mixin(ItemFrameRenderState.class)
-abstract class ItemFrameRenderStateMixin implements ItemEyes.Holder {
+abstract class ItemFrameRenderStateMixin implements PresentationEyes.Holder {
 
     @Unique
     @Nullable
-    private ItemEyes.FrameData somegoogly$frameEye;
+    private PresentationEyes.FrameData somegoogly$frameEye;
 
     @Override
     @Nullable
-    public ItemEyes.FrameData somegoogly$frameEye() {
+    public PresentationEyes.FrameData somegoogly$frameEye() {
         return somegoogly$frameEye;
     }
 
     @Override
-    public void somegoogly$setFrameEye(@Nullable ItemEyes.FrameData data) {
+    public void somegoogly$setFrameEye(@Nullable PresentationEyes.FrameData data) {
         somegoogly$frameEye = data;
     }
 }
