@@ -156,6 +156,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("serializationgametests/picker_export_packet_round_trips", () -> SerializationGameTests::pickerExportPacketRoundTrips);
         functions.register("serializationgametests/picker_freeze_packet_round_trips", () -> SerializationGameTests::pickerFreezePacketRoundTrips);
         functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
+        functions.register("skulleyegametests/placed_head_uses_shared_ambient_slots", () -> SkullEyeGameTests::placedHeadUsesSharedAmbientSlots);
         functions.register("skulleyegametests/denied_item_use_leaves_heads_untouched", () -> SkullEyeGameTests::deniedItemUseLeavesHeadsUntouched);
         functions.register("skulleyegametests/head_eyes_survive_save_load", () -> SkullEyeGameTests::headEyesSurviveSaveLoad);
         functions.register("skulleyegametests/optometrist_harvests_a_placed_head", () -> SkullEyeGameTests::optometristHarvestsAPlacedHead);

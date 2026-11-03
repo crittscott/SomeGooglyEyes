@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.mixin;
 
-import com.github.crittscott.somegoogly.client.SkullEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import net.minecraft.client.renderer.blockentity.state.SkullBlockRenderState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,13 +14,13 @@ abstract class SkullBlockRenderStateMixin implements SkullEyeRenderer.PlacedHold
 
     @Unique
     @Nullable
-    private SkullEyes somegoogly$eyes;
+    private PresentationEyes somegoogly$eyes;
     @Unique
     private float somegoogly$partialTick;
 
     @Override
     @Nullable
-    public SkullEyes somegoogly$eyes() {
+    public PresentationEyes somegoogly$eyes() {
         return somegoogly$eyes;
     }
 
@@ -30,7 +30,7 @@ abstract class SkullBlockRenderStateMixin implements SkullEyeRenderer.PlacedHold
     }
 
     @Override
-    public void somegoogly$setEyes(@Nullable SkullEyes eyes, float partialTick) {
+    public void somegoogly$setEyes(@Nullable PresentationEyes eyes, float partialTick) {
         somegoogly$eyes = eyes;
         somegoogly$partialTick = partialTick;
     }

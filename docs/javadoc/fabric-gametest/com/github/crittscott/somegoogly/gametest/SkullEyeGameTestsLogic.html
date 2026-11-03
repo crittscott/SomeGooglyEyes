@@ -56,6 +56,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#placedHeadUsesSharedAmbientSlots(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">placedHeadUsesSharedAmbientSlots(GameTestHelper)</a></li>
 <li><a href="#deniedItemUseLeavesHeadsUntouched(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player,java.util.function.BiConsumer)" tabindex="0">deniedItemUseLeavesHeadsUntouched(GameTestHelper, Player, BiConsumer)</a></li>
 <li><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" tabindex="0">slimyEyeGivesAPlacedHeadEyes(GameTestHelper, Player)</a></li>
 <li><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" tabindex="0">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper, Player)</a></li>
@@ -133,15 +134,21 @@ item, damaging shears, or spawning a drop.</div>
 <div class="block">Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#placedHeadUsesSharedAmbientSlots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">placedHeadUsesSharedAmbientSlots</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+<div class="block">In game: give a placed head a one-eye layout and enable blink and cross-eye at the shortest
+interval.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A head without a definition, or any head while the switch is off, refuses a Slimy Eye.</div>
 </div>
 </div>
@@ -161,6 +168,17 @@ item, damaging shears, or spawning a drop.</div>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="placedHeadUsesSharedAmbientSlots(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>placedHeadUsesSharedAmbientSlots</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">placedHeadUsesSharedAmbientSlots</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">In game: give a placed head a one-eye layout and enable blink and cross-eye at the shortest
+interval. Walk away and return during a blink. The head resumes at the current blink phase
+and its unpaired pupil never crosses.</div>
+</div>
+</section>
+</li>
 <li>
 <section class="detail" id="deniedItemUseLeavesHeadsUntouched(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player,java.util.function.BiConsumer)">
 <h3>deniedItemUseLeavesHeadsUntouched</h3>
