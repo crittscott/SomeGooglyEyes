@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
@@ -48,10 +48,10 @@ public final class FramedEyeGameTestsLogic {
      * with a Slimy Eye, a diamond, and nothing; only the Googly Eye has a simulated pupil.
      */
     public static void framedEyeFiltersItems(GameTestHelper helper) {
-        helper.assertTrue(ItemEyes.supports(new ItemStack(ModContent.GOOGLY_EYE.get())), Component.literal("Googly Eye is eligible"));
-        helper.assertTrue(!ItemEyes.supports(new ItemStack(ModContent.SLIMY_EYE.get())), Component.literal("Slimy Eye is static"));
-        helper.assertTrue(!ItemEyes.supports(new ItemStack(Items.DIAMOND)), Component.literal("ordinary items are static"));
-        helper.assertTrue(!ItemEyes.supports(ItemStack.EMPTY), Component.literal("empty frames have no pupil simulation"));
+        helper.assertTrue(PresentationEyes.supports(new ItemStack(ModContent.GOOGLY_EYE.get())), Component.literal("Googly Eye is eligible"));
+        helper.assertTrue(!PresentationEyes.supports(new ItemStack(ModContent.SLIMY_EYE.get())), Component.literal("Slimy Eye is static"));
+        helper.assertTrue(!PresentationEyes.supports(new ItemStack(Items.DIAMOND)), Component.literal("ordinary items are static"));
+        helper.assertTrue(!PresentationEyes.supports(ItemStack.EMPTY), Component.literal("empty frames have no pupil simulation"));
         helper.succeed();
     }
 
@@ -60,8 +60,8 @@ public final class FramedEyeGameTestsLogic {
      * In game: right-click a wall-mounted eye to rotate it; its pupil still falls toward the ground.
      */
     public static void framedEyeFollowsMountedGravity(GameTestHelper helper) {
-        ItemEyes left = new ItemEyes(FIRST_FRAME);
-        ItemEyes right = new ItemEyes(FIRST_FRAME);
+        PresentationEyes left = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes right = new PresentationEyes(FIRST_FRAME);
         left.eye.gravX = -1F;
         right.eye.gravX = 1F;
         left.eye.gravY = right.eye.gravY = 0F;
@@ -80,7 +80,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeHandlesShortIntervalsAndTimeJumps(GameTestHelper helper) {
         BehaviorSettings shortSlots = settings(true, 1, List.of(EyeBehavior.BLINK));
-        ItemEyes eye = new ItemEyes(FIRST_FRAME);
+        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
         eye.tick(0L, shortSlots);
         BehaviorInstance first = eye.active;
         helper.assertTrue(first != null && first.age == 0, Component.literal("first short slot starts a blink"));
@@ -100,7 +100,7 @@ public final class FramedEyeGameTestsLogic {
      * when settings change. In game: reload each setting and observe that the framed eye stops expressing.
      */
     public static void framedEyeHonorsAmbientSettings(GameTestHelper helper) {
-        ItemEyes eye = new ItemEyes(FIRST_FRAME);
+        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
         eye.tick(0L, settings(true, 1, List.of(EyeBehavior.BLINK)));
         helper.assertTrue(eye.active != null, Component.literal("begin with an active expression"));
         List<BehaviorSettings> inactive = List.of(
@@ -122,7 +122,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyePlaysSingleEyeExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.CROSS_EYE, EyeBehavior.BLINK));
-        ItemEyes eye = new ItemEyes(FIRST_FRAME);
+        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
         boolean winked = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             eye.tick(tick, settings);
@@ -142,12 +142,12 @@ public final class FramedEyeGameTestsLogic {
     public static void framedEyeReconstructsExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS,
                 List.of(EyeBehavior.SIDE_EYE, EyeBehavior.COLOR_CHANGE, EyeBehavior.BLINK));
-        ItemEyes original = new ItemEyes(FIRST_FRAME);
+        PresentationEyes original = new PresentationEyes(FIRST_FRAME);
         boolean reconstructed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             original.tick(tick, settings);
             if (original.active != null && original.active.age > 0) {
-                ItemEyes arriving = new ItemEyes(FIRST_FRAME);
+                PresentationEyes arriving = new PresentationEyes(FIRST_FRAME);
                 arriving.tick(tick, settings);
                 BehaviorInstance a = original.active;
                 BehaviorInstance b = arriving.active;
@@ -167,7 +167,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeReleasesExpressionOverlays(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.BLINK));
-        ItemEyes eye = new ItemEyes(FIRST_FRAME);
+        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
         boolean played = false;
         boolean released = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
@@ -188,8 +188,8 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeUsesIndependentSchedules(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.SIDE_EYE, EyeBehavior.BLINK));
-        ItemEyes first = new ItemEyes(FIRST_FRAME);
-        ItemEyes second = new ItemEyes(SECOND_FRAME);
+        PresentationEyes first = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes second = new PresentationEyes(SECOND_FRAME);
         boolean differed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             first.tick(tick, settings);
@@ -208,7 +208,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedHeadAllowsPairedExpressions(GameTestHelper helper) {
         withHeadDefinitions(() -> {
-            ItemEyes frame = ItemEyes.create(FIRST_FRAME,
+            PresentationEyes frame = PresentationEyes.create(FIRST_FRAME,
                     eyedHead(Items.SKELETON_SKULL, new Snapshot(true, 0F, AppearanceOverride.EMPTY)));
             helper.assertTrue(frame != null, Component.literal("an eyed skull has a frame simulation"));
             BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.CROSS_EYE));
@@ -245,17 +245,17 @@ public final class FramedEyeGameTestsLogic {
         withHeadDefinitions(() -> {
             Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY);
             ItemStack stack = eyedHead(Items.SKELETON_SKULL, snapshot);
-            ItemEyes frame = ItemEyes.create(FIRST_FRAME, stack);
+            PresentationEyes frame = PresentationEyes.create(FIRST_FRAME, stack);
             helper.assertTrue(frame != null && frame.matches(stack.copy()), Component.literal("equal head state keeps its tracker"));
             helper.assertTrue(!frame.matches(eyedHead(Items.CREEPER_HEAD, snapshot)), Component.literal("a different species replaces the layout"));
             helper.assertTrue(!frame.matches(eyedHead(Items.SKELETON_SKULL,
                     new Snapshot(true, 0.5F, AppearanceOverride.EMPTY))), Component.literal("a different variant replaces the layout"));
             helper.assertTrue(!frame.matches(eyedHead(Items.SKELETON_SKULL,
                     new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)))), Component.literal("appearance changes replace the head snapshot"));
-            helper.assertTrue(!ItemEyes.supports(new ItemStack(Items.SKELETON_SKULL))
-                            && ItemEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null, Component.literal("a plain skull has no animated eyes"));
+            helper.assertTrue(!PresentationEyes.supports(new ItemStack(Items.SKELETON_SKULL))
+                            && PresentationEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null, Component.literal("a plain skull has no animated eyes"));
             helper.assertTrue(!frame.matches(new ItemStack(ModContent.GOOGLY_EYE.get()))
-                            && !new ItemEyes(FIRST_FRAME).matches(stack), Component.literal("head and loose-eye simulations cannot be reused for each other"));
+                            && !new PresentationEyes(FIRST_FRAME).matches(stack), Component.literal("head and loose-eye simulations cannot be reused for each other"));
             helper.succeed();
         });
     }
@@ -268,7 +268,7 @@ public final class FramedEyeGameTestsLogic {
         withHeadDefinitions(() -> {
             ItemStack stack = eyedHead(Items.SKELETON_SKULL,
                     new Snapshot(true, 0F, AppearanceOverride.EMPTY));
-            ItemEyes original = ItemEyes.create(FIRST_FRAME, stack);
+            PresentationEyes original = PresentationEyes.create(FIRST_FRAME, stack);
             helper.assertTrue(original != null, Component.literal("an eyed skull has a frame simulation"));
             BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.BLINK));
             boolean blinked = false;
@@ -281,7 +281,7 @@ public final class FramedEyeGameTestsLogic {
                     }
                 }
                 if (original.active != null && original.active.age > 0) {
-                    ItemEyes arriving = ItemEyes.create(FIRST_FRAME, stack);
+                    PresentationEyes arriving = PresentationEyes.create(FIRST_FRAME, stack);
                     arriving.tick(tick, settings);
                     helper.assertTrue(arriving.active != null && arriving.active.age == original.active.age
                                     && Arrays.deepEquals(arriving.active.mask, original.active.mask), Component.literal("head viewers reconstruct the same blink age and participation"));
@@ -302,7 +302,7 @@ public final class FramedEyeGameTestsLogic {
         withHeadDefinitions(() -> {
             Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
             ItemStack stack = eyedHead(Items.SKELETON_SKULL, snapshot);
-            ItemEyes frame = ItemEyes.create(FIRST_FRAME, stack);
+            PresentationEyes frame = PresentationEyes.create(FIRST_FRAME, stack);
             helper.assertTrue(frame != null && frame.helper != null && frame.helper.hasConfig(), Component.literal("a framed eyed skull resolves its mob's definition"));
             helper.assertTrue(snapshot.equals(frame.snapshot), Component.literal("the head keeps its stored appearance and roll"));
             int pupils = 0;

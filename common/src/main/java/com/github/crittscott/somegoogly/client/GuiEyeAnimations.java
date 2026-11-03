@@ -31,16 +31,16 @@ public final class GuiEyeAnimations {
     }
 
     /** Stable identity distinguishes separately animated copies in vanilla's GUI item cache. */
-    public record Presentation(ItemEyes eyes, Object identity) {
+    public record Presentation(PresentationEyes eyes, Object identity) {
     }
 
     private static final class Entry {
-        final ItemEyes eyes;
+        final PresentationEyes eyes;
         final Object identity = new Object();
         long lastShown;
         final AppearanceOverride properties;
 
-        Entry(ItemEyes eyes, AppearanceOverride properties) {
+        Entry(PresentationEyes eyes, AppearanceOverride properties) {
             this.eyes = eyes;
             this.properties = properties;
         }
@@ -54,14 +54,14 @@ public final class GuiEyeAnimations {
     /** Request a visible presentation; unsupported or disabled items retire their former simulation. */
     @Nullable
     public Presentation get(Key key, ItemStack stack, boolean enabled) {
-        if (!enabled || !ItemEyes.supports(stack)) {
+        if (!enabled || !PresentationEyes.supports(stack)) {
             entries.remove(key);
             return null;
         }
         AppearanceOverride properties = EyeItemProperties.get(stack);
         Entry entry = entries.get(key);
         if (entry == null || !entry.eyes.matches(stack) || !entry.properties.equals(properties)) {
-            ItemEyes eyes = ItemEyes.create(new UUID(0L, ++nextSeed), stack);
+            PresentationEyes eyes = PresentationEyes.create(new UUID(0L, ++nextSeed), stack);
             if (eyes == null) {
                 entries.remove(key);
                 return null;

@@ -50,7 +50,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
 
     private static final HeldEye HELD = new HeldEye();
 
-    private static ItemEyes.@Nullable FrameData frameContext;
+    private static PresentationEyes.@Nullable FrameData frameContext;
 
     /** Appearance and display context captured before deferred item submission. */
     public record Frame(AppearanceOverride appearance, ItemDisplayContext context) {
@@ -92,16 +92,16 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
 
     /** Animation for a head item in the current GUI, hand, or frame draw, if its state still matches. */
     @Nullable
-    public static ItemEyes itemEyes(ItemStack stack) {
-        ItemEyes gui = GuiItemEyes.current().eyes();
+    public static PresentationEyes itemEyes(ItemStack stack) {
+        PresentationEyes gui = GuiItemEyes.current().eyes();
         if (gui != null && gui.matches(stack)) {
             return gui;
         }
-        ItemEyes hand = HandItemEyes.current().eyes();
+        PresentationEyes hand = HandItemEyes.current().eyes();
         if (hand != null && hand.matches(stack)) {
             return hand;
         }
-        ItemEyes eye = frameContext == null ? null : frameContext.eye();
+        PresentationEyes eye = frameContext == null ? null : frameContext.eye();
         return eye != null && eye.matches(stack) ? eye : null;
     }
 
@@ -158,15 +158,15 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        ItemEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
-        ItemEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+        PresentationEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
+        PresentationEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                 || ctx == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND ? HandItemEyes.current().eyes() : null;
-        ItemEyes.FrameData frame = ctx == ItemDisplayContext.FIXED ? frameContext : null;
-        ItemEyes framed = frame == null ? null : frame.eye();
+        PresentationEyes.FrameData frame = ctx == ItemDisplayContext.FIXED ? frameContext : null;
+        PresentationEyes framed = frame == null ? null : frame.eye();
         GooglyTracker.EyeInfo animated = gui != null ? gui.eye
                 : hand != null ? hand.eye : framed != null ? framed.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
         if (gui != null || hand != null || framed != null) {
-            GooglyEyeRenderer.captureItemGravity(pose, animated);
+            GooglyEyeRenderer.captureGravity(pose, animated);
         }
         if (ctx == ItemDisplayContext.FIXED) {
             pose.scale(FRAME_DIAMETER_MULTIPLIER, FRAME_DIAMETER_MULTIPLIER, 1F);
@@ -190,8 +190,8 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<GooglyEyeItem
 
     /** Scope animation to this item-state draw and restore any enclosing context even on failure. */
     public static void renderInFrame(ItemStackRenderState item, PoseStack pose, SubmitNodeCollector buffer,
-                                     int light, int overlay, int outlineColor, ItemEyes.@Nullable FrameData frame) {
-        ItemEyes.FrameData previous = frameContext;
+                                     int light, int overlay, int outlineColor, PresentationEyes.@Nullable FrameData frame) {
+        PresentationEyes.FrameData previous = frameContext;
         frameContext = frame;
         try {
             item.submit(pose, buffer, light, overlay, outlineColor);
