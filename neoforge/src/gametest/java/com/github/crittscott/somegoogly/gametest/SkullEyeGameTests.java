@@ -16,6 +16,10 @@ public final class SkullEyeGameTests {
     private SkullEyeGameTests() {
     }
 
+    public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.placedHeadUsesSharedAmbientSlots(helper);
+    }
+
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper) {
         SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }

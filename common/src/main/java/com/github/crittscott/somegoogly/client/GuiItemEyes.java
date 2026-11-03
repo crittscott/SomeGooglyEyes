@@ -25,7 +25,7 @@ public final class GuiItemEyes {
     private GuiItemEyes() {
     }
 
-    public record Context(@Nullable ItemEyes eyes, Object identity, float partialTick) {
+    public record Context(@Nullable PresentationEyes eyes, Object identity, float partialTick) {
     }
 
     /** Implemented by item render states so GUI context survives deferred submission. */
