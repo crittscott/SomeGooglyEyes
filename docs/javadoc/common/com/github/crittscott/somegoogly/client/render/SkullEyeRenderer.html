@@ -83,7 +83,7 @@ loadScripts(document, 'script');</script>
 is extracted (<a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>extract(SkullBlockEntity)</code></a>) and kept on that state (<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render"><code>SkullEyeRenderer.PlacedHolder</code></a>). Mixins bracket a placed head's
 submission with <a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)"><code>begin(SkullEyeRenderer.PlacedHolder)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and
 call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a> right after the head model is submitted, in the model's space. A placed head's eyes are
-live (<a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>SkullEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn
+live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn
 heads share the model submission without either bracket, so they draw no eyes.
 
 <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
@@ -141,7 +141,7 @@ definition places them as they are. Honors the client display settings by the he
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The placed head's or head item's submission ends.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
@@ -178,7 +178,7 @@ submission space, its <code>packedLight</code>, and its extracted model state.</
 <section class="detail" id="extract(net.minecraft.world.level.block.entity.SkullBlockEntity)">
 <h3>extract</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></span>&nbsp;<span class="element-name">extract</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></span>&nbsp;<span class="element-name">extract</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</span></div>
 <div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
 its render state is extracted.</div>
 </div>

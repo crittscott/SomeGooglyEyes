@@ -26,12 +26,12 @@ public final class HandEyeAnimations {
     }
 
     private static final class Entry {
-        final ItemEyes eyes;
+        final PresentationEyes eyes;
         final LivingEntity holder;
         long lastShown;
         final AppearanceOverride properties;
 
-        Entry(ItemEyes eyes, LivingEntity holder, AppearanceOverride properties) {
+        Entry(PresentationEyes eyes, LivingEntity holder, AppearanceOverride properties) {
             this.eyes = eyes;
             this.holder = holder;
             this.properties = properties;
@@ -44,9 +44,9 @@ public final class HandEyeAnimations {
 
     /** Stack copies and counts retain state; eye layout and appearance changes replace it. */
     @Nullable
-    public ItemEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack, boolean enabled) {
+    public PresentationEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack, boolean enabled) {
         Key key = new Key(holder.getUUID(), hand);
-        if (!enabled || holder.isRemoved() || !ItemEyes.supports(stack)) {
+        if (!enabled || holder.isRemoved() || !PresentationEyes.supports(stack)) {
             entries.remove(key);
             return null;
         }
@@ -56,7 +56,7 @@ public final class HandEyeAnimations {
             UUID uuid = holder.getUUID();
             UUID seed = hand == InteractionHand.MAIN_HAND ? uuid
                     : new UUID(uuid.getMostSignificantBits() ^ OFFHAND_SEED, uuid.getLeastSignificantBits());
-            ItemEyes eyes = ItemEyes.create(seed, stack);
+            PresentationEyes eyes = PresentationEyes.create(seed, stack);
             if (eyes == null) {
                 entries.remove(key);
                 return null;
