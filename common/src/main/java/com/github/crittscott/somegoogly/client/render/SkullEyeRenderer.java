@@ -1,11 +1,10 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.SkullEyes;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -28,7 +27,7 @@ import javax.annotation.Nullable;
 /**
  * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with {@link #begin}
  * and a head item's with {@link #beginItem}, both ending in {@link #end}, and call {@link #render} right after
- * the head model is drawn, in the model's space. A placed head's eyes are live ({@link SkullEyes}); an item's
+ * the head model is drawn, in the model's space. A placed head's eyes are live ({@link PresentationEyes}); an item's
  * are drawn at rest, pupils centered, like the Googly Eye item's. Worn heads share the model draw without
  * either bracket, so they draw no eyes.
  *
@@ -115,7 +114,7 @@ public final class SkullEyeRenderer {
             if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
                 return;
             }
-            SkullEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
+            PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
             if (eyes != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(pose, bufferSource, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
@@ -127,7 +126,7 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            ItemEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            PresentationEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {

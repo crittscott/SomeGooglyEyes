@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client.mixin;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,9 +23,9 @@ abstract class ItemFrameRendererMixin {
             + "Lnet/minecraft/client/renderer/entity/state/ItemFrameRenderState;F)V", at = @At("TAIL"))
     private void somegoogly$extractFrameEye(ItemFrame frame, ItemFrameRenderState state, float partialTick,
                                             CallbackInfo callback) {
-        ItemEyes eye = ClientEyeRuntime.frameEye(frame);
-        ((ItemEyes.Holder) state).somegoogly$setFrameEye(
-                eye == null ? null : new ItemEyes.FrameData(eye, partialTick));
+        PresentationEyes eye = ClientEyeRuntime.frameEye(frame);
+        ((PresentationEyes.Holder) state).somegoogly$setFrameEye(
+                eye == null ? null : new PresentationEyes.FrameData(eye, partialTick));
     }
 
     @Redirect(method = "render(Lnet/minecraft/client/renderer/entity/state/ItemFrameRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
@@ -34,6 +34,6 @@ abstract class ItemFrameRendererMixin {
     private void somegoogly$renderFramedItem(ItemStackRenderState item, PoseStack pose, MultiBufferSource buffer, int light, int overlay,
                                             ItemFrameRenderState state, PoseStack framePose, MultiBufferSource frameBuffer, int frameLight) {
         GooglyEyeItemRenderer.renderInFrame(item, pose, buffer, light, overlay,
-                ((ItemEyes.Holder) state).somegoogly$frameEye());
+                ((PresentationEyes.Holder) state).somegoogly$frameEye());
     }
 }

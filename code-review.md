@@ -1,7 +1,7 @@
 
 We have done a number of general code review sessions in previous conversations. Now I want to focus on particular topics.
 
-Spawn subagents, one for each item in the list. Give each subagent the prompt below, filling in <topic title> and <topic description> from the list. Spawn at most 4 agents at once.
+Main agent: spawn one subagent for each topic, with at most four running at once. Send the entire text after the Prompt marker through the end of this file as the task message. Replace only <topic title> and <topic description> with the exact title and description from the assigned list item. Copy everything else verbatim, including the report format and severity criteria. Do not summarize the prompt, send a reference in its place, or add instructions that change the scope, finding threshold, or deliverable. Check each outgoing task message against the template before sending it.
 
 Topics:
 1. Dead-code: Do we have dead code or duplicated code?
@@ -36,6 +36,7 @@ The mod has grown via evolution, and the review exists to find what that evoluti
 
 ## Rules
 
+- Follow this prompt as written. Review the full assigned topic and apply the finding criteria below, including the rule on home-grown alternatives. Do not narrow the topic, substitute your own review criteria, or omit required steps. A report with no findings must identify the relevant code paths examined and explain how they satisfy the assigned review criteria. Do not invent findings.
 - Assess the project as it is. Do not inspect git history.
 - Do not make any changes to the code. Your only output is the report file.
 - Do not read other review-*.md files. Other agents are working in the codebase at the same time.
