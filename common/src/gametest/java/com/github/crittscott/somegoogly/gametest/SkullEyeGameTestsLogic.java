@@ -1,8 +1,18 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.client.PresentationEyes;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import java.util.Map;
@@ -21,6 +31,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -54,6 +65,48 @@ import java.util.function.BiConsumer;
  * <p>For the in-game steps below, get Optometrist shears as described in {@link EyeItemServiceGameTestsLogic}.
  */
 public final class SkullEyeGameTestsLogic {
+
+    /**
+     * In game: give a placed head a one-eye layout and enable blink and cross-eye at the shortest
+     * interval. Walk away and return during a blink. The head resumes at the current blink phase
+     * and its unpaired pupil never crosses.
+     */
+    public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
+        HeadConfig head = new HeadConfig();
+        head.attachPoint = "head";
+        head.eyes = List.of(new EyeDefinition(
+                new EyePlacement(Vec3.ZERO, 1F, 1F, 1F, 0F, 0F, -1), EyeAppearance.DEFAULT));
+        Variant variant = new Variant();
+        variant.heads = List.of(head);
+        RuntimeConfig config = new RuntimeConfig();
+        config.variants = List.of(variant);
+        HeadInfo layout = new HeadInfo(config, 0);
+        var entity = SkullEyeState.entityFor(Blocks.SKELETON_SKULL);
+        Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY);
+        int[] parts = SkullEyeState.headParts(entity, layout);
+        helper.assertTrue(parts.length == 1, "the skull renders the single-eye layout");
+        long seed = Mth.getSeed(new BlockPos(1, 2, 3));
+        var watched = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts, false);
+        var returning = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts, false);
+        var pupil = returning.eyes[parts[0]][0];
+        helper.assertTrue(!pupil.itemGravity && !pupil.guiGravity && pupil.deltaY == -1F,
+                Component.literal("placed heads start with attached-eye gravity and pupil position"));
+
+        var settings = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK, EyeBehavior.CROSS_EYE),
+                0, false, 1, Set.of());
+        int duration = EyeBehavior.BLINK.defaultDuration();
+        for (int tick = 0; tick < duration * 2; tick++) {
+            watched.tick(tick, settings);
+            helper.assertTrue(watched.active != null && watched.active.behavior == EyeBehavior.BLINK
+                            && watched.active.age == tick % duration,
+                    Component.literal("short slots fit a whole blink and exclude cross-eye"));
+        }
+        returning.tick(duration * 2L - 1, settings);
+        helper.assertTrue(returning.active != null && returning.active.behavior == watched.active.behavior
+                        && returning.active.age == watched.active.age,
+                Component.literal("a newly visible head joins the expression at its current age"));
+        helper.succeed();
+    }
 
     /** How far from its source block a drop is looked for; less than the gap to a neighboring test. */
     private static final double DROP_SEARCH_RADIUS = 1.5;

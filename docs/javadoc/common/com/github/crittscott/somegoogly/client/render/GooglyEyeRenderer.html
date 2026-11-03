@@ -138,10 +138,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#captureItemGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" class="member-name-link">captureItemGravity</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#captureGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" class="member-name-link">captureGravity</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Capture a mounted item's pose before expression scaling, removing its display scale.</div>
+<div class="block">Capture the eye plane for the next physics tick after composing the eye pose and before
+ expression scaling.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" class="member-name-link">drawAnimatedEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -239,11 +240,13 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="captureItemGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)">
-<h3>captureItemGravity</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">captureItemGravity</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<section class="detail" id="captureGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)">
+<h3>captureGravity</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">captureGravity</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo)</span></div>
-<div class="block">Capture a mounted item's pose before expression scaling, removing its display scale.</div>
+<div class="block">Capture the eye plane for the next physics tick after composing the eye pose and before
+ expression scaling. The pupil's gravity mode selects world-down or GUI screen-down and
+ determines whether display scale is removed.</div>
 </section>
 </li>
 <li>

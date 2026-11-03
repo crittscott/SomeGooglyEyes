@@ -160,6 +160,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("skulleyegametests/heads_mod_mobs_have_head_eyes", () -> SkullEyeGameTests::headsModMobsHaveHeadEyes);
         functions.register("skulleyegametests/heads_mod_head_takes_keeps_and_gives_up_eyes", () -> SkullEyeGameTests::headsModHeadTakesKeepsAndGivesUpEyes);
         functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
+        functions.register("skulleyegametests/placed_head_uses_shared_ambient_slots", () -> SkullEyeGameTests::placedHeadUsesSharedAmbientSlots);
         functions.register("skulleyegametests/denied_item_use_leaves_heads_untouched", () -> SkullEyeGameTests::deniedItemUseLeavesHeadsUntouched);
         functions.register("skulleyegametests/head_eyes_survive_save_load", () -> SkullEyeGameTests::headEyesSurviveSaveLoad);
         functions.register("skulleyegametests/optometrist_harvests_a_placed_head", () -> SkullEyeGameTests::optometristHarvestsAPlacedHead);

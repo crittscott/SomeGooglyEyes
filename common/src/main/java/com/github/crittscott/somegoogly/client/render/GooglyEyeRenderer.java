@@ -56,19 +56,14 @@ public final class GooglyEyeRenderer {
     }
 
     /**
-     * Record world-down in this eye's pupil plane for the next physics tick, using the eye's fully
-     * composed animated pose. The result is independent of camera orientation and uses the tracker
-     * simulation's coordinate convention.
+     * Capture the eye plane for the next physics tick after composing the eye pose and before
+     * expression scaling. The pupil's gravity mode selects world-down or GUI screen-down and
+     * determines whether display scale is removed.
      */
-    private static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
+    public static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
         GRAVITY_POSE.set(pose.last().pose());
         // Submitted entity/item poses are in world space; the camera is applied later.
         eyeInfo.capturePose(GRAVITY_POSE, null);
-    }
-
-    /** Capture a mounted item's pose before expression scaling, removing its display scale. */
-    public static void captureItemGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
-        captureGravity(pose, eyeInfo);
     }
 
     /**

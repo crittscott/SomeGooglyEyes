@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
  * One presentation's loose eye or configured eye layout and ambient expressions. Its identity and
  * supplied clock determine expression age; physics is local and disposable. The renderer supplies gravity.
  */
-public final class ItemEyes {
+public final class PresentationEyes {
 
     /** Spreads consecutive ambient slots' seeds apart. */
     private static final long SLOT_SEED_STEP = 0x9E3779B97F4A7C15L;
@@ -33,6 +33,8 @@ public final class ItemEyes {
     private long behaviorSeed;
     @Nullable
     public final Identifier entity;
+    /** Whether the placed head uses fitted Heads-mod geometry. */
+    public final boolean headsMod;
     /** Loose-item pupil; configured heads use the shaped arrays in eyes. */
     public final GooglyTracker.EyeInfo eye = new GooglyTracker.EyeInfo();
     public final GooglyTracker.EyeInfo[][] eyes;
@@ -57,14 +59,17 @@ public final class ItemEyes {
     @Nullable
     public final Snapshot snapshot;
     private long startsAt;
+    private final boolean stationaryHead;
 
-    public ItemEyes(UUID uuid) {
-        this(uuid, null, null, null, new int[]{0});
+    public PresentationEyes(UUID uuid) {
+        this(uuidSeed(uuid), null, null, null, new int[]{0}, false, false);
     }
 
-    private ItemEyes(UUID uuid, @Nullable Identifier entity, @Nullable Snapshot snapshot,
-                       @Nullable HeadInfo helper, int[] parts) {
-        seed = uuid.getMostSignificantBits() ^ Long.rotateLeft(uuid.getLeastSignificantBits(), 1);
+    private PresentationEyes(long seed, @Nullable Identifier entity, @Nullable Snapshot snapshot,
+                             @Nullable HeadInfo helper, int[] parts, boolean stationaryHead, boolean headsMod) {
+        this.seed = seed;
+        this.stationaryHead = stationaryHead;
+        this.headsMod = headsMod;
         rand = RandomSource.create(seed);
         this.entity = entity;
         this.snapshot = snapshot;
@@ -80,8 +85,10 @@ public final class ItemEyes {
                 eyes[head] = new GooglyTracker.EyeInfo[helper.getEyeCount(head)];
                 for (int index = 0; index < eyes[head].length; index++) {
                     GooglyTracker.EyeInfo pupil = new GooglyTracker.EyeInfo();
-                    pupil.prevDeltaY = pupil.deltaY = 0F;
-                    pupil.itemGravity = true;
+                    if (!stationaryHead) {
+                        pupil.prevDeltaY = pupil.deltaY = 0F;
+                        pupil.itemGravity = true;
+                    }
                     eyes[head][index] = pupil;
                 }
             }
@@ -89,7 +96,7 @@ public final class ItemEyes {
     }
 
     /** Animation selected during frame-state extraction, carried to its item draw. */
-    public record FrameData(@Nullable ItemEyes eye, float partialTick) {
+    public record FrameData(@Nullable PresentationEyes eye, float partialTick) {
     }
 
     /** Implemented by the frame render-state mixin. */
@@ -102,9 +109,9 @@ public final class ItemEyes {
 
     /** Build the item's current layout; plain heads and unsupported definitions have no simulation. */
     @Nullable
-    public static ItemEyes create(UUID uuid, ItemStack stack) {
+    public static PresentationEyes create(UUID uuid, ItemStack stack) {
         if (stack.is(ModContent.GOOGLY_EYE.get())) {
-            return new ItemEyes(uuid);
+            return new PresentationEyes(uuid);
         }
         Identifier entity = SkullEyeState.entityFor(stack);
         Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
@@ -112,19 +119,35 @@ public final class ItemEyes {
             return null;
         }
         HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-        if (!helper.hasConfig() || SkullEyeState.headParts(entity, helper).length == 0) {
+        int[] parts = SkullEyeState.headParts(entity, helper);
+        if (parts.length == 0) {
             return null;
         }
-        return new ItemEyes(uuid, entity, snapshot, helper, SkullEyeState.headParts(entity, helper));
+        return new PresentationEyes(uuidSeed(uuid), entity, snapshot, helper, parts, false, false);
     }
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */
-    public static ItemEyes create(UUID uuid, Identifier entity, Snapshot snapshot, HeadInfo helper) {
+    public static PresentationEyes create(UUID uuid, Identifier entity, Snapshot snapshot, HeadInfo helper) {
         if (!helper.hasConfig()) {
             throw new IllegalArgumentException("An ambient layout must contain eyes");
         }
-        return new ItemEyes(uuid, entity, snapshot, helper,
-                IntStream.range(0, helper.getHeadCount()).toArray());
+        return new PresentationEyes(uuidSeed(uuid), entity, snapshot, helper,
+                IntStream.range(0, helper.getHeadCount()).toArray(), false, false);
+    }
+
+    /** Use the block position's seed and the attached-eye gravity convention for a placed head. */
+    public static PresentationEyes placedHead(long seed, Identifier entity, Snapshot snapshot,
+                                              HeadInfo helper, int[] parts, boolean headsMod) {
+        return new PresentationEyes(seed, entity, snapshot, helper, parts, true, headsMod);
+    }
+
+    private static long uuidSeed(UUID uuid) {
+        return uuid.getMostSignificantBits() ^ Long.rotateLeft(uuid.getLeastSignificantBits(), 1);
+    }
+
+    /** Stamp this presentation as rendered during the current client tick. */
+    public void markRendered(int currentClientTick) {
+        lastRenderTick = currentClientTick;
     }
 
     /** Item changes that affect layout or appearance replace a head simulation. */
@@ -212,7 +235,7 @@ public final class ItemEyes {
                 }
                 GooglyTracker.EyeInfo pupil = eyes[part][index];
                 pupil.applyOverlays(influence, 1F, 1F, 0F, 0F);
-                if (resetMotion) {
+                if (resetMotion && !stationaryHead) {
                     pupil.resetMotion();
                 }
                 pupil.update(rand, yaw, pitch, mx, my, mz,
