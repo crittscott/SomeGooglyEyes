@@ -1,11 +1,10 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.SkullEyes;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
 import com.github.crittscott.somegoogly.client.render.resolver.Attachment;
@@ -50,7 +49,7 @@ import java.util.Optional;
  * Draws the eyes of placed mob heads and head items. Each loader's Mixins bracket a placed head's draw with
  * {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
- * ({@link SkullEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
+ * ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  * share the model draw without either bracket, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part. A vanilla head model shares that part with its mob, so the mob's
@@ -293,7 +292,7 @@ public final class SkullEyeRenderer {
             if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
                 return;
             }
-            SkullEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
+            PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
             if (eyes != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(pose, bufferSource, packedLight, model, head, isHeadsMod(block), entity, eyes.helper,
@@ -305,7 +304,7 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            ItemEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            PresentationEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {

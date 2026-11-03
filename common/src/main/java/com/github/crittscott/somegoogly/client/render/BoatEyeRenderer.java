@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,7 +18,7 @@ public final class BoatEyeRenderer {
 
     /** The caller retains the hull pose; ordinary boat rendering and water masking stay with vanilla. */
     public static void render(Boat boat, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
-        ItemEyes eyes = ClientEyeRuntime.boatEyes(boat);
+        PresentationEyes eyes = ClientEyeRuntime.boatEyes(boat);
         if (eyes == null) {
             return;
         }

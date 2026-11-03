@@ -2,7 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.client.BoatEyeAnimations;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
@@ -97,9 +97,9 @@ public final class BoatEyeGameTestsLogic {
         pairVariant.heads = List.of(pair);
         RuntimeConfig pairConfig = new RuntimeConfig();
         pairConfig.variants = List.of(pairVariant);
-        var paired = ItemEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state,
+        var paired = PresentationEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state,
                 BoatEyeLayout.resolve(boat, pairConfig, 0F));
-        var sides = ItemEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state,
+        var sides = PresentationEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state,
                 BoatEyeLayout.resolve(boat, source, 0F));
         var cross = settings(List.of(EyeBehavior.CROSS_EYE));
         boolean crossed = false;
@@ -129,7 +129,7 @@ public final class BoatEyeGameTestsLogic {
             variant.heads = List.of(head);
             RuntimeConfig config = new RuntimeConfig();
             config.variants = List.of(variant);
-            var eyes = ItemEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state, BoatEyeLayout.resolve(boat, config, 0F));
+            var eyes = PresentationEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state, BoatEyeLayout.resolve(boat, config, 0F));
             for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
                 eyes.tick(tick, cross);
                 helper.assertTrue(eyes.active == null, "unpaired eyes cannot schedule cross-eye");
@@ -266,8 +266,8 @@ public final class BoatEyeGameTestsLogic {
         var config = ServerEyeConfigs.get(EntityType.getKey(EntityType.BOAT), false);
         var layout = BoatEyeLayout.resolve(boat, config, 0F);
         var state = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY);
-        var first = ItemEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state, layout);
-        var second = ItemEyes.create(new UUID(23L, 31L), EntityType.getKey(EntityType.BOAT), state, layout);
+        var first = PresentationEyes.create(SEED, EntityType.getKey(EntityType.BOAT), state, layout);
+        var second = PresentationEyes.create(new UUID(23L, 31L), EntityType.getKey(EntityType.BOAT), state, layout);
         var blink = settings(List.of(EyeBehavior.BLINK));
         first.tick(1L, blink);
         second.tick(1L, blink);

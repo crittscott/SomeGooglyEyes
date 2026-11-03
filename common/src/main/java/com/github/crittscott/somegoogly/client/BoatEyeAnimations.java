@@ -28,10 +28,10 @@ public final class BoatEyeAnimations {
     private static final class Entry {
         final String attachment;
         final RuntimeConfig config;
-        final ItemEyes eyes;
+        final PresentationEyes eyes;
         long lastShown;
 
-        Entry(String attachment, RuntimeConfig config, ItemEyes eyes) {
+        Entry(String attachment, RuntimeConfig config, PresentationEyes eyes) {
             this.attachment = attachment;
             this.config = config;
             this.eyes = eyes;
@@ -51,7 +51,7 @@ public final class BoatEyeAnimations {
 
     /** Return the rendered boat's current layout, replacing simulations after state or geometry changes. */
     @Nullable
-    public ItemEyes get(Boat boat) {
+    public PresentationEyes get(Boat boat) {
         var type = EntityType.getKey(boat.getType());
         RuntimeConfig config = ClientEyeConfigs.get(type, false);
         if (!mayShow(boat, config)) {
@@ -63,7 +63,7 @@ public final class BoatEyeAnimations {
             var snapshot = EyeState.snapshot(boat);
             HeadInfo helper = BoatEyeLayout.resolve(boat, config, snapshot.variantRoll());
             entry = new Entry(BoatEyeLayout.attachment(boat), config,
-                    ItemEyes.create(boat.getUUID(), type, snapshot, helper));
+                    PresentationEyes.create(boat.getUUID(), type, snapshot, helper));
             entries.put(boat, entry);
         }
         entry.lastShown = ticks;

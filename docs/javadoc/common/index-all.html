@@ -64,12 +64,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The behavior playing, or <code>null</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#active" class="member-name-link">active</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#active" class="member-name-link">active</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#active" class="member-name-link">active</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">The behavior playing, or <code>null</code>.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html#adult" class="member-name-link">adult</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a></dt>
 <dd>
 <div class="block">Adult-specific config, or <code>null</code> when this set does not define one.</div>
@@ -480,9 +476,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken(EntityModel&lt;?&gt;, String)</a> - Method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#captureItemGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" class="member-name-link">captureItemGravity(PoseStack, GooglyTracker.EyeInfo)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html#captureGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" class="member-name-link">captureGravity(PoseStack, GooglyTracker.EyeInfo)</a> - Static method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></dt>
 <dd>
-<div class="block">Capture a mounted item's pose before expression scaling, removing its display scale.</div>
+<div class="block">Capture the eye plane for the next physics tick after composing the eye pose and before
+ expression scaling.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#capturePose(org.joml.Matrix3fc,org.joml.Quaternionfc)" class="member-name-link">capturePose(Matrix3fc, Quaternionfc)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
 <dd>
@@ -719,11 +716,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Physical left/right display contexts map to logical hands using the holder's dominant arm.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/HandItemEyes.Context.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.ItemEyes,float)" class="member-name-link">Context(ItemEyes, float)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HandItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">HandItemEyes.Context</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/HandItemEyes.Context.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.PresentationEyes,float)" class="member-name-link">Context(PresentationEyes, float)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HandItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">HandItemEyes.Context</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Context</code> record class.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/GuiItemEyes.Context.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.ItemEyes,java.lang.Object,float)" class="member-name-link">Context(ItemEyes, Object, float)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/GuiItemEyes.Context.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.PresentationEyes,java.lang.Object,float)" class="member-name-link">Context(PresentationEyes, Object, float)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Context</code> record class.</div>
 </dd>
@@ -762,11 +759,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A new slimy-eye stack carrying <code>properties</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#create(java.util.UUID,net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">create(UUID, ResourceLocation, EyeState.Snapshot, HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#create(java.util.UUID,net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">create(UUID, ResourceLocation, EyeState.Snapshot, HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Build a validated, enabled layout without item or skull eligibility assumptions.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#create(java.util.UUID,net.minecraft.world.item.ItemStack)" class="member-name-link">create(UUID, ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#create(java.util.UUID,net.minecraft.world.item.ItemStack)" class="member-name-link">create(UUID, ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Build the item's current layout; plain heads and unsupported definitions have no simulation.</div>
 </dd>
@@ -1073,12 +1070,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GuiItemEyes.html#endPresentation()" class="member-name-link">endPresentation()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiItemEyes.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#entity" class="member-name-link">entity</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#entity" class="member-name-link">entity</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#entity" class="member-name-link">entity</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">The mob whose definition the head uses.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#ENTITY_OVERRIDES" class="member-name-link">ENTITY_OVERRIDES</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>
 <div class="block">Per-entity spawn chances as <code>"entity-pattern,percent"</code> lines; read through <a href="com/github/crittscott/somegoogly/config/ServerConfig.html#percentFor(net.minecraft.resources.ResourceLocation)"><code>ServerConfig.percentFor(net.minecraft.resources.ResourceLocation)</code></a>.</div>
@@ -1253,12 +1246,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The pupil, or <code>null</code> while no Googly Eye is held.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Loose-item pupil; configured heads use the shaped arrays in eyes.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html#eye" class="member-name-link">eye</a> - Variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.ListedEye.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.ListedEye</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#EYE_ANGER" class="member-name-link">EYE_ANGER</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/NetworkHandler.html#EYE_BEHAVIOR" class="member-name-link">EYE_BEHAVIOR</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network">NetworkHandler</a></dt>
@@ -1443,14 +1436,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Pupil simulators, indexed by head then eye, shaped by this tracker's placement.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#eyes" class="member-name-link">eyes</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html#eyes" class="member-name-link">eyes</a> - Variable in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftVariant.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftVariant</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#eyes" class="member-name-link">eyes</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">Per head and eye of <a href="com/github/crittscott/somegoogly/client/SkullEyes.html#helper"><code>SkullEyes.helper</code></a>; the heads outside <a href="com/github/crittscott/somegoogly/client/SkullEyes.html#parts"><code>SkullEyes.parts</code></a> sit unused.</div>
-</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#eyes" class="member-name-link">eyes</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html#eyes" class="member-name-link">eyes</a> - Variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.HeadConfig</a></dt>
 <dd>
 <div class="block">Required eye list; installed heads contain at least one eye.</div>
@@ -2057,12 +2046,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The placement this tracker's eyes were built for.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">The head's placement view: its mob's adult definition, at the head's variant roll.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#helper" class="member-name-link">helper</a> - Variable in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
 <div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
@@ -2295,12 +2280,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Animation for a head item in the current GUI, hand, or frame draw, if its state still matches.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
-<dd>
-<div class="block">One presentation's loose eye or configured eye layout and ambient expressions.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#%3Cinit%3E(java.util.UUID)" class="member-name-link">ItemEyes(UUID)</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#itemGravity" class="member-name-link">itemGravity</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
 <dd>
 <div class="block">World item and boat eyes remove display scale and project owner acceleration through their captured pose.</div>
@@ -2422,9 +2401,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
  <a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#markRendered(int)" class="member-name-link">markRendered(int)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#markRendered(int)" class="member-name-link">markRendered(int)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
-<div class="block">Stamp these eyes as rendered during <code>currentClientTick</code>.</div>
+<div class="block">Stamp this presentation as rendered during the current client tick.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#mask" class="member-name-link">mask</a> - Variable in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
@@ -2441,7 +2420,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/recipe/EyeModifierRecipe.html#matches(net.minecraft.world.inventory.CraftingContainer,net.minecraft.world.level.Level)" class="member-name-link">matches(CraftingContainer, Level)</a> - Method in class com.github.crittscott.somegoogly.recipe.<a href="com/github/crittscott/somegoogly/recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#matches(net.minecraft.world.item.ItemStack)" class="member-name-link">matches(ItemStack)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#matches(net.minecraft.world.item.ItemStack)" class="member-name-link">matches(ItemStack)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Item changes that affect layout or appearance replace a head simulation.</div>
 </dd>
@@ -2850,12 +2829,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Index into <a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#parts()"><code>PickerState.parts()</code></a> of the current placement-frame part.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#parts" class="member-name-link">parts</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#parts" class="member-name-link">parts</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#parts" class="member-name-link">parts</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">The <a href="com/github/crittscott/somegoogly/client/SkullEyes.html#helper"><code>SkullEyes.helper</code></a> heads on the model's head part, the ones drawn.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.html#parts()" class="member-name-link">parts()</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState</a></dt>
 <dd>
 <div class="block">Borrowed view of the chosen mob's selectable part tokens in enumeration order.</div>
@@ -2971,6 +2946,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>pickerTarget</code> record component.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#placedHead(long,net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,com.github.crittscott.somegoogly.eye.HeadInfo,int%5B%5D)" class="member-name-link">placedHead(long, ResourceLocation, EyeState.Snapshot, HeadInfo, int[])</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
+<dd>
+<div class="block">Use the block position's seed and the attached-eye gravity convention for a placed head.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/EyeDefinition.html#placement()" class="member-name-link">placement()</a> - Method in record class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye">EyeDefinition</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>placement</code> record component.</div>
@@ -3004,10 +2983,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
  the picker's frozen display state.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.Presentation.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.ItemEyes,java.lang.Object)" class="member-name-link">Presentation(ItemEyes, Object)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.Presentation.html" title="class in com.github.crittscott.somegoogly.client">GuiEyeAnimations.Presentation</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.Presentation.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.PresentationEyes,java.lang.Object)" class="member-name-link">Presentation(PresentationEyes, Object)</a> - Constructor for record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.Presentation.html" title="class in com.github.crittscott.somegoogly.client">GuiEyeAnimations.Presentation</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Presentation</code> record class.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
+<dd>
+<div class="block">One presentation's loose eye or configured eye layout and ambient expressions.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#%3Cinit%3E(java.util.UUID)" class="member-name-link">PresentationEyes(UUID)</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html#preTransform(net.minecraft.client.model.EntityModel,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform(EntityModel&lt;?&gt;, PoseStack)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></dt>
 <dd>
 <div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
@@ -3605,11 +3590,6 @@ loadScripts(document, 'script');</script>
  replacing any built for another kind of head at the same position; <code>null</code> when the client's
  definitions give it nothing to draw.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a> - Class in <a href="com/github/crittscott/somegoogly/client/package-summary.html">com.github.crittscott.somegoogly.client</a></dt>
-<dd>
-<div class="block">The live eyes of one placed mob head: a <a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil per configured eye, stepped with
- the same physics as mob eyes for a head that never moves, plus the expression playing on them.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a> - Class in <a href="com/github/crittscott/somegoogly/eye/state/package-summary.html">com.github.crittscott.somegoogly.eye.state</a></dt>
 <dd>
 <div class="block">Eye state of a placed mob head and of a head item.</div>
@@ -3677,12 +3657,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.html#SLOT" class="member-name-link">SLOT</a> - Static variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GuiEyeAnimations.html" title="class in com.github.crittscott.somegoogly.client">GuiEyeAnimations</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#snapshot" class="member-name-link">snapshot</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#snapshot" class="member-name-link">snapshot</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/client/SkullEyes.html#snapshot" class="member-name-link">snapshot</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/SkullEyes.html" title="class in com.github.crittscott.somegoogly.client">SkullEyes</a></dt>
-<dd>
-<div class="block">The eye state this tracker was built from; a change replaces the tracker.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#snapshot()" class="member-name-link">snapshot()</a> - Method in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>snapshot</code> record component.</div>
@@ -3810,7 +3786,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Registry and wood checks exclude modded entities and loader-added boat variants.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#supports(net.minecraft.world.item.ItemStack)" class="member-name-link">supports(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#supports(net.minecraft.world.item.ItemStack)" class="member-name-link">supports(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Whether this item carries a loose eye or an eligible head-eye snapshot.</div>
 </dd>
@@ -3907,11 +3883,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">World time determines expressions; pause stops simulation and recently unseen hands expire.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#tick(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick(long, BehaviorSettings)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#tick(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick(long, BehaviorSettings)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Step once on the presentation clock.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#tick(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings,net.minecraft.world.entity.Entity)" class="member-name-link">tick(long, BehaviorSettings, Entity)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#tick(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings,net.minecraft.world.entity.Entity)" class="member-name-link">tick(long, BehaviorSettings, Entity)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Step with the world's actual owner motion; render poses supply gravity and the eye-plane basis.</div>
 </dd>
@@ -4137,7 +4113,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sneak + use: eye yourself.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ItemEyes.html#useGuiGravity()" class="member-name-link">useGuiGravity()</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ItemEyes.html" title="class in com.github.crittscott.somegoogly.client">ItemEyes</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#useGuiGravity()" class="member-name-link">useGuiGravity()</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
 <div class="block">Use screen-down rather than world-down when the GUI renderer captures pupil orientation.</div>
 </dd>

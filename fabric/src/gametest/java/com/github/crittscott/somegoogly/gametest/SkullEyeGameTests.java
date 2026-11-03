@@ -13,6 +13,11 @@ public final class SkullEyeGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.placedHeadUsesSharedAmbientSlots(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper) {
         SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, FakePlayer.get(helper.getLevel()));
     }

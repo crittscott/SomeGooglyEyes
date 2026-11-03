@@ -80,7 +80,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Draws the eyes of placed mob heads and head items. Each loader's Mixins bracket a placed head's draw with
  <a href="#begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)"><code>begin(net.minecraft.world.level.block.entity.SkullBlockEntity, float)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and call
  <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after the head model is drawn, in the model's space. A placed head's eyes are live
- (<a href="../SkullEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>SkullEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
+ (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  share the model draw without either bracket, so they draw no eyes.
 
  <p>The eyes attach to the model's head part. A vanilla head model shares that part with its mob, so the mob's
