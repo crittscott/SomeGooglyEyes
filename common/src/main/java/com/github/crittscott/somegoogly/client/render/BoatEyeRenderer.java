@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.BoatRenderState;
@@ -15,7 +15,7 @@ public final class BoatEyeRenderer {
     private BoatEyeRenderer() {
     }
 
-    public record Data(@Nullable ItemEyes eyes, float partialTick) {
+    public record Data(@Nullable PresentationEyes eyes, float partialTick) {
         public static final Data NONE = new Data(null, 0F);
     }
 
@@ -27,14 +27,14 @@ public final class BoatEyeRenderer {
 
     /** Capture the boat's current eyes before the renderer loses access to the live entity. */
     public static Data extract(AbstractBoat boat, float partialTick) {
-        ItemEyes eyes = ClientEyeRuntime.boatEyes(boat);
+        PresentationEyes eyes = ClientEyeRuntime.boatEyes(boat);
         return eyes == null ? Data.NONE : new Data(eyes, partialTick);
     }
 
     /** Vanilla owns hull, cargo, paddles, and water masking; only the extracted eye data draws here. */
     public static void render(BoatRenderState state, PoseStack pose, SubmitNodeCollector buffers, int light) {
         Data data = ((Holder) state).somegoogly$boatEyes();
-        ItemEyes eyes = data.eyes();
+        PresentationEyes eyes = data.eyes();
         if (eyes == null) {
             return;
         }

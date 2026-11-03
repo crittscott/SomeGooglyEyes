@@ -12,6 +12,11 @@ public final class SkullEyeGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.placedHeadUsesSharedAmbientSlots(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void brokenHeadKeepsItsEyes(GameTestHelper helper) {
         SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, FakePlayer.get(helper.getLevel()));
     }

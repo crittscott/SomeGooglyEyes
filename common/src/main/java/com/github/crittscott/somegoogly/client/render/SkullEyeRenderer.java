@@ -1,10 +1,9 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.ItemEyes;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.SkullEyes;
 import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
@@ -47,7 +46,7 @@ import org.jspecify.annotations.Nullable;
  * is extracted ({@link #extract}) and kept on that state ({@link PlacedHolder}). Mixins bracket a placed head's
  * submission with {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and
  * call {@link #render} right after the head model is submitted, in the model's space. A placed head's eyes are
- * live ({@link SkullEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn
+ * live ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn
  * heads share the model submission without either bracket, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
@@ -76,7 +75,7 @@ public final class SkullEyeRenderer {
 
     /** The placed head's eyes being submitted, or {@code null} outside a placed head's submission. */
     @Nullable
-    private static SkullEyes current;
+    private static PresentationEyes current;
     /** The head item being drawn, or {@code null} outside a head item's draw. */
     @Nullable
     private static ItemStack currentItem;
@@ -148,11 +147,11 @@ public final class SkullEyeRenderer {
 
         /** The eyes to draw, or {@code null} when the head shows none. */
         @Nullable
-        SkullEyes somegoogly$eyes();
+        PresentationEyes somegoogly$eyes();
 
         float somegoogly$partialTick();
 
-        void somegoogly$setEyes(@Nullable SkullEyes eyes, float partialTick);
+        void somegoogly$setEyes(@Nullable PresentationEyes eyes, float partialTick);
     }
 
     /**
@@ -160,12 +159,12 @@ public final class SkullEyeRenderer {
      * its render state is extracted.
      */
     @Nullable
-    public static SkullEyes extract(SkullBlockEntity skull) {
+    public static PresentationEyes extract(SkullBlockEntity skull) {
         Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
             return null;
         }
-        SkullEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
+        PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
         if (eyes != null) {
             eyes.markRendered(ClientEyeRuntime.clientTicks());
         }
@@ -317,7 +316,7 @@ public final class SkullEyeRenderer {
         if (head == null) {
             return;
         }
-        SkullEyes eyes = current;
+        PresentationEyes eyes = current;
         ItemStack stack = currentItem;
         if (eyes == null && (stack == null || itemEyesSubmitted)) {
             return;
@@ -333,7 +332,7 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            ItemEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            PresentationEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
