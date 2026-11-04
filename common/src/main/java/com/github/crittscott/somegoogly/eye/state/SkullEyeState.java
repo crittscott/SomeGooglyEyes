@@ -7,6 +7,8 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +30,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -60,12 +64,15 @@ public final class SkullEyeState {
     private static final Map<ResourceLocation, String> HEAD_PART_TOKENS = Map.of(
             EntityType.getKey(EntityType.BEE), "body",
             EntityType.getKey(EntityType.CHICKEN), "head1",
-            EntityType.getKey(EntityType.GHAST), "root/body");
+            EntityType.getKey(EntityType.GHAST), "root/body",
+            EntityType.getKey(EntityType.SQUID), "root",
+            EntityType.getKey(EntityType.GLOW_SQUID), "root",
+            EntityType.getKey(EntityType.SLIME), "root/right_eye",
+            EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0");
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
-     * endermite, silverfish) and those whose mob's eyes sit on a part the head model doesn't reproduce (squid,
-     * glow squid, slime, magma cube).
+     * endermite, silverfish).
      */
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */
@@ -77,6 +84,34 @@ public final class SkullEyeState {
             SkullBlock.Types.SKELETON, EntityType.SKELETON,
             SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
             SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
+
+    public static final ResourceLocation SUPPLEMENTARIES_SPIDER_HEAD =
+            ResourceLocation.fromNamespaceAndPath("supplementaries", "spider_head");
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Set<String> HEAD_DIAGNOSTICS = ConcurrentHashMap.newKeySet();
+
+    public static boolean isTracedHead(Block block) {
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        String path = id.getPath();
+        return SUPPLEMENTARIES_SPIDER_HEAD.equals(id) || (HEADS_NAMESPACE.equals(id.getNamespace())
+                && (path.contains("enderman") || path.contains("spider") || path.contains("snow_golem")));
+    }
+
+    public static void traceHead(Block block, String stage, String details) {
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        if (HEAD_DIAGNOSTICS.add(id + "/" + stage + "/" + details)) {
+            LOGGER.info("[heads-eyes] {} {}: {}", stage, id, details);
+        }
+    }
+
+    public static String describeHeadConfig(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
+        return "entity=" + entity + ", usable=" + RuntimeConfig.isUsable(config)
+                + ", eligible=" + canHaveEyes(entity, config)
+                + ", variants=" + (config == null ? "missing" : config.variants.stream()
+                .map(variant -> variant.weight + ":" + variant.heads.stream().map(head -> head.attachPoint).toList())
+                .toList());
+    }
 
     private SkullEyeState() {
     }
@@ -139,11 +174,14 @@ public final class SkullEyeState {
     }
 
     /**
-     * The mob whose eye definition the Heads mod's head block {@code blockId} (floor or wall) uses, or {@code null}
+     * The mob whose eye definition a supported modded head block {@code blockId} (floor or wall) uses, or {@code null}
      * for any other block id.
      */
     @Nullable
     public static ResourceLocation entityFor(ResourceLocation blockId) {
+        if (SUPPLEMENTARIES_SPIDER_HEAD.equals(blockId)) {
+            return EntityType.getKey(EntityType.SPIDER);
+        }
         if (!blockId.getNamespace().equals(HEADS_NAMESPACE)) {
             return null;
         }
@@ -204,6 +242,7 @@ public final class SkullEyeState {
         mobs.put("fox_head", EntityType.FOX);
         mobs.put("fox_snow_head", EntityType.FOX);
         mobs.put("ghast_head", EntityType.GHAST);
+        mobs.put("glow_squid_head", EntityType.GLOW_SQUID);
         mobs.put("goat_head", EntityType.GOAT);
         mobs.put("hoglin_head", EntityType.HOGLIN);
         mobs.put("horse_skeleton_head", EntityType.SKELETON_HORSE);
@@ -211,6 +250,7 @@ public final class SkullEyeState {
         mobs.put("husk_head", EntityType.HUSK);
         mobs.put("illusioner_head", EntityType.ILLUSIONER);
         mobs.put("iron_golem_head", EntityType.IRON_GOLEM);
+        mobs.put("magma_cube_head", EntityType.MAGMA_CUBE);
         mobs.put("mule_head", EntityType.MULE);
         mobs.put("ocelot_head", EntityType.OCELOT);
         mobs.put("pig_head", EntityType.PIG);
@@ -221,8 +261,10 @@ public final class SkullEyeState {
         mobs.put("salmon_head", EntityType.SALMON);
         mobs.put("sheep_head", EntityType.SHEEP);
         mobs.put("sheep_shaven_head", EntityType.SHEEP);
+        mobs.put("slime_head", EntityType.SLIME);
         mobs.put("snow_golem_head", EntityType.SNOW_GOLEM);
         mobs.put("spider_head", EntityType.SPIDER);
+        mobs.put("squid_head", EntityType.SQUID);
         mobs.put("stray_head", EntityType.STRAY);
         mobs.put("turtle_head", EntityType.TURTLE);
         mobs.put("villager_head", EntityType.VILLAGER);

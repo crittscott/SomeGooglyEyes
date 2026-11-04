@@ -62,10 +62,11 @@ public final class SkullEyeRenderer {
 
     /**
      * The part whose cubes stand for a mob's eye part, for mobs whose eyes attach to a part sharing its pivot with
-     * a larger one (the chicken's beak, beside its head); any other mob's eye part stands for itself.
+     * a larger one, such as the chicken's beak or the slime's eye. Other eye parts stand for themselves.
      */
     private static final Map<ResourceLocation, String> CUBE_TOKENS = Map.of(
-            EntityType.getKey(EntityType.CHICKEN), "head");
+            EntityType.getKey(EntityType.CHICKEN), "head",
+            EntityType.getKey(EntityType.SLIME), "root");
     /** The field name the Heads mod's head models keep their head part in. */
     private static final String HEAD_FIELD = "head";
     /** Each Heads-mod model class's field holding its head part, or empty when it has none. */
@@ -73,6 +74,8 @@ public final class SkullEyeRenderer {
     // Like the mob layers' model, one instance whose iris is moved before each draw on the render thread.
     private static final ModelGooglyEye MODEL = new ModelGooglyEye();
     private static final float PIXELS_PER_BLOCK = 16F;
+    private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
+    private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
@@ -226,9 +229,11 @@ public final class SkullEyeRenderer {
         }
     }
 
-    /** Whether {@code block} is one of the Heads mod's heads, whose eyes need a {@link Placement}. */
-    private static boolean isHeadsMod(Block block) {
-        return BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(SkullEyeState.HEADS_NAMESPACE);
+    /** Whether {@code block} uses a modded head model that needs a {@link Placement}. */
+    private static boolean needsPlacement(Block block) {
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        return SkullEyeState.HEADS_NAMESPACE.equals(id.getNamespace())
+                || SkullEyeState.SUPPLEMENTARIES_SPIDER_HEAD.equals(id);
     }
 
     /**
@@ -281,10 +286,18 @@ public final class SkullEyeRenderer {
      */
     public static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight, SkullModelBase model) {
         ModelPart head = headPart(model);
+        SkullBlockEntity skull = current;
+        if (skull != null && SkullEyeState.isTracedHead(skull.getBlockState().getBlock())) {
+            Block block = skull.getBlockState().getBlock();
+            ResourceLocation entity = SkullEyeState.entityFor(block);
+            SkullEyeState.traceHead(block, "render",
+                    "model=" + model.getClass().getName() + ", headPart=" + (head != null)
+                            + ", entity=" + entity + ", hasEyes=" + SkullEyeState.hasEyes(skull)
+                            + ", mayShow=" + mayShow(entity));
+        }
         if (head == null) {
             return;
         }
-        SkullBlockEntity skull = current;
         ItemStack stack = currentItem;
         if (skull != null) {
             Block block = skull.getBlockState().getBlock();
@@ -293,9 +306,13 @@ public final class SkullEyeRenderer {
                 return;
             }
             PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
+            if (SkullEyeState.isTracedHead(block)) {
+                SkullEyeState.traceHead(block, "render eyes",
+                        eyes == null ? "no presentation" : "parts=" + java.util.Arrays.toString(eyes.parts));
+            }
             if (eyes != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
-                renderEyes(pose, bufferSource, packedLight, model, head, isHeadsMod(block), entity, eyes.helper,
+                renderEyes(pose, bufferSource, packedLight, model, head, needsPlacement(block), entity, eyes.helper,
                         eyes.parts, eyes.eyes, eyes.snapshot.properties(), partialTick);
             }
         } else if (stack != null && stack.getItem() instanceof BlockItem item) {
@@ -308,7 +325,7 @@ public final class SkullEyeRenderer {
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, model, head, isHeadsMod(item.getBlock()), entity, helper,
+                renderEyes(pose, bufferSource, packedLight, model, head, needsPlacement(item.getBlock()), entity, helper,
                         SkullEyeState.headParts(entity, helper), framed == null ? null : framed.eyes,
                         snapshot.properties(),
                         framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
@@ -327,17 +344,35 @@ public final class SkullEyeRenderer {
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
+        // The Heads Enderman face uses the same head-local coordinates as its mob eye layout.
+        // Draw just in front of the skull's separate emissive eye layer.
+        boolean endermanFace = headsMod && EntityType.getKey(EntityType.ENDERMAN).equals(entity);
+        boolean snowGolemFace = headsMod && EntityType.getKey(EntityType.SNOW_GOLEM).equals(entity);
         for (int part : parts) {
             Placement placement = null;
-            if (headsMod) {
+            if (headsMod && !endermanFace) {
                 placement = placement(model, head, entity, helper.getAttachToken(part));
+                if (current != null && SkullEyeState.isTracedHead(current.getBlockState().getBlock())) {
+                    SkullEyeState.traceHead(current.getBlockState().getBlock(), "fit " + part,
+                            "attachPoint=" + helper.getAttachToken(part) + ", fitted=" + (placement != null));
+                }
                 if (placement == null) {
                     continue;
                 }
             }
             pose.pushPose();
-            if (placement != null) {
+            if (endermanFace) {
+                pose.translate(0F, 0F, -ENDERMAN_EYE_CLEARANCE);
+                if (current != null) {
+                    SkullEyeState.traceHead(current.getBlockState().getBlock(), "render placement",
+                            "using Enderman face coordinates");
+                }
+            } else if (placement != null) {
                 placement.apply(pose);
+                if (snowGolemFace) {
+                    // The mob layout sits forward of the bare face, which is exposed on the Heads skull.
+                    pose.translate(0F, 0F, SNOW_GOLEM_EYE_SETBACK);
+                }
             }
             int eyeCount = helper.getEyeCount(part);
             for (int eye = 0; eye < eyeCount; eye++) {

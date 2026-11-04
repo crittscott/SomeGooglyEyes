@@ -42,6 +42,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -334,7 +335,7 @@ public final class SkullEyeGameTestsLogic {
     /**
      * The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts. Runs with
      * or without that mod. In game, with Heads installed: sneak with a Googly Eye at a placed Heads cow head, then
-     * at a wall-mounted one; both report that they can have eyes. A Heads squid head reports no configuration.
+     * at a wall-mounted one; both report that they can have eyes. A Heads squid head also reports that it can have eyes.
      */
     public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
         Map<String, EntityType<?>> expected = Map.of(
@@ -346,7 +347,13 @@ public final class SkullEyeGameTestsLogic {
                 "zombified_piglin_wall_skull", EntityType.ZOMBIFIED_PIGLIN);
         expected.forEach((path, type) -> helper.assertTrue(
                 EntityType.getKey(type).equals(SkullEyeState.entityFor(headsId(path))), path + " maps to its mob"));
-        helper.assertTrue(SkullEyeState.entityFor(headsId("squid_head")) == null, "a squid head has no mob");
+        Map.of("squid_wall_head", EntityType.SQUID, "glow_squid_head", EntityType.GLOW_SQUID,
+                "slime_head", EntityType.SLIME, "magma_cube_head", EntityType.MAGMA_CUBE,
+                "enderman_wall_head", EntityType.ENDERMAN).forEach((path, type) -> helper.assertTrue(
+                EntityType.getKey(type).equals(SkullEyeState.entityFor(headsId(path))), path + " maps to its mob"));
+        helper.assertTrue(EntityType.getKey(EntityType.SPIDER).equals(
+                        SkullEyeState.entityFor(SkullEyeState.SUPPLEMENTARIES_SPIDER_HEAD)),
+                "the Supplementaries spider head uses the spider layout");
         helper.assertTrue(SkullEyeState.entityFor(ResourceLocation.fromNamespaceAndPath("minecraft", "cow_head")) == null,
                 "another namespace's cow_head is not the Heads mod's");
         helper.succeed();
@@ -354,11 +361,17 @@ public final class SkullEyeGameTestsLogic {
 
     /**
      * A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
-     * shears, as a vanilla head does. Needs the Heads mod. In game, with Heads installed: place a Heads cow head
+     * shears, as a vanilla head does. Also checks application to the Enderman Skull. Needs the Heads mod. In game, with Heads installed: place a Heads cow head
      * and repeat {@link #slimyEyeGivesAPlacedHeadEyes}, {@link #brokenHeadKeepsItsEyes}, and
      * {@link #optometristHarvestsAPlacedHead} on it.
      */
     public static void headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper helper, Player player) {
+        SkullBlockEntity enderman = placeHead(helper, headsBlock(helper, "enderman_head"));
+        player.setItemInHand(InteractionHand.MAIN_HAND, purpleSlimyEye());
+        helper.assertTrue(use(helper, player, enderman) == InteractionResult.SUCCESS,
+                "a Slimy Eye applies to the registered Enderman Skull");
+        helper.assertTrue(SkullEyeState.hasEyes(enderman), "the Enderman Skull stores its eyes");
+
         Block cowHead = headsBlock(helper, "cow_head");
         SkullBlockEntity skull = placeHead(helper, cowHead);
         ItemStack slimy = purpleSlimyEye();
@@ -393,6 +406,20 @@ public final class SkullEyeGameTestsLogic {
      * several Heads cow heads; every one shows eyes on its face.
      */
     public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
+        for (ResourceLocation id : BuiltInRegistries.BLOCK.keySet()) {
+            if (!SkullEyeState.HEADS_NAMESPACE.equals(id.getNamespace())) {
+                continue;
+            }
+            Block block = BuiltInRegistries.BLOCK.get(id);
+            String path = id.getPath();
+            if (!(block instanceof AbstractSkullBlock)
+                    || path.contains("axolotl") || path.contains("endermite") || path.contains("silverfish")) {
+                continue;
+            }
+            ResourceLocation entity = SkullEyeState.entityFor(block);
+            helper.assertTrue(entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false)),
+                    id + " is registered and can have eyes");
+        }
         SkullEyeState.HEADS_MOBS.forEach((path, type) -> {
             ResourceLocation entity = EntityType.getKey(type);
             helper.assertTrue(SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false)),

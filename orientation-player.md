@@ -70,7 +70,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 ## Mob heads
 
-Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. So can the Heads mod's heads on NeoForge, fitted to each head's shape, except its axolotl, endermite, silverfish, squid, glow squid, slime, and magma cube heads. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. So can the Heads mod's heads on NeoForge, fitted to each head's shape, except its axolotl, endermite, and silverfish heads. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play idle expressions all players see alike. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 

@@ -62,7 +62,16 @@ public final class EyeInspector {
         }
         EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
                 entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
-        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
+        HitResult blockTarget = player.pick(REACH, 1.0F, false);
+        if (blockTarget instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
+            var block = minecraft.level.getBlockState(hit.getBlockPos()).getBlock();
+            var blockEntity = minecraft.level.getBlockEntity(hit.getBlockPos());
+            SkullEyeState.traceHead(block, "inspect target",
+                    "blockEntity=" + (blockEntity == null ? "missing" : blockEntity.getClass().getName())
+                            + ", nearerEntity=" + (target != null && player.getEyePosition().distanceToSqr(target.getLocation())
+                            <= player.getEyePosition().distanceToSqr(hit.getLocation())));
+        }
+        if (blockTarget instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
                 && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
@@ -98,7 +107,12 @@ public final class EyeInspector {
     /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
     private static Component verdict(SkullBlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (entity == null || !SkullEyeState.canHaveEyes(entity, ClientEyeConfigs.get(entity, false))) {
+        RuntimeConfig config = entity == null ? null : ClientEyeConfigs.get(entity, false);
+        if (SkullEyeState.isTracedHead(skull.getBlockState().getBlock())) {
+            SkullEyeState.traceHead(skull.getBlockState().getBlock(), "inspect",
+                    SkullEyeState.describeHeadConfig(entity, config) + ", hasEyes=" + SkullEyeState.hasEyes(skull));
+        }
+        if (!SkullEyeState.canHaveEyes(entity, config)) {
             return cannot();
         }
         return SkullEyeState.hasEyes(skull) ? alreadyHas() : canHave();

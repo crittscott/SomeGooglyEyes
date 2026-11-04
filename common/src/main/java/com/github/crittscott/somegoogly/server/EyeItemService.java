@@ -87,6 +87,15 @@ public final class EyeItemService {
     public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, SkullBlockEntity skull,
                                                   Direction face) {
         BlockPos pos = skull.getBlockPos();
+        Block block = skull.getBlockState().getBlock();
+        if (SkullEyeState.isTracedHead(block)) {
+            ResourceLocation entity = SkullEyeState.entityFor(block);
+            SkullEyeState.traceHead(block, "server apply",
+                    SkullEyeState.describeHeadConfig(entity, entity == null ? null : ServerEyeConfigs.get(entity, false))
+                            + ", enabled=" + ServerConfig.GOOGLY_EYES_ENABLED.get()
+                            + ", hasEyes=" + SkullEyeState.hasEyes(skull)
+                            + ", mayAlter=" + mayAlter(player, pos, face, stack));
+        }
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !canHeadHaveEyes(skull) || SkullEyeState.hasEyes(skull)
                 || !mayAlter(player, pos, face, stack)) {
             return InteractionResult.FAIL;
@@ -327,6 +336,13 @@ public final class EyeItemService {
     public static InteractionResult useOnSkull(Player player, Level level, InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
         boolean slimy = stack.getItem() instanceof SlimyEyeItem;
+        Block block = level.getBlockState(hit.getBlockPos()).getBlock();
+        if (slimy && SkullEyeState.isTracedHead(block)) {
+            var blockEntity = level.getBlockEntity(hit.getBlockPos());
+            SkullEyeState.traceHead(block, level.isClientSide() ? "client use" : "server use",
+                    "blockEntity=" + (blockEntity == null ? "missing" : blockEntity.getClass().getName())
+                            + ", face=" + hit.getDirection());
+        }
         if (!slimy && !(stack.is(ModContent.SHEARS) && hasOptometrist(stack, level.registryAccess()))
                 || !(level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull)
                 || !slimy && !SkullEyeState.hasEyes(skull)) {
