@@ -44,7 +44,7 @@ Mutations flush one full snapshot. Rolls read clamped; eye state and roll initia
 
 Eye items carry only `AppearanceOverride` in the synced `somegoogly:eye_properties` component. Harvesting copies the first eye's effective appearance; modifier recipes change that component. The Slimy Eye recipe copies every component.
 
-`SkullEyeState` stores a placed head's snapshot in Mixin-owned `somegoogly:data`, replaced on load and included in update tags. Head items use the `somegoogly:head_eyes` component, exchanged implicitly by the block entity. Heads borrow adult variants with eyes on their copied part (`HEAD_PART_TOKENS`, else head). Vanilla types and Heads block IDs (`HEADS_MOBS`) map to mobs without linking that optional mod. Mutations send a block update. Loot adapters use `copyToLoot`.
+Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:data` key. Items use the `somegoogly:head_eyes` component. Optional NeoForge mixins carry eyes through Twilight Forest skull candle conversion and give trophies the same storage, item, and render lifecycle as skulls. Hydra uses its own trophy layout.
 
 For 1.20.1 saves, `EyeItemMigration` converts `EyeProperties` custom data during `verifyComponentsAfterLoad`: current components win; undecodable data stays and is logged.
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge kee
 
 ## Automated verification
 
-GameTest scenarios: Fabric 181, Forge 179, NeoForge 181, including thirteen shared boat scenarios per loader. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
+GameTest scenarios: Fabric 181, Forge 179, NeoForge 184, including thirteen shared boat scenarios per loader. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
 
 ## Operational boundaries
 

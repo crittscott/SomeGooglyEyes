@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -72,10 +72,10 @@ public final class EyeInspector {
                             <= player.getEyePosition().distanceToSqr(hit.getLocation())));
         }
         if (blockTarget instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
+                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullEyeState.Holder
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
-            player.displayClientMessage(verdict(skull), true);
+            player.displayClientMessage(verdict(minecraft.level.getBlockEntity(hit.getBlockPos())), true);
         } else if (target != null) {
             player.displayClientMessage(target.getEntity() instanceof Boat boat
                     ? verdict(boat) : verdict((LivingEntity) target.getEntity()), true);
@@ -105,7 +105,7 @@ public final class EyeInspector {
     }
 
     /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
-    private static Component verdict(SkullBlockEntity skull) {
+    private static Component verdict(BlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         RuntimeConfig config = entity == null ? null : ClientEyeConfigs.get(entity, false);
         if (SkullEyeState.isTracedHead(skull.getBlockState().getBlock())) {

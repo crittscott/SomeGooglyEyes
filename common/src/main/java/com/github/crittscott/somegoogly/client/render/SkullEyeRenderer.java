@@ -33,12 +33,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -77,18 +79,14 @@ public final class SkullEyeRenderer {
     private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
     private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
-    private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
+    private static final Map<ModelPart, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
     /** Rest pose for head items drawn outside frames. */
     private static final GooglyTracker.EyeInfo REST = rest();
 
-    /** The placed head being drawn, or {@code null} outside a placed head's draw. */
-    @Nullable
-    private static SkullBlockEntity current;
-    /** The head item being drawn, or {@code null} outside a head item's draw. */
-    @Nullable
-    private static ItemStack currentItem;
-    private static float partialTick;
+    private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
+
+    private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
 
     private SkullEyeRenderer() {
     }
@@ -140,14 +138,13 @@ public final class SkullEyeRenderer {
     }
 
     /** A placed head's draw starts. */
-    public static void begin(SkullBlockEntity skull, float partialTick) {
-        current = skull;
-        SkullEyeRenderer.partialTick = partialTick;
+    public static void begin(BlockEntity skull, float partialTick) {
+        DRAWS.push(new DrawContext(skull, null, partialTick));
     }
 
     /** A head item's draw starts; any other item's draw is ignored, since it never reaches {@link #render}. */
     public static void beginItem(ItemStack stack) {
-        currentItem = stack;
+        DRAWS.push(new DrawContext(null, stack, 0F));
     }
 
     /** Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models. */
@@ -157,8 +154,7 @@ public final class SkullEyeRenderer {
 
     /** The placed head's or head item's draw ends. */
     public static void end() {
-        current = null;
-        currentItem = null;
+        DRAWS.pop();
     }
 
     /**
@@ -268,9 +264,9 @@ public final class SkullEyeRenderer {
 
     /** The cached fit for eyes on {@code entity}'s part {@code token} drawn by the Heads-mod head {@code model}. */
     @Nullable
-    private static Placement placement(SkullModelBase model, ModelPart head, ResourceLocation entity,
+    private static Placement placement(ModelPart head, ResourceLocation entity,
                                        String token) {
-        return PLACEMENTS.computeIfAbsent(model, m -> new HashMap<>()).computeIfAbsent(token, t -> {
+        return PLACEMENTS.computeIfAbsent(head, m -> new HashMap<>()).computeIfAbsent(token, t -> {
             Placement fitted = fit(head, entity, t);
             if (fitted == null) {
                 ClientIntegrationFailures.warnOnce("Heads", "eye placement", entity + " " + t,
@@ -285,20 +281,28 @@ public final class SkullEyeRenderer {
      * {@code model} was just drawn in and the head's {@code packedLight}.
      */
     public static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight, SkullModelBase model) {
-        ModelPart head = headPart(model);
-        SkullBlockEntity skull = current;
+        renderHead(pose, bufferSource, packedLight, headPart(model), false);
+    }
+
+    public static void renderTrophy(PoseStack pose, MultiBufferSource bufferSource, int packedLight, ModelPart head) {
+        renderHead(pose, bufferSource, packedLight, head, true);
+    }
+
+    private static void renderHead(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
+                                   @Nullable ModelPart head, boolean trophy) {
+        DrawContext draw = DRAWS.peek();
+        if (draw == null || head == null) {
+            return;
+        }
+        BlockEntity skull = draw.block();
         if (skull != null && SkullEyeState.isTracedHead(skull.getBlockState().getBlock())) {
             Block block = skull.getBlockState().getBlock();
             ResourceLocation entity = SkullEyeState.entityFor(block);
             SkullEyeState.traceHead(block, "render",
-                    "model=" + model.getClass().getName() + ", headPart=" + (head != null)
-                            + ", entity=" + entity + ", hasEyes=" + SkullEyeState.hasEyes(skull)
+                    "entity=" + entity + ", hasEyes=" + SkullEyeState.hasEyes(skull)
                             + ", mayShow=" + mayShow(entity));
         }
-        if (head == null) {
-            return;
-        }
-        ItemStack stack = currentItem;
+        ItemStack stack = draw.item();
         if (skull != null) {
             Block block = skull.getBlockState().getBlock();
             ResourceLocation entity = SkullEyeState.entityFor(block);
@@ -312,8 +316,8 @@ public final class SkullEyeRenderer {
             }
             if (eyes != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
-                renderEyes(pose, bufferSource, packedLight, model, head, needsPlacement(block), entity, eyes.helper,
-                        eyes.parts, eyes.eyes, eyes.snapshot.properties(), partialTick);
+                renderEyes(pose, bufferSource, packedLight, head, needsPlacement(block) || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity), entity, eyes.helper,
+                        eyes.parts, eyes.eyes, eyes.snapshot.properties(), draw.partialTick());
             }
         } else if (stack != null && stack.getItem() instanceof BlockItem item) {
             ResourceLocation entity = SkullEyeState.entityFor(stack);
@@ -325,7 +329,7 @@ public final class SkullEyeRenderer {
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, model, head, needsPlacement(item.getBlock()), entity, helper,
+                renderEyes(pose, bufferSource, packedLight, head, needsPlacement(item.getBlock()) || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity), entity, helper,
                         SkullEyeState.headParts(entity, helper), framed == null ? null : framed.eyes,
                         snapshot.properties(),
                         framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
@@ -339,9 +343,11 @@ public final class SkullEyeRenderer {
      * each part's eyes through its {@link Placement} and skips any part it couldn't fit.
      */
     private static void renderEyes(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
-                                   SkullModelBase model, ModelPart head, boolean headsMod, ResourceLocation entity,
+                                   ModelPart head, boolean headsMod, ResourceLocation entity,
                                    HeadInfo helper, int[] parts, @Nullable GooglyTracker.EyeInfo[][] eyes,
                                    AppearanceOverride overrides, float partialTick) {
+        DrawContext draw = DRAWS.peek();
+        BlockEntity current = draw == null ? null : draw.block();
         pose.pushPose();
         head.translateAndRotate(pose);
         // The Heads Enderman face uses the same head-local coordinates as its mob eye layout.
@@ -351,7 +357,7 @@ public final class SkullEyeRenderer {
         for (int part : parts) {
             Placement placement = null;
             if (headsMod && !endermanFace) {
-                placement = placement(model, head, entity, helper.getAttachToken(part));
+                placement = placement(head, entity, helper.getAttachToken(part));
                 if (current != null && SkullEyeState.isTracedHead(current.getBlockState().getBlock())) {
                     SkullEyeState.traceHead(current.getBlockState().getBlock(), "fit " + part,
                             "attachPoint=" + helper.getAttachToken(part) + ", fitted=" + (placement != null));
