@@ -34,7 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -83,7 +83,7 @@ public final class EyeItemService {
      * placing a block there would require. Otherwise, or while {@code googlyEyesEnabled} is off, it refuses
      * ({@code FAIL}) and consumes nothing.
      */
-    public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, SkullBlockEntity skull,
+    public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, BlockEntity skull,
                                                   Direction face) {
         BlockPos pos = skull.getBlockPos();
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !canHeadHaveEyes(skull) || SkullEyeState.hasEyes(skull)
@@ -107,9 +107,10 @@ public final class EyeItemService {
     }
 
     /** Whether the placed head's mob has an adult definition to borrow with eyes the head shows. */
-    private static boolean canHeadHaveEyes(SkullBlockEntity skull) {
+    private static boolean canHeadHaveEyes(BlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        return entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
+        return skull instanceof SkullEyeState.Holder && entity != null
+                && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
     }
 
     /**
@@ -119,7 +120,7 @@ public final class EyeItemService {
      * player must be allowed to use the shears on that block. Returns {@link InteractionResult#PASS} when it
      * doesn't apply (no eyes, not allowed, {@code googlyEyesEnabled} off).
      */
-    public static InteractionResult harvestSkull(ServerPlayer player, InteractionHand hand, SkullBlockEntity skull,
+    public static InteractionResult harvestSkull(ServerPlayer player, InteractionHand hand, BlockEntity skull,
                                                  Direction face) {
         ItemStack shears = player.getItemInHand(hand);
         BlockPos pos = skull.getBlockPos();
@@ -317,16 +318,17 @@ public final class EyeItemService {
 
     /**
      * Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye goes to
-     * {@link #applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity, Direction)}, Optometrist shears on an eyed
+     * {@link #applySlimyEye(ItemStack, ServerPlayer, BlockEntity, Direction)}, Optometrist shears on an eyed
      * head to {@link #harvestSkull}. The client answers {@link InteractionResult#SUCCESS} in exactly those cases,
      * so it neither runs nor sends the item's own use on top (a sneaking player's self-apply or self-shear).
      * Anything else, including plain shears, returns {@link InteractionResult#PASS}.
      */
     public static InteractionResult useOnSkull(Player player, Level level, InteractionHand hand, BlockHitResult hit) {
+        BlockEntity skull = level.getBlockEntity(hit.getBlockPos());
         ItemStack stack = player.getItemInHand(hand);
         boolean slimy = stack.getItem() instanceof SlimyEyeItem;
         if (!slimy && !(stack.is(ModContent.SHEARS) && hasOptometrist(stack))
-                || !(level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull)
+                || !(skull instanceof SkullEyeState.Holder)
                 || !slimy && !SkullEyeState.hasEyes(skull)) {
             return InteractionResult.PASS;
         }

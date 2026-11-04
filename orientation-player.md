@@ -70,7 +70,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 ## Mob heads
 
-Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. So can the Heads mod's heads on Forge, except its axolotl, endermite, and silverfish heads; their eyes are fitted to each head's shape. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+Skeleton, wither skeleton, zombie, creeper, piglin, and player heads use their mob's eye layout. Forge also supports the Heads mod's configured heads and Twilight Forest's skull candles and trophies. Adding a candle by hand or dispenser keeps the eyes. Breaking the candle block returns its eyes on the vanilla skull. Hydra has its own trophy layout. An eyed mob's own head can inherit eyes from its death drop. Apply eyes with a Slimy Eye and harvest one with Optometrist shears. Both require build permission.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play synchronized idle expressions. Cross-eye requires a paired layout. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 

@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -40,9 +40,8 @@ import javax.annotation.Nullable;
  *
  * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to the part of its mob
  * that the head model reproduces ({@link #headParts}). Vanilla head types are matched by type, the Heads mod's
- * by block id ({@link #entityFor(ResourceLocation)}), so that mod is never referenced and its absence changes
- * nothing. A head with no mob here (the dragon, other mods' heads, Heads' heads whose mob's eyes sit on a part
- * the head doesn't reproduce) never has eyes.
+ * and Twilight Forest heads by block id. A head with no usable definition or no matching eye attachment
+ * never has eyes.
  *
  * <p>Server mutations end in a block update, which resends the block entity's data to every client in
  * range; clients only read the compound.
@@ -64,7 +63,9 @@ public final class SkullEyeState {
             EntityType.getKey(EntityType.SQUID), "root",
             EntityType.getKey(EntityType.GLOW_SQUID), "root",
             EntityType.getKey(EntityType.SLIME), "root/right_eye",
-            EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0");
+            EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0",
+            new ResourceLocation("twilightforest", "naga"), "#0",
+            new ResourceLocation("twilightforest", "ur_ghast"), "root/body");
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
@@ -73,6 +74,8 @@ public final class SkullEyeState {
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */
     public static final String HEADS_NAMESPACE = "heads";
+    /** Hydra eyes use the trophy model because the mob's heads are separate renderers. */
+    public static final ResourceLocation HYDRA_TROPHY_LAYOUT = new ResourceLocation("twilightforest", "hydra_trophy");
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -93,6 +96,13 @@ public final class SkullEyeState {
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
+
+        default void somegoogly$saveEyes(CompoundTag tag) {
+            CompoundTag data = somegoogly$find();
+            if (data != null) {
+                tag.put(DATA_KEY, data.copy());
+            }
+        }
     }
 
     /**
@@ -113,7 +123,8 @@ public final class SkullEyeState {
 
     /** Copy an eyed head block's snapshot onto its generated head items. */
     public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
-        if (context.getParamOrNull(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
+        BlockEntity skull = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        if (skull instanceof Holder) {
             Snapshot state = snapshot(skull);
             if (state.hasEyes()) {
                 for (ItemStack stack : generatedLoot) {
@@ -132,7 +143,7 @@ public final class SkullEyeState {
             EntityType<?> type = MOBS.get(skull.getType());
             return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
         }
-        return null;
+        return entityFor(BuiltInRegistries.BLOCK.getKey(block));
     }
 
     /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
@@ -142,21 +153,42 @@ public final class SkullEyeState {
     }
 
     /**
-     * The mob whose eye definition the Heads mod's head block {@code blockId} (floor or wall) uses, or {@code null}
+     * The eye definition an optional mod's head block {@code blockId} (floor or wall) uses, or {@code null}
      * for any other block id.
      */
     @Nullable
     public static ResourceLocation entityFor(ResourceLocation blockId) {
         if (!blockId.getNamespace().equals(HEADS_NAMESPACE)) {
-            return null;
+            return twilightHead(blockId);
         }
         EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace("_wall_", "_"));
         return type == null ? null : EntityType.getKey(type);
     }
 
+    @Nullable
+    private static ResourceLocation twilightHead(ResourceLocation id) {
+        if (!id.getNamespace().equals("twilightforest")) {
+            return null;
+        }
+        String path = id.getPath().replace("_wall_", "_");
+        return switch (path) {
+            case "skeleton_skull_candle" -> EntityType.getKey(EntityType.SKELETON);
+            case "wither_skeleton_skull_candle" -> EntityType.getKey(EntityType.WITHER_SKELETON);
+            case "zombie_skull_candle" -> EntityType.getKey(EntityType.ZOMBIE);
+            case "creeper_skull_candle" -> EntityType.getKey(EntityType.CREEPER);
+            case "player_skull_candle" -> EntityType.getKey(EntityType.PLAYER);
+            case "piglin_skull_candle" -> EntityType.getKey(EntityType.PIGLIN);
+            case "hydra_trophy" -> HYDRA_TROPHY_LAYOUT;
+            case "naga_trophy", "lich_trophy", "minoshroom_trophy", "knight_phantom_trophy",
+                    "ur_ghast_trophy", "alpha_yeti_trophy", "snow_queen_trophy", "quest_ram_trophy" ->
+                    new ResourceLocation(id.getNamespace(), path.substring(0, path.length() - "_trophy".length()));
+            default -> null;
+        };
+    }
+
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
-    public static boolean hasEyes(SkullBlockEntity skull) {
-        CompoundTag data = ((Holder) skull).somegoogly$find();
+    public static boolean hasEyes(BlockEntity skull) {
+        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
         return data != null && data.getBoolean(EyeState.HAS_EYES);
     }
 
@@ -267,7 +299,7 @@ public final class SkullEyeState {
      * Replace the placed head's eye state and send it to every client in range through a block update; server
      * side only.
      */
-    public static void set(SkullBlockEntity skull, Snapshot snapshot) {
+    public static void set(BlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
         skull.setChanged();
         Level level = skull.getLevel();
@@ -288,8 +320,8 @@ public final class SkullEyeState {
     }
 
     /** The placed head's eye state; {@link Snapshot#NONE} when it has never had any. */
-    public static Snapshot snapshot(SkullBlockEntity skull) {
-        CompoundTag data = ((Holder) skull).somegoogly$find();
+    public static Snapshot snapshot(@Nullable BlockEntity skull) {
+        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 

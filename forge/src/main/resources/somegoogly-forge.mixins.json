@@ -5,9 +5,17 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
-    "MushroomCowShearMixin"
+    "MushroomCowShearMixin",
+    "TwilightSkullCandleDataMixin",
+    "TwilightSkullConversionMixin",
+    "TwilightTrophyDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "TwilightHeadItemRendererMixin",
+    "TwilightSkullCandleRendererMixin",
+    "TwilightTrophyRendererMixin"
+  ]
 }

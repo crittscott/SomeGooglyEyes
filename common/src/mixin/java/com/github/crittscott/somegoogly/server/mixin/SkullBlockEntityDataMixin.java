@@ -46,8 +46,6 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
 
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     private void somegoogly$save(CompoundTag tag, CallbackInfo callback) {
-        if (somegoogly$data != null) {
-            tag.put(SkullEyeState.DATA_KEY, somegoogly$data.copy());
-        }
+        somegoogly$saveEyes(tag);
     }
 }
