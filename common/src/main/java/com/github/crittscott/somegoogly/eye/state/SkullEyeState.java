@@ -57,19 +57,22 @@ public final class SkullEyeState {
      * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
      * every other mob's head shows the eyes on parts named {@value #HEAD_PART}.
      */
-    private static final Map<Identifier, String> HEAD_PART_TOKENS = Map.of(
-            EntityType.getKey(EntityType.BEE), "bone",
-            EntityType.getKey(EntityType.CHICKEN), "beak",
-            EntityType.getKey(EntityType.DONKEY), "head_parts",
-            EntityType.getKey(EntityType.GHAST), "root/body",
-            EntityType.getKey(EntityType.HORSE), "head_parts",
-            EntityType.getKey(EntityType.MULE), "head_parts",
-            EntityType.getKey(EntityType.ZOMBIE_HORSE), "head_parts");
+    private static final Map<Identifier, String> HEAD_PART_TOKENS = Map.ofEntries(
+            Map.entry(EntityType.getKey(EntityType.BEE), "bone"),
+            Map.entry(EntityType.getKey(EntityType.CHICKEN), "beak"),
+            Map.entry(EntityType.getKey(EntityType.DONKEY), "head_parts"),
+            Map.entry(EntityType.getKey(EntityType.GHAST), "root/body"),
+            Map.entry(EntityType.getKey(EntityType.HORSE), "head_parts"),
+            Map.entry(EntityType.getKey(EntityType.MULE), "head_parts"),
+            Map.entry(EntityType.getKey(EntityType.ZOMBIE_HORSE), "head_parts"),
+            Map.entry(EntityType.getKey(EntityType.SQUID), "root"),
+            Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), "root"),
+            Map.entry(EntityType.getKey(EntityType.SLIME), "root/right_eye"),
+            Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0"));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
-     * endermite, silverfish) and those whose mob's eyes sit on a part the head model doesn't reproduce (squid,
-     * glow squid, slime, magma cube).
+     * endermite, silverfish).
      */
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */
@@ -241,6 +244,10 @@ public final class SkullEyeState {
         mobs.put("zoglin_head", EntityType.ZOGLIN);
         mobs.put("zombie_villager_head", EntityType.ZOMBIE_VILLAGER);
         mobs.put("zombified_piglin_skull", EntityType.ZOMBIFIED_PIGLIN);
+        mobs.put("squid_head", EntityType.SQUID);
+        mobs.put("glow_squid_head", EntityType.GLOW_SQUID);
+        mobs.put("slime_head", EntityType.SLIME);
+        mobs.put("magma_cube_head", EntityType.MAGMA_CUBE);
         return Map.copyOf(mobs);
     }
 
