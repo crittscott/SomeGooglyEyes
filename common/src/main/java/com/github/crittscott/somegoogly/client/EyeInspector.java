@@ -16,7 +16,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -63,11 +63,15 @@ public final class EyeInspector {
         EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
                 entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
         if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
-            player.sendOverlayMessage(verdict(skull));
-        } else if (target != null) {
+            BlockEntity head = minecraft.level.getBlockEntity(hit.getBlockPos());
+            if (head instanceof SkullEyeState.Holder) {
+                player.sendOverlayMessage(verdict(head));
+                return;
+            }
+        }
+        if (target != null) {
             player.sendOverlayMessage(target.getEntity() instanceof AbstractBoat boat
                     ? verdict(boat) : verdict((LivingEntity) target.getEntity()));
         }
@@ -96,7 +100,7 @@ public final class EyeInspector {
     }
 
     /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
-    private static Component verdict(SkullBlockEntity skull) {
+    private static Component verdict(BlockEntity skull) {
         Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (entity == null || !SkullEyeState.canHaveEyes(entity, ClientEyeConfigs.get(entity, false))) {
             return cannot();

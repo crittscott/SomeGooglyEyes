@@ -19,7 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 
 /** Loader-neutral owner of mob, boat, placed-head, and framed-item eye simulations and their lifecycle. */
@@ -164,7 +164,7 @@ public final class ClientEyeRuntime {
      * definitions give it nothing to draw.
      */
     @Nullable
-    public static PresentationEyes skullEyes(SkullBlockEntity skull, Identifier entity) {
+    public static PresentationEyes skullEyes(BlockEntity skull, Identifier entity) {
         PresentationEyes eyes = SKULLS.get(skull.getBlockPos());
         if (eyes == null || !eyes.entity.equals(entity)) {
             var snapshot = SkullEyeState.snapshot(skull);
@@ -239,8 +239,7 @@ public final class ClientEyeRuntime {
             PresentationEyes eyes = entry.getValue();
             int idle = clientTicks - eyes.lastRenderTick;
             if (idle > EVICT_IDLE_TICKS || level == null
-                    || !(level.getBlockEntity(entry.getKey()) instanceof SkullBlockEntity skull)
-                    || !SkullEyeState.snapshot(skull).equals(eyes.snapshot)) {
+                    || !SkullEyeState.snapshot(level.getBlockEntity(entry.getKey())).equals(eyes.snapshot)) {
                 skulls.remove();
             } else if (idle <= SIMULATE_IDLE_TICKS) {
                 eyes.tick(level.getGameTime(), behaviors);

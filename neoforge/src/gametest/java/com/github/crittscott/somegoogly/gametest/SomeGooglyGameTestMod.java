@@ -155,6 +155,9 @@ public final class SomeGooglyGameTestMod {
         functions.register("serializationgametests/network_protocol_ids_are_versioned_and_unique", () -> SerializationGameTests::networkProtocolIdsAreVersionedAndUnique);
         functions.register("serializationgametests/picker_export_packet_round_trips", () -> SerializationGameTests::pickerExportPacketRoundTrips);
         functions.register("serializationgametests/picker_freeze_packet_round_trips", () -> SerializationGameTests::pickerFreezePacketRoundTrips);
+        functions.register("twilightheadgametests/player_conversion_keeps_eyes", () -> TwilightHeadGameTests::playerConversionKeepsEyes);
+        functions.register("twilightheadgametests/dispenser_conversion_keeps_eyes", () -> TwilightHeadGameTests::dispenserConversionKeepsEyes);
+        functions.register("twilightheadgametests/lich_trophy_takes_keeps_and_gives_up_eyes", () -> TwilightHeadGameTests::lichTrophyTakesKeepsAndGivesUpEyes);
         functions.register("skulleyegametests/eyed_mobs_heads_mod_head_inherits_its_eyes", () -> SkullEyeGameTests::eyedMobsHeadsModHeadInheritsItsEyes);
         functions.register("skulleyegametests/heads_mod_blocks_map_to_their_mobs", () -> SkullEyeGameTests::headsModBlocksMapToTheirMobs);
         functions.register("skulleyegametests/heads_mod_mobs_have_head_eyes", () -> SkullEyeGameTests::headsModMobsHaveHeadEyes);

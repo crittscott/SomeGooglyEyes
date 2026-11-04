@@ -44,7 +44,7 @@ Mutations send one full snapshot; stored rolls read clamped to 0..1. Eye state a
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
-`SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants on the part the head reproduces. Heads-mod floor/wall blocks map by registry id; bee, chicken, ghast, and equines use specific attachment tokens. Mutations send block updates.
+Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:data` key. Items use the `somegoogly:head_eyes` component. Optional NeoForge mixins carry eyes through Twilight Forest skull candle conversion and give trophies the same storage, item, and render lifecycle as skulls. Hydra uses its own trophy layout.
 
 Saved data from the 26.1.1 release is already in current form; nothing migrates.
 
@@ -94,7 +94,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 169, Forge 171, NeoForge 173. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals, connections, protection ordering, and real saves need manual checks.
+GameTest scenarios: Fabric 169, Forge 171, NeoForge 176. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals, connections, protection ordering, and real saves need manual checks.
 
 ## Operational boundaries
 

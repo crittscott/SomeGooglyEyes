@@ -22,7 +22,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import org.joml.Quaternionf;
 import java.lang.reflect.Field;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -37,7 +39,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import org.jspecify.annotations.Nullable;
 
@@ -71,20 +73,25 @@ public final class SkullEyeRenderer {
     private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
     private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
-    private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
+    private static final Map<ModelPart, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
     /** Rest pose for head items drawn outside frames. */
     private static final GooglyTracker.EyeInfo REST = rest();
 
-    /** The placed head's eyes being submitted, or {@code null} outside a placed head's submission. */
-    @Nullable
-    private static PresentationEyes current;
-    /** The head item being drawn, or {@code null} outside a head item's draw. */
-    @Nullable
-    private static ItemStack currentItem;
-    private static float partialTick;
-    /** Head items can submit an additional wool model; their eyes belong to the first model only. */
-    private static boolean itemEyesSubmitted;
+    private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
+
+    private static final class DrawContext {
+        final @Nullable PresentationEyes eyes;
+        final @Nullable ItemStack item;
+        final float partialTick;
+        boolean itemEyesSubmitted;
+
+        DrawContext(@Nullable PresentationEyes eyes, @Nullable ItemStack item, float partialTick) {
+            this.eyes = eyes;
+            this.item = item;
+            this.partialTick = partialTick;
+        }
+    }
 
     private SkullEyeRenderer() {
     }
@@ -162,7 +169,7 @@ public final class SkullEyeRenderer {
      * its render state is extracted.
      */
     @Nullable
-    public static PresentationEyes extract(SkullBlockEntity skull) {
+    public static PresentationEyes extract(BlockEntity skull) {
         Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
             return null;
@@ -176,14 +183,12 @@ public final class SkullEyeRenderer {
 
     /** A placed head's submission starts. */
     public static void begin(PlacedHolder state) {
-        current = state.somegoogly$eyes();
-        partialTick = state.somegoogly$partialTick();
+        DRAWS.push(new DrawContext(state.somegoogly$eyes(), null, state.somegoogly$partialTick()));
     }
 
     /** An item's submission starts; any but a head item's is ignored, since it never reaches {@link #render}. */
     public static void beginItem(@Nullable ItemStack stack) {
-        currentItem = stack;
-        itemEyesSubmitted = false;
+        DRAWS.push(new DrawContext(null, stack, 0F));
     }
 
     /** Drop fits when renderer rebuilds replace the head and mob models. */
@@ -193,9 +198,7 @@ public final class SkullEyeRenderer {
 
     /** The placed head's or head item's submission ends. */
     public static void end() {
-        current = null;
-        currentItem = null;
-        itemEyesSubmitted = false;
+        DRAWS.pop();
     }
 
     /**
@@ -296,9 +299,9 @@ public final class SkullEyeRenderer {
 
     /** The cached fit for eyes on {@code entity}'s part {@code token} drawn by the Heads-mod head {@code model}. */
     @Nullable
-    private static Placement placement(SkullModelBase model, ModelPart head, Identifier entity,
+    private static Placement placement(ModelPart head, Identifier entity,
                                        String token) {
-        return PLACEMENTS.computeIfAbsent(model, m -> new HashMap<>()).computeIfAbsent(token, t -> {
+        return PLACEMENTS.computeIfAbsent(head, m -> new HashMap<>()).computeIfAbsent(token, t -> {
             Placement fitted = fit(head, entity, t);
             if (fitted == null) {
                 ClientIntegrationFailures.warnOnce("Heads", "eye placement", entity + " " + t,
@@ -315,20 +318,33 @@ public final class SkullEyeRenderer {
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
                               SkullModelBase.State modelState) {
+        DrawContext draw = DRAWS.peek();
+        if (draw == null || draw.eyes == null && (draw.item == null || draw.itemEyesSubmitted)) {
+            return;
+        }
         ModelPart head = headPart(model);
-        if (head == null) {
+        if (head != null) {
+            model.setupAnim(modelState);
+            renderHead(pose, collector, packedLight, head, false);
+        }
+    }
+
+    public static void renderTrophy(PoseStack pose, SubmitNodeCollector collector, int packedLight, ModelPart head) {
+        renderHead(pose, collector, packedLight, head, true);
+    }
+
+    private static void renderHead(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                   ModelPart head, boolean trophy) {
+        DrawContext draw = DRAWS.peek();
+        if (draw == null || draw.eyes == null && (draw.item == null || draw.itemEyesSubmitted)) {
             return;
         }
-        PresentationEyes eyes = current;
-        ItemStack stack = currentItem;
-        if (eyes == null && (stack == null || itemEyesSubmitted)) {
-            return;
-        }
-        model.setupAnim(modelState);
+        PresentationEyes eyes = draw.eyes;
+        ItemStack stack = draw.item;
         if (eyes != null) {
-            renderEyes(pose, collector, packedLight, model, head, eyes.headsMod,
+            renderEyes(pose, collector, packedLight, head, eyes.headsMod || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(eyes.entity),
                     eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
-                    eyes.snapshot.properties(), partialTick);
+                    eyes.snapshot.properties(), draw.partialTick);
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
             Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
@@ -339,9 +355,10 @@ public final class SkullEyeRenderer {
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
-                itemEyesSubmitted = true;
-                renderEyes(pose, collector, packedLight, model, head,
-                        stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock()),
+                draw.itemEyesSubmitted = true;
+                renderEyes(pose, collector, packedLight, head,
+                        trophy ? !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity)
+                                : stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock()),
                         entity, helper, SkullEyeState.headParts(entity, helper),
                         framed == null ? null : framed.eyes, snapshot.properties(),
                         framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
@@ -354,7 +371,7 @@ public final class SkullEyeRenderer {
      * entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
      */
     private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                   SkullModelBase model, ModelPart head, boolean headsMod, Identifier entity, HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
+                                   ModelPart head, boolean headsMod, Identifier entity, HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
@@ -364,7 +381,7 @@ public final class SkullEyeRenderer {
         for (int part : parts) {
             Placement placement = null;
             if (headsMod && !endermanFace) {
-                placement = placement(model, head, entity, helper.getAttachToken(part));
+                placement = placement(head, entity, helper.getAttachToken(part));
                 if (placement == null) {
                     continue;
                 }
