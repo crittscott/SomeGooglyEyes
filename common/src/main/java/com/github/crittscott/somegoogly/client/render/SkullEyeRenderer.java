@@ -65,7 +65,8 @@ public final class SkullEyeRenderer {
      * a larger one (the chicken's beak, beside its head); any other mob's eye part stands for itself.
      */
     private static final Map<ResourceLocation, String> CUBE_TOKENS = Map.of(
-            EntityType.getKey(EntityType.CHICKEN), "head");
+            EntityType.getKey(EntityType.CHICKEN), "head",
+            EntityType.getKey(EntityType.SLIME), "root");
     /** The field name the Heads mod's head models keep their head part in. */
     private static final String HEAD_FIELD = "head";
     /** Each Heads-mod model class's field holding its head part, or empty when it has none. */
@@ -73,6 +74,8 @@ public final class SkullEyeRenderer {
     // Like the mob layers' model, one instance whose iris is moved before each draw on the render thread.
     private static final ModelGooglyEye MODEL = new ModelGooglyEye();
     private static final float PIXELS_PER_BLOCK = 16F;
+    private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
+    private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<SkullModelBase, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
@@ -327,17 +330,25 @@ public final class SkullEyeRenderer {
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
+        // The Enderman Skull's face uses the mob layout's head-local coordinates.
+        boolean endermanFace = headsMod && EntityType.getKey(EntityType.ENDERMAN).equals(entity);
+        boolean snowGolemFace = headsMod && EntityType.getKey(EntityType.SNOW_GOLEM).equals(entity);
         for (int part : parts) {
             Placement placement = null;
-            if (headsMod) {
+            if (headsMod && !endermanFace) {
                 placement = placement(model, head, entity, helper.getAttachToken(part));
                 if (placement == null) {
                     continue;
                 }
             }
             pose.pushPose();
-            if (placement != null) {
+            if (endermanFace) {
+                pose.translate(0F, 0F, -ENDERMAN_EYE_CLEARANCE);
+            } else if (placement != null) {
                 placement.apply(pose);
+                if (snowGolemFace) {
+                    pose.translate(0F, 0F, SNOW_GOLEM_EYE_SETBACK);
+                }
             }
             int eyeCount = helper.getEyeCount(part);
             for (int eye = 0; eye < eyeCount; eye++) {

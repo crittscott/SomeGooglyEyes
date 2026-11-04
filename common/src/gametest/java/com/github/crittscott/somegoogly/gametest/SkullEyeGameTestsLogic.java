@@ -333,11 +333,15 @@ public final class SkullEyeGameTestsLogic {
     /**
      * The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts. Runs with
      * or without that mod. In game, with Heads installed: sneak with a Googly Eye at a placed Heads cow head, then
-     * at a wall-mounted one; both report that they can have eyes. A Heads squid head reports no configuration.
+     * at a wall-mounted one; both report that they can have eyes. A Heads squid head can also have eyes.
      */
     public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
         Map<String, EntityType<?>> expected = Map.of(
                 "cow_head", EntityType.COW,
+                "glow_squid_head", EntityType.GLOW_SQUID,
+                "slime_head", EntityType.SLIME,
+                "magma_cube_head", EntityType.MAGMA_CUBE,
+                "enderman_wall_head", EntityType.ENDERMAN,
                 "cow_wall_head", EntityType.COW,
                 "cat_british_shorthair_wall_head", EntityType.CAT,
                 "horse_undead_head", EntityType.ZOMBIE_HORSE,
@@ -345,7 +349,7 @@ public final class SkullEyeGameTestsLogic {
                 "zombified_piglin_wall_skull", EntityType.ZOMBIFIED_PIGLIN);
         expected.forEach((path, type) -> helper.assertTrue(
                 EntityType.getKey(type).equals(SkullEyeState.entityFor(headsId(path))), path + " maps to its mob"));
-        helper.assertTrue(SkullEyeState.entityFor(headsId("squid_head")) == null, "a squid head has no mob");
+        helper.assertTrue(EntityType.getKey(EntityType.SQUID).equals(SkullEyeState.entityFor(headsId("squid_head"))), "a squid head maps to the squid");
         helper.assertTrue(SkullEyeState.entityFor(new ResourceLocation("minecraft", "cow_head")) == null,
                 "another namespace's cow_head is not the Heads mod's");
         helper.succeed();
