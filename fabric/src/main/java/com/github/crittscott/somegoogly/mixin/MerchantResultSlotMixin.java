@@ -23,7 +23,7 @@ abstract class MerchantResultSlotMixin {
 
     @Inject(method = "onTake", at = @At("TAIL"))
     private void somegoogly$afterTrade(Player player, ItemStack stack, CallbackInfo callback) {
-        if (merchant instanceof AbstractVillager villager && !villager.level().isClientSide()) {
+        if (merchant instanceof AbstractVillager villager) {
             ServerBehaviorScheduler.onTrade(villager);
         }
     }

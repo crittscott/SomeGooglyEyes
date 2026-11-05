@@ -130,8 +130,8 @@ public final class SkullEyeState {
      * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
      * has a weighted variant with eyes the head shows.
      */
-    public static boolean canHaveEyes(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
-        if (entity == null || !RuntimeConfig.isUsable(config)) {
+    public static boolean canHaveEyes(ResourceLocation entity, @Nullable RuntimeConfig config) {
+        if (!RuntimeConfig.isUsable(config)) {
             return false;
         }
         for (Variant variant : config.variants) {
@@ -307,10 +307,7 @@ public final class SkullEyeState {
     }
 
     /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
-    private static boolean isShownPart(ResourceLocation entity, @Nullable String token) {
-        if (token == null) {
-            return false;
-        }
+    private static boolean isShownPart(ResourceLocation entity, String token) {
         String partToken = HEAD_PART_TOKENS.get(entity);
         return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART)
                 : token.equals(partToken);

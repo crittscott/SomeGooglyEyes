@@ -20,12 +20,14 @@ import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,6 +52,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 /**
@@ -199,6 +202,37 @@ public final class SkullEyeGameTestsLogic {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
         helper.assertTrue(slimy.getCount() == 1, "no refusal uses up the Slimy Eye");
+        helper.succeed();
+    }
+
+    /**
+     * Spectators cannot use eye items on heads or shear themselves. In game: in spectator mode, hold a Slimy Eye and
+     * right-click a skeleton skull, then sneak and right-click with shears while wearing eyes; nothing changes and
+     * nothing is used up.
+     */
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        ServerPlayer spectator = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "head_spectator")) {
+            @Override
+            public boolean isSpectator() {
+                return true;
+            }
+        };
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        ItemStack slimy = purpleSlimyEye();
+        spectator.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+        helper.assertTrue(use(helper, spectator, skull) == InteractionResult.PASS, "a spectator's head click passes");
+        helper.assertTrue(!SkullEyeState.hasEyes(skull) && slimy.getCount() == 1,
+                "a spectator's Slimy Eye changes nothing");
+
+        ItemStack shears = new ItemStack(Items.SHEARS);
+        spectator.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        spectator.setShiftKeyDown(true);
+        EyeState.applySnapshot(spectator, purpleEyes());
+        helper.assertTrue(EyeItemService.selfRemoveWithShears(spectator, InteractionHand.MAIN_HAND)
+                == InteractionResult.PASS, "a spectator's self-shear passes");
+        helper.assertTrue(EyeState.hasEyes(spectator) && shears.getDamageValue() == 0,
+                "a spectator keeps their eyes and their shears' durability");
         helper.succeed();
     }
 

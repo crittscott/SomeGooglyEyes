@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.network;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,10 +38,6 @@ public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implement
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        if (snapshot == null || !validRoll(snapshot.variantRoll())
-                || snapshot.properties() == null || !snapshot.properties().isValid()) {
-            throw new EncoderException("Invalid eye state packet");
-        }
         buffer.writeVarInt(entityId);
         buffer.writeBoolean(snapshot.hasEyes());
         buffer.writeFloat(snapshot.variantRoll());

@@ -35,8 +35,7 @@ public class LLibraryResolver extends ReflectedBoxResolver {
         static final Handles ABSENT = new Handles(null, null, null, null, null, null);
 
         boolean available() {
-            return modelClass != null && boxClass != null && advancedBoxClass != null
-                    && boxList != null && getParent != null && translateRotate != null;
+            return modelClass != null;
         }
 
         static Handles load() {
@@ -50,7 +49,7 @@ public class LLibraryResolver extends ReflectedBoxResolver {
                 return new Handles(modelClass, boxClass, advancedBoxClass, boxList, getParent, translateRotate);
             } catch (ClassNotFoundException absent) {
                 return ABSENT;
-            } catch (Throwable failure) {
+            } catch (ReflectiveOperationException | LinkageError failure) {
                 ClientIntegrationFailures.warnOnce(
                         "LLibraryResolver", "API discovery", BASIC_MODEL_BASE, failure);
                 return ABSENT;
@@ -74,7 +73,7 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object rawParts(EntityModel<?> model) throws Throwable {
+    protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
         return HANDLES.boxList().get(model);
     }
 
@@ -84,12 +83,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object rawParent(Object part) throws Throwable {
+    protected Object rawParent(Object part) throws ReflectiveOperationException {
         return HANDLES.advancedBoxClass().isInstance(part) ? HANDLES.getParent().invoke(part) : null;
     }
 
     @Override
-    protected void rawTransform(Object part, PoseStack poseStack) throws Throwable {
+    protected void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException {
         HANDLES.translateRotate().invoke(part, poseStack);
     }
 }

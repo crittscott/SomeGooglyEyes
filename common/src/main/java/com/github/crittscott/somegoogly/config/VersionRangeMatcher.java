@@ -77,7 +77,7 @@ public final class VersionRangeMatcher {
     /** Parse a declared version into its endpoints, or {@code null} if malformed (same cases as {@link #matches}). */
     @Nullable
     private static Bounds bounds(String range) {
-        if (range == null || range.isBlank()) {
+        if (range.isBlank()) {
             return null;
         }
         String trimmed = range.trim();
@@ -134,7 +134,7 @@ public final class VersionRangeMatcher {
      * zero-padded component comparison. Blank or malformed input never matches.
      */
     public static boolean matches(String range, String version) {
-        if (range == null || range.isBlank() || version == null || version.isBlank()) {
+        if (range.isBlank() || version.isBlank()) {
             return false;
         }
 
@@ -173,7 +173,7 @@ public final class VersionRangeMatcher {
      */
     @Nullable
     public static String nearestVersion(Collection<String> declaredVersions, String loadedVersion) {
-        if (loadedVersion == null || loadedVersion.isBlank()) {
+        if (loadedVersion.isBlank()) {
             return null;
         }
         String bestOlder = null;  // greatest upper bound at or below the installed version

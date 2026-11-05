@@ -69,9 +69,8 @@ public final class FabricClientEvents {
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (!ClientPlayNetworking.canSend(PickerFreezePacket.ID) && client.getConnection() != null) {
-                client.getConnection().getConnection()
-                        .disconnect(Component.translatable("somegoogly.network.required_server"));
+            if (!ClientPlayNetworking.canSend(PickerFreezePacket.ID)) {
+                handler.getConnection().disconnect(Component.translatable("somegoogly.network.required_server"));
             }
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());

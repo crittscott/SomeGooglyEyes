@@ -106,8 +106,7 @@ public final class EyeItemService {
     /** Whether the placed head's mob has an adult definition to borrow with eyes the head shows. */
     private static boolean canHeadHaveEyes(BlockEntity skull) {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        return skull instanceof SkullEyeState.Holder && entity != null
-                && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
+        return entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
     }
 
     /** Use up one of {@code stack}, unless {@code player} is in creative. */
@@ -159,7 +158,8 @@ public final class EyeItemService {
     /**
      * Route supported entities through normal loader interaction hooks. Living entities retain their
      * item behavior; boats predict eligible application and harvesting on the client so success also
-     * consumes boarding or cargo use. Irrelevant boat actions pass through to vanilla.
+     * consumes boarding or cargo use. Irrelevant boat actions pass through to vanilla. Spectators pass here
+     * and at the other use entry points because the loaders' use hooks can fire before vanilla's spectator test.
      */
     public static InteractionResult interact(Player player, Level level, InteractionHand hand,
                                              Entity target) {
@@ -283,10 +283,13 @@ public final class EyeItemService {
      * appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
      * additionally deal one melee hit's worth of {@link ModContent#SELF_SHEAR} damage, which has no
      * attacker so PvP and team rules don't cancel it. Returns {@link InteractionResult#PASS}
-     * when it doesn't apply (not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so the
-     * vanilla item use proceeds.
+     * when it doesn't apply (spectating, not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so
+     * the vanilla item use proceeds.
      */
     public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
+        if (player.isSpectator()) {
+            return InteractionResult.PASS;
+        }
         ItemStack stack = player.getItemInHand(hand);
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !player.isShiftKeyDown()
                 || !stack.is(ModContent.SHEARS) || !EyeState.hasEyes(player)) {
@@ -327,9 +330,12 @@ public final class EyeItemService {
      * {@link #applySlimyEye(ItemStack, ServerPlayer, BlockEntity, Direction)}, Optometrist shears on an eyed
      * head to {@link #harvestSkull}. The client answers {@link InteractionResult#SUCCESS} in exactly those cases,
      * so it neither runs nor sends the item's own use on top (a sneaking player's self-apply or self-shear).
-     * Anything else, including plain shears, returns {@link InteractionResult#PASS}.
+     * Anything else, including plain shears or a spectator's click, returns {@link InteractionResult#PASS}.
      */
     public static InteractionResult useOnSkull(Player player, Level level, InteractionHand hand, BlockHitResult hit) {
+        if (player.isSpectator()) {
+            return InteractionResult.PASS;
+        }
         BlockEntity skull = level.getBlockEntity(hit.getBlockPos());
         ItemStack stack = player.getItemInHand(hand);
         boolean slimy = stack.getItem() instanceof SlimyEyeItem;

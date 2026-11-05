@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -49,9 +48,6 @@ public class EyeBehaviorTriggerPacket implements Payload {
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        if (!validTiming(duration, elapsed)) {
-            throw new EncoderException("Invalid eye behavior timing");
-        }
         buffer.writeInt(entityId);
         buffer.writeResourceLocation(behaviorId);
         buffer.writeVarInt(duration);

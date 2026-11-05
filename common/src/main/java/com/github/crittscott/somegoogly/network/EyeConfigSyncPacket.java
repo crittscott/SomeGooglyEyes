@@ -5,7 +5,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -60,12 +59,8 @@ public class EyeConfigSyncPacket implements Payload {
             if (tag == null) {
                 throw new DecoderException("Missing synced eye config for " + id);
             }
-            RuntimeConfigSet decoded;
-            try {
-                decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow();
-            } catch (Exception e) {
-                throw new DecoderException("Malformed synced eye config for " + id, e);
-            }
+            RuntimeConfigSet decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result()
+                    .orElseThrow(() -> new DecoderException("Malformed synced eye config for " + id));
             configs.put(id, decoded);
             encoded.put(id, tag);
         }
@@ -103,13 +98,7 @@ public class EyeConfigSyncPacket implements Payload {
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        int start = buffer.writerIndex();
         writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
-        int written = buffer.writerIndex() - start;
-        if (written > MAX_PAYLOAD_BYTES) {
-            throw new EncoderException("Eye config sync payload is " + written
-                    + " bytes, exceeding the safe " + MAX_PAYLOAD_BYTES + "-byte limit");
-        }
     }
 
     /** The server's behavior settings. */

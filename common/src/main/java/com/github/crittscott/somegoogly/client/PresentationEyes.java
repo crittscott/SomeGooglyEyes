@@ -137,9 +137,6 @@ public final class PresentationEyes {
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */
     public static PresentationEyes create(UUID uuid, ResourceLocation entity, Snapshot snapshot, HeadInfo helper) {
-        if (!helper.hasConfig()) {
-            throw new IllegalArgumentException("An ambient layout must contain eyes");
-        }
         return new PresentationEyes(uuidSeed(uuid), ItemStack.EMPTY, entity, snapshot, helper,
                 IntStream.range(0, helper.getHeadCount()).toArray(), false);
     }

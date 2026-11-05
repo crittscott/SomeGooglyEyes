@@ -242,7 +242,7 @@ public final class ClientEyeRuntime {
      */
     public static void tick(@Nullable Level level, boolean simulate) {
         clientTicks++;
-        if (!simulate || level == null) {
+        if (!simulate) {
             return;
         }
         tickBehaviors();
@@ -250,9 +250,9 @@ public final class ClientEyeRuntime {
         if (!ClientEyeConfigs.eyesVisible()) {
             FRAMES.clear();
         }
-        BOATS.tick(level, level.getGameTime(), behaviors);
+        BOATS.tick(level.getGameTime(), behaviors);
         sweep(FRAMES, clientTicks, eye -> eye.lastRenderTick,
-                (frame, eye) -> frame.isRemoved() || frame.level() != level,
+                (frame, eye) -> frame.isRemoved(),
                 (frame, eye) -> eye.tick(level.getGameTime(), behaviors));
         sweep(SKULLS, clientTicks, eyes -> eyes.lastRenderTick, (pos, eyes) -> false,
                 (pos, eyes) -> eyes.tick(level.getGameTime(), behaviors));

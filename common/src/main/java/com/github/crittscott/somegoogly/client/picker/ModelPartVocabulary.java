@@ -107,7 +107,7 @@ public final class ModelPartVocabulary {
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(id);
         try {
             return type.create(level) instanceof LivingEntity living ? living : null;
-        } catch (Throwable constructionFailed) {
+        } catch (RuntimeException | LinkageError constructionFailed) {
             ClientIntegrationFailures.warnOnce(
                     "entity factory", "sample construction", id.toString(), constructionFailed);
             return null;

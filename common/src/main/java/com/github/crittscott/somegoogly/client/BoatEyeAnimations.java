@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.level.Level;
 
 /** World-owned boat pupils, retained and simulated only while recently rendered. */
 public final class BoatEyeAnimations {
@@ -89,11 +88,11 @@ public final class BoatEyeAnimations {
     }
 
     /** Step one unpaused tick; world time selects expressions. */
-    public void tick(Level level, long gameTime, BehaviorSettings settings) {
+    public void tick(long gameTime, BehaviorSettings settings) {
         ticks++;
         ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown, (boat, entry) -> {
             RuntimeConfig config = ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false);
-            return boat.level() != level || !mayShow(boat) || !entry.matches(boat, config);
+            return !mayShow(boat) || !entry.matches(boat, config);
         }, (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
     }
 }

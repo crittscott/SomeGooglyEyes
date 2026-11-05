@@ -150,28 +150,28 @@ public final class BoatEyeGameTestsLogic {
             BoatEyeAnimations cache = new BoatEyeAnimations();
             var eyes = cache.get(boat);
             var blink = settings(List.of(EyeBehavior.BLINK));
-            cache.tick(helper.getLevel(), 1L, blink);
+            cache.tick(1L, blink);
             helper.assertTrue(eyes.active != null && eyes.active.age == 1, "recently rendered boats simulate");
-            cache.tick(helper.getLevel(), 2L, blink);
+            cache.tick(2L, blink);
             helper.assertTrue(eyes.active.age == 1, "unrendered boats stop simulating after their grace tick");
             for (int tick = 0; tick < 12; tick++) {
-                cache.tick(helper.getLevel(), 3L + tick, blink);
+                cache.tick(3L + tick, blink);
             }
             var recreated = cache.get(boat);
             helper.assertTrue(recreated != eyes, "boats unseen past the idle limit retire their pupils");
-            cache.tick(helper.getLevel(), 100001L, blink);
+            cache.tick(100001L, blink);
             helper.assertTrue(recreated.active != null && recreated.active.age == 1,
                     "a reappearing boat follows current expression time without replaying missed slots");
             EyeState.Snapshot glowing = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
             EyeState.applySnapshot(boat, glowing);
             cache.onStateChanged(boat, glowing);
-            cache.tick(helper.getLevel(), 100002L, blink);
+            cache.tick(100002L, blink);
             helper.assertTrue(cache.get(boat) != recreated, "unrendered state changes invalidate cached pupils");
             recreated = cache.get(boat);
             cache.clear();
             helper.assertTrue(cache.get(boat) != recreated, "clearing drops every cached boat");
             boat.discard();
-            cache.tick(helper.getLevel(), 100003L, blink);
+            cache.tick(100003L, blink);
             helper.assertTrue(cache.get(boat) == null, "removed boats cannot retain or rebuild a simulation");
         } finally {
             ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
@@ -206,21 +206,21 @@ public final class BoatEyeGameTestsLogic {
             for (int tick = 0; tick < 8; tick++) {
                 cache.get(moving);
                 cache.get(still);
-                cache.tick(helper.getLevel(), tick, BehaviorSettings.NONE);
+                cache.tick(tick, BehaviorSettings.NONE);
             }
             helper.assertTrue(movingEyes.eyes[0][0].deltaY < -0.5F
                             && movingEyes.eyes[0][1].deltaY < -0.5F, "both side pupils settle under hull-relative world gravity");
             moving.setPos(moving.getX() + 0.05D, moving.getY(), moving.getZ());
             cache.get(moving);
             cache.get(still);
-            cache.tick(helper.getLevel(), 8L, BehaviorSettings.NONE);
+            cache.tick(8L, BehaviorSettings.NONE);
             helper.assertTrue(Math.abs(movingEyes.eyes[0][0].deltaX - stillEyes.eyes[0][0].deltaX) > 0.2F,
                     "boat translation reaches pupil physics");
             helper.assertTrue(movingEyes.eyes[0][0].deltaX * movingEyes.eyes[0][1].deltaX < 0F,
                     "opposite-facing side eyes project acceleration into their own planes");
             moving.setYRot(35F);
             cache.get(moving);
-            cache.tick(helper.getLevel(), 9L, BehaviorSettings.NONE);
+            cache.tick(9L, BehaviorSettings.NONE);
             helper.assertTrue(movingEyes.eyes[0][0].rotationYaw == moving.getYRot(), "boat rotation reaches pupil physics");
         } finally {
             ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);

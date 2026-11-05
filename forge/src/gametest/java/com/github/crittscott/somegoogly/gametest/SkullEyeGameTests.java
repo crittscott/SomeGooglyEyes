@@ -69,6 +69,11 @@ public final class SkullEyeGameTests {
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
+
     // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an eyed mob's
     // head keeps its eyes in game; disabled until the cause is found.
     // @GameTest(template = TEMPLATE, timeoutTicks = 40)

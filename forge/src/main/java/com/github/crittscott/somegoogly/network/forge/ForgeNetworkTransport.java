@@ -19,7 +19,6 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -89,6 +88,6 @@ public final class ForgeNetworkTransport {
     }
 
     private static ServerPlayer sender(Supplier<NetworkEvent.Context> context) {
-        return Objects.requireNonNull(context.get().getSender(), "Serverbound payload has no authenticated sender");
+        return context.get().getSender();
     }
 }

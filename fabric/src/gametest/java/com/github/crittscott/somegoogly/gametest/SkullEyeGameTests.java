@@ -58,4 +58,9 @@ public final class SkullEyeGameTests implements FabricGameTest {
     public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
         SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
 }

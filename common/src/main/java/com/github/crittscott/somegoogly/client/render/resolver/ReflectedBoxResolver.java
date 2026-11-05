@@ -79,16 +79,16 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     protected abstract Class<?> boxClass();
 
     /** The family's iterable of all the model's boxes, in its stable order. */
-    protected abstract Object rawParts(EntityModel<?> model) throws Throwable;
+    protected abstract Object rawParts(EntityModel<?> model) throws ReflectiveOperationException;
 
     /** The box's author-set name, or {@code ""} when the family has none / it is unset. */
     protected abstract String intrinsicName(Object part);
 
     /** The box's parent, or {@code null} for a root. */
-    protected abstract Object rawParent(Object part) throws Throwable;
+    protected abstract Object rawParent(Object part) throws ReflectiveOperationException;
 
     /** Apply the box's local pose transform (the family's translate+rotate). */
-    protected abstract void rawTransform(Object part, PoseStack poseStack) throws Throwable;
+    protected abstract void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException;
 
     /** All of the model's boxes in the family's stable order; empty on any reflection failure. */
     private List<Object> collectParts(EntityModel<?> model) {
@@ -106,7 +106,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                 }
             }
             return parts;
-        } catch (Throwable failure) {
+        } catch (ReflectiveOperationException | RuntimeException failure) {
             disableIntegration("part collection", model, failure);
             return List.of();
         }
@@ -117,7 +117,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         try {
             Object parent = rawParent(part);
             return boxClass().isInstance(parent) ? parent : null;
-        } catch (Throwable failure) {
+        } catch (ReflectiveOperationException | RuntimeException failure) {
             disableIntegration("parent lookup", part, failure);
             return null;
         }
@@ -131,7 +131,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         try {
             rawTransform(part, poseStack);
             return true;
-        } catch (Throwable failure) {
+        } catch (ReflectiveOperationException | RuntimeException failure) {
             disableIntegration("pose transform", part, failure);
             return false;
         }
@@ -175,7 +175,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                     if (boxClass().isInstance(box)) {
                         names.put(box, field.getName());
                     }
-                } catch (Throwable accessDenied) {
+                } catch (ReflectiveOperationException | RuntimeException accessDenied) {
                     ClientIntegrationFailures.warnOnce(familyLabel(),
                             "fallback field access", model.getClass().getName(), accessDenied);
                     // Positional names remain a reliable fallback when a Java field is inaccessible.
@@ -190,9 +190,6 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * whose path suffix-matches. A nameless box's {@code #N} segment matches here like any other segment.
      */
     private static int find(ModelIndex index, String token) {
-        if (token == null) {
-            return -1;
-        }
         for (int i = 0; i < index.paths().size(); i++) {
             if (EyeAttachmentResolver.pathMatches(token, index.paths().get(i))) {
                 return i;
@@ -212,11 +209,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      */
     private String pathOf(Object part, Map<Object, String> fallbackNames) {
         ArrayDeque<String> segments = new ArrayDeque<>();
-        IdentityHashMap<Object, Boolean> seen = new IdentityHashMap<>();
         for (Object box = part; box != null; box = parentOf(box)) {
-            if (seen.put(box, Boolean.TRUE) != null) {
-                break; // parent cycle: keep the segments gathered so far
-            }
             String segment = segmentName(box, fallbackNames);
             if (segment != null) {
                 segments.addFirst(segment);
@@ -290,11 +283,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         }
 
         ArrayDeque<Object> chain = new ArrayDeque<>();
-        IdentityHashMap<Object, Boolean> seen = new IdentityHashMap<>();
         for (Object part = index.parts().get(i); part != null; part = parentOf(part)) {
-            if (seen.put(part, Boolean.TRUE) != null) {
-                return null; // parent cycle: no usable chain
-            }
             chain.addFirst(part);
         }
         if (integrationFailed) {

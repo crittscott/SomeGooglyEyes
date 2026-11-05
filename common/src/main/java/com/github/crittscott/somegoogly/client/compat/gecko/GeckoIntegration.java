@@ -46,7 +46,7 @@ public final class GeckoIntegration {
     public static void compileLayers(GeoEntityRenderer<?> renderer, Consumer<GeoRenderLayer> addLayer) {
         try {
             addLayer.accept(new GooglyGeoLayer(renderer));
-        } catch (Throwable failure) {
+        } catch (RuntimeException | LinkageError failure) {
             ClientIntegrationFailures.warnOnce(
                     "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
         }

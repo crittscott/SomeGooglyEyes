@@ -86,11 +86,9 @@ public final class FabricServerEvents {
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
                 EyeItemService.interact(player, level, hand, entity));
-        // Fabric's use callbacks fire before vanilla's spectator check, so these two make it themselves.
         UseBlockCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
-                player.isSpectator() ? InteractionResult.PASS
-                        : EyeItemService.useOnSkull(player, level, hand, hitResult));
+                EyeItemService.useOnSkull(player, level, hand, hitResult));
         // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (headLootTables().contains(id)) {
@@ -100,8 +98,7 @@ public final class FabricServerEvents {
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> {
-            if (player.isSpectator()
-                    || EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
+            if (EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
                 return InteractionResultHolder.pass(player.getItemInHand(hand));
             }
             return InteractionResultHolder.success(player.getItemInHand(hand));

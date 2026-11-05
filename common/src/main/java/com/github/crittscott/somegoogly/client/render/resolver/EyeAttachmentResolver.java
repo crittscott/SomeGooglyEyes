@@ -64,19 +64,16 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
 
     /** Normalizes a single token/part-name segment so camelCase field names match snake_case child-map keys. */
     static String normalize(String s) {
-        return s == null ? "" : NON_ALPHANUMERIC.matcher(s.toLowerCase(Locale.ROOT)).replaceAll("");
+        return NON_ALPHANUMERIC.matcher(s.toLowerCase(Locale.ROOT)).replaceAll("");
     }
 
     /**
      * Split a slash-delimited attach token into normalized, non-empty path segments. A bare name (no
-     * slash) yields a one-element list; {@code null}/blank yields an empty list. Each segment is
+     * slash) yields a one-element list; a blank token yields an empty list. Each segment is
      * {@link #normalize}d, so {@code "Body/leftHead"} and {@code "body/left_head"} produce the same list.
      */
     static List<String> segments(String token) {
         List<String> out = new ArrayList<>();
-        if (token == null) {
-            return out;
-        }
         for (String part : token.split("/")) {
             String n = normalize(part);
             if (!n.isEmpty()) {

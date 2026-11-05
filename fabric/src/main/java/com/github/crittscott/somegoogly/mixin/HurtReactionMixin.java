@@ -20,7 +20,7 @@ abstract class HurtReactionMixin {
     @Inject(method = "actuallyHurt", at = @At("TAIL"))
     private void somegoogly$afterHurt(DamageSource source, float amount, CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (!self.level().isClientSide() && source.getEntity() instanceof Player) {
+        if (source.getEntity() instanceof Player) {
             ServerBehaviorScheduler.onPlayerHurt(self);
         }
     }

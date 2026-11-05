@@ -12,8 +12,9 @@ import java.util.List;
  * Soft-dependency gate for the optional GeckoLib renderer integration.
  *
  * <p>{@link GeckoIntegration} — and the GeckoLib types it references — is touched only after the
- * {@link #LOADED} check, so it never loads when GeckoLib is absent. A GeckoLib present but broken logs
- * each affected operation once and renders its mobs without eyes rather than failing mod load.
+ * {@link #LOADED} check, so it never loads when GeckoLib is absent. Bone enumeration runs other mods' model
+ * code against a GeckoLib that may be newer than the build's, so a failure there is logged once and leaves
+ * the picker without that mob's bones. Rendering through the GeckoLib layer is not guarded.
  */
 public final class GeckoCompat {
 
@@ -35,7 +36,7 @@ public final class GeckoCompat {
         }
         try {
             return GeckoIntegration.enumerate(renderer, living);
-        } catch (Throwable failure) {
+        } catch (RuntimeException | LinkageError failure) {
             ClientIntegrationFailures.warnOnce(
                     "GeckoLib", "model-part enumeration", renderer.getClass().getName(), failure);
             return List.of();

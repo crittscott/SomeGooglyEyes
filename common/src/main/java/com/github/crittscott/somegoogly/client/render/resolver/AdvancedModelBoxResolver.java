@@ -55,8 +55,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
         static final Handles ABSENT = new Handles(null, null, null, null, null, null);
 
         boolean available() {
-            return modelClass != null && boxClass != null && getAllParts != null
-                    && getParent != null && translateAndRotate != null && boxName != null;
+            return modelClass != null;
         }
 
         static Handles load(String familyLabel, String modelClassName, String boxClassName) {
@@ -70,7 +69,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
                 return new Handles(modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
             } catch (ClassNotFoundException absent) {
                 return ABSENT;
-            } catch (Throwable failure) {
+            } catch (ReflectiveOperationException | LinkageError failure) {
                 ClientIntegrationFailures.warnOnce(
                         familyLabel, "API discovery", modelClassName, failure);
                 return ABSENT;
@@ -99,7 +98,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object rawParts(EntityModel<?> model) throws Throwable {
+    protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
         return api.getAllParts().invoke(model);
     }
 
@@ -108,7 +107,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
         try {
             Object value = api.boxName().get(part);
             return value instanceof String s ? s : "";
-        } catch (Throwable failure) {
+        } catch (ReflectiveOperationException | RuntimeException failure) {
             ClientIntegrationFailures.warnOnce(
                     familyLabel, "box-name access", part.getClass().getName(), failure);
             return "";
@@ -116,12 +115,12 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object rawParent(Object part) throws Throwable {
+    protected Object rawParent(Object part) throws ReflectiveOperationException {
         return api.getParent().invoke(part);
     }
 
     @Override
-    protected void rawTransform(Object part, PoseStack poseStack) throws Throwable {
+    protected void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException {
         api.translateAndRotate().invoke(part, poseStack);
     }
 }
