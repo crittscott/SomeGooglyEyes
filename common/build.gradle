@@ -4,12 +4,19 @@ architectury {
 
 loom {
     accessWidenerPath = file('src/main/resources/somegoogly.accesswidener')
+
+    // The common Mixins need their own refmap. Architectury names it in the production Mixin configs and
+    // rewrites it to SRG names for Forge, so the configs must not name it: development runs use Mojang names.
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = 'somegoogly-common.refmap.json'
+    }
 }
 
 dependencies {
-    // Supplies Fabric's @Environment annotation types, which the common Minecraft jar references.
-    // Do NOT use Fabric Loader API from common.
-    modCompileOnly "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    // Supplies Fabric's @Environment annotation types, which the common Minecraft jar references, and the
+    // Mixin annotations for the common Mixins. Do NOT use Fabric Loader API from common.
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     // Optional at runtime; needed at compile time by the GeckoLib render integration. GeckoLib publishes no
     // common artifact for this version, so common compiles against the Fabric one, whose API Forge's matches.

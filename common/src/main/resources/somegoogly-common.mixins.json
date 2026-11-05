@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "com.github.crittscott.somegoogly.client.mixin",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
-  "refmap": "somegoogly.refmap.json",
   "client": [
     "BoatRendererMixin",
     "ContainerItemEyesMixin",

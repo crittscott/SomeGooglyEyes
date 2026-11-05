@@ -9,10 +9,6 @@ architectury {
 
 rootProject.configureGameTests(project)
 
-// Shared Mixins: one copy compiled into each loader jar, so that loader's annotation processor writes
-// their refmap entries in the names it runs on (intermediary on Fabric, SRG on Forge).
-sourceSets.main.java.srcDir project(':common').file('src/mixin/java')
-
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 

@@ -12,8 +12,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration |
-| `common/src/mixin/java` | Shared Mixins, compiled by each loader |
+| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration, Mixins |
 | `common/src/main/resources` | Assets, recipes, eye definitions, language |
 | `common/src/gametest` | Shared GameTest assertions and the structure fixture |
 | `fabric/src/main` | Fabric entry points, callbacks, configuration, adapters, Mixins, metadata |
@@ -87,7 +86,7 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 ## Loader integration
 
-Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes; each loader compiles them into its own refmap. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes; each loader has a mooshroom-shear Mixin, Forge's also targeting `shearInternal`.
+Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes; each loader has a mooshroom-shear Mixin, Forge's also targeting `shearInternal`.
 
 Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus. Forge GameTests use the unprefixed `empty` template.
 
