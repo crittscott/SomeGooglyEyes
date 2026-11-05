@@ -2,12 +2,12 @@
   "pack": {
     "description": "Some Googly Eyes GameTest fixtures",
     "min_format": [
-      101,
-      1
+      ${pack_format},
+      ${pack_format_minor}
     ],
     "max_format": [
-      101,
-      1
+      ${pack_format},
+      ${pack_format_minor}
     ]
   }
 }

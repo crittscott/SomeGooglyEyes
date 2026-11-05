@@ -33,15 +33,6 @@ loom {
     }
 }
 
-// The GameTest server reuses run/world between launches; clear it so entities and eye state left by
-// one GameTest run cannot leak into the next.
-def gameTestWorldDirectory = layout.projectDirectory.dir('run/world')
-tasks.named('runGameTestServer').configure {
-    doFirst {
-        project.delete(gameTestWorldDirectory)
-    }
-}
-
 configurations {
     common {
         canBeResolved = true
@@ -72,12 +63,17 @@ dependencies {
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     compileOnly "com.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
+    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    runtimeOnly("com.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
 
     common(project(path: ':common')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
-// Expands ${...} placeholders in fabric.mod.json (this module's own resource).
+// Expands ${...} placeholders in fabric.mod.json and this module's Mixin config.
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = rootProject.sharedModProperties + [
             fabric_loader_version: fabric_loader_version,
@@ -85,21 +81,21 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching('fabric.mod.json') {
+    filesMatching(['fabric.mod.json', '*.mixins.json']) {
         expand replaceProperties
     }
 }
 
-// Expands ${...} placeholders in the gametest fabric.mod.json (this module's own resource).
+// Expands ${...} placeholders in the gametest fabric.mod.json and the shared fixtures' pack.mcmeta.
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
             mod_version          : mod_version,
             fabric_loader_version: fabric_loader_version,
             fabric_api_version   : fabric_api_version,
-    ]
+    ] + rootProject.packFormatProperties
     inputs.properties replaceProperties
 
-    filesMatching('fabric.mod.json') {
+    filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }
