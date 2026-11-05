@@ -10,7 +10,7 @@ Some Googly Eyes animates eyes on living entities, vanilla boats, heads, and eye
 
 Two items, one enchantment, one creative tab; datapacks place eyes on mobs.
 
-Targets Minecraft 1.21.1: Fabric, NeoForge, Forge. Fabric requires Fabric Loader 0.16.14+ and Fabric API 0.102.1+1.21.1+. NeoForge requires NeoForge 21.1.34+ within the 21.1 line. Forge requires Forge 52.1.2+ within the 52 line. All loaders require Java 21; GeckoLib 4.7.4+ is an optional client dependency. Clients and servers need the same network version.
+Targets Minecraft 1.21.1: Fabric, NeoForge, Forge. Fabric requires Fabric Loader 0.16.14+ and Fabric API 0.102.1+1.21.1+. NeoForge requires NeoForge 21.1.209+ within the 21.1 line. Forge requires Forge 52.1.2+ within the 52 line. All loaders require Java 21; GeckoLib 4.7.4+ is an optional client dependency. Clients and servers need the same network version.
 
 ## Mobs with eyes
 

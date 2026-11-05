@@ -81,7 +81,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
             if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
                 SomeGooglyCommon.LOGGER.warn(
-                        "Ignoring eye config {} — the ender dragon is hard-excluded from googly eyes", entry.getKey());
+                        "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes", entry.getKey());
                 continue;
             }
             // A bundled definition for an absent optional mod is the common case, not an error: skip it
@@ -126,13 +126,13 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             if (key.downgrade()) {
                 SomeGooglyCommon.LOGGER.warn(
                         "{} eye configs for '{}' have no entry for installed version {}; using their oldest entry"
-                                + " (version {}) — expected after a mod downgrade.",
+                                + " (version {}); expected after a mod downgrade.",
                         fallback.getValue(), key.namespace(), key.installed(), key.used());
             } else {
                 SomeGooglyCommon.LOGGER.warn(
                         "{} eye configs for '{}' have no entry for installed version {}; using their newest entry"
                                 + " (version {}). Placement may be slightly off until they are re-exported for the"
-                                + " installed version — expected for bundled optional-mod definitions.",
+                                + " installed version; expected for bundled optional-mod definitions.",
                         fallback.getValue(), key.namespace(), key.installed(), key.used());
             }
         }

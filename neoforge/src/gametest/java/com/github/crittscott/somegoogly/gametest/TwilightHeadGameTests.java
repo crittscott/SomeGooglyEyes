@@ -49,9 +49,7 @@ public final class TwilightHeadGameTests {
      */
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void playerConversionKeepsEyes(GameTestHelper helper) {
-        if (skipWithoutTwilightForest(helper)) {
-            return;
-        }
+        requireTwilightForest(helper);
         Player player = FakePlayerFactory.getMinecraft(helper.getLevel());
         eyedSkull(helper);
         use(helper, player, new ItemStack(Items.RED_CANDLE));
@@ -70,9 +68,7 @@ public final class TwilightHeadGameTests {
      */
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void dispenserConversionKeepsEyes(GameTestHelper helper) {
-        if (skipWithoutTwilightForest(helper)) {
-            return;
-        }
+        requireTwilightForest(helper);
         helper.setBlock(HEAD.south(), Blocks.STONE);
         helper.setBlock(HEAD, Blocks.SKELETON_WALL_SKULL.defaultBlockState()
                 .setValue(WallSkullBlock.FACING, Direction.NORTH));
@@ -91,9 +87,7 @@ public final class TwilightHeadGameTests {
      */
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void lichTrophyTakesKeepsAndGivesUpEyes(GameTestHelper helper) {
-        if (skipWithoutTwilightForest(helper)) {
-            return;
-        }
+        requireTwilightForest(helper);
         Block trophy = twilightBlock("lich_trophy");
         helper.setBlock(HEAD, trophy);
         Player player = FakePlayerFactory.getMinecraft(helper.getLevel());
@@ -122,12 +116,8 @@ public final class TwilightHeadGameTests {
                 head.saveWithFullMetadata(registries), registries);
     }
 
-    private static boolean skipWithoutTwilightForest(GameTestHelper helper) {
-        if (ModList.get().isLoaded("twilightforest")) {
-            return false;
-        }
-        helper.succeed();
-        return true;
+    private static void requireTwilightForest(GameTestHelper helper) {
+        helper.assertTrue(ModList.get().isLoaded("twilightforest"), "Twilight Forest is missing from the GameTest run");
     }
 
     private static Block twilightBlock(String path) {

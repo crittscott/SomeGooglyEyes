@@ -21,3 +21,13 @@ dependencies {
     // Optional at runtime; needed at compile time by the GeckoLib render integration.
     modCompileOnly "software.bernie.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
 }
+
+// Expands ${...} placeholders in pack.mcmeta and the common Mixin configs.
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = rootProject.sharedModProperties
+    inputs.properties replaceProperties
+
+    filesMatching(['pack.mcmeta', '*.mixins.json']) {
+        expand replaceProperties
+    }
+}
