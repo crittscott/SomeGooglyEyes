@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_${mixin_java_version}",
   "mixins": [
     "MilkingMixin",
+    "MushroomCowShearMixin",
     "ServerLevelEntityEventMixin",
     "ShearingMixin",
     "SkullBlockEntityDataMixin"

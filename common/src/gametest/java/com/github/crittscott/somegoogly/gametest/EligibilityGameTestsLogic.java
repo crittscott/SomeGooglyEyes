@@ -9,7 +9,9 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.server.ServerServices;
@@ -34,7 +36,7 @@ import java.util.Map;
  * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the slimy eye's targeting,
  * the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
  * {@link ServerEyeConfigs#isEligible} delegating to it — are what keep those three in agreement.
- * The delegation test swaps the config store via {@code replaceAll} (restored afterwards, the same
+ * The delegation test swaps the config store via {@link TestEyeConfigs} (restored afterwards, the same
  * force-and-restore pattern as {@code SpawnGatingGameTests}) rather than depending on which configs
  * happen to ship.
  *
@@ -47,6 +49,12 @@ import java.util.Map;
 public final class EligibilityGameTestsLogic {
 
     private EligibilityGameTestsLogic() {
+    }
+
+    private static ItemStack slimyEye(AppearanceOverride properties, int count) {
+        ItemStack stack = new ItemStack(ModContent.SLIMY_EYE.get(), count);
+        EyeItemProperties.set(stack, properties);
+        return stack;
     }
 
     private static RuntimeConfig usableConfig() {
@@ -93,13 +101,13 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(cowId, set));
+            TestEyeConfigs.install(Map.of(cowId, set));
             helper.assertTrue(ServerEyeConfigs.isEligible(cow), "a cow with a usable config should be eligible");
 
-            ServerEyeConfigs.replaceAll(Map.of());
+            TestEyeConfigs.install(Map.of());
             helper.assertTrue(!ServerEyeConfigs.isEligible(cow), "a cow with no config should not be eligible");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -125,8 +133,8 @@ public final class EligibilityGameTestsLogic {
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             // Unconfigured: refused outright, and the eye stays in hand.
-            ServerEyeConfigs.replaceAll(Map.of());
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(red), 2);
+            TestEyeConfigs.install(Map.of());
+            ItemStack stack = slimyEye(AppearanceOverride.EMPTY.withIrisColor(red), 2);
             InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
@@ -135,7 +143,7 @@ public final class EligibilityGameTestsLogic {
             // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
@@ -151,7 +159,7 @@ public final class EligibilityGameTestsLogic {
                     "the applied eyes should carry the stack's iris color");
             helper.assertTrue(stack.getCount() == 1, "applying should consume exactly one eye");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }
         helper.succeed();
@@ -169,13 +177,13 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
 
             EyeState.setIrisTint(cow, red);
             EyeState.setHasEyes(cow, true);
             float roll = EyeState.getVariantRoll(cow);
 
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
+            ItemStack stack = slimyEye(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
             InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(!refused.consumesAction(), "an already-eyed target should refuse the apply");
@@ -185,7 +193,7 @@ public final class EligibilityGameTestsLogic {
                     "a refusal should not touch the appearance");
             helper.assertTrue(EyeState.getVariantRoll(cow) == roll, "a refusal should not touch the variant roll");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -202,20 +210,20 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
 
             EyeState.setHasEyes(cow, false);
             // A sentinel outside nextFloat()'s [0, 1) range: any freshly drawn roll must displace it.
             EntityPersistentData.get(cow).putFloat(EyeState.VARIANT_ROLL, 2F);
 
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
+            ItemStack stack = slimyEye(AppearanceOverride.EMPTY, 1);
             InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "an eyeless configured target should accept the apply");
             float roll = EyeState.getVariantRoll(cow);
             helper.assertTrue(roll >= 0F && roll < 1F, "an application should draw a fresh variant roll");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -235,21 +243,21 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet adultOnly = new RuntimeConfigSet();
             adultOnly.adult = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(cowId, adultOnly));
+            TestEyeConfigs.install(Map.of(cowId, adultOnly));
             helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
                     "an adult-only config still lets the entity roll at spawn");
 
             RuntimeConfigSet babyOnly = new RuntimeConfigSet();
             babyOnly.baby = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(cowId, babyOnly));
+            TestEyeConfigs.install(Map.of(cowId, babyOnly));
             helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
                     "a baby-only config also lets an adult roll, so both buckets are consulted");
 
-            ServerEyeConfigs.replaceAll(Map.of());
+            TestEyeConfigs.install(Map.of());
             helper.assertTrue(!ServerEyeConfigs.canEverWearEyes(cow),
                     "an unconfigured entity can never wear eyes");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -271,7 +279,7 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(cowId, set));
+            TestEyeConfigs.install(Map.of(cowId, set));
             ServerConfig.GLOBAL_PERCENT.set(100);
 
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
@@ -290,7 +298,7 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(EyeState.hasEyes(eyed) && EyeState.getVariantRoll(eyed) == roll,
                     "a later load never revisits an already-initialized entity");
         } finally {
-            ServerEyeConfigs.replaceAll(originalConfigs);
+            TestEyeConfigs.install(originalConfigs);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
             ServerConfig.GLOBAL_PERCENT.set(originalPercent);
         }
@@ -310,10 +318,10 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
 
             player.getAbilities().instabuild = true;
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 3);
+            ItemStack stack = slimyEye(AppearanceOverride.EMPTY, 3);
             InteractionResult applied = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
 
             helper.assertTrue(applied.consumesAction(), "a creative application still succeeds");
@@ -321,7 +329,7 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(stack.getCount() == 3, "a creative application consumes no eye");
         } finally {
             player.getAbilities().instabuild = instabuild;
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -336,10 +344,10 @@ public final class EligibilityGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
             EyeState.setHasEyes(player, false);
 
-            ItemStack stack = SlimyEyeItem.create(AppearanceOverride.EMPTY, 1);
+            ItemStack stack = slimyEye(AppearanceOverride.EMPTY, 1);
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             SlimyEyeItem item = (SlimyEyeItem) stack.getItem();
 
@@ -356,7 +364,7 @@ public final class EligibilityGameTestsLogic {
         } finally {
             player.setShiftKeyDown(false);
             EyeState.disableAndClearProperties(player);
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }

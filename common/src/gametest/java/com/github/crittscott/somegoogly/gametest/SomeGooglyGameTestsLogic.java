@@ -197,15 +197,15 @@ public final class SomeGooglyGameTestsLogic {
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
 
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
-            ServerEyeConfigs.replaceAll(Map.of());
+            TestEyeConfigs.install(Map.of());
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
 
-            ServerEyeConfigs.replaceAll(originalConfigs);
+            TestEyeConfigs.install(originalConfigs);
             EyeState.setHasEyes(cow, true);
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
         } finally {
-            ServerEyeConfigs.replaceAll(originalConfigs);
+            TestEyeConfigs.install(originalConfigs);
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
         }

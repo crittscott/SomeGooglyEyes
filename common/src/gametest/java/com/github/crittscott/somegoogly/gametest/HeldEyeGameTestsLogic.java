@@ -8,7 +8,6 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +35,7 @@ public final class HeldEyeGameTestsLogic {
     /** A held eye ticked once under {@code settings} for a fresh mock player holding a Googly Eye in {@code hand}. */
     private static HeldEye heldBy(Player player, InteractionHand hand, BehaviorSettings settings) {
         player.setItemInHand(hand, new ItemStack(ModContent.GOOGLY_EYE.get()));
-        HeldEye held = new HeldEye(RandomSource.create(1L));
+        HeldEye held = new HeldEye();
         held.tick(player, settings);
         return held;
     }

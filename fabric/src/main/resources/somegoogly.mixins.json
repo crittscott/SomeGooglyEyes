@@ -9,8 +9,7 @@
     "EntityPersistentDataMigrationMixin",
     "LivingEntityDeathLootMixin",
     "LivingEntityReactionMixin",
-    "MerchantResultSlotMixin",
-    "MushroomCowShearMixin"
+    "MerchantResultSlotMixin"
   ],
   "client": [
     "MinecraftLevelMixin"

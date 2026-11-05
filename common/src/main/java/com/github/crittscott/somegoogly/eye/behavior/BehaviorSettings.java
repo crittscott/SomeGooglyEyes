@@ -53,6 +53,14 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         ongoing = Collections.unmodifiableSet(copy);
     }
 
+    /**
+     * A wait between ambient expressions: uniform between {@code min} and {@code max}, or {@code min} alone when
+     * {@code max} doesn't exceed it. Mobs, held eyes, and heads all draw it here.
+     */
+    public static int drawAmbientTicks(int min, int max, RandomSource rand) {
+        return max <= min ? min : min + rand.nextInt(max - min);
+    }
+
     /** Whether {@code behavior}'s switch is on. */
     public boolean enabled(OngoingBehavior behavior) {
         return ongoing.contains(behavior);
@@ -74,14 +82,9 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return maxTicks <= minTicks ? minTicks : (minTicks + maxTicks) / 2;
     }
 
-    /** A wait between ambient expressions, drawn as the server's own scheduler draws it. */
+    /** A wait between ambient expressions under these bounds. */
     public int nextAmbientTicks(RandomSource rand) {
-        return maxTicks <= minTicks ? minTicks : minTicks + rand.nextInt(maxTicks - minTicks);
-    }
-
-    /** Whether any ambient expression can play. */
-    public boolean plays() {
-        return ambient && !pool.isEmpty();
+        return drawAmbientTicks(minTicks, maxTicks, rand);
     }
 
     /** Decode and validate settings written by {@link #write}. */

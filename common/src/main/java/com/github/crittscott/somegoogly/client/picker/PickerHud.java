@@ -125,7 +125,7 @@ public final class PickerHud {
     }
 
     /** Draw the picker HUD while the picker is active. */
-    public static void render(GuiGraphics graphics, int width, int height) {
+    public static void render(GuiGraphics graphics, int width) {
         if (!PickerState.isActive()) {
             return;
         }

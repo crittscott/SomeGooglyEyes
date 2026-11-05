@@ -50,23 +50,10 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
     private static Consumer<PoseStack> youngWrap(HierarchicalModel<?> model) {
         if (model instanceof AgeableHierarchicalModel<?> ageable) {
             float scale = ageable.youngScaleFactor;
-            float yOffset = ageable.bodyYOffset;
-            return poseStack -> {
-                if (!ageable.young) {
-                    return;
-                }
-                poseStack.scale(scale, scale, scale);
-                poseStack.translate(0.0F, yOffset / 16.0F, 0.0F);
-            };
+            return youngWrap(ageable, scale, scale, scale, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
         }
         if (model instanceof CamelModel<?> camel) {
-            return poseStack -> {
-                if (!camel.young) {
-                    return;
-                }
-                poseStack.scale(0.45F, 0.45F, 0.45F);
-                poseStack.translate(0.0F, 1.834375F, 0.0F);
-            };
+            return youngWrap(camel, 0.45F, 0.45F, 0.45F, 0.0F, 1.834375F, 0.0F);
         }
         return null;
     }

@@ -51,4 +51,10 @@ public final class BehaviorInstance {
         this.duration = duration;
         this.rand = RandomSource.create(seed);
     }
+
+    /** Count one played tick; returns whether the behavior has now run its full duration. */
+    public boolean advance() {
+        age++;
+        return age >= duration;
+    }
 }

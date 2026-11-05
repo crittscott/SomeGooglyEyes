@@ -138,13 +138,6 @@ public final class EyeConfigModel {
             return file;
         }
 
-        /** A file holding one entry for {@code config}. */
-        public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
-            ConfigFile file = new ConfigFile();
-            file.entries = List.of(VersionedEntry.of(versionRange, age, config));
-            return file;
-        }
-
         /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
         public void writeJson(Path path) throws IOException {
             JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow(false, error -> { });

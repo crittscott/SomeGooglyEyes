@@ -92,6 +92,11 @@ public final class PresentationEyes {
         }
     }
 
+    /** The animation an item draw uses and that draw's partial tick; {@link #NONE} outside animated draws. */
+    public record Draw(@Nullable PresentationEyes eyes, float partialTick) {
+        public static final Draw NONE = new Draw(null, 0F);
+    }
+
     /** Build the item's current layout; plain heads and unsupported definitions have no simulation. */
     @Nullable
     public static PresentationEyes create(UUID uuid, ItemStack stack) {
@@ -214,17 +219,11 @@ public final class PresentationEyes {
 
         for (int part : parts) {
             for (int index = 0; index < eyes[part].length; index++) {
-                influence.reset();
-                if (active != null) {
-                    active.behavior.influence(active, part, index, influence);
-                }
                 GooglyTracker.EyeInfo pupil = eyes[part][index];
-                pupil.applyOverlays(influence, 1F, 1F, 0F, 0F);
                 if (resetMotion && !stationaryHead) {
                     pupil.resetMotion();
                 }
-                pupil.update(rand, yaw, pitch, mx, my, mz,
-                        influence.anchorX, influence.anchorY, influence.stiffness, 0F);
+                pupil.step(influence, active, part, index, rand, yaw, pitch, mx, my, mz);
             }
         }
     }

@@ -72,7 +72,8 @@ public final class PickerExportGameTestsLogic {
         RuntimeConfig config = new RuntimeConfig();
         config.variants = List.of(variant);
 
-        ConfigFile file = ConfigFile.single("1.20.1", "any", config);
+        ConfigFile file = new ConfigFile();
+        file.entries = List.of(VersionedEntry.of("1.20.1", "any", config));
         JsonObject json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file)
                 .result().orElseThrow().getAsJsonObject();
         JsonObject eye = json.getAsJsonArray("entries").get(0).getAsJsonObject()

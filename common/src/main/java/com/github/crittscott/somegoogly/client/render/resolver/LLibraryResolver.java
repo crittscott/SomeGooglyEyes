@@ -6,8 +6,6 @@ import net.minecraft.client.model.EntityModel;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Resolver for LLibrary-style models. Mowzie's Mobs ships its own fork of LLibrary's model toolkit
@@ -34,6 +32,8 @@ public class LLibraryResolver extends ReflectedBoxResolver {
 
     private record Handles(Class<?> modelClass, Class<?> boxClass, Class<?> advancedBoxClass,
                            Field boxList, Method getParent, Method translateRotate) {
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+
         boolean available() {
             return modelClass != null && boxClass != null && advancedBoxClass != null
                     && boxList != null && getParent != null && translateRotate != null;
@@ -49,13 +49,11 @@ public class LLibraryResolver extends ReflectedBoxResolver {
                 Method translateRotate = boxClass.getMethod("translateRotate", PoseStack.class);
                 return new Handles(modelClass, boxClass, advancedBoxClass, boxList, getParent, translateRotate);
             } catch (ClassNotFoundException absent) {
-                return new Handles(null, null, null, null,
-                        null, null);
+                return ABSENT;
             } catch (Throwable failure) {
                 ClientIntegrationFailures.warnOnce(
                         "LLibraryResolver", "API discovery", BASIC_MODEL_BASE, failure);
-                return new Handles(null, null, null, null,
-                        null, null);
+                return ABSENT;
             }
         }
     }
@@ -76,26 +74,8 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected List<Object> collectParts(EntityModel<?> model) {
-        if (!available()) {
-            return List.of();
-        }
-        try {
-            Object raw = HANDLES.boxList().get(model);
-            if (!(raw instanceof Iterable<?> iterable)) {
-                return List.of();
-            }
-            List<Object> parts = new ArrayList<>();
-            for (Object part : iterable) {
-                if (HANDLES.boxClass().isInstance(part)) {
-                    parts.add(part);
-                }
-            }
-            return parts;
-        } catch (Throwable failure) {
-            disableIntegration("part collection", model, failure);
-            return List.of();
-        }
+    protected Object rawParts(EntityModel<?> model) throws Throwable {
+        return HANDLES.boxList().get(model);
     }
 
     @Override
@@ -104,30 +84,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object parentOf(Object part) {
-        if (!HANDLES.advancedBoxClass().isInstance(part)) {
-            return null;
-        }
-        try {
-            Object parent = HANDLES.getParent().invoke(part);
-            return HANDLES.boxClass().isInstance(parent) ? parent : null;
-        } catch (Throwable failure) {
-            disableIntegration("parent lookup", part, failure);
-            return null;
-        }
+    protected Object rawParent(Object part) throws Throwable {
+        return HANDLES.advancedBoxClass().isInstance(part) ? HANDLES.getParent().invoke(part) : null;
     }
 
     @Override
-    protected boolean applyTransform(Object part, PoseStack poseStack) {
-        if (integrationFailed()) {
-            return false;
-        }
-        try {
-            HANDLES.translateRotate().invoke(part, poseStack);
-            return true;
-        } catch (Throwable failure) {
-            disableIntegration("pose transform", part, failure);
-            return false;
-        }
+    protected void rawTransform(Object part, PoseStack poseStack) throws Throwable {
+        HANDLES.translateRotate().invoke(part, poseStack);
     }
 }

@@ -115,12 +115,12 @@ public final class EyeItemServiceGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             EyeState.setHasEyes(cow, true);
-            ServerEyeConfigs.replaceAll(Map.of());
+            TestEyeConfigs.install(Map.of());
             helper.assertTrue(
                     EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
                     "an unconfigured mob passes rather than dropping a config-less eye");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
 
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();

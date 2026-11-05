@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -15,9 +14,7 @@ import net.minecraft.world.item.ItemStack;
 /** Disposable ambient simulations, independent for each holder's main hand and offhand. */
 public final class HandEyeAnimations {
 
-    private static final int EVICT_IDLE_TICKS = 10;
     private static final long OFFHAND_SEED = 0x9E3779B97F4A7C15L;
-    private static final int SIMULATE_IDLE_TICKS = 1;
 
     private final Map<Key, Entry> entries = new HashMap<>();
     private long ticks;
@@ -61,11 +58,6 @@ public final class HandEyeAnimations {
                 entries.remove(key);
                 return null;
             }
-            for (int part : eyes.parts) {
-                for (GooglyTracker.EyeInfo pupil : eyes.eyes[part]) {
-                    pupil.itemGravity = true;
-                }
-            }
             entry = new Entry(eyes, holder, properties);
             entries.put(key, entry);
         }
@@ -84,15 +76,8 @@ public final class HandEyeAnimations {
             return;
         }
         ticks++;
-        Iterator<Entry> iterator = entries.values().iterator();
-        while (iterator.hasNext()) {
-            Entry entry = iterator.next();
-            long idle = ticks - entry.lastShown;
-            if (idle > EVICT_IDLE_TICKS || entry.holder.isRemoved()) {
-                iterator.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                entry.eyes.tick(gameTime, settings, entry.holder);
-            }
-        }
+        ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown,
+                (key, entry) -> entry.holder.isRemoved(),
+                (key, entry) -> entry.eyes.tick(gameTime, settings, entry.holder));
     }
 }

@@ -43,11 +43,11 @@ public final class GuiItemEyeGameTestsLogic {
         BehaviorSettings blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK),
                 0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
         cache.tick(view, blink);
-        helper.assertTrue(presentation.eyes().active != null && presentation.eyes().active.age == 1,
+        helper.assertTrue(presentation.active != null && presentation.active.age == 1,
                 "the first UI tick joins its blink without consulting world time");
         cache.get(key, stack, true);
         cache.tick(view, blink);
-        helper.assertTrue(presentation.eyes().active.age == 2, "UI time advances independently");
+        helper.assertTrue(presentation.active.age == 2, "UI time advances independently");
         helper.succeed();
     }
 
@@ -61,7 +61,7 @@ public final class GuiItemEyeGameTestsLogic {
         var first = cache.get(key, eye(), true);
         helper.assertTrue(cache.get(key, eye(), false) == null, "disabled GUI animation supplies no simulation");
         var restored = cache.get(key, eye(), true);
-        helper.assertTrue(restored.identity() != first.identity(), "reenabling creates fresh state");
+        helper.assertTrue(restored != first, "reenabling creates fresh state");
         helper.assertTrue(cache.get(key, new ItemStack(Items.DIAMOND), true) == null,
                 "ordinary items have no eye simulation");
         helper.assertTrue(cache.get(key, new ItemStack(Items.SKELETON_SKULL), true) == null,
@@ -71,7 +71,7 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * Stack copies and count changes preserve a slot's simulation and bounded model identity.
+     * Stack copies and count changes preserve a slot's simulation.
      * In game: split and merge a stack in one slot; its pupil does not restart on each rendered frame.
      */
     public static void guiEyesKeepPresentationIdentity(GameTestHelper helper) {
@@ -82,15 +82,15 @@ public final class GuiItemEyeGameTestsLogic {
         ItemStack copy = stack.copy();
         copy.setCount(2);
         var second = cache.get(key, copy, true);
-        helper.assertTrue(first.eyes() == second.eyes() && first.identity() == second.identity(),
-                "copies and counts do not create per-frame cache identities");
-        helper.assertTrue(first.eyes().eye.guiGravity && !first.eyes().eye.itemGravity,
+        helper.assertTrue(first == second,
+                "copies and counts do not create per-frame simulations");
+        helper.assertTrue(first.eye.guiGravity && !first.eye.itemGravity,
                 "GUI pupils use screen orientation rather than mounted world orientation");
         helper.succeed();
     }
 
     /**
-     * A changed appearance invalidates cached draw state. In game: replace a normal eye in one slot
+     * A changed appearance replaces the simulation. In game: replace a normal eye in one slot
      * with a glowing or dyed copy; its icon immediately shows the new appearance.
      */
     public static void guiEyesReplaceChangedContents(GameTestHelper helper) {
@@ -100,8 +100,8 @@ public final class GuiItemEyeGameTestsLogic {
         var first = cache.get(key, stack, true);
         EyeItemProperties.set(stack, AppearanceOverride.EMPTY.withGlow(true));
         var changed = cache.get(key, stack, true);
-        helper.assertTrue(first.eyes() != changed.eyes() && first.identity() != changed.identity(),
-                "appearance changes invalidate animation and its GUI identity");
+        helper.assertTrue(first != changed,
+                "appearance changes replace the simulation");
         helper.succeed();
     }
 
@@ -117,24 +117,24 @@ public final class GuiItemEyeGameTestsLogic {
         var screen = cache.get(screenKey, eye(), true);
         var hud = cache.get(hudKey, eye(), true);
         cache.tick(new Object(), BehaviorSettings.NONE);
-        helper.assertTrue(cache.get(screenKey, eye(), true).identity() != screen.identity(),
-                "departing a screen retires its identities");
-        helper.assertTrue(cache.get(hudKey, eye(), true).identity() == hud.identity(),
-                "HUD identity belongs to its own view");
+        helper.assertTrue(cache.get(screenKey, eye(), true) != screen,
+                "departing a screen retires its simulations");
+        helper.assertTrue(cache.get(hudKey, eye(), true) == hud,
+                "the HUD simulation belongs to its own view");
         for (int tick = 0; tick < IDLE_TICKS; tick++) {
             cache.tick(null, BehaviorSettings.NONE);
         }
-        helper.assertTrue(cache.get(hudKey, eye(), true).identity() != hud.identity(),
+        helper.assertTrue(cache.get(hudKey, eye(), true) != hud,
                 "unseen presentations are evicted");
         var current = cache.get(hudKey, eye(), true);
         cache.clear();
-        helper.assertTrue(cache.get(hudKey, eye(), true).identity() != current.identity(),
+        helper.assertTrue(cache.get(hudKey, eye(), true) != current,
                 "resource/world resets invalidate GUI state");
         helper.succeed();
     }
 
     /**
-     * Neighboring copies and a carried stack have independent animation and model identities. In game:
+     * Neighboring copies and a carried stack have independent animation. In game:
      * drag an eye across matching occupied slots; the cursor eye keeps its own expression while moving.
      */
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
@@ -144,14 +144,13 @@ public final class GuiItemEyeGameTestsLogic {
         var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 1, 0, 0), eye(), true);
         var cursorKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.CURSOR, 0, 0, 0);
         var cursor = cache.get(cursorKey, eye(), true);
-        helper.assertTrue(first.eyes() != second.eyes() && first.identity() != second.identity()
-                        && cursor.identity() != first.identity(), "presentations do not share pupils or GUI cache keys");
-        helper.assertTrue(cache.get(cursorKey, eye().copy(), true).identity() == cursor.identity(),
-                "cursor identity is independent of its moving coordinates");
+        helper.assertTrue(first != second && cursor != first, "presentations do not share pupils");
+        helper.assertTrue(cache.get(cursorKey, eye().copy(), true) == cursor,
+                "the cursor simulation is independent of its moving coordinates");
         var hotbarKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, 1, 0, 0);
         var hotbar = cache.get(hotbarKey, eye(), true);
         cache.tick(view, BehaviorSettings.NONE);
-        helper.assertTrue(cache.get(hotbarKey, eye(), true).identity() == hotbar.identity(),
+        helper.assertTrue(cache.get(hotbarKey, eye(), true) == hotbar,
                 "hotbar slot seeds remain stable while another screen is open");
         helper.succeed();
     }
@@ -173,10 +172,10 @@ public final class GuiItemEyeGameTestsLogic {
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
             var presentation = cache.get(key, head, true);
-            helper.assertTrue(presentation != null && presentation.eyes().helper != null,
+            helper.assertTrue(presentation != null && presentation.helper != null,
                     "an eyed GUI head resolves its configured layout");
-            for (int part : presentation.eyes().parts) {
-                for (var pupil : presentation.eyes().eyes[part]) {
+            for (int part : presentation.parts) {
+                for (var pupil : presentation.eyes[part]) {
                     helper.assertTrue(pupil.guiGravity && !pupil.itemGravity, "each head pupil has GUI orientation");
                 }
             }
@@ -187,7 +186,7 @@ public final class GuiItemEyeGameTestsLogic {
             for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
                 cache.get(key, head, true);
                 cache.tick(view, cross);
-                played |= presentation.eyes().active != null;
+                played |= presentation.active != null;
             }
             helper.assertTrue(played, "a paired GUI head can play cross-eye");
             helper.succeed();

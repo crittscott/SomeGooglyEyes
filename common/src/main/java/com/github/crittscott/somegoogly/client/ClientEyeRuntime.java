@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -11,6 +10,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -25,9 +27,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 /** Loader-neutral owner of mob, boat, placed-head, and framed-item eye simulations and their lifecycle. */
 public final class ClientEyeRuntime {
 
-    /** Evict a tracker once it has gone unrendered for more than this many client ticks. */
+    /** Evict a simulation once it has gone unshown for more than this many of its cache's ticks. */
     private static final int EVICT_IDLE_TICKS = 10;
-    /** Simulate a tracker only while it was rendered this tick or last (freezes off-screen eyes). */
+    /** Simulate only what was shown this tick or last (freezes off-screen eyes). */
     private static final int SIMULATE_IDLE_TICKS = 1;
 
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
@@ -74,14 +76,10 @@ public final class ClientEyeRuntime {
         return clientTicks;
     }
 
-    private static boolean frameAnimationEnabled() {
-        return ClientEyeConfigs.googlyEyesEnabled() && !ClientConfig.DISABLE_GOOGLY_EYES.get();
-    }
-
     /** The rendered frame's eye, or none while its item or the global switches disallow animation. */
     @Nullable
     public static PresentationEyes frameEye(ItemFrame frame) {
-        if (!frameAnimationEnabled() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
+        if (!ClientEyeConfigs.eyesVisible() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
             FRAMES.remove(frame);
             return null;
         }
@@ -94,7 +92,7 @@ public final class ClientEyeRuntime {
             }
             FRAMES.put(frame, eye);
         }
-        eye.lastRenderTick = clientTicks;
+        eye.markRendered(clientTicks);
         return eye;
     }
 
@@ -180,6 +178,25 @@ public final class ClientEyeRuntime {
         return eyes;
     }
 
+    /**
+     * The render-driven lifecycle every eye cache shares, on that cache's own clock: an entry unshown past
+     * {@link #EVICT_IDLE_TICKS} or now {@code stale} is removed, and one shown within
+     * {@link #SIMULATE_IDLE_TICKS} steps.
+     */
+    static <K, V> void sweep(Map<K, V> entries, long now, ToLongFunction<V> lastShown,
+                             BiPredicate<K, V> stale, BiConsumer<K, V> step) {
+        Iterator<Map.Entry<K, V>> iterator = entries.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<K, V> entry = iterator.next();
+            long idle = now - lastShown.applyAsLong(entry.getValue());
+            if (idle > EVICT_IDLE_TICKS || stale.test(entry.getKey(), entry.getValue())) {
+                iterator.remove();
+            } else if (idle <= SIMULATE_IDLE_TICKS) {
+                step.accept(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     private static void synchronizeBehavior(LivingEntity living, GooglyTracker tracker, int ageOffset) {
         ReceivedBehavior received = BEHAVIORS.get(living);
         if (received == null) {
@@ -215,46 +232,21 @@ public final class ClientEyeRuntime {
         }
         tickBehaviors();
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
-        if (!frameAnimationEnabled()) {
+        if (!ClientEyeConfigs.eyesVisible()) {
             FRAMES.clear();
         }
-        BOATS.tick(level, level.getGameTime(), true, behaviors);
-        Iterator<Map.Entry<ItemFrame, PresentationEyes>> frames = FRAMES.entrySet().iterator();
-        while (frames.hasNext()) {
-            Map.Entry<ItemFrame, PresentationEyes> entry = frames.next();
-            ItemFrame frame = entry.getKey();
-            PresentationEyes eye = entry.getValue();
-            int idle = clientTicks - eye.lastRenderTick;
-            if (idle > EVICT_IDLE_TICKS || frame.isRemoved() || frame.level() != level
-                    || !eye.matches(frame.getItem())) {
-                frames.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                eye.tick(level.getGameTime(), behaviors);
-            }
-        }
-        Iterator<Map.Entry<BlockPos, PresentationEyes>> skulls = SKULLS.entrySet().iterator();
-        while (skulls.hasNext()) {
-            Map.Entry<BlockPos, PresentationEyes> entry = skulls.next();
-            PresentationEyes eyes = entry.getValue();
-            int idle = clientTicks - eyes.lastRenderTick;
-            if (idle > EVICT_IDLE_TICKS || level == null
-                    || !SkullEyeState.snapshot(level.getBlockEntity(entry.getKey())).equals(eyes.snapshot)) {
-                skulls.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                eyes.tick(level.getGameTime(), behaviors);
-            }
-        }
-        Iterator<Map.Entry<LivingEntity, GooglyTracker>> iterator = TRACKERS.entrySet().iterator();
-        while (iterator.hasNext()) {
-            GooglyTracker tracker = iterator.next().getValue();
-            int idle = clientTicks - tracker.lastRenderTick;
-            if (idle > EVICT_IDLE_TICKS) {
-                iterator.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                synchronizeBehavior(tracker.parent, tracker, -1);
-                tracker.update(behaviors);
-            }
-        }
+        BOATS.tick(level, level.getGameTime(), behaviors);
+        sweep(FRAMES, clientTicks, eye -> eye.lastRenderTick,
+                (frame, eye) -> frame.isRemoved() || frame.level() != level || !eye.matches(frame.getItem()),
+                (frame, eye) -> eye.tick(level.getGameTime(), behaviors));
+        sweep(SKULLS, clientTicks, eyes -> eyes.lastRenderTick,
+                (pos, eyes) -> !SkullEyeState.snapshot(level.getBlockEntity(pos)).equals(eyes.snapshot),
+                (pos, eyes) -> eyes.tick(level.getGameTime(), behaviors));
+        sweep(TRACKERS, clientTicks, tracker -> tracker.lastRenderTick, (living, tracker) -> false,
+                (living, tracker) -> {
+                    synchronizeBehavior(tracker.parent, tracker, -1);
+                    tracker.update(behaviors);
+                });
     }
 
     /** Advance received expression time once per unpaused simulation tick, even for unrendered entities. */

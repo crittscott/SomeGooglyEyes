@@ -73,6 +73,11 @@ public final class ClientEyeConfigs {
         resolved.clear();
     }
 
+    /** Whether eyes may show on this client at all: the server's master switch and the player's own setting. */
+    public static boolean eyesVisible() {
+        return googlyEyesEnabled && !ClientConfig.DISABLE_GOOGLY_EYES.get();
+    }
+
     /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
     public static boolean googlyEyesEnabled() {
         return googlyEyesEnabled;

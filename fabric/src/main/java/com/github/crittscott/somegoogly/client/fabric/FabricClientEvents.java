@@ -75,11 +75,8 @@ public final class FabricClientEvents {
             }
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
-        HudRenderCallback.EVENT.register((graphics, partialTick) -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            PickerHud.render(graphics, minecraft.getWindow().getGuiScaledWidth(),
-                    minecraft.getWindow().getGuiScaledHeight());
-        });
+        HudRenderCallback.EVENT.register((graphics, partialTick) ->
+                PickerHud.render(graphics, Minecraft.getInstance().getWindow().getGuiScaledWidth()));
 
         ItemTooltipCallback.EVENT.register((stack, context, lines) ->
                 EyeItemProperties.appendHeadTooltip(stack, lines));

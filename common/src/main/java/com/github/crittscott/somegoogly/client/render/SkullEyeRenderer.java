@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
 import com.github.crittscott.somegoogly.client.render.resolver.Attachment;
@@ -74,8 +73,6 @@ public final class SkullEyeRenderer {
     private static final String HEAD_FIELD = "head";
     /** Each modded head model class's field holding its head part, or empty when it has none. */
     private static final Map<Class<?>, Optional<Field>> HEAD_FIELDS = new HashMap<>();
-    // Like the mob layers' model, one instance whose iris is moved before each draw on the render thread.
-    private static final ModelGooglyEye MODEL = new ModelGooglyEye();
     private static final float PIXELS_PER_BLOCK = 16F;
     private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
     private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
@@ -83,7 +80,6 @@ public final class SkullEyeRenderer {
     private static final Map<Model, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
     /** Rest pose for head items drawn outside frames. */
-    private static final GooglyTracker.EyeInfo REST = rest();
 
     private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
 
@@ -264,7 +260,7 @@ public final class SkullEyeRenderer {
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
     private static boolean mayShow(@Nullable ResourceLocation entity) {
-        return entity != null && !ClientConfig.DISABLE_GOOGLY_EYES.get() && ClientEyeConfigs.googlyEyesEnabled()
+        return entity != null && ClientEyeConfigs.eyesVisible()
                 && !ClientConfig.isEntityDisabled(entity);
     }
 
@@ -325,14 +321,14 @@ public final class SkullEyeRenderer {
             if (snapshot == null || !mayShow(entity)) {
                 return;
             }
-            PresentationEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
+            PresentationEyes.Draw itemDraw = GooglyEyeItemRenderer.itemDraw(stack);
+            PresentationEyes framed = itemDraw.eyes();
             HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
                     : framed.helper;
             if (helper.hasConfig()) {
                 renderEyes(pose, bufferSource, packedLight, model, head, usesFit(item.getBlock(), entity, trophy), entity,
                         helper, SkullEyeState.headParts(entity, helper), framed == null ? null : framed.eyes,
-                        snapshot.properties(),
-                        framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
+                        snapshot.properties(), itemDraw.partialTick());
             }
         }
     }
@@ -368,22 +364,10 @@ public final class SkullEyeRenderer {
                     pose.translate(0F, 0F, SNOW_GOLEM_EYE_SETBACK);
                 }
             }
-            int eyeCount = helper.getEyeCount(part);
-            for (int eye = 0; eye < eyeCount; eye++) {
-                if (helper.getEyeScale(part, eye) > 0F) {
-                    GooglyEyeRenderer.renderEye(pose, MODEL, bufferSource, packedLight, OverlayTexture.NO_OVERLAY,
-                            eyes == null ? REST : eyes[part][eye], helper, overrides, part, eye, partialTick);
-                }
-            }
+            GooglyEyeRenderer.renderHead(pose, bufferSource, packedLight, OverlayTexture.NO_OVERLAY,
+                    eyes == null ? null : eyes[part], helper, overrides, part, partialTick);
             pose.popPose();
         }
         pose.popPose();
-    }
-
-    private static GooglyTracker.EyeInfo rest() {
-        GooglyTracker.EyeInfo rest = new GooglyTracker.EyeInfo();
-        rest.deltaY = 0F;
-        rest.prevDeltaY = 0F;
-        return rest;
     }
 }

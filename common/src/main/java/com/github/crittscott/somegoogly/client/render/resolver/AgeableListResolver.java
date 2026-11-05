@@ -67,15 +67,7 @@ public class AgeableListResolver extends ModelPartTreeResolver {
 
     /** Same as {@link #headWrap}, for the scale/offset {@code renderToBuffer} applies around {@code bodyParts()}. */
     private static Consumer<PoseStack> bodyWrap(AgeableListModel<?> ageable) {
-        float babyBodyScale = ageable.babyBodyScale;
-        float yOffset = ageable.bodyYOffset;
-        return poseStack -> {
-            if (!ageable.young) {
-                return;
-            }
-            float f = 1.0F / babyBodyScale;
-            poseStack.scale(f, f, f);
-            poseStack.translate(0.0F, yOffset / 16.0F, 0.0F);
-        };
+        float f = 1.0F / ageable.babyBodyScale;
+        return youngWrap(ageable, f, f, f, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
     }
 }

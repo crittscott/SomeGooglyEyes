@@ -95,9 +95,9 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
     }
 
     private static List<NamedRoot> llamaRoots(LlamaModel<?> llama) {
-        Consumer<PoseStack> headWrap = llamaYoungWrap(llama, 0.71428573F, 0.64935064F, 0.7936508F, 1.3125F, 0.22F);
-        Consumer<PoseStack> bodyWrap = llamaYoungWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 2.0625F, 0.0F);
-        Consumer<PoseStack> legsChestWrap = llamaYoungWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 2.0625F, 0.0F);
+        Consumer<PoseStack> headWrap = youngWrap(llama, 0.71428573F, 0.64935064F, 0.7936508F, 0.0F, 1.3125F, 0.22F);
+        Consumer<PoseStack> bodyWrap = youngWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
+        Consumer<PoseStack> legsChestWrap = youngWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
         return List.of(
                 new NamedRoot("head", llama.head, headWrap),
                 new NamedRoot("body", llama.body, bodyWrap),
@@ -108,21 +108,5 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
                 new NamedRoot("rightChest", llama.rightChest, legsChestWrap),
                 new NamedRoot("leftChest", llama.leftChest, legsChestWrap)
         );
-    }
-
-    /**
-     * One of {@code LlamaModel.renderToBuffer}'s three independent young-only wraps (head; body; legs +
-     * chest) — a no-op on an adult, whose render has no wrap at all. {@code young} is re-checked on every
-     * call for the same reason as {@link #rabbitHeadWrap}.
-     */
-    private static Consumer<PoseStack> llamaYoungWrap(LlamaModel<?> llama, float sx, float sy, float sz,
-                                                        float yOffset, float zOffset) {
-        return poseStack -> {
-            if (!llama.young) {
-                return;
-            }
-            poseStack.scale(sx, sy, sz);
-            poseStack.translate(0.0F, yOffset, zOffset);
-        };
     }
 }

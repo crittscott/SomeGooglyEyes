@@ -68,7 +68,7 @@ public class GooglyClientCommands {
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         PickerState.activate(); // turn the picker on so the preview/gizmo render
-        feedback(ctx, "somegoogly.command.picker.feedback", PickerState.lockOn());
+        feedback("somegoogly.command.picker.feedback", PickerState.lockOn());
         return 1;
     }
 
@@ -79,7 +79,7 @@ public class GooglyClientCommands {
         float y = FloatArgumentType.getFloat(ctx, "y");
         float z = FloatArgumentType.getFloat(ctx, "z");
         PickerState.createEye(x, y, z);
-        feedback(ctx, "somegoogly.command.picker.created_eye",
+        feedback("somegoogly.command.picker.created_eye",
                 String.format("%.3f", x), String.format("%.3f", y), String.format("%.3f", z));
         return 1;
     }
@@ -91,7 +91,7 @@ public class GooglyClientCommands {
         if (!PickerState.delete(n)) {
             throw BAD_INDEX.create(n);
         }
-        feedback(ctx, "somegoogly.command.picker.deleted_eye", n, PickerState.currentEyeCount());
+        feedback("somegoogly.command.picker.deleted_eye", n, PickerState.currentEyeCount());
         return 1;
     }
 
@@ -102,7 +102,7 @@ public class GooglyClientCommands {
         if (!PickerState.dupe(n)) {
             throw BAD_INDEX.create(n);
         }
-        feedback(ctx, "somegoogly.command.picker.duped_eye", n);
+        feedback("somegoogly.command.picker.duped_eye", n);
         return 1;
     }
 
@@ -110,17 +110,17 @@ public class GooglyClientCommands {
     private static int export(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.export());
+        feedback("somegoogly.command.picker.feedback", PickerExporter.export());
         return 1;
     }
 
     private static int exportAll(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
-        feedback(ctx, "somegoogly.command.picker.feedback", PickerExporter.exportAll());
+        feedback("somegoogly.command.picker.feedback", PickerExporter.exportAll());
         return 1;
     }
 
-    private static void feedback(CommandContext<?> ctx, String key, Object... args) {
+    private static void feedback(String key, Object... args) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             player.displayClientMessage(Component.translatable(key, args), false);
@@ -131,7 +131,7 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         List<ListedEye> list = PickerState.currentEyes();
-        feedback(ctx, "somegoogly.command.picker.eyes_header", PickerState.variantIndex() + 1, list.size());
+        feedback("somegoogly.command.picker.eyes_header", PickerState.variantIndex() + 1, list.size());
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
@@ -139,7 +139,7 @@ public class GooglyClientCommands {
             Component cross = e.crossTarget >= 0
                     ? Component.translatable("somegoogly.picker.cross_target_mark", e.crossTarget + 1)
                     : Component.empty();
-            feedback(ctx, "somegoogly.command.picker.eye_entry", i + 1, le.part,
+            feedback("somegoogly.command.picker.eye_entry", i + 1, le.part,
                     String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
                     String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth), cross, mark);
         }
@@ -149,9 +149,9 @@ public class GooglyClientCommands {
     private static int listParts(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        feedback(ctx, "somegoogly.command.picker.parts_header", PickerState.parts().size());
+        feedback("somegoogly.command.picker.parts_header", PickerState.parts().size());
         for (int i = 0; i < PickerState.parts().size(); i++) {
-            feedback(ctx, "somegoogly.command.picker.part_entry", i + 1, PickerState.parts().get(i));
+            feedback("somegoogly.command.picker.part_entry", i + 1, PickerState.parts().get(i));
         }
         return 1;
     }
@@ -159,11 +159,11 @@ public class GooglyClientCommands {
     private static int listVariants(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        feedback(ctx, "somegoogly.command.picker.variants_header", PickerState.variantCount());
+        feedback("somegoogly.command.picker.variants_header", PickerState.variantCount());
         for (int i = 0; i < PickerState.variantCount(); i++) {
             PickerState.DraftVariant v = PickerState.variants().get(i);
             Component mark = i == PickerState.variantIndex() ? SELECTED_MARK : Component.empty();
-            feedback(ctx, "somegoogly.command.picker.variant_entry", i + 1, String.format("%.2f", v.weight), v.eyes.size(), mark);
+            feedback("somegoogly.command.picker.variant_entry", i + 1, String.format("%.2f", v.weight), v.eyes.size(), mark);
         }
         return 1;
     }
@@ -176,7 +176,7 @@ public class GooglyClientCommands {
                 MaybeFloatArgumentType.get(ctx, "y"),
                 MaybeFloatArgumentType.get(ctx, "z"));
         EyeDraft e = PickerState.currentEye();
-        feedback(ctx, "somegoogly.command.picker.position",
+        feedback("somegoogly.command.picker.position",
                 String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]));
         return 1;
     }
@@ -187,7 +187,7 @@ public class GooglyClientCommands {
         String target = StringArgumentType.getString(ctx, "target");
         if (target.equalsIgnoreCase(CLEAR_PART_TOKEN)) {
             PickerState.clearPart();
-            feedback(ctx, "somegoogly.command.picker.part_cleared");
+            feedback("somegoogly.command.picker.part_cleared");
             return 1;
         }
         boolean ok;
@@ -199,7 +199,7 @@ public class GooglyClientCommands {
         if (!ok) {
             throw BAD_PART.create(target);
         }
-        feedback(ctx, "somegoogly.command.picker.part_set", PickerState.currentPart());
+        feedback("somegoogly.command.picker.part_set", PickerState.currentPart());
         return 1;
     }
 
@@ -213,7 +213,7 @@ public class GooglyClientCommands {
         PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
-        feedback(ctx, "somegoogly.command.picker.posrot",
+        feedback("somegoogly.command.picker.posrot",
                 String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
                 String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth));
         return 1;
@@ -236,9 +236,9 @@ public class GooglyClientCommands {
         }
         int target = PickerState.currentEye().crossTarget;
         if (target < 0) {
-            feedback(ctx, "somegoogly.command.picker.cross_target_cleared");
+            feedback("somegoogly.command.picker.cross_target_cleared");
         } else {
-            feedback(ctx, "somegoogly.command.picker.cross_target_set", target + 1);
+            feedback("somegoogly.command.picker.cross_target_set", target + 1);
         }
         return 1;
     }
@@ -249,7 +249,7 @@ public class GooglyClientCommands {
         requireDraft();
         PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
                 FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "somegoogly.command.picker.cornea_set");
+        feedback("somegoogly.command.picker.cornea_set");
         return 1;
     }
 
@@ -259,7 +259,7 @@ public class GooglyClientCommands {
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
         PickerState.setDepth(v);
-        feedback(ctx, "somegoogly.command.picker.depth_set", v);
+        feedback("somegoogly.command.picker.depth_set", v);
         return 1;
     }
 
@@ -269,7 +269,7 @@ public class GooglyClientCommands {
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
         PickerState.setEyeScale(v);
-        feedback(ctx, "somegoogly.command.picker.eyescale_set", v);
+        feedback("somegoogly.command.picker.eyescale_set", v);
         return 1;
     }
 
@@ -279,7 +279,7 @@ public class GooglyClientCommands {
         requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setGlow(v);
-        feedback(ctx, "somegoogly.command.picker.glow_set",
+        feedback("somegoogly.command.picker.glow_set",
                 Component.translatable(v ? "somegoogly.value.on" : "somegoogly.value.off"));
         return 1;
     }
@@ -290,7 +290,7 @@ public class GooglyClientCommands {
         requireDraft();
         PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
                 FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
-        feedback(ctx, "somegoogly.command.picker.iris_set");
+        feedback("somegoogly.command.picker.iris_set");
         return 1;
     }
 
@@ -300,7 +300,7 @@ public class GooglyClientCommands {
         requireDraft();
         float v = FloatArgumentType.getFloat(ctx, "v");
         PickerState.setIrisScale(v);
-        feedback(ctx, "somegoogly.command.picker.irisscale_set", v);
+        feedback("somegoogly.command.picker.irisscale_set", v);
         return 1;
     }
 
@@ -462,7 +462,7 @@ public class GooglyClientCommands {
         PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
-        feedback(ctx, "somegoogly.command.picker.rotation",
+        feedback("somegoogly.command.picker.rotation",
                 String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth));
         return 1;
     }
@@ -474,7 +474,7 @@ public class GooglyClientCommands {
         if (!PickerState.save()) {
             throw NO_PART.create();
         }
-        feedback(ctx, "somegoogly.command.picker.saved_eye",
+        feedback("somegoogly.command.picker.saved_eye",
                 PickerState.selectedIndex() + 1, PickerState.variantIndex() + 1, PickerState.currentEyeCount());
         return 1;
     }
@@ -486,14 +486,14 @@ public class GooglyClientCommands {
         if (!PickerState.select(n)) {
             throw BAD_INDEX.create(n);
         }
-        feedback(ctx, "somegoogly.command.picker.editing_eye", n);
+        feedback("somegoogly.command.picker.editing_eye", n);
         return 1;
     }
 
     private static int unchoose(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         PickerState.unlock();
-        feedback(ctx, "somegoogly.command.picker.selection_cleared");
+        feedback("somegoogly.command.picker.selection_cleared");
         return 1;
     }
 
@@ -507,7 +507,7 @@ public class GooglyClientCommands {
         if (!PickerState.deleteVariant(n)) {
             throw CANT_DELETE_LAST_VARIANT.create();
         }
-        feedback(ctx, "somegoogly.command.picker.deleted_variant", n, PickerState.variantCount());
+        feedback("somegoogly.command.picker.deleted_variant", n, PickerState.variantCount());
         return 1;
     }
 
@@ -515,7 +515,7 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         int n = PickerState.newVariant();
-        feedback(ctx, "somegoogly.command.picker.added_variant", n, PickerState.variantCount());
+        feedback("somegoogly.command.picker.added_variant", n, PickerState.variantCount());
         return 1;
     }
 
@@ -526,7 +526,7 @@ public class GooglyClientCommands {
         if (!PickerState.selectVariant(n)) {
             throw BAD_VARIANT.create(n);
         }
-        feedback(ctx, "somegoogly.command.picker.editing_variant", n, PickerState.currentEyeCount());
+        feedback("somegoogly.command.picker.editing_variant", n, PickerState.currentEyeCount());
         return 1;
     }
 
@@ -535,7 +535,7 @@ public class GooglyClientCommands {
         requireChosen();
         float w = FloatArgumentType.getFloat(ctx, "w");
         PickerState.setVariantWeight(w);
-        feedback(ctx, "somegoogly.command.picker.variant_weight", PickerState.variantIndex() + 1, w);
+        feedback("somegoogly.command.picker.variant_weight", PickerState.variantIndex() + 1, w);
         return 1;
     }
 

@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.client;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -51,8 +51,6 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Nullable
     private static FrameContext frameContext;
 
-    private ModelGooglyEye model;
-
     public GooglyEyeItemRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
     }
@@ -79,50 +77,29 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
                 || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
     }
 
-    /** Animation for a head item in the current GUI, hand, or frame draw, if its state still matches. */
-    @Nullable
-    public static PresentationEyes itemEyes(ItemStack stack) {
-        PresentationEyes gui = GuiItemEyes.current().eyes();
-        if (gui != null && gui.matches(stack)) {
+    /** The animation for {@code stack} in the current GUI, hand, or frame draw, if its state still matches. */
+    public static PresentationEyes.Draw itemDraw(ItemStack stack) {
+        PresentationEyes.Draw gui = GuiItemEyes.current();
+        if (gui.eyes() != null && gui.eyes().matches(stack)) {
             return gui;
         }
-        PresentationEyes hand = HandItemEyes.current().eyes();
-        if (hand != null && hand.matches(stack)) {
+        PresentationEyes.Draw hand = HandItemEyes.current();
+        if (hand.eyes() != null && hand.eyes().matches(stack)) {
             return hand;
         }
         if (frameContext == null || stack != frameContext.frame().getItem()) {
-            return null;
+            return PresentationEyes.Draw.NONE;
         }
-        return ClientEyeRuntime.frameEye(frameContext.frame());
-    }
-
-    /** Partial tick supplied by the current GUI, hand, or frame presentation. */
-    public static float itemPartialTick() {
-        if (GuiItemEyes.current().eyes() != null) {
-            return GuiItemEyes.current().partialTick();
-        }
-        if (HandItemEyes.current().eyes() != null) {
-            return HandItemEyes.current().partialTick();
-        }
-        return frameContext == null ? 0F : frameContext.partialTick();
-    }
-
-    private ModelGooglyEye model() {
-        if (model == null) {
-            model = new ModelGooglyEye();
-        }
-        return model;
+        PresentationEyes framed = ClientEyeRuntime.frameEye(frameContext.frame());
+        return framed == null ? PresentationEyes.Draw.NONE
+                : new PresentationEyes.Draw(framed, frameContext.partialTick());
     }
 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        AppearanceOverride props = EyeItemProperties.get(stack);
-        EyeColor cornea = props.cornea().orElse(EyeColor.WHITE);
-        EyeColor iris = props.iris().orElse(EyeColor.BLACK);
-        boolean glow = props.glow().orElse(false);
+        EyeAppearance look = EyeAppearance.DEFAULT.overlay(EyeItemProperties.get(stack));
 
-        ModelGooglyEye m = model();
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // Face the pupil (model -Z) at the viewer; winding-safe (pure rotation). Hand/GUI/ground view the
@@ -133,14 +110,10 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        PresentationEyes gui = ctx == ItemDisplayContext.GUI ? GuiItemEyes.current().eyes() : null;
-        PresentationEyes hand = ctx == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
-                || ctx == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND ? HandItemEyes.current().eyes() : null;
-        PresentationEyes framed = ctx == ItemDisplayContext.FIXED && frameContext != null
-                && stack == frameContext.frame().getItem() ? ClientEyeRuntime.frameEye(frameContext.frame()) : null;
-        GooglyTracker.EyeInfo animated = gui != null ? gui.eye
-                : hand != null ? hand.eye : framed != null ? framed.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
-        if (gui != null || hand != null || framed != null) {
+        PresentationEyes.Draw draw = itemDraw(stack);
+        PresentationEyes presented = draw.eyes();
+        GooglyTracker.EyeInfo animated = presented != null ? presented.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
+        if (presented != null) {
             GooglyEyeRenderer.captureGravity(pose, animated);
         }
         if (ctx == ItemDisplayContext.FIXED) {
@@ -148,18 +121,15 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
         if (animated != null) {
             // First-person eyes retain eye-local down; their pose is relative to the camera rather than the world.
-            float partialTick = gui != null ? GuiItemEyes.current().partialTick()
-                    : hand != null ? HandItemEyes.current().partialTick()
-                    : framed != null ? frameContext.partialTick()
-                    : Minecraft.getInstance().getFrameTime();
-            GooglyEyeRenderer.drawAnimatedEye(pose, m, buffer, light, overlay, animated,
-                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, 1F, cornea, iris,
-                    IRIS_SCALE, glow, partialTick);
+            float partialTick = presented != null ? draw.partialTick() : Minecraft.getInstance().getFrameTime();
+            GooglyEyeRenderer.drawAnimatedEye(pose, buffer, light, overlay, animated,
+                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, 1F, look.cornea(), look.iris(),
+                    IRIS_SCALE, look.glow(), partialTick);
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
             pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);
-            GooglyEyeRenderer.drawEye(pose, m, buffer, light, overlay, cornea.toArray(), iris.toArray(), IRIS_SCALE,
-                    0F, 0F, glow);
+            GooglyEyeRenderer.drawEye(pose, buffer, light, overlay, look.cornea().toArray(), look.iris().toArray(),
+                    IRIS_SCALE, 0F, 0F, look.glow());
         }
         pose.popPose();
     }

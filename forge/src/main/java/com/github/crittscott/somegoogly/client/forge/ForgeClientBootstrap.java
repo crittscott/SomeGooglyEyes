@@ -113,7 +113,7 @@ public final class ForgeClientBootstrap {
 
     private static void registerGuiLayers(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("picker",
-                (gui, graphics, partialTick, width, height) -> PickerHud.render(graphics, width, height));
+                (gui, graphics, partialTick, width, height) -> PickerHud.render(graphics, width));
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {

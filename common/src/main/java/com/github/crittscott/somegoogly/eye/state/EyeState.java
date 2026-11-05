@@ -55,8 +55,8 @@ public final class EyeState {
 
         /** Read the state keys of {@code data}; absent keys read as {@link #NONE}'s values. */
         public static Snapshot read(CompoundTag data) {
-            return new Snapshot(data.getBoolean(HAS_EYES), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
-                    data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null));
+            return new Snapshot(data.getBoolean(HAS_EYES), EyeState.variantRoll(data),
+                    AppearanceOverride.fromNbt(overridesTag(data)));
         }
 
         /** Write every state key into {@code data}, removing the overrides compound when there are none. */
@@ -90,7 +90,7 @@ public final class EyeState {
         }
         snapshot(source).write(EntityPersistentData.get(target));
         if (hasEyes(target)) {
-            ServerBehaviorScheduler.onEyesGained(target);
+            eyesGained(target);
         }
         sync(target);
     }
@@ -110,10 +110,14 @@ public final class EyeState {
         data.putFloat(VARIANT_ROLL, roll);
         writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
+        eyesGained(entity);
+        sync(entity);
+    }
+
+    private static void eyesGained(Entity entity) {
         if (entity instanceof LivingEntity living) {
             ServerBehaviorScheduler.onEyesGained(living);
         }
-        sync(entity);
     }
 
     /**
@@ -141,9 +145,7 @@ public final class EyeState {
         data.putBoolean(HAS_EYES, hasEyes);
         data.putFloat(VARIANT_ROLL, variantRoll);
         if (hasEyes) {
-            if (entity instanceof LivingEntity living) {
-                ServerBehaviorScheduler.onEyesGained(living);
-            }
+            eyesGained(entity);
             sync(entity);
         }
     }
@@ -163,11 +165,15 @@ public final class EyeState {
         return EntityPersistentData.get(entity).contains(HAS_EYES);
     }
 
+    @Nullable
+    private static CompoundTag overridesTag(CompoundTag data) {
+        return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+    }
+
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */
     @Nullable
     public static CompoundTag overridesTagOrNull(Entity entity) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
+        return overridesTag(EntityPersistentData.get(entity));
     }
 
     private static EyeStatePacket packet(Entity entity) {
@@ -207,9 +213,7 @@ public final class EyeState {
     public static void setHasEyes(Entity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
         if (hasEyes) {
-            if (entity instanceof LivingEntity living) {
-                ServerBehaviorScheduler.onEyesGained(living);
-            }
+            eyesGained(entity);
         }
         sync(entity);
     }

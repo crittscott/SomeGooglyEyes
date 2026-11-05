@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_${mixin_java_version}",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
-    "MushroomCowShearMixin",
     "TwilightSkullCandleDataMixin",
     "TwilightSkullConversionMixin",
     "TwilightTrophyDataMixin"

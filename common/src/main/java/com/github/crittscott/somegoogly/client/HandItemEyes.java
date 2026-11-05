@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -13,30 +12,20 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-/** Connects world-owned hand simulations to immediate and extracted item draws. */
+/** Connects world-owned hand simulations to item draws. */
 public final class HandItemEyes {
 
-    private static final Deque<Context> DRAWS = new ArrayDeque<>();
-    public static final Context EMPTY = new Context(null, 0F);
+    private static final Deque<PresentationEyes.Draw> DRAWS = new ArrayDeque<>();
     private static final HandEyeAnimations SIMULATIONS = new HandEyeAnimations();
 
-    private static Context current = EMPTY;
+    private static PresentationEyes.Draw current = PresentationEyes.Draw.NONE;
 
     private HandItemEyes() {
     }
 
-    public record Context(@Nullable PresentationEyes eyes, float partialTick) {
-    }
-
-    public interface Holder {
-        Context somegoogly$handEyes();
-
-        void somegoogly$setHandEyes(Context context);
-    }
-
-    public static void begin(Context context) {
+    public static void begin(PresentationEyes.Draw draw) {
         DRAWS.push(current);
-        current = context;
+        current = draw;
     }
 
     public static void clear() {
@@ -44,21 +33,22 @@ public final class HandItemEyes {
     }
 
     /** Physical left/right display contexts map to logical hands using the holder's dominant arm. */
-    public static Context context(@Nullable LivingEntity holder, ItemStack stack, ItemDisplayContext display) {
+    public static PresentationEyes.Draw context(@Nullable LivingEntity holder, ItemStack stack,
+                                                ItemDisplayContext display) {
         if (holder == null || (display != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
                 && display != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)) {
-            return EMPTY;
+            return PresentationEyes.Draw.NONE;
         }
         Minecraft minecraft = Minecraft.getInstance();
         HumanoidArm arm = display == ItemDisplayContext.THIRD_PERSON_LEFT_HAND ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
         InteractionHand hand = arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        boolean enabled = minecraft.level != null && !holder.isRemoved()
-                && ClientEyeConfigs.googlyEyesEnabled() && !ClientConfig.DISABLE_GOOGLY_EYES.get();
+        boolean enabled = minecraft.level != null && !holder.isRemoved() && ClientEyeConfigs.eyesVisible();
         PresentationEyes eyes = SIMULATIONS.get(holder, hand, stack, enabled);
-        return eyes == null ? EMPTY : new Context(eyes, Minecraft.getInstance().getFrameTime());
+        return eyes == null ? PresentationEyes.Draw.NONE
+                : new PresentationEyes.Draw(eyes, Minecraft.getInstance().getFrameTime());
     }
 
-    public static Context current() {
+    public static PresentationEyes.Draw current() {
         return current;
     }
 
@@ -72,8 +62,7 @@ public final class HandItemEyes {
 
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null || !ClientEyeConfigs.googlyEyesEnabled()
-                || ClientConfig.DISABLE_GOOGLY_EYES.get()) {
+        if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {
             clear();
         } else {
             SIMULATIONS.tick(minecraft.level.getGameTime(), !minecraft.isPaused(), ClientEyeConfigs.behaviors());

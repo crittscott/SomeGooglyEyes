@@ -74,11 +74,9 @@ public final class FabricServerEvents {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 GooglyServerCommands.register(dispatcher, registryAccess));
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        // Fabric's use callbacks fire before vanilla's spectator check, so callers must make it themselves.
         UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
-                !player.isSpectator()
-                        ? EyeItemService.interact(player, level, hand, entity)
-                        : InteractionResult.PASS);
+                EyeItemService.interact(player, level, hand, entity));
+        // Fabric's use callbacks fire before vanilla's spectator check, so these two make it themselves.
         UseBlockCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
                 player.isSpectator() ? InteractionResult.PASS

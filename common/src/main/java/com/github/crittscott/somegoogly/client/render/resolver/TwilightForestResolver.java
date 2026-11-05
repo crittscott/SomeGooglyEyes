@@ -73,21 +73,4 @@ public class TwilightForestResolver extends ModelPartTreeResolver {
         index(roots, "body", ageable.bodyParts(), bodyWrap);
         return roots;
     }
-
-    /**
-     * A young-gated uniform-axis scale followed by a translate. {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
-     * resolved chain per (model, token) and the same model instance renders every baby and adult of its
-     * type.
-     */
-    private static Consumer<PoseStack> youngWrap(AgeableListModel<?> ageable, float sx, float sy, float sz,
-                                                   float tx, float ty, float tz) {
-        return poseStack -> {
-            if (!ageable.young) {
-                return;
-            }
-            poseStack.scale(sx, sy, sz);
-            poseStack.translate(tx, ty, tz);
-        };
-    }
 }

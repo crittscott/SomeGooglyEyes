@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -15,11 +14,9 @@ import javax.annotation.Nullable;
 public final class GuiEyeAnimations {
 
     public static final int CURSOR = 2;
-    private static final int EVICT_IDLE_TICKS = 10;
     public static final int HOTBAR = 3;
     public static final Object HUD = new Object();
     public static final int POSITION = 0;
-    private static final int SIMULATE_IDLE_TICKS = 1;
     public static final int SLOT = 1;
 
     private final Map<Key, Entry> entries = new HashMap<>();
@@ -30,13 +27,8 @@ public final class GuiEyeAnimations {
     public record Key(Object view, int kind, int x, int y, int seed) {
     }
 
-    /** Stable identity distinguishes separately animated copies in vanilla's GUI item cache. */
-    public record Presentation(PresentationEyes eyes, Object identity) {
-    }
-
     private static final class Entry {
         final PresentationEyes eyes;
-        final Object identity = new Object();
         long lastShown;
         final AppearanceOverride properties;
 
@@ -53,7 +45,7 @@ public final class GuiEyeAnimations {
 
     /** Request a visible presentation; unsupported or disabled items retire their former simulation. */
     @Nullable
-    public Presentation get(Key key, ItemStack stack, boolean enabled) {
+    public PresentationEyes get(Key key, ItemStack stack, boolean enabled) {
         if (!enabled || !PresentationEyes.supports(stack)) {
             entries.remove(key);
             return null;
@@ -71,23 +63,14 @@ public final class GuiEyeAnimations {
             entries.put(key, entry);
         }
         entry.lastShown = ticks;
-        return new Presentation(entry.eyes, entry.identity);
+        return entry.eyes;
     }
 
     /** Advance the UI clock even when the world is paused; hidden and departed views do no simulation. */
     public void tick(@Nullable Object activeView, BehaviorSettings settings) {
         ticks++;
-        Iterator<Map.Entry<Key, Entry>> iterator = entries.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Key, Entry> pair = iterator.next();
-            Entry entry = pair.getValue();
-            long idle = ticks - entry.lastShown;
-            Object view = pair.getKey().view();
-            if (idle > EVICT_IDLE_TICKS || view != HUD && view != activeView) {
-                iterator.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                entry.eyes.tick(ticks, settings);
-            }
-        }
+        ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown,
+                (key, entry) -> key.view() != HUD && key.view() != activeView,
+                (key, entry) -> entry.eyes.tick(ticks, settings));
     }
 }

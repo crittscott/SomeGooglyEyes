@@ -124,11 +124,6 @@ public final class ServerEyeConfigs {
         return Map.copyOf(encoded);
     }
 
-    /** Unconditionally install a snapshot. This is the replacement path used by tests. */
-    public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
-        installed = new Installed(Map.copyOf(next), encode(next));
-    }
-
     /**
      * Datapack-reload entry point: install {@code next} only when its encoding differs from the installed
      * set's, so a {@code /reload} for an unrelated datapack leaves the installed snapshot, and therefore

@@ -67,9 +67,7 @@ public final class EyeItemService {
             }
         }
         EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
+        consumeOne(player, stack);
         target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
         target.gameEvent(GameEvent.ENTITY_INTERACT, player);
@@ -91,9 +89,7 @@ public final class EyeItemService {
             return InteractionResult.FAIL;
         }
         SkullEyeState.set(skull, new EyeState.Snapshot(true, player.getRandom().nextFloat(), EyeItemProperties.get(stack)));
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
+        consumeOne(player, stack);
         Level level = player.level();
         level.playSound(null, pos, SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
@@ -111,6 +107,13 @@ public final class EyeItemService {
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
         return skull instanceof SkullEyeState.Holder && entity != null
                 && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
+    }
+
+    /** Use up one of {@code stack}, unless {@code player} is in creative. */
+    private static void consumeOne(ServerPlayer player, ItemStack stack) {
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
     }
 
     /**

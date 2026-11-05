@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -234,7 +235,7 @@ public final class PickerState {
 
     /** The CLI {@code create x y z} op: start a fresh current eye at the given position. */
     public static void createEye(float x, float y, float z) {
-        currentEye = defaultEye();
+        currentEye = new EyeDraft();
         currentEye.position[0] = x;
         currentEye.position[1] = y;
         currentEye.position[2] = z;
@@ -288,14 +289,22 @@ public final class PickerState {
         currentPart = parts.get(partIndex);
     }
 
+    /** Copy the saved eye at 1-based {@code oneBased} into the draft, adopting its part; false if out of range. */
+    private static boolean copyToDraft(int oneBased) {
+        ListedEye listed = eyeAt(oneBased);
+        if (listed == null) {
+            return false;
+        }
+        currentEye = listed.eye.copy();
+        currentPart = listed.part;
+        syncPartIndex();
+        return true;
+    }
+
     /** Turn the picker off and release the frozen mob; the authored drafts stay in memory. */
     public static void deactivate() {
         active = false;
         unlock();
-    }
-
-    private static EyeDraft defaultEye() {
-        return new EyeDraft();
     }
 
     /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
@@ -340,17 +349,19 @@ public final class PickerState {
      * overwriting. Adopts the source eye's part; replaces any existing unsaved draft.
      */
     public static boolean dupe(int oneBased) {
-        List<ListedEye> eyes = currentEyes();
-        int idx = oneBased - 1;
-        if (idx < 0 || idx >= eyes.size()) {
+        if (!copyToDraft(oneBased)) {
             return false;
         }
-        ListedEye le = eyes.get(idx);
-        currentEye = le.eye.copy();
-        currentPart = le.part;
-        syncPartIndex();
         selectedIndex = -1;
         return true;
+    }
+
+    /** The saved eye at 1-based {@code oneBased}, or {@code null} if out of range. */
+    @Nullable
+    private static ListedEye eyeAt(int oneBased) {
+        List<ListedEye> eyes = currentEyes();
+        int idx = oneBased - 1;
+        return idx < 0 || idx >= eyes.size() ? null : eyes.get(idx);
     }
 
     /**
@@ -519,17 +530,24 @@ public final class PickerState {
 
     /** The CLI {@code select <n>} op (1-based): load a saved eye from the current variant for adjustment. */
     public static boolean select(int oneBased) {
-        List<ListedEye> eyes = currentEyes();
-        int idx = oneBased - 1;
-        if (idx < 0 || idx >= eyes.size()) {
+        if (!copyToDraft(oneBased)) {
             return false;
         }
-        ListedEye le = eyes.get(idx);
-        currentEye = le.eye.copy();
-        currentPart = le.part;
-        syncPartIndex();
-        selectedIndex = idx;
+        selectedIndex = oneBased - 1;
         return true;
+    }
+
+    /** The saved eyes a preview draws: those with a part, except the selected one, shown live as the draft. */
+    public static List<ListedEye> previewEyes() {
+        List<ListedEye> eyes = currentEyes();
+        List<ListedEye> preview = new ArrayList<>(eyes.size());
+        for (int i = 0; i < eyes.size(); i++) {
+            ListedEye listed = eyes.get(i);
+            if (i != selectedIndex && listed.part != null) {
+                preview.add(listed);
+            }
+        }
+        return preview;
     }
 
     /** Index of the saved eye being edited ({@code -1} = the draft is new/unsaved). */
@@ -575,11 +593,8 @@ public final class PickerState {
             return true;
         }
         int idx = oneBased - 1;
-        List<ListedEye> eyes = currentEyes();
-        if (idx < 0 || idx >= eyes.size() || idx == selectedIndex) {
-            return false;
-        }
-        if (currentPart == null || !currentPart.equals(eyes.get(idx).part)) {
+        ListedEye target = eyeAt(oneBased);
+        if (target == null || idx == selectedIndex || currentPart == null || !currentPart.equals(target.part)) {
             return false;
         }
         currentEye.crossTarget = idx;

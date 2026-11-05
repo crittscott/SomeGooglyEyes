@@ -8,7 +8,6 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
@@ -18,9 +17,6 @@ import net.minecraft.world.level.Level;
 
 /** World-owned boat pupils, retained and simulated only while recently rendered. */
 public final class BoatEyeAnimations {
-
-    private static final int EVICT_IDLE_TICKS = 10;
-    private static final int SIMULATE_IDLE_TICKS = 1;
 
     private final Map<Boat, Entry> entries = new HashMap<>();
     private long ticks;
@@ -71,7 +67,7 @@ public final class BoatEyeAnimations {
     }
 
     private static boolean mayShow(Boat boat, @Nullable RuntimeConfig config) {
-        return ClientEyeConfigs.googlyEyesEnabled() && !ClientConfig.DISABLE_GOOGLY_EYES.get()
+        return ClientEyeConfigs.eyesVisible()
                 && !ClientConfig.isEntityDisabled(EntityType.getKey(boat.getType()))
                 && !boat.isInvisible() && !boat.isRemoved() && EyeState.hasEyes(boat)
                 && BoatEyeLayout.isEligible(boat, config);
@@ -82,29 +78,12 @@ public final class BoatEyeAnimations {
         entries.remove(entity);
     }
 
-    /** World time selects expressions; pause stops physics and idle aging, and absent levels clear state. */
-    public void tick(@Nullable Level level, long gameTime, boolean simulate, BehaviorSettings settings) {
-        if (level == null) {
-            clear();
-            return;
-        }
-        if (!simulate) {
-            return;
-        }
+    /** Step one unpaused tick; world time selects expressions. */
+    public void tick(Level level, long gameTime, BehaviorSettings settings) {
         ticks++;
-        Iterator<Map.Entry<Boat, Entry>> iterator = entries.entrySet().iterator();
-        while (iterator.hasNext()) {
-            var item = iterator.next();
-            Boat boat = item.getKey();
-            Entry entry = item.getValue();
-            long idle = ticks - entry.lastShown;
+        ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown, (boat, entry) -> {
             RuntimeConfig config = ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false);
-            if (idle > EVICT_IDLE_TICKS || boat.level() != level || !mayShow(boat, config)
-                    || !entry.matches(boat, config)) {
-                iterator.remove();
-            } else if (idle <= SIMULATE_IDLE_TICKS) {
-                entry.eyes.tick(gameTime, settings, boat);
-            }
-        }
+            return boat.level() != level || !mayShow(boat, config) || !entry.matches(boat, config);
+        }, (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
     }
 }

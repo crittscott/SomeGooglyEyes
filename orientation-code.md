@@ -26,7 +26,7 @@ Server owns gameplay/authorization; client owns rendering/picker UI.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricConfigMigration` quotes released spaced headers. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` logs the effective master switch at startup and changes.
+`ServerConfig`/`ClientConfig` each declare a setting once, as a `ConfigValue` holding its section, key, comment, default, and limits; declaration order is file order, and both loaders build their file and schema from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricConfigMigration` quotes released spaced headers. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` logs the effective master switch at startup and changes.
 
 Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload by resolving one version per entity type, validating, and NBT-encoding the set; `ServerEyeConfigs` swaps only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits stay aligned across reload (which reserves the maximum behavior block in its packet budget), picker export, and network decode; `EyeColor` codecs reject out-of-range channels.
 
@@ -66,7 +66,7 @@ The common `somegoogly.accesswidener` serves common and both loaders; Forge rema
 
 Optional GeckoLib: `client/compat/gecko` holds the GeckoLib-typed layer and bone code; `GeckoCompat` reaches it only once GeckoLib is found; a failed attach can't block load.
 
-`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. The boat Mixin draws before the hull pose is popped. `PresentationEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. The boat Mixin draws before the hull pose is popped. `PresentationEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes draw context. GUI Mixins select slots/cursor. `ClientEyeRuntime.sweep` is the eviction and simulation rule every eye cache shares, each on its own clock. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -86,7 +86,7 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 ## Loader integration
 
-Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes; each loader has a mooshroom-shear Mixin, Forge's also targeting `shearInternal`.
+Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, mooshroom shearing (`shear`, and Forge's `shearInternal`), server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes.
 
 Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus. Forge GameTests use the unprefixed `empty` template.
 

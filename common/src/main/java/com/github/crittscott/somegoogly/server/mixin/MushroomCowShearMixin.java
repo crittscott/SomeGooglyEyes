@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.forge;
+package com.github.crittscott.somegoogly.server.mixin;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.world.entity.Entity;
@@ -9,10 +9,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
- * Shearing a mooshroom builds its replacement cow by hand rather than through {@code Mob#convertTo}, and
- * Forge fires no {@code LivingConversionEvent} for it. This copies the mooshroom's eyes onto that cow as it
- * is added to the level, as the conversion listener does for every other conversion. Forge's shearing may
- * spawn the cow from its shared shear helper rather than {@code shear} itself, so both are targeted.
+ * Shearing a mooshroom builds its replacement cow by hand rather than through {@code Mob#convertTo}, so neither
+ * loader's mob-conversion event fires for it. This copies the mooshroom's eyes onto that cow as it is added to the
+ * level, as the conversion listeners do for every other conversion. Forge's shearing may spawn the cow from its
+ * shared {@code shearInternal} helper rather than {@code shear} itself, so both are targeted; the helper doesn't
+ * exist on Fabric.
  */
 @Mixin(MushroomCow.class)
 abstract class MushroomCowShearMixin {
