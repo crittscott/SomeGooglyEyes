@@ -6,9 +6,7 @@ Order members within a class/interface/record alphabetically, **to the extent th
 Java language allows**. The exceptions below are the only places where another rule
 overrides alphabetical — everything else sorts by name (case-insensitive).
 
-This is an unreleased mod: there is no legacy wire format, save format, or public API
-to preserve, so we order for readability and let the few real constraints win where
-they apply.
+We order for readability and let the few real constraints win where they apply.
 
 ### Member order within a type
 
@@ -70,9 +68,9 @@ The same principle applies to any value whose meaning is derived from declaratio
 (e.g. network packet discriminators): assign explicit, stable ids rather than deriving
 them from order, so the source can be alphabetized without changing behavior.
 
-### Exception: the main mod class header
+### Exception: the identity class header
 
-The `@Mod` entry-point class (`SomeGoogly`) starts with its identity constants in a fixed,
+`SomeGooglyCommon` starts with the mod's identity constants in a fixed,
 **non-alphabetical** order:
 
 ```
