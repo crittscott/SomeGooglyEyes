@@ -317,18 +317,25 @@ public final class SkullEyeRenderer {
             }
         } else if (stack != null && stack.getItem() instanceof BlockItem item) {
             ResourceLocation entity = SkullEyeState.entityFor(stack);
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot == null || !mayShow(entity)) {
+            if (!mayShow(entity)) {
                 return;
             }
             PresentationEyes.Draw itemDraw = GooglyEyeItemRenderer.itemDraw(stack);
             PresentationEyes framed = itemDraw.eyes();
-            HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
-                    : framed.helper;
+            boolean fitted = usesFit(item.getBlock(), entity, trophy);
+            if (framed != null) {
+                renderEyes(pose, bufferSource, packedLight, model, head, fitted, entity, framed.helper, framed.parts,
+                        framed.eyes, framed.properties, itemDraw.partialTick());
+                return;
+            }
+            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
+            if (snapshot == null) {
+                return;
+            }
+            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
             if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, model, head, usesFit(item.getBlock(), entity, trophy), entity,
-                        helper, SkullEyeState.headParts(entity, helper), framed == null ? null : framed.eyes,
-                        snapshot.properties(), itemDraw.partialTick());
+                renderEyes(pose, bufferSource, packedLight, model, head, fitted, entity, helper,
+                        SkullEyeState.headParts(entity, helper), null, snapshot.properties(), itemDraw.partialTick());
             }
         }
     }

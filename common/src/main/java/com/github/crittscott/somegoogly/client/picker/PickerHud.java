@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,10 @@ public final class PickerHud {
     private static final int TOP_MARGIN = 6;
     private static final int WHITE = 0xFFFFFFFF;
     private static final int YELLOW = 0xFFFFE060;
+
+    /** The panel's text, rebuilt at most once per client tick; {@code null} while the picker is off. */
+    private static List<List<Line>> cachedRows;
+    private static int cachedRowsTick;
 
     private PickerHud() {
     }
@@ -127,10 +132,16 @@ public final class PickerHud {
     /** Draw the picker HUD while the picker is active. */
     public static void render(GuiGraphics graphics, int width) {
         if (!PickerState.isActive()) {
+            cachedRows = null;
             return;
         }
         Font font = Minecraft.getInstance().font;
-        List<List<Line>> rows = lines();
+        int tick = ClientEyeRuntime.clientTicks();
+        if (cachedRows == null || cachedRowsTick != tick) {
+            cachedRows = lines();
+            cachedRowsTick = tick;
+        }
+        List<List<Line>> rows = cachedRows;
 
         int widest = 0;
         for (List<Line> row : rows) {

@@ -6,13 +6,16 @@ import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import javax.annotation.Nullable;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -36,9 +39,17 @@ public final class PresentationEyes {
     /** Loose-item pupil; configured heads use the shaped arrays in eyes. */
     public final GooglyTracker.EyeInfo eye = new GooglyTracker.EyeInfo();
     public final GooglyTracker.EyeInfo[][] eyes;
+    /**
+     * The placed head's eye-state compound this was built from. A load replaces that compound, so another
+     * reference means the head's state may have changed.
+     */
+    @Nullable
+    CompoundTag headData;
     @Nullable
     public final HeadInfo helper;
     private final EyeInfluence influence = new EyeInfluence();
+    /** A private copy of the presented item; empty for placed heads and boats. */
+    private final ItemStack item;
     int lastRenderTick;
     private long motionTick = Long.MIN_VALUE;
     @Nullable
@@ -46,6 +57,8 @@ public final class PresentationEyes {
     public final int[] parts;
     private double prevX, prevY, prevZ;
     private List<EyeBehavior> pool = List.of();
+    /** The appearance this presentation draws, decoded once. */
+    public final AppearanceOverride properties;
     private final RandomSource rand;
     private long scheduledSlot = Long.MIN_VALUE;
     private final long seed;
@@ -60,12 +73,18 @@ public final class PresentationEyes {
     private final boolean stationaryHead;
 
     public PresentationEyes(UUID uuid) {
-        this(uuidSeed(uuid), null, null, null, new int[]{0}, false);
+        this(uuid, new ItemStack(ModContent.GOOGLY_EYE.get()));
     }
 
-    private PresentationEyes(long seed, @Nullable ResourceLocation entity, @Nullable Snapshot snapshot,
+    private PresentationEyes(UUID uuid, ItemStack looseEye) {
+        this(uuidSeed(uuid), looseEye.copyWithCount(1), null, null, null, new int[]{0}, false);
+    }
+
+    private PresentationEyes(long seed, ItemStack item, @Nullable ResourceLocation entity, @Nullable Snapshot snapshot,
                              @Nullable HeadInfo helper, int[] parts, boolean stationaryHead) {
         this.seed = seed;
+        this.item = item;
+        this.properties = snapshot != null ? snapshot.properties() : EyeItemProperties.get(item);
         this.stationaryHead = stationaryHead;
         rand = RandomSource.create(seed);
         this.entity = entity;
@@ -101,7 +120,7 @@ public final class PresentationEyes {
     @Nullable
     public static PresentationEyes create(UUID uuid, ItemStack stack) {
         if (stack.is(ModContent.GOOGLY_EYE.get())) {
-            return new PresentationEyes(uuid);
+            return new PresentationEyes(uuid, stack);
         }
         ResourceLocation entity = SkullEyeState.entityFor(stack);
         Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
@@ -113,7 +132,7 @@ public final class PresentationEyes {
         if (parts.length == 0) {
             return null;
         }
-        return new PresentationEyes(uuidSeed(uuid), entity, snapshot, helper, parts, false);
+        return new PresentationEyes(uuidSeed(uuid), stack.copyWithCount(1), entity, snapshot, helper, parts, false);
     }
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */
@@ -121,14 +140,14 @@ public final class PresentationEyes {
         if (!helper.hasConfig()) {
             throw new IllegalArgumentException("An ambient layout must contain eyes");
         }
-        return new PresentationEyes(uuidSeed(uuid), entity, snapshot, helper,
+        return new PresentationEyes(uuidSeed(uuid), ItemStack.EMPTY, entity, snapshot, helper,
                 IntStream.range(0, helper.getHeadCount()).toArray(), false);
     }
 
     /** Use the block position's seed and the attached-eye gravity convention for a placed head. */
     public static PresentationEyes placedHead(long seed, ResourceLocation entity, Snapshot snapshot,
                                               HeadInfo helper, int[] parts) {
-        return new PresentationEyes(seed, entity, snapshot, helper, parts, true);
+        return new PresentationEyes(seed, ItemStack.EMPTY, entity, snapshot, helper, parts, true);
     }
 
     private static long uuidSeed(UUID uuid) {
@@ -140,16 +159,15 @@ public final class PresentationEyes {
         lastRenderTick = currentClientTick;
     }
 
-    /** Item changes that affect layout or appearance replace a head simulation. */
+    /** Whether {@code stack} is still the presented item; a different count or stack copy still is. */
     public boolean matches(ItemStack stack) {
-        return helper == null ? stack.is(ModContent.GOOGLY_EYE.get())
-                : entity.equals(SkullEyeState.entityFor(stack)) && snapshot.equals(SkullEyeState.itemSnapshot(stack));
+        return ItemStack.isSameItemSameTags(item, stack);
     }
 
     /** Whether this item carries a loose eye or an eligible head-eye snapshot. */
     public static boolean supports(ItemStack stack) {
         return stack.is(ModContent.GOOGLY_EYE.get())
-                || SkullEyeState.entityFor(stack) != null && SkullEyeState.itemSnapshot(stack) != null;
+                || SkullEyeState.itemHasEyes(stack) && SkullEyeState.entityFor(stack) != null;
     }
 
     /**

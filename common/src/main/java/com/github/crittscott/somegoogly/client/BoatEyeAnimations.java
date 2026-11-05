@@ -34,8 +34,7 @@ public final class BoatEyeAnimations {
         }
 
         boolean matches(Boat boat, RuntimeConfig current) {
-            return config == current && attachment.equals(BoatEyeLayout.attachment(boat))
-                    && eyes.snapshot.equals(EyeState.snapshot(boat));
+            return config == current && attachment.equals(BoatEyeLayout.attachment(boat));
         }
     }
 
@@ -50,12 +49,16 @@ public final class BoatEyeAnimations {
     public PresentationEyes get(Boat boat) {
         var type = EntityType.getKey(boat.getType());
         RuntimeConfig config = ClientEyeConfigs.get(type, false);
-        if (!mayShow(boat, config)) {
+        if (!mayShow(boat)) {
             entries.remove(boat);
             return null;
         }
         Entry entry = entries.get(boat);
         if (entry == null || !entry.matches(boat, config)) {
+            if (!BoatEyeLayout.isEligible(boat, config)) {
+                entries.remove(boat);
+                return null;
+            }
             var snapshot = EyeState.snapshot(boat);
             HeadInfo helper = BoatEyeLayout.resolve(boat, config, snapshot.variantRoll());
             entry = new Entry(BoatEyeLayout.attachment(boat), config,
@@ -66,11 +69,18 @@ public final class BoatEyeAnimations {
         return entry.eyes;
     }
 
-    private static boolean mayShow(Boat boat, @Nullable RuntimeConfig config) {
+    private static boolean mayShow(Boat boat) {
         return ClientEyeConfigs.eyesVisible()
                 && !ClientConfig.isEntityDisabled(EntityType.getKey(boat.getType()))
-                && !boat.isInvisible() && !boat.isRemoved() && EyeState.hasEyes(boat)
-                && BoatEyeLayout.isEligible(boat, config);
+                && !boat.isInvisible() && !boat.isRemoved() && EyeState.hasEyes(boat);
+    }
+
+    /** A synchronized state replaces the boat's simulation unless it is the state that simulation shows. */
+    public void onStateChanged(Entity boat, EyeState.Snapshot snapshot) {
+        Entry entry = entries.get(boat);
+        if (entry != null && !entry.eyes.snapshot.equals(snapshot)) {
+            entries.remove(boat);
+        }
     }
 
     /** Entity unloading immediately releases the boat's local simulation. */
@@ -83,7 +93,7 @@ public final class BoatEyeAnimations {
         ticks++;
         ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown, (boat, entry) -> {
             RuntimeConfig config = ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false);
-            return boat.level() != level || !mayShow(boat, config) || !entry.matches(boat, config);
+            return boat.level() != level || !mayShow(boat) || !entry.matches(boat, config);
         }, (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
     }
 }

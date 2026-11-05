@@ -2,16 +2,13 @@ package com.github.crittscott.somegoogly.platform.fabric;
 
 import com.github.crittscott.somegoogly.network.Payload;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-/** Fabric clientbound sends; tracking fanout uses Fabric API's authoritative lookup. */
+/** Fabric clientbound sends; tracking fanout encodes once and uses the vanilla broadcast Forge's distributor does. */
 public final class NetworkingImpl {
 
     private NetworkingImpl() {
@@ -22,11 +19,8 @@ public final class NetworkingImpl {
     }
 
     public static void sendTrackingAndSelf(Entity entity, Payload payload) {
-        Collection<ServerPlayer> recipients = new ArrayList<>(PlayerLookup.tracking(entity));
-        if (entity instanceof ServerPlayer player && !recipients.contains(player)) {
-            recipients.add(player);
-        }
-        recipients.forEach(player -> sendToPlayer(player, payload));
+        ((ServerChunkCache) entity.level().getChunkSource()).broadcastAndSend(entity,
+                ServerPlayNetworking.createS2CPacket(payload.id(), encode(payload)));
     }
 
     /** A fresh buffer holding {@code payload}'s body. */

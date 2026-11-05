@@ -98,7 +98,10 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        EyeAppearance look = EyeAppearance.DEFAULT.overlay(EyeItemProperties.get(stack));
+        PresentationEyes.Draw draw = itemDraw(stack);
+        PresentationEyes presented = draw.eyes();
+        EyeAppearance look = EyeAppearance.DEFAULT.overlay(
+                presented != null ? presented.properties : EyeItemProperties.get(stack));
 
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
@@ -110,8 +113,6 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        PresentationEyes.Draw draw = itemDraw(stack);
-        PresentationEyes presented = draw.eyes();
         GooglyTracker.EyeInfo animated = presented != null ? presented.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
         if (presented != null) {
             GooglyEyeRenderer.captureGravity(pose, animated);

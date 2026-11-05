@@ -1,8 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
-import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -30,11 +28,9 @@ public final class GuiEyeAnimations {
     private static final class Entry {
         final PresentationEyes eyes;
         long lastShown;
-        final AppearanceOverride properties;
 
-        Entry(PresentationEyes eyes, AppearanceOverride properties) {
+        Entry(PresentationEyes eyes) {
             this.eyes = eyes;
-            this.properties = properties;
         }
     }
 
@@ -43,23 +39,18 @@ public final class GuiEyeAnimations {
         entries.clear();
     }
 
-    /** Request a visible presentation; unsupported or disabled items retire their former simulation. */
+    /** Request a visible presentation, replacing one built for another item; unsupported items have none. */
     @Nullable
-    public PresentationEyes get(Key key, ItemStack stack, boolean enabled) {
-        if (!enabled || !PresentationEyes.supports(stack)) {
-            entries.remove(key);
-            return null;
-        }
-        AppearanceOverride properties = EyeItemProperties.get(stack);
+    public PresentationEyes get(Key key, ItemStack stack) {
         Entry entry = entries.get(key);
-        if (entry == null || !entry.eyes.matches(stack) || !entry.properties.equals(properties)) {
+        if (entry == null || !entry.eyes.matches(stack)) {
             PresentationEyes eyes = PresentationEyes.create(new UUID(0L, ++nextSeed), stack);
             if (eyes == null) {
                 entries.remove(key);
                 return null;
             }
             eyes.useGuiGravity();
-            entry = new Entry(eyes, properties);
+            entry = new Entry(eyes);
             entries.put(key, entry);
         }
         entry.lastShown = ticks;

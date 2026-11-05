@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.function.BiPredicate;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -106,9 +108,14 @@ public final class ClientEyeRuntime {
         if (tracker == null || !tracker.matches(helper)) {
             tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()), ClientEyeConfigs.behaviors());
             TRACKERS.put(living, tracker);
+            synchronizeBehavior(living, tracker, 0);
         }
-        synchronizeBehavior(living, tracker, 0);
         return tracker;
+    }
+
+    /** A boat's eye state arrived from the server; a differing state replaces its simulation. */
+    public static void onBoatState(Entity boat, EyeState.Snapshot snapshot) {
+        BOATS.onStateChanged(boat, snapshot);
     }
 
     /** Forget a removed entity's simulation and server-reported anger. */
@@ -158,12 +165,20 @@ public final class ClientEyeRuntime {
 
     /**
      * The eyes of the eyed head {@code skull}, a head of {@code entity}'s kind, creating them on first use and
-     * replacing any built for another kind of head at the same position; {@code null} when the client's
-     * definitions give it nothing to draw.
+     * replacing any built for another kind of head at the same position or from another state; {@code null}
+     * when the client's definitions give it nothing to draw. A load with unchanged state keeps the pupils.
      */
     @Nullable
     public static PresentationEyes skullEyes(BlockEntity skull, ResourceLocation entity) {
         PresentationEyes eyes = SKULLS.get(skull.getBlockPos());
+        CompoundTag data = SkullEyeState.data(skull);
+        if (eyes != null && eyes.headData != data) {
+            if (SkullEyeState.snapshot(skull).equals(eyes.snapshot)) {
+                eyes.headData = data;
+            } else {
+                eyes = null;
+            }
+        }
         if (eyes == null || !eyes.entity.equals(entity)) {
             var snapshot = SkullEyeState.snapshot(skull);
             var layout = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
@@ -173,6 +188,7 @@ public final class ClientEyeRuntime {
                 return null;
             }
             eyes = PresentationEyes.placedHead(Mth.getSeed(skull.getBlockPos()), entity, snapshot, layout, parts);
+            eyes.headData = data;
             SKULLS.put(skull.getBlockPos().immutable(), eyes);
         }
         return eyes;
@@ -222,8 +238,7 @@ public final class ClientEyeRuntime {
     /**
      * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
      * physics of those rendered this tick or last when {@code simulate} is true. The client lifecycle
-     * disables simulation while there is no level or the game is paused. A head's eyes are also dropped
-     * when its eye state has changed, to be rebuilt from the new state when it next renders.
+     * disables simulation while there is no level or the game is paused.
      */
     public static void tick(@Nullable Level level, boolean simulate) {
         clientTicks++;
@@ -237,10 +252,9 @@ public final class ClientEyeRuntime {
         }
         BOATS.tick(level, level.getGameTime(), behaviors);
         sweep(FRAMES, clientTicks, eye -> eye.lastRenderTick,
-                (frame, eye) -> frame.isRemoved() || frame.level() != level || !eye.matches(frame.getItem()),
+                (frame, eye) -> frame.isRemoved() || frame.level() != level,
                 (frame, eye) -> eye.tick(level.getGameTime(), behaviors));
-        sweep(SKULLS, clientTicks, eyes -> eyes.lastRenderTick,
-                (pos, eyes) -> !SkullEyeState.snapshot(level.getBlockEntity(pos)).equals(eyes.snapshot),
+        sweep(SKULLS, clientTicks, eyes -> eyes.lastRenderTick, (pos, eyes) -> false,
                 (pos, eyes) -> eyes.tick(level.getGameTime(), behaviors));
         sweep(TRACKERS, clientTicks, tracker -> tracker.lastRenderTick, (living, tracker) -> false,
                 (living, tracker) -> {

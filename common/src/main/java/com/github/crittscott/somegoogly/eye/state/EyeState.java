@@ -127,12 +127,14 @@ public final class EyeState {
      * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(Entity entity) {
-        return variantRoll(EntityPersistentData.get(entity));
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data == null ? Snapshot.NONE.variantRoll() : variantRoll(data);
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
     public static boolean hasEyes(Entity entity) {
-        return EntityPersistentData.get(entity).getBoolean(HAS_EYES);
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data != null && data.getBoolean(HAS_EYES);
     }
 
     /**
@@ -162,7 +164,8 @@ public final class EyeState {
 
     /** Whether the server has made this entity's one-time natural-eye decision. */
     public static boolean isInitialized(Entity entity) {
-        return EntityPersistentData.get(entity).contains(HAS_EYES);
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data != null && data.contains(HAS_EYES);
     }
 
     @Nullable
@@ -173,7 +176,8 @@ public final class EyeState {
     /** The overrides compound, or {@code null} if absent (used by the sync packet). */
     @Nullable
     public static CompoundTag overridesTagOrNull(Entity entity) {
-        return overridesTag(EntityPersistentData.get(entity));
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data == null ? null : overridesTag(data);
     }
 
     private static EyeStatePacket packet(Entity entity) {
@@ -182,8 +186,8 @@ public final class EyeState {
 
     /**
      * Read the mob's appearance override as {@link AppearanceOverride} ({@link AppearanceOverride#EMPTY}
-     * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
-     * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
+     * when none). The override compound is the same {@link AppearanceOverride#toNbt} schema an eye item
+     * carries, so item↔mob transfer is a straight property copy.
      */
     public static AppearanceOverride readProperties(Entity entity) {
         return AppearanceOverride.fromNbt(overridesTagOrNull(entity));

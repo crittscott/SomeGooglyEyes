@@ -61,9 +61,12 @@ public final class GooglyEyeRenderer {
     /**
      * Capture the eye plane for the next physics tick after composing the eye pose and before
      * expression scaling. The pupil's gravity mode selects world-down or GUI screen-down and
-     * determines whether display scale is removed.
+     * determines whether display scale is removed. Only the first draw after a tick captures.
      */
     public static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
+        if (!eyeInfo.poseStale) {
+            return;
+        }
         GRAVITY_POSE.set(pose.last().pose());
         eyeInfo.capturePose(GRAVITY_POSE, eyeInfo.guiGravity ? null
                 : Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());

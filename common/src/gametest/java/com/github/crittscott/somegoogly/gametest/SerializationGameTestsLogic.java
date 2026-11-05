@@ -29,6 +29,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -144,6 +146,16 @@ public final class SerializationGameTestsLogic {
                 .withIrisColor(new EyeColor(Float.NaN, 0.5F, 0.5F));
         helper.assertTrue(AppearanceOverride.fromNbt(invalid.toNbt()).equals(AppearanceOverride.EMPTY),
                 "non-finite portable appearance data is discarded");
+        // /give and /data write decimals as doubles.
+        ListTag doubles = new ListTag();
+        doubles.add(DoubleTag.valueOf(0.25D));
+        doubles.add(DoubleTag.valueOf(0.5D));
+        doubles.add(DoubleTag.valueOf(0.75D));
+        CompoundTag typed = new CompoundTag();
+        typed.put("irisColor", doubles);
+        helper.assertTrue(AppearanceOverride.fromNbt(typed).equals(
+                AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.25F, 0.5F, 0.75F))),
+                "a hand-typed color list reads whatever its number type");
         helper.succeed();
     }
 

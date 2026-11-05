@@ -40,8 +40,8 @@ import java.util.Map;
  * the debug {@link #trigger}). A tracked-but-eyeless mob — the overwhelming majority, since the default
  * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
- * eye / admin toggle), called from {@link EyeState}. Once promoted, a mob stays in {@link #ACTIVE} for
- * the rest of its tracked lifetime, even if it loses its eyes.
+ * eye / admin toggle), called from {@link EyeState}. A promoted mob that loses its eyes leaves {@link #ACTIVE}
+ * when its next ambient roll finds them gone.
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
@@ -50,8 +50,7 @@ public final class ServerBehaviorScheduler {
 
     private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
-    // Never demoted while tracked, so a mob whose behavior still needs retiring is never evicted; a mob
-    // that loses its eyes while watched is rare enough that walking it costs nothing noticeable.
+    // Only an idle mob leaves while tracked, so one whose behavior still needs retiring is never evicted.
     private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
     private static long now; // monotonic scheduler tick, advanced once per server tick
@@ -195,9 +194,10 @@ public final class ServerBehaviorScheduler {
             return;
         }
 
-        if (EyeState.hasEyes(mob)) {
-            // Initial state is complete; the cached delta still belongs to all existing watchers.
-            Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), isAngry(mob)));
+        // Calm is every client's default, so only anger needs catching up. The cached delta still belongs to
+        // all existing watchers.
+        if (EyeState.hasEyes(mob) && isAngry(mob)) {
+            Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), true));
         }
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
         // they pick it up in sync rather than seeing nothing until the next one.
@@ -288,19 +288,20 @@ public final class ServerBehaviorScheduler {
             }
             // Anger changes are rare, so a packet goes out only when one happens. An eyeless mob's anger
             // stays unsent; it's picked up on the first tick after the mob gains eyes.
+            // Resuming, a viewer added while disabled still needs to hear of anger that didn't change.
             boolean angry = isAngry(mob);
-            if (resuming && EyeState.hasEyes(mob)
-                    || angry != state.angry && (!angry || EyeState.hasEyes(mob))) {
+            if ((angry != state.angry || resuming && angry) && (!angry || EyeState.hasEyes(mob))) {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
             }
             // Idle + ambient enabled → count down, and only at expiry check whether the mob still has
-            // eyes (a mob can be walked here after having lost them again — see the class doc).
+            // eyes; one that lost them stops being walked until onEyesGained promotes it again.
             if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
                 if (EyeState.hasEyes(mob)) {
                     rollAmbient(mob, state);
                 } else {
                     state.ambientCooldown = nextCooldown();
+                    it.remove();
                 }
             }
         }

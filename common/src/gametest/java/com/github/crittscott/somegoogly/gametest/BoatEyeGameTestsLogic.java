@@ -162,7 +162,9 @@ public final class BoatEyeGameTestsLogic {
             cache.tick(helper.getLevel(), 100001L, blink);
             helper.assertTrue(recreated.active != null && recreated.active.age == 1,
                     "a reappearing boat follows current expression time without replaying missed slots");
-            EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
+            EyeState.Snapshot glowing = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
+            EyeState.applySnapshot(boat, glowing);
+            cache.onStateChanged(boat, glowing);
             cache.tick(helper.getLevel(), 100002L, blink);
             helper.assertTrue(cache.get(boat) != recreated, "unrendered state changes invalidate cached pupils");
             recreated = cache.get(boat);
@@ -393,7 +395,11 @@ public final class BoatEyeGameTestsLogic {
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
             var first = ClientEyeRuntime.boatEyes(boat);
             helper.assertTrue(first != null && first == ClientEyeRuntime.boatEyes(boat), "unchanged boats retain pupils");
-            EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
+            ClientEyeRuntime.onBoatState(boat, EyeState.snapshot(boat));
+            helper.assertTrue(first == ClientEyeRuntime.boatEyes(boat), "a repeated state retains pupils");
+            EyeState.Snapshot glowing = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
+            EyeState.applySnapshot(boat, glowing);
+            ClientEyeRuntime.onBoatState(boat, glowing);
             var changed = ClientEyeRuntime.boatEyes(boat);
             helper.assertTrue(changed != first, "appearance changes replace pupils");
             boat.setVariant(Boat.Type.BAMBOO);

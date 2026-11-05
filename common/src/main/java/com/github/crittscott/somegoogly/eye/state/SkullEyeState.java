@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -87,6 +88,26 @@ public final class SkullEyeState {
     private SkullEyeState() {
     }
 
+    /**
+     * Each head block's mob, built on first use, after every block is registered. Never changed afterward, so
+     * the server and render threads can both read it.
+     */
+    private static final class HeadBlocks {
+
+        static final Map<Block, ResourceLocation> ENTITIES = build();
+
+        private static Map<Block, ResourceLocation> build() {
+            Map<Block, ResourceLocation> entities = new IdentityHashMap<>();
+            for (Block block : BuiltInRegistries.BLOCK) {
+                ResourceLocation entity = headEntity(block);
+                if (entity != null) {
+                    entities.put(block, entity);
+                }
+            }
+            return entities;
+        }
+    }
+
     /** The head block entity's side of the eye-state compound, added by each loader's Mixin. */
     public interface Holder {
 
@@ -136,14 +157,16 @@ public final class SkullEyeState {
         }
     }
 
+    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    @Nullable
+    public static CompoundTag data(@Nullable BlockEntity skull) {
+        return skull instanceof Holder holder ? holder.somegoogly$find() : null;
+    }
+
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
     @Nullable
     public static ResourceLocation entityFor(Block block) {
-        if (block instanceof AbstractSkullBlock skull) {
-            EntityType<?> type = MOBS.get(skull.getType());
-            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
-        }
-        return entityFor(BuiltInRegistries.BLOCK.getKey(block));
+        return HeadBlocks.ENTITIES.get(block);
     }
 
     /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
@@ -188,8 +211,17 @@ public final class SkullEyeState {
 
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data != null && data.getBoolean(EyeState.HAS_EYES);
+    }
+
+    @Nullable
+    private static ResourceLocation headEntity(Block block) {
+        if (block instanceof AbstractSkullBlock skull) {
+            EntityType<?> type = MOBS.get(skull.getType());
+            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
+        }
+        return entityFor(BuiltInRegistries.BLOCK.getKey(block));
     }
 
     /**
@@ -284,6 +316,12 @@ public final class SkullEyeState {
                 : token.equals(partToken);
     }
 
+    /** Whether a head item's eye state has eyes, without decoding the rest of it; safe on any item. */
+    public static boolean itemHasEyes(ItemStack stack) {
+        CompoundTag tag = stack.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
+        return tag != null && tag.getCompound(DATA_KEY).getBoolean(EyeState.HAS_EYES);
+    }
+
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
     @Nullable
     public static Snapshot itemSnapshot(ItemStack stack) {
@@ -321,7 +359,7 @@ public final class SkullEyeState {
 
     /** The placed head's eye state; {@link Snapshot#NONE} when it has never had any. */
     public static Snapshot snapshot(@Nullable BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 

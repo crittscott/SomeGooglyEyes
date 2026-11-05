@@ -36,16 +36,17 @@ public final class HandItemEyes {
     public static PresentationEyes.Draw context(@Nullable LivingEntity holder, ItemStack stack,
                                                 ItemDisplayContext display) {
         if (holder == null || (display != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
-                && display != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)) {
+                && display != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) || !PresentationEyes.supports(stack)) {
             return PresentationEyes.Draw.NONE;
         }
         Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {
+            return PresentationEyes.Draw.NONE;
+        }
         HumanoidArm arm = display == ItemDisplayContext.THIRD_PERSON_LEFT_HAND ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
         InteractionHand hand = arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        boolean enabled = minecraft.level != null && !holder.isRemoved() && ClientEyeConfigs.eyesVisible();
-        PresentationEyes eyes = SIMULATIONS.get(holder, hand, stack, enabled);
-        return eyes == null ? PresentationEyes.Draw.NONE
-                : new PresentationEyes.Draw(eyes, Minecraft.getInstance().getFrameTime());
+        PresentationEyes eyes = SIMULATIONS.get(holder, hand, stack);
+        return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
     }
 
     public static PresentationEyes.Draw current() {

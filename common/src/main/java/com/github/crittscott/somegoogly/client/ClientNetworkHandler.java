@@ -60,6 +60,8 @@ public final class ClientNetworkHandler {
             if (tracker != null) {
                 tracker.overrides = packet.snapshot().properties();
             }
+        } else {
+            ClientEyeRuntime.onBoatState(entity, packet.snapshot());
         }
     }
 

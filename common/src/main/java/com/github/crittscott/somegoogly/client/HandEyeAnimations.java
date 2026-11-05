@@ -1,8 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
-import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,12 +24,10 @@ public final class HandEyeAnimations {
         final PresentationEyes eyes;
         final LivingEntity holder;
         long lastShown;
-        final AppearanceOverride properties;
 
-        Entry(PresentationEyes eyes, LivingEntity holder, AppearanceOverride properties) {
+        Entry(PresentationEyes eyes, LivingEntity holder) {
             this.eyes = eyes;
             this.holder = holder;
-            this.properties = properties;
         }
     }
 
@@ -41,15 +37,14 @@ public final class HandEyeAnimations {
 
     /** Stack copies and counts retain state; eye layout and appearance changes replace it. */
     @Nullable
-    public PresentationEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack, boolean enabled) {
+    public PresentationEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack) {
         Key key = new Key(holder.getUUID(), hand);
-        if (!enabled || holder.isRemoved() || !PresentationEyes.supports(stack)) {
+        if (holder.isRemoved()) {
             entries.remove(key);
             return null;
         }
-        AppearanceOverride properties = EyeItemProperties.get(stack);
         Entry entry = entries.get(key);
-        if (entry == null || entry.holder != holder || !entry.eyes.matches(stack) || !entry.properties.equals(properties)) {
+        if (entry == null || entry.holder != holder || !entry.eyes.matches(stack)) {
             UUID uuid = holder.getUUID();
             UUID seed = hand == InteractionHand.MAIN_HAND ? uuid
                     : new UUID(uuid.getMostSignificantBits() ^ OFFHAND_SEED, uuid.getLeastSignificantBits());
@@ -58,7 +53,7 @@ public final class HandEyeAnimations {
                 entries.remove(key);
                 return null;
             }
-            entry = new Entry(eyes, holder, properties);
+            entry = new Entry(eyes, holder);
             entries.put(key, entry);
         }
         entry.lastShown = ticks;

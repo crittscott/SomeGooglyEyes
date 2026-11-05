@@ -292,6 +292,8 @@ public class GooglyTracker {
         private boolean capturedPose;
         private final Matrix3f inversePose = new Matrix3f();
         /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
+        /** Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough. */
+        public boolean poseStale = true;
         private final Vector3f worldRight = new Vector3f();
         private final Vector3f worldUp = new Vector3f();
 
@@ -351,6 +353,7 @@ public class GooglyTracker {
             gravX = sign * worldRight.y;
             gravY = sign * worldUp.y;
             capturedPose = true;
+            poseStale = false;
         }
 
         /** Re-prime input differentiation after an owner change or a gap in simulation. */
@@ -401,6 +404,7 @@ public class GooglyTracker {
          */
         public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness, float agitation) {
+            poseStale = true;
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 

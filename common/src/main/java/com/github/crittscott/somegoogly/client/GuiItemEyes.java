@@ -22,9 +22,15 @@ public final class GuiItemEyes {
     private GuiItemEyes() {
     }
 
-    /** Called by the GUI's core item method, covering slots, the hotbar, and generic previews. */
-    public static void beginDraw(ItemStack stack, int x, int y, int seed) {
+    /**
+     * The animation of a supported item's GUI draw, if eyes are visible. A slot's former simulation stays until
+     * idle eviction or the next {@link #tick} with eyes hidden.
+     */
+    private static PresentationEyes.Draw animatedDraw(ItemStack stack, int x, int y, int seed) {
         Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {
+            return PresentationEyes.Draw.NONE;
+        }
         Object view = minecraft.screen;
         GuiEyeAnimations.Key key = PRESENTATIONS.peek();
         if (key == null) {
@@ -34,11 +40,15 @@ public final class GuiItemEyes {
         if (key.kind() == GuiEyeAnimations.HOTBAR) {
             key = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, seed, 0, 0);
         }
-        boolean enabled = minecraft.level != null && ClientEyeConfigs.eyesVisible();
-        PresentationEyes eyes = SIMULATIONS.get(key, stack, enabled);
-        float partialTick = Mth.clamp((float) (System.nanoTime() - lastTickNanos) / NANOS_PER_TICK, 0F, 1F);
+        PresentationEyes eyes = SIMULATIONS.get(key, stack);
+        return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes,
+                Mth.clamp((float) (System.nanoTime() - lastTickNanos) / NANOS_PER_TICK, 0F, 1F));
+    }
+
+    /** Called by the GUI's core item method, covering slots, the hotbar, and generic previews. */
+    public static void beginDraw(ItemStack stack, int x, int y, int seed) {
         DRAWS.push(current);
-        current = eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, partialTick);
+        current = PresentationEyes.supports(stack) ? animatedDraw(stack, x, y, seed) : PresentationEyes.Draw.NONE;
     }
 
     /** Slots and carried stacks retain one simulation while their on-screen coordinates change. */

@@ -1,10 +1,7 @@
 package com.github.crittscott.somegoogly.eye.state;
 
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -15,8 +12,9 @@ import java.util.Optional;
  * A <b>sparse</b> override of an eye's {@link EyeAppearance}: each field is optional and, when absent,
  * falls back to the underlying value (a mob's datapack appearance, via {@link EyeAppearance#overlay}).
  *
- * <p>This is the one portable appearance payload. Persistent forms use {@link #CODEC}; the bounded
- * network packet ({@code EyeStatePacket}) uses {@link #write} and {@link #read}. It serves three uses:
+ * <p>This is the one portable appearance payload. Persistent forms use {@link #toNbt} and {@link #fromNbt},
+ * which runs while drawing; the bounded network packet ({@code EyeStatePacket}) uses {@link #write} and
+ * {@link #read}. It serves three uses:
  * <ul>
  *   <li>an eye <b>item</b>'s stack NBT (what survives crafting / harvest),</li>
  *   <li>a mob's per-entity override (see {@link EyeState}),</li>
@@ -32,21 +30,22 @@ import java.util.Optional;
  */
 public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> iris, Optional<Boolean> glow) {
 
-    public static final Codec<AppearanceOverride> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            EyeColor.CODEC.optionalFieldOf("corneaColor").forGetter(AppearanceOverride::cornea),
-            EyeColor.CODEC.optionalFieldOf("irisColor").forGetter(AppearanceOverride::iris),
-            Codec.BOOL.optionalFieldOf("glow").forGetter(AppearanceOverride::glow)
-    ).apply(inst, AppearanceOverride::new));
-
+    private static final String CORNEA_KEY = "corneaColor";
     public static final AppearanceOverride EMPTY =
             new AppearanceOverride(Optional.empty(), Optional.empty(), Optional.empty());
+    private static final String GLOW_KEY = "glow";
+    private static final String IRIS_KEY = "irisColor";
 
     /**
-     * Decode an override, returning {@link #EMPTY} when {@code tag} is {@code null} or cannot be
-     * decoded by {@link #CODEC}.
+     * Decode an override, returning {@link #EMPTY} when {@code tag} is not a compound; a field that is
+     * missing or malformed, or a color out of range, reads as unset.
      */
     public static AppearanceOverride fromNbt(@Nullable Tag tag) {
-        return tag == null ? EMPTY : CODEC.parse(NbtOps.INSTANCE, tag).result().orElse(EMPTY);
+        if (!(tag instanceof CompoundTag data)) {
+            return EMPTY;
+        }
+        return new AppearanceOverride(EyeColor.fromNbt(data.get(CORNEA_KEY)), EyeColor.fromNbt(data.get(IRIS_KEY)),
+                data.contains(GLOW_KEY, Tag.TAG_ANY_NUMERIC) ? Optional.of(data.getBoolean(GLOW_KEY)) : Optional.empty());
     }
 
     /** Read the network form written by {@link #write}; an out-of-range color fails the decode. */
@@ -76,7 +75,11 @@ public record AppearanceOverride(Optional<EyeColor> cornea, Optional<EyeColor> i
 
     /** Encode this override as a compound. */
     public CompoundTag toNbt() {
-        return (CompoundTag) CODEC.encodeStart(NbtOps.INSTANCE, this).getOrThrow(false, error -> { });
+        CompoundTag data = new CompoundTag();
+        cornea.ifPresent(color -> data.put(CORNEA_KEY, color.toNbt()));
+        iris.ifPresent(color -> data.put(IRIS_KEY, color.toNbt()));
+        glow.ifPresent(value -> data.putBoolean(GLOW_KEY, value));
+        return data;
     }
 
     /** {@code null} clears the field. */

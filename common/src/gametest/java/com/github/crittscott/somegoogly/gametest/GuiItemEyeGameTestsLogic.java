@@ -38,35 +38,35 @@ public final class GuiItemEyeGameTestsLogic {
         Object view = new Object();
         var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
         ItemStack stack = eye();
-        var presentation = cache.get(key, stack, true);
+        var presentation = cache.get(key, stack);
         BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
         BehaviorSettings blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK),
                 0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
         cache.tick(view, blink);
         helper.assertTrue(presentation.active != null && presentation.active.age == 1,
                 "the first UI tick joins its blink without consulting world time");
-        cache.get(key, stack, true);
+        cache.get(key, stack);
         cache.tick(view, blink);
         helper.assertTrue(presentation.active.age == 2, "UI time advances independently");
         helper.succeed();
     }
 
     /**
-     * Disabled and ordinary items retire their old presentation. In game: disable eye animation, then
+     * Hidden eyes and ordinary items retire their old presentation. In game: disable eye animation, then
      * replace a visible eye with a diamond; restoring the eye produces a fresh live presentation.
      */
     public static void guiEyesHonorEligibilityAndSwitch(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 0, 0, 0);
-        var first = cache.get(key, eye(), true);
-        helper.assertTrue(cache.get(key, eye(), false) == null, "disabled GUI animation supplies no simulation");
-        var restored = cache.get(key, eye(), true);
+        var first = cache.get(key, eye());
+        cache.clear();
+        var restored = cache.get(key, eye());
         helper.assertTrue(restored != first, "reenabling creates fresh state");
-        helper.assertTrue(cache.get(key, new ItemStack(Items.DIAMOND), true) == null,
+        helper.assertTrue(cache.get(key, new ItemStack(Items.DIAMOND)) == null,
                 "ordinary items have no eye simulation");
-        helper.assertTrue(cache.get(key, new ItemStack(Items.SKELETON_SKULL), true) == null,
+        helper.assertTrue(cache.get(key, new ItemStack(Items.SKELETON_SKULL)) == null,
                 "plain heads have no eye simulation");
-        helper.assertTrue(cache.get(key, ItemStack.EMPTY, true) == null, "empty slots retire their presentation");
+        helper.assertTrue(cache.get(key, ItemStack.EMPTY) == null, "empty slots retire their presentation");
         helper.succeed();
     }
 
@@ -78,10 +78,10 @@ public final class GuiItemEyeGameTestsLogic {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 3, 0, 0);
         ItemStack stack = eye();
-        var first = cache.get(key, stack, true);
+        var first = cache.get(key, stack);
         ItemStack copy = stack.copy();
         copy.setCount(2);
-        var second = cache.get(key, copy, true);
+        var second = cache.get(key, copy);
         helper.assertTrue(first == second,
                 "copies and counts do not create per-frame simulations");
         helper.assertTrue(first.eye.guiGravity && !first.eye.itemGravity,
@@ -97,9 +97,9 @@ public final class GuiItemEyeGameTestsLogic {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 0, 0, 0);
         ItemStack stack = eye();
-        var first = cache.get(key, stack, true);
+        var first = cache.get(key, stack);
         EyeItemProperties.set(stack, AppearanceOverride.EMPTY.withGlow(true));
-        var changed = cache.get(key, stack, true);
+        var changed = cache.get(key, stack);
         helper.assertTrue(first != changed,
                 "appearance changes replace the simulation");
         helper.succeed();
@@ -114,21 +114,21 @@ public final class GuiItemEyeGameTestsLogic {
         Object view = new Object();
         var screenKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
         var hudKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.POSITION, 0, 0, 0);
-        var screen = cache.get(screenKey, eye(), true);
-        var hud = cache.get(hudKey, eye(), true);
+        var screen = cache.get(screenKey, eye());
+        var hud = cache.get(hudKey, eye());
         cache.tick(new Object(), BehaviorSettings.NONE);
-        helper.assertTrue(cache.get(screenKey, eye(), true) != screen,
+        helper.assertTrue(cache.get(screenKey, eye()) != screen,
                 "departing a screen retires its simulations");
-        helper.assertTrue(cache.get(hudKey, eye(), true) == hud,
+        helper.assertTrue(cache.get(hudKey, eye()) == hud,
                 "the HUD simulation belongs to its own view");
         for (int tick = 0; tick < IDLE_TICKS; tick++) {
             cache.tick(null, BehaviorSettings.NONE);
         }
-        helper.assertTrue(cache.get(hudKey, eye(), true) != hud,
+        helper.assertTrue(cache.get(hudKey, eye()) != hud,
                 "unseen presentations are evicted");
-        var current = cache.get(hudKey, eye(), true);
+        var current = cache.get(hudKey, eye());
         cache.clear();
-        helper.assertTrue(cache.get(hudKey, eye(), true) != current,
+        helper.assertTrue(cache.get(hudKey, eye()) != current,
                 "resource/world resets invalidate GUI state");
         helper.succeed();
     }
@@ -140,17 +140,17 @@ public final class GuiItemEyeGameTestsLogic {
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         Object view = new Object();
-        var first = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0), eye(), true);
-        var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 1, 0, 0), eye(), true);
+        var first = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0), eye());
+        var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 1, 0, 0), eye());
         var cursorKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.CURSOR, 0, 0, 0);
-        var cursor = cache.get(cursorKey, eye(), true);
+        var cursor = cache.get(cursorKey, eye());
         helper.assertTrue(first != second && cursor != first, "presentations do not share pupils");
-        helper.assertTrue(cache.get(cursorKey, eye().copy(), true) == cursor,
+        helper.assertTrue(cache.get(cursorKey, eye().copy()) == cursor,
                 "the cursor simulation is independent of its moving coordinates");
         var hotbarKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, 1, 0, 0);
-        var hotbar = cache.get(hotbarKey, eye(), true);
+        var hotbar = cache.get(hotbarKey, eye());
         cache.tick(view, BehaviorSettings.NONE);
-        helper.assertTrue(cache.get(hotbarKey, eye(), true) == hotbar,
+        helper.assertTrue(cache.get(hotbarKey, eye()) == hotbar,
                 "hotbar slot seeds remain stable while another screen is open");
         helper.succeed();
     }
@@ -171,7 +171,7 @@ public final class GuiItemEyeGameTestsLogic {
             var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
-            var presentation = cache.get(key, head, true);
+            var presentation = cache.get(key, head);
             helper.assertTrue(presentation != null && presentation.helper != null,
                     "an eyed GUI head resolves its configured layout");
             for (int part : presentation.parts) {
@@ -184,7 +184,7 @@ public final class GuiItemEyeGameTestsLogic {
                     0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
             boolean played = false;
             for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
-                cache.get(key, head, true);
+                cache.get(key, head);
                 cache.tick(view, cross);
                 played |= presentation.active != null;
             }
