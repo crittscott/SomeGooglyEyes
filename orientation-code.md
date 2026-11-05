@@ -42,7 +42,7 @@ Persistent entity keys:
 
 The eye-state key and roll are initialized together only when absent, keeping the natural-eyes decision. `initialize` and `sendTo` skip a default snapshot; mid-life mutations always send. Loader hooks call `EyeState.copy` on mob conversion and non-death respawn; a player joining a level gets their own snapshot.
 
-Placed heads store a `Snapshot` under `somegoogly:data`, cleared on load when absent. Block updates sync it, loot copies it to `BlockEntityTag`, and placement restores it. Vanilla heads map by type, Heads and Twilight Forest by ID. Optional Forge mixins add trophy storage and sync, and carry eyes through skull candle conversion. Skull, candle, and trophy draws share nested render contexts. Trophies fit mob eye layouts to their models, with a trophy-local Hydra layout.
+Placed heads store a `Snapshot` under `somegoogly:data`, cleared on load when absent. Block updates sync it, loot copies it to `BlockEntityTag`, and placement restores it. Vanilla heads map by type, Heads and Twilight Forest by ID. Optional Forge mixins add trophy storage and sync, and carry eyes through skull candle conversion; their config is non-required, so a Twilight Forest change costs eyes, not a launch. Skull, candle, and trophy draws share nested render contexts. Trophies fit mob eye layouts to their models, with a trophy-local Hydra layout.
 
 Eye items carry `AppearanceOverride` as the `EyeProperties` compound (`EyeItemProperties`), never geometry; harvesting copies the first eye's effective appearance, and the modifier recipe changes only that compound.
 
@@ -86,13 +86,13 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 ## Loader integration
 
-Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, mooshroom shearing (`shear`, and Forge's `shearInternal`), server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt and heal, trades, shears-kill and head drops, and level changes.
+Shared Mixins (`somegoogly-common*.mixins.json`) cover milking, sheep shearing, mooshroom shearing (`shear`, and Forge's `shearInternal`), server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt (on `LivingEntity` and `Player`) and heal, lightning conversion, trades, shears-kill and head drops, and level changes.
 
 Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus. Forge GameTests use the unprefixed `empty` template.
 
 ## Automated verification
 
-GameTest scenarios: Fabric 172, Forge 175, including three that require Twilight Forest. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
+GameTest scenarios: Fabric 180, Forge 183, including three that require Twilight Forest. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
 
 ## Operational boundaries
 

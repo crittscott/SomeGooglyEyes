@@ -120,4 +120,9 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayer.get(helper.getLevel()));
+    }
 }

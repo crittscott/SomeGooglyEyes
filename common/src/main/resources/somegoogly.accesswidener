@@ -23,6 +23,10 @@ accessible	field	net/minecraft/client/model/AgeableListModel	bodyYOffset	F
 # INSERTED before the slime's translucent outer-cube layer instead of appended after it.
 accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layers	Ljava/util/List;
 
+# EntityRenderDispatcher.renderers (private map of every type's renderer). Forge's AddLayers event has no way to
+# list them without a cast that fails on non-living renderers.
+accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	renderers	Ljava/util/Map;
+
 # Forge patches addLayer public. Fabric widens the vanilla protected method for the same adapter API.
 accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
 

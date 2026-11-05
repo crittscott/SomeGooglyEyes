@@ -84,6 +84,7 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`) from 
 | Fabric API runtime declaration | `>=0.92.11+1.20.1`; compilation uses `0.92.11+1.20.1` |
 | GeckoLib | optional on every loader; `4.7.4` or newer when present |
 | Heads | optional on Forge, any version (`mods.toml`); never required |
+| Twilight Forest | optional on Forge, any version (`mods.toml`); never required |
 
 ## Resolution and version authorities
 

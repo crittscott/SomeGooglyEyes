@@ -36,4 +36,9 @@ public final class RecipeGameTests implements FabricGameTest {
     public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RecipeGameTestsLogic.slimyEyeCarriesTheEyesAppearance(helper);
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        RecipeGameTestsLogic.slimyEyeRecipeUnlocksByAdvancement(helper);
+    }
 }

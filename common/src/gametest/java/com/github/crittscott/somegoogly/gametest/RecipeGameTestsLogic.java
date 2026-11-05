@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -38,6 +40,10 @@ public final class RecipeGameTestsLogic {
 
     private static final ResourceLocation EYE_MODIFIER =
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "eye_modifier");
+    private static final ResourceLocation SLIMY_EYE =
+            new ResourceLocation(SomeGooglyCommon.MOD_ID, "slimy_eye");
+    private static final ResourceLocation SLIMY_EYE_ADVANCEMENT =
+            new ResourceLocation(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
 
     private RecipeGameTestsLogic() {
     }
@@ -161,6 +167,19 @@ public final class RecipeGameTestsLogic {
         helper.assertTrue(EyeItemProperties.slimyEyeTint(new ItemStack(ModContent.SLIMY_EYE.get()),
                         EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX) == 0xFF000000,
                 "the slimy eye should render its default black iris with full alpha");
+        helper.succeed();
+    }
+
+    /**
+     * Picking up a Googly Eye unlocks the Slimy Eye recipe. In game: in a new survival world, {@code /give}
+     * yourself a Googly Eye; the recipe book offers the Slimy Eye, and it can be crafted with the
+     * {@code doLimitedCrafting} game rule on.
+     */
+    public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        Advancement advancement = helper.getLevel().getServer().getAdvancements().getAdvancement(SLIMY_EYE_ADVANCEMENT);
+        helper.assertTrue(advancement != null, "the Slimy Eye recipe should have an unlock advancement");
+        helper.assertTrue(Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
+                "the advancement should reward the Slimy Eye recipe");
         helper.succeed();
     }
 }

@@ -12,6 +12,7 @@ import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import java.util.EnumSet;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -542,6 +543,36 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.SWIRL_ON_HEAL.set(onHeal);
             ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A player's real hit bulges the eyes of a mob or of another player. In game: with
+     * {@code growOnHitPercent = 100}, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
+     * eyes grow.
+     */
+    public static void playerHitBulgesEyes(GameTestHelper helper, ServerPlayer attacker) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(100);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Player victim = helper.makeMockPlayer();
+            for (LivingEntity target : List.of(cow, victim)) {
+                EyeState.setHasEyes(target, true);
+                ServerBehaviorScheduler.onStartTracking(target, attacker);
+                helper.assertTrue(target.hurt(helper.getLevel().damageSources().playerAttack(attacker), 1F),
+                        "the hit lands");
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 3, 1L),
+                        "the hit starts the grow, so another behavior can't start");
+            }
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
         }
         helper.succeed();

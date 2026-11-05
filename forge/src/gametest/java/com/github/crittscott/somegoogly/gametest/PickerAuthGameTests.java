@@ -42,6 +42,11 @@ public final class PickerAuthGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void refusedFinalizationLeavesTerrain(GameTestHelper helper) {
         int[] refused = {0};
         Consumer<MobSpawnEvent.FinalizeSpawn> refusal = event -> {

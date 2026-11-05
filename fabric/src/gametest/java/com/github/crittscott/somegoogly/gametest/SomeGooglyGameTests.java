@@ -3,11 +3,13 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.migration.fabric.FabricEntityDataMigration;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.server.fabric.FabricServerEvents;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
@@ -106,6 +108,23 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.optometristAcceptsOnlyShears(helper);
+    }
+
+    /**
+     * A client without the mod reads the refusal in English. In game: join a Fabric server that has this mod from
+     * a client that doesn't; the disconnect screen shows a sentence rather than a translation key.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void requiredClientRefusalCarriesItsText(GameTestHelper helper) {
+        TranslatableContents refusal = (TranslatableContents) FabricServerEvents.requiredClientMessage().getContents();
+        helper.assertTrue(refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
+                "the refusal should carry the English text for a client without our language file");
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.lightningConversionKeepsEyeState(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)

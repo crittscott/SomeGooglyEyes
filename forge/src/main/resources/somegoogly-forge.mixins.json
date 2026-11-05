@@ -1,5 +1,5 @@
 {
-  "required": true,
+  "required": false,
   "minVersion": "0.8",
   "package": "com.github.crittscott.somegoogly.mixin.forge",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
@@ -10,7 +10,7 @@
     "TwilightTrophyDataMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   },
   "client": [
     "TwilightHeadItemRendererMixin",

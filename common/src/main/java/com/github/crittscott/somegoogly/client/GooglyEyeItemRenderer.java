@@ -10,11 +10,9 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -135,16 +133,13 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         pose.popPose();
     }
 
-    /** Draw the frame's item with scoped context, restoring an enclosing draw even if rendering fails. */
-    public static void renderInFrame(ItemRenderer renderer, ItemStack stack, ItemDisplayContext context,
-                                     int light, int overlay, PoseStack pose, MultiBufferSource buffer, Level level,
-                                     int seed, ItemFrame frame, float partialTick) {
-        FrameContext previous = frameContext;
+    /** {@code frame}'s item draw starts; {@link #itemDraw} reads the frame until {@link #endFrame}. */
+    public static void beginFrame(ItemFrame frame, float partialTick) {
         frameContext = new FrameContext(frame, partialTick);
-        try {
-            renderer.renderStatic(stack, context, light, overlay, pose, buffer, level, seed);
-        } finally {
-            frameContext = previous;
-        }
+    }
+
+    /** The current frame's item draw is over. */
+    public static void endFrame() {
+        frameContext = null;
     }
 }

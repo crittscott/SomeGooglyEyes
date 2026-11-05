@@ -55,8 +55,6 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
      */
     public static class Serializer implements RecipeSerializer<SlimyEyeRecipe> {
 
-        private static final ShapelessRecipe.Serializer SHAPELESS = new ShapelessRecipe.Serializer();
-
         private static SlimyEyeRecipe rebuild(ShapelessRecipe base) {
             return new SlimyEyeRecipe(base.getId(), base.getGroup(), base.category(),
                     base.getResultItem(RegistryAccess.EMPTY), base.getIngredients());
@@ -64,17 +62,17 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
 
         @Override
         public SlimyEyeRecipe fromJson(ResourceLocation id, JsonObject json) {
-            return rebuild(SHAPELESS.fromJson(id, json));
+            return rebuild(RecipeSerializer.SHAPELESS_RECIPE.fromJson(id, json));
         }
 
         @Override
         public SlimyEyeRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
-            return rebuild(SHAPELESS.fromNetwork(id, buffer));
+            return rebuild(RecipeSerializer.SHAPELESS_RECIPE.fromNetwork(id, buffer));
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buffer, SlimyEyeRecipe recipe) {
-            SHAPELESS.toNetwork(buffer, recipe);
+            RecipeSerializer.SHAPELESS_RECIPE.toNetwork(buffer, recipe);
         }
     }
 }

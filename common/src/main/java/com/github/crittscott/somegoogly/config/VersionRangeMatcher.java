@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
 import javax.annotation.Nullable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,13 +48,13 @@ public final class VersionRangeMatcher {
         return trimmed.startsWith("[") || trimmed.startsWith("(");
     }
 
-    private record Token(Integer number, String text) implements Comparable<Token> {
-        private static final Token ZERO = new Token(0, null);
+    private record Token(BigInteger number, String text) implements Comparable<Token> {
+        private static final Token ZERO = new Token(BigInteger.ZERO, null);
 
         @Override
         public int compareTo(Token other) {
             if (number != null && other.number != null) {
-                return Integer.compare(number, other.number);
+                return number.compareTo(other.number);
             }
             if (number != null) {
                 return 1;
@@ -66,7 +67,7 @@ public final class VersionRangeMatcher {
 
         static Token of(String value) {
             try {
-                return new Token(Integer.parseInt(value), null);
+                return new Token(new BigInteger(value), null);
             } catch (NumberFormatException ignored) {
                 return new Token(null, value);
             }

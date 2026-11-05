@@ -64,6 +64,11 @@ public final class SomeGooglyGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.lightningConversionKeepsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
                 helper, survivalPlayer(helper));

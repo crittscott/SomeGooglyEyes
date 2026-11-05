@@ -126,4 +126,9 @@ public final class BehaviorSchedulerGameTests {
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
 }

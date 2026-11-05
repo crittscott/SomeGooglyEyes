@@ -32,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -247,10 +248,12 @@ public final class EyeItemService {
     /**
      * Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
      * phase: Forge adds it to the {@code LivingDropsEvent} collection, Fabric appends it
-     * from a {@code dropCustomDeathLoot} mixin.
+     * from a {@code dropCustomDeathLoot} mixin. Forge's event fires whatever {@code doMobLoot} says, so the rule
+     * is checked here.
      */
     public static void onDeath(LivingEntity mob, DamageSource source, Consumer<ItemStack> dropSink) {
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !EyeState.hasEyes(mob)
+                || !mob.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
                 || !(source.getEntity() instanceof Player player)
                 || source.getDirectEntity() != player) {
             return;

@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -47,6 +48,24 @@ public final class ForgeServerEvents {
      * gets first refusal — this handler consumes the event as soon as it acts.
      */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        InteractionResult result = EyeItemService.interact(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
+    /**
+     * An armor stand takes the held item in its own {@code interactAt}, which ends the click before
+     * {@link #onEntityInteract} can see it, so a stand is handled at this earlier event. Other entities stay
+     * with the later one: their click goes on to {@code interact} whatever happens here, and a mob just
+     * harvested here would then be sheared or otherwise used by the same click.
+     */
+    private static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (!(event.getTarget() instanceof ArmorStand)) {
+            return;
+        }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
@@ -156,6 +175,7 @@ public final class ForgeServerEvents {
     public static void register(IEventBus gameBus) {
         gameBus.addListener(ForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteractSpecific);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops, such as the Heads mod's.

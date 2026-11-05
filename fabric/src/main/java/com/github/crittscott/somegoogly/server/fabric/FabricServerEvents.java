@@ -29,6 +29,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
@@ -67,6 +68,15 @@ public final class FabricServerEvents {
             headLootTables = Set.copyOf(tables);
         }
         return headLootTables;
+    }
+
+    /**
+     * The refusal shown to a client without this mod. That client lacks our language file, so the text travels
+     * with the key; Fabric API loads the mod's language file on the server.
+     */
+    public static Component requiredClientMessage() {
+        String key = "somegoogly.network.required_client";
+        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key));
     }
 
     /** Subscribe the server listeners; called once from the mod initializer. */
@@ -117,7 +127,7 @@ public final class FabricServerEvents {
                     if (!understood) {
                         SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
                                 handler.getUserName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
-                        handler.disconnect(Component.translatable("somegoogly.network.required_client"));
+                        handler.disconnect(requiredClientMessage());
                     }
                 });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->

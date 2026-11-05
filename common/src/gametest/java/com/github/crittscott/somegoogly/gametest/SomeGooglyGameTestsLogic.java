@@ -16,14 +16,21 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -92,6 +99,42 @@ public final class SomeGooglyGameTestsLogic {
             helper.assertTrue(EyeState.getVariantRoll(cow) == 0.375F, "Converted mob should keep its variant roll");
             helper.assertTrue(iris.equals(EyeState.readProperties(cow).iris().orElse(null)),
                     "Converted mob should keep its appearance overrides");
+        });
+    }
+
+    /**
+     * A mob lightning turns into another keeps its eye state. In game, on any difficulty but Peaceful: give a
+     * pig and a villager eyes and an iris tint with {@code /sg admin}, then strike each with
+     * {@code /summon lightning_bolt}; the zombified piglin and the witch show the same eyes in the same color.
+     */
+    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
+        BlockPos pigPos = new BlockPos(1, 2, 1);
+        BlockPos villagerPos = new BlockPos(4, 2, 4);
+        Pig pig = helper.spawnWithNoFreeWill(EntityType.PIG, pigPos);
+        Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, villagerPos);
+        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
+        for (LivingEntity mob : List.of(pig, villager)) {
+            EyeState.initialize(mob, true, 0.375F);
+            EyeState.setIrisTint(mob, iris);
+        }
+
+        LightningBolt bolt = Objects.requireNonNull(EntityType.LIGHTNING_BOLT.create(helper.getLevel()));
+        pig.thunderHit(helper.getLevel(), bolt);
+        villager.thunderHit(helper.getLevel(), bolt);
+
+        helper.succeedWhen(() -> {
+            AABB pigArea = new AABB(helper.absolutePos(pigPos)).inflate(CONVERSION_SEARCH_RADIUS);
+            AABB villagerArea = new AABB(helper.absolutePos(villagerPos)).inflate(CONVERSION_SEARCH_RADIUS);
+            List<ZombifiedPiglin> piglins = helper.getLevel().getEntitiesOfClass(ZombifiedPiglin.class, pigArea);
+            List<Witch> witches = helper.getLevel().getEntitiesOfClass(Witch.class, villagerArea);
+            helper.assertTrue(piglins.size() == 1, "Expected the struck pig to become one zombified piglin");
+            helper.assertTrue(witches.size() == 1, "Expected the struck villager to become one witch");
+            for (LivingEntity converted : List.of(piglins.get(0), witches.get(0))) {
+                helper.assertTrue(EyeState.hasEyes(converted), "A struck mob should keep its eyes");
+                helper.assertTrue(EyeState.getVariantRoll(converted) == 0.375F, "A struck mob should keep its variant roll");
+                helper.assertTrue(iris.equals(EyeState.readProperties(converted).iris().orElse(null)),
+                        "A struck mob should keep its appearance overrides");
+            }
         });
     }
 
@@ -166,7 +209,7 @@ public final class SomeGooglyGameTestsLogic {
      * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
      * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
      * player, an eyed cow shot by a player holding shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
-     * {@code googlyEyesEnabled = false}.
+     * {@code googlyEyesEnabled = false} or the {@code doMobLoot} game rule off.
      */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
@@ -175,6 +218,8 @@ public final class SomeGooglyGameTestsLogic {
         int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
         Map<ResourceLocation, EyeConfigModel.RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        GameRules.BooleanValue mobLoot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean originalMobLoot = mobLoot.get();
 
         try {
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
@@ -204,10 +249,15 @@ public final class SomeGooglyGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
+
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            mobLoot.set(false, helper.getLevel().getServer());
+            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
         } finally {
             TestEyeConfigs.install(originalConfigs);
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
+            mobLoot.set(originalMobLoot, helper.getLevel().getServer());
         }
 
         helper.assertTrue(drops.isEmpty(), "Nonqualifying death harvests should emit no eye stacks");

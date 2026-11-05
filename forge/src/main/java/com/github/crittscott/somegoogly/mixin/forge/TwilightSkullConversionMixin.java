@@ -25,7 +25,7 @@ abstract class TwilightSkullConversionMixin {
 
     @Redirect(method = {"makeFloorSkull", "makeWallSkull"}, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z",
-            remap = true), require = 2)
+            remap = true))
     private static boolean somegoogly$rememberEyes(Level level, BlockPos pos, BlockState state) {
         Snapshot snapshot = level.isClientSide() ? Snapshot.NONE : SkullEyeState.snapshot(level.getBlockEntity(pos));
         boolean replaced = level.setBlockAndUpdate(pos, state);
@@ -35,11 +35,12 @@ abstract class TwilightSkullConversionMixin {
 
     @Redirect(method = {"makeFloorSkull", "makeWallSkull"}, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/Level;setBlockEntity(Lnet/minecraft/world/level/block/entity/BlockEntity;)V",
-            remap = true), require = 2)
+            remap = true))
     private static void somegoogly$transferEyes(Level level, BlockEntity candle) {
-        Snapshot snapshot = somegoogly$conversion.get().pop();
+        // Empty if a Twilight Forest update left only this redirect applying.
+        Snapshot snapshot = somegoogly$conversion.get().poll();
         level.setBlockEntity(candle);
-        if (snapshot.hasEyes() && level.getBlockEntity(candle.getBlockPos()) == candle) {
+        if (snapshot != null && snapshot.hasEyes() && level.getBlockEntity(candle.getBlockPos()) == candle) {
             SkullEyeState.set(candle, snapshot);
         }
     }

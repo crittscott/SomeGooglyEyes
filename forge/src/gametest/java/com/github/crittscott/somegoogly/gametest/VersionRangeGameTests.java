@@ -65,6 +65,11 @@ public final class VersionRangeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.longSegmentsCompareAsNumbers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
     }

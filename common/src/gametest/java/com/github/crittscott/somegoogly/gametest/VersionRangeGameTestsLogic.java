@@ -141,6 +141,19 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
+     * A segment of any length compares as a number, so a date-stamped build sorts after an older one. In game:
+     * entries {@code "[1.0.202601010000,1.0.202701010000)"} (blue) and {@code "[1.1,1.2)"} (red) for a mod at
+     * version {@code 1.0.202606010000}; its mob spawns with blue irises.
+     */
+    public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        String range = "[1.0.202601010000,1.0.202701010000)";
+        helper.assertTrue(VersionRangeMatcher.matches(range, "1.0.202606010000"), "a build inside the range should match");
+        helper.assertTrue(!VersionRangeMatcher.matches(range, "1.0.202501010000"), "an older build should not match");
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.0.5,1.1)", "1.0.alpha"), "text still sorts below a number");
+        helper.succeed();
+    }
+
+    /**
      * Exports declare another mod's definitions for that mod's current minor release. In game: with an
      * optional mod installed (say version 4.12.4), run {@code /sg exportall}; that mod's files under
      * {@code somegoogly-export} declare {@code "version": "[4.12.4,4.13)"}.

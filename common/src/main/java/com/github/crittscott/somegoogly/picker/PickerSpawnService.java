@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -45,7 +46,8 @@ import javax.annotation.Nullable;
  * {@code spawnExcludedEntities} ({@link ServerConfig#isSpawnExcluded}).
  *
  * <p>The server-owned {@code /sg spawn} and {@code /sg spawnall} commands call
- * {@link #spawn(ServerPlayer, String)} / {@link #spawnOne(ServerPlayer, EntityType)} on the server
+ * {@link #spawn(CommandSourceStack, ServerPlayer, String)} /
+ * {@link #spawnOne(CommandSourceStack, ServerPlayer, EntityType)} on the server
  * thread, so the verbs work from a remote client as well as in single-player.
  *
  * <p>Layout: mobs are grouped by mod, sorted by id within each mod. Each mod gets its own row heading
@@ -124,34 +126,16 @@ public final class PickerSpawnService {
     private record Candidate(ResourceLocation id, Entity entity) {
     }
 
-    /** Insert the mob and its riders, honoring each insertion result and removing partial additions on refusal. */
+    /** Insert the mob and its riders as {@code /summon} does; a refused mob takes its riders with it. */
     private static boolean addCommandEntity(ServerLevel level, Entity entity) {
-        List<Entity> members = new ArrayList<>();
-        members.add(entity);
-        entity.getIndirectPassengers().forEach(members::add);
-        for (Entity member : members) {
-            if (level.getEntity(member.getUUID()) != null) {
-                return false;
-            }
+        if (!level.tryAddFreshEntityWithPassengers(entity)) {
+            return false;
         }
-        List<Entity> added = new ArrayList<>();
-        boolean complete = false;
-        try {
-            for (Entity member : members) {
-                if (!level.addFreshEntity(member)) {
-                    return false;
-                }
-                added.add(member);
-            }
-            complete = true;
+        if (level.getEntity(entity.getUUID()) == entity) {
             return true;
-        } finally {
-            if (!complete) {
-                for (int index = added.size() - 1; index >= 0; index--) {
-                    added.get(index).discard();
-                }
-            }
         }
+        entity.getSelfAndPassengers().toList().forEach(Entity::discard);
+        return false;
     }
 
     /**
@@ -224,8 +208,9 @@ public final class PickerSpawnService {
      * @param modFilter if non-null/blank, only spawn mobs whose namespace equals it (e.g. {@code "minecraft"}
      *                  or {@code "exoticbirds"}), and additionally report each type in that namespace that was
      *                  dropped and why — a debugging aid for mods whose mobs don't appear.
+     * @return the number of mobs spawned
      */
-    public static void spawn(ServerPlayer player, String modFilter) {
+    public static int spawn(CommandSourceStack source, ServerPlayer player, String modFilter) {
         ServerLevel level = player.serverLevel();
 
         boolean filtering = modFilter != null && !modFilter.isBlank();
@@ -270,8 +255,8 @@ public final class PickerSpawnService {
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
-            tell(player, "somegoogly.command.spawnall.no_types", modFilter);
-            return;
+            tellFailure(source, "somegoogly.command.spawnall.no_types", modFilter);
+            return 0;
         }
         // Sort by mod (namespace) first, then by mob id within the mod.
         candidates.sort(Comparator.comparing((Candidate c) -> c.id.getNamespace()).thenComparing(c -> c.id.getPath()));
@@ -388,14 +373,15 @@ public final class PickerSpawnService {
                 ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
         SomeGooglyCommon.LOGGER.info("{} ran /sg spawnall (scope={}): spawned {}, skipped {}",
                 player.getGameProfile().getName(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
-        tell(player, "somegoogly.command.spawnall.result",
+        tellSuccess(source, "somegoogly.command.spawnall.result",
                 finalSpawned, scope, platformNote, finalRows, skippedNote);
         if (filtering && !dropped.isEmpty()) {
-            tell(player, "somegoogly.command.spawnall.dropped_header", dropped.size());
+            tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
-                player.sendSystemMessage(Component.translatable("somegoogly.command.spawnall.dropped_entry", entry));
+                source.sendSuccess(() -> Component.translatable("somegoogly.command.spawnall.dropped_entry", entry), false);
             }
         }
+        return finalSpawned;
     }
 
     /**
@@ -404,14 +390,16 @@ public final class PickerSpawnService {
      * persistent, facing the player, ender dragon excluded) but never terraforms: water mobs spawn
      * wherever the player aims, so aim into water to keep one alive. Fails with feedback when no block
      * is targeted or the mob's bounding box doesn't fit at the target.
+     *
+     * @return whether the mob spawned
      */
-    public static void spawnOne(ServerPlayer player, EntityType<?> type) {
+    public static boolean spawnOne(CommandSourceStack source, ServerPlayer player, EntityType<?> type) {
         ServerLevel level = player.serverLevel();
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         SpawnRefusal refusal = refusal(type);
         if (refusal != null) {
-            tell(player, refusal.spawnKey, id.toString());
-            return;
+            tellFailure(source, refusal.spawnKey, id.toString());
+            return false;
         }
 
         // Block raytrace along the player's view. Fluids are clipped through (Fluid.NONE), so aiming
@@ -421,8 +409,8 @@ public final class PickerSpawnService {
         BlockHitResult hit = level.clip(new ClipContext(eye, end,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         if (hit.getType() != HitResult.Type.BLOCK) {
-            tell(player, "somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH);
-            return;
+            tellFailure(source, "somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH);
+            return false;
         }
 
         Entity entity;
@@ -430,16 +418,16 @@ public final class PickerSpawnService {
             entity = type.create(level);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.warn("/sg spawn {}: entity factory threw", id, e);
-            tell(player, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
+            return false;
         }
         if (entity == null) {
-            tell(player, "somegoogly.command.spawn.create_null", id.toString());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.create_null", id.toString());
+            return false;
         }
         if (!(entity instanceof LivingEntity)) {
-            tell(player, "somegoogly.command.spawn.not_living", id.toString());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.not_living", id.toString());
+            return false;
         }
 
         // Feet centered in the block adjacent to the hit face (on top, for an upward face). NoAi mobs
@@ -453,24 +441,25 @@ public final class PickerSpawnService {
             finalized = prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.warn("/sg spawn {}: finalizeSpawn() threw", id, e);
-            tell(player, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
+            return false;
         }
         if (!finalized) {
-            tell(player, "somegoogly.command.spawn.cancelled", id.toString());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.cancelled", id.toString());
+            return false;
         }
 
         if (!level.noCollision(entity)) {
-            tell(player, "somegoogly.command.spawn.doesnt_fit", id.toString());
-            return;
+            tellFailure(source, "somegoogly.command.spawn.doesnt_fit", id.toString());
+            return false;
         }
 
         if (addCommandEntity(level, entity)) {
-            tell(player, "somegoogly.command.spawn.spawned", id.toString());
-        } else {
-            tell(player, "somegoogly.command.spawn.refused", id.toString());
+            tellSuccess(source, "somegoogly.command.spawn.spawned", id.toString());
+            return true;
         }
+        tellFailure(source, "somegoogly.command.spawn.refused", id.toString());
+        return false;
     }
 
     /**
@@ -507,10 +496,16 @@ public final class PickerSpawnService {
         return true;
     }
 
-    /** Picker feedback to {@code player}, under the shared picker prefix. */
-    private static void tell(ServerPlayer player, String key, Object... args) {
-        player.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
+    /** Report a refusal to the command's sender, under the shared picker prefix. */
+    public static void tellFailure(CommandSourceStack source, String key, Object... args) {
+        source.sendFailure(Component.translatable("somegoogly.command.picker.feedback",
                 Component.translatable(key, args)));
+    }
+
+    /** Report a result to the command's sender alone, under the shared picker prefix. */
+    public static void tellSuccess(CommandSourceStack source, String key, Object... args) {
+        source.sendSuccess(() -> Component.translatable("somegoogly.command.picker.feedback",
+                Component.translatable(key, args)), false);
     }
 
     /** Source-block column height that keeps a water mob of this size submerged (at least one block). */

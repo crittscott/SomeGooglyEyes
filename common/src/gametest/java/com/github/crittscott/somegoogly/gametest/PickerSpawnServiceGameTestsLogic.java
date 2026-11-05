@@ -96,7 +96,7 @@ public final class PickerSpawnServiceGameTestsLogic {
                     }
                 }
             }
-            PickerSpawnService.spawn(player, "minecraft");
+            PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
             before.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
                     "refused bulk spawn must leave terrain unchanged at " + pos));
             helper.assertTrue(helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull

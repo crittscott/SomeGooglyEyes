@@ -10,9 +10,7 @@ import com.github.crittscott.somegoogly.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
@@ -34,27 +32,15 @@ public final class ForgeClientBootstrap {
     }
 
     /**
-     * Forge's event exposes renderers per type but not the set of types that have one, so walk the
-     * entity-type registry. Its getter casts to a living renderer, so a non-living type's renderer fails
-     * that cast; those types carry no vanilla-model eye layer and are skipped.
+     * Forge's event doesn't list its renderers and its getter casts to a living renderer, so this reads the
+     * dispatcher's map, which the reload firing the event has just rebuilt.
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
         for (String skin : event.getSkins()) {
             ClientRenderLayers.install(event.getSkin(skin));
         }
-        for (EntityType entityType : BuiltInRegistries.ENTITY_TYPE) {
-            EntityRenderer<?> renderer;
-            try {
-                renderer = event.getRenderer(entityType);
-            } catch (ClassCastException notLiving) {
-                continue;
-            }
-            if (renderer != null) {
-                ClientRenderLayers.install(renderer);
-            }
-        }
+        Minecraft.getInstance().getEntityRenderDispatcher().renderers.values().forEach(ClientRenderLayers::install);
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent event) {
