@@ -4,12 +4,12 @@
       "translate": "somegoogly.pack.description"
     },
     "min_format": [
-      84,
-      0
+      ${pack_min_format},
+      ${pack_min_format_minor}
     ],
     "max_format": [
-      101,
-      1
+      ${pack_format},
+      ${pack_format_minor}
     ]
   }
 }
