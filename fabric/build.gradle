@@ -9,10 +9,6 @@ architectury {
 
 rootProject.configureGameTests(project)
 
-// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
-// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
-sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
-
 // Shared Mixins: one copy compiled into each loader jar, so that loader's annotation processor writes
 // their refmap entries in the names it runs on (intermediary on Fabric, SRG on Forge).
 sourceSets.main.java.srcDir project(':common').file('src/mixin/java')
@@ -46,15 +42,6 @@ loom {
     }
 }
 
-// The GameTest server reuses run/world between launches; clear it so entities and eye state left by
-// one GameTest run cannot leak into the next.
-def gameTestWorldDirectory = layout.projectDirectory.dir('run/world')
-tasks.named('runGameTestServer').configure {
-    doFirst {
-        project.delete(gameTestWorldDirectory)
-    }
-}
-
 configurations {
     common {
         canBeResolved = true
@@ -83,14 +70,19 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render integration.
+    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     modCompileOnly "software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
+    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    modLocalRuntime("software.bernie.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
-// Expands ${...} placeholders in fabric.mod.json (this module's own resource).
+// Expands ${...} placeholders in fabric.mod.json and this module's Mixin config.
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = rootProject.sharedModProperties + [
             fabric_loader_version: fabric_loader_version,
@@ -98,21 +90,21 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching('fabric.mod.json') {
+    filesMatching(['fabric.mod.json', '*.mixins.json']) {
         expand replaceProperties
     }
 }
 
-// Expands ${...} placeholders in the gametest fabric.mod.json (this module's own resource).
+// Expands ${...} placeholders in the gametest fabric.mod.json and the shared fixtures' pack.mcmeta.
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
             mod_version          : mod_version,
             fabric_loader_version: fabric_loader_version,
             fabric_api_version   : fabric_api_version,
-    ]
+    ] + rootProject.packFormatProperties
     inputs.properties replaceProperties
 
-    filesMatching('fabric.mod.json') {
+    filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }

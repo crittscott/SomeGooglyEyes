@@ -12,8 +12,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 | Source tree | Responsibility |
 | --- | --- |
-| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib gate |
-| `gecko/src/main/java` | GeckoLib-typed layer and bone code, compiled by each loader |
+| `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration |
 | `common/src/mixin/java` | Shared Mixins, compiled by each loader |
 | `common/src/main/resources` | Assets, recipes, eye definitions, language |
 | `common/src/gametest` | Shared GameTest assertions and the structure fixture |
@@ -66,7 +65,7 @@ Resolvers cache by model identity, clear on renderer/runtime reset, and replay `
 
 The common `somegoogly.accesswidener` serves common and both loaders; Forge remaps it to an access transformer.
 
-Optional GeckoLib: `gecko/src/main/java` is `srcDir`-ed into each loader against its compile-only GeckoLib; common enumerates bones through `GeckoCompat`'s `@ExpectPlatform` `enumerateBones` only once GeckoLib is found; a failed attach can't block load.
+Optional GeckoLib: `client/compat/gecko` holds the GeckoLib-typed layer and bone code; `GeckoCompat` reaches it only once GeckoLib is found; a failed attach can't block load.
 
 `BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boat item interactions and tracking use generic eye snapshots without living behavior scheduling. `BoatEyeAnimations` owns disposable world-clock simulations. The boat Mixin draws before the hull pose is popped. `PresentationEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `EyeInfo.capturePose` projects world gravity/acceleration independently of the camera; frames/GUI remain stationary. `HandEyeAnimations` keys world-timed state by holder/hand; `HandItemEyes` scopes draws and item states retain it. `GuiEyeAnimations` owns view keys and UI time; `GuiItemEyes` scopes extraction/draw context. GUI Mixins select slots/cursor; item states retain context and animated cache identity. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 

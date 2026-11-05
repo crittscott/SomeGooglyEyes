@@ -9,10 +9,6 @@ architectury {
 
 rootProject.configureGameTests(project)
 
-// Shared GeckoLib render integration: one copy compiled into each loader jar against that loader's
-// own compile-only GeckoLib artifact. Only GeckoCompatImpl stays per-loader.
-sourceSets.main.java.srcDir rootProject.file('gecko/src/main/java')
-
 // Shared Mixins: one copy compiled into each loader jar, so that loader's annotation processor writes
 // their refmap entries in the names it runs on (intermediary on Fabric, SRG on Forge).
 sourceSets.main.java.srcDir project(':common').file('src/mixin/java')
@@ -62,6 +58,14 @@ repositories {
             includeGroup 'maven.modrinth'
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven { url = 'https://cursemaven.com' }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
 }
 
 configurations {
@@ -86,19 +90,27 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.minecraft_version-$rootProject.forge_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render integration. Not remapped:
-    // GeckoLib's Forge artifacts are already usable as-is.
-    compileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
+    modCompileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
+    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    modLocalRuntime("software.bernie.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
 
     // Heads, loaded in development runs and GameTests only, so its heads can be checked; the mod never
     // references it and neither compiles against nor publishes it.
     modLocalRuntime "maven.modrinth:heads:$rootProject.heads_version"
 
+    // Twilight Forest, loaded in development runs and GameTests only, so its heads can be checked; the
+    // mod reaches it only through Mixins and neither compiles against nor publishes it.
+    modLocalRuntime "curse.maven:the-twilight-forest-227639:$rootProject.twilight_version"
+
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 }
 
-// Expands ${...} placeholders in mods.toml (this module's own resource).
+// Expands ${...} placeholders in mods.toml, common's pack.mcmeta, and this module's Mixin configs.
 tasks.named('processResources', ProcessResources).configure {
     // This loader's resource root must be a data pack in development as well as in the bundled jar.
     from project(':common').file('src/main/resources/pack.mcmeta')
@@ -109,12 +121,12 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching('META-INF/mods.toml') {
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']) {
         expand replaceProperties
     }
 }
 
-// Expands ${...} placeholders in the gametest mods.toml (this module's own resource).
+// Expands ${...} placeholders in the gametest mods.toml and the shared fixtures' pack.mcmeta.
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
             mod_license               : mod_license,
@@ -122,10 +134,10 @@ tasks.named('processGametestResources', ProcessResources).configure {
             forge_version_range       : forge_version_range,
             forge_loader_version_range: forge_loader_version_range,
             minecraft_version_range   : minecraft_version_range,
-    ]
+    ] + rootProject.packFormatProperties
     inputs.properties replaceProperties
 
-    filesMatching('META-INF/mods.toml') {
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }
