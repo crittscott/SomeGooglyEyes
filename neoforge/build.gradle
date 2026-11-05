@@ -77,12 +77,17 @@ dependencies {
 
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
+    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    modLocalRuntime("software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 }
 
-// Expands ${...} placeholders in neoforge.mods.toml (this module's own resource).
+// Expands ${...} placeholders in neoforge.mods.toml, common's pack.mcmeta, and this module's Mixin configs.
 tasks.named('processResources', ProcessResources).configure {
     // This loader's resource root must be a data pack in development as well as in the bundled jar.
     from project(':common').file('src/main/resources/pack.mcmeta')
@@ -93,12 +98,12 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching('META-INF/neoforge.mods.toml') {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta', '*.mixins.json']) {
         expand replaceProperties
     }
 }
 
-// Expands ${...} placeholders in the gametest neoforge.mods.toml (this module's own resource).
+// Expands ${...} placeholders in the gametest neoforge.mods.toml and the shared fixtures' pack.mcmeta.
 tasks.named('processGametestResources', ProcessResources).configure {
     var replaceProperties = [
             mod_license                  : mod_license,
@@ -106,10 +111,10 @@ tasks.named('processGametestResources', ProcessResources).configure {
             neoforge_version_range       : neoforge_version_range,
             neoforge_loader_version_range: neoforge_loader_version_range,
             minecraft_version_range      : minecraft_version_range,
-    ]
+    ] + rootProject.packFormatProperties
     inputs.properties replaceProperties
 
-    filesMatching('META-INF/neoforge.mods.toml') {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }

@@ -3,9 +3,9 @@
     "description": {
       "translate": "somegoogly.pack.description"
     },
-    "min_format": [64, 0],
-    "max_format": [94, 1],
-    "pack_format": 94,
-    "supported_formats": {"min_inclusive": 64, "max_inclusive": 94}
+    "min_format": [${pack_min_format}, ${pack_min_format_minor}],
+    "max_format": [${pack_format}, ${pack_format_minor}],
+    "pack_format": ${pack_format},
+    "supported_formats": {"min_inclusive": ${pack_min_format}, "max_inclusive": ${pack_format}}
   }
 }

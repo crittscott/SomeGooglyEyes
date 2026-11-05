@@ -8,8 +8,8 @@ architectury {
     minecraft = project.minecraft_version
 }
 
-// Creates a loader's `gametest` source set over the shared scenarios and resources, and registers
-// its GameTest Javadoc task.
+// Creates a loader's `gametest` source set over the shared scenarios and resources, registers its
+// GameTest Javadoc task, and clears its GameTest world before each run.
 ext.configureGameTests = { Project loaderProject ->
     def main = loaderProject.sourceSets.main
     def gametest = loaderProject.sourceSets.create('gametest')
@@ -17,6 +17,16 @@ ext.configureGameTests = { Project loaderProject ->
     gametest.resources.srcDir rootProject.file('common/src/gametest/resources')
     gametest.compileClasspath += main.compileClasspath + main.output
     gametest.runtimeClasspath += main.runtimeClasspath + main.output
+
+    // The GameTest server reuses run/world between launches; clear it so entities and eye state left by
+    // one GameTest run cannot leak into the next. Matched lazily: each loader declares the run after
+    // calling this.
+    def gameTestWorldDirectory = loaderProject.layout.projectDirectory.dir('run/world')
+    loaderProject.tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+        doFirst {
+            loaderProject.delete(gameTestWorldDirectory)
+        }
+    }
 
     loaderProject.tasks.register('gametestJavadoc', Javadoc) {
         group = 'documentation'
@@ -44,7 +54,12 @@ if (project.hasProperty('neoforge_version')) {
     ext.neoforge_version_range = "[${neoforge_version},${nextLine})"
 }
 
-// Placeholder values shared by every loader's `${...}` resource expansion. Each loader adds its own
+// The pack formats this Minecraft version's pack.mcmeta files declare; newer versions need more of them.
+ext.packFormatProperties = ['pack_format', 'pack_format_minor', 'pack_min_format', 'pack_min_format_minor']
+        .findAll { project.hasProperty(it) }
+        .collectEntries { [(it): project.property(it)] }
+
+// Placeholder values shared by every module's `${...}` resource expansion. Each loader adds its own
 // loader-specific version ranges on top of this.
 ext.sharedModProperties = [
         mod_id           : mod_id,
@@ -59,7 +74,8 @@ ext.sharedModProperties = [
         mod_issues       : "${mod_homepage}/issues",
         geckolib_version : geckolib_version,
         java_version     : java_version,
-]
+        mixin_java_version: mixin_java_version,
+] + packFormatProperties
 
 allprojects {
     group = rootProject.maven_group
@@ -104,6 +120,15 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
         }
+    }
+
+    // Sources are UTF-8 whatever the machine's locale or the JDK's default charset.
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+    tasks.withType(Javadoc).configureEach {
+        options.encoding = 'UTF-8'
+        options.charSet = 'UTF-8'
     }
 }
 
