@@ -1,6 +1,6 @@
 {
   "pack": {
     "description": "Some Googly Eyes GameTest fixtures",
-    "pack_format": 81
+    "pack_format": ${pack_format}
   }
 }

@@ -79,7 +79,7 @@ public final class SkullEyeGameTestsLogic {
         var entity = SkullEyeState.entityFor(Blocks.SKELETON_SKULL);
         Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY);
         int[] parts = SkullEyeState.headParts(layout);
-        helper.assertTrue(parts.length == 1, "the skull renders the single-eye layout");
+        helper.assertTrue(parts.length == 1, Component.literal("the skull renders the single-eye layout"));
         long seed = Mth.getSeed(new BlockPos(1, 2, 3));
         var watched = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts);
         var returning = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts);

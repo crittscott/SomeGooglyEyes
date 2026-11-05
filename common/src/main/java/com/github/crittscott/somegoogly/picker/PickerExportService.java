@@ -127,7 +127,7 @@ public final class PickerExportService {
 
         PickerGate.exportSucceeded(server, playerId);
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
-        SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {} — forcing datapack reload",
+        SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {}; forcing datapack reload",
                 player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
         // Already on the server thread; the datapack is re-read and re-synced to every client.
         reloadDatapacks(server);
