@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block"><code>EyeConfigModel.RuntimeConfig.isUsable(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)</code> is the single eligibility predicate behind the slimy eye's targeting,
  the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- <code>ServerEyeConfigs.isEligible(net.minecraft.world.entity.LivingEntity)</code> delegating to it — are what keep those three in agreement.</div>
+ <code>EyeItemService.verdictFor(net.minecraft.world.entity.Entity)</code> reading it — are what keep those three in agreement.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/EyeConfigLimitsGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeConfigLimitsGameTests</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -232,7 +232,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Serialization contracts: the flat-JSON eye codecs round-trip by value, and all six native
+<div class="block">Serialization contracts: the flat-JSON eye codecs round-trip by value, and all seven native
  payloads preserve their wire representation through encode/decode.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></div>
@@ -268,29 +268,33 @@ loadScripts(document, 'script');</script>
 <div class="block">The at-spawn eye roll is probabilistic, but its endpoints are deterministic: <code>globalPercent = 100</code>
  always grants eyes to an eligible mob, <code>0</code> never does.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/TwilightHeadGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">TwilightHeadGameTests</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTests</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeConfigs</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Installs a test's eye definitions through the same path a datapack reload uses.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/TwilightHeadGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">TwilightHeadGameTests</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>VariantSelectionGameTestsLogic</code></a>; see that class for the
  actual assertions.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTestsLogic</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Pure-logic coverage of <code>EyeConfigModel.chooseVariantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig, float)</code> — the
  deterministic weighted pick that lets the client and server agree on a mob's arrangement from its
  stored roll without sending an index.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTests</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTests</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Forge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>VersionRangeGameTestsLogic</code></a>; see that class for the actual
  assertions.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTestsLogic</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTestsLogic</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Pure-logic coverage of <code>VersionRangeMatcher</code>: <code>matches</code> (bracket-range bounds,
  exact-version matching, the zero-padding equivalence <code>1.20</code> ≡ <code>1.20.0</code>, malformed input)
- and the nearest-generation fallback (<code>nearestVersion</code> / <code>isEntirelyBelow</code>) used when no
+ and the nearest-generation fallback (<code>nearestVersion</code>) used when no
  entry matches the installed version.</div>
 </div>
 </div>

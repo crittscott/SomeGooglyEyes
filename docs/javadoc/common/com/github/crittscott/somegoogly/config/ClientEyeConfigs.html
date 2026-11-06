@@ -77,10 +77,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientEyeConfigs</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Client-side store of the resolved server eye state, populated from the server via
- <code>EyeConfigSyncPacket</code>: the per-entity eye geometry configs, the current
- <code>googlyEyesEnabled</code> master switch, and the behavior settings clients run behaviors from. This store also owns the resolved-view cache used by
- renderers.
+<div class="block">Client-side store of the resolved server eye state: the per-entity eye geometry configs, from
+ <code>EyeConfigSyncPacket</code>, and the current <code>googlyEyesEnabled</code> master switch and the behavior settings
+ clients run behaviors from, from <code>EyeSettingsPacket</code>. This store also owns the resolved-view cache used
+ by renderers.
 
  <p>Separate from <a href="ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerEyeConfigs</code></a> to avoid single-player static-state bleed: in SP the
  integrated server fills the server store and the local sync fills this one independently. Installed
@@ -105,48 +105,55 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The immutable synced map, by entity.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviors()" class="member-name-link">behaviors</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The server's behavior settings, as of the last sync.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Clear everything (e.g.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
- boolean&nbsp;baby)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#googlyEyesEnabled()" class="member-name-link">googlyEyesEnabled</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The server's current <code>googlyEyesEnabled</code> master switch, as of the last sync.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- boolean&nbsp;googlyEyesEnabled,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#applySettings(boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">applySettings</a><wbr>(boolean&nbsp;googlyEyesEnabled,
  <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Take the server's <code>googlyEyesEnabled</code> master switch and behavior settings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviors()" class="member-name-link">behaviors</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The server's behavior settings, as of the last sync.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Clear everything (e.g.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyesVisible()" class="member-name-link">eyesVisible</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own setting.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyesVisible(net.minecraft.resources.ResourceLocation)" class="member-name-link">eyesVisible</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not disabled for it.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+ boolean&nbsp;baby)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#googlyEyesEnabled()" class="member-name-link">googlyEyesEnabled</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The server's current <code>googlyEyesEnabled</code> master switch, as of the last sync.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
  rendering view.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,boolean,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,boolean,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
  boolean&nbsp;baby,
  float&nbsp;variantRoll)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve and cache the selected variant for the requested age, for client rendering.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
- net.minecraft.world.entity.LivingEntity&nbsp;living,
- float&nbsp;variantRoll)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve and cache the selected variant for <code>living</code>'s current age.</div>
+<div class="block">Resolve and cache the selected variant for the requested age, for client rendering.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveHead(net.minecraft.resources.ResourceLocation,float)" class="member-name-link">resolveHead</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entity,
@@ -181,6 +188,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="applySettings(boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
+<h3>applySettings</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">applySettings</span><wbr><span class="parameters">(boolean&nbsp;googlyEyesEnabled,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
+<div class="block">Take the server's <code>googlyEyesEnabled</code> master switch and behavior settings.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="behaviors()">
 <h3>behaviors</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">behaviors</span>()</div>
@@ -192,6 +207,20 @@ loadScripts(document, 'script');</script>
 <h3>clear</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
 <div class="block">Clear everything (e.g. on disconnect) so a previous server's configs don't leak.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyesVisible()">
+<h3>eyesVisible</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">eyesVisible</span>()</div>
+<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own setting.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyesVisible(net.minecraft.resources.ResourceLocation)">
+<h3>eyesVisible</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">eyesVisible</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity)</span></div>
+<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not disabled for it.</div>
 </section>
 </li>
 <li>
@@ -220,15 +249,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="resolve(net.minecraft.resources.ResourceLocation,net.minecraft.world.entity.LivingEntity,float)">
-<h3>resolve</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
- net.minecraft.world.entity.LivingEntity&nbsp;living,
- float&nbsp;variantRoll)</span></div>
-<div class="block">Resolve and cache the selected variant for <code>living</code>'s current age.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="resolveHead(net.minecraft.resources.ResourceLocation,float)">
 <h3>resolveHead</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolveHead</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entity,
@@ -238,11 +258,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="replaceAll(java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
+<section class="detail" id="replaceAll(java.util.Map)">
 <h3>replaceAll</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</span></div>
 <div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
  rendering view. The supplied model values become store-owned and must not be mutated afterward.</div>
 </section>

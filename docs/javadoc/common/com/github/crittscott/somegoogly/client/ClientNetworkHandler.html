@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientNetworkHandler</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Applies the four server-to-client payloads on the client game thread. Loader payload registration runs on
+<div class="block">Applies the five server-to-client payloads on the client game thread. Loader payload registration runs on
  both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
  payload arrives rather than when the handler is registered.</div>
 </section>
@@ -107,11 +107,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+<div class="block">Replace the client's eye definitions and drop every tracker built from the old set.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeSettings(com.github.crittscott.somegoogly.network.EyeSettingsPacket)" class="member-name-link">handleEyeSettings</a><wbr>(<a href="../network/EyeSettingsPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeSettingsPacket</a>&nbsp;packet)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Take the server's master switch and behavior settings; trackers read them afresh each tick.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)" class="member-name-link">handleEyeState</a><wbr>(<a href="../network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a>&nbsp;packet)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored.</div>
 </div>
 </div>
@@ -149,7 +154,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
 <h3>handleEyeConfigSync</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeConfigSync</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</span></div>
-<div class="block">Replace the client's eye definitions and master switch, and drop every tracker built from the old set.</div>
+<div class="block">Replace the client's eye definitions and drop every tracker built from the old set.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="handleEyeSettings(com.github.crittscott.somegoogly.network.EyeSettingsPacket)">
+<h3>handleEyeSettings</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleEyeSettings</span><wbr><span class="parameters">(<a href="../network/EyeSettingsPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeSettingsPacket</a>&nbsp;packet)</span></div>
+<div class="block">Take the server's master switch and behavior settings; trackers read them afresh each tick.</div>
 </section>
 </li>
 <li>

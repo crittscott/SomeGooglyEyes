@@ -98,14 +98,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerRequestsThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">pickerRequestsThrottlePerTick</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerCommandsFailForSurvivalOperators(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">pickerCommandsFailForSurvivalOperators</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A sender gets at most one picker request per tick, and clearing its record resets the limit.</div>
+<div class="block">The picker verbs reach an operator in any game mode, so tab completion doesn't go stale on <code>/gamemode</code>,
+ and refuse at execution outside creative with a failure result.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllHasAServerWideCooldown(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllHasAServerWideCooldown</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerRequestsThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">pickerRequestsThrottlePerTick</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A sender gets at most one picker request per tick, and clearing its record resets the limit.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllHasAServerWideCooldown(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllHasAServerWideCooldown</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>allowSpawnAll</code> arms a server-wide cooldown; a second call inside the window is refused.</div>
 </div>
 </div>
@@ -125,6 +132,17 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="pickerCommandsFailForSurvivalOperators(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>pickerCommandsFailForSurvivalOperators</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerCommandsFailForSurvivalOperators</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">The picker verbs reach an operator in any game mode, so tab completion doesn't go stale on <code>/gamemode</code>,
+ and refuse at execution outside creative with a failure result. In game: as an operator in survival, run
+ <code>/sg spawn minecraft:cow</code>; a red message names the requirement and no cow appears. Switch to creative
+ and tab completion offers <code>/sg spawn</code> without rejoining.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="pickerRequestsThrottlePerTick(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>pickerRequestsThrottlePerTick</h3>

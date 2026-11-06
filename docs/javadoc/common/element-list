@@ -1,5 +1,6 @@
 com.github.crittscott.somegoogly
 com.github.crittscott.somegoogly.client
+com.github.crittscott.somegoogly.client.command
 com.github.crittscott.somegoogly.client.compat
 com.github.crittscott.somegoogly.client.compat.gecko
 com.github.crittscott.somegoogly.client.picker

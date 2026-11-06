@@ -44,13 +44,13 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -82,6 +82,23 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final net.minecraftforge.network.simple.SimpleChannel</code></div>
+<div class="col-second even-row-color"><code><a href="#CHANNEL" class="member-name-link">CHANNEL</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The payload channel; each packet's number below is its wire id, so it stays fixed whatever the order.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -98,23 +115,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Register every payload; called once from the mod constructor, before any send.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToPlayer(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendToPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
- com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send to one player.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToServer(com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendToServer</a><wbr>(com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send from the client to the server.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTrackingAndSelf(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendTrackingAndSelf</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
- com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send to every player tracking <code>entity</code>, and to the entity itself if it is a player.</div>
-</div>
 </div>
 </div>
 </div>
@@ -127,6 +127,21 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="CHANNEL">
+<h3>CHANNEL</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraftforge.network.simple.SimpleChannel</span>&nbsp;<span class="element-name">CHANNEL</span></div>
+<div class="block">The payload channel; each packet's number below is its wire id, so it stays fixed whatever the order.</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -137,29 +152,6 @@ loadScripts(document, 'script');</script>
 <h3>register</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
 <div class="block">Register every payload; called once from the mod constructor, before any send.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="sendToPlayer(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.Payload)">
-<h3>sendToPlayer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToPlayer</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
- com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</span></div>
-<div class="block">Send to one player.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="sendToServer(com.github.crittscott.somegoogly.network.Payload)">
-<h3>sendToServer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToServer</span><wbr><span class="parameters">(com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</span></div>
-<div class="block">Send from the client to the server.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="sendTrackingAndSelf(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.Payload)">
-<h3>sendTrackingAndSelf</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTrackingAndSelf</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
- com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</span></div>
-<div class="block">Send to every player tracking <code>entity</code>, and to the entity itself if it is a player.</div>
 </section>
 </li>
 </ul>

@@ -82,8 +82,9 @@ loadScripts(document, 'script');</script>
 <div class="block">One RGB color, each channel 0..1. The single color representation across the mod — config,
  item/entity override, and the renderer all use this.
 
- <p>Serialized as a <code>[r, g, b]</code> list, the datapack JSON's color layout. Both the codec and the
- network form (<a href="#read(net.minecraft.network.FriendlyByteBuf)"><code>read(net.minecraft.network.FriendlyByteBuf)</code></a>) reject a channel outside 0..1 on decode, so every decoded color is in range.</div>
+ <p>Serialized as a <code>[r, g, b]</code> list, the datapack JSON's color layout. The codec, the NBT form
+ (<a href="#fromNbt(net.minecraft.nbt.Tag)"><code>fromNbt(net.minecraft.nbt.Tag)</code></a>), and the network form (<a href="#read(net.minecraft.network.FriendlyByteBuf)"><code>read(net.minecraft.network.FriendlyByteBuf)</code></a>) all reject a channel outside 0..1 on decode, so
+ every decoded color is in range.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -146,50 +147,60 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromRgb24(int)" class="member-name-link">fromRgb24</a><wbr>(int&nbsp;rgb)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromNbt(net.minecraft.nbt.Tag)" class="member-name-link">fromNbt</a><wbr>(net.minecraft.nbt.Tag&nbsp;tag)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The <a href="#toNbt()"><code>toNbt()</code></a> form, or nothing unless <code>tag</code> is a list of three in-range numbers of any type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromRgb24(int)" class="member-name-link">fromRgb24</a><wbr>(int&nbsp;rgb)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A color from a packed <code>0xRRGGBB</code> integer.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#g()" class="member-name-link">g</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#g()" class="member-name-link">g</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>g</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether every channel is within <code>[0, 1]</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(float%5B%5D)" class="member-name-link">of</a><wbr>(float[]&nbsp;rgb)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(float%5B%5D)" class="member-name-link">of</a><wbr>(float[]&nbsp;rgb)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A color from a three-element <code>[r, g, b]</code> array.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#r()" class="member-name-link">r</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#r()" class="member-name-link">r</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>r</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Read the network form written by <a href="#write(net.minecraft.network.FriendlyByteBuf)"><code>write(net.minecraft.network.FriendlyByteBuf)</code></a>, rejecting a channel outside 0..1.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toArray()" class="member-name-link">toArray</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toArray()" class="member-name-link">toArray</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The renderer/model APIs take a <code>float[3]</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toHex()" class="member-name-link">toHex</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toHex()" class="member-name-link">toHex</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>RRGGBB</code> — six uppercase hex digits, no leading <code>#</code>; display templates add their own.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.nbt.ListTag</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toNbt()" class="member-name-link">toNbt</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The NBT form: a list of three floats.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toOpaqueArgb32()" class="member-name-link">toOpaqueArgb32</a>()</code></div>
@@ -285,6 +296,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="fromNbt(net.minecraft.nbt.Tag)">
+<h3>fromNbt</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;</span>&nbsp;<span class="element-name">fromNbt</span><wbr><span class="parameters">(@Nullable
+ net.minecraft.nbt.Tag&nbsp;tag)</span></div>
+<div class="block">The <a href="#toNbt()"><code>toNbt()</code></a> form, or nothing unless <code>tag</code> is a list of three in-range numbers of any type.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="fromRgb24(int)">
 <h3>fromRgb24</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></span>&nbsp;<span class="element-name">fromRgb24</span><wbr><span class="parameters">(int&nbsp;rgb)</span></div>
@@ -317,6 +336,13 @@ loadScripts(document, 'script');</script>
 <h3>toArray</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float[]</span>&nbsp;<span class="element-name">toArray</span>()</div>
 <div class="block">The renderer/model APIs take a <code>float[3]</code>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="toNbt()">
+<h3>toNbt</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.nbt.ListTag</span>&nbsp;<span class="element-name">toNbt</span>()</div>
+<div class="block">The NBT form: a list of three floats.</div>
 </section>
 </li>
 <li>

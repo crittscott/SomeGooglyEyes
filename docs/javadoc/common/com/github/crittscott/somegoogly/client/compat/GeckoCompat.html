@@ -80,8 +80,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.
 
  <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> — and the GeckoLib types it references — is touched only after the
- <code>LOADED</code> check, so it never loads when GeckoLib is absent. A GeckoLib present but broken logs
- each affected operation once and renders its mobs without eyes rather than failing mod load.</div>
+ <code>LOADED</code> check, so it never loads when GeckoLib is absent. Bone enumeration runs other mods' model
+ code against a GeckoLib that may be newer than the build's, so a failure there is logged once and leaves
+ the picker without that mob's bones. Rendering through the GeckoLib layer is not guarded.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

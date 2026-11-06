@@ -82,9 +82,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EyeConfigSyncPacket</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></span></div>
-<div class="block">Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- <code>googlyEyesEnabled</code> master switch and the behavior settings clients run behaviors from. The server builds it from the installed set and that set's
- precomputed NBT (<a href="../config/ServerEyeConfigs.html#encoded()"><code>ServerEyeConfigs.encoded()</code></a>), which was
+<div class="block">Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
+ the installed set and that set's precomputed NBT (<a href="../config/ServerEyeConfigs.html#encoded()"><code>ServerEyeConfigs.encoded()</code></a>), which was
  validated when installed, so writing it to each connection only copies tags. The client decodes and
  re-validates everything it receives.</div>
 </section>
@@ -116,10 +115,8 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">EyeConfigSyncPacket</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded,
- boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.util.Map,java.util.Map)" class="member-name-link">EyeConfigSyncPacket</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
 <div class="col-last even-row-color">
 <div class="block"><code>encoded</code> must hold exactly <code>configs</code>, each encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>.</div>
 </div>
@@ -137,20 +134,10 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#behaviors()" class="member-name-link">behaviors</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configs()" class="member-name-link">configs</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The server's behavior settings.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configs()" class="member-name-link">configs</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The resolved eye definitions, by entity type.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#googlyEyesEnabled()" class="member-name-link">googlyEyesEnabled</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The server's <code>googlyEyesEnabled</code> switch.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
@@ -163,7 +150,7 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wireSize(java.util.Map)" class="member-name-link">wireSize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Maximum packet size for <code>encoded</code>, including any supported server behavior settings.</div>
+<div class="block">The packet size of <code>encoded</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
@@ -214,12 +201,10 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.util.Map,java.util.Map,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)">
+<section class="detail" id="&lt;init&gt;(java.util.Map,java.util.Map)">
 <h3>EyeConfigSyncPacket</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EyeConfigSyncPacket</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded,
- boolean&nbsp;googlyEyesEnabled,
- <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
 <div class="block"><code>encoded</code> must hold exactly <code>configs</code>, each encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>.</div>
 </section>
 </li>
@@ -235,7 +220,7 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <section class="detail" id="wireSize(java.util.Map)">
 <h3>wireSize</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireSize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
-<div class="block">Maximum packet size for <code>encoded</code>, including any supported server behavior settings.</div>
+<div class="block">The packet size of <code>encoded</code>.</div>
 </section>
 </li>
 <li>
@@ -249,24 +234,10 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </section>
 </li>
 <li>
-<section class="detail" id="behaviors()">
-<h3>behaviors</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">behaviors</span>()</div>
-<div class="block">The server's behavior settings.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="configs()">
 <h3>configs</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</span>&nbsp;<span class="element-name">configs</span>()</div>
 <div class="block">The resolved eye definitions, by entity type.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="googlyEyesEnabled()">
-<h3>googlyEyesEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">googlyEyesEnabled</span>()</div>
-<div class="block">The server's <code>googlyEyesEnabled</code> switch.</div>
 </section>
 </li>
 <li>

@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">NetworkingImpl</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Fabric clientbound sends; tracking fanout uses Fabric API's authoritative lookup.</div>
+<div class="block">Fabric clientbound sends; fanout encodes once and uses the vanilla broadcasts Forge's distributors do.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -93,13 +93,17 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToPlayer(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendToPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToAll(net.minecraft.server.MinecraftServer,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendToAll</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
  com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTrackingAndSelf(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendTrackingAndSelf</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToPlayer(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendToPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
  com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendTrackingAndSelf(net.minecraft.world.entity.Entity,com.github.crittscott.somegoogly.network.Payload)" class="member-name-link">sendTrackingAndSelf</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
+ com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -117,6 +121,13 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="sendToAll(net.minecraft.server.MinecraftServer,com.github.crittscott.somegoogly.network.Payload)">
+<h3>sendToAll</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendToAll</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
+ com.github.crittscott.somegoogly.network.Payload&nbsp;payload)</span></div>
+</section>
+</li>
 <li>
 <section class="detail" id="sendToPlayer(net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.network.Payload)">
 <h3>sendToPlayer</h3>

@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GuiItemEyes</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Scopes GUI presentation identity during extraction and animation during item drawing.</div>
+<div class="block">Scopes GUI presentation keys around item drawing, and owns the view-keyed simulations those keys select.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -91,12 +91,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="GuiItemEyes.Context.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="GuiItemEyes.Holder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client">GuiItemEyes.Holder</a></code></div>
+<div class="col-second even-row-color"><code><a href="GuiItemEyes.Key.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Key</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Coordinates are used only for generic previews; slots and cursor items use logical indexes.</div>
+</div>
+<div class="col-first odd-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="GuiItemEyes.Kind.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.client">GuiItemEyes.Kind</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Implemented by item render states so GUI context survives deferred submission.</div>
+<div class="block">What a <a href="GuiItemEyes.Key.html" title="class in com.github.crittscott.somegoogly.client"><code>GuiItemEyes.Key</code></a> identifies an item by.</div>
+</div>
+<div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="GuiItemEyes.Simulations.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Simulations</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">View-owned item simulations with a UI clock independent of world ticks and pause.</div>
 </div>
 </div>
 </section>
@@ -110,8 +117,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final <a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></code></div>
-<div class="col-second even-row-color"><code><a href="#EMPTY" class="member-name-link">EMPTY</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color"><code><a href="#HUD" class="member-name-link">HUD</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -136,30 +143,21 @@ loadScripts(document, 'script');</script>
 <div class="block">Called by the GUI's core item method, covering slots, the hotbar, and generic previews.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginPresentation(java.lang.Object,int,int)" class="member-name-link">beginPresentation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
- int&nbsp;kind,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.GuiItemEyes.Kind,int)" class="member-name-link">beginPresentation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
+ <a href="GuiItemEyes.Kind.html" title="enum class in com.github.crittscott.somegoogly.client">GuiItemEyes.Kind</a>&nbsp;kind,
  int&nbsp;index)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Slots and carried stacks retain one identity while their on-screen coordinates change.</div>
+<div class="block">Slots and carried stacks retain one simulation while their on-screen coordinates change.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginRender(com.github.crittscott.somegoogly.client.GuiItemEyes.Context)" class="member-name-link">beginRender</a><wbr>(<a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a>&nbsp;context)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#current()" class="member-name-link">current</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#endDraw()" class="member-name-link">endDraw</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#endPresentation()" class="member-name-link">endPresentation</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#endPresentation()" class="member-name-link">endPresentation</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick()" class="member-name-link">tick</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">GUI simulation advances on client ticks regardless of the world's pause state.</div>
 </div>
 </div>
@@ -180,9 +178,9 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="EMPTY">
-<h3>EMPTY</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></span>&nbsp;<span class="element-name">EMPTY</span></div>
+<section class="detail" id="HUD">
+<h3>HUD</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">HUD</span></div>
 </section>
 </li>
 </ul>
@@ -204,36 +202,18 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="beginPresentation(java.lang.Object,int,int)">
+<section class="detail" id="beginPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.GuiItemEyes.Kind,int)">
 <h3>beginPresentation</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginPresentation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
- int&nbsp;kind,
+ <a href="GuiItemEyes.Kind.html" title="enum class in com.github.crittscott.somegoogly.client">GuiItemEyes.Kind</a>&nbsp;kind,
  int&nbsp;index)</span></div>
-<div class="block">Slots and carried stacks retain one identity while their on-screen coordinates change.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="beginRender(com.github.crittscott.somegoogly.client.GuiItemEyes.Context)">
-<h3>beginRender</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginRender</span><wbr><span class="parameters">(<a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a>&nbsp;context)</span></div>
+<div class="block">Slots and carried stacks retain one simulation while their on-screen coordinates change.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="clear()">
 <h3>clear</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="current()">
-<h3>current</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="GuiItemEyes.Context.html" title="class in com.github.crittscott.somegoogly.client">GuiItemEyes.Context</a></span>&nbsp;<span class="element-name">current</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="endDraw()">
-<h3>endDraw</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">endDraw</span>()</div>
 </section>
 </li>
 <li>

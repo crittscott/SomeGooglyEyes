@@ -99,17 +99,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesHonorEligibilityAndSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesHonorEligibilityAndSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Disabled and ordinary items retire their old presentation.</div>
+<div class="block">Hidden eyes and ordinary items retire their old presentation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesKeepPresentationIdentity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesKeepPresentationIdentity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Stack copies and count changes preserve a slot's simulation and bounded model identity.</div>
+<div class="block">Stack copies and count changes preserve a slot's simulation.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesReplaceChangedContents(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesReplaceChangedContents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A changed appearance invalidates cached draw state.</div>
+<div class="block">A changed appearance replaces the simulation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesRetireClosedAndHiddenViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesRetireClosedAndHiddenViews</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -119,7 +119,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesSeparateSlotsAndCursor</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Neighboring copies and a carried stack have independent animation and model identities.</div>
+<div class="block">Neighboring copies and a carried stack have independent animation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiHeadUsesConfiguredLayout</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -155,7 +155,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="guiEyesHonorEligibilityAndSwitch(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>guiEyesHonorEligibilityAndSwitch</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesHonorEligibilityAndSwitch</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Disabled and ordinary items retire their old presentation. In game: disable eye animation, then
+<div class="block">Hidden eyes and ordinary items retire their old presentation. In game: disable eye animation, then
  replace a visible eye with a diamond; restoring the eye produces a fresh live presentation.</div>
 </section>
 </li>
@@ -163,7 +163,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="guiEyesKeepPresentationIdentity(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>guiEyesKeepPresentationIdentity</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesKeepPresentationIdentity</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Stack copies and count changes preserve a slot's simulation and bounded model identity.
+<div class="block">Stack copies and count changes preserve a slot's simulation.
  In game: split and merge a stack in one slot; its pupil does not restart on each rendered frame.</div>
 </section>
 </li>
@@ -171,7 +171,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="guiEyesReplaceChangedContents(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>guiEyesReplaceChangedContents</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesReplaceChangedContents</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A changed appearance invalidates cached draw state. In game: replace a normal eye in one slot
+<div class="block">A changed appearance replaces the simulation. In game: replace a normal eye in one slot
  with a glowing or dyed copy; its icon immediately shows the new appearance.</div>
 </section>
 </li>
@@ -187,7 +187,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>guiEyesSeparateSlotsAndCursor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesSeparateSlotsAndCursor</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Neighboring copies and a carried stack have independent animation and model identities. In game:
+<div class="block">Neighboring copies and a carried stack have independent animation. In game:
  drag an eye across matching occupied slots; the cursor eye keeps its own expression while moving.</div>
 </section>
 </li>

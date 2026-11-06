@@ -157,86 +157,91 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">See <a href="#momentumX"><code>momentumX</code></a>.</div>
 </div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#prevDeltaX" class="member-name-link">prevDeltaX</a></code></div>
+<div class="col-first even-row-color"><code>boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#poseStale" class="member-name-link">poseStale</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough.</div>
+</div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#prevDeltaX" class="member-name-link">prevDeltaX</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Pupil position at the previous tick, for render interpolation.</div>
 </div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#prevDeltaY" class="member-name-link">prevDeltaY</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>float</code></div>
+<div class="col-second even-row-color"><code><a href="#prevDeltaY" class="member-name-link">prevDeltaY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">See <a href="#prevDeltaX"><code>prevDeltaX</code></a>.</div>
 </div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#prevIrisScaleMul" class="member-name-link">prevIrisScaleMul</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#prevIrisScaleMul" class="member-name-link">prevIrisScaleMul</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Love pupil size times the creepy pulse; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#prevIrisTintAmount" class="member-name-link">prevIrisTintAmount</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>float</code></div>
+<div class="col-second even-row-color"><code><a href="#prevIrisTintAmount" class="member-name-link">prevIrisTintAmount</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">How far the pupil is blended toward <a href="GooglyTracker.html#ANGER_IRIS_COLOR"><code>GooglyTracker.ANGER_IRIS_COLOR</code></a>; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#prevLid" class="member-name-link">prevLid</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#prevLid" class="member-name-link">prevLid</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">How much of the eye each of a sleeping villager's lids covers (0 none); see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#prevRotationPitch" class="member-name-link">prevRotationPitch</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>float</code></div>
+<div class="col-second even-row-color"><code><a href="#prevRotationPitch" class="member-name-link">prevRotationPitch</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Head orientation, kept across ticks to differentiate into angular velocity and acceleration.</div>
 </div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#prevRotationYaw" class="member-name-link">prevRotationYaw</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
-</div>
 <div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#prevScaleMul" class="member-name-link">prevScaleMul</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
- and interpolated at render.</div>
-</div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#prevSquashY" class="member-name-link">prevSquashY</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Blink squash times the sleeping squint; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
-</div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#prevTintAmount" class="member-name-link">prevTintAmount</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
-</div>
-<div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#rotationPitch" class="member-name-link">rotationPitch</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
-</div>
-<div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#rotationYaw" class="member-name-link">rotationYaw</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#prevRotationYaw" class="member-name-link">prevRotationYaw</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#scaleMul" class="member-name-link">scaleMul</a></code></div>
+<div class="col-second even-row-color"><code><a href="#prevScaleMul" class="member-name-link">prevScaleMul</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
  and interpolated at render.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
-<div class="col-second odd-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#prevSquashY" class="member-name-link">prevSquashY</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Blink squash times the sleeping squint; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
-<div class="col-second even-row-color"><code><a href="#tintAmount" class="member-name-link">tintAmount</a></code></div>
+<div class="col-second even-row-color"><code><a href="#prevTintAmount" class="member-name-link">prevTintAmount</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
-<div class="col-first odd-row-color"><code>float[]</code></div>
-<div class="col-second odd-row-color"><code><a href="#tintColor" class="member-name-link">tintColor</a></code></div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#rotationPitch" class="member-name-link">rotationPitch</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
+</div>
+<div class="col-first even-row-color"><code>float</code></div>
+<div class="col-second even-row-color"><code><a href="#rotationYaw" class="member-name-link">rotationYaw</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">See <a href="#prevRotationPitch"><code>prevRotationPitch</code></a>.</div>
+</div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#scaleMul" class="member-name-link">scaleMul</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
+ and interpolated at render.</div>
+</div>
+<div class="col-first even-row-color"><code>float</code></div>
+<div class="col-second even-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Blink squash times the sleeping squint; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
+<div class="col-first odd-row-color"><code>float</code></div>
+<div class="col-second odd-row-color"><code><a href="#tintAmount" class="member-name-link">tintAmount</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Color-change blend amount; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
+</div>
+<div class="col-first even-row-color"><code>float[]</code></div>
+<div class="col-second even-row-color"><code><a href="#tintColor" class="member-name-link">tintColor</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Color-change target color; see <a href="#scaleMul"><code>scaleMul</code></a>.</div>
 </div>
 </div>
@@ -287,6 +292,41 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetMotion()" class="member-name-link">resetMotion</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Re-prime input differentiation after an owner change or a gap in simulation.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,float,float,float,float,net.minecraft.util.RandomSource,float,float,double,double,double,float)" class="member-name-link">step</a><wbr>(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
+ int&nbsp;head,
+ int&nbsp;eye,
+ float&nbsp;irisPulse,
+ float&nbsp;squash,
+ float&nbsp;lid,
+ float&nbsp;irisTint,
+ net.minecraft.util.RandomSource&nbsp;rand,
+ float&nbsp;headYaw,
+ float&nbsp;headPitch,
+ double&nbsp;motionX,
+ double&nbsp;motionY,
+ double&nbsp;motionZ,
+ float&nbsp;agitation)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
+ influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
+ folded in as a force.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)" class="member-name-link">step</a><wbr>(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
+ int&nbsp;head,
+ int&nbsp;eye,
+ net.minecraft.util.RandomSource&nbsp;rand,
+ float&nbsp;headYaw,
+ float&nbsp;headPitch,
+ double&nbsp;motionX,
+ double&nbsp;motionY,
+ double&nbsp;motionZ)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">A <code>step</code> with no overlays of the owner's own.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" class="member-name-link">update</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand,
@@ -526,6 +566,13 @@ loadScripts(document, 'script');</script>
 <div class="block">This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step.</div>
 </section>
 </li>
+<li>
+<section class="detail" id="poseStale">
+<h3>poseStale</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">poseStale</span></div>
+<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough.</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -583,6 +630,47 @@ loadScripts(document, 'script');</script>
 <h3>resetMotion</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetMotion</span>()</div>
 <div class="block">Re-prime input differentiation after an owner change or a gap in simulation.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)">
+<h3>step</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">step</span><wbr><span class="parameters">(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ @Nullable
+ <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
+ int&nbsp;head,
+ int&nbsp;eye,
+ net.minecraft.util.RandomSource&nbsp;rand,
+ float&nbsp;headYaw,
+ float&nbsp;headPitch,
+ double&nbsp;motionX,
+ double&nbsp;motionY,
+ double&nbsp;motionZ)</span></div>
+<div class="block">A <code>step</code> with no overlays of the owner's own.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,float,float,float,float,net.minecraft.util.RandomSource,float,float,double,double,double,float)">
+<h3>step</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">step</span><wbr><span class="parameters">(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
+ @Nullable
+ <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
+ int&nbsp;head,
+ int&nbsp;eye,
+ float&nbsp;irisPulse,
+ float&nbsp;squash,
+ float&nbsp;lid,
+ float&nbsp;irisTint,
+ net.minecraft.util.RandomSource&nbsp;rand,
+ float&nbsp;headYaw,
+ float&nbsp;headPitch,
+ double&nbsp;motionX,
+ double&nbsp;motionY,
+ double&nbsp;motionZ,
+ float&nbsp;agitation)</span></div>
+<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
+ influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
+ folded in as a force. <code>influence</code> is the caller's reusable scratch instance.</div>
 </section>
 </li>
 <li>

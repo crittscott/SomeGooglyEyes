@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientIntegrationFailures</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Logs recoverable client integration failures once while allowing affected eyes to be skipped.</div>
+<div class="block">Logs recoverable client integration failures once each.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -98,7 +98,8 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;failure)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Log a renderer-integration failure, once per integration, operation, and subject.</div>
+<div class="block">Log a renderer-integration failure, once per integration, operation, and subject; <code>failure</code> is
+ <code>null</code> when no exception lies behind it.</div>
 </div>
 </div>
 </div>
@@ -123,8 +124,10 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">warnOnce</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;integration,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;operation,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;subject,
+ @Nullable
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;failure)</span></div>
-<div class="block">Log a renderer-integration failure, once per integration, operation, and subject.</div>
+<div class="block">Log a renderer-integration failure, once per integration, operation, and subject; <code>failure</code> is
+ <code>null</code> when no exception lies behind it.</div>
 </section>
 </li>
 </ul>

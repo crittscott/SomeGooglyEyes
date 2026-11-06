@@ -73,11 +73,11 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a></code>, <code><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></code>, <code><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code>, <code><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></code>, <code><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></code>, <code><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></code></dd>
+<dd><code><a href="EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a></code>, <code><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></code>, <code><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code>, <code><a href="EyeSettingsPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeSettingsPacket</a></code>, <code><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></code>, <code><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></code>, <code><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Payload</span></div>
-<div class="block">One of the mod's five payloads: its versioned id (from <a href="NetworkHandler.html" title="class in com.github.crittscott.somegoogly.network"><code>NetworkHandler</code></a>) and its body. Each payload
+<div class="block">One of the mod's seven payloads: its id and its body. Each payload
  class pairs this with a static <code>read(FriendlyByteBuf)</code> that validates on decode; the loader bridges
  <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and
  <a href="../platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.platform"><code>ClientNetworking</code></a> send it on that id.</div>

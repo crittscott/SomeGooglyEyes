@@ -80,14 +80,15 @@ loadScripts(document, 'script');</script>
 <div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear
  googly eyes — every summonable living entity, whether or not it has an eye config yet — so the
  picker can be used on any of them without hunting each one down in survival. The single-mob
- sibling <code>/sg spawn &lt;type&gt;</code> lands in <a href="#spawnOne(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.EntityType&lt;?&gt;)</code></a>. The ender dragon
+ sibling <code>/sg spawn &lt;type&gt;</code> lands in <a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(net.minecraft.commands.CommandSourceStack, net.minecraft.server.level.ServerPlayer, net.minecraft.world.entity.EntityType&lt;?&gt;)</code></a>. The ender dragon
  (<a href="../config/ServerEyeConfigs.html#ENDER_DRAGON"><code>ServerEyeConfigs.ENDER_DRAGON</code></a>) is skipped: it's hard-excluded from eyes, and NoAi
  doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
  Both verbs also skip any type an admin listed in the server config's <code>spawnExcludedMods</code> /
  <code>spawnExcludedEntities</code> (<a href="../config/ServerConfig.html#isSpawnExcluded(net.minecraft.resources.ResourceLocation)"><code>ServerConfig.isSpawnExcluded(net.minecraft.resources.ResourceLocation)</code></a>).
 
  <p>The server-owned <code>/sg spawn</code> and <code>/sg spawnall</code> commands call
- <a href="#spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)"><code>spawn(ServerPlayer, String)</code></a> / <a href="#spawnOne(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(ServerPlayer, EntityType)</code></a> on the server
+ <a href="#spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)"><code>spawn(CommandSourceStack, ServerPlayer, String)</code></a> /
+ <a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(CommandSourceStack, ServerPlayer, EntityType)</code></a> on the server
  thread, so the verbs work from a remote client as well as in single-player.
 
  <p>Layout: mobs are grouped by mod, sorted by id within each mod. Each mod gets its own row heading
@@ -153,14 +154,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">spawn</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">spawn</a><wbr>(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;modFilter)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Spawn the grid around <code>player</code> (must run on the server thread).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnOne(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)" class="member-name-link">spawnOne</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)" class="member-name-link">spawnOne</a><wbr>(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0
@@ -199,9 +202,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="spawn(net.minecraft.server.level.ServerPlayer,java.lang.String)">
+<section class="detail" id="spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)">
 <h3>spawn</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawn</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">spawn</span><wbr><span class="parameters">(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;modFilter)</span></div>
 <div class="block">Spawn the grid around <code>player</code> (must run on the server thread). Reports the result.</div>
 <dl class="notes">
@@ -209,19 +213,26 @@ loadScripts(document, 'script');</script>
 <dd><code>modFilter</code> - if non-null/blank, only spawn mobs whose namespace equals it (e.g. <code>"minecraft"</code>
                   or <code>"exoticbirds"</code>), and additionally report each type in that namespace that was
                   dropped and why — a debugging aid for mods whose mobs don't appear.</dd>
+<dt>Returns:</dt>
+<dd>the number of mobs spawned</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="spawnOne(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)">
+<section class="detail" id="spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)">
 <h3>spawnOne</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnOne</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">spawnOne</span><wbr><span class="parameters">(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
 <div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0
  blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half. Shares spawnall's conventions (NoAi +
  persistent, facing the player, ender dragon excluded) but never terraforms: water mobs spawn
  wherever the player aims, so aim into water to keep one alive. Fails with feedback when no block
  is targeted or the mob's bounding box doesn't fit at the target.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>whether the mob spawned</dd>
+</dl>
 </section>
 </li>
 <li>

@@ -79,8 +79,8 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>EyeItemService.interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.Entity)</code> (the Optometrist right-click harvest) and
  <code>EyeItemService.selfRemoveWithShears(net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code> (sneak + shears on air). The shears-on-kill harvest and
  the Slimy Eye application verb are covered by <a href="SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>SomeGooglyGameTestsLogic</code></a> and
- <a href="EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>EligibilityGameTestsLogic</code></a>. The loader adapters' protection-mod / PvP gating around these calls
- stays source-verified — it needs live listener ordering.
+ <a href="EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>EligibilityGameTestsLogic</code></a>. The loader adapters' protection-mod ordering around these calls stays
+ source-verified — it needs live listener ordering.
 
  <p>For the in-game steps below, get Optometrist shears from an Optometrist book in an anvil, or with
  <code>/give @s shears[enchantments={levels:{"somegoogly:optometrist":1}}]</code>.</div>
@@ -99,22 +99,27 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractHarvestsEyesForOneDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractHarvestsEyesForOneDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#anotherPlayersEyesFollowThePvpRules(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">anotherPlayersEyesFollowThePvpRules</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Eyes go on or come off another player only where you could hurt them.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractHarvestsEyesForOneDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractHarvestsEyesForOneDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Right-click an eyed, configured mob with Optometrist shears: one eye drops, eyes clear, one
  durability.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractPassesWhenNotApplicable(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractPassesWhenNotApplicable</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristInteractPassesWhenNotApplicable(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractPassesWhenNotApplicable</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
  Optometrist; only a non-sneaking use is left to the vanilla item.</div>
 </div>
@@ -135,6 +140,17 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="anotherPlayersEyesFollowThePvpRules(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>anotherPlayersEyesFollowThePvpRules</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">anotherPlayersEyesFollowThePvpRules</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Eyes go on or come off another player only where you could hurt them. In game, on a server with
+ <code>pvp=false</code>: right-click another player with a Slimy Eye, then give them eyes with
+ <code>/sg admin eyes true</code> and right-click them with Optometrist shears; nothing happens either way and
+ nothing is spent. With <code>pvp=true</code>, put both players on a team with <code>friendlyFire false</code> and
+ repeat; nothing happens. With <code>friendlyFire true</code> the shears take the eyes.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="optometristInteractHarvestsEyesForOneDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)">
 <h3>optometristInteractHarvestsEyesForOneDurability</h3>
