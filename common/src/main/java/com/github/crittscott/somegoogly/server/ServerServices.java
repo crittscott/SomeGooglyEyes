@@ -32,7 +32,7 @@ import net.minecraft.world.entity.player.Player;
 public final class ServerServices {
 
     @Nullable
-    private static Boolean loggedGooglyEyesEnabled;
+    private static String loggedConfig;
 
     /**
      * The definitions connected clients last received, with the master switch and behavior settings below, or
@@ -107,12 +107,14 @@ public final class ServerServices {
         PickerGate.onPlayerLeft(player.getUUID());
     }
 
-    /** Record the applied world switch once at startup and whenever its effective value changes. */
+    /** Record the settings that decide who gets eyes, once at startup and whenever they change. */
     public static void onServerConfigApplied() {
-        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        if (loggedGooglyEyesEnabled == null || loggedGooglyEyesEnabled != enabled) {
-            SomeGooglyCommon.LOGGER.info("Server configuration applied (googlyEyesEnabled={})", enabled);
-            loggedGooglyEyesEnabled = enabled;
+        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d".formatted(
+                ServerConfig.GOOGLY_EYES_ENABLED.get(), ServerConfig.GLOBAL_PERCENT.get(),
+                ServerConfig.ENTITY_OVERRIDES.parsed().size());
+        if (!applied.equals(loggedConfig)) {
+            SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);
+            loggedConfig = applied;
         }
     }
 
@@ -122,7 +124,7 @@ public final class ServerServices {
         PickerFreezeService.onServerStopping(server);
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
-        loggedGooglyEyesEnabled = null;
+        loggedConfig = null;
         sentEyeConfigs = null;
     }
 

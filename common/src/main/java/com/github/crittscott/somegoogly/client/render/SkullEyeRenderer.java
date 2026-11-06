@@ -271,8 +271,8 @@ public final class SkullEyeRenderer {
         return PLACEMENTS.computeIfAbsent(model, m -> new HashMap<>()).computeIfAbsent(token, t -> {
             Placement fitted = fit(head, entity, t);
             if (fitted == null) {
-                ClientIntegrationFailures.warnOnce("Head models", "eye placement", entity + " " + t,
-                        new IllegalStateException("no cube to fit eyes by"));
+                ClientIntegrationFailures.warnOnce(
+                        "Head models", "eye placement (no cube to fit eyes by)", entity + " " + t, null);
             }
             return Optional.ofNullable(fitted);
         }).orElse(null);

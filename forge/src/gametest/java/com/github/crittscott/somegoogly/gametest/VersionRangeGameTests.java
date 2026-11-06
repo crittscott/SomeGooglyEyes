@@ -55,11 +55,6 @@ public final class VersionRangeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
     }

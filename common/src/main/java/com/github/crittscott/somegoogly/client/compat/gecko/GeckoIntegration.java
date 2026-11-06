@@ -27,13 +27,13 @@ public final class GeckoIntegration {
      * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
      * model.
      */
-    @SuppressWarnings({"rawtypes", "unchecked", "removal"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static List<String> enumerate(EntityRenderer<?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
         }
         GeoModel model = geo.getGeoModel();
-        ResourceLocation location = model.getModelResource((GeoAnimatable) living);
+        ResourceLocation location = model.getModelResource((GeoAnimatable) living, geo);
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }

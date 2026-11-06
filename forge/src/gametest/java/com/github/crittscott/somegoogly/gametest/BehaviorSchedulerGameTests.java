@@ -57,6 +57,12 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));

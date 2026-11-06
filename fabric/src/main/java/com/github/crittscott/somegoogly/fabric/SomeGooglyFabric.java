@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.fabric.FabricServerConfig;
 import com.github.crittscott.somegoogly.config.fabric.FabricEyeConfigReloadListener;
 import com.github.crittscott.somegoogly.registry.fabric.FabricContentRegistrar;
@@ -25,6 +26,7 @@ public final class SomeGooglyFabric implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA)
                 .registerReloadListener(new FabricEyeConfigReloadListener());
 
-        SomeGooglyCommon.LOGGER.info("{} initialized on Fabric", SomeGooglyCommon.MOD_NAME);
+        SomeGooglyCommon.LOGGER.info("{} {} initialized on Fabric", SomeGooglyCommon.MOD_NAME,
+                ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 }

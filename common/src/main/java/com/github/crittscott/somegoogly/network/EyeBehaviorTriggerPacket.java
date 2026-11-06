@@ -35,17 +35,6 @@ public class EyeBehaviorTriggerPacket implements Payload {
         this.elapsed = elapsed;
     }
 
-    private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
-        this.entityId = buffer.readInt();
-        this.behaviorId = buffer.readResourceLocation();
-        this.duration = buffer.readVarInt();
-        this.seed = buffer.readLong();
-        this.elapsed = buffer.readVarInt();
-        if (!validTiming(duration, elapsed)) {
-            throw new DecoderException("Invalid eye behavior timing");
-        }
-    }
-
     @Override
     public void write(FriendlyByteBuf buffer) {
         buffer.writeInt(entityId);
@@ -82,7 +71,15 @@ public class EyeBehaviorTriggerPacket implements Payload {
 
     /** Decode and validate a received payload. */
     public static EyeBehaviorTriggerPacket read(FriendlyByteBuf buffer) {
-        return new EyeBehaviorTriggerPacket(buffer);
+        int entityId = buffer.readInt();
+        ResourceLocation behaviorId = buffer.readResourceLocation();
+        int duration = buffer.readVarInt();
+        long seed = buffer.readLong();
+        int elapsed = buffer.readVarInt();
+        if (!validTiming(duration, elapsed)) {
+            throw new DecoderException("Invalid eye behavior timing");
+        }
+        return new EyeBehaviorTriggerPacket(entityId, behaviorId, duration, seed, elapsed);
     }
 
     /** The seed that makes the behavior's randomness identical on every viewer. */

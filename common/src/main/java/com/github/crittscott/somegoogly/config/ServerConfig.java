@@ -202,14 +202,6 @@ public class ServerConfig {
         return parseBehaviorPool(AMBIENT_BEHAVIOR_POOL.defaultValue());
     }
 
-    /**
-     * The behaviors eligible for ambient play: every registered behavior whose id appears in
-     * {@link #AMBIENT_BEHAVIOR_POOL}. Unknown ids in the config are simply ignored.
-     */
-    public static List<EyeBehavior> enabledBehaviors() {
-        return AMBIENT_BEHAVIOR_POOL.parsed();
-    }
-
     private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
         Set<String> enabled = new LinkedHashSet<>(pool);
         List<EyeBehavior> result = new ArrayList<>();

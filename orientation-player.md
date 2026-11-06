@@ -176,7 +176,7 @@ They specify adult and baby arrangements, attachment points, size, position, dir
 
 Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. These mods are optional; their definitions may need adjusting when their models change.
 
-74 of the 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; armadillo, bogged, and breeze target later versions, and the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
+All 76 bundled Minecraft definitions select 1.20.1, including the player and armor stand; the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
 Resource packs replace eye textures/item models. There is no JEI plugin.
 

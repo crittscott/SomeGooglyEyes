@@ -31,7 +31,7 @@ public final class EyeItemProperties {
     }
 
     /**
-     * The Slimy Eye {@code ItemColor} body shared by all three loaders: the stored iris color for the
+     * The Slimy Eye {@code ItemColor} body shared by both loaders: the stored iris color for the
      * iris layer as opaque ARGB, {@code -1} (no tint) for every other layer.
      */
     public static int slimyEyeTint(ItemStack stack, int tintIndex) {

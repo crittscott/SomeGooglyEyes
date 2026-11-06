@@ -44,17 +44,13 @@ public class PickerExportPacket implements Payload {
 
     /** Decode and validate a received payload. */
     public static PickerExportPacket read(FriendlyByteBuf buffer) {
-        return new PickerExportPacket(buffer);
-    }
-
-    private PickerExportPacket(FriendlyByteBuf buffer) {
-        this.typeId = buffer.readResourceLocation();
-        this.age = buffer.readUtf(MAX_AGE_LENGTH);
+        ResourceLocation typeId = buffer.readResourceLocation();
+        String age = buffer.readUtf(MAX_AGE_LENGTH);
         CompoundTag configNbt = buffer.readNbt();
         if (configNbt == null) {
             throw new DecoderException("Picker export packet has no config");
         }
-        this.configNbt = configNbt;
+        return new PickerExportPacket(typeId, age, configNbt);
     }
 
     /** Whether this packet's encoded data fits under {@link #MAX_SERVERBOUND_BYTES}. */

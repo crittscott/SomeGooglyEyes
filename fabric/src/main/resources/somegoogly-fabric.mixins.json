@@ -1,17 +1,17 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.github.crittscott.somegoogly.mixin",
+  "package": "com.github.crittscott.somegoogly.mixin.fabric",
   "compatibilityLevel": "JAVA_${java_version}",
   "refmap": "somegoogly.refmap.json",
   "mixins": [
+    "AbstractVillagerTradeMixin",
     "EntityHeadDropMixin",
     "EntityPersistentDataMigrationMixin",
     "HurtReactionMixin",
     "LightningConversionMixin",
     "LivingEntityDeathLootMixin",
-    "LivingEntityReactionMixin",
-    "MerchantResultSlotMixin"
+    "LivingEntityReactionMixin"
   ],
   "client": [
     "MinecraftLevelMixin"

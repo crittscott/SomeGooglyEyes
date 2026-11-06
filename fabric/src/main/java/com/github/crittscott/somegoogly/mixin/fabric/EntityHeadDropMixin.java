@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.mixin.fabric;
 
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.world.entity.Entity;
@@ -11,11 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Fabric has no drop-collection event, and a mob's head reaches the world two ways the death-loot hook in
- * {@link LivingEntityDeathLootMixin} doesn't see: a charged-creeper kill spawns it after that hook runs, and a
- * loot-table head (the wither skeleton's) never passes through it. Both end in {@code spawnAtLocation}, so a
- * dying living entity's drops are offered to {@link EyeItemService#markHeadDrop} there, the counterpart of
- * Forge's {@code LivingDropsEvent} collection.
+ * Fabric has no drop-collection event, and a mob's head reaches the world two ways: a charged-creeper kill and a
+ * loot table (the wither skeleton's). Both end in {@code spawnAtLocation}, so a dying living entity's drops are
+ * offered to {@link EyeItemService#markHeadDrop} there, the counterpart of Forge's {@code LivingDropsEvent}
+ * collection.
  */
 @Mixin(Entity.class)
 abstract class EntityHeadDropMixin {

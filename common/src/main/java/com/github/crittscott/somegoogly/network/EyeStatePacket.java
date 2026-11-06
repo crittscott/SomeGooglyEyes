@@ -19,21 +19,14 @@ public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implement
 
     /** Decode and validate a received payload. */
     public static EyeStatePacket read(FriendlyByteBuf buffer) {
-        return new EyeStatePacket(buffer);
-    }
-
-    private EyeStatePacket(FriendlyByteBuf buffer) {
-        this(buffer.readVarInt(), readSnapshot(buffer));
-    }
-
-    private static EyeState.Snapshot readSnapshot(FriendlyByteBuf buffer) {
+        int entityId = buffer.readVarInt();
         boolean hasGooglyEyes = buffer.readBoolean();
         float variantRoll = buffer.readFloat();
         if (!validRoll(variantRoll)) {
             throw new DecoderException("Invalid eye placement variant roll");
         }
         AppearanceOverride overrides = AppearanceOverride.read(buffer);
-        return new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides);
+        return new EyeStatePacket(entityId, new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides));
     }
 
     @Override

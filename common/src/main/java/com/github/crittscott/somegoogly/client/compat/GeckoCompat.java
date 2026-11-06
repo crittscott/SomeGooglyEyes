@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client.compat;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.gecko.GeckoIntegration;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -19,12 +18,6 @@ import java.util.List;
 public final class GeckoCompat {
 
     private static final boolean LOADED = ModVersionLookup.versionForNamespace("geckolib").isPresent();
-
-    static {
-        if (LOADED) {
-            SomeGooglyCommon.LOGGER.info("GeckoLib detected; enabling googly-eye support on GeckoLib renderers");
-        }
-    }
 
     private GeckoCompat() {
     }

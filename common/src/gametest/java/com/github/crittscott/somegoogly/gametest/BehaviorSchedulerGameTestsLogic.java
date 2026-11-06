@@ -43,6 +43,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -549,6 +550,34 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
+     * A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
+     * {@code swirlOnTrade = true}, trade with an eyed villager; its eyes swirl as you take the item.
+     */
+    public static void completedTradeSwirlsEyes(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_TRADE.set(true);
+            Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(villager, true);
+            ServerBehaviorScheduler.onStartTracking(villager, player);
+            villager.setTradingPlayer(player);
+
+            villager.notifyTrade(new MerchantOffer(
+                    new ItemStack(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 5, 1L),
+                    "the completed trade starts a swirl");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+        }
+        helper.succeed();
+    }
+
+    /**
      * A player's real hit bulges the eyes of a mob or of another player. In game: with
      * {@code growOnHitPercent = 100}, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
      * eyes grow.
@@ -580,7 +609,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
         helper.assertTrue(headInfo != null, type + " has an eye config");
         return headInfo;
     }
@@ -851,7 +880,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     /**
      * Use shears on {@code mob} the way a player's right-click does. Goes through {@code Player#interactOn}
-     * because Forge and NeoForge shear from the shears item rather than the sheep's {@code mobInteract}.
+     * because Forge shears from the shears item rather than the sheep's {@code mobInteract}.
      */
     private static void shear(ServerPlayer player, Mob mob) {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
@@ -966,7 +995,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager.isBaby(), EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, "villagers have an eye config");
 
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
@@ -1025,7 +1054,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void swellingCreeperRattles(GameTestHelper helper) {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper.isBaby(), EyeState.getVariantRoll(creeper));
         helper.assertTrue(headInfo != null, "creepers have an eye config");
 
         GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false, ON);

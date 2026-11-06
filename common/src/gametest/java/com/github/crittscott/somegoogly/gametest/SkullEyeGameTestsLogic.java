@@ -255,6 +255,8 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
         helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, "Optometrist shears harvest");
         helper.assertTrue(!SkullEyeState.hasEyes(skull), "the harvest clears the head's eyes");
+        helper.assertTrue(!skull.saveWithoutMetadata().contains(SkullEyeState.DATA_KEY),
+                "a head without eyes saves no eye data, so its drop stacks with plain heads");
         helper.assertTrue(shears.getDamageValue() == 1, "the harvest spends one shears durability");
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
         helper.assertTrue(eyes.size() == 1, "exactly one Googly Eye pops out");

@@ -26,7 +26,7 @@ Server owns gameplay/authorization; client owns rendering/picker UI.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` each declare a setting once, as a `ConfigValue` holding its section, key, comment, default, and limits; declaration order is file order, and both loaders build their file and schema from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricConfigMigration` quotes released spaced headers. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` logs the effective master switch at startup and changes.
+`ServerConfig`/`ClientConfig` each declare a setting once, as a `ConfigValue` holding its section, key, comment, default, and limits; declaration order is file order, and both loaders build their file and schema from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricConfigMigration` quotes released spaced headers, keeping the original as `.0.8.2.bak`. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` and `ClientConfig.onApplied` log the deciding settings at startup and on change.
 
 Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload by resolving one version per entity type, validating, and NBT-encoding the set; `ServerEyeConfigs` swaps only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits stay aligned across reload (which reserves the maximum behavior block in its packet budget), picker export, and network decode; `EyeColor` codecs reject out-of-range channels.
 
@@ -42,7 +42,7 @@ Persistent entity keys:
 
 The eye-state key and roll are initialized together only when absent, keeping the natural-eyes decision. `initialize` and `sendTo` skip a default snapshot; mid-life mutations always send. Loader hooks call `EyeState.copy` on mob conversion and non-death respawn; a player joining a level gets their own snapshot.
 
-Placed heads store a `Snapshot` under `somegoogly:data`, cleared on load when absent. Block updates sync it, loot copies it to `BlockEntityTag`, and placement restores it. Vanilla heads map by type, Heads and Twilight Forest by ID. Optional Forge mixins add trophy storage and sync, and carry eyes through skull candle conversion; their config is non-required, so a Twilight Forest change costs eyes, not a launch. Skull, candle, and trophy draws share nested render contexts. Trophies fit mob eye layouts to their models, with a trophy-local Hydra layout.
+Placed heads save a `Snapshot` under `somegoogly:data` only while eyed, cleared on load when absent. Block updates sync it, loot copies it to `BlockEntityTag`, and placement restores it. Vanilla heads map by type, Heads and Twilight Forest by ID. Optional Forge mixins add trophy storage and sync, and carry eyes through skull candle conversion; their config is non-required, so a Twilight Forest change costs eyes, not a launch. Skull, candle, and trophy draws share nested render contexts. Trophies fit mob eye layouts to their models, with a trophy-local Hydra layout.
 
 Eye items carry `AppearanceOverride` as the `EyeProperties` compound (`EyeItemProperties`), never geometry; harvesting copies the first eye's effective appearance, and the modifier recipe changes only that compound.
 
@@ -70,7 +70,7 @@ Optional GeckoLib: `client/compat/gecko` holds the GeckoLib-typed layer and bone
 
 ## Networking
 
-Six `Payload` classes: eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Ids in `NetworkHandler` embed network version `17`; bump it on wire changes. Forge registers each on a `SimpleChannel` requiring that version; Fabric's `HANDSHAKE` login query disconnects a client that doesn't understand it; its receivers decode off-thread.
+Six `Payload` classes: eye definitions, entity eye state, behavior triggers, anger, picker freeze, and picker export. Ids in `NetworkHandler` embed network version `17`; bump it on wire changes. Forge registers each on a `SimpleChannel` under a fixed id, requiring that version; Fabric's `HANDSHAKE` login query disconnects a client that doesn't understand it; its receivers decode off-thread.
 
 The eye-definition packet also carries `googlyEyesEnabled` and `BehaviorSettings`; joins always get it, and after each datapack reload or Forge server-config apply `ServerServices.broadcastEyeConfigsIfChanged` resends it only on a change, since it resets client trackers.
 
@@ -82,7 +82,7 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 `PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization and throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection compares actual hit locations. `PickerSpawnService` finalizes through `MobSpawning`, inserts each entity/passenger with checked results, discards partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
 
-`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards server branches explicitly.
+`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `SERVER_BRANCHES`.
 
 ## Loader integration
 
@@ -92,7 +92,7 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-GameTest scenarios: Fabric 180, Forge 183, including three that require Twilight Forest. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
+GameTest scenarios: Fabric 180, Forge 183, including three that require Twilight Forest. Client checklists: `docs/*-eyes-testing.md`. Visuals, multiplayer, protection, commands, and real saves need manual checks.
 
 ## Operational boundaries
 

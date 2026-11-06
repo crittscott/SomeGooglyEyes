@@ -20,11 +20,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -118,9 +115,10 @@ public final class SkullEyeState {
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
 
+        /** Save the compound into {@code tag} while the head has eyes; a head without them saves nothing. */
         default void somegoogly$saveEyes(CompoundTag tag) {
             CompoundTag data = somegoogly$find();
-            if (data != null) {
+            if (data != null && data.getBoolean(EyeState.HAS_EYES)) {
                 tag.put(DATA_KEY, data.copy());
             }
         }
@@ -140,21 +138,6 @@ public final class SkullEyeState {
             }
         }
         return false;
-    }
-
-    /** Copy an eyed head block's snapshot onto its generated head items. */
-    public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
-        BlockEntity skull = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
-        if (skull instanceof Holder) {
-            Snapshot state = snapshot(skull);
-            if (state.hasEyes()) {
-                for (ItemStack stack : generatedLoot) {
-                    if (entityFor(stack) != null) {
-                        stampItem(stack, state);
-                    }
-                }
-            }
-        }
     }
 
     /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */

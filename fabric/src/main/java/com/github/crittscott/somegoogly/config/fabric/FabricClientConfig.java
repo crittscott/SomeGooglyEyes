@@ -25,8 +25,10 @@ public final class FabricClientConfig {
             CommentedConfig document = TomlConfig.readOrCreate(path, defaults);
             TomlConfig.apply(document, ClientConfig.settings());
             TomlConfig.completeIfMissing(path, document, defaults);
+            ClientConfig.onApplied();
         } catch (IOException | IllegalArgumentException e) {
-            SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}", path, e);
+            SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}; keeping the values already in effect",
+                    path, e);
         }
     }
 }

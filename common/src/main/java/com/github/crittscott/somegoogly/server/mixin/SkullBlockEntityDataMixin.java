@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 
 /**
  * Gives the head block entity its eye-state compound ({@link SkullEyeState.Holder}), saved under
- * {@link SkullEyeState#DATA_KEY} with its own data and replaced on every load, so the server's save, the
+ * {@link SkullEyeState#DATA_KEY} with its own data while it has eyes and replaced on every load, so the server's save, the
  * clients' update packets, and a placed head item all carry it. A load without the key clears it.
  */
 @Mixin(SkullBlockEntity.class)

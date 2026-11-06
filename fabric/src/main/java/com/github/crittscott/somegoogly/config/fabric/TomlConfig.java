@@ -9,6 +9,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
+import com.github.crittscott.somegoogly.migration.fabric.FabricConfigMigration;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -153,9 +154,7 @@ public final class TomlConfig {
         String migrated = FabricConfigMigration.quoteReleasedHeader(source);
         CommentedConfig values = parse(migrated);
         if (!migrated.equals(source)) {
-            Files.copy(path, path.resolveSibling(path.getFileName() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
-            Files.writeString(path, migrated, StandardCharsets.UTF_8);
-            SomeGooglyCommon.LOGGER.info("Migrated released config section header in {}", path);
+            FabricConfigMigration.replaceFile(path, migrated);
         }
         return values;
     }

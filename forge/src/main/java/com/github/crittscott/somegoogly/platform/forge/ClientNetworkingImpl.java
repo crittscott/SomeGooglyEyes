@@ -10,6 +10,6 @@ public final class ClientNetworkingImpl {
     }
 
     public static void sendToServer(Payload payload) {
-        ForgeNetworkTransport.sendToServer(payload);
+        ForgeNetworkTransport.CHANNEL.sendToServer(payload);
     }
 }

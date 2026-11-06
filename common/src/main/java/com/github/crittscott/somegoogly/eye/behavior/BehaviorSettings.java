@@ -69,7 +69,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     /** The server's current settings. */
     public static BehaviorSettings fromConfig() {
         return new BehaviorSettings(ServerConfig.AMBIENT_BEHAVIORS.get(), ServerConfig.AMBIENT_MIN_TICKS.get(),
-                ServerConfig.AMBIENT_MAX_TICKS.get(), ServerConfig.enabledBehaviors(),
+                ServerConfig.AMBIENT_MAX_TICKS.get(), ServerConfig.AMBIENT_BEHAVIOR_POOL.parsed(),
                 ServerConfig.GROW_ON_HIT_PERCENT.get(), ServerConfig.SWIRL_ON_HEAL.get(),
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get(), switchedOn(false));
     }

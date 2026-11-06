@@ -15,7 +15,7 @@ import java.nio.file.Path;
  * Creates and loads the active world's server TOML when the server starts and again at the start of
  * each {@code /reload}, since Fabric has no config system; values return to defaults when the server stops.
  * {@link ServerConfig#settings} drives the commented file and the load, as it does the native Forge server spec.
- * Like those loaders, a file missing any key, such as one from an earlier release, is
+ * Like Forge, a file missing any key, such as one from an earlier release, is
  * completed with only absent keys at their defaults; existing values and comments are retained.
  */
 public final class FabricServerConfig {
@@ -35,22 +35,25 @@ public final class FabricServerConfig {
     }
 
     private static void load(MinecraftServer server) {
-        load(server.getWorldPath(LevelResource.ROOT).resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME));
-        ServerServices.onServerConfigApplied();
+        if (load(server.getWorldPath(LevelResource.ROOT).resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME))) {
+            ServerServices.onServerConfigApplied();
+        }
     }
 
     /**
      * Load the server config at {@code path} into {@link ServerConfig}, writing the defaults there if it is absent
-     * and adding any keys it lacks.
+     * and adding any keys it lacks. Returns whether it loaded; a failure is logged.
      */
-    public static void load(Path path) {
+    public static boolean load(Path path) {
         try {
             String defaults = TomlConfig.render(ServerConfig.settings());
             CommentedConfig values = TomlConfig.readOrCreate(path, defaults);
             TomlConfig.apply(values, ServerConfig.settings());
             TomlConfig.completeIfMissing(path, values, defaults);
+            return true;
         } catch (IOException | IllegalArgumentException e) {
-            SomeGooglyCommon.LOGGER.error("Could not load server config {}", path, e);
+            SomeGooglyCommon.LOGGER.error("Could not load server config {}; keeping the values already in effect", path, e);
+            return false;
         }
     }
 }

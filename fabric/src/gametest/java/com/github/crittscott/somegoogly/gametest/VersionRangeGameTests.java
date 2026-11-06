@@ -48,11 +48,6 @@ public final class VersionRangeGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
     }

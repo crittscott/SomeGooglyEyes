@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.config;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,9 @@ public final class ClientConfig {
             SECTION, "disabledMods", List.of(), ServerConfig::validateNamespace, Set::copyOf,
             "Mod namespaces whose entities should not display googly eyes"));
 
+    @Nullable
+    private static String loggedConfig;
+
     private ClientConfig() {
     }
 
@@ -43,6 +47,16 @@ public final class ClientConfig {
     public static boolean isEntityDisabled(ResourceLocation entityType) {
         return DISABLED_MODS.parsed().contains(entityType.getNamespace())
                 || DISABLED_ENTITIES.parsed().contains(entityType);
+    }
+
+    /** Record the settings that hide eyes on this client, once at load and whenever they change. */
+    public static void onApplied() {
+        String applied = "disableGooglyEyes=%s, disabledEntities=%d, disabledMods=%d".formatted(
+                DISABLE_GOOGLY_EYES.get(), DISABLED_ENTITIES.parsed().size(), DISABLED_MODS.parsed().size());
+        if (!applied.equals(loggedConfig)) {
+            SomeGooglyCommon.LOGGER.info("Client configuration applied ({})", applied);
+            loggedConfig = applied;
+        }
     }
 
     /** Every setting, in the order of the client config file. */

@@ -5,8 +5,6 @@ import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
-import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.server.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import java.util.HashSet;
@@ -24,13 +22,8 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -70,15 +63,6 @@ public final class FabricServerEvents {
         return headLootTables;
     }
 
-    /**
-     * The refusal shown to a client without this mod. That client lacks our language file, so the text travels
-     * with the key; Fabric API loads the mod's language file on the server.
-     */
-    public static Component requiredClientMessage() {
-        String key = "somegoogly.network.required_client";
-        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key));
-    }
-
     /** Subscribe the server listeners; called once from the mod initializer. */
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
@@ -90,6 +74,7 @@ public final class FabricServerEvents {
         UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
                 EyeItemService.useOnSkull(player, level, hand, hitResult));
         // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
+        // The Forge counterpart is HeadEyesLootModifier. A head without eyes saves no compound, so nothing copies.
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (headLootTables().contains(id)) {
                 tableBuilder.modifyPools(pool -> pool.apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
@@ -116,17 +101,6 @@ public final class FabricServerEvents {
                 EyeState.copy(oldPlayer, newPlayer);
             }
         });
-        // Refuse a client without this network version before it joins the world: it cannot answer the query.
-        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) ->
-                sender.sendPacket(FabricNetworkTransport.HANDSHAKE, PacketByteBufs.empty()));
-        ServerLoginNetworking.registerGlobalReceiver(FabricNetworkTransport.HANDSHAKE,
-                (server, handler, understood, buffer, synchronizer, responseSender) -> {
-                    if (!understood) {
-                        SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
-                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
-                        handler.disconnect(requiredClientMessage());
-                    }
-                });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 ServerServices.syncEyeConfigs(handler.player));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->

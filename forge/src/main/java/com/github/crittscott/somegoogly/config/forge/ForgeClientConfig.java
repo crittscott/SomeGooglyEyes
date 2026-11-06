@@ -34,5 +34,6 @@ public final class ForgeClientConfig {
             return;
         }
         COPY_VALUES.run();
+        ClientConfig.onApplied();
     }
 }

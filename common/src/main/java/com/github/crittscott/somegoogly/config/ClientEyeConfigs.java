@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,11 +93,6 @@ public final class ClientEyeConfigs {
     public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
         RuntimeConfig config = get(entity, baby);
         return cached(entity, baby, config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
-    }
-
-    /** Resolve and cache the selected variant for {@code living}'s current age. */
-    public static HeadInfo resolve(ResourceLocation entity, LivingEntity living, float variantRoll) {
-        return resolve(entity, living.isBaby(), variantRoll);
     }
 
     /**

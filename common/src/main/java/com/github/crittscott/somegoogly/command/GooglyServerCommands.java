@@ -34,6 +34,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 /**
  * Server-owned {@code /sg} commands. Both kinds require creative mode and permission level 2: the
  * picker branches ({@link PickerGate#mayUsePicker}) spawn, move, and rotate authoring mobs; the
@@ -52,8 +54,14 @@ import javax.annotation.Nullable;
  */
 public final class GooglyServerCommands {
 
+    private static final String ADMIN = "admin";
+    private static final String MOB = "mob";
     /** The {@code /sg} root literal, shared by the server tree, the client tree, and Fabric's routing. */
     public static final String ROOT = "sg";
+    private static final String SPAWN = "spawn";
+    private static final String SPAWN_ALL = "spawnall";
+    /** The branches this tree owns under {@link #ROOT}, which Fabric's client forwards to the server. */
+    public static final List<String> SERVER_BRANCHES = List.of(ADMIN, MOB, SPAWN, SPAWN_ALL);
 
     /**
      * {@code /sg mob rot} azimuth is measured from +X toward +Z; vanilla yaw 0 faces +Z, so
@@ -81,7 +89,7 @@ public final class GooglyServerCommands {
 
     /** The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}. */
     private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
-        return Commands.literal("admin")
+        return Commands.literal(ADMIN)
                 .requires(GooglyServerCommands::gamemaster)
                 .then(Commands.literal("eyes")
                         .then(Commands.argument("value", BoolArgumentType.bool())
@@ -114,7 +122,7 @@ public final class GooglyServerCommands {
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> spawnTree(CommandBuildContext buildContext) {
-        return Commands.literal("spawn")
+        return Commands.literal(SPAWN)
                 .requires(GooglyServerCommands::gamemaster)
                 .then(Commands.argument("type", ResourceArgument.resource(buildContext, Registries.ENTITY_TYPE))
                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
@@ -125,7 +133,7 @@ public final class GooglyServerCommands {
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> spawnAllTree() {
-        return Commands.literal("spawnall")
+        return Commands.literal(SPAWN_ALL)
                 .requires(GooglyServerCommands::gamemaster)
                 .executes(ctx -> spawnAll(ctx, null))
                 .then(Commands.argument("mod", StringArgumentType.word())
@@ -133,7 +141,7 @@ public final class GooglyServerCommands {
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> mobTree() {
-        return Commands.literal("mob")
+        return Commands.literal(MOB)
                 .requires(GooglyServerCommands::gamemaster)
                 .then(Commands.literal("move")
                         .then(Commands.argument("dx", FloatArgumentType.floatArg(-MAX_MOB_MOVE, MAX_MOB_MOVE))

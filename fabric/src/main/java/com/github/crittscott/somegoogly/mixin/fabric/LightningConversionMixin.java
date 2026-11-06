@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.mixin.fabric;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.world.entity.Entity;

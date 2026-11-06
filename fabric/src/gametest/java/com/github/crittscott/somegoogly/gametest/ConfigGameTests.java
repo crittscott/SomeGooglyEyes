@@ -171,6 +171,8 @@ public final class ConfigGameTests implements FabricGameTest {
                                         .equals(List.of("somegoogly:blink", "somegoogly:stare"))
                                 && !ServerConfig.SWIRL_ON_TRADE.get(),
                         "every released value loads");
+                helper.assertTrue(Files.readString(file.resolveSibling("server.toml.0.8.2.bak")).equals(released),
+                        "the released text survives the later completion backup");
                 helper.assertTrue(ServerConfig.SQUINT_ON_SLEEP.get() && ServerConfig.GROW_ON_MILK.get(),
                         "keys the released file lacks take their defaults");
 
@@ -190,6 +192,7 @@ public final class ConfigGameTests implements FabricGameTest {
             } finally {
                 restore.forEach(Runnable::run);
                 Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
+                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".0.8.2.bak"));
                 Files.deleteIfExists(file);
                 Files.deleteIfExists(dir);
             }

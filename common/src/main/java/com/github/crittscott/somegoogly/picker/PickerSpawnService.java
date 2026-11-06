@@ -138,6 +138,12 @@ public final class PickerSpawnService {
         return false;
     }
 
+    /** Report a world change to the sender, other operators, and the console, per vanilla convention. */
+    private static void announce(CommandSourceStack source, String key, Object... args) {
+        source.sendSuccess(() -> Component.translatable("somegoogly.command.picker.feedback",
+                Component.translatable(key, args)), true);
+    }
+
     /**
      * Plan a basin for a water mob: raise the 5x5 perimeter into sandstone walls
      * and flood the inner 3x3, both as tall as the mob's water column so it stays submerged and the water
@@ -371,9 +377,7 @@ public final class PickerSpawnService {
                 ? Component.translatable("somegoogly.command.spawnall.scope", modFilter) : Component.empty();
         Component skippedNote = finalSkipped > 0
                 ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
-        SomeGooglyCommon.LOGGER.info("{} ran /sg spawnall (scope={}): spawned {}, skipped {}",
-                player.getGameProfile().getName(), filtering ? modFilter : "all", finalSpawned, finalSkipped);
-        tellSuccess(source, "somegoogly.command.spawnall.result",
+        announce(source, "somegoogly.command.spawnall.result",
                 finalSpawned, scope, platformNote, finalRows, skippedNote);
         if (filtering && !dropped.isEmpty()) {
             tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
@@ -455,7 +459,7 @@ public final class PickerSpawnService {
         }
 
         if (addCommandEntity(level, entity)) {
-            tellSuccess(source, "somegoogly.command.spawn.spawned", id.toString());
+            announce(source, "somegoogly.command.spawn.spawned", id.toString());
             return true;
         }
         tellFailure(source, "somegoogly.command.spawn.refused", id.toString());

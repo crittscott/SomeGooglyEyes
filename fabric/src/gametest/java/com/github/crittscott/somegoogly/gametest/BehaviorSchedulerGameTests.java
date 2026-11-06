@@ -51,6 +51,12 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, FakePlayer.get(helper.getLevel()));

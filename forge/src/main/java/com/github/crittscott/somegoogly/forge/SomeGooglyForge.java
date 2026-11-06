@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.forge;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.forge.ForgeClientBootstrap;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
+import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
 import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
@@ -18,12 +19,10 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 /** Forge bootstrap for common registration and server datapack resources. */
 @Mod(SomeGooglyCommon.MOD_ID)
-public final class SomeGoogly {
+public final class SomeGooglyForge {
 
-    public SomeGoogly() {
+    public SomeGooglyForge() {
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
-        // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
-        // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         IEventBus modEventBus = context.getModEventBus();
         ForgeContentRegistrar registrar = new ForgeContentRegistrar();
         SomeGooglyCommon.init(registrar);
@@ -33,13 +32,14 @@ public final class SomeGoogly {
         ForgeServerConfig.register(context);
 
         ForgeServerEvents.register(MinecraftForge.EVENT_BUS);
-        MinecraftForge.EVENT_BUS.addListener(SomeGoogly::addReloadListeners);
+        MinecraftForge.EVENT_BUS.addListener(SomeGooglyForge::addReloadListeners);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ForgeClientBootstrap.register(context);
         }
 
-        SomeGooglyCommon.LOGGER.info("{} initialized on Forge", SomeGooglyCommon.MOD_NAME);
+        SomeGooglyCommon.LOGGER.info("{} {} registered on Forge", SomeGooglyCommon.MOD_NAME,
+                ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 
     private static void addReloadListeners(AddReloadListenerEvent event) {

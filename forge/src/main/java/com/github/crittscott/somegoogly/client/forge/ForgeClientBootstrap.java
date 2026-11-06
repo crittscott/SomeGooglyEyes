@@ -91,6 +91,7 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
+        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

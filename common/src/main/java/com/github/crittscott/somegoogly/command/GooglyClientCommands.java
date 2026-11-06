@@ -32,7 +32,7 @@ import java.util.function.Consumer;
  * in the client-side {@link PickerState}. Like the keyboard picker, they require creative mode and
  * permission level 2 ({@link PickerGate#mayUsePicker}).
  *
- * <p>Each verb is a single full literal; there are no short aliases. The picker keyboard and this CLI
+ * <p>The picker keyboard and this CLI
  * call the same {@link PickerState} methods, so they stay in lock-step.
  *
  * <p>{@code export} sends the client-authored draft to the server. World-mutating commands such as

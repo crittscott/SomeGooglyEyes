@@ -56,12 +56,8 @@ public class PickerFreezePacket implements Payload {
 
     /** Decode and validate a received payload. */
     public static PickerFreezePacket read(FriendlyByteBuf buffer) {
-        return new PickerFreezePacket(buffer);
-    }
-
-    private PickerFreezePacket(FriendlyByteBuf buffer) {
-        this.freeze = buffer.readBoolean();
-        this.mobId = freeze ? buffer.readUUID() : null;
+        boolean freeze = buffer.readBoolean();
+        return new PickerFreezePacket(freeze, freeze ? buffer.readUUID() : null);
     }
 
     @Override

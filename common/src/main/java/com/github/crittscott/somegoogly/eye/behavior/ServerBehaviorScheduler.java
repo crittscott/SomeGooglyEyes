@@ -235,7 +235,7 @@ public final class ServerBehaviorScheduler {
 
     private static void rollAmbient(LivingEntity mob, MobState state) {
         state.ambientCooldown = nextCooldown();
-        List<EyeBehavior> pool = ServerConfig.enabledBehaviors();
+        List<EyeBehavior> pool = ServerConfig.AMBIENT_BEHAVIOR_POOL.parsed();
         if (pool.isEmpty()) {
             return;
         }

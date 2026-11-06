@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin;
+package com.github.crittscott.somegoogly.mixin.fabric;
 
 import com.github.crittscott.somegoogly.migration.fabric.FabricEntityDataMigration;
 import net.minecraft.nbt.CompoundTag;

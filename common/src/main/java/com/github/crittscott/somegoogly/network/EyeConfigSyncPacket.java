@@ -40,40 +40,6 @@ public class EyeConfigSyncPacket implements Payload {
         this.behaviors = behaviors;
     }
 
-    private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
-        if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
-            throw new DecoderException("Eye config sync payload exceeds network limit");
-        }
-        int size = buffer.readVarInt();
-        if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
-            throw new DecoderException("Eye config count exceeds network limit: " + size);
-        }
-        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
-        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
-        for (int i = 0; i < size; i++) {
-            ResourceLocation id = buffer.readResourceLocation();
-            if (configs.containsKey(id)) {
-                throw new DecoderException("Duplicate synced eye config for " + id);
-            }
-            CompoundTag tag = buffer.readNbt();
-            if (tag == null) {
-                throw new DecoderException("Missing synced eye config for " + id);
-            }
-            RuntimeConfigSet decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result()
-                    .orElseThrow(() -> new DecoderException("Malformed synced eye config for " + id));
-            configs.put(id, decoded);
-            encoded.put(id, tag);
-        }
-        EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(configs);
-        if (error != null) {
-            throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
-        }
-        this.configs = configs;
-        this.encoded = encoded;
-        this.googlyEyesEnabled = buffer.readBoolean();
-        this.behaviors = BehaviorSettings.read(buffer);
-    }
-
     /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
@@ -123,6 +89,33 @@ public class EyeConfigSyncPacket implements Payload {
 
     /** Decode and validate a received payload. */
     public static EyeConfigSyncPacket read(FriendlyByteBuf buffer) {
-        return new EyeConfigSyncPacket(buffer);
+        if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
+            throw new DecoderException("Eye config sync payload exceeds network limit");
+        }
+        int size = buffer.readVarInt();
+        if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
+            throw new DecoderException("Eye config count exceeds network limit: " + size);
+        }
+        Map<ResourceLocation, RuntimeConfigSet> configs = new HashMap<>();
+        Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            ResourceLocation id = buffer.readResourceLocation();
+            if (configs.containsKey(id)) {
+                throw new DecoderException("Duplicate synced eye config for " + id);
+            }
+            CompoundTag tag = buffer.readNbt();
+            if (tag == null) {
+                throw new DecoderException("Missing synced eye config for " + id);
+            }
+            RuntimeConfigSet decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result()
+                    .orElseThrow(() -> new DecoderException("Malformed synced eye config for " + id));
+            configs.put(id, decoded);
+            encoded.put(id, tag);
+        }
+        EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(configs);
+        if (error != null) {
+            throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
+        }
+                return new EyeConfigSyncPacket(configs, encoded, buffer.readBoolean(), BehaviorSettings.read(buffer));
     }
 }

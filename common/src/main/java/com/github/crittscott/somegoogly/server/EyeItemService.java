@@ -152,7 +152,7 @@ public final class EyeItemService {
 
     private static HeadInfo helperFor(LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        return ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        return ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
     }
 
     /**
@@ -247,8 +247,8 @@ public final class EyeItemService {
 
     /**
      * Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
-     * phase: Forge adds it to the {@code LivingDropsEvent} collection, Fabric appends it
-     * from a {@code dropCustomDeathLoot} mixin. Forge's event fires whatever {@code doMobLoot} says, so the rule
+     * phase: Forge adds it to the {@code LivingDropsEvent} collection, Fabric spawns it
+     * from a {@code dropAllDeathLoot} mixin at the same point. Neither depends on {@code doMobLoot}, so the rule
      * is checked here.
      */
     public static void onDeath(LivingEntity mob, DamageSource source, Consumer<ItemStack> dropSink) {
