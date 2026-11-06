@@ -4,14 +4,19 @@ import com.github.crittscott.somegoogly.network.Payload;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-/** Fabric clientbound sends; tracking fanout encodes once and uses the vanilla broadcast Forge's distributor does. */
+/** Fabric clientbound sends; fanout encodes once and uses the vanilla broadcasts Forge's distributors do. */
 public final class NetworkingImpl {
 
     private NetworkingImpl() {
+    }
+
+    public static void sendToAll(MinecraftServer server, Payload payload) {
+        server.getPlayerList().broadcastAll(ServerPlayNetworking.createS2CPacket(payload.id(), encode(payload)));
     }
 
     public static void sendToPlayer(ServerPlayer player, Payload payload) {

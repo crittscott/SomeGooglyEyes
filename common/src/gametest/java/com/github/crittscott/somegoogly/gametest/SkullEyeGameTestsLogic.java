@@ -355,6 +355,28 @@ public final class SkullEyeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * A head keeps only its eye state from the data it loads, so nothing else a head item carried is saved or sent
+     * to players. In game, in creative: {@code /give} a skeleton skull whose {@code BlockEntityTag} has a
+     * {@code somegoogly:data} compound with {@code hasGooglyEyes} true and an extra key, and place it; {@code /data
+     * get block} shows the eye state without that key.
+     */
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        CompoundTag data = new CompoundTag();
+        purpleEyes().write(data);
+        data.putString("padding", "x".repeat(1024));
+        CompoundTag tag = skull.saveWithoutMetadata();
+        tag.put(SkullEyeState.DATA_KEY, data);
+
+        skull.load(tag);
+
+        helper.assertTrue(purpleEyes().equals(SkullEyeState.snapshot(skull)), "the head keeps its eyes");
+        helper.assertTrue(!skull.saveWithoutMetadata().getCompound(SkullEyeState.DATA_KEY).contains("padding"),
+                "the head doesn't keep data that isn't eye state");
+        helper.succeed();
+    }
+
     /** The Heads mod's block {@code path}; fails the test when that mod isn't loaded. */
     private static Block headsBlock(GameTestHelper helper, String path) {
         ResourceLocation id = headsId(path);

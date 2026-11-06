@@ -205,7 +205,7 @@ While the picker is active, configured mobs display eyes regardless of spawn cha
 
 Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits.
 
-`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks, at most once per player every 10 seconds; a definition too large to send is refused.
+`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks, at most once per player every 10 seconds; a definition too large to send, or one that would push the whole set past the sync limits, is refused.
 
 `/sg exportall` writes all loaded definitions and session edits to:
 

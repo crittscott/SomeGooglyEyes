@@ -36,6 +36,9 @@ import javax.annotation.Nullable;
 
 import java.util.List;
 
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
+
 /**
  * Server-owned {@code /sg} commands. Both kinds require creative mode and permission level 2: the
  * picker branches ({@link PickerGate#mayUsePicker}) spawn, move, and rotate authoring mobs; the
@@ -206,8 +209,8 @@ public final class GooglyServerCommands {
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
         PickerSpawnService.tellSuccess(source, "somegoogly.command.picker.mob_moved",
-                String.format("%.2f", living.getX()), String.format("%.2f", living.getY()),
-                String.format("%.2f", living.getZ()));
+                compact(living.getX()), compact(living.getY()),
+                compact(living.getZ()));
         return 1;
     }
 
@@ -226,7 +229,7 @@ public final class GooglyServerCommands {
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        PickerSpawnService.tellSuccess(source, "somegoogly.command.picker.mob_rotated", String.format("%.0f", azimuth));
+        PickerSpawnService.tellSuccess(source, "somegoogly.command.picker.mob_rotated", angle(azimuth));
         return 1;
     }
 

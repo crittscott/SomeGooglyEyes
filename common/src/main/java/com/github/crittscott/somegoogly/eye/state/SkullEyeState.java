@@ -48,11 +48,11 @@ public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
-    /** The last segment of an attachment token that names a model's head part. */
-    private static final String HEAD_PART = "head";
+    /** Twilight Forest's namespace. Ahead of the maps below, which name it. */
+    private static final String TWILIGHT_NAMESPACE = "twilightforest";
     /**
      * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
-     * every other mob's head shows the eyes on parts named {@value #HEAD_PART}.
+     * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
      */
     private static final Map<ResourceLocation, String> HEAD_PART_TOKENS = Map.of(
             EntityType.getKey(EntityType.BEE), "body",
@@ -62,8 +62,8 @@ public final class SkullEyeState {
             EntityType.getKey(EntityType.GLOW_SQUID), "root",
             EntityType.getKey(EntityType.SLIME), "root/right_eye",
             EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0",
-            new ResourceLocation("twilightforest", "naga"), "#0",
-            new ResourceLocation("twilightforest", "ur_ghast"), "root/body");
+            new ResourceLocation(TWILIGHT_NAMESPACE, "naga"), "#0",
+            new ResourceLocation(TWILIGHT_NAMESPACE, "ur_ghast"), "root/body");
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
@@ -73,7 +73,7 @@ public final class SkullEyeState {
     /** The Heads mod's namespace. */
     public static final String HEADS_NAMESPACE = "heads";
     /** Hydra eyes use the trophy model because the mob's heads are separate renderers. */
-    public static final ResourceLocation HYDRA_TROPHY_LAYOUT = new ResourceLocation("twilightforest", "hydra_trophy");
+    public static final ResourceLocation HYDRA_TROPHY_LAYOUT = new ResourceLocation(TWILIGHT_NAMESPACE, "hydra_trophy");
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -81,6 +81,8 @@ public final class SkullEyeState {
             SkullBlock.Types.SKELETON, EntityType.SKELETON,
             SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
             SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
+    /** The path segment that sets a wall-mounted head's block id apart from its floor block's. */
+    private static final String WALL_SEGMENT = "_wall_";
 
     private SkullEyeState() {
     }
@@ -146,6 +148,21 @@ public final class SkullEyeState {
         return skull instanceof Holder holder ? holder.somegoogly$find() : null;
     }
 
+    /**
+     * The eye-state compound of a head loading from {@code tag}, or {@code null} if it holds none. Only the state
+     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
+     * saved and sent to everyone near the head.
+     */
+    @Nullable
+    public static CompoundTag loadedData(CompoundTag tag) {
+        if (!tag.contains(DATA_KEY, Tag.TAG_COMPOUND)) {
+            return null;
+        }
+        CompoundTag data = new CompoundTag();
+        Snapshot.read(tag.getCompound(DATA_KEY)).write(data);
+        return data;
+    }
+
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
     @Nullable
     public static ResourceLocation entityFor(Block block) {
@@ -167,16 +184,16 @@ public final class SkullEyeState {
         if (!blockId.getNamespace().equals(HEADS_NAMESPACE)) {
             return twilightHead(blockId);
         }
-        EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace("_wall_", "_"));
+        EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace(WALL_SEGMENT, "_"));
         return type == null ? null : EntityType.getKey(type);
     }
 
     @Nullable
     private static ResourceLocation twilightHead(ResourceLocation id) {
-        if (!id.getNamespace().equals("twilightforest")) {
+        if (!id.getNamespace().equals(TWILIGHT_NAMESPACE)) {
             return null;
         }
-        String path = id.getPath().replace("_wall_", "_");
+        String path = id.getPath().replace(WALL_SEGMENT, "_");
         return switch (path) {
             case "skeleton_skull_candle" -> EntityType.getKey(EntityType.SKELETON);
             case "wither_skeleton_skull_candle" -> EntityType.getKey(EntityType.WITHER_SKELETON);
@@ -210,7 +227,7 @@ public final class SkullEyeState {
     /**
      * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
      * order: those attached to the part the head reproduces, by default the model's head part (an attachment
-     * token whose last segment is {@value #HEAD_PART}).
+     * token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(ResourceLocation entity, HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -292,7 +309,7 @@ public final class SkullEyeState {
     /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
     private static boolean isShownPart(ResourceLocation entity, String token) {
         String partToken = HEAD_PART_TOKENS.get(entity);
-        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART)
+        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
     }
 

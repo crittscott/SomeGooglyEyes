@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,8 +30,6 @@ import net.minecraft.world.entity.animal.Sheep;
  * per-bone callback.
  */
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    /** Attachment part whose eyes sit on a sheep's wool. */
-    private static final String SHEEP_BODY_PART = "body";
     /** Thickness of the adult sheep's wool beyond its body, in blocks (1.75 model pixels). */
     private static final float SHEEP_WOOL_DEPTH = 1.75F / 16.0F;
 
@@ -89,7 +88,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
      */
     private static void insetShearedSheepBody(PoseStack poseStack, LivingEntity living, String part) {
         if (living instanceof Sheep sheep && sheep.isSheared() && !sheep.isBaby()
-                && SHEEP_BODY_PART.equals(part)) {
+                && EyeConfigModel.PART_BODY.equals(part)) {
             poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
         }
     }

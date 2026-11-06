@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
@@ -37,8 +38,8 @@ public class AgeableListResolver extends ModelPartTreeResolver {
     protected List<NamedRoot> roots(EntityModel<?> model) {
         AgeableListModel<?> ageable = (AgeableListModel<?>) model;
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, "head", ageable.headParts(), headWrap(ageable));
-        index(roots, "body", ageable.bodyParts(), bodyWrap(ageable));
+        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), headWrap(ageable));
+        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), bodyWrap(ageable));
         return roots;
     }
 

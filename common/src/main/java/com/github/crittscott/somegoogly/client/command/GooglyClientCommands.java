@@ -1,9 +1,12 @@
-package com.github.crittscott.somegoogly.command;
+package com.github.crittscott.somegoogly.client.command;
 
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.command.GooglyServerCommands;
+import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -25,6 +28,10 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.position;
 
 /**
  * The {@code /sg} command tree — the in-game eye-placement CLI. Each loader registers the same
@@ -80,7 +87,7 @@ public class GooglyClientCommands {
         float z = FloatArgumentType.getFloat(ctx, "z");
         PickerState.createEye(x, y, z);
         feedback("somegoogly.command.picker.created_eye",
-                String.format("%.3f", x), String.format("%.3f", y), String.format("%.3f", z));
+                position(x), position(y), position(z));
         return 1;
     }
 
@@ -136,12 +143,12 @@ public class GooglyClientCommands {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
             Component mark = i == PickerState.selectedIndex() ? SELECTED_MARK : Component.empty();
-            Component cross = e.crossTarget >= 0
+            Component cross = e.crossTarget != EyePlacement.NO_CROSS_TARGET
                     ? Component.translatable("somegoogly.picker.cross_target_mark", e.crossTarget + 1)
                     : Component.empty();
             feedback("somegoogly.command.picker.eye_entry", i + 1, le.part,
-                    String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
-                    String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth), cross, mark);
+                    position(e.position[0]), position(e.position[1]), position(e.position[2]),
+                    angle(e.inclination), angle(e.azimuth), cross, mark);
         }
         return 1;
     }
@@ -163,7 +170,7 @@ public class GooglyClientCommands {
         for (int i = 0; i < PickerState.variantCount(); i++) {
             PickerState.DraftVariant v = PickerState.variants().get(i);
             Component mark = i == PickerState.variantIndex() ? SELECTED_MARK : Component.empty();
-            feedback("somegoogly.command.picker.variant_entry", i + 1, String.format("%.2f", v.weight), v.eyes.size(), mark);
+            feedback("somegoogly.command.picker.variant_entry", i + 1, compact(v.weight), v.eyes.size(), mark);
         }
         return 1;
     }
@@ -177,7 +184,7 @@ public class GooglyClientCommands {
                 MaybeFloatArgumentType.get(ctx, "z"));
         EyeDraft e = PickerState.currentEye();
         feedback("somegoogly.command.picker.position",
-                String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]));
+                position(e.position[0]), position(e.position[1]), position(e.position[2]));
         return 1;
     }
 
@@ -214,8 +221,8 @@ public class GooglyClientCommands {
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
         feedback("somegoogly.command.picker.posrot",
-                String.format("%.3f", e.position[0]), String.format("%.3f", e.position[1]), String.format("%.3f", e.position[2]),
-                String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth));
+                position(e.position[0]), position(e.position[1]), position(e.position[2]),
+                angle(e.inclination), angle(e.azimuth));
         return 1;
     }
 
@@ -235,7 +242,7 @@ public class GooglyClientCommands {
             throw BAD_CROSS_TARGET.create(n);
         }
         int target = PickerState.currentEye().crossTarget;
-        if (target < 0) {
+        if (target == EyePlacement.NO_CROSS_TARGET) {
             feedback("somegoogly.command.picker.cross_target_cleared");
         } else {
             feedback("somegoogly.command.picker.cross_target_set", target + 1);
@@ -463,7 +470,7 @@ public class GooglyClientCommands {
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
         feedback("somegoogly.command.picker.rotation",
-                String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth));
+                angle(e.inclination), angle(e.azimuth));
         return 1;
     }
 

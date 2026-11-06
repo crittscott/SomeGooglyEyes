@@ -24,6 +24,9 @@ import java.util.UUID;
  */
 public class PickerExportPacket implements Payload {
 
+    /** What a loader adds to the encoded data on the wire: Forge's channel writes a one-byte message index first. */
+    private static final int LOADER_FRAMING_BYTES = 1;
+
     /** Wire bound on the age string; comfortably above the longest age name. */
     private static final int MAX_AGE_LENGTH = 16;
 
@@ -53,12 +56,12 @@ public class PickerExportPacket implements Payload {
         return new PickerExportPacket(typeId, age, configNbt);
     }
 
-    /** Whether this packet's encoded data fits under {@link #MAX_SERVERBOUND_BYTES}. */
+    /** Whether this packet's encoded data and loader framing fit under {@link #MAX_SERVERBOUND_BYTES}. */
     public boolean fitsServerbound() {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
             write(buffer);
-            return buffer.readableBytes() <= MAX_SERVERBOUND_BYTES;
+            return buffer.readableBytes() + LOADER_FRAMING_BYTES <= MAX_SERVERBOUND_BYTES;
         } finally {
             buffer.release();
         }

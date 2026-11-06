@@ -37,9 +37,9 @@ public final class ForgeServerEvents {
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
-            ServerServices.syncEyeConfigs(player);
+            ServerServices.syncJoiningPlayer(player);
         } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+            ServerServices.broadcastEyeSyncIfChanged(event.getPlayerList().getServer());
         }
     }
 

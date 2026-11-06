@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.server.mixin;
+package com.github.crittscott.somegoogly.mixin.common;
 
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import net.minecraft.world.InteractionHand;

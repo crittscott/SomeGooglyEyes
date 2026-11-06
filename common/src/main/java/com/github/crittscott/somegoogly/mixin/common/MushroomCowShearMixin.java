@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.server.mixin;
+package com.github.crittscott.somegoogly.mixin.common;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.world.entity.Entity;

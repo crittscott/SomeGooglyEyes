@@ -206,6 +206,38 @@ public final class SomeGooglyGameTestsLogic {
     }
 
     /**
+     * A real shears kill harvests through each loader's own death path, and a baby harvests like an adult though it
+     * drops no loot of its own. In game: set {@code harvestOnKillPercent = 100} and kill an eyed cow and an eyed calf
+     * with shears; each drops one Googly Eye.
+     */
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper, Player player) {
+        BlockPos adultPos = new BlockPos(2, 2, 2);
+        Cow adult = helper.spawnWithNoFreeWill(EntityType.COW, adultPos);
+        Cow baby = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 2));
+        baby.setBaby(true);
+        int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
+
+        try {
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+            for (Cow cow : List.of(adult, baby)) {
+                EyeState.setHasEyes(cow, true);
+                cow.hurt(helper.getLevel().damageSources().playerAttack(player), Float.MAX_VALUE);
+                helper.assertTrue(cow.isDeadOrDying(), "the blow should kill the cow");
+            }
+        } finally {
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
+            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        }
+
+        int eyes = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+                new AABB(helper.absolutePos(adultPos)).inflate(4.0),
+                drop -> drop.getItem().is(ModContent.GOOGLY_EYE.get())).size();
+        helper.assertTrue(eyes == 2, "both kills should drop one Googly Eye, found " + eyes);
+        helper.succeed();
+    }
+
+    /**
      * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
      * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
      * player, an eyed cow shot by a player holding shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or

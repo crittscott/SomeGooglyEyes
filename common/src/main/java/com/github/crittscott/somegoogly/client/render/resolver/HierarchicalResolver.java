@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableHierarchicalModel;
 import net.minecraft.client.model.CamelModel;
@@ -37,7 +38,7 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
     @Override
     protected List<NamedRoot> roots(EntityModel<?> model) {
         HierarchicalModel<?> hierarchical = (HierarchicalModel<?>) model;
-        return List.of(new NamedRoot("root", hierarchical.root(), youngWrap(hierarchical)));
+        return List.of(new NamedRoot(EyeConfigModel.PART_ROOT, hierarchical.root(), youngWrap(hierarchical)));
     }
 
     /**

@@ -101,13 +101,17 @@ public final class FabricServerEvents {
                 EyeState.copy(oldPlayer, newPlayer);
             }
         });
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                ServerServices.syncEyeConfigs(handler.player));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
+        // Sent with the rest of the joining player's game data, ahead of their own eye state.
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
+            if (joined) {
+                ServerServices.syncJoiningPlayer(player);
+            }
+        });
         // Once per reload, after the eye definitions and the re-read server config are both applied.
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) ->
-                ServerServices.broadcastEyeConfigsIfChanged(server));
+                ServerServices.broadcastEyeSyncIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {

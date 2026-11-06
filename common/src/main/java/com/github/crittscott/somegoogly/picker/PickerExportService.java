@@ -4,8 +4,10 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,10 +22,12 @@ import net.minecraft.world.level.storage.LevelResource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import javax.annotation.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
@@ -97,6 +101,10 @@ public final class PickerExportService {
         if (limitsError != null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
         }
+        Component syncRefusal = syncRefusal(typeId, age, pruned);
+        if (syncRefusal != null) {
+            return syncRefusal;
+        }
         Optional<String> version = ConfigFile.exportVersion(typeId.getNamespace());
         if (version.isEmpty()) {
             return Component.translatable(
@@ -130,5 +138,42 @@ public final class PickerExportService {
         // datapacks and re-syncs them to every client.
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), "reload");
         return Component.translatable("somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);
+    }
+
+    /**
+     * Why the installed definitions with this export applied could not be synchronized, or {@code null} if they
+     * can. The reload listener would refuse such a set, leaving the export on disk with no effect until a restart
+     * loads no definitions at all, so it has to be refused before anything is written.
+     */
+    @Nullable
+    private static Component syncRefusal(ResourceLocation typeId, String age, RuntimeConfig authored) {
+        Map<ResourceLocation, RuntimeConfigSet> next = new HashMap<>(ServerEyeConfigs.all());
+        next.put(typeId, withAge(next.get(typeId), age, authored));
+        EyeConfigLimits.Issue limitsError = EyeConfigLimits.validateSync(next);
+        if (limitsError != null) {
+            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
+        }
+        int wireSize = EyeConfigSyncPacket.wireSize(ServerEyeConfigs.encode(next));
+        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload",
+                    Component.translatable("somegoogly.validation.sync_size", wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES));
+        }
+        return null;
+    }
+
+    /** {@code base} with its adult or baby config replaced by {@code authored}. */
+    private static RuntimeConfigSet withAge(@Nullable RuntimeConfigSet base, String age, RuntimeConfig authored) {
+        RuntimeConfigSet set = new RuntimeConfigSet();
+        if (base != null) {
+            set.adult = base.adult;
+            set.baby = base.baby;
+            set.any = base.any;
+        }
+        if (AGE_ADULT.equals(age)) {
+            set.adult = authored;
+        } else {
+            set.baby = authored;
+        }
+        return set;
     }
 }

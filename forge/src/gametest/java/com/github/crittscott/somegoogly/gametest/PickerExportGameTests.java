@@ -70,6 +70,11 @@ public final class PickerExportGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsWhatTheSyncCouldNotCarry(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }

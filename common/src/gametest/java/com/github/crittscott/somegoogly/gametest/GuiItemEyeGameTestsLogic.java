@@ -36,7 +36,7 @@ public final class GuiItemEyeGameTestsLogic {
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         Object view = new Object();
-        var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
+        var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var presentation = cache.get(key, stack);
         BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
@@ -57,7 +57,7 @@ public final class GuiItemEyeGameTestsLogic {
      */
     public static void guiEyesHonorEligibilityAndSwitch(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 0, 0, 0);
+        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
         var first = cache.get(key, eye());
         cache.clear();
         var restored = cache.get(key, eye());
@@ -76,7 +76,7 @@ public final class GuiItemEyeGameTestsLogic {
      */
     public static void guiEyesKeepPresentationIdentity(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 3, 0, 0);
+        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 3, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         ItemStack copy = stack.copy();
@@ -95,7 +95,7 @@ public final class GuiItemEyeGameTestsLogic {
      */
     public static void guiEyesReplaceChangedContents(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.SLOT, 0, 0, 0);
+        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         EyeItemProperties.set(stack, AppearanceOverride.EMPTY.withGlow(true));
@@ -112,8 +112,8 @@ public final class GuiItemEyeGameTestsLogic {
     public static void guiEyesRetireClosedAndHiddenViews(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         Object view = new Object();
-        var screenKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
-        var hudKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.POSITION, 0, 0, 0);
+        var screenKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
+        var hudKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.POSITION, 0, 0, 0);
         var screen = cache.get(screenKey, eye());
         var hud = cache.get(hudKey, eye());
         cache.tick(new Object(), BehaviorSettings.NONE);
@@ -140,14 +140,14 @@ public final class GuiItemEyeGameTestsLogic {
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
         GuiEyeAnimations cache = new GuiEyeAnimations();
         Object view = new Object();
-        var first = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0), eye());
-        var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 1, 0, 0), eye());
-        var cursorKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.CURSOR, 0, 0, 0);
+        var first = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0), eye());
+        var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 1, 0, 0), eye());
+        var cursorKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.CURSOR, 0, 0, 0);
         var cursor = cache.get(cursorKey, eye());
         helper.assertTrue(first != second && cursor != first, "presentations do not share pupils");
         helper.assertTrue(cache.get(cursorKey, eye().copy()) == cursor,
                 "the cursor simulation is independent of its moving coordinates");
-        var hotbarKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, 1, 0, 0);
+        var hotbarKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, 1, 0, 0);
         var hotbar = cache.get(hotbarKey, eye());
         cache.tick(view, BehaviorSettings.NONE);
         helper.assertTrue(cache.get(hotbarKey, eye()) == hotbar,
@@ -165,10 +165,11 @@ public final class GuiItemEyeGameTestsLogic {
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             GuiEyeAnimations cache = new GuiEyeAnimations();
             Object view = new Object();
-            var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.SLOT, 0, 0, 0);
+            var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
             var presentation = cache.get(key, head);
@@ -191,7 +192,8 @@ public final class GuiItemEyeGameTestsLogic {
             helper.assertTrue(played, "a paired GUI head can play cross-eye");
             helper.succeed();
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
     }
 }

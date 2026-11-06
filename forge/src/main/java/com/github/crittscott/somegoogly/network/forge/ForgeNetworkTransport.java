@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkHandler;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
@@ -66,6 +67,11 @@ public final class ForgeNetworkTransport {
                 .encoder(PickerExportPacket::write)
                 .decoder(PickerExportPacket::read)
                 .consumerMainThread((payload, context) -> PickerExportPacket.handle(payload, sender(context)))
+                .add();
+        CHANNEL.messageBuilder(EyeSettingsPacket.class, 6, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(EyeSettingsPacket::write)
+                .decoder(EyeSettingsPacket::read)
+                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleEyeSettings(payload))
                 .add();
     }
 

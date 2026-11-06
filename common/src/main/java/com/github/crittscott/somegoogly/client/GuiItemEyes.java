@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +13,7 @@ import java.util.Deque;
 public final class GuiItemEyes {
 
     private static final Deque<PresentationEyes.Draw> DRAWS = new ArrayDeque<>();
-    private static final long NANOS_PER_TICK = 50_000_000L;
+    private static final long NANOS_PER_TICK = 1_000_000_000L / SharedConstants.TICKS_PER_SECOND;
     private static final Deque<GuiEyeAnimations.Key> PRESENTATIONS = new ArrayDeque<>();
     private static final GuiEyeAnimations SIMULATIONS = new GuiEyeAnimations();
 
@@ -35,10 +36,10 @@ public final class GuiItemEyes {
         GuiEyeAnimations.Key key = PRESENTATIONS.peek();
         if (key == null) {
             key = new GuiEyeAnimations.Key(view == null ? GuiEyeAnimations.HUD : view,
-                    GuiEyeAnimations.POSITION, x, y, seed);
+                    GuiEyeAnimations.Kind.POSITION, x, y, seed);
         }
-        if (key.kind() == GuiEyeAnimations.HOTBAR) {
-            key = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, seed, 0, 0);
+        if (key.kind() == GuiEyeAnimations.Kind.HOTBAR) {
+            key = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, seed, 0, 0);
         }
         PresentationEyes eyes = SIMULATIONS.get(key, stack);
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes,
@@ -52,7 +53,7 @@ public final class GuiItemEyes {
     }
 
     /** Slots and carried stacks retain one simulation while their on-screen coordinates change. */
-    public static void beginPresentation(Object view, int kind, int index) {
+    public static void beginPresentation(Object view, GuiEyeAnimations.Kind kind, int index) {
         PRESENTATIONS.push(new GuiEyeAnimations.Key(view, kind, index, 0, 0));
     }
 

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -122,7 +123,7 @@ public final class BoatEyeGameTestsLogic {
         for (int count : List.of(1, 2)) {
             HeadConfig head = new HeadConfig();
             head.attachPoint = "hull";
-            head.eyes = java.util.stream.IntStream.range(0, count).mapToObj(index ->
+            head.eyes = IntStream.range(0, count).mapToObj(index ->
                     new EyeDefinition(new EyePlacement(new Vec3(index, 0D, 0D), 1F, 0.6F, 1F, 90F, 180F, -1),
                             EyeAppearance.DEFAULT)).toList();
             Variant variant = new Variant();
@@ -145,7 +146,8 @@ public final class BoatEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         Boat boat = Objects.requireNonNull(EntityType.BOAT.create(helper.getLevel()));
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
             BoatEyeAnimations cache = new BoatEyeAnimations();
             var eyes = cache.get(boat);
@@ -174,7 +176,8 @@ public final class BoatEyeGameTestsLogic {
             cache.tick(100003L, blink);
             helper.assertTrue(cache.get(boat) == null, "removed boats cannot retain or rebuild a simulation");
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
         helper.succeed();
     }
@@ -189,7 +192,8 @@ public final class BoatEyeGameTestsLogic {
         moving.setUUID(SEED);
         still.setUUID(SEED);
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.NONE);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.NONE);
             var state = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY);
             EyeState.applySnapshot(moving, state);
             EyeState.applySnapshot(still, state);
@@ -223,7 +227,8 @@ public final class BoatEyeGameTestsLogic {
             cache.tick(9L, BehaviorSettings.NONE);
             helper.assertTrue(movingEyes.eyes[0][0].rotationYaw == moving.getYRot(), "boat rotation reaches pupil physics");
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
         helper.succeed();
     }
@@ -391,7 +396,8 @@ public final class BoatEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         Boat boat = Objects.requireNonNull(EntityType.BOAT.create(helper.getLevel()));
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
             var first = ClientEyeRuntime.boatEyes(boat);
             helper.assertTrue(first != null && first == ClientEyeRuntime.boatEyes(boat), "unchanged boats retain pupils");
@@ -419,11 +425,13 @@ public final class BoatEyeGameTestsLogic {
             boat.setInvisible(true);
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) == null, "invisible boats hide eyes and retire pupils");
             boat.setInvisible(false);
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), false, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(false, BehaviorSettings.DEFAULTS);
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) == null, "master-off suppresses animation");
         } finally {
             ClientEyeRuntime.clear();
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
         helper.succeed();
     }

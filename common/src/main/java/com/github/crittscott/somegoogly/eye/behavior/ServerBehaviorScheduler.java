@@ -5,7 +5,6 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.platform.Networking;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -61,10 +60,10 @@ public final class ServerBehaviorScheduler {
 
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
     private static final class MobState {
+        EyeBehavior activeBehavior;   // the playing behavior (for mid-join catch-up)
         int activeDuration;
-        boolean angry;                // the anger last sent to this mob's trackers
-        ResourceLocation activeId;    // the playing behavior (for mid-join catch-up)
         long activeSeed;
+        boolean angry;                // the anger last sent to this mob's trackers
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
         long busyUntil;               // scheduler tick the active behavior ends (0 = idle)
         long healSwirlReadyAt;        // earliest scheduler tick a heal may trigger another swirl (0 = ready)
@@ -74,7 +73,7 @@ public final class ServerBehaviorScheduler {
 
     /** {@code mob}'s playing behavior for a viewer joining it partway through. */
     private static EyeBehaviorTriggerPacket catchUpPacket(LivingEntity mob, MobState state) {
-        return new EyeBehaviorTriggerPacket(mob.getId(), state.activeId, state.activeDuration, state.activeSeed,
+        return new EyeBehaviorTriggerPacket(mob.getId(), state.activeBehavior, state.activeDuration, state.activeSeed,
                 (int) (now - state.startedAt));
     }
 
@@ -269,7 +268,7 @@ public final class ServerBehaviorScheduler {
             // Retire a finished behavior back to idle.
             if (state.busyUntil != 0 && now >= state.busyUntil) {
                 state.busyUntil = 0;
-                state.activeId = null;
+                state.activeBehavior = null;
             }
             // Evict idle entries no player is watching. Tracked entries are removed by onStopTracking;
             // this catches states created by trigger() (the admin command) on untracked mobs, which
@@ -328,7 +327,7 @@ public final class ServerBehaviorScheduler {
             return false;
         }
         state.activeDuration = duration;
-        state.activeId = behavior.id();
+        state.activeBehavior = behavior;
         state.activeSeed = seed;
         state.busyUntil = now + duration;
         state.startedAt = now;
@@ -336,7 +335,7 @@ public final class ServerBehaviorScheduler {
         // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
         ACTIVE.putIfAbsent(mob, state);
         Networking.sendTrackingAndSelf(mob,
-                new EyeBehaviorTriggerPacket(mob.getId(), behavior.id(), duration, seed, 0));
+                new EyeBehaviorTriggerPacket(mob.getId(), behavior, duration, seed, 0));
         return true;
     }
 

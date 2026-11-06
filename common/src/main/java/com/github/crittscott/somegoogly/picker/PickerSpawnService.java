@@ -368,24 +368,25 @@ public final class PickerSpawnService {
             }
         }
 
-        int finalSkipped = skipped;
-        int finalRows = rowIndex + 1;
-        int finalSpawned = spawned;
-        Component platformNote = buildPlatforms
-                ? Component.translatable("somegoogly.command.spawnall.on_platforms") : Component.empty();
-        Component scope = filtering
-                ? Component.translatable("somegoogly.command.spawnall.scope", modFilter) : Component.empty();
-        Component skippedNote = finalSkipped > 0
-                ? Component.translatable("somegoogly.command.spawnall.skipped", finalSkipped) : Component.empty();
-        announce(source, "somegoogly.command.spawnall.result",
-                finalSpawned, scope, platformNote, finalRows, skippedNote);
+        int rows = rowIndex + 1;
+        if (filtering) {
+            announce(source, "somegoogly.command.spawnall.result_mod", modFilter, spawned, rows);
+        } else {
+            announce(source, "somegoogly.command.spawnall.result", spawned, rows);
+        }
+        if (buildPlatforms) {
+            announce(source, "somegoogly.command.spawnall.on_platforms");
+        }
+        if (skipped > 0) {
+            announce(source, "somegoogly.command.spawnall.skipped", skipped);
+        }
         if (filtering && !dropped.isEmpty()) {
             tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
                 source.sendSuccess(() -> Component.translatable("somegoogly.command.spawnall.dropped_entry", entry), false);
             }
         }
-        return finalSpawned;
+        return spawned;
     }
 
     /**

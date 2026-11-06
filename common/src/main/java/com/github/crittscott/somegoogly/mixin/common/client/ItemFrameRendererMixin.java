@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.client.mixin;
+package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;

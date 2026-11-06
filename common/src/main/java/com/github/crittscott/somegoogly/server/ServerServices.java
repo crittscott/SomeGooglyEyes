@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
@@ -35,13 +36,14 @@ public final class ServerServices {
     private static String loggedConfig;
 
     /**
-     * The definitions connected clients last received, with the master switch and behavior settings below, or
-     * {@code null} before the first send since server start. Read and written on the server thread only.
+     * The definitions connected clients last received, or {@code null} before the first send since server
+     * start. Read and written on the server thread only.
      */
     @Nullable
     private static Map<ResourceLocation, RuntimeConfigSet> sentEyeConfigs;
-    private static BehaviorSettings sentBehaviors = BehaviorSettings.DEFAULTS;
-    private static boolean sentGooglyEyesEnabled;
+    /** The settings connected clients last received, on the same terms as {@link #sentEyeConfigs}. */
+    @Nullable
+    private static EyeSettingsPacket sentSettings;
 
     private ServerServices() {
     }
@@ -61,26 +63,24 @@ public final class ServerServices {
     }
 
     /**
-     * Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
-     * when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
-     * apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.
+     * Send every player the eye definitions and the settings, each only when it differs from what clients last
+     * received. Runs once after each datapack reload and each server-config apply, on the server thread. New
+     * definitions restart client eye motion, because trackers are built from them; new settings don't.
      */
-    public static void broadcastEyeConfigsIfChanged(MinecraftServer server) {
-        if (sentEyeConfigs == ServerEyeConfigs.all()
-                && sentGooglyEyesEnabled == ServerConfig.GOOGLY_EYES_ENABLED.get()
-                && sentBehaviors.equals(BehaviorSettings.fromConfig())) {
-            return;
+    public static void broadcastEyeSyncIfChanged(MinecraftServer server) {
+        if (sentEyeConfigs != ServerEyeConfigs.all()) {
+            sentEyeConfigs = ServerEyeConfigs.all();
+            Networking.sendToAll(server, eyeConfigPacket());
         }
-        recordSentEyeConfigs();
-        EyeConfigSyncPacket packet = eyeConfigPacket();
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            Networking.sendToPlayer(player, packet);
+        EyeSettingsPacket settings = settingsPacket();
+        if (!settings.equals(sentSettings)) {
+            sentSettings = settings;
+            Networking.sendToAll(server, settings);
         }
     }
 
     private static EyeConfigSyncPacket eyeConfigPacket() {
-        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded(),
-                ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
+        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded());
     }
 
     /**
@@ -126,6 +126,7 @@ public final class ServerServices {
         ServerEyeConfigs.onServerStopping();
         loggedConfig = null;
         sentEyeConfigs = null;
+        sentSettings = null;
     }
 
     /**
@@ -141,18 +142,19 @@ public final class ServerServices {
         }
     }
 
-    private static void recordSentEyeConfigs() {
-        sentEyeConfigs = ServerEyeConfigs.all();
-        sentGooglyEyesEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        sentBehaviors = BehaviorSettings.fromConfig();
+    private static EyeSettingsPacket settingsPacket() {
+        return new EyeSettingsPacket(ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
     }
 
-    /** Send the current resolved eye definitions, master switch, and behavior settings to a joining player. */
-    public static void syncEyeConfigs(ServerPlayer player) {
+    /** Send a joining player the current resolved eye definitions and settings. */
+    public static void syncJoiningPlayer(ServerPlayer player) {
+        EyeSettingsPacket settings = settingsPacket();
         if (sentEyeConfigs == null) {
             // Nobody has received a view yet, so every connected client now holds this one.
-            recordSentEyeConfigs();
+            sentEyeConfigs = ServerEyeConfigs.all();
+            sentSettings = settings;
         }
         Networking.sendToPlayer(player, eyeConfigPacket());
+        Networking.sendToPlayer(player, settings);
     }
 }

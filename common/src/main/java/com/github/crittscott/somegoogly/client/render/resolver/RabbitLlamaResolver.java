@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LlamaModel;
@@ -43,7 +44,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
         Consumer<PoseStack> headWrap = rabbitHeadWrap(rabbit);
         Consumer<PoseStack> bodyWrap = rabbitBodyWrap(rabbit);
         return List.of(
-                new NamedRoot("head", rabbit.head, headWrap),
+                new NamedRoot(EyeConfigModel.PART_HEAD, rabbit.head, headWrap),
                 new NamedRoot("rightEar", rabbit.rightEar, headWrap),
                 new NamedRoot("leftEar", rabbit.leftEar, headWrap),
                 new NamedRoot("nose", rabbit.nose, headWrap),
@@ -51,7 +52,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
                 new NamedRoot("rightRearFoot", rabbit.rightRearFoot, bodyWrap),
                 new NamedRoot("leftHaunch", rabbit.leftHaunch, bodyWrap),
                 new NamedRoot("rightHaunch", rabbit.rightHaunch, bodyWrap),
-                new NamedRoot("body", rabbit.body, bodyWrap),
+                new NamedRoot(EyeConfigModel.PART_BODY, rabbit.body, bodyWrap),
                 new NamedRoot("leftFrontLeg", rabbit.leftFrontLeg, bodyWrap),
                 new NamedRoot("rightFrontLeg", rabbit.rightFrontLeg, bodyWrap),
                 new NamedRoot("tail", rabbit.tail, bodyWrap)
@@ -99,8 +100,8 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
         Consumer<PoseStack> bodyWrap = youngWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
         Consumer<PoseStack> legsChestWrap = youngWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
         return List.of(
-                new NamedRoot("head", llama.head, headWrap),
-                new NamedRoot("body", llama.body, bodyWrap),
+                new NamedRoot(EyeConfigModel.PART_HEAD, llama.head, headWrap),
+                new NamedRoot(EyeConfigModel.PART_BODY, llama.body, bodyWrap),
                 new NamedRoot("rightHindLeg", llama.rightHindLeg, legsChestWrap),
                 new NamedRoot("leftHindLeg", llama.leftHindLeg, legsChestWrap),
                 new NamedRoot("rightFrontLeg", llama.rightFrontLeg, legsChestWrap),

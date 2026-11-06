@@ -6,6 +6,7 @@ import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.github.crittscott.somegoogly.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
@@ -42,6 +43,9 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public final class PickerState {
 
+    /** The {@link #selectedIndex} of a draft that is new and unsaved. */
+    public static final int NO_SELECTION = -1;
+
     private static final DraftSession DRAFTS = new DraftSession();
 
     private static boolean active = false;
@@ -67,8 +71,8 @@ public final class PickerState {
     private static EyeDraft currentEye = null;
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
     private static String currentPart = null;
-    /** Index into the current variant's eye list that {@code save} writes back to, or {@code -1} to append. */
-    private static int selectedIndex = -1;
+    /** Index into the current variant's eye list that {@code save} writes back to, or {@link #NO_SELECTION} to append. */
+    private static int selectedIndex = NO_SELECTION;
 
     private PickerState() {
     }
@@ -115,18 +119,18 @@ public final class PickerState {
         }
 
         /**
-         * Resolve eye {@code f}'s flat cross-target to a within-head index, or {@code -1} when it has none, is
+         * Resolve eye {@code f}'s flat cross-target to a within-head index, or {@link EyePlacement#NO_CROSS_TARGET} when it has none, is
          * out of range, points at itself, or points at an eye on a different part (cross-eye is same-head only).
          */
         private static int resolveCrossTarget(DraftVariant dv, int f, int[] withinHead) {
             int flat = dv.eyes.get(f).eye.crossTarget;
             if (flat < 0 || flat >= dv.eyes.size() || flat == f) {
-                return -1;
+                return EyePlacement.NO_CROSS_TARGET;
             }
             ListedEye self = dv.eyes.get(f);
             ListedEye target = dv.eyes.get(flat);
             if (self.part == null || !self.part.equals(target.part)) {
-                return -1;
+                return EyePlacement.NO_CROSS_TARGET;
             }
             return withinHead[flat];
         }
@@ -225,7 +229,7 @@ public final class PickerState {
      */
     public static void clearDraft() {
         currentEye = null;
-        selectedIndex = -1;
+        selectedIndex = NO_SELECTION;
     }
 
     /** The CLI {@code part none} op. */
@@ -239,7 +243,7 @@ public final class PickerState {
         currentEye.position[0] = x;
         currentEye.position[1] = y;
         currentEye.position[2] = z;
-        selectedIndex = -1;
+        selectedIndex = NO_SELECTION;
     }
 
     /** The life stage of the selected draft, or null before any selection. */
@@ -352,7 +356,7 @@ public final class PickerState {
         if (!copyToDraft(oneBased)) {
             return false;
         }
-        selectedIndex = -1;
+        selectedIndex = NO_SELECTION;
         return true;
     }
 
@@ -550,7 +554,7 @@ public final class PickerState {
         return preview;
     }
 
-    /** Index of the saved eye being edited ({@code -1} = the draft is new/unsaved). */
+    /** Index of the saved eye being edited, or {@link #NO_SELECTION}. */
     public static int selectedIndex() {
         return selectedIndex;
     }
@@ -589,7 +593,7 @@ public final class PickerState {
             return false;
         }
         if (oneBased <= 0) {
-            currentEye.crossTarget = -1;
+            currentEye.crossTarget = EyePlacement.NO_CROSS_TARGET;
             return true;
         }
         int idx = oneBased - 1;

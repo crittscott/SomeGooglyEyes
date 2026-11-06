@@ -1,8 +1,7 @@
-package com.github.crittscott.somegoogly.server.mixin;
+package com.github.crittscott.somegoogly.mixin.common;
 
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,8 +39,7 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
 
     @Inject(method = "load", at = @At("TAIL"))
     private void somegoogly$load(CompoundTag tag, CallbackInfo callback) {
-        somegoogly$data = tag.contains(SkullEyeState.DATA_KEY, Tag.TAG_COMPOUND)
-                ? tag.getCompound(SkullEyeState.DATA_KEY) : null;
+        somegoogly$data = SkullEyeState.loadedData(tag);
     }
 
     @Inject(method = "saveAdditional", at = @At("TAIL"))

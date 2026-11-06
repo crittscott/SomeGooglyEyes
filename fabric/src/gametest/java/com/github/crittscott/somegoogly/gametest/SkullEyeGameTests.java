@@ -30,6 +30,11 @@ public final class SkullEyeGameTests implements FabricGameTest {
     // }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headKeepsOnlyItsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void headEyesSurviveSaveLoad(GameTestHelper helper) {
         SkullEyeGameTestsLogic.headEyesSurviveSaveLoad(helper);
     }

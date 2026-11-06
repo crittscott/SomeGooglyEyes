@@ -83,7 +83,7 @@ public final class ForgeServerConfig {
         // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
-            server.execute(() -> ServerServices.broadcastEyeConfigsIfChanged(server));
+            server.execute(() -> ServerServices.broadcastEyeSyncIfChanged(server));
         }
     }
 }

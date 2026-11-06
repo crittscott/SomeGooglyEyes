@@ -172,7 +172,7 @@ public final class EyeState {
         return data.contains(EYE_OVERRIDES, Tag.TAG_COMPOUND) ? data.getCompound(EYE_OVERRIDES) : null;
     }
 
-    /** The overrides compound, or {@code null} if absent (used by the sync packet). */
+    /** The overrides compound, or {@code null} if absent. */
     @Nullable
     public static CompoundTag overridesTagOrNull(Entity entity) {
         CompoundTag data = EntityPersistentData.find(entity);

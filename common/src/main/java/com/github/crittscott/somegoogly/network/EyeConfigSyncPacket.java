@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.nbt.CompoundTag;
@@ -14,9 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- * {@code googlyEyesEnabled} master switch and the behavior settings clients run behaviors from. The server builds it from the installed set and that set's
- * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
+ * Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
+ * the installed set and that set's precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
  * validated when installed, so writing it to each connection only copies tags. The client decodes and
  * re-validates everything it receives.
  */
@@ -25,61 +23,43 @@ public class EyeConfigSyncPacket implements Payload {
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
     public static final ResourceLocation ID = NetworkHandler.EYE_CONFIG;
 
-    private final BehaviorSettings behaviors;
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final Map<ResourceLocation, CompoundTag> encoded;
-    private final boolean googlyEyesEnabled;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
-                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled,
-                               BehaviorSettings behaviors) {
+                               Map<ResourceLocation, CompoundTag> encoded) {
         this.configs = configs;
         this.encoded = encoded;
-        this.googlyEyesEnabled = googlyEyesEnabled;
-        this.behaviors = behaviors;
     }
 
-    /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
+    /** The packet size of {@code encoded}. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
+            writeBody(buffer, encoded);
             return buffer.writerIndex();
         } finally {
             buffer.release();
         }
     }
 
-    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
-                                  boolean googlyEyesEnabled, BehaviorSettings behaviors) {
+    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded) {
         buffer.writeVarInt(encoded.size());
         for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
-        buffer.writeBoolean(googlyEyesEnabled);
-        behaviors.write(buffer);
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
-    }
-
-    /** The server's behavior settings. */
-    public BehaviorSettings behaviors() {
-        return behaviors;
+        writeBody(buffer, encoded);
     }
 
     /** The resolved eye definitions, by entity type. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
-    }
-
-    /** The server's {@code googlyEyesEnabled} switch. */
-    public boolean googlyEyesEnabled() {
-        return googlyEyesEnabled;
     }
 
     @Override
@@ -116,6 +96,6 @@ public class EyeConfigSyncPacket implements Payload {
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
         }
-                return new EyeConfigSyncPacket(configs, encoded, buffer.readBoolean(), BehaviorSettings.read(buffer));
+        return new EyeConfigSyncPacket(configs, encoded);
     }
 }

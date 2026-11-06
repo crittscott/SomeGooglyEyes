@@ -34,6 +34,10 @@ public final class EyeConfigModel {
     public static final String AGE_ADULT = "adult";
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
+    /** The attachment tokens the renderers name a model's body, head, and root by, and eye files use. */
+    public static final String PART_BODY = "body";
+    public static final String PART_HEAD = "head";
+    public static final String PART_ROOT = "root";
 
 
     private EyeConfigModel() {

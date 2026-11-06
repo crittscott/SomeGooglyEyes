@@ -128,6 +128,11 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
                 helper, FakePlayer.get(helper.getLevel()));

@@ -8,11 +8,12 @@ import javax.annotation.Nullable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.RandomSupport;
 
 /** Disposable ambient simulations, independent for each holder's main hand and offhand. */
 public final class HandEyeAnimations {
 
-    private static final long OFFHAND_SEED = 0x9E3779B97F4A7C15L;
+    private static final long OFFHAND_SEED = RandomSupport.GOLDEN_RATIO_64;
 
     private final Map<Key, Entry> entries = new HashMap<>();
     private long ticks;

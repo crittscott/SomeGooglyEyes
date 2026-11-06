@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
-import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;

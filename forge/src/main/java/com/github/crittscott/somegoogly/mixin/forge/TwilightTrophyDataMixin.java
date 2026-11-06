@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.mixin.forge;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -41,8 +40,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        somegoogly$data = tag.contains(SkullEyeState.DATA_KEY, Tag.TAG_COMPOUND)
-                ? tag.getCompound(SkullEyeState.DATA_KEY) : null;
+        somegoogly$data = SkullEyeState.loadedData(tag);
     }
 
     @Override

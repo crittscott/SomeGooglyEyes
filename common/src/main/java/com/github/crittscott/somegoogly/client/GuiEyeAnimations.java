@@ -11,18 +11,19 @@ import javax.annotation.Nullable;
 /** View-owned item simulations with a UI clock independent of world ticks and pause. */
 public final class GuiEyeAnimations {
 
-    public static final int CURSOR = 2;
-    public static final int HOTBAR = 3;
     public static final Object HUD = new Object();
-    public static final int POSITION = 0;
-    public static final int SLOT = 1;
 
     private final Map<Key, Entry> entries = new HashMap<>();
     private long nextSeed;
     private long ticks;
 
+    /** What a {@link Key} identifies an item by. */
+    public enum Kind {
+        CURSOR, HOTBAR, POSITION, SLOT
+    }
+
     /** Coordinates are used only for generic previews; slots and cursor items use logical indexes. */
-    public record Key(Object view, int kind, int x, int y, int seed) {
+    public record Key(Object view, Kind kind, int x, int y, int seed) {
     }
 
     private static final class Entry {

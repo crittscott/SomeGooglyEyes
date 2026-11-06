@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The server's behavior settings as clients receive them with the eye definitions, for what clients run
+ * The server's behavior settings as clients receive them, for what clients run
  * themselves: the {@link OngoingBehavior}s on every eyed mob, and the expressions of placed mob heads and the
  * held Googly Eye. Mob expressions stay scheduled by the server ({@link ServerBehaviorScheduler}) from
  * {@link ServerConfig} directly.
@@ -40,11 +40,6 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     /** Inactive client state before server settings arrive and after disconnect. */
     public static final BehaviorSettings NONE = new BehaviorSettings(false, DEFAULTS.minTicks(), DEFAULTS.maxTicks(),
             List.of(), 0, false, DEFAULTS.swirlHealCooldownTicks(), Set.of());
-
-    /** Largest supported behavior block, reserving space even when the server configuration later changes. */
-    public static final BehaviorSettings WIRE_MAXIMUM = new BehaviorSettings(true, ServerConfig.TICKS_MAX,
-            ServerConfig.TICKS_MAX, List.of(EyeBehavior.values()), ServerConfig.PERCENT_MAX, true,
-            ServerConfig.TICKS_MAX, EnumSet.allOf(OngoingBehavior.class));
 
     public BehaviorSettings {
         pool = List.copyOf(pool);

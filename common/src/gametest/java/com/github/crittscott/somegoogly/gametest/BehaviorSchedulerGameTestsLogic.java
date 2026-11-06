@@ -309,7 +309,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo info = headInfo(helper, zombie);
         ClientEyeRuntime.onLevelChanged();
         BehaviorSettings originalBehaviors = ClientEyeConfigs.behaviors();
-        ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), ON);
+        ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), ON);
         try {
             ClientEyeRuntime.setAngry(zombie, true);
             GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
@@ -337,7 +337,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                     "client world replacement drops both trackers and anger");
         } finally {
             ClientEyeRuntime.onLevelChanged();
-            ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
+            ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
         }
         helper.succeed();
     }

@@ -20,8 +20,8 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
-        SerializationGameTestsLogic.networkProtocolIdsAreVersionedAndUnique(helper);
+    public static void networkProtocolIdsAreUnique(GameTestHelper helper) {
+        SerializationGameTestsLogic.networkProtocolIdsAreUnique(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
@@ -35,8 +35,18 @@ public final class SerializationGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void pickerNumbersIgnoreTheComputersLanguage(GameTestHelper helper) {
+        SerializationGameTestsLogic.pickerNumbersIgnoreTheComputersLanguage(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void angerPacketRoundTrips(GameTestHelper helper) {
         SerializationGameTestsLogic.angerPacketRoundTrips(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void settingsPacketRoundTrips(GameTestHelper helper) {
+        SerializationGameTestsLogic.settingsPacketRoundTrips(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)

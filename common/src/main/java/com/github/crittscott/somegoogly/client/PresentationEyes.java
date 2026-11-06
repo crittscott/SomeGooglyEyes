@@ -21,6 +21,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.RandomSupport;
 
 /**
  * One presentation's loose eye or configured eye layout and ambient expressions. Its identity and
@@ -29,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 public final class PresentationEyes {
 
     /** Spreads consecutive ambient slots' seeds apart. */
-    private static final long SLOT_SEED_STEP = 0x9E3779B97F4A7C15L;
+    private static final long SLOT_SEED_STEP = RandomSupport.GOLDEN_RATIO_64;
 
     @Nullable
     public BehaviorInstance active;

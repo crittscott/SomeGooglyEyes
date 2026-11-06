@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
-import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,14 +25,13 @@ public class PickerFreezePacket implements Payload {
     public static final ResourceLocation ID = NetworkHandler.PICKER_FREEZE;
 
     /**
-     * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
-     * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
-     * the mob's box and the mob's position the server measures to. Keeps an authorized client from
-     * freezing an arbitrary mob in any loaded chunk by UUID.
+     * Server-side sanity bound on the freeze target's distance from the requester. Well past the crosshair
+     * reach the picker chooses mobs at, because the client hits the mob's box and the server measures to its
+     * position, which are far apart on a very large mob. Keeps an authorized client from freezing an
+     * arbitrary mob in any loaded chunk by UUID.
      */
-    private static final double FREEZE_DISTANCE_SLACK = 4.0;
-    private static final double MAX_FREEZE_DISTANCE_SQ = (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK)
-            * (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK);
+    private static final double MAX_FREEZE_DISTANCE = 24.0;
+    private static final double MAX_FREEZE_DISTANCE_SQ = MAX_FREEZE_DISTANCE * MAX_FREEZE_DISTANCE;
 
     private final boolean freeze;
     @Nullable

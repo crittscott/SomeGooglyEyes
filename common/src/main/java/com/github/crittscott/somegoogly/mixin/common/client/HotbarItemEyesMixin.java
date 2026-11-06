@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.client.mixin;
+package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.GuiEyeAnimations;
 import com.github.crittscott.somegoogly.client.GuiItemEyes;
@@ -14,7 +14,7 @@ abstract class HotbarItemEyesMixin {
 
     @Inject(method = "renderHotbar", at = @At("HEAD"))
     private void somegoogly$beginHotbar(CallbackInfo callback) {
-        GuiItemEyes.beginPresentation(GuiEyeAnimations.HUD, GuiEyeAnimations.HOTBAR, 0);
+        GuiItemEyes.beginPresentation(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, 0);
     }
 
     @Inject(method = "renderHotbar", at = @At("RETURN"))

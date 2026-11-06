@@ -214,7 +214,8 @@ public final class HandItemEyeGameTestsLogic {
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             HandEyeAnimations cache = new HandEyeAnimations();
             LivingEntity firstHolder = holder(helper, FIRST);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
@@ -238,7 +239,8 @@ public final class HandItemEyeGameTestsLogic {
             helper.assertTrue(played, "a paired hand-held head can play cross-eye");
             helper.succeed();
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
     }
 

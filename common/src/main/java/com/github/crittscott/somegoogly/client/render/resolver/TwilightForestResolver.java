@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
@@ -69,8 +70,8 @@ public class TwilightForestResolver extends ModelPartTreeResolver {
         }
 
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, "head", ageable.headParts(), headWrap);
-        index(roots, "body", ageable.bodyParts(), bodyWrap);
+        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), headWrap);
+        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), bodyWrap);
         return roots;
     }
 }

@@ -16,25 +16,34 @@ import net.minecraft.resources.ResourceLocation;
 public final class FabricNetworkTransport {
 
     /**
-     * Login-query channel the server asks about before the player joins. A client that answers it declares
-     * that it runs this network version; one that does not understand it is refused.
+     * Login-query channel the server asks about before the player joins. A client that answers it has the mod and
+     * replies with its network version; one that does not understand it, or runs another version, is refused.
      */
-    public static final ResourceLocation HANDSHAKE = NetworkHandler.versioned("handshake");
+    public static final ResourceLocation HANDSHAKE = NetworkHandler.id("handshake");
+    /** Longest network version a client's handshake reply may hold. */
+    private static final int MAX_VERSION_LENGTH = 16;
 
     private FabricNetworkTransport() {
     }
 
     /** Register the login check and the serverbound receivers; called once from the mod initializer. */
     public static void register() {
-        // Refuse a client without this network version before it joins the world: it cannot answer the query.
+        // Refuse a client without this network version before it joins the world.
         ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) ->
                 sender.sendPacket(HANDSHAKE, PacketByteBufs.empty()));
         ServerLoginNetworking.registerGlobalReceiver(HANDSHAKE,
                 (server, handler, understood, buffer, synchronizer, responseSender) -> {
                     if (!understood) {
-                        SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {} network version {}",
-                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, NetworkHandler.NETWORK_VERSION);
+                        SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {}",
+                                handler.getUserName(), SomeGooglyCommon.MOD_NAME);
                         handler.disconnect(requiredClientMessage());
+                        return;
+                    }
+                    String version = buffer.readUtf(MAX_VERSION_LENGTH);
+                    if (!version.equals(NetworkHandler.NETWORK_VERSION)) {
+                        SomeGooglyCommon.LOGGER.info("Refusing {}: client runs {} network version {}, server runs {}",
+                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, version, NetworkHandler.NETWORK_VERSION);
+                        handler.disconnect(versionMismatchMessage(version));
                     }
                 });
         ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.ID, (server, player, handler, buffer, sender) -> {
@@ -47,12 +56,18 @@ public final class FabricNetworkTransport {
         });
     }
 
-    /**
-     * The refusal shown to a client without this mod. That client lacks our language file, so the text travels
-     * with the key; Fabric API loads the mod's language file on the server.
-     */
+    /** A refusal that also reads right to a client lacking our language file; Fabric API loads it on the server. */
+    private static Component refusal(String key, Object... arguments) {
+        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key), arguments);
+    }
+
+    /** The refusal shown to a client without this mod. */
     public static Component requiredClientMessage() {
-        String key = "somegoogly.network.required_client";
-        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key));
+        return refusal("somegoogly.network.required_client");
+    }
+
+    /** The refusal shown to a client running network version {@code clientVersion}. */
+    public static Component versionMismatchMessage(String clientVersion) {
+        return refusal("somegoogly.network.version_mismatch", NetworkHandler.NETWORK_VERSION, clientVersion);
     }
 }
