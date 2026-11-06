@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import java.util.HashSet;
 import java.util.Set;
@@ -86,7 +86,7 @@ public final class FabricServerEvents {
             if (EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
                 return InteractionResultHolder.pass(player.getItemInHand(hand));
             }
-            return InteractionResultHolder.success(player.getItemInHand(hand));
+            return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
         });
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
@@ -117,10 +117,6 @@ public final class FabricServerEvents {
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             ServerServices.onStartTracking(entity, player);
         });
-        EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> {
-            if (entity instanceof LivingEntity living) {
-                ServerBehaviorScheduler.onStopTracking(living);
-            }
-        });
+        EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerServices.onStopTracking(entity));
     }
 }

@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
-import com.github.crittscott.somegoogly.client.render.BoatEyeRenderer;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.BoatRenderer;
@@ -19,6 +19,6 @@ abstract class BoatRendererMixin {
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 0))
     private void somegoogly$drawBoatEyes(Boat boat, float yaw, float partialTick, PoseStack pose,
                                          MultiBufferSource buffers, int light, CallbackInfo callback) {
-        BoatEyeRenderer.render(boat, partialTick, pose, buffers, light);
+        GooglyEyeRenderer.renderBoat(boat, partialTick, pose, buffers, light);
     }
 }

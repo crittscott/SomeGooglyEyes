@@ -65,6 +65,11 @@ public final class VersionRangeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.loaderNamesDoNotChangeAVersion(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
     }

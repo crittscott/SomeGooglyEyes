@@ -1,7 +1,9 @@
-package com.github.crittscott.somegoogly.client;
+package com.github.crittscott.somegoogly.client.render;
 
-import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.client.HeldEye;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -10,11 +12,8 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nullable;
 
 /**
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
@@ -44,30 +43,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
 
-    private static final HeldEye HELD = new HeldEye();
-
-    @Nullable
-    private static FrameContext frameContext;
-
     public GooglyEyeItemRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-    }
-
-    private record FrameContext(ItemFrame frame, float partialTick) {
-    }
-
-    /** Advance the local player's held eye one tick, unless the game is paused; called from the client tick. */
-    public static void tick() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (!minecraft.isPaused()) {
-            HELD.tick(minecraft.player, ClientEyeConfigs.behaviors());
-        }
-    }
-
-    /** Drop held-eye state and scoped frame context when leaving a world or server. */
-    public static void reset() {
-        frameContext = null;
-        HELD.reset();
     }
 
     private static boolean isFirstPersonHand(ItemDisplayContext ctx) {
@@ -75,28 +52,10 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
                 || ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
     }
 
-    /** The animation for {@code stack} in the current GUI, hand, or frame draw, if its state still matches. */
-    public static PresentationEyes.Draw itemDraw(ItemStack stack) {
-        PresentationEyes.Draw gui = GuiItemEyes.current();
-        if (gui.eyes() != null && gui.eyes().matches(stack)) {
-            return gui;
-        }
-        PresentationEyes.Draw hand = HandItemEyes.current();
-        if (hand.eyes() != null && hand.eyes().matches(stack)) {
-            return hand;
-        }
-        if (frameContext == null || stack != frameContext.frame().getItem()) {
-            return PresentationEyes.Draw.NONE;
-        }
-        PresentationEyes framed = ClientEyeRuntime.frameEye(frameContext.frame());
-        return framed == null ? PresentationEyes.Draw.NONE
-                : new PresentationEyes.Draw(framed, frameContext.partialTick());
-    }
-
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        PresentationEyes.Draw draw = itemDraw(stack);
+        PresentationEyes.Draw draw = ClientEyeRuntime.itemDraw(stack);
         PresentationEyes presented = draw.eyes();
         EyeAppearance look = EyeAppearance.DEFAULT.overlay(
                 presented != null ? presented.properties : EyeItemProperties.get(stack));
@@ -111,7 +70,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness (depth multiplier 1).
-        GooglyTracker.EyeInfo animated = presented != null ? presented.eye : isFirstPersonHand(ctx) ? HELD.eye : null;
+        GooglyTracker.EyeInfo animated = presented != null ? presented.eye
+                : isFirstPersonHand(ctx) ? ClientEyeRuntime.heldEye() : null;
         if (presented != null) {
             GooglyEyeRenderer.captureGravity(pose, animated);
         }
@@ -131,15 +91,5 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
                     IRIS_SCALE, 0F, 0F, look.glow());
         }
         pose.popPose();
-    }
-
-    /** {@code frame}'s item draw starts; {@link #itemDraw} reads the frame until {@link #endFrame}. */
-    public static void beginFrame(ItemFrame frame, float partialTick) {
-        frameContext = new FrameContext(frame, partialTick);
-    }
-
-    /** The current frame's item draw is over. */
-    public static void endFrame() {
-        frameContext = null;
     }
 }

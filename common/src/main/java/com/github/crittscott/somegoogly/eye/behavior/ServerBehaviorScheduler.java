@@ -108,7 +108,7 @@ public final class ServerBehaviorScheduler {
      * Promote {@code mob} into the per-tick-walked {@link #ACTIVE} set now that it's known to have eyes.
      * A no-op if nobody is currently tracking it (no {@link MobState} to promote) — {@link
      * #onStartTracking} independently checks {@link EyeState#hasEyes} for that case. Called from
-     * {@link EyeState} wherever the persisted has-eyes flag turns on.
+     * {@link EyeState} whenever it synchronizes an eyed mob.
      */
     public static void onEyesGained(LivingEntity mob) {
         MobState state = STATES.get(mob);
@@ -136,9 +136,12 @@ public final class ServerBehaviorScheduler {
                 ServerConfig.AMBIENT_MAX_TICKS.get(), RANDOM);
     }
 
-    /** {@code mob} was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it. */
+    /**
+     * {@code mob} is about to be healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.
+     * Both loaders call this ahead of the heal, since vanilla also asks a mob at full health to heal.
+     */
     public static void onHealed(LivingEntity mob) {
-        if (!ServerConfig.SWIRL_ON_HEAL.get()) {
+        if (!ServerConfig.SWIRL_ON_HEAL.get() || mob.getHealth() >= mob.getMaxHealth()) {
             return;
         }
         MobState state = eventTarget(mob);

@@ -6,10 +6,13 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
+import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -19,11 +22,16 @@ public final class FabricClientNetworkTransport {
     private FabricClientNetworkTransport() {
     }
 
-    /** Register the client's login-query answer and its receivers for every clientbound payload. */
+    /** Register the client's login-query answer, its refusal of a server without the mod, and its payload receivers. */
     public static void register() {
         ClientLoginNetworking.registerGlobalReceiver(FabricNetworkTransport.HANDSHAKE,
                 (client, handler, buffer, listenerAdder) -> CompletableFuture.completedFuture(
-                        PacketByteBufs.create().writeUtf(NetworkHandler.NETWORK_VERSION)));
+                        PacketByteBufs.create().writeUtf(NetworkProtocol.NETWORK_VERSION)));
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (!ClientPlayNetworking.canSend(PickerFreezePacket.ID)) {
+                handler.getConnection().disconnect(Component.translatable("somegoogly.network.required_server"));
+            }
+        });
         ClientPlayNetworking.registerGlobalReceiver(EyeStatePacket.ID, (client, handler, buffer, sender) -> {
             EyeStatePacket packet = EyeStatePacket.read(buffer);
             client.execute(() -> ClientNetworkHandler.handleEyeState(packet));

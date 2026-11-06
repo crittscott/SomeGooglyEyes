@@ -1,8 +1,9 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
@@ -16,8 +17,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 
@@ -158,6 +161,21 @@ public final class GooglyEyeRenderer {
         pose.scale(irisScale, irisScale, 1F);
         MODEL.renderIris(pose, buffer, packedLight, overlay, iris[0], iris[1], iris[2], 1F);
         pose.popPose();
+    }
+
+    /**
+     * Draw {@code boat}'s eyes in the hull model's space, which already includes vanilla yaw, damage rocking, and
+     * bubble rotation. The caller retains the hull pose; ordinary boat rendering and water masking stay with vanilla.
+     */
+    public static void renderBoat(Boat boat, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
+        PresentationEyes eyes = ClientEyeRuntime.boatEyes(boat);
+        if (eyes == null) {
+            return;
+        }
+        for (int part : eyes.parts) {
+            renderHead(pose, buffers, light, OverlayTexture.NO_OVERLAY, eyes.eyes[part], eyes.helper,
+                    eyes.snapshot.properties(), part, partialTick);
+        }
     }
 
     /**

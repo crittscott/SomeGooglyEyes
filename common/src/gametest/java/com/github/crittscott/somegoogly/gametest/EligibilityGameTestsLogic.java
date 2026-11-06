@@ -12,7 +12,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.BlockPos;
@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the slimy eye's targeting,
  * the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- * {@link ServerEyeConfigs#isEligible} delegating to it — are what keep those three in agreement.
+ * {@link EyeItemService#verdictFor} reading it — are what keep those three in agreement.
  * The delegation test swaps the config store via {@link TestEyeConfigs} (restored afterwards, the same
  * force-and-restore pattern as {@code SpawnGatingGameTests}) rather than depending on which configs
  * happen to ship.
@@ -102,10 +102,12 @@ public final class EligibilityGameTestsLogic {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             TestEyeConfigs.install(Map.of(cowId, set));
-            helper.assertTrue(ServerEyeConfigs.isEligible(cow), "a cow with a usable config should be eligible");
+            helper.assertTrue(EyeItemService.verdictFor(cow) != EyeItemService.Verdict.CANNOT,
+                    "a cow with a usable config should be eligible");
 
             TestEyeConfigs.install(Map.of());
-            helper.assertTrue(!ServerEyeConfigs.isEligible(cow), "a cow with no config should not be eligible");
+            helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CANNOT,
+                    "a cow with no config should not be eligible");
         } finally {
             TestEyeConfigs.install(original);
         }
@@ -145,6 +147,8 @@ public final class EligibilityGameTestsLogic {
             set.any = usableConfig();
             TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+            helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CANNOT,
+                    "the master switch decides the verdict, so the inspector hint agrees with the refusal");
             InteractionResult disabled = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
             helper.assertTrue(!disabled.consumesAction(), "googlyEyesEnabled=false should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "a disabled apply should not gain eyes");

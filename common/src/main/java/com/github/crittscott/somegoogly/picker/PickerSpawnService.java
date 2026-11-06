@@ -261,7 +261,7 @@ public final class PickerSpawnService {
             }
         }
         if (filtering && candidates.isEmpty() && dropped.isEmpty()) {
-            tellFailure(source, "somegoogly.command.spawnall.no_types", modFilter);
+            PickerGate.tellFailure(source, "somegoogly.command.spawnall.no_types", modFilter);
             return 0;
         }
         // Sort by mod (namespace) first, then by mob id within the mod.
@@ -381,7 +381,7 @@ public final class PickerSpawnService {
             announce(source, "somegoogly.command.spawnall.skipped", skipped);
         }
         if (filtering && !dropped.isEmpty()) {
-            tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
+            PickerGate.tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
                 source.sendSuccess(() -> Component.translatable("somegoogly.command.spawnall.dropped_entry", entry), false);
             }
@@ -403,7 +403,7 @@ public final class PickerSpawnService {
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         SpawnRefusal refusal = refusal(type);
         if (refusal != null) {
-            tellFailure(source, refusal.spawnKey, id.toString());
+            PickerGate.tellFailure(source, refusal.spawnKey, id.toString());
             return false;
         }
 
@@ -414,7 +414,7 @@ public final class PickerSpawnService {
         BlockHitResult hit = level.clip(new ClipContext(eye, end,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         if (hit.getType() != HitResult.Type.BLOCK) {
-            tellFailure(source, "somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH);
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.no_block_targeted", (int) SPAWN_REACH);
             return false;
         }
 
@@ -423,15 +423,15 @@ public final class PickerSpawnService {
             entity = type.create(level);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.warn("/sg spawn {}: entity factory threw", id, e);
-            tellFailure(source, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.create_threw", id.toString(), e.getClass().getSimpleName());
             return false;
         }
         if (entity == null) {
-            tellFailure(source, "somegoogly.command.spawn.create_null", id.toString());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.create_null", id.toString());
             return false;
         }
         if (!(entity instanceof LivingEntity)) {
-            tellFailure(source, "somegoogly.command.spawn.not_living", id.toString());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.not_living", id.toString());
             return false;
         }
 
@@ -446,16 +446,16 @@ public final class PickerSpawnService {
             finalized = prepareForCommandSpawn(level, entity, x, pos.getY(), z, yaw);
         } catch (Exception e) {
             SomeGooglyCommon.LOGGER.warn("/sg spawn {}: finalizeSpawn() threw", id, e);
-            tellFailure(source, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.finalize_threw", id.toString(), e.getClass().getSimpleName());
             return false;
         }
         if (!finalized) {
-            tellFailure(source, "somegoogly.command.spawn.cancelled", id.toString());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.cancelled", id.toString());
             return false;
         }
 
         if (!level.noCollision(entity)) {
-            tellFailure(source, "somegoogly.command.spawn.doesnt_fit", id.toString());
+            PickerGate.tellFailure(source, "somegoogly.command.spawn.doesnt_fit", id.toString());
             return false;
         }
 
@@ -463,7 +463,7 @@ public final class PickerSpawnService {
             announce(source, "somegoogly.command.spawn.spawned", id.toString());
             return true;
         }
-        tellFailure(source, "somegoogly.command.spawn.refused", id.toString());
+        PickerGate.tellFailure(source, "somegoogly.command.spawn.refused", id.toString());
         return false;
     }
 
@@ -499,18 +499,6 @@ public final class PickerSpawnService {
             mob.setYBodyRot(yaw);
         }
         return true;
-    }
-
-    /** Report a refusal to the command's sender, under the shared picker prefix. */
-    public static void tellFailure(CommandSourceStack source, String key, Object... args) {
-        source.sendFailure(Component.translatable("somegoogly.command.picker.feedback",
-                Component.translatable(key, args)));
-    }
-
-    /** Report a result to the command's sender alone, under the shared picker prefix. */
-    public static void tellSuccess(CommandSourceStack source, String key, Object... args) {
-        source.sendSuccess(() -> Component.translatable("somegoogly.command.picker.feedback",
-                Component.translatable(key, args)), false);
     }
 
     /** Source-block column height that keeps a water mob of this size submerged (at least one block). */

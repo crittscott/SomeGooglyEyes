@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Selects GUI animation before models are resolved; rendering states retain the selection. */
+/** Selects GUI animation before the item is drawn. */
 @Mixin(GuiGraphics.class)
 abstract class GuiItemEyesMixin {
 
@@ -25,6 +26,6 @@ abstract class GuiItemEyesMixin {
             + "Lnet/minecraft/world/item/ItemStack;IIII)V", at = @At("RETURN"))
     private void somegoogly$endGuiItem(LivingEntity owner, Level level, ItemStack stack, int x, int y,
                                        int seed, int z, CallbackInfo callback) {
-        GuiItemEyes.endDraw();
+        ClientEyeRuntime.endItemDraw();
     }
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
@@ -13,6 +14,9 @@ import java.util.Locale;
  * the range synthesis ({@link #rangeFor}) used when exporting definitions for optional mods.
  */
 public final class VersionRangeMatcher {
+
+    /** Version-string words that name a build's loader and say nothing about its age. */
+    private static final Set<String> LOADER_NAMES = Set.of("fabric", "forge", "neoforge", "quilt");
 
     private VersionRangeMatcher() {
     }
@@ -194,7 +198,7 @@ public final class VersionRangeMatcher {
     private static List<Token> tokenize(String version) {
         List<Token> tokens = new ArrayList<>();
         for (String part : version.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) {
-            if (!part.isEmpty()) {
+            if (!part.isEmpty() && !LOADER_NAMES.contains(part)) {
                 tokens.add(Token.of(part));
             }
         }

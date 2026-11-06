@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -19,7 +19,7 @@ public final class FabricNetworkTransport {
      * Login-query channel the server asks about before the player joins. A client that answers it has the mod and
      * replies with its network version; one that does not understand it, or runs another version, is refused.
      */
-    public static final ResourceLocation HANDSHAKE = NetworkHandler.id("handshake");
+    public static final ResourceLocation HANDSHAKE = NetworkProtocol.id("handshake");
     /** Longest network version a client's handshake reply may hold. */
     private static final int MAX_VERSION_LENGTH = 16;
 
@@ -40,9 +40,9 @@ public final class FabricNetworkTransport {
                         return;
                     }
                     String version = buffer.readUtf(MAX_VERSION_LENGTH);
-                    if (!version.equals(NetworkHandler.NETWORK_VERSION)) {
+                    if (!version.equals(NetworkProtocol.NETWORK_VERSION)) {
                         SomeGooglyCommon.LOGGER.info("Refusing {}: client runs {} network version {}, server runs {}",
-                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, version, NetworkHandler.NETWORK_VERSION);
+                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, version, NetworkProtocol.NETWORK_VERSION);
                         handler.disconnect(versionMismatchMessage(version));
                     }
                 });
@@ -68,6 +68,6 @@ public final class FabricNetworkTransport {
 
     /** The refusal shown to a client running network version {@code clientVersion}. */
     public static Component versionMismatchMessage(String clientVersion) {
-        return refusal("somegoogly.network.version_mismatch", NetworkHandler.NETWORK_VERSION, clientVersion);
+        return refusal("somegoogly.network.version_mismatch", NetworkProtocol.NETWORK_VERSION, clientVersion);
     }
 }

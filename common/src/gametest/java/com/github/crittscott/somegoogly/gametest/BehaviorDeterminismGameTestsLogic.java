@@ -29,8 +29,7 @@ public final class BehaviorDeterminismGameTestsLogic {
     }
 
     private static BehaviorInstance playTo(EyeBehavior behavior, HeadInfo helper, int ticks, long seed) {
-        BehaviorInstance instance = new BehaviorInstance(behavior, helper, 8, seed);
-        behavior.onStart(instance);
+        BehaviorInstance instance = BehaviorInstance.start(behavior, helper, 8, seed);
         instance.age = Math.max(0, Math.min(ticks, instance.duration));
         return instance;
     }

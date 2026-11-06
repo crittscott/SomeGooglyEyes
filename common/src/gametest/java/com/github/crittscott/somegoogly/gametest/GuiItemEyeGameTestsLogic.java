@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.GuiEyeAnimations;
+import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -34,9 +34,9 @@ public final class GuiItemEyeGameTestsLogic {
      * preview in a pausing screen; its eyes continue expressing while world entities are paused.
      */
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
         Object view = new Object();
-        var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
+        var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var presentation = cache.get(key, stack);
         BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
@@ -56,8 +56,8 @@ public final class GuiItemEyeGameTestsLogic {
      * replace a visible eye with a diamond; restoring the eye produces a fresh live presentation.
      */
     public static void guiEyesHonorEligibilityAndSwitch(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 0, 0, 0);
         var first = cache.get(key, eye());
         cache.clear();
         var restored = cache.get(key, eye());
@@ -75,8 +75,8 @@ public final class GuiItemEyeGameTestsLogic {
      * In game: split and merge a stack in one slot; its pupil does not restart on each rendered frame.
      */
     public static void guiEyesKeepPresentationIdentity(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 3, 0, 0);
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 3, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         ItemStack copy = stack.copy();
@@ -94,8 +94,8 @@ public final class GuiItemEyeGameTestsLogic {
      * with a glowing or dyed copy; its icon immediately shows the new appearance.
      */
     public static void guiEyesReplaceChangedContents(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
-        var key = new GuiEyeAnimations.Key(new Object(), GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         EyeItemProperties.set(stack, AppearanceOverride.EMPTY.withGlow(true));
@@ -110,10 +110,10 @@ public final class GuiItemEyeGameTestsLogic {
      * In game: close a chest, change screens, and scroll creative entries out of view; no old icon state leaks.
      */
     public static void guiEyesRetireClosedAndHiddenViews(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
         Object view = new Object();
-        var screenKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
-        var hudKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.POSITION, 0, 0, 0);
+        var screenKey = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
+        var hudKey = new GuiItemEyes.Key(GuiItemEyes.HUD, GuiItemEyes.Kind.POSITION, 0, 0, 0);
         var screen = cache.get(screenKey, eye());
         var hud = cache.get(hudKey, eye());
         cache.tick(new Object(), BehaviorSettings.NONE);
@@ -138,16 +138,16 @@ public final class GuiItemEyeGameTestsLogic {
      * drag an eye across matching occupied slots; the cursor eye keeps its own expression while moving.
      */
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
-        GuiEyeAnimations cache = new GuiEyeAnimations();
+        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
         Object view = new Object();
-        var first = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0), eye());
-        var second = cache.get(new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 1, 0, 0), eye());
-        var cursorKey = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.CURSOR, 0, 0, 0);
+        var first = cache.get(new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0), eye());
+        var second = cache.get(new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 1, 0, 0), eye());
+        var cursorKey = new GuiItemEyes.Key(view, GuiItemEyes.Kind.CURSOR, 0, 0, 0);
         var cursor = cache.get(cursorKey, eye());
         helper.assertTrue(first != second && cursor != first, "presentations do not share pupils");
         helper.assertTrue(cache.get(cursorKey, eye().copy()) == cursor,
                 "the cursor simulation is independent of its moving coordinates");
-        var hotbarKey = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, 1, 0, 0);
+        var hotbarKey = new GuiItemEyes.Key(GuiItemEyes.HUD, GuiItemEyes.Kind.HOTBAR, 1, 0, 0);
         var hotbar = cache.get(hotbarKey, eye());
         cache.tick(view, BehaviorSettings.NONE);
         helper.assertTrue(cache.get(hotbarKey, eye()) == hotbar,
@@ -167,9 +167,9 @@ public final class GuiItemEyeGameTestsLogic {
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
-            GuiEyeAnimations cache = new GuiEyeAnimations();
+            GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
             Object view = new Object();
-            var key = new GuiEyeAnimations.Key(view, GuiEyeAnimations.Kind.SLOT, 0, 0, 0);
+            var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
             var presentation = cache.get(key, head);

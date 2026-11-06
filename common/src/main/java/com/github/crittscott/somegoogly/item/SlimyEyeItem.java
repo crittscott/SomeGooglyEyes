@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.item;
 
-import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

@@ -9,7 +9,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
-import com.github.crittscott.somegoogly.migration.fabric.FabricConfigMigration;
+import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -151,10 +151,10 @@ public final class TomlConfig {
             SomeGooglyCommon.LOGGER.info("Wrote default config file {}", path);
         }
         String source = Files.readString(path, StandardCharsets.UTF_8);
-        String migrated = FabricConfigMigration.quoteReleasedHeader(source);
+        String migrated = FabricMigration.quoteReleasedHeader(source);
         CommentedConfig values = parse(migrated);
         if (!migrated.equals(source)) {
-            FabricConfigMigration.replaceFile(path, migrated);
+            FabricMigration.replaceFile(path, migrated);
         }
         return values;
     }

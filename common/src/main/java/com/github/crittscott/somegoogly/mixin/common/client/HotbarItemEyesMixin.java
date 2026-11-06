@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
-import com.github.crittscott.somegoogly.client.GuiEyeAnimations;
 import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +13,7 @@ abstract class HotbarItemEyesMixin {
 
     @Inject(method = "renderHotbar", at = @At("HEAD"))
     private void somegoogly$beginHotbar(CallbackInfo callback) {
-        GuiItemEyes.beginPresentation(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, 0);
+        GuiItemEyes.beginPresentation(GuiItemEyes.HUD, GuiItemEyes.Kind.HOTBAR, 0);
     }
 
     @Inject(method = "renderHotbar", at = @At("RETURN"))

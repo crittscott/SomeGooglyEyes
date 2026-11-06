@@ -173,15 +173,15 @@ public final class GooglyServerCommands {
             return 0;
         }
         if (!ServerConfig.ALLOW_SPAWN_ALL.get()) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.spawnall_disabled");
+            PickerGate.tellFailure(source, "somegoogly.command.picker.spawnall_disabled");
             return 0;
         }
         if (modFilter != null && !ServerConfig.validateNamespace(modFilter)) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.spawnall_invalid_mod", modFilter);
+            PickerGate.tellFailure(source, "somegoogly.command.picker.spawnall_invalid_mod", modFilter);
             return 0;
         }
         if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.spawnall_cooldown");
+            PickerGate.tellFailure(source, "somegoogly.command.picker.spawnall_cooldown");
             return 0;
         }
         source.sendSuccess(() -> modFilter == null
@@ -200,7 +200,7 @@ public final class GooglyServerCommands {
         double dy = FloatArgumentType.getFloat(ctx, "dy");
         double dz = FloatArgumentType.getFloat(ctx, "dz");
         if (dx * dx + dy * dy + dz * dz > MAX_MOB_MOVE_SQUARED) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE);
+            PickerGate.tellFailure(source, "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE);
             return 0;
         }
         LivingEntity living = frozenMob(source, player);
@@ -208,7 +208,7 @@ public final class GooglyServerCommands {
             return 0;
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
-        PickerSpawnService.tellSuccess(source, "somegoogly.command.picker.mob_moved",
+        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_moved",
                 compact(living.getX()), compact(living.getY()),
                 compact(living.getZ()));
         return 1;
@@ -229,7 +229,7 @@ public final class GooglyServerCommands {
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        PickerSpawnService.tellSuccess(source, "somegoogly.command.picker.mob_rotated", angle(azimuth));
+        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_rotated", angle(azimuth));
         return 1;
     }
 
@@ -237,12 +237,12 @@ public final class GooglyServerCommands {
     private static LivingEntity frozenMob(CommandSourceStack source, ServerPlayer player) {
         var mobId = PickerFreezeService.frozenMobId(player.getUUID());
         if (mobId == null) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.mob_not_chosen");
+            PickerGate.tellFailure(source, "somegoogly.command.picker.mob_not_chosen");
             return null;
         }
         Entity entity = player.serverLevel().getEntity(mobId);
         if (!(entity instanceof LivingEntity living)) {
-            PickerSpawnService.tellFailure(source, "somegoogly.command.picker.mob_not_found");
+            PickerGate.tellFailure(source, "somegoogly.command.picker.mob_not_found");
             return null;
         }
         return living;
@@ -348,23 +348,24 @@ public final class GooglyServerCommands {
     private static ServerPlayer requirePickerUser(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         if (!PickerGate.mayUsePicker(player)) {
-            PickerSpawnService.tellFailure(ctx.getSource(), "somegoogly.command.picker.not_authorized");
+            PickerGate.tellFailure(ctx.getSource(), "somegoogly.command.picker.not_authorized");
             return null;
         }
         return player;
     }
 
     /**
-     * The shared per-execution guard: the sender must be a player <b>in creative mode</b> (the op-level-2
-     * gate on the subtree is registration-time only), looking at a living entity. Returns that entity, or
-     * {@code null} (with feedback) when it isn't creative or isn't looking at one; a non-player sender
-     * gets vanilla's player-required error. Every admin verb calls this first.
+     * The shared per-execution guard: the sender must be a player who may use the picker
+     * ({@link PickerGate#mayUsePicker}), looking at a living entity. The subtree's {@code requires} reads the source's
+     * level, which {@code /execute as} carries over to a player without it, so the rule is checked on the player
+     * here. Returns that entity, or {@code null} (with feedback) when the player may not or isn't looking at one;
+     * a non-player sender gets vanilla's player-required error. Every admin verb calls this first.
      */
     @Nullable
     private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayerOrException();
-        if (!player.isCreative()) {
+        if (!PickerGate.mayUsePicker(player)) {
             adminFailure(source, Component.translatable("somegoogly.command.admin.requires_creative"));
             return null;
         }

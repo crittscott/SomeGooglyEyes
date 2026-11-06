@@ -30,7 +30,6 @@ public final class ClientLifecycle {
     public static void onDisconnect() {
         ClientEyeConfigs.clear();
         ClientEyeRuntime.onLevelChanged();
-        GooglyEyeItemRenderer.reset();
         PickerState.resetOnDisconnect();
     }
 
@@ -40,7 +39,9 @@ public final class ClientLifecycle {
         GuiItemEyes.tick();
         HandItemEyes.tick();
         ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused());
-        GooglyEyeItemRenderer.tick();
+        if (!minecraft.isPaused()) {
+            ClientEyeRuntime.tickHeldEye(minecraft.player);
+        }
         EyeInspector.tick();
         PickerInput.consumePendingKeys();
     }

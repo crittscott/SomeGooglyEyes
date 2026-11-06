@@ -77,7 +77,7 @@ public final class PickerHud {
         List<List<Line>> out = new ArrayList<>();
 
         if (PickerState.target() == null) {
-            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerKeys.LOCK)), GRAY)));
+            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerInput.LOCK)), GRAY)));
             return out;
         }
 
@@ -98,7 +98,7 @@ public final class PickerHud {
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.part_label"), GREEN),
                 new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n,
-                        keyName(PickerKeys.PART_PREV), keyName(PickerKeys.PART_NEXT)), WHITE)));
+                        keyName(PickerInput.PART_PREV), keyName(PickerInput.PART_NEXT)), WHITE)));
 
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.eyes_header_label"), GREEN),

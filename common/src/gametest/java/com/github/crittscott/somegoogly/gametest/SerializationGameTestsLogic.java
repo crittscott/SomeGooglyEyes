@@ -21,7 +21,7 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
@@ -64,16 +64,16 @@ public final class SerializationGameTestsLogic {
      * Every payload id is unique. No in-game form; guards that no two payloads are misread as each other.
      */
     public static void networkProtocolIdsAreUnique(GameTestHelper helper) {
-        List<ResourceLocation> gameplay = List.of(
-                NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_SETTINGS,
-                NetworkHandler.EYE_BEHAVIOR, NetworkHandler.EYE_ANGER, NetworkHandler.PICKER_FREEZE,
-                NetworkHandler.PICKER_EXPORT);
-        helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
-                "every gameplay payload must have a unique channel id");
         List<ResourceLocation> typedPayloads = List.of(
                 EyeStatePacket.ID, EyeConfigSyncPacket.ID, EyeSettingsPacket.ID, EyeBehaviorTriggerPacket.ID,
                 EyeAngerPacket.ID, PickerFreezePacket.ID, PickerExportPacket.ID);
-        helper.assertTrue(typedPayloads.equals(gameplay),
+        helper.assertTrue(Set.copyOf(typedPayloads).size() == typedPayloads.size(),
+                "every gameplay payload must have a unique channel id");
+        List<ResourceLocation> established = List.of(
+                NetworkProtocol.id("eye_state"), NetworkProtocol.id("eye_config"), NetworkProtocol.id("eye_settings"),
+                NetworkProtocol.id("eye_behavior"), NetworkProtocol.id("eye_anger"),
+                NetworkProtocol.id("picker_freeze"), NetworkProtocol.id("picker_export"));
+        helper.assertTrue(typedPayloads.equals(established),
                 "the native payload types must preserve every established wire id");
         helper.succeed();
     }

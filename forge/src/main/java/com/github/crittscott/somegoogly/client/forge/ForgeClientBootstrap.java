@@ -5,7 +5,7 @@ import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -109,9 +109,9 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(PickerKeys.LOCK);
-        event.register(PickerKeys.PART_NEXT);
-        event.register(PickerKeys.PART_PREV);
-        event.register(PickerKeys.TOGGLE);
+        event.register(PickerInput.LOCK);
+        event.register(PickerInput.PART_NEXT);
+        event.register(PickerInput.PART_PREV);
+        event.register(PickerInput.TOGGLE);
     }
 }

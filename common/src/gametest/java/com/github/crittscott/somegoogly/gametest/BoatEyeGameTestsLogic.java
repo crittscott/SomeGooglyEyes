@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.BoatEyeAnimations;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
@@ -24,7 +23,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import java.util.List;
@@ -112,7 +111,7 @@ public final class BoatEyeGameTestsLogic {
         }
         helper.assertTrue(crossed, "a configured pair can cross");
         var influence = new EyeInfluence();
-        var crossing = new BehaviorInstance(
+        var crossing = BehaviorInstance.start(
                 EyeBehavior.CROSS_EYE, paired.helper, EyeBehavior.CROSS_EYE.defaultDuration(), 1L);
         crossing.age = crossing.duration / 2;
         EyeBehavior.CROSS_EYE.influence(crossing, 0, 0, influence);
@@ -149,7 +148,7 @@ public final class BoatEyeGameTestsLogic {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
-            BoatEyeAnimations cache = new BoatEyeAnimations();
+            ClientEyeRuntime.BoatSimulations cache = new ClientEyeRuntime.BoatSimulations();
             var eyes = cache.get(boat);
             var blink = settings(List.of(EyeBehavior.BLINK));
             cache.tick(1L, blink);
@@ -197,7 +196,7 @@ public final class BoatEyeGameTestsLogic {
             var state = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY);
             EyeState.applySnapshot(moving, state);
             EyeState.applySnapshot(still, state);
-            BoatEyeAnimations cache = new BoatEyeAnimations();
+            ClientEyeRuntime.BoatSimulations cache = new ClientEyeRuntime.BoatSimulations();
             var movingEyes = cache.get(moving);
             var stillEyes = cache.get(still);
             for (var eyes : List.of(movingEyes, stillEyes)) {
@@ -246,7 +245,7 @@ public final class BoatEyeGameTestsLogic {
         var existingDrops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, area,
                 item -> item.getItem().is(ModContent.GOOGLY_EYE.get()));
         helper.assertTrue(EyeItemService.interact(player, helper.getLevel(), InteractionHand.OFF_HAND, boat)
-                == InteractionResult.SUCCESS, "successful harvesting consumes chest interaction");
+                == InteractionResult.CONSUME, "successful harvesting consumes chest interaction");
         helper.assertTrue(!EyeState.hasEyes(boat) && EyeState.readProperties(boat).isEmpty(), "harvest clears state");
         helper.assertTrue(shears.getDamageValue() == 1, "one durability is spent");
         // Nearby tests may already have dropped eyes; count only this interaction's new entities.
@@ -296,7 +295,7 @@ public final class BoatEyeGameTestsLogic {
             ItemStack stack = new ItemStack(ModContent.SLIMY_EYE.get());
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             helper.assertTrue(EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, boat)
-                    == InteractionResult.SUCCESS && stack.getCount() == 1 && EyeState.hasEyes(boat),
+                    == InteractionResult.CONSUME && stack.getCount() == 1 && EyeState.hasEyes(boat),
                     "creative application preserves the eye item");
         } finally {
             player.getAbilities().instabuild = creative;
@@ -343,7 +342,7 @@ public final class BoatEyeGameTestsLogic {
                 var appearance = AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.2F, 0.6F, 0.8F)).withGlow(true);
                 EyeItemProperties.set(slimy, appearance);
                 player.setItemInHand(hand, slimy);
-                helper.assertTrue(EyeItemService.interact(player, helper.getLevel(), hand, boat) == InteractionResult.SUCCESS,
+                helper.assertTrue(EyeItemService.interact(player, helper.getLevel(), hand, boat) == InteractionResult.CONSUME,
                         "Slimy Eye application consumes the boat interaction");
                 helper.assertTrue(EyeState.hasEyes(boat) && appearance.equals(EyeState.readProperties(boat)),
                         "the whole appearance transfers to the boat");

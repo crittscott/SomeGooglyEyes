@@ -1,6 +1,7 @@
-package com.github.crittscott.somegoogly.server;
+package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
@@ -8,12 +9,11 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.item.GooglyEyeItem;
-import com.github.crittscott.somegoogly.item.SlimyEyeItem;
+import com.github.crittscott.somegoogly.platform.ItemDestruction;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -45,56 +46,51 @@ public final class EyeItemService {
     private EyeItemService() {
     }
 
+    /** Whether a target can receive eyes, and why not; each side answers from the state it holds. */
+    public enum Verdict {
+        ALREADY_HAS, CAN_HAVE, CANNOT, ONLY_AS_ADULT, ONLY_AS_BABY
+    }
+
     /**
-     * The Slimy Eye apply verb, server side: an eyeless target passing the shared eligibility predicate
-     * gains eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye.
-     * An already-eyed or ineligible target refuses ({@code FAIL}) and consumes nothing, as does any
-     * target while {@code googlyEyesEnabled} is off — the master switch blocks hand application the same
-     * as it blocks the at-spawn roll. Applying to another player additionally requires server PvP to be
-     * enabled and {@code canHarmPlayer} to hold, so it can't be used to restyle a teammate or anyone in a
-     * PvP-off world. Both the mob path ({@link #interact}) and the sneak self-apply
-     * ({@code SlimyEyeItem#use}) route through here.
+     * The Slimy Eye apply verb, server side: a target whose {@link #verdictFor(Entity) verdict} is
+     * {@link Verdict#CAN_HAVE} gains eyes carrying the stack's appearance on a freshly rolled placement variant,
+     * consuming one eye. Any other target refuses ({@code FAIL}) and consumes nothing, as does another player
+     * {@link #mayAffect} protects. Both the mob path ({@link #interact}) and the sneak self-apply
+     * ({@code SlimyEyeItem#use}) route through here. Vanilla records no item use for either, so this does.
      */
     public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, Entity target) {
-        boolean eligible = target instanceof LivingEntity living ? ServerEyeConfigs.isEligible(living)
-                : target instanceof Boat boat && BoatEyeLayout.isEligible(boat,
-                        ServerEyeConfigs.get(BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType()), false));
-        if (player.isSpectator() || !ServerConfig.GOOGLY_EYES_ENABLED.get() || EyeState.hasEyes(target) || !eligible) {
+        if (player.isSpectator() || verdictFor(target) != Verdict.CAN_HAVE || !mayAffect(player, target)) {
             return InteractionResult.FAIL;
         }
-        if (target instanceof Player victim && victim != player) {
-            if (!player.serverLevel().getServer().isPvpAllowed() || !player.canHarmPlayer(victim)) {
-                return InteractionResult.FAIL;
-            }
-        }
         EyeState.enableWithProperties(target, EyeItemProperties.get(stack));
+        player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
         consumeOne(player, stack);
         target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
         target.gameEvent(GameEvent.ENTITY_INTERACT, player);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     /**
-     * The Slimy Eye apply verb for a placed mob head, server side, clicked on its {@code face}: an eyeless head
-     * whose mob has an adult definition gains eyes carrying the stack's appearance on a freshly rolled placement
-     * variant, consuming one eye outside creative. The player must be allowed to use the item on that block, as
-     * placing a block there would require. Otherwise, or while {@code googlyEyesEnabled} is off, it refuses
+     * The Slimy Eye apply verb for a placed mob head, server side, clicked on its {@code face}: a head whose
+     * {@link #verdictFor(BlockEntity) verdict} is {@link Verdict#CAN_HAVE} gains eyes carrying the stack's
+     * appearance on a freshly rolled placement variant, consuming one eye outside creative. The player must be
+     * allowed to use the item on that block, as placing a block there would require. Otherwise it refuses
      * ({@code FAIL}) and consumes nothing.
      */
     public static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, BlockEntity skull,
                                                   Direction face) {
         BlockPos pos = skull.getBlockPos();
-        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || !canHeadHaveEyes(skull) || SkullEyeState.hasEyes(skull)
-                || !mayAlter(player, pos, face, stack)) {
+        if (verdictFor(skull) != Verdict.CAN_HAVE || !mayAlter(player, pos, face, stack)) {
             return InteractionResult.FAIL;
         }
         SkullEyeState.set(skull, new EyeState.Snapshot(true, player.getRandom().nextFloat(), EyeItemProperties.get(stack)));
+        recordBlockUse(player, pos, stack);
         consumeOne(player, stack);
         Level level = player.level();
         level.playSound(null, pos, SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     /** A Googly Eye carrying the effective appearance of the first eye on head {@code headIndex}. */
@@ -103,10 +99,10 @@ public final class EyeItemService {
         return GooglyEyeItem.create(harvested, 1);
     }
 
-    /** Whether the placed head's mob has an adult definition to borrow with eyes the head shows. */
-    private static boolean canHeadHaveEyes(BlockEntity skull) {
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        return entity != null && SkullEyeState.canHaveEyes(entity, ServerEyeConfigs.get(entity, false));
+    /** The definition of {@code type} at the given age that {@code level}'s side holds. */
+    @Nullable
+    private static RuntimeConfig config(Level level, ResourceLocation type, boolean baby) {
+        return level.isClientSide() ? ClientEyeConfigs.get(type, baby) : ServerEyeConfigs.get(type, baby);
     }
 
     /** Use up one of {@code stack}, unless {@code player} is in creative. */
@@ -114,6 +110,11 @@ public final class EyeItemService {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
+    }
+
+    /** Whether the {@code googlyEyesEnabled} master switch is on, as {@code level}'s side knows it. */
+    private static boolean enabled(Level level) {
+        return level.isClientSide() ? ClientEyeConfigs.googlyEyesEnabled() : ServerConfig.GOOGLY_EYES_ENABLED.get();
     }
 
     /**
@@ -140,10 +141,11 @@ public final class EyeItemService {
             Block.popResource(level, pos, buildEyeDrop(helper, parts[0], state.properties()));
         }
         SkullEyeState.set(skull, EyeState.Snapshot.NONE);
-        shears.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+        recordBlockUse(player, pos, shears);
+        wearShears(player, hand);
         level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.SHEAR, pos);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     private static boolean hasOptometrist(ItemStack stack) {
@@ -152,14 +154,17 @@ public final class EyeItemService {
 
     private static HeadInfo helperFor(LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        return ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
+        float roll = EyeState.getVariantRoll(mob);
+        return mob.level().isClientSide() ? ClientEyeConfigs.resolve(type, mob.isBaby(), roll)
+                : ServerEyeConfigs.resolve(type, mob.isBaby(), roll);
     }
 
     /**
-     * Route supported entities through normal loader interaction hooks. Living entities retain their
-     * item behavior; boats predict eligible application and harvesting on the client so success also
-     * consumes boarding or cargo use. Irrelevant boat actions pass through to vanilla. Spectators pass here
-     * and at the other use entry points because the loaders' use hooks can fire before vanilla's spectator test.
+     * Route supported entities through normal loader interaction hooks. Eligible application and harvesting are
+     * predicted on the client, so success also consumes the target's own use, and on Fabric the click's second
+     * interact packet: that packet's callback would otherwise find a just-harvested mob eyeless and let vanilla
+     * shear it. Irrelevant actions pass through to vanilla. Spectators pass here and at the other use entry
+     * points because the loaders' use hooks can fire before vanilla's spectator test.
      */
     public static InteractionResult interact(Player player, Level level, InteractionHand hand,
                                              Entity target) {
@@ -177,17 +182,21 @@ public final class EyeItemService {
             return level.isClientSide() ? InteractionResult.SUCCESS
                     : applySlimyEye(stack, (ServerPlayer) player, mob);
         }
-        if (level.isClientSide() || !stack.is(ModContent.SHEARS)
-                || !EyeState.hasEyes(mob) || !hasOptometrist(stack)
-                || !ServerConfig.GOOGLY_EYES_ENABLED.get()) {
+        if (!stack.is(ModContent.SHEARS) || !EyeState.hasEyes(mob) || !hasOptometrist(stack) || !enabled(level)) {
             return InteractionResult.PASS;
         }
         HeadInfo helper = helperFor(mob);
         if (!helper.hasConfig()) {
             return InteractionResult.PASS;
         }
+        if (!mayAffect(player, mob)) {
+            return InteractionResult.FAIL;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
         shearEyes(mob, player, hand, buildEyeDrop(helper, 0, EyeState.readProperties(mob)));
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     /** Vanilla boat use, after the loader's normal protection listeners have accepted the interaction. */
@@ -199,10 +208,8 @@ public final class EyeItemService {
             return InteractionResult.PASS;
         }
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
-        boolean enabled = level.isClientSide() ? ClientEyeConfigs.googlyEyesEnabled()
-                : ServerConfig.GOOGLY_EYES_ENABLED.get();
-        var config = level.isClientSide() ? ClientEyeConfigs.get(type, false) : ServerEyeConfigs.get(type, false);
-        if (!enabled || !BoatEyeLayout.isEligible(boat, config)) {
+        RuntimeConfig config = config(level, type, false);
+        if (!enabled(level) || !BoatEyeLayout.isEligible(boat, config)) {
             return InteractionResult.PASS;
         }
         if (slimy) {
@@ -215,11 +222,12 @@ public final class EyeItemService {
         if (!EyeState.hasEyes(boat)) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide()) {
-            HeadInfo helper = BoatEyeLayout.resolve(boat, config, EyeState.getVariantRoll(boat));
-            shearEyes(boat, player, hand, buildEyeDrop(helper, 0, EyeState.readProperties(boat)));
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+        HeadInfo helper = BoatEyeLayout.resolve(boat, config, EyeState.getVariantRoll(boat));
+        shearEyes(boat, player, hand, buildEyeDrop(helper, 0, EyeState.readProperties(boat)));
+        return InteractionResult.CONSUME;
     }
 
     /**
@@ -240,9 +248,22 @@ public final class EyeItemService {
         }
     }
 
-    /** Whether {@code player} may use {@code stack} on the block at {@code pos}, as building there would need. */
+    /**
+     * Whether {@code actor} may change {@code target}'s eyes: anyone but another player, or one it could hurt, so
+     * eyes can't be put on or taken off a teammate or anyone in a PvP-off world. The client doesn't know the
+     * server's PvP setting; its answer only predicts the click.
+     */
+    private static boolean mayAffect(Player actor, Entity target) {
+        return !(target instanceof Player victim) || victim == actor || actor.canHarmPlayer(victim);
+    }
+
+    /**
+     * Whether {@code player} may use {@code stack} on the block at {@code pos}, clicked on its {@code face}, as
+     * building there would need. {@code mayUseItemAt} tests the block behind the position it gets, so as for a
+     * bucket that is the position in front of the clicked face.
+     */
     private static boolean mayAlter(Player player, BlockPos pos, Direction face, ItemStack stack) {
-        return player.level().mayInteract(player, pos) && player.mayUseItemAt(pos, face, stack);
+        return player.level().mayInteract(player, pos) && player.mayUseItemAt(pos.relative(face), face, stack);
     }
 
     /**
@@ -268,6 +289,7 @@ public final class EyeItemService {
             return;
         }
         dropSink.accept(buildEyeDrop(helper, 0, EyeState.readProperties(mob)));
+        // The attack that made this kill reports a weapon it breaks, as it does for any weapon.
         weapon.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
         mob.gameEvent(GameEvent.SHEAR, player);
     }
@@ -275,6 +297,16 @@ public final class EyeItemService {
     private static void playShearSound(Entity target) {
         target.level().playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
+    }
+
+    /**
+     * Report {@code stack}'s use on the block at {@code pos} to statistics and advancements; the head paths run
+     * from the loaders' block-click hooks, ahead of the vanilla code that does this for an item's {@code useOn}.
+     * Call before the use spends the stack.
+     */
+    private static void recordBlockUse(ServerPlayer player, BlockPos pos, ItemStack stack) {
+        CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(player, pos, stack);
+        player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
     }
 
     /**
@@ -307,7 +339,7 @@ public final class EyeItemService {
                             .getHolderOrThrow(ModContent.SELF_SHEAR)),
                     (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     /**
@@ -320,7 +352,7 @@ public final class EyeItemService {
             target.spawnAtLocation(drop);
         }
         EyeState.disableAndClearProperties(target);
-        actor.getItemInHand(hand).hurtAndBreak(1, actor, p -> p.broadcastBreakEvent(hand));
+        wearShears(actor, hand);
         playShearSound(target);
         target.gameEvent(GameEvent.SHEAR, actor);
     }
@@ -330,7 +362,9 @@ public final class EyeItemService {
      * {@link #applySlimyEye(ItemStack, ServerPlayer, BlockEntity, Direction)}, Optometrist shears on an eyed
      * head to {@link #harvestSkull}. The client answers {@link InteractionResult#SUCCESS} in exactly those cases,
      * so it neither runs nor sends the item's own use on top (a sneaking player's self-apply or self-shear).
-     * Anything else, including plain shears or a spectator's click, returns {@link InteractionResult#PASS}.
+     * Anything else, including plain shears or a spectator's click, returns {@link InteractionResult#PASS}. The
+     * Slimy Eye comes here rather than through {@code Item#useOn} for the reason a mob's click does: a head block
+     * can have a use of its own that takes the click first, as Twilight Forest's trophies do.
      */
     public static InteractionResult useOnSkull(Player player, Level level, InteractionHand hand, BlockHitResult hit) {
         if (player.isSpectator()) {
@@ -350,5 +384,51 @@ public final class EyeItemService {
         ServerPlayer serverPlayer = (ServerPlayer) player;
         return slimy ? applySlimyEye(stack, serverPlayer, skull, hit.getDirection())
                 : harvestSkull(serverPlayer, hand, skull, hit.getDirection());
+    }
+
+    /** Whether the entity {@code target} can receive eyes, by what its side knows. */
+    public static Verdict verdictFor(Entity target) {
+        Level level = target.level();
+        ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
+        if (!enabled(level)) {
+            return Verdict.CANNOT;
+        }
+        if (target instanceof LivingEntity living) {
+            boolean baby = living.isBaby();
+            if (RuntimeConfig.isUsable(config(level, type, baby))) {
+                return EyeState.hasEyes(target) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
+            }
+            if (RuntimeConfig.isUsable(config(level, type, !baby))) {
+                return baby ? Verdict.ONLY_AS_ADULT : Verdict.ONLY_AS_BABY;
+            }
+            return Verdict.CANNOT;
+        }
+        if (target instanceof Boat boat && BoatEyeLayout.isEligible(boat, config(level, type, false))) {
+            return EyeState.hasEyes(target) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
+        }
+        return Verdict.CANNOT;
+    }
+
+    /**
+     * Whether the placed head {@code skull} can receive eyes, by what its side knows: its mob needs an adult
+     * definition, which the head borrows, with eyes the head shows.
+     */
+    public static Verdict verdictFor(BlockEntity skull) {
+        Level level = skull.getLevel();
+        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        if (!enabled(level) || entity == null
+                || !SkullEyeState.canHaveEyes(entity, config(level, entity, false))) {
+            return Verdict.CANNOT;
+        }
+        return SkullEyeState.hasEyes(skull) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
+    }
+
+    /** Spend one durability of the shears in {@code hand}, reporting them to the loader if that breaks them. */
+    private static void wearShears(Player player, InteractionHand hand) {
+        ItemStack shears = player.getItemInHand(hand);
+        shears.hurtAndBreak(1, player, p -> {
+            p.broadcastBreakEvent(hand);
+            ItemDestruction.report(p, shears.copy(), hand);
+        });
     }
 }

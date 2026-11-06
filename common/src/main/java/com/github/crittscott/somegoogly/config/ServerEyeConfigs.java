@@ -93,16 +93,6 @@ public final class ServerEyeConfigs {
         return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
     }
 
-    /**
-     * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
-     * config that is enabled and has at least one head. Used by Slimy Eye application
-     * ({@code EyeItemService.applySlimyEye}), which should only apply to targets the eyes would visibly
-     * appear on immediately. Players have a definition ({@code player.json}) and so are eligible.
-     */
-    public static boolean isEligible(LivingEntity living) {
-        return RuntimeConfig.isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living.isBaby()));
-    }
-
     /** Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. */
     public static Map<ResourceLocation, CompoundTag> encode(Map<ResourceLocation, RuntimeConfigSet> configs) {
         Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();

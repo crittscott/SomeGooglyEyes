@@ -589,8 +589,7 @@ public class GooglyTracker {
         if (active != null || parent.isSleeping()) {
             return false;
         }
-        BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
-        behavior.onStart(instance);
+        BehaviorInstance instance = BehaviorInstance.start(behavior, helper, duration, seed);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
         instance.age = elapsed;

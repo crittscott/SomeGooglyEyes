@@ -2,13 +2,11 @@ package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
 import com.github.crittscott.somegoogly.client.render.resolver.Attachment;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import com.github.crittscott.somegoogly.config.ClientConfig;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
@@ -28,7 +26,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Draws the eyes of placed mob heads and head items. Each loader's Mixins bracket a placed head's draw with
+ * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
  * {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
  * ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
@@ -62,24 +59,14 @@ import java.util.Optional;
  */
 public final class SkullEyeRenderer {
 
-    /**
-     * The part whose cubes stand for a mob's eye part, for mobs whose eyes attach to a part sharing its pivot with
-     * a larger one (the chicken's beak, beside its head); any other mob's eye part stands for itself.
-     */
-    private static final Map<ResourceLocation, String> CUBE_TOKENS = Map.of(
-            EntityType.getKey(EntityType.CHICKEN), "head",
-            EntityType.getKey(EntityType.SLIME), "root");
     /** The usual field name for a modded head model's face part. */
     private static final String HEAD_FIELD = "head";
     /** Each modded head model class's field holding its head part, or empty when it has none. */
     private static final Map<Class<?>, Optional<Field>> HEAD_FIELDS = new HashMap<>();
     private static final float PIXELS_PER_BLOCK = 16F;
-    private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
-    private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
     /** Fitted placements by head model and eye attach token; empty where fitting failed. */
     private static final Map<Model, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
-    /** Rest pose for head items drawn outside frames. */
 
     private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
 
@@ -167,8 +154,8 @@ public final class SkullEyeRenderer {
             return null;
         }
         EntityModel<?> mobModel = livingRenderer.getModel();
-        Attachment attachment = Resolvers.forModel(mobModel)
-                .resolve(mobModel, CUBE_TOKENS.getOrDefault(entity, token));
+        String cubePart = SkullEyeState.shape(entity).cubePart();
+        Attachment attachment = Resolvers.forModel(mobModel).resolve(mobModel, cubePart == null ? token : cubePart);
         ModelPart mobPart = attachment == null ? null : attachment.part();
         FoundCube mob = mobPart == null ? null : largestCube(mobPart, new ArrayList<>());
         FoundCube heads = largestCube(head, new ArrayList<>());
@@ -260,8 +247,7 @@ public final class SkullEyeRenderer {
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
     private static boolean mayShow(@Nullable ResourceLocation entity) {
-        return entity != null && ClientEyeConfigs.eyesVisible()
-                && !ClientConfig.isEntityDisabled(entity);
+        return entity != null && ClientEyeConfigs.eyesVisible(entity);
     }
 
     /** The cached fit for eyes on {@code entity}'s part {@code token} drawn by the head {@code model}. */
@@ -320,7 +306,7 @@ public final class SkullEyeRenderer {
             if (!mayShow(entity)) {
                 return;
             }
-            PresentationEyes.Draw itemDraw = GooglyEyeItemRenderer.itemDraw(stack);
+            PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw(stack);
             PresentationEyes framed = itemDraw.eyes();
             boolean fitted = usesFit(item.getBlock(), entity, trophy);
             if (framed != null) {
@@ -351,25 +337,21 @@ public final class SkullEyeRenderer {
                                    AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
-        // The Enderman Skull's face uses the mob layout's head-local coordinates.
-        boolean endermanFace = fittedModel && EntityType.getKey(EntityType.ENDERMAN).equals(entity);
-        boolean snowGolemFace = fittedModel && EntityType.getKey(EntityType.SNOW_GOLEM).equals(entity);
+        SkullEyeState.HeadShape shape = SkullEyeState.shape(entity);
         for (int part : parts) {
             Placement placement = null;
-            if (fittedModel && !endermanFace) {
+            if (fittedModel && shape.fitted()) {
                 placement = placement(model, head, entity, helper.getAttachToken(part));
                 if (placement == null) {
                     continue;
                 }
             }
             pose.pushPose();
-            if (endermanFace) {
-                pose.translate(0F, 0F, -ENDERMAN_EYE_CLEARANCE);
-            } else if (placement != null) {
+            if (placement != null) {
                 placement.apply(pose);
-                if (snowGolemFace) {
-                    pose.translate(0F, 0F, SNOW_GOLEM_EYE_SETBACK);
-                }
+            }
+            if (fittedModel) {
+                pose.translate(0F, 0F, shape.faceOffset());
             }
             GooglyEyeRenderer.renderHead(pose, bufferSource, packedLight, OverlayTexture.NO_OVERLAY,
                     eyes == null ? null : eyes[part], helper, overrides, part, partialTick);

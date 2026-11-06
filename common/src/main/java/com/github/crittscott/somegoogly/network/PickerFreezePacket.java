@@ -22,7 +22,7 @@ import java.util.UUID;
  */
 public class PickerFreezePacket implements Payload {
 
-    public static final ResourceLocation ID = NetworkHandler.PICKER_FREEZE;
+    public static final ResourceLocation ID = NetworkProtocol.id("picker_freeze");
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester. Well past the crosshair
@@ -74,13 +74,12 @@ public class PickerFreezePacket implements Payload {
             }
             Entity target = sender.serverLevel().getEntity(packet.mobId);
             if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
-                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
-                        Component.translatable("somegoogly.command.picker.freeze_too_far")));
+                PickerGate.tell(sender, Component.translatable("somegoogly.command.picker.freeze_too_far"));
                 return;
             }
             Component error = PickerFreezeService.freeze(sender.serverLevel(), sender.getUUID(), packet.mobId);
             if (error != null) {
-                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
+                PickerGate.tell(sender, error);
             }
         } else {
             PickerFreezeService.unfreeze(sender.serverLevel().getServer(), sender.getUUID());

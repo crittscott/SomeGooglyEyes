@@ -173,9 +173,8 @@ public final class HeldEyeGameTestsLogic {
         step(held, player, BLINK_PEAK_TICKS, DEFAULTS);
         helper.assertTrue(held.eye.squashY < BLINK_PEAK_SQUASH, "the lone eye closes for the blink");
 
-        BehaviorInstance cross = new BehaviorInstance(EyeBehavior.CROSS_EYE, null,
+        BehaviorInstance cross = BehaviorInstance.start(EyeBehavior.CROSS_EYE, null,
                 EyeBehavior.CROSS_EYE.defaultDuration(), 1L);
-        EyeBehavior.CROSS_EYE.onStart(cross);
         cross.age = cross.duration / 2;
         EyeInfluence influence = new EyeInfluence();
         EyeBehavior.CROSS_EYE.influence(cross, 0, 0, influence);

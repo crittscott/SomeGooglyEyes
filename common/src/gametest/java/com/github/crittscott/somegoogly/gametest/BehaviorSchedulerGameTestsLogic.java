@@ -491,6 +491,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
             ServerBehaviorScheduler.onStartTracking(cow, player);
             EyeState.setHasEyes(cow, false);
+            cow.setHealth(1F);
 
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
@@ -524,6 +525,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerConfig.SWIRL_ON_HEAL.set(false);
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
                     "swirlOnHeal=false suppresses the heal swirl");
@@ -632,6 +634,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
+            cow.setHealth(1F);
 
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
@@ -646,6 +649,38 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.SWIRL_ON_HEAL.set(onHeal);
             ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with {@code swirlOnHeal}
+     * on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.
+     */
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 1L),
+                    "a heal at full health starts nothing");
+            advance(1);
+
+            cow.setHealth(1F);
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 2L),
+                    "a heal of a hurt mob swirls, so the one at full health left its cooldown unspent");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
         }
         helper.succeed();
     }
@@ -963,6 +998,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
                     "a trigger on a sleeping mob is dropped");
+            villager.setHealth(1F);
             ServerBehaviorScheduler.onHealed(villager);
             ServerBehaviorScheduler.onTrade(villager);
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);

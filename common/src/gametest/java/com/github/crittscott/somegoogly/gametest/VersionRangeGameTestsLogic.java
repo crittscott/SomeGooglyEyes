@@ -139,6 +139,21 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
+     * A loader name in a version says nothing about its age, so {@code 1.0.0-forge} is {@code 1.0.0}. In game:
+     * entries {@code "[1.0.0,1.1)"} (blue) and {@code "[0.9,1.0)"} (red) for a mod at version
+     * {@code 1.0.0-forge}; its mob spawns with blue irises and the log reports no fallback.
+     */
+    public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        helper.assertTrue(VersionRangeMatcher.matches("[1.0.0,1.1)", "1.0.0-forge"), "a suffixed lower bound should match");
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.0.0,1.1)", "1.1-fabric"), "a suffixed upper bound should not");
+        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1-1.5.2-neoforge,1.21)", "1.20.1-1.5.2-neoforge"),
+                "a declared suffix should still match itself");
+        helper.assertTrue(VersionRangeMatcher.matches("[7.14.0+1.20.1-forge,7.15)", "7.14.1+1.20.1-forge"),
+                "a suffix after a build number should change nothing");
+        helper.succeed();
+    }
+
+    /**
      * Exports declare another mod's definitions for that mod's current minor release. In game: with an
      * optional mod installed (say version 4.12.4), run {@code /sg exportall}; that mod's files under
      * {@code somegoogly-export} declare {@code "version": "[4.12.4,4.13)"}.

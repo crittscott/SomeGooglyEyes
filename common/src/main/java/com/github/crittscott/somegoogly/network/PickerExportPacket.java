@@ -33,7 +33,7 @@ public class PickerExportPacket implements Payload {
     /** Vanilla's cap on a serverbound custom payload's encoded data. */
     public static final int MAX_SERVERBOUND_BYTES = 32767;
 
-    public static final ResourceLocation ID = NetworkHandler.PICKER_EXPORT;
+    public static final ResourceLocation ID = NetworkProtocol.id("picker_export");
 
     private final CompoundTag configNbt;
     private final ResourceLocation typeId;
@@ -82,7 +82,7 @@ public class PickerExportPacket implements Payload {
         UUID playerId = sender.getUUID();
         Component result = PickerExportService.export(
                 sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
-        sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", result));
+        PickerGate.tell(sender, result);
     }
 
     @Override

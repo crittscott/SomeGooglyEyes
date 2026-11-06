@@ -224,8 +224,7 @@ public final class PresentationEyes {
             long elapsed = gameTime - startsAt;
             if (elapsed >= 0 && elapsed < slotBehavior.defaultDuration()) {
                 if (active == null) {
-                    active = new BehaviorInstance(slotBehavior, helper, slotBehavior.defaultDuration(), behaviorSeed);
-                    slotBehavior.onStart(active);
+                    active = BehaviorInstance.start(slotBehavior, helper, slotBehavior.defaultDuration(), behaviorSeed);
                 }
                 active.age = (int) elapsed;
             } else {

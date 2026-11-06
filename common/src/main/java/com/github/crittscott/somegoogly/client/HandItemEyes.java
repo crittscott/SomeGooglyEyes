@@ -1,8 +1,9 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
@@ -11,21 +12,82 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.RandomSupport;
 
-/** Connects world-owned hand simulations to item draws. */
+/** World-owned simulations of eyes in third-person hands, and their connection to item draws. */
 public final class HandItemEyes {
 
-    private static final Deque<PresentationEyes.Draw> DRAWS = new ArrayDeque<>();
-    private static final HandEyeAnimations SIMULATIONS = new HandEyeAnimations();
-
-    private static PresentationEyes.Draw current = PresentationEyes.Draw.NONE;
+    private static final Simulations SIMULATIONS = new Simulations();
 
     private HandItemEyes() {
     }
 
-    public static void begin(PresentationEyes.Draw draw) {
-        DRAWS.push(current);
-        current = draw;
+    /** Disposable ambient simulations, independent for each holder's main hand and offhand. */
+    public static final class Simulations {
+
+        private static final long OFFHAND_SEED = RandomSupport.GOLDEN_RATIO_64;
+
+        private final Map<Key, Entry> entries = new HashMap<>();
+        private long ticks;
+
+        private record Key(UUID holder, InteractionHand hand) {
+        }
+
+        private static final class Entry {
+            final PresentationEyes eyes;
+            final LivingEntity holder;
+            long lastShown;
+
+            Entry(PresentationEyes eyes, LivingEntity holder) {
+                this.eyes = eyes;
+                this.holder = holder;
+            }
+        }
+
+        public void clear() {
+            entries.clear();
+        }
+
+        /** Stack copies and counts retain state; eye layout and appearance changes replace it. */
+        @Nullable
+        public PresentationEyes get(LivingEntity holder, InteractionHand hand, ItemStack stack) {
+            Key key = new Key(holder.getUUID(), hand);
+            if (holder.isRemoved()) {
+                entries.remove(key);
+                return null;
+            }
+            Entry entry = entries.get(key);
+            if (entry == null || entry.holder != holder || !entry.eyes.matches(stack)) {
+                UUID uuid = holder.getUUID();
+                UUID seed = hand == InteractionHand.MAIN_HAND ? uuid
+                        : new UUID(uuid.getMostSignificantBits() ^ OFFHAND_SEED, uuid.getLeastSignificantBits());
+                PresentationEyes eyes = PresentationEyes.create(seed, stack);
+                if (eyes == null) {
+                    entries.remove(key);
+                    return null;
+                }
+                entry = new Entry(eyes, holder);
+                entries.put(key, entry);
+            }
+            entry.lastShown = ticks;
+            return entry.eyes;
+        }
+
+        /** Entity removal immediately releases both hands, including holders not currently visible. */
+        public void remove(UUID holder) {
+            entries.keySet().removeIf(key -> key.holder().equals(holder));
+        }
+
+        /** World time determines expressions; pause stops simulation and recently unseen hands expire. */
+        public void tick(long gameTime, boolean simulate, BehaviorSettings settings) {
+            if (!simulate) {
+                return;
+            }
+            ticks++;
+            ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown,
+                    (key, entry) -> entry.holder.isRemoved(),
+                    (key, entry) -> entry.eyes.tick(gameTime, settings, entry.holder));
+        }
     }
 
     public static void clear() {
@@ -47,14 +109,6 @@ public final class HandItemEyes {
         InteractionHand hand = arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
         PresentationEyes eyes = SIMULATIONS.get(holder, hand, stack);
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
-    }
-
-    public static PresentationEyes.Draw current() {
-        return current;
-    }
-
-    public static void end() {
-        current = DRAWS.pop();
     }
 
     public static void remove(UUID holder) {

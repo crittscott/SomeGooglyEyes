@@ -14,6 +14,11 @@ public final class EyeItemServiceGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void anotherPlayersEyesFollowThePvpRules(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.anotherPlayersEyesFollowThePvpRules(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristInteractHarvestsEyesForOneDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.optometristInteractHarvestsEyesForOneDurability(
                 helper, FakePlayer.get(helper.getLevel()));

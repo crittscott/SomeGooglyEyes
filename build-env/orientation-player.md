@@ -14,7 +14,7 @@ Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Lo
 
 ## Mobs with eyes
 
-Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death or by shearing them off themselves. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
+Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death, by shearing them off themselves, or to another player's Optometrist shears where that player could hurt them. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
@@ -29,7 +29,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - sheared (sheep): bulge;
 - showing affection (love mode, villager breeding, golem flowers, ocelot trust): pupils swell;
 - completing a villager or wandering-trader trade: swirl;
-- healed: swirl, 200-tick default cooldown.
+- healed, when the heal restores health: swirl, 200-tick default cooldown.
 
 One expression plays at a time; all are cosmetic. Sleepers play nothing else; villagers close tan eyelids to a slit, others squint. Under any expression, a ramming goat squints, a skeleton drawing its bow, or a player drawing and holding one, closes the eye away from the bow arm, a swelling creeper's pupils rattle faster toward the blast, an angry mob's pupils turn red, and a screaming enderman's pupils throb.
 
@@ -205,7 +205,7 @@ While the picker is active, configured mobs display eyes regardless of spawn cha
 
 Use `~` to leave a component unchanged in `move`, `rot`, and `posrot`. Switching away from an unsaved eye discards its edits.
 
-`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks, at most once per player every 10 seconds; a definition too large to send is refused.
+`/sg export` writes the chosen definition into the world's `somegoogly-picker` datapack and reloads datapacks, at most once per player every 10 seconds; a definition too large to send, or one that would push the whole set past the sync limits, is refused.
 
 `/sg exportall` writes all loaded definitions and session edits to:
 

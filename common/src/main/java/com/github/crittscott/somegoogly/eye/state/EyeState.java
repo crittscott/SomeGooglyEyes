@@ -88,9 +88,6 @@ public final class EyeState {
             return;
         }
         snapshot(source).write(EntityPersistentData.get(target));
-        if (hasEyes(target)) {
-            eyesGained(target);
-        }
         sync(target);
     }
 
@@ -109,14 +106,7 @@ public final class EyeState {
         data.putFloat(VARIANT_ROLL, roll);
         writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
-        eyesGained(entity);
         sync(entity);
-    }
-
-    private static void eyesGained(Entity entity) {
-        if (entity instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onEyesGained(living);
-        }
     }
 
     /**
@@ -146,7 +136,6 @@ public final class EyeState {
         data.putBoolean(HAS_EYES, hasEyes);
         data.putFloat(VARIANT_ROLL, variantRoll);
         if (hasEyes) {
-            eyesGained(entity);
             sync(entity);
         }
     }
@@ -215,9 +204,6 @@ public final class EyeState {
     /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
     public static void setHasEyes(Entity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
-        if (hasEyes) {
-            eyesGained(entity);
-        }
         sync(entity);
     }
 
@@ -240,7 +226,11 @@ public final class EyeState {
         return Snapshot.read(EntityPersistentData.get(entity));
     }
 
+    /** Tell the scheduler an eyed mob now has eyes, then send every viewer the state; every write ends here. */
     private static void sync(Entity entity) {
+        if (entity instanceof LivingEntity living && hasEyes(living)) {
+            ServerBehaviorScheduler.onEyesGained(living);
+        }
         Networking.sendTrackingAndSelf(entity, packet(entity));
     }
 

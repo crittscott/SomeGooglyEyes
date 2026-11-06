@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.minecraft.resources.ResourceLocation;
@@ -28,9 +28,9 @@ public final class ForgeNetworkTransport {
     /** The payload channel; each packet's number below is its wire id, so it stays fixed whatever the order. */
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "network"),
-            () -> NetworkHandler.NETWORK_VERSION,
-            NetworkHandler.NETWORK_VERSION::equals,
-            NetworkHandler.NETWORK_VERSION::equals);
+            () -> NetworkProtocol.NETWORK_VERSION,
+            NetworkProtocol.NETWORK_VERSION::equals,
+            NetworkProtocol.NETWORK_VERSION::equals);
 
     private ForgeNetworkTransport() {
     }

@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -8,19 +9,80 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
-/** Scopes GUI presentation keys and animation around item drawing. */
+/** Scopes GUI presentation keys around item drawing, and owns the view-keyed simulations those keys select. */
 public final class GuiItemEyes {
 
-    private static final Deque<PresentationEyes.Draw> DRAWS = new ArrayDeque<>();
-    private static final long NANOS_PER_TICK = 1_000_000_000L / SharedConstants.TICKS_PER_SECOND;
-    private static final Deque<GuiEyeAnimations.Key> PRESENTATIONS = new ArrayDeque<>();
-    private static final GuiEyeAnimations SIMULATIONS = new GuiEyeAnimations();
+    public static final Object HUD = new Object();
 
-    private static PresentationEyes.Draw current = PresentationEyes.Draw.NONE;
+    private static final long NANOS_PER_TICK = 1_000_000_000L / SharedConstants.TICKS_PER_SECOND;
+    private static final Deque<Key> PRESENTATIONS = new ArrayDeque<>();
+    private static final Simulations SIMULATIONS = new Simulations();
+
     private static long lastTickNanos = System.nanoTime();
 
     private GuiItemEyes() {
+    }
+
+    /** What a {@link Key} identifies an item by. */
+    public enum Kind {
+        CURSOR, HOTBAR, POSITION, SLOT
+    }
+
+    /** Coordinates are used only for generic previews; slots and cursor items use logical indexes. */
+    public record Key(Object view, Kind kind, int x, int y, int seed) {
+    }
+
+    /** View-owned item simulations with a UI clock independent of world ticks and pause. */
+    public static final class Simulations {
+
+        private final Map<Key, Entry> entries = new HashMap<>();
+        private long nextSeed;
+        private long ticks;
+
+        private static final class Entry {
+            final PresentationEyes eyes;
+            long lastShown;
+
+            Entry(PresentationEyes eyes) {
+                this.eyes = eyes;
+            }
+        }
+
+        /** Drop view-owned simulations, including ones built from old eye definitions. */
+        public void clear() {
+            entries.clear();
+        }
+
+        /** Request a visible presentation, replacing one built for another item; unsupported items have none. */
+        @Nullable
+        public PresentationEyes get(Key key, ItemStack stack) {
+            Entry entry = entries.get(key);
+            if (entry == null || !entry.eyes.matches(stack)) {
+                PresentationEyes eyes = PresentationEyes.create(new UUID(0L, ++nextSeed), stack);
+                if (eyes == null) {
+                    entries.remove(key);
+                    return null;
+                }
+                eyes.useGuiGravity();
+                entry = new Entry(eyes);
+                entries.put(key, entry);
+            }
+            entry.lastShown = ticks;
+            return entry.eyes;
+        }
+
+        /** Advance the UI clock even when the world is paused; hidden and departed views do no simulation. */
+        public void tick(@Nullable Object activeView, BehaviorSettings settings) {
+            ticks++;
+            ClientEyeRuntime.sweep(entries, ticks, entry -> entry.lastShown,
+                    (key, entry) -> key.view() != HUD && key.view() != activeView,
+                    (key, entry) -> entry.eyes.tick(ticks, settings));
+        }
     }
 
     /**
@@ -33,13 +95,12 @@ public final class GuiItemEyes {
             return PresentationEyes.Draw.NONE;
         }
         Object view = minecraft.screen;
-        GuiEyeAnimations.Key key = PRESENTATIONS.peek();
+        Key key = PRESENTATIONS.peek();
         if (key == null) {
-            key = new GuiEyeAnimations.Key(view == null ? GuiEyeAnimations.HUD : view,
-                    GuiEyeAnimations.Kind.POSITION, x, y, seed);
+            key = new Key(view == null ? HUD : view, Kind.POSITION, x, y, seed);
         }
-        if (key.kind() == GuiEyeAnimations.Kind.HOTBAR) {
-            key = new GuiEyeAnimations.Key(GuiEyeAnimations.HUD, GuiEyeAnimations.Kind.HOTBAR, seed, 0, 0);
+        if (key.kind() == Kind.HOTBAR) {
+            key = new Key(HUD, Kind.HOTBAR, seed, 0, 0);
         }
         PresentationEyes eyes = SIMULATIONS.get(key, stack);
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes,
@@ -48,25 +109,17 @@ public final class GuiItemEyes {
 
     /** Called by the GUI's core item method, covering slots, the hotbar, and generic previews. */
     public static void beginDraw(ItemStack stack, int x, int y, int seed) {
-        DRAWS.push(current);
-        current = PresentationEyes.supports(stack) ? animatedDraw(stack, x, y, seed) : PresentationEyes.Draw.NONE;
+        ClientEyeRuntime.beginItemDraw(PresentationEyes.supports(stack) ? animatedDraw(stack, x, y, seed)
+                : PresentationEyes.Draw.NONE);
     }
 
     /** Slots and carried stacks retain one simulation while their on-screen coordinates change. */
-    public static void beginPresentation(Object view, GuiEyeAnimations.Kind kind, int index) {
-        PRESENTATIONS.push(new GuiEyeAnimations.Key(view, kind, index, 0, 0));
+    public static void beginPresentation(Object view, Kind kind, int index) {
+        PRESENTATIONS.push(new Key(view, kind, index, 0, 0));
     }
 
     public static void clear() {
         SIMULATIONS.clear();
-    }
-
-    public static PresentationEyes.Draw current() {
-        return current;
-    }
-
-    public static void endDraw() {
-        current = DRAWS.pop();
     }
 
     public static void endPresentation() {

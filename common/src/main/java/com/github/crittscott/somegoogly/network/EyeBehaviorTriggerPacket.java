@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 public record EyeBehaviorTriggerPacket(int entityId, EyeBehavior behavior, int duration, long seed, int elapsed)
         implements Payload {
 
-    public static final ResourceLocation ID = NetworkHandler.EYE_BEHAVIOR;
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_behavior");
 
     private static final int MAX_DURATION_TICKS = 1_200;
 

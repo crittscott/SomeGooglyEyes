@@ -21,7 +21,7 @@ import java.util.Map;
 public class EyeConfigSyncPacket implements Payload {
 
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
-    public static final ResourceLocation ID = NetworkHandler.EYE_CONFIG;
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_config");
 
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final Map<ResourceLocation, CompoundTag> encoded;

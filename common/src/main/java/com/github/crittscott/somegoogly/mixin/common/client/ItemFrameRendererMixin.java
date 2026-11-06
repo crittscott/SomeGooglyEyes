@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
@@ -24,12 +24,12 @@ abstract class ItemFrameRendererMixin {
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = DRAW_ITEM))
     private void somegoogly$beginFrame(ItemFrame frame, float yaw, float partialTick, PoseStack pose,
                                        MultiBufferSource buffer, int light, CallbackInfo callback) {
-        GooglyEyeItemRenderer.beginFrame(frame, partialTick);
+        ClientEyeRuntime.beginFrame(frame, partialTick);
     }
 
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = DRAW_ITEM, shift = At.Shift.AFTER))
     private void somegoogly$endFrame(ItemFrame frame, float yaw, float partialTick, PoseStack pose,
                                      MultiBufferSource buffer, int light, CallbackInfo callback) {
-        GooglyEyeItemRenderer.endFrame();
+        ClientEyeRuntime.endItemDraw();
     }
 }

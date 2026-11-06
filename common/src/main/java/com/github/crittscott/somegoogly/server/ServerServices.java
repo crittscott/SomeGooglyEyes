@@ -142,6 +142,13 @@ public final class ServerServices {
         }
     }
 
+    /** A player stopped tracking {@code entity}; only living entities are scheduled. */
+    public static void onStopTracking(Entity entity) {
+        if (entity instanceof LivingEntity living) {
+            ServerBehaviorScheduler.onStopTracking(living);
+        }
+    }
+
     private static EyeSettingsPacket settingsPacket() {
         return new EyeSettingsPacket(ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
     }

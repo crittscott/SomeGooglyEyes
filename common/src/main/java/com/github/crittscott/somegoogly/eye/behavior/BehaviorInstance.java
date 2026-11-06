@@ -44,8 +44,7 @@ public final class BehaviorInstance {
     @Nullable
     public boolean[][] mask;
 
-    /** Create unstarted per-play state; the caller next invokes {@link EyeBehavior#onStart}. */
-    public BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
+    private BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
         this.helper = helper;
         this.duration = duration;
@@ -56,5 +55,12 @@ public final class BehaviorInstance {
     public boolean advance() {
         age++;
         return age >= duration;
+    }
+
+    /** Create the per-play state of {@code behavior} and run its {@link EyeBehavior#onStart}. */
+    public static BehaviorInstance start(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
+        BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
+        behavior.onStart(instance);
+        return instance;
     }
 }

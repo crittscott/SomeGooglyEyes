@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 /**
  * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob does,
- * in a compound each loader's Mixin adds to the head block entity ({@link Holder}), saved under
+ * in a compound a Mixin adds to the head block entity ({@link Holder}), saved under
  * {@value #DATA_KEY} in its data and replaced on every {@code load}. So the server's save, the clients'
  * update packets, and a head item's {@code BlockEntityTag} all carry it: vanilla's placement loads it into
  * the new block entity, and the head's loot copies it back onto the dropped item. Neither loader's own
@@ -50,20 +50,19 @@ public final class SkullEyeState {
     public static final String DATA_KEY = "somegoogly:data";
     /** Twilight Forest's namespace. Ahead of the maps below, which name it. */
     private static final String TWILIGHT_NAMESPACE = "twilightforest";
-    /**
-     * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
-     * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
-     */
-    private static final Map<ResourceLocation, String> HEAD_PART_TOKENS = Map.of(
-            EntityType.getKey(EntityType.BEE), "body",
-            EntityType.getKey(EntityType.CHICKEN), "head1",
-            EntityType.getKey(EntityType.GHAST), "root/body",
-            EntityType.getKey(EntityType.SQUID), "root",
-            EntityType.getKey(EntityType.GLOW_SQUID), "root",
-            EntityType.getKey(EntityType.SLIME), "root/right_eye",
-            EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0",
-            new ResourceLocation(TWILIGHT_NAMESPACE, "naga"), "#0",
-            new ResourceLocation(TWILIGHT_NAMESPACE, "ur_ghast"), "root/body");
+    /** Each mob whose head departs from {@link HeadShape#DEFAULT}. */
+    private static final Map<ResourceLocation, HeadShape> HEAD_SHAPES = Map.ofEntries(
+            Map.entry(EntityType.getKey(EntityType.BEE), HeadShape.showing("body")),
+            Map.entry(EntityType.getKey(EntityType.CHICKEN), new HeadShape("head1", "head", true, 0F)),
+            Map.entry(EntityType.getKey(EntityType.ENDERMAN), new HeadShape(null, null, false, -0.5F / 16F)),
+            Map.entry(EntityType.getKey(EntityType.GHAST), HeadShape.showing("root/body")),
+            Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), HeadShape.showing("root")),
+            Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), HeadShape.showing("root/cube0")),
+            Map.entry(EntityType.getKey(EntityType.SLIME), new HeadShape("root/right_eye", "root", true, 0F)),
+            Map.entry(EntityType.getKey(EntityType.SNOW_GOLEM), new HeadShape(null, null, true, 0.06F)),
+            Map.entry(EntityType.getKey(EntityType.SQUID), HeadShape.showing("root")),
+            Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "naga"), HeadShape.showing("#0")),
+            Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "ur_ghast"), HeadShape.showing("root/body")));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
@@ -88,6 +87,27 @@ public final class SkullEyeState {
     }
 
     /**
+     * How a head of one mob relates to that mob's eye layout.
+     *
+     * @param eyePart    the attachment token of the part the head reproduces, or {@code null} for parts named
+     *                   {@value EyeConfigModel#PART_HEAD}
+     * @param cubePart   the part whose cubes stand for the eye part when fitting a modded head, where it shares its
+     *                   pivot with a larger one (the chicken's beak, beside its head), or {@code null} for the eye
+     *                   part itself
+     * @param fitted     whether a modded head carries the eyes through a fitted placement; false where its face uses
+     *                   the mob layout's head-local coordinates
+     * @param faceOffset the distance a modded head moves its eyes along the model's Z axis, to clear its face
+     */
+    public record HeadShape(@Nullable String eyePart, @Nullable String cubePart, boolean fitted, float faceOffset) {
+
+        static final HeadShape DEFAULT = new HeadShape(null, null, true, 0F);
+
+        private static HeadShape showing(String eyePart) {
+            return new HeadShape(eyePart, null, true, 0F);
+        }
+    }
+
+    /**
      * Each head block's mob, built on first use, after every block is registered. Never changed afterward, so
      * the server and render threads can both read it.
      */
@@ -107,7 +127,7 @@ public final class SkullEyeState {
         }
     }
 
-    /** The head block entity's side of the eye-state compound, added by each loader's Mixin. */
+    /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
         /** The compound, or {@code null} if the head has none; read it, don't write it. */
@@ -308,7 +328,7 @@ public final class SkullEyeState {
 
     /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
     private static boolean isShownPart(ResourceLocation entity, String token) {
-        String partToken = HEAD_PART_TOKENS.get(entity);
+        String partToken = shape(entity).eyePart();
         return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
     }
@@ -342,6 +362,11 @@ public final class SkullEyeState {
             BlockState state = skull.getBlockState();
             level.sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** How a head of {@code entity}'s kind relates to that mob's eye layout. */
+    public static HeadShape shape(ResourceLocation entity) {
+        return HEAD_SHAPES.getOrDefault(entity, HeadShape.DEFAULT);
     }
 
     /** Whether {@code variant} of {@code entity}'s definition has eyes a head of that mob shows. */

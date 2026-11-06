@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeSettingsPacket(boolean googlyEyesEnabled, BehaviorSettings behaviors) implements Payload {
 
-    public static final ResourceLocation ID = NetworkHandler.EYE_SETTINGS;
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_settings");
 
     /** Decode and validate a received payload. */
     public static EyeSettingsPacket read(FriendlyByteBuf buffer) {

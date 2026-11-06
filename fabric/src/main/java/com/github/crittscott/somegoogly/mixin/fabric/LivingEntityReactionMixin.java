@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 abstract class LivingEntityReactionMixin {
 
-    @Inject(method = "heal", at = @At("TAIL"))
-    private void somegoogly$afterHeal(float amount, CallbackInfo callback) {
+    @Inject(method = "heal", at = @At("HEAD"))
+    private void somegoogly$beforeHeal(float amount, CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;
         if (!self.level().isClientSide()) {
             ServerBehaviorScheduler.onHealed(self);

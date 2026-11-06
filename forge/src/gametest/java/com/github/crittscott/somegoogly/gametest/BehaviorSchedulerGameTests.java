@@ -69,6 +69,12 @@ public final class BehaviorSchedulerGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void healSwirlIsRateLimited(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));

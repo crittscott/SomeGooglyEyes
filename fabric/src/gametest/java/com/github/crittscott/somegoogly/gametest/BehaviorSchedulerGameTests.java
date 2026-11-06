@@ -63,6 +63,12 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
+                helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void healSwirlIsRateLimited(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
                 helper, FakePlayer.get(helper.getLevel()));

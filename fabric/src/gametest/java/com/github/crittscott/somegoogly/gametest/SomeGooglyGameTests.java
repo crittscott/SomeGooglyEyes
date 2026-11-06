@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.migration.fabric.FabricEntityDataMigration;
+import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.fabricmc.fabric.api.entity.FakePlayer;
@@ -88,7 +88,7 @@ public final class SomeGooglyGameTests implements FabricGameTest {
 
         helper.assertTrue(!EyeState.hasEyes(restored), "Unrecognized released data must not grant eyes");
         helper.assertTrue("not a compound".equals(EntityPersistentData.get(restored)
-                        .getString(FabricEntityDataMigration.SET_ASIDE_KEY)),
+                        .getString(FabricMigration.SET_ASIDE_KEY)),
                 "Unrecognized released data should be set aside in the attachment");
         helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
                 "Set-aside data should not be written under the released key");

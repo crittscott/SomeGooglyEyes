@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.HandEyeAnimations;
+import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -72,7 +72,7 @@ public final class HandItemEyeGameTestsLogic {
      * F5, and start/stop walking or jumping; the pupils lag acceleration and settle after movement stops.
      */
     public static void handEyesReactToHolderMotion(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity moving = holder(helper, FIRST);
         LivingEntity still = holder(helper, SECOND);
         var movingEyes = cache.get(moving, InteractionHand.MAIN_HAND, eye());
@@ -109,7 +109,7 @@ public final class HandItemEyeGameTestsLogic {
      * glowing copy, a plain skull, and an ordinary item; no previous layout or color persists.
      */
     public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         ItemStack stack = eye();
         var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, stack);
@@ -137,7 +137,7 @@ public final class HandItemEyeGameTestsLogic {
      * unload its chunk, reload resources, and reconnect; no old hand state remains attached.
      */
     public static void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
         var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
@@ -166,7 +166,7 @@ public final class HandItemEyeGameTestsLogic {
      * both hands beside another player holding eyes; all presentations animate independently.
      */
     public static void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
         var main = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
@@ -185,7 +185,7 @@ public final class HandItemEyeGameTestsLogic {
      * resume, and compare with inventory animation; only the world presentation freezes.
      */
     public static void handEyesUseWorldClockAndPause(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         var eye = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
@@ -216,7 +216,7 @@ public final class HandItemEyeGameTestsLogic {
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
-            HandEyeAnimations cache = new HandEyeAnimations();
+            HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
             LivingEntity firstHolder = holder(helper, FIRST);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));

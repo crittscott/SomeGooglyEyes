@@ -83,6 +83,11 @@ public final class ClientEyeConfigs {
         return googlyEyesEnabled && !ClientConfig.DISABLE_GOOGLY_EYES.get();
     }
 
+    /** Whether eyes may show on this client on {@code entity}'s kind: {@link #eyesVisible()} and not disabled for it. */
+    public static boolean eyesVisible(ResourceLocation entity) {
+        return eyesVisible() && !ClientConfig.isEntityDisabled(entity);
+    }
+
     /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
     public static boolean googlyEyesEnabled() {
         return googlyEyesEnabled;

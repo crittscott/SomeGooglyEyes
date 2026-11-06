@@ -81,9 +81,7 @@ public final class HeldEye {
         if (eye == null || active != null) {
             return false;
         }
-        BehaviorInstance instance = new BehaviorInstance(behavior, null, behavior.defaultDuration(), rand.nextLong());
-        behavior.onStart(instance);
-        active = instance;
+        active = BehaviorInstance.start(behavior, null, behavior.defaultDuration(), rand.nextLong());
         return true;
     }
 

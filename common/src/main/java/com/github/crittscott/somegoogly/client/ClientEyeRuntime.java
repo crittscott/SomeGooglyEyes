@@ -1,11 +1,15 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
+import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,13 +24,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-/** Loader-neutral owner of mob, boat, placed-head, and framed-item eye simulations and their lifecycle. */
+/**
+ * Loader-neutral owner of mob, boat, placed-head, framed-item, and held eye simulations and their lifecycle, and of
+ * the scope that tells an item draw which animation it belongs to.
+ */
 public final class ClientEyeRuntime {
 
     /** Evict a simulation once it has gone unshown for more than this many of its cache's ticks. */
@@ -37,12 +46,16 @@ public final class ClientEyeRuntime {
     // Anger survives render-tracker eviction but not entity unloading or client world replacement.
     private static final Set<Integer> ANGRY = new HashSet<>();
     private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
-    private static final BoatEyeAnimations BOATS = new BoatEyeAnimations();
+    private static final BoatSimulations BOATS = new BoatSimulations();
+    /** The enclosing item draws' animations; the innermost is in {@link #currentDraw}. */
+    private static final Deque<PresentationEyes.Draw> DRAWS = new ArrayDeque<>();
     private static final Map<ItemFrame, PresentationEyes> FRAMES = new HashMap<>();
+    private static final HeldEye HELD = new HeldEye();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, PresentationEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
+    private static PresentationEyes.Draw currentDraw = PresentationEyes.Draw.NONE;
     private static long simulationTicks;
 
     private ClientEyeRuntime() {
@@ -50,6 +63,100 @@ public final class ClientEyeRuntime {
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
     record ReceivedBehavior(EyeBehavior behavior, int duration, long seed, long startedAt) {
+    }
+
+    /** World-owned boat pupils, retained and simulated only while recently rendered. */
+    public static final class BoatSimulations {
+
+        private final Map<Boat, Entry> entries = new HashMap<>();
+        private long ticks;
+
+        private static final class Entry {
+            final String attachment;
+            final RuntimeConfig config;
+            final PresentationEyes eyes;
+            long lastShown;
+
+            Entry(String attachment, RuntimeConfig config, PresentationEyes eyes) {
+                this.attachment = attachment;
+                this.config = config;
+                this.eyes = eyes;
+            }
+
+            boolean matches(Boat boat, RuntimeConfig current) {
+                return config == current && attachment.equals(BoatEyeLayout.attachment(boat));
+            }
+        }
+
+        /** Forget disposable pupils on resource/config reload, disconnect, or level replacement. */
+        public void clear() {
+            entries.clear();
+            ticks = 0;
+        }
+
+        /** Return the rendered boat's current layout, replacing simulations after state or geometry changes. */
+        @Nullable
+        public PresentationEyes get(Boat boat) {
+            var type = EntityType.getKey(boat.getType());
+            RuntimeConfig config = ClientEyeConfigs.get(type, false);
+            if (!mayShow(boat)) {
+                entries.remove(boat);
+                return null;
+            }
+            Entry entry = entries.get(boat);
+            if (entry == null || !entry.matches(boat, config)) {
+                if (!BoatEyeLayout.isEligible(boat, config)) {
+                    entries.remove(boat);
+                    return null;
+                }
+                var snapshot = EyeState.snapshot(boat);
+                HeadInfo helper = BoatEyeLayout.resolve(boat, config, snapshot.variantRoll());
+                entry = new Entry(BoatEyeLayout.attachment(boat), config,
+                        PresentationEyes.create(boat.getUUID(), type, snapshot, helper));
+                entries.put(boat, entry);
+            }
+            entry.lastShown = ticks;
+            return entry.eyes;
+        }
+
+        private static boolean mayShow(Boat boat) {
+            return ClientEyeConfigs.eyesVisible(EntityType.getKey(boat.getType()))
+                    && !boat.isInvisible() && !boat.isRemoved() && EyeState.hasEyes(boat);
+        }
+
+        /** A synchronized state replaces the boat's simulation unless it is the state that simulation shows. */
+        public void onStateChanged(Entity boat, EyeState.Snapshot snapshot) {
+            Entry entry = entries.get(boat);
+            if (entry != null && !entry.eyes.snapshot.equals(snapshot)) {
+                entries.remove(boat);
+            }
+        }
+
+        /** Entity unloading immediately releases the boat's local simulation. */
+        public void remove(Entity entity) {
+            entries.remove(entity);
+        }
+
+        /** Step one unpaused tick; world time selects expressions. */
+        public void tick(long gameTime, BehaviorSettings settings) {
+            ticks++;
+            sweep(entries, ticks, entry -> entry.lastShown, (boat, entry) -> {
+                RuntimeConfig config = ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false);
+                return !mayShow(boat) || !entry.matches(boat, config);
+            }, (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
+        }
+    }
+
+    /** {@code frame}'s item draw starts, with its eye if the item has one; ended by {@link #endItemDraw}. */
+    public static void beginFrame(ItemFrame frame, float partialTick) {
+        PresentationEyes eyes = frameEye(frame);
+        beginItemDraw(eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, partialTick));
+    }
+
+    /** An item draw starts, animated by {@code draw}; ended by {@link #endItemDraw}. */
+    public static void beginItemDraw(PresentationEyes.Draw draw) {
+        DRAWS.push(currentDraw);
+        currentDraw = draw;
     }
 
     /** The current boat layout, rebuilt only when its state, geometry, or definition changes. */
@@ -78,9 +185,14 @@ public final class ClientEyeRuntime {
         return clientTicks;
     }
 
+    /** The current item draw is over. */
+    public static void endItemDraw() {
+        currentDraw = DRAWS.pop();
+    }
+
     /** The rendered frame's eye, or none while its item or the global switches disallow animation. */
     @Nullable
-    public static PresentationEyes frameEye(ItemFrame frame) {
+    private static PresentationEyes frameEye(ItemFrame frame) {
         if (!ClientEyeConfigs.eyesVisible() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
             FRAMES.remove(frame);
             return null;
@@ -113,6 +225,17 @@ public final class ClientEyeRuntime {
         return tracker;
     }
 
+    /** The pupil of the Googly Eye the local player holds, or {@code null} while none is held. */
+    @Nullable
+    public static GooglyTracker.EyeInfo heldEye() {
+        return HELD.eye;
+    }
+
+    /** The animation for {@code stack} in the current item draw, if its state still matches. */
+    public static PresentationEyes.Draw itemDraw(ItemStack stack) {
+        return currentDraw.eyes() != null && currentDraw.eyes().matches(stack) ? currentDraw : PresentationEyes.Draw.NONE;
+    }
+
     /** A boat's eye state arrived from the server; a differing state replaces its simulation. */
     public static void onBoatState(Entity boat, EyeState.Snapshot snapshot) {
         BOATS.onStateChanged(boat, snapshot);
@@ -132,6 +255,7 @@ public final class ClientEyeRuntime {
         clear();
         clearAnger();
         BEHAVIORS.clear();
+        HELD.reset();
         simulationTicks = 0;
     }
 
@@ -261,6 +385,11 @@ public final class ClientEyeRuntime {
                     synchronizeBehavior(tracker.parent, tracker, -1);
                     tracker.update(behaviors);
                 });
+    }
+
+    /** Advance the local player's held eye one tick, while the game isn't paused. */
+    public static void tickHeldEye(@Nullable LivingEntity holder) {
+        HELD.tick(holder, ClientEyeConfigs.behaviors());
     }
 
     /** Advance received expression time once per unpaused simulation tick, even for unrendered entities. */

@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.server.forge;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -162,9 +162,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
-        }
+        ServerServices.onStopTracking(event.getTarget());
     }
 
     private static void onTrade(TradeWithVillagerEvent event) {
@@ -187,8 +185,9 @@ public final class ForgeServerEvents {
         gameBus.addListener(ForgeServerEvents::onServerTick);
         gameBus.addListener(ForgeServerEvents::onStartTracking);
         gameBus.addListener(ForgeServerEvents::onStopTracking);
-        gameBus.addListener(ForgeServerEvents::onLivingDamage);
-        gameBus.addListener(ForgeServerEvents::onLivingHeal);
+        // Lowest priority so eyes react only to damage and healing no other mod cancelled.
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingDamage);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingHeal);
         gameBus.addListener(ForgeServerEvents::onTrade);
         gameBus.addListener(ForgeServerEvents::onPlayerClone);
         gameBus.addListener(ForgeServerEvents::onLivingConversion);

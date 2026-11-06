@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeAngerPacket(int entityId, boolean angry) implements Payload {
 
-    public static final ResourceLocation ID = NetworkHandler.EYE_ANGER;
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_anger");
 
     /** Decode a received payload. */
     public static EyeAngerPacket read(FriendlyByteBuf buffer) {
