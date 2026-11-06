@@ -223,6 +223,7 @@ public class GooglyTracker {
         // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
         private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
         private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
+        private static final float R_SETTLE_MIN_GRAVITY = 0.01f; // in-plane gravity below this leaves a new pupil in place
         private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
         private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
         private static final float R_AGITATED_MIN_SPEED = 1.5f;  // speed floor at full agitation (units/tick)
@@ -336,12 +337,17 @@ public class GooglyTracker {
             irisTintAmount = irisTint;
         }
 
-        /** Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera. */
+        /**
+         * Capture a world draw's view-space pose and camera rotation, or a pose that holds no view rotation with
+         * a {@code null} camera. The camera's frame looks along +Z and the view's along -Z, so undoing the view
+         * takes the camera rotation and a half turn about Y. A new simulation's first capture also rests its
+         * pupil on the rim toward gravity, so eyes rebuilt after time offscreen come into view already settled.
+         */
         public void capturePose(Matrix3fc pose, @Nullable Quaternionfc cameraOrientation) {
             if (cameraOrientation == null) {
                 inversePose.set(pose).invert();
             } else {
-                inversePose.rotation(cameraOrientation).mul(pose).invert();
+                inversePose.rotation(cameraOrientation).rotateY(Mth.PI).mul(pose).invert();
             }
             worldRight.set(inversePose.m00(), inversePose.m10(), inversePose.m20());
             worldUp.set(inversePose.m01(), inversePose.m11(), inversePose.m21());
@@ -352,8 +358,20 @@ public class GooglyTracker {
             float sign = guiGravity ? -1F : 1F;
             gravX = sign * worldRight.y;
             gravY = sign * worldUp.y;
+            if (!capturedPose) {
+                settle();
+            }
             capturedPose = true;
             poseStale = false;
+        }
+
+        /** Rest the pupil on the rim toward gravity; an eye with almost none in its plane stays where it is. */
+        private void settle() {
+            float gravity = Mth.sqrt(gravX * gravX + gravY * gravY);
+            if (gravity >= R_SETTLE_MIN_GRAVITY) {
+                prevDeltaX = deltaX = gravX / gravity;
+                prevDeltaY = deltaY = gravY / gravity;
+            }
         }
 
         /** Re-prime input differentiation after an owner change or a gap in simulation. */

@@ -43,27 +43,37 @@ public final class HandItemEyeGameTestsLogic {
 
     /**
      * World gravity ignores camera rotation and item display scale. In game: disable ambient expressions,
-     * tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down.
+     * tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down. A new
+     * simulation starts at rest. In game: look away from a framed eye for a second and back; its pupil is
+     * already down rather than dropping from the center.
      */
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
-        var camera = new Quaternionf().rotationYXZ(0.7F, -0.4F, 0.2F);
+        float yaw = 0.7F;
+        float pitch = 0.4F;
+        var camera = new Quaternionf().rotationYXZ(-yaw, pitch, 0F);
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
-        var viewPose = new Matrix3f().rotation(new Quaternionf(camera).conjugate()).mul(localToWorld);
+        var viewPose = new Matrix3f().rotationX(pitch).rotateY(yaw + (float) Math.PI).mul(localToWorld);
         var rotated = new PresentationEyes(FIRST);
         rotated.eye.capturePose(viewPose, camera);
         helper.assertTrue(Math.abs(rotated.eye.gravX - 1F) < PHYSICS_TOLERANCE
                         && Math.abs(rotated.eye.gravY) < PHYSICS_TOLERANCE,
                 "camera rotation cancels and display scale does not weaken gravity");
+        helper.assertTrue(Math.abs(rotated.eye.deltaX - 1F) < PHYSICS_TOLERANCE
+                        && Math.abs(rotated.eye.prevDeltaX - 1F) < PHYSICS_TOLERANCE
+                        && Math.abs(rotated.eye.deltaY) < PHYSICS_TOLERANCE,
+                "the first capture rests a new pupil on the rim toward gravity");
         for (int tick = 0; tick < GRAVITY_TICKS; tick++) {
             rotated.tick(tick, BehaviorSettings.NONE);
         }
         helper.assertTrue(rotated.eye.deltaX > 0.5F && Math.abs(rotated.eye.deltaY) < 0.1F,
                 "the pupil falls along projected world-down");
         var horizontal = new PresentationEyes(FIRST);
-        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), new Quaternionf());
+        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), null);
         helper.assertTrue(Math.abs(horizontal.eye.gravX) < PHYSICS_TOLERANCE
                         && Math.abs(horizontal.eye.gravY) < PHYSICS_TOLERANCE,
                 "an upward-facing eye has no in-plane gravity");
+        helper.assertTrue(horizontal.eye.deltaX == 0F && horizontal.eye.deltaY == 0F,
+                "with no in-plane gravity a new pupil stays centered");
         helper.succeed();
     }
 
@@ -77,8 +87,8 @@ public final class HandItemEyeGameTestsLogic {
         LivingEntity still = holder(helper, SECOND);
         var movingEyes = cache.get(moving, InteractionHand.MAIN_HAND, eye());
         var stillEyes = cache.get(still, InteractionHand.MAIN_HAND, eye());
-        movingEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), new Quaternionf());
-        stillEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), new Quaternionf());
+        movingEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), null);
+        stillEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), null);
         for (int tick = 0; tick < 2; tick++) {
             cache.get(moving, InteractionHand.MAIN_HAND, eye());
             cache.get(still, InteractionHand.MAIN_HAND, eye());

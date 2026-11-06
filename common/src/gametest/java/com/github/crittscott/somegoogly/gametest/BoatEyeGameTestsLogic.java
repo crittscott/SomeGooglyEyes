@@ -46,7 +46,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
-import org.joml.Quaternionf;
 
 /** Boat state and ambient checks; composed poses, event ordering, and remote tracking need client checks. */
 public final class BoatEyeGameTestsLogic {
@@ -203,7 +202,7 @@ public final class BoatEyeGameTestsLogic {
                 for (int index = 0; index < eyes.eyes[0].length; index++) {
                     var hullPose = new Matrix3f().scaling(-1F, -1F, 1F)
                             .rotate(eyes.helper.placementAt(0, index).orientation());
-                    eyes.eyes[0][index].capturePose(hullPose, new Quaternionf());
+                    eyes.eyes[0][index].capturePose(hullPose, null);
                 }
             }
             for (int tick = 0; tick < 8; tick++) {
