@@ -195,7 +195,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getVariantRoll(net.minecraft.world.entity.Entity)" class="member-name-link">getVariantRoll</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The entity's stored placement-variant roll (0..1), assigned at first join and redrawn when a
+<div class="block">The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
  slimy-eye application turns eyes on.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
@@ -224,7 +224,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.nbt.CompoundTag</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overridesTagOrNull(net.minecraft.world.entity.Entity)" class="member-name-link">overridesTagOrNull</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The overrides compound, or <code>null</code> if absent (used by the sync packet).</div>
+<div class="block">The overrides compound, or <code>null</code> if absent.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readProperties(net.minecraft.world.entity.Entity)" class="member-name-link">readProperties</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
@@ -386,7 +386,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getVariantRoll(net.minecraft.world.entity.Entity)">
 <h3>getVariantRoll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getVariantRoll</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
-<div class="block">The entity's stored placement-variant roll (0..1), assigned at first join and redrawn when a
+<div class="block">The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
  slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
  Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
  clamped into range, and a non-finite one as 0.</div>
@@ -432,7 +432,7 @@ loadScripts(document, 'script');</script>
 <h3>overridesTagOrNull</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.nbt.CompoundTag</span>&nbsp;<span class="element-name">overridesTagOrNull</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
-<div class="block">The overrides compound, or <code>null</code> if absent (used by the sync packet).</div>
+<div class="block">The overrides compound, or <code>null</code> if absent.</div>
 </section>
 </li>
 <li>
@@ -440,8 +440,8 @@ loadScripts(document, 'script');</script>
 <h3>readProperties</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">readProperties</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
 <div class="block">Read the mob's appearance override as <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (<a href="AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a>
- when none). The override compound is serialized via the shared <code>AppearanceOverride</code> codec —
- the same schema an eye item carries — so item↔mob transfer is a straight property copy.</div>
+ when none). The override compound is the same <a href="AppearanceOverride.html#toNbt()"><code>AppearanceOverride.toNbt()</code></a> schema an eye item
+ carries, so item↔mob transfer is a straight property copy.</div>
 </section>
 </li>
 <li>

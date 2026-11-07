@@ -80,10 +80,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><a href="resolver/package-summary.html">com.github.crittscott.somegoogly.client.render.resolver</a></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><a href="../compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a></div>
+<div class="col-first even-row-color"><a href="../command/package-summary.html">com.github.crittscott.somegoogly.client.command</a></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><a href="../picker/package-summary.html">com.github.crittscott.somegoogly.client.picker</a></div>
+<div class="col-first odd-row-color"><a href="../compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><a href="../picker/package-summary.html">com.github.crittscott.somegoogly.client.picker</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </div>
 </li>
@@ -94,26 +96,31 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BoatEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">BoatEyeRenderer</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Eyes in the hull model's space, including vanilla yaw, damage rocking, and bubble rotation.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">Per-frame eye decision for one living entity, taken by the eye layer that renders it.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeItemRenderer</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client.render"><code>ModelGooglyEye</code></a>, tinted by the item's
+ <a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeRenderer</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
  and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
- <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.ModelGooglyEye,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, com.github.crittscott.somegoogly.client.ModelGooglyEye, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
+ <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a>&lt;T extends net.minecraft.world.entity.LivingEntity,<wbr>M extends net.minecraft.client.model.EntityModel&lt;T&gt;&gt;</div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Eye layer for vanilla-style <code>LivingEntityRenderer</code>s.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client.render">ModelGooglyEye</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="SkullEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Draws the eyes of placed mob heads and head items.</div>
 </div>
 </div>

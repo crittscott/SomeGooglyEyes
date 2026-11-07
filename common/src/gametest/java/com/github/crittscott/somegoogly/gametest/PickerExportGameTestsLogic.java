@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
@@ -22,11 +23,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -72,7 +76,8 @@ public final class PickerExportGameTestsLogic {
         RuntimeConfig config = new RuntimeConfig();
         config.variants = List.of(variant);
 
-        ConfigFile file = ConfigFile.single("1.21.1", "any", config);
+        ConfigFile file = new ConfigFile();
+        file.entries = List.of(VersionedEntry.of("1.21.1", "any", config));
         JsonObject json = ConfigFile.CODEC.encodeStart(JsonOps.INSTANCE, file)
                 .result().orElseThrow().getAsJsonObject();
         JsonObject eye = json.getAsJsonArray("entries").get(0).getAsJsonObject()
@@ -291,9 +296,8 @@ public final class PickerExportGameTestsLogic {
     }
 
     /**
-     * Export refuses geometry outside the validator's limits, including a forged non-finite position.
-     * In game: save an eye beyond the position limit and export; it is rejected. With a temporary
-     * resource-pack translation, both the wrapper and the inner placement explanation must translate.
+     * Export refuses geometry outside the validator's limits, such as a non-finite position. No in-game form,
+     * since picker commands accept only finite numbers; guards the server against a forged export packet.
      */
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         HeadConfig head = new HeadConfig();
@@ -319,6 +323,50 @@ public final class PickerExportGameTestsLogic {
         helper.assertTrue(result.equals(Component.translatable(
                         "somegoogly.command.picker.export_rejected_unsafe_payload", error.message())),
                 "non-finite exported geometry must be rejected, got: " + result.getString());
+        helper.succeed();
+    }
+
+    /**
+     * An export that would push the whole definition set over the sync limits is refused before it is written.
+     * In game: this needs a datapack whose definitions already total 4,096 eyes; then one more exported eye reports
+     * the unsafe payload in chat, and no file appears in the world's {@code somegoogly-picker} pack.
+     */
+    public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
+        HeadConfig head = new HeadConfig();
+        head.attachPoint = "head";
+        head.eyes = List.of(EyeDefinition.DEFAULT);
+        Variant variant = new Variant();
+        variant.heads = List.of(head);
+        RuntimeConfig config = new RuntimeConfig();
+        config.variants = List.of(variant);
+        CompoundTag exported = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
+
+        Map<ResourceLocation, RuntimeConfigSet> originalSet = ServerEyeConfigs.all();
+        Map<ResourceLocation, CompoundTag> originalEncoded = ServerEyeConfigs.encoded();
+        Map<ResourceLocation, RuntimeConfigSet> full = new HashMap<>();
+        for (int part = 0; part < EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC / EyeConfigLimits.MAX_EYES_PER_HEAD; part++) {
+            HeadConfig fullHead = new HeadConfig();
+            fullHead.attachPoint = "head";
+            fullHead.eyes = Collections.nCopies(EyeConfigLimits.MAX_EYES_PER_HEAD, EyeDefinition.DEFAULT);
+            Variant fullVariant = new Variant();
+            fullVariant.heads = List.of(fullHead);
+            RuntimeConfig fullConfig = new RuntimeConfig();
+            fullConfig.variants = List.of(fullVariant);
+            RuntimeConfigSet set = new RuntimeConfigSet();
+            set.any = fullConfig;
+            full.put(ResourceLocation.fromNamespaceAndPath("somegoogly", "filler_" + part), set);
+        }
+        Component result;
+        try {
+            ServerEyeConfigs.replaceIfChanged(full, ServerEyeConfigs.encode(full));
+            result = PickerExportService.export(server(helper), UUID.randomUUID(),
+                    ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, exported);
+        } finally {
+            ServerEyeConfigs.replaceIfChanged(originalSet, originalEncoded);
+        }
+        helper.assertTrue(result.getContents() instanceof TranslatableContents contents
+                        && contents.getKey().equals("somegoogly.command.picker.export_rejected_unsafe_payload"),
+                "an export past the sync limits must be refused, got: " + result.getString());
         helper.succeed();
     }
 

@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -80,8 +79,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        somegoogly$data = tag.contains(SkullEyeState.DATA_KEY, Tag.TAG_COMPOUND)
-                ? tag.getCompound(SkullEyeState.DATA_KEY) : null;
+        somegoogly$data = SkullEyeState.loadedData(tag);
     }
 
     @Override
@@ -93,8 +91,6 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        if (somegoogly$data != null) {
-            tag.put(SkullEyeState.DATA_KEY, somegoogly$data.copy());
-        }
+        somegoogly$saveEyes(tag);
     }
 }

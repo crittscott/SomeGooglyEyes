@@ -9,6 +9,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
+import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -42,6 +43,28 @@ public final class TomlConfig {
             }
         }
         return changed;
+    }
+
+    /**
+     * Apply {@code document}'s values to {@code settings}. Every table is resolved first, so a malformed one leaves
+     * the shared runtime configuration untouched; a setting the document lacks returns to its default.
+     */
+    public static void apply(UnmodifiableConfig document, List<ConfigValue<?>> settings) {
+        for (ConfigValue<?> setting : settings) {
+            section(document, setting.section());
+        }
+        settings.forEach(ConfigValue::reset);
+        for (ConfigValue<?> setting : settings) {
+            Map<String, Object> values = section(document, setting.section());
+            String key = setting.key();
+            if (setting instanceof ConfigValue.Flag flag) {
+                flag.set(bool(values, key, flag.defaultValue()));
+            } else if (setting instanceof ConfigValue.Ranged ranged) {
+                assign(ranged, key, integer(values, key, ranged.defaultValue()));
+            } else if (setting instanceof ConfigValue.Parsed<?> list) {
+                assign(list, key, strings(values, key, list.defaultValue()));
+            }
+        }
     }
 
     /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
@@ -128,12 +151,10 @@ public final class TomlConfig {
             SomeGooglyCommon.LOGGER.info("Wrote default config file {}", path);
         }
         String source = Files.readString(path, StandardCharsets.UTF_8);
-        String migrated = FabricConfigMigration.quoteReleasedHeader(source);
+        String migrated = FabricMigration.quoteReleasedHeader(source);
         CommentedConfig values = parse(migrated);
         if (!migrated.equals(source)) {
-            Files.copy(path, path.resolveSibling(path.getFileName() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
-            Files.writeString(path, migrated, StandardCharsets.UTF_8);
-            SomeGooglyCommon.LOGGER.info("Migrated released config section header in {}", path);
+            FabricMigration.replaceFile(path, migrated);
         }
         return values;
     }
@@ -148,6 +169,28 @@ public final class TomlConfig {
             throw new IllegalArgumentException("Config section is not a table: " + section);
         }
         return config.valueMap();
+    }
+
+    /** Render {@code settings} at their defaults as a commented file, section by section. */
+    public static String render(List<ConfigValue<?>> settings) {
+        StringBuilder toml = new StringBuilder();
+        String section = null;
+        for (ConfigValue<?> setting : settings) {
+            if (!setting.section().equals(section)) {
+                if (section != null) {
+                    toml.append('\n');
+                }
+                section = setting.section();
+                toml.append(table(section)).append('\n');
+            }
+            for (String line : setting.comment().split("\n")) {
+                toml.append("# ").append(line).append('\n');
+            }
+            String value = setting instanceof ConfigValue.Parsed<?> list ? stringList(list.defaultValue())
+                    : String.valueOf(setting.defaultValue());
+            toml.append(setting.key()).append(" = ").append(value).append('\n');
+        }
+        return toml.toString();
     }
 
     /** Render {@code values} as a TOML array of escaped basic strings, for writing config files. */

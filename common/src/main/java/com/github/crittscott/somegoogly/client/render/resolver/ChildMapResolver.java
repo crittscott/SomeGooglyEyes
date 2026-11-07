@@ -65,7 +65,7 @@ public class ChildMapResolver extends ModelPartTreeResolver {
                     if (field.get(model) instanceof ModelPart part && seen.add(part)) {
                         ordered.add(part);
                     }
-                } catch (Throwable accessDenied) {
+                } catch (ReflectiveOperationException | RuntimeException accessDenied) {
                     ClientIntegrationFailures.warnOnce("ModelPart reflection", "root field access",
                             model.getClass().getName(), accessDenied);
                     return List.of();

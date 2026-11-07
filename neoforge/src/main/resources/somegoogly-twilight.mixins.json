@@ -1,5 +1,5 @@
 {
-  "required": true,
+  "required": false,
   "minVersion": "0.8",
   "package": "com.github.crittscott.somegoogly.mixin.neoforge.twilight",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
@@ -15,6 +15,6 @@
     "TwilightKnightTrophyModelMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 0
   }
 }

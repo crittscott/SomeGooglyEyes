@@ -30,4 +30,9 @@ public final class EyeItemServiceGameTests implements FabricGameTest {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void anotherPlayersEyesFollowThePvpRules(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.anotherPlayersEyesFollowThePvpRules(helper);
+    }
 }

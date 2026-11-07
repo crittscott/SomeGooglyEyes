@@ -37,7 +37,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li><a href="#field-summary">Field</a></li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
@@ -57,7 +57,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -96,6 +96,23 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="PresentationEyes.Draw.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">PresentationEyes.Draw</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The animation an item draw uses and that draw's partial tick; <a href="PresentationEyes.Draw.html#NONE"><code>PresentationEyes.Draw.NONE</code></a> outside animated draws.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -125,9 +142,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>final int[]</code></div>
 <div class="col-second odd-row-color"><code><a href="#parts" class="member-name-link">parts</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final <a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
-<div class="col-second even-row-color"><code><a href="#snapshot" class="member-name-link">snapshot</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>final <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
+<div class="col-second even-row-color"><code><a href="#properties" class="member-name-link">properties</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The appearance this presentation draws, decoded once.</div>
+</div>
+<div class="col-first odd-row-color"><code>final <a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#snapshot" class="member-name-link">snapshot</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -177,7 +199,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(net.minecraft.world.item.ItemStack)" class="member-name-link">matches</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Item changes that affect layout or appearance replace a head simulation.</div>
+<div class="block">Whether <code>stack</code> is still the presented item; a different count or stack copy still is.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#placedHead(long,net.minecraft.resources.ResourceLocation,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,com.github.crittscott.somegoogly.eye.HeadInfo,int%5B%5D)" class="member-name-link">placedHead</a><wbr>(long&nbsp;seed,
@@ -269,6 +291,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="properties">
+<h3>properties</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">properties</span></div>
+<div class="block">The appearance this presentation draws, decoded once.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="snapshot">
 <h3>snapshot</h3>
 <div class="member-signature"><span class="annotations">@Nullable
@@ -338,7 +367,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="matches(net.minecraft.world.item.ItemStack)">
 <h3>matches</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">Item changes that affect layout or appearance replace a head simulation.</div>
+<div class="block">Whether <code>stack</code> is still the presented item; a different count or stack copy still is.</div>
 </section>
 </li>
 <li>

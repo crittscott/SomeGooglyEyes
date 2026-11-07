@@ -1,18 +1,20 @@
 package com.github.crittscott.somegoogly.platform.fabric;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-/** Fabric clientbound sends; tracking fanout uses Fabric API's authoritative lookup. */
+/** Fabric clientbound sends; fanout encodes once and uses the vanilla broadcasts NeoForge's and Forge's distributors do. */
 public final class NetworkingImpl {
 
     private NetworkingImpl() {
+    }
+
+    public static void sendToAll(MinecraftServer server, CustomPacketPayload payload) {
+        server.getPlayerList().broadcastAll(ServerPlayNetworking.createS2CPacket(payload));
     }
 
     public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
@@ -20,10 +22,7 @@ public final class NetworkingImpl {
     }
 
     public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
-        Collection<ServerPlayer> recipients = new ArrayList<>(PlayerLookup.tracking(entity));
-        if (entity instanceof ServerPlayer player && !recipients.contains(player)) {
-            recipients.add(player);
-        }
-        recipients.forEach(player -> ServerPlayNetworking.send(player, payload));
+        ((ServerChunkCache) entity.level().getChunkSource()).broadcastAndSend(entity,
+                ServerPlayNetworking.createS2CPacket(payload));
     }
 }

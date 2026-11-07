@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 /**
  * The picker's single view of a living model's attachment vocabulary. It composes ordinary model
@@ -24,10 +25,10 @@ import java.util.List;
  */
 public final class ModelPartVocabulary {
 
-    private final Canonicalizer canonicalizer;
+    private final UnaryOperator<String> canonicalizer;
     private final List<String> tokens;
 
-    private ModelPartVocabulary(List<String> tokens, Canonicalizer canonicalizer) {
+    private ModelPartVocabulary(List<String> tokens, UnaryOperator<String> canonicalizer) {
         this.tokens = List.copyOf(tokens);
         this.canonicalizer = canonicalizer;
     }
@@ -62,7 +63,7 @@ public final class ModelPartVocabulary {
 
     /** The canonical attach token for {@code token}. */
     public String canonicalize(String token) {
-        return canonicalizer.canonicalize(token);
+        return canonicalizer.apply(token);
     }
 
     /** The model's attachable part tokens, in selection order. */
@@ -106,15 +107,10 @@ public final class ModelPartVocabulary {
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(id);
         try {
             return type.create(level) instanceof LivingEntity living ? living : null;
-        } catch (Throwable constructionFailed) {
+        } catch (RuntimeException | LinkageError constructionFailed) {
             ClientIntegrationFailures.warnOnce(
                     "entity factory", "sample construction", id.toString(), constructionFailed);
             return null;
         }
-    }
-
-    @FunctionalInterface
-    private interface Canonicalizer {
-        String canonicalize(String token);
     }
 }

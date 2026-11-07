@@ -37,7 +37,7 @@ One expression plays at a time; all are cosmetic. Sleepers play nothing else; vi
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears means vanilla shears or any `c:tools/shear` item. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify, and the `doMobLoot` game rule must be on. Shears means vanilla shears or any `c:tools/shear` item. A successful harvest costs one shears durability.
 
 ### Optometrist
 

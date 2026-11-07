@@ -81,9 +81,9 @@ public final class ConfigGameTests {
     public static void releasedConfigSurvivesNativeCorrection(GameTestHelper helper) {
         CommentedConfig config = new TomlParser().parse("[\"Server Settings\"]\nglobalPercent = 17\n");
         ForgeServerConfig.SPEC.correct(config);
-        helper.assertTrue(config.<Number>get(List.of(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT_KEY)).intValue() == 17,
+        helper.assertTrue(config.<Number>get(List.of(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT.key())).intValue() == 17,
                 "native correction retains a released non-default value");
-        helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP_KEY)),
+        helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP.key())),
                 "native correction supplies an absent behavior key");
         helper.succeed();
     }

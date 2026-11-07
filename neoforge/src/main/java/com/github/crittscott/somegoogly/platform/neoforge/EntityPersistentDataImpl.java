@@ -9,6 +9,10 @@ public final class EntityPersistentDataImpl {
     private EntityPersistentDataImpl() {
     }
 
+    public static CompoundTag find(Entity entity) {
+        return entity.getPersistentData();
+    }
+
     public static CompoundTag get(Entity entity) {
         return entity.getPersistentData();
     }

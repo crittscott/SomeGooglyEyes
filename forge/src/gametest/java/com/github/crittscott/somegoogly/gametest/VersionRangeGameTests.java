@@ -53,11 +53,6 @@ public final class VersionRangeGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
-    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
     }
@@ -65,5 +60,15 @@ public final class VersionRangeGameTests {
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.longSegmentsCompareAsNumbers(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.loaderNamesDoNotChangeAVersion(helper);
     }
 }

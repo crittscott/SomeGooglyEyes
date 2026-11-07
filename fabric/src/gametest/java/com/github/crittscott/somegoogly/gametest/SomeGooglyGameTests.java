@@ -1,12 +1,14 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.migration.fabric.FabricEntityDataMigration;
+import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
@@ -86,7 +88,7 @@ public final class SomeGooglyGameTests implements FabricGameTest {
 
         helper.assertTrue(!EyeState.hasEyes(restored), "Unrecognized released data must not grant eyes");
         helper.assertTrue("not a compound".equals(EntityPersistentData.get(restored)
-                        .getString(FabricEntityDataMigration.SET_ASIDE_KEY)),
+                        .getString(FabricMigration.SET_ASIDE_KEY)),
                 "Unrecognized released data should be set aside in the attachment");
         helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
                 "Set-aside data should not be written under the released key");
@@ -118,5 +120,27 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.lightningConversionKeepsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    /**
+     * A client without the mod reads the refusal in English. In game: join a Fabric server that has this mod from
+     * a client that doesn't; the disconnect screen shows a sentence rather than a translation key.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void requiredClientRefusalCarriesItsText(GameTestHelper helper) {
+        TranslatableContents refusal = (TranslatableContents) FabricNetworkTransport.requiredClientMessage().getContents();
+        helper.assertTrue(refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
+                "the refusal should carry the English text for a client without our language file");
+        helper.succeed();
     }
 }

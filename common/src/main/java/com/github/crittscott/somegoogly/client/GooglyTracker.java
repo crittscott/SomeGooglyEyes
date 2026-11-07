@@ -19,7 +19,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
 import org.joml.Matrix3f;
 import org.joml.Matrix3fc;
-import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
 /**
@@ -223,6 +222,7 @@ public class GooglyTracker {
         // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
         private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
         private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
+        private static final float R_SETTLE_MIN_GRAVITY = 0.01f; // in-plane gravity below this leaves a new pupil in place
         private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
         private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
         private static final float R_AGITATED_MIN_SPEED = 1.5f;  // speed floor at full agitation (units/tick)
@@ -292,6 +292,8 @@ public class GooglyTracker {
         private boolean capturedPose;
         private final Matrix3f inversePose = new Matrix3f();
         /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
+        /** Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough. */
+        public boolean poseStale = true;
         private final Vector3f worldRight = new Vector3f();
         private final Vector3f worldUp = new Vector3f();
 
@@ -334,13 +336,13 @@ public class GooglyTracker {
             irisTintAmount = irisTint;
         }
 
-        /** Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera. */
-        public void capturePose(Matrix3fc pose, @Nullable Quaternionfc cameraOrientation) {
-            if (cameraOrientation == null) {
-                inversePose.set(pose).invert();
-            } else {
-                inversePose.rotation(cameraOrientation).mul(pose).invert();
-            }
+        /**
+         * Capture a draw's pose, whose axes are already world-aligned: the view rotation is applied later through
+         * the model-view matrix, so nothing needs removing. A new simulation's first capture also rests its pupil
+         * on the rim toward gravity, so eyes rebuilt after time offscreen come into view already settled.
+         */
+        public void capturePose(Matrix3fc pose) {
+            inversePose.set(pose).invert();
             worldRight.set(inversePose.m00(), inversePose.m10(), inversePose.m20());
             worldUp.set(inversePose.m01(), inversePose.m11(), inversePose.m21());
             if (itemGravity || guiGravity) {
@@ -350,12 +352,51 @@ public class GooglyTracker {
             float sign = guiGravity ? -1F : 1F;
             gravX = sign * worldRight.y;
             gravY = sign * worldUp.y;
+            if (!capturedPose) {
+                settle();
+            }
             capturedPose = true;
+            poseStale = false;
+        }
+
+        /** Rest the pupil on the rim toward gravity; an eye with almost none in its plane stays where it is. */
+        private void settle() {
+            float gravity = Mth.sqrt(gravX * gravX + gravY * gravY);
+            if (gravity >= R_SETTLE_MIN_GRAVITY) {
+                prevDeltaX = deltaX = gravX / gravity;
+                prevDeltaY = deltaY = gravY / gravity;
+            }
         }
 
         /** Re-prime input differentiation after an owner change or a gap in simulation. */
         public void resetMotion() {
             primed = false;
+        }
+
+        /** A {@code step} with no overlays of the owner's own. */
+        public void step(EyeInfluence influence, @Nullable BehaviorInstance active, int head, int eye,
+                         RandomSource rand, float headYaw, float headPitch,
+                         double motionX, double motionY, double motionZ) {
+            step(influence, active, head, eye, 1F, 1F, 0F, 0F, rand, headYaw, headPitch,
+                    motionX, motionY, motionZ, 0F);
+        }
+
+        /**
+         * One tick of this pupil, eye {@code eye} of head {@code head}: ask the active behavior, if any, for its
+         * influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
+         * folded in as a force. {@code influence} is the caller's reusable scratch instance.
+         */
+        public void step(EyeInfluence influence, @Nullable BehaviorInstance active, int head, int eye,
+                         float irisPulse, float squash, float lid, float irisTint,
+                         RandomSource rand, float headYaw, float headPitch,
+                         double motionX, double motionY, double motionZ, float agitation) {
+            influence.reset();
+            if (active != null) {
+                active.behavior.influence(active, head, eye, influence);
+            }
+            applyOverlays(influence, irisPulse, squash, lid, irisTint);
+            update(rand, headYaw, headPitch, motionX, motionY, motionZ,
+                    influence.anchorX, influence.anchorY, influence.stiffness, agitation);
         }
 
         /**
@@ -375,6 +416,7 @@ public class GooglyTracker {
          */
         public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness, float agitation) {
+            poseStale = true;
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
@@ -559,8 +601,7 @@ public class GooglyTracker {
         if (active != null || parent.isSleeping()) {
             return false;
         }
-        BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
-        behavior.onStart(instance);
+        BehaviorInstance instance = BehaviorInstance.start(behavior, helper, duration, seed);
         // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
         // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
         instance.age = elapsed;
@@ -586,11 +627,8 @@ public class GooglyTracker {
 
         // Advance the active behavior (if any), retiring it when it runs out. Done before the physics so
         // this tick's simulation already sees the retired (null) behavior on its final step.
-        if (active != null) {
-            active.age++;
-            if (active.age >= active.duration) {
-                active = null;
-            }
+        if (active != null && active.advance()) {
+            active = null;
         }
 
         // Ease toward the squint or back out. A behavior playing under it (one already playing when sleep
@@ -624,19 +662,10 @@ public class GooglyTracker {
             for (int i1 = 0; i1 < eyes[i].length; i1++) {
                 EyeInfo info = eyes[i][i1];
 
-                // Ask the single active behavior for this eye's influence (spring + overlays), or neutral.
-                INFLUENCE.reset();
-                if (active != null) {
-                    active.behavior.influence(active, i, i1, INFLUENCE);
-                }
-
-                info.applyOverlays(INFLUENCE,
+                info.step(INFLUENCE, active, i, i1,
                         1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset),
-                        squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F), lidCoverage, anger);
-
-                // Step the pupil physics, with the behavior's spring folded in as a force.
-                info.update(rand, headYaw, headPitch, motionX, motionY, motionZ,
-                        INFLUENCE.anchorX, INFLUENCE.anchorY, INFLUENCE.stiffness, agitation);
+                        squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F), lidCoverage, anger,
+                        rand, headYaw, headPitch, motionX, motionY, motionZ, agitation);
             }
         }
     }

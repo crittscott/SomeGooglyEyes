@@ -64,11 +64,10 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
      */
     public static class Serializer implements RecipeSerializer<SlimyEyeRecipe> {
 
-        private static final ShapelessRecipe.Serializer SHAPELESS = new ShapelessRecipe.Serializer();
         private static final MapCodec<SlimyEyeRecipe> CODEC =
-                SHAPELESS.codec().xmap(SlimyEyeRecipe::new, recipe -> recipe.delegate);
+                RecipeSerializer.SHAPELESS_RECIPE.codec().xmap(SlimyEyeRecipe::new, recipe -> recipe.delegate);
         private static final StreamCodec<RegistryFriendlyByteBuf, SlimyEyeRecipe> STREAM_CODEC =
-                SHAPELESS.streamCodec().map(SlimyEyeRecipe::new, recipe -> recipe.delegate);
+                RecipeSerializer.SHAPELESS_RECIPE.streamCodec().map(SlimyEyeRecipe::new, recipe -> recipe.delegate);
 
         @Override
         public MapCodec<SlimyEyeRecipe> codec() {

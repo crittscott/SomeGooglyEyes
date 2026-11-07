@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableHierarchicalModel;
 import net.minecraft.client.model.CamelModel;
@@ -37,12 +38,12 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
     @Override
     protected List<NamedRoot> roots(EntityModel<?> model) {
         HierarchicalModel<?> hierarchical = (HierarchicalModel<?>) model;
-        return List.of(new NamedRoot("root", hierarchical.root(), youngWrap(hierarchical)));
+        return List.of(new NamedRoot(EyeConfigModel.PART_ROOT, hierarchical.root(), youngWrap(hierarchical)));
     }
 
     /**
      * {@code null} for the common case (no wrap to replay). {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
+     * rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches the
      * resolved chain per (model, token) and the same model instance renders both baby and adult entities
      * of its type.
      */
@@ -50,23 +51,10 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
     private static Consumer<PoseStack> youngWrap(HierarchicalModel<?> model) {
         if (model instanceof AgeableHierarchicalModel<?> ageable) {
             float scale = ageable.youngScaleFactor;
-            float yOffset = ageable.bodyYOffset;
-            return poseStack -> {
-                if (!ageable.young) {
-                    return;
-                }
-                poseStack.scale(scale, scale, scale);
-                poseStack.translate(0.0F, yOffset / 16.0F, 0.0F);
-            };
+            return youngWrap(ageable, scale, scale, scale, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
         }
         if (model instanceof CamelModel<?> camel) {
-            return poseStack -> {
-                if (!camel.young) {
-                    return;
-                }
-                poseStack.scale(0.45F, 0.45F, 0.45F);
-                poseStack.translate(0.0F, 1.834375F, 0.0F);
-            };
+            return youngWrap(camel, 0.45F, 0.45F, 0.45F, 0.0F, 1.834375F, 0.0F);
         }
         return null;
     }

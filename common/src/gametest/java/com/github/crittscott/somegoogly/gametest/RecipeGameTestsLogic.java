@@ -10,6 +10,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -37,6 +38,10 @@ public final class RecipeGameTestsLogic {
 
     private static final ResourceLocation EYE_MODIFIER =
             ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
+    private static final ResourceLocation SLIMY_EYE =
+            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye");
+    private static final ResourceLocation SLIMY_EYE_ADVANCEMENT =
+            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
 
     private RecipeGameTestsLogic() {
     }
@@ -146,6 +151,19 @@ public final class RecipeGameTestsLogic {
         helper.assertTrue(EyeItemProperties.slimyEyeTint(new ItemStack(ModContent.SLIMY_EYE.get()),
                         EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX) == 0xFF000000,
                 "the slimy eye should render its default black iris with full alpha");
+        helper.succeed();
+    }
+
+    /**
+     * Picking up a Googly Eye unlocks the Slimy Eye recipe. In game: in a new survival world, {@code /give}
+     * yourself a Googly Eye; the recipe book offers the Slimy Eye, and it can be crafted with the
+     * {@code doLimitedCrafting} game rule on.
+     */
+    public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        AdvancementHolder advancement = helper.getLevel().getServer().getAdvancements().get(SLIMY_EYE_ADVANCEMENT);
+        helper.assertTrue(advancement != null, "the Slimy Eye recipe should have an unlock advancement");
+        helper.assertTrue(advancement.value().rewards().recipes().contains(SLIMY_EYE),
+                "the advancement should reward the Slimy Eye recipe");
         helper.succeed();
     }
 }

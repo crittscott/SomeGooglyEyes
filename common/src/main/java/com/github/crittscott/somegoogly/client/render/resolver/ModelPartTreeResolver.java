@@ -51,6 +51,21 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         }
     }
 
+    /**
+     * A baby-only scale followed by a translate, as models apply around their parts. {@code young} is re-checked on
+     * every call rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches
+     * the resolved chain per (model, token) and the same model instance renders every baby and adult of its type.
+     */
+    protected static Consumer<PoseStack> youngWrap(EntityModel<?> model, float sx, float sy, float sz,
+                                                   float tx, float ty, float tz) {
+        return poseStack -> {
+            if (model.young) {
+                poseStack.scale(sx, sy, sz);
+                poseStack.translate(tx, ty, tz);
+            }
+        };
+    }
+
     /** The subtrees to walk for this model, in a stable order. Only called when {@link #handles} is true. */
     protected abstract List<NamedRoot> roots(EntityModel<?> model);
 

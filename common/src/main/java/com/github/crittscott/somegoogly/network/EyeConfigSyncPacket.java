@@ -2,10 +2,8 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
-import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,33 +16,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Server-to-client synchronization of the complete resolved eye-definition set, plus the current
- * {@code googlyEyesEnabled} master switch and the behavior settings clients run behaviors from. The server builds it from the installed set and that set's
- * precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
+ * Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
+ * the installed set and that set's precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
  * validated when installed, so writing it to each connection only copies tags. The client decodes and
  * re-validates everything it receives.
  */
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
-    public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE =
-            new CustomPacketPayload.Type<>(NetworkHandler.EYE_CONFIG);
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_config");
+    public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::new);
 
-    private final BehaviorSettings behaviors;
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
     private final Map<ResourceLocation, CompoundTag> encoded;
-    private final boolean googlyEyesEnabled;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
-                               Map<ResourceLocation, CompoundTag> encoded, boolean googlyEyesEnabled,
-                               BehaviorSettings behaviors) {
+                               Map<ResourceLocation, CompoundTag> encoded) {
         this.configs = configs;
         this.encoded = encoded;
-        this.googlyEyesEnabled = googlyEyesEnabled;
-        this.behaviors = behaviors;
     }
 
     private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
@@ -66,12 +58,8 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             if (tag == null) {
                 throw new DecoderException("Missing synced eye config for " + id);
             }
-            RuntimeConfigSet decoded;
-            try {
-                decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result().orElseThrow();
-            } catch (Exception e) {
-                throw new DecoderException("Malformed synced eye config for " + id, e);
-            }
+            RuntimeConfigSet decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result()
+                    .orElseThrow(() -> new DecoderException("Malformed synced eye config for " + id));
             configs.put(id, decoded);
             encoded.put(id, tag);
         }
@@ -81,55 +69,34 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         }
         this.configs = configs;
         this.encoded = encoded;
-        this.googlyEyesEnabled = buffer.readBoolean();
-        this.behaviors = BehaviorSettings.read(buffer);
     }
 
-    /** Maximum packet size for {@code encoded}, including any supported server behavior settings. */
+    /** The packet size of {@code encoded}. */
     public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
-            writeBody(buffer, encoded, false, BehaviorSettings.WIRE_MAXIMUM);
+            writeBody(buffer, encoded);
             return buffer.writerIndex();
         } finally {
             buffer.release();
         }
     }
 
-    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded,
-                                  boolean googlyEyesEnabled, BehaviorSettings behaviors) {
+    private static void writeBody(FriendlyByteBuf buffer, Map<ResourceLocation, CompoundTag> encoded) {
         buffer.writeVarInt(encoded.size());
         for (Map.Entry<ResourceLocation, CompoundTag> entry : encoded.entrySet()) {
             buffer.writeResourceLocation(entry.getKey());
             buffer.writeNbt(entry.getValue());
         }
-        buffer.writeBoolean(googlyEyesEnabled);
-        behaviors.write(buffer);
     }
 
     private void write(FriendlyByteBuf buffer) {
-        int start = buffer.writerIndex();
-        writeBody(buffer, encoded, googlyEyesEnabled, behaviors);
-        int written = buffer.writerIndex() - start;
-        if (written > MAX_PAYLOAD_BYTES) {
-            throw new EncoderException("Eye config sync payload is " + written
-                    + " bytes, exceeding the safe " + MAX_PAYLOAD_BYTES + "-byte limit");
-        }
-    }
-
-    /** The server's behavior settings. */
-    public BehaviorSettings behaviors() {
-        return behaviors;
+        writeBody(buffer, encoded);
     }
 
     /** The resolved eye definitions, by entity type. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
-    }
-
-    /** The server's {@code googlyEyesEnabled} switch. */
-    public boolean googlyEyesEnabled() {
-        return googlyEyesEnabled;
     }
 
     @Override

@@ -166,7 +166,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsUnsafeNumericConfig(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsUnsafeNumericConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Export refuses geometry outside the validator's limits, including a forged non-finite position.</div>
+<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsWhatTheSyncCouldNotCarry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsWhatTheSyncCouldNotCarry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">An export that would push the whole definition set over the sync limits is refused before it is written.</div>
 </div>
 </div>
 </div>
@@ -279,9 +284,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="exportRejectsUnsafeNumericConfig(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>exportRejectsUnsafeNumericConfig</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsUnsafeNumericConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Export refuses geometry outside the validator's limits, including a forged non-finite position.
- In game: save an eye beyond the position limit and export; it is rejected. With a temporary
- resource-pack translation, both the wrapper and the inner placement explanation must translate.</div>
+<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position. No in-game form,
+ since picker commands accept only finite numbers; guards the server against a forged export packet.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="exportRejectsWhatTheSyncCouldNotCarry(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>exportRejectsWhatTheSyncCouldNotCarry</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsWhatTheSyncCouldNotCarry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">An export that would push the whole definition set over the sync limits is refused before it is written.
+ In game: this needs a datapack whose definitions already total 4,096 eyes; then one more exported eye reports
+ the unsafe payload in chat, and no file appears in the world's <code>somegoogly-picker</code> pack.</div>
 </section>
 </li>
 </ul>

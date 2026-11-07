@@ -14,7 +14,7 @@ import com.github.crittscott.somegoogly.migration.EyeItemMigration;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -309,7 +309,7 @@ public final class EyeItemMigrationGameTestsLogic {
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
-            ServerEyeConfigs.replaceAll(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), set));
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             player.getAbilities().instabuild = false;
 
@@ -319,7 +319,7 @@ public final class EyeItemMigrationGameTestsLogic {
                     "the mob must receive the converted appearance");
             helper.assertTrue(migrated.getCount() == 1, "a successful application must consume one item");
         } finally {
-            ServerEyeConfigs.replaceAll(originalConfigs);
+            TestEyeConfigs.install(originalConfigs);
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
             player.getAbilities().instabuild = originalInstabuild;
             EyeState.disableAndClearProperties(cow);

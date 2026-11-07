@@ -1,18 +1,24 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.github.crittscott.somegoogly.client.mixin",
+  "package": "com.github.crittscott.somegoogly.mixin.common",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
   "refmap": "somegoogly-common.refmap.json",
+  "mixins": [
+    "MilkingMixin",
+    "ServerLevelEntityEventMixin",
+    "ShearingMixin",
+    "SkullBlockEntityDataMixin"
+  ],
   "client": [
-    "BoatRendererMixin",
-    "ContainerItemEyesMixin",
-    "GuiItemEyesMixin",
-    "HandItemEyesMixin",
-    "HeadItemRendererMixin",
-    "HotbarItemEyesMixin",
-    "ItemFrameRendererMixin",
-    "SkullBlockRendererMixin"
+    "client.BoatRendererMixin",
+    "client.ContainerItemEyesMixin",
+    "client.GuiItemEyesMixin",
+    "client.HandItemEyesMixin",
+    "client.HeadItemRendererMixin",
+    "client.HotbarItemEyesMixin",
+    "client.ItemFrameRendererMixin",
+    "client.SkullBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

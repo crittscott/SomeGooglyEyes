@@ -41,6 +41,8 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
@@ -50,6 +52,7 @@ import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
@@ -312,7 +315,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo info = headInfo(helper, zombie);
         ClientEyeRuntime.onLevelChanged();
         BehaviorSettings originalBehaviors = ClientEyeConfigs.behaviors();
-        ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), ON);
+        ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), ON);
         try {
             ClientEyeRuntime.setAngry(zombie, true);
             GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
@@ -340,7 +343,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                     "client world replacement drops both trackers and anger");
         } finally {
             ClientEyeRuntime.onLevelChanged();
-            ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
+            ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
         }
         helper.succeed();
     }
@@ -495,6 +498,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
             EyeState.setHasEyes(cow, false);
 
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
@@ -527,6 +531,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerConfig.SWIRL_ON_HEAL.set(false);
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
                     "swirlOnHeal=false suppresses the heal swirl");
@@ -554,7 +559,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
         helper.assertTrue(headInfo != null, type + " has an eye config");
         return headInfo;
     }
@@ -578,11 +583,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     "the first heal starts a swirl");
 
             advance(EyeBehavior.SWIRL.defaultDuration());
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
                     "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
@@ -908,6 +915,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
                     "a trigger on a sleeping mob is dropped");
+            villager.setHealth(1F);
             ServerBehaviorScheduler.onHealed(villager);
             ServerBehaviorScheduler.onTrade(villager);
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
@@ -940,7 +948,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager.isBaby(), EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, "villagers have an eye config");
 
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
@@ -1003,7 +1011,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         creeper.setNoGravity(true);
         creeper.setDeltaMovement(Vec3.ZERO);
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper.isBaby(), EyeState.getVariantRoll(creeper));
         helper.assertTrue(headInfo != null && headInfo.hasConfig(), "creepers have usable eye geometry");
 
         GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false, ON);
@@ -1133,5 +1141,95 @@ public final class BehaviorSchedulerGameTestsLogic {
         on.remove(off);
         return new BehaviorSettings(ON.ambient(), ON.minTicks(), ON.maxTicks(), ON.pool(), ON.growOnHitPercent(),
                 ON.swirlOnHeal(), ON.swirlHealCooldownTicks(), on);
+    }
+
+    /**
+     * A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
+     * {@code swirlOnTrade = true}, trade with an eyed villager; its eyes swirl as you take the item.
+     */
+    public static void completedTradeSwirlsEyes(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_TRADE.set(true);
+            Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(villager, true);
+            ServerBehaviorScheduler.onStartTracking(villager, player);
+            villager.setTradingPlayer(player);
+
+            villager.notifyTrade(new MerchantOffer(
+                    new ItemCost(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 5, 1L),
+                    "the completed trade starts a swirl");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A player's real hit bulges the eyes of a mob or of another player. In game: with
+     * {@code growOnHitPercent = 100}, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
+     * eyes grow.
+     */
+    public static void playerHitBulgesEyes(GameTestHelper helper, ServerPlayer attacker) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(100);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Player victim = helper.makeMockPlayer(GameType.SURVIVAL);
+            for (LivingEntity target : List.of(cow, victim)) {
+                EyeState.setHasEyes(target, true);
+                ServerBehaviorScheduler.onStartTracking(target, attacker);
+                helper.assertTrue(target.hurt(helper.getLevel().damageSources().playerAttack(attacker), 1F),
+                        "the hit lands");
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 3, 1L),
+                        "the hit starts the grow, so another behavior can't start");
+            }
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with {@code swirlOnHeal}
+     * on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.
+     */
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 1L),
+                    "a heal at full health starts nothing");
+            advance(1);
+
+            cow.setHealth(1F);
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 2L),
+                    "a heal of a hurt mob swirls, so the one at full health left its cooldown unspent");
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+        }
+        helper.succeed();
     }
 }

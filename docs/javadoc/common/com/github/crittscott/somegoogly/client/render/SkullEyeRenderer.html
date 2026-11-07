@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SkullEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Draws the eyes of placed mob heads and head items. Each loader's Mixins bracket a placed head's draw with
+<div class="block">Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
  <a href="#begin(net.minecraft.world.level.block.entity.BlockEntity,float)"><code>begin(net.minecraft.world.level.block.entity.BlockEntity, float)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and call
  <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after the head model is drawn, in the model's space. A placed head's eyes are live
  (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
@@ -151,7 +151,9 @@ loadScripts(document, 'script');</script>
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  net.minecraft.client.model.geom.ModelPart&nbsp;head)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw a trophy's eyes on its <code>head</code> part, in Twilight Forest's model space.</div>
+</div>
 </div>
 </div>
 </div>
@@ -216,6 +218,7 @@ loadScripts(document, 'script');</script>
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  net.minecraft.client.model.geom.ModelPart&nbsp;head)</span></div>
+<div class="block">Draw a trophy's eyes on its <code>head</code> part, in Twilight Forest's model space.</div>
 </section>
 </li>
 </ul>

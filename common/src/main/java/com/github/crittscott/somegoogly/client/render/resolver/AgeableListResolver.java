@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
@@ -37,15 +38,15 @@ public class AgeableListResolver extends ModelPartTreeResolver {
     protected List<NamedRoot> roots(EntityModel<?> model) {
         AgeableListModel<?> ageable = (AgeableListModel<?>) model;
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, "head", ageable.headParts(), headWrap(ageable));
-        index(roots, "body", ageable.bodyParts(), bodyWrap(ageable));
+        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), headWrap(ageable));
+        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), bodyWrap(ageable));
         return roots;
     }
 
     /**
      * The scale/offset {@link AgeableListModel#renderToBuffer} applies around {@code headParts()} for a
      * young entity. {@code young} is re-checked on every call rather than baked in when this closure is
-     * built, because {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the
+     * built, because {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the
      * same model instance renders both baby and adult entities of its type.
      */
     private static Consumer<PoseStack> headWrap(AgeableListModel<?> ageable) {
@@ -67,15 +68,7 @@ public class AgeableListResolver extends ModelPartTreeResolver {
 
     /** Same as {@link #headWrap}, for the scale/offset {@code renderToBuffer} applies around {@code bodyParts()}. */
     private static Consumer<PoseStack> bodyWrap(AgeableListModel<?> ageable) {
-        float babyBodyScale = ageable.babyBodyScale;
-        float yOffset = ageable.bodyYOffset;
-        return poseStack -> {
-            if (!ageable.young) {
-                return;
-            }
-            float f = 1.0F / babyBodyScale;
-            poseStack.scale(f, f, f);
-            poseStack.translate(0.0F, yOffset / 16.0F, 0.0F);
-        };
+        float f = 1.0F / ageable.babyBodyScale;
+        return youngWrap(ageable, f, f, f, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
     }
 }

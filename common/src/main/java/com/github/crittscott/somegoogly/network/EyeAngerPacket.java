@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Server → client: entity {@code entityId} became angry or calmed down. Covers anger the server keeps to
@@ -13,8 +14,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
  */
 public record EyeAngerPacket(int entityId, boolean angry) implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<EyeAngerPacket> TYPE =
-            new CustomPacketPayload.Type<>(NetworkHandler.EYE_ANGER);
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_anger");
+    public static final CustomPacketPayload.Type<EyeAngerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeAngerPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeAngerPacket::write, EyeAngerPacket::new);
 

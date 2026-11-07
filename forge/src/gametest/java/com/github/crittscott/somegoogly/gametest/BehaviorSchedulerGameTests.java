@@ -124,4 +124,19 @@ public final class BehaviorSchedulerGameTests {
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, helper.makeMockServerPlayerInLevel());
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, helper.makeMockServerPlayerInLevel());
+    }
 }

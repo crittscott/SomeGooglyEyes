@@ -1,10 +1,12 @@
 package com.github.crittscott.somegoogly.config;
 
 import javax.annotation.Nullable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
@@ -12,6 +14,9 @@ import java.util.Locale;
  * the range synthesis ({@link #rangeFor}) used when exporting definitions for optional mods.
  */
 public final class VersionRangeMatcher {
+
+    /** Version-string words that name a build's loader and say nothing about its age. */
+    private static final Set<String> LOADER_NAMES = Set.of("fabric", "forge", "neoforge", "quilt");
 
     private VersionRangeMatcher() {
     }
@@ -47,13 +52,13 @@ public final class VersionRangeMatcher {
         return trimmed.startsWith("[") || trimmed.startsWith("(");
     }
 
-    private record Token(Integer number, String text) implements Comparable<Token> {
-        private static final Token ZERO = new Token(0, null);
+    private record Token(BigInteger number, String text) implements Comparable<Token> {
+        private static final Token ZERO = new Token(BigInteger.ZERO, null);
 
         @Override
         public int compareTo(Token other) {
             if (number != null && other.number != null) {
-                return Integer.compare(number, other.number);
+                return number.compareTo(other.number);
             }
             if (number != null) {
                 return 1;
@@ -66,7 +71,7 @@ public final class VersionRangeMatcher {
 
         static Token of(String value) {
             try {
-                return new Token(Integer.parseInt(value), null);
+                return new Token(new BigInteger(value), null);
             } catch (NumberFormatException ignored) {
                 return new Token(null, value);
             }
@@ -76,7 +81,7 @@ public final class VersionRangeMatcher {
     /** Parse a declared version into its endpoints, or {@code null} if malformed (same cases as {@link #matches}). */
     @Nullable
     private static Bounds bounds(String range) {
-        if (range == null || range.isBlank()) {
+        if (range.isBlank()) {
             return null;
         }
         String trimmed = range.trim();
@@ -118,22 +123,11 @@ public final class VersionRangeMatcher {
     }
 
     /**
-     * Whether the whole declared range sits at or below {@code version} (its upper bound does).
-     * Selects the fallback log message: a {@link #nearestVersion} pick that is entirely below the
-     * installed version means the datapack is stale (older than the mod); otherwise the mod was
-     * downgraded below every declaration.
-     */
-    public static boolean isEntirelyBelow(String range, String version) {
-        Bounds b = bounds(range);
-        return b != null && b.upper() != null && compare(b.upper(), version) <= 0;
-    }
-
-    /**
      * Whether {@code version} satisfies {@code range}: an exact version by string equality, or a bracketed range by
      * zero-padded component comparison. Blank or malformed input never matches.
      */
     public static boolean matches(String range, String version) {
-        if (range == null || range.isBlank() || version == null || version.isBlank()) {
+        if (range.isBlank() || version.isBlank()) {
             return false;
         }
 
@@ -172,7 +166,7 @@ public final class VersionRangeMatcher {
      */
     @Nullable
     public static String nearestVersion(Collection<String> declaredVersions, String loadedVersion) {
-        if (loadedVersion == null || loadedVersion.isBlank()) {
+        if (loadedVersion.isBlank()) {
             return null;
         }
         String bestOlder = null;  // greatest upper bound at or below the installed version
@@ -204,7 +198,7 @@ public final class VersionRangeMatcher {
     private static List<Token> tokenize(String version) {
         List<Token> tokens = new ArrayList<>();
         for (String part : version.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) {
-            if (!part.isEmpty()) {
+            if (!part.isEmpty() && !LOADER_NAMES.contains(part)) {
                 tokens.add(Token.of(part));
             }
         }

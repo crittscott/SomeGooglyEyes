@@ -7,10 +7,9 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -28,10 +27,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -55,22 +53,21 @@ public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
-    /** The last segment of an attachment token that names a model's head part. */
-    private static final String HEAD_PART = "head";
-    /**
-     * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
-     * every other mob's head shows the eyes on parts named {@value #HEAD_PART}.
-     */
-    private static final Map<ResourceLocation, String> HEAD_PART_TOKENS = Map.of(
-            EntityType.getKey(EntityType.BEE), "body",
-            EntityType.getKey(EntityType.CHICKEN), "head1",
-            EntityType.getKey(EntityType.GHAST), "root/body",
-            EntityType.getKey(EntityType.SQUID), "root",
-            EntityType.getKey(EntityType.GLOW_SQUID), "root",
-            EntityType.getKey(EntityType.SLIME), "root/right_eye",
-            EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0",
-            ResourceLocation.fromNamespaceAndPath("twilightforest", "naga"), "#0",
-            ResourceLocation.fromNamespaceAndPath("twilightforest", "ur_ghast"), "root/body");
+    /** Twilight Forest's namespace. Ahead of the maps below, which name it. */
+    private static final String TWILIGHT_NAMESPACE = "twilightforest";
+    /** Each mob whose head departs from {@link HeadShape#DEFAULT}. */
+    private static final Map<ResourceLocation, HeadShape> HEAD_SHAPES = Map.ofEntries(
+            Map.entry(EntityType.getKey(EntityType.BEE), HeadShape.showing("body")),
+            Map.entry(EntityType.getKey(EntityType.CHICKEN), new HeadShape("head1", "head", true, 0F)),
+            Map.entry(EntityType.getKey(EntityType.ENDERMAN), new HeadShape(null, null, false, -0.5F / 16F)),
+            Map.entry(EntityType.getKey(EntityType.GHAST), HeadShape.showing("root/body")),
+            Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), HeadShape.showing("root")),
+            Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), HeadShape.showing("root/cube0")),
+            Map.entry(EntityType.getKey(EntityType.SLIME), new HeadShape("root/right_eye", "root", true, 0F)),
+            Map.entry(EntityType.getKey(EntityType.SNOW_GOLEM), new HeadShape(null, null, true, 0.06F)),
+            Map.entry(EntityType.getKey(EntityType.SQUID), HeadShape.showing("root")),
+            Map.entry(ResourceLocation.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "naga"), HeadShape.showing("#0")),
+            Map.entry(ResourceLocation.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "ur_ghast"), HeadShape.showing("root/body")));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
@@ -79,7 +76,8 @@ public final class SkullEyeState {
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */
     public static final String HEADS_NAMESPACE = "heads";
-    public static final ResourceLocation HYDRA_TROPHY_LAYOUT = ResourceLocation.fromNamespaceAndPath("twilightforest", "hydra_trophy");
+    /** Hydra eyes use the trophy model because the mob's heads are separate renderers. */
+    public static final ResourceLocation HYDRA_TROPHY_LAYOUT = ResourceLocation.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "hydra_trophy");
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -87,36 +85,54 @@ public final class SkullEyeState {
             SkullBlock.Types.SKELETON, EntityType.SKELETON,
             SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
             SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
-
+    /** The path segment that sets a wall-mounted head's block id apart from its floor block's. */
+    private static final String WALL_SEGMENT = "_wall_";
+    /** Supplementaries' spider head, drawn by a modded model. */
     public static final ResourceLocation SUPPLEMENTARIES_SPIDER_HEAD =
             ResourceLocation.fromNamespaceAndPath("supplementaries", "spider_head");
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Set<String> HEAD_DIAGNOSTICS = ConcurrentHashMap.newKeySet();
-
-    public static boolean isTracedHead(Block block) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
-        String path = id.getPath();
-        return SUPPLEMENTARIES_SPIDER_HEAD.equals(id) || (HEADS_NAMESPACE.equals(id.getNamespace())
-                && (path.contains("enderman") || path.contains("spider") || path.contains("snow_golem")));
+    private SkullEyeState() {
     }
 
-    public static void traceHead(Block block, String stage, String details) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
-        if (HEAD_DIAGNOSTICS.add(id + "/" + stage + "/" + details)) {
-            LOGGER.info("[heads-eyes] {} {}: {}", stage, id, details);
+    /**
+     * How a head of one mob relates to that mob's eye layout.
+     *
+     * @param eyePart    the attachment token of the part the head reproduces, or {@code null} for parts named
+     *                   {@value EyeConfigModel#PART_HEAD}
+     * @param cubePart   the part whose cubes stand for the eye part when fitting a modded head, where it shares its
+     *                   pivot with a larger one (the chicken's beak, beside its head), or {@code null} for the eye
+     *                   part itself
+     * @param fitted     whether a modded head carries the eyes through a fitted placement; false where its face uses
+     *                   the mob layout's head-local coordinates
+     * @param faceOffset the distance a modded head moves its eyes along the model's Z axis, to clear its face
+     */
+    public record HeadShape(@Nullable String eyePart, @Nullable String cubePart, boolean fitted, float faceOffset) {
+
+        static final HeadShape DEFAULT = new HeadShape(null, null, true, 0F);
+
+        private static HeadShape showing(String eyePart) {
+            return new HeadShape(eyePart, null, true, 0F);
         }
     }
 
-    public static String describeHeadConfig(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
-        return "entity=" + entity + ", usable=" + RuntimeConfig.isUsable(config)
-                + ", eligible=" + canHaveEyes(entity, config)
-                + ", variants=" + (config == null ? "missing" : config.variants.stream()
-                .map(variant -> variant.weight + ":" + variant.heads.stream().map(head -> head.attachPoint).toList())
-                .toList());
-    }
+    /**
+     * Each head block's mob, built on first use, after every block is registered. Never changed afterward, so
+     * the server and render threads can both read it.
+     */
+    private static final class HeadBlocks {
 
-    private SkullEyeState() {
+        static final Map<Block, ResourceLocation> ENTITIES = build();
+
+        private static Map<Block, ResourceLocation> build() {
+            Map<Block, ResourceLocation> entities = new IdentityHashMap<>();
+            for (Block block : BuiltInRegistries.BLOCK) {
+                ResourceLocation entity = headEntity(block);
+                if (entity != null) {
+                    entities.put(block, entity);
+                }
+            }
+            return entities;
+        }
     }
 
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
@@ -128,14 +144,22 @@ public final class SkullEyeState {
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
+
+        /** Save the compound into {@code tag} while the head has eyes; a head without them saves nothing. */
+        default void somegoogly$saveEyes(CompoundTag tag) {
+            CompoundTag data = somegoogly$find();
+            if (data != null && data.getBoolean(EyeState.HAS_EYES)) {
+                tag.put(DATA_KEY, data.copy());
+            }
+        }
     }
 
     /**
      * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
      * has a weighted variant with eyes the head shows.
      */
-    public static boolean canHaveEyes(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
-        if (entity == null || !RuntimeConfig.isUsable(config)) {
+    public static boolean canHaveEyes(ResourceLocation entity, @Nullable RuntimeConfig config) {
+        if (!RuntimeConfig.isUsable(config)) {
             return false;
         }
         for (Variant variant : config.variants) {
@@ -146,7 +170,11 @@ public final class SkullEyeState {
         return false;
     }
 
-    /** Copy an eyed head block's snapshot onto its generated head items. */
+    /**
+     * Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
+     * {@code HeadEyesLootModifier}s call this; Fabric's counterpart is the {@code copy_components} function its
+     * loot-table event adds.
+     */
     public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
         BlockEntity skull = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
         if (skull instanceof Holder) {
@@ -161,14 +189,31 @@ public final class SkullEyeState {
         }
     }
 
+    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    @Nullable
+    public static CompoundTag data(@Nullable BlockEntity skull) {
+        return skull instanceof Holder holder ? holder.somegoogly$find() : null;
+    }
+
+    /**
+     * The eye-state compound of a head loading from {@code tag}, or {@code null} if it holds none. Only the state
+     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
+     * saved and sent to everyone near the head.
+     */
+    @Nullable
+    public static CompoundTag loadedData(CompoundTag tag) {
+        if (!tag.contains(DATA_KEY, Tag.TAG_COMPOUND)) {
+            return null;
+        }
+        CompoundTag data = new CompoundTag();
+        Snapshot.read(tag.getCompound(DATA_KEY)).write(data);
+        return data;
+    }
+
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
     @Nullable
     public static ResourceLocation entityFor(Block block) {
-        if (block instanceof AbstractSkullBlock skull) {
-            EntityType<?> type = MOBS.get(skull.getType());
-            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
-        }
-        return entityFor(BuiltInRegistries.BLOCK.getKey(block));
+        return HeadBlocks.ENTITIES.get(block);
     }
 
     /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
@@ -189,16 +234,16 @@ public final class SkullEyeState {
         if (!blockId.getNamespace().equals(HEADS_NAMESPACE)) {
             return twilightHead(blockId);
         }
-        EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace("_wall_", "_"));
+        EntityType<?> type = HEADS_MOBS.get(blockId.getPath().replace(WALL_SEGMENT, "_"));
         return type == null ? null : EntityType.getKey(type);
     }
 
     @Nullable
     private static ResourceLocation twilightHead(ResourceLocation id) {
-        if (!id.getNamespace().equals("twilightforest")) {
+        if (!id.getNamespace().equals(TWILIGHT_NAMESPACE)) {
             return null;
         }
-        String path = id.getPath().replace("_wall_", "_");
+        String path = id.getPath().replace(WALL_SEGMENT, "_");
         return switch (path) {
             case "skeleton_skull_candle" -> EntityType.getKey(EntityType.SKELETON);
             case "wither_skeleton_skull_candle" -> EntityType.getKey(EntityType.WITHER_SKELETON);
@@ -216,14 +261,23 @@ public final class SkullEyeState {
 
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data != null && data.getBoolean(EyeState.HAS_EYES);
+    }
+
+    @Nullable
+    private static ResourceLocation headEntity(Block block) {
+        if (block instanceof AbstractSkullBlock skull) {
+            EntityType<?> type = MOBS.get(skull.getType());
+            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
+        }
+        return entityFor(BuiltInRegistries.BLOCK.getKey(block));
     }
 
     /**
      * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
      * order: those attached to the part the head reproduces, by default the model's head part (an attachment
-     * token whose last segment is {@value #HEAD_PART}).
+     * token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(ResourceLocation entity, HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -267,7 +321,6 @@ public final class SkullEyeState {
         mobs.put("fox_head", EntityType.FOX);
         mobs.put("fox_snow_head", EntityType.FOX);
         mobs.put("ghast_head", EntityType.GHAST);
-        mobs.put("glow_squid_head", EntityType.GLOW_SQUID);
         mobs.put("goat_head", EntityType.GOAT);
         mobs.put("hoglin_head", EntityType.HOGLIN);
         mobs.put("horse_skeleton_head", EntityType.SKELETON_HORSE);
@@ -275,7 +328,6 @@ public final class SkullEyeState {
         mobs.put("husk_head", EntityType.HUSK);
         mobs.put("illusioner_head", EntityType.ILLUSIONER);
         mobs.put("iron_golem_head", EntityType.IRON_GOLEM);
-        mobs.put("magma_cube_head", EntityType.MAGMA_CUBE);
         mobs.put("mule_head", EntityType.MULE);
         mobs.put("ocelot_head", EntityType.OCELOT);
         mobs.put("pig_head", EntityType.PIG);
@@ -286,10 +338,8 @@ public final class SkullEyeState {
         mobs.put("salmon_head", EntityType.SALMON);
         mobs.put("sheep_head", EntityType.SHEEP);
         mobs.put("sheep_shaven_head", EntityType.SHEEP);
-        mobs.put("slime_head", EntityType.SLIME);
         mobs.put("snow_golem_head", EntityType.SNOW_GOLEM);
         mobs.put("spider_head", EntityType.SPIDER);
-        mobs.put("squid_head", EntityType.SQUID);
         mobs.put("stray_head", EntityType.STRAY);
         mobs.put("turtle_head", EntityType.TURTLE);
         mobs.put("villager_head", EntityType.VILLAGER);
@@ -300,17 +350,24 @@ public final class SkullEyeState {
         mobs.put("zoglin_head", EntityType.ZOGLIN);
         mobs.put("zombie_villager_head", EntityType.ZOMBIE_VILLAGER);
         mobs.put("zombified_piglin_skull", EntityType.ZOMBIFIED_PIGLIN);
+        mobs.put("squid_head", EntityType.SQUID);
+        mobs.put("glow_squid_head", EntityType.GLOW_SQUID);
+        mobs.put("slime_head", EntityType.SLIME);
+        mobs.put("magma_cube_head", EntityType.MAGMA_CUBE);
         return Map.copyOf(mobs);
     }
 
     /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
-    private static boolean isShownPart(ResourceLocation entity, @Nullable String token) {
-        if (token == null) {
-            return false;
-        }
-        String partToken = HEAD_PART_TOKENS.get(entity);
-        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART)
+    private static boolean isShownPart(ResourceLocation entity, String token) {
+        String partToken = shape(entity).eyePart();
+        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
+    }
+
+    /** Whether a head item's eye state has eyes; safe on any item. */
+    public static boolean itemHasEyes(ItemStack stack) {
+        Snapshot snapshot = stack.get(ModContent.HEAD_EYES.get());
+        return snapshot != null && snapshot.hasEyes();
     }
 
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
@@ -334,6 +391,11 @@ public final class SkullEyeState {
         }
     }
 
+    /** How a head of {@code entity}'s kind relates to that mob's eye layout. */
+    public static HeadShape shape(ResourceLocation entity) {
+        return HEAD_SHAPES.getOrDefault(entity, HeadShape.DEFAULT);
+    }
+
     /** Whether {@code variant} of {@code entity}'s definition has eyes a head of that mob shows. */
     private static boolean showsOnHead(ResourceLocation entity, Variant variant) {
         for (HeadConfig head : variant.heads) {
@@ -346,7 +408,7 @@ public final class SkullEyeState {
 
     /** The placed head's eye state; {@link Snapshot#NONE} when it has never had any. */
     public static Snapshot snapshot(@Nullable BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 

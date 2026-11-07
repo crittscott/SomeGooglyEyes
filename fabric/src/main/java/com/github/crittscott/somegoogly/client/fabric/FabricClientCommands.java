@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.client.fabric;
 
-import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -22,10 +22,7 @@ public final class FabricClientCommands {
 
         // Fabric executes a matching client root before consulting the server. Explicit parse
         // failures forward the disjoint world-mutation branches to the server dispatcher.
-        addServerPath(dispatcher, "admin");
-        addServerPath(dispatcher, "spawn");
-        addServerPath(dispatcher, "spawnall");
-        addServerPath(dispatcher, "mob");
+        GooglyServerCommands.SERVER_BRANCHES.forEach(branch -> addServerPath(dispatcher, branch));
     }
 
     private static void addServerPath(

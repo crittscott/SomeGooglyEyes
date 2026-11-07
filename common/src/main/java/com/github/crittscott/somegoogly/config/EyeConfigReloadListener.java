@@ -104,6 +104,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                 }
                 RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
                 if (!config.hasAnyConfig()) {
+                    SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
                     rejected++;
                     continue;
                 }
@@ -123,18 +124,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         for (Map.Entry<Fallback, Integer> fallback : fallbacks.entrySet()) {
             Fallback key = fallback.getKey();
             fallbackTotal += fallback.getValue();
-            if (key.downgrade()) {
-                SomeGooglyCommon.LOGGER.warn(
-                        "{} eye configs for '{}' have no entry for installed version {}; using their oldest entry"
-                                + " (version {}); expected after a mod downgrade.",
-                        fallback.getValue(), key.namespace(), key.installed(), key.used());
-            } else {
-                SomeGooglyCommon.LOGGER.warn(
-                        "{} eye configs for '{}' have no entry for installed version {}; using their newest entry"
-                                + " (version {}). Placement may be slightly off until they are re-exported for the"
-                                + " installed version; expected for bundled optional-mod definitions.",
-                        fallback.getValue(), key.namespace(), key.installed(), key.used());
-            }
+            SomeGooglyCommon.LOGGER.info(
+                    "{} eye configs for '{}' have no entry for installed version {}; using entry version {}."
+                            + " Placement may be off.",
+                    fallback.getValue(), key.namespace(), key.installed(), key.used());
         }
         EyeConfigLimits.Issue aggregateError = EyeConfigLimits.validateSync(selected);
         if (aggregateError != null) {
@@ -151,14 +144,15 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                     wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES);
             return;
         }
-        if (!ServerEyeConfigs.replaceIfChanged(selected, encoded)) {
-            SomeGooglyCommon.LOGGER.info("Eye config reload produced no change");
-            return;
-        }
+        boolean changed = ServerEyeConfigs.replaceIfChanged(selected, encoded);
         SomeGooglyCommon.LOGGER.info(
-                "Loaded {} selected eye configs from {} files ({} skipped: mod not installed, {} failed to parse,"
-                        + " {} rejected: no usable entry or unsafe; {} using another version's entry)",
-                selected.size(), files.size(), skippedModNotInstalled, failedParse, rejected, fallbackTotal);
+                "Eye config reload {}: {} selected eye configs from {} files ({} skipped: mod not installed,"
+                        + " {} failed to parse, {} rejected: no usable entry or unsafe; {} using another version's entry)",
+                changed ? "applied" : "unchanged", selected.size(), files.size(), skippedModNotInstalled, failedParse,
+                rejected, fallbackTotal);
+        if (selected.isEmpty()) {
+            SomeGooglyCommon.LOGGER.warn("No eye configs are loaded, so no entity can have googly eyes");
+        }
     }
 
     private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
@@ -170,7 +164,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     }
 
     /** One namespace's version fallback during a reload; reloads count files per fallback and log each once. */
-    private record Fallback(String namespace, String installed, String used, boolean downgrade) {
+    private record Fallback(String namespace, String installed, String used) {
     }
 
     private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded,
@@ -203,8 +197,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         if (nearest == null) {
             return set; // nothing usable declared anywhere; nothing to fall back to
         }
-        boolean downgrade = !VersionRangeMatcher.isEntirelyBelow(nearest, loaded);
-        fallbacks.merge(new Fallback(entityId.getNamespace(), loaded, nearest, downgrade), 1, Integer::sum);
+        fallbacks.merge(new Fallback(entityId.getNamespace(), loaded, nearest), 1, Integer::sum);
         // Same-version entries fall back as one generation, so adult/baby pairs stay together.
         return select(entityId, validEntries, entry -> nearest.equals(entry.version));
     }
@@ -240,8 +233,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
 
     /**
      * Filter an entry's {@code variants} down to the usable ones (those with at least one head).
-     * Variants are the only placement shape on disk; a config left with none is not
-     * {@link RuntimeConfig#isUsable}.
+     * A config left with none is not {@link RuntimeConfig#isUsable}.
      */
     private static List<Variant> usableVariants(VersionedEntry entry) {
         List<Variant> result = new ArrayList<>();

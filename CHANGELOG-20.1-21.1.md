@@ -16,4 +16,11 @@
 - Architectury API is no longer a runtime dependency on any loader.
 
 ### Fixed
+- Eyes on heads, frames, boats, and mobs fall toward world down wherever the camera points, and eyes coming back into view are already settled.
+- The shears-kill Googly Eye honors the `doMobLoot` game rule, and shearing an eyed armor stand on NeoForge or Forge takes its eyes instead of handing it the shears.
+- Optometrist shears can't take eyes from a player protected from PvP, and spectators can't use eye items on heads or shear themselves.
+- Lightning conversions keep eyes on Fabric, and players' eyes react to hits on Fabric.
+- Healing at full health no longer swirls eyes, and using eye items counts in statistics.
+- A settings change no longer restarts eye motion on connected clients.
+- The Slimy Eye recipe unlocks by picking up a Googly Eye.
 - Googly Eyes and Slimy Eyes loaded from 1.20.1 worlds now convert their retained `EyeProperties` custom data into the 1.21.1 appearance component, preserving iris color, cornea color, and explicit glow state across inventories and containers.

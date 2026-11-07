@@ -7,7 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /** Loader-neutral registration boundary for the mod's four content registries. */
@@ -31,19 +30,13 @@ public interface ContentRegistrar {
     final class Handle<T> implements Supplier<T> {
         private Supplier<? extends T> delegate;
 
-        /** Bind this handle to the loader's supplier; a handle binds only once. */
+        /** Bind this handle to the loader's supplier. */
         public void bind(Supplier<? extends T> supplier) {
-            if (delegate != null) {
-                throw new IllegalStateException("Registry handle is already bound");
-            }
-            delegate = Objects.requireNonNull(supplier, "supplier");
+            delegate = supplier;
         }
 
         @Override
         public T get() {
-            if (delegate == null) {
-                throw new IllegalStateException("Registry handle has not been bound");
-            }
             return delegate.get();
         }
     }

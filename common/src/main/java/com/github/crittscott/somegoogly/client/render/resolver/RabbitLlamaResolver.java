@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LlamaModel;
@@ -43,7 +44,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
         Consumer<PoseStack> headWrap = rabbitHeadWrap(rabbit);
         Consumer<PoseStack> bodyWrap = rabbitBodyWrap(rabbit);
         return List.of(
-                new NamedRoot("head", rabbit.head, headWrap),
+                new NamedRoot(EyeConfigModel.PART_HEAD, rabbit.head, headWrap),
                 new NamedRoot("rightEar", rabbit.rightEar, headWrap),
                 new NamedRoot("leftEar", rabbit.leftEar, headWrap),
                 new NamedRoot("nose", rabbit.nose, headWrap),
@@ -51,7 +52,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
                 new NamedRoot("rightRearFoot", rabbit.rightRearFoot, bodyWrap),
                 new NamedRoot("leftHaunch", rabbit.leftHaunch, bodyWrap),
                 new NamedRoot("rightHaunch", rabbit.rightHaunch, bodyWrap),
-                new NamedRoot("body", rabbit.body, bodyWrap),
+                new NamedRoot(EyeConfigModel.PART_BODY, rabbit.body, bodyWrap),
                 new NamedRoot("leftFrontLeg", rabbit.leftFrontLeg, bodyWrap),
                 new NamedRoot("rightFrontLeg", rabbit.rightFrontLeg, bodyWrap),
                 new NamedRoot("tail", rabbit.tail, bodyWrap)
@@ -62,7 +63,7 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
      * {@code head}, {@code rightEar}, {@code leftEar}, {@code nose}: {@code RabbitModel.renderToBuffer}'s
      * head-group wrap when young, its separate (but equally outside-the-tree) adult wrap otherwise.
      * {@code young} is re-checked on every call rather than baked in when this closure is built, because
-     * {@link AttachmentCache#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
+     * {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
      * instance renders both baby and adult rabbits.
      */
     private static Consumer<PoseStack> rabbitHeadWrap(RabbitModel<?> rabbit) {
@@ -95,12 +96,12 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
     }
 
     private static List<NamedRoot> llamaRoots(LlamaModel<?> llama) {
-        Consumer<PoseStack> headWrap = llamaYoungWrap(llama, 0.71428573F, 0.64935064F, 0.7936508F, 1.3125F, 0.22F);
-        Consumer<PoseStack> bodyWrap = llamaYoungWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 2.0625F, 0.0F);
-        Consumer<PoseStack> legsChestWrap = llamaYoungWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 2.0625F, 0.0F);
+        Consumer<PoseStack> headWrap = youngWrap(llama, 0.71428573F, 0.64935064F, 0.7936508F, 0.0F, 1.3125F, 0.22F);
+        Consumer<PoseStack> bodyWrap = youngWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
+        Consumer<PoseStack> legsChestWrap = youngWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
         return List.of(
-                new NamedRoot("head", llama.head, headWrap),
-                new NamedRoot("body", llama.body, bodyWrap),
+                new NamedRoot(EyeConfigModel.PART_HEAD, llama.head, headWrap),
+                new NamedRoot(EyeConfigModel.PART_BODY, llama.body, bodyWrap),
                 new NamedRoot("rightHindLeg", llama.rightHindLeg, legsChestWrap),
                 new NamedRoot("leftHindLeg", llama.leftHindLeg, legsChestWrap),
                 new NamedRoot("rightFrontLeg", llama.rightFrontLeg, legsChestWrap),
@@ -108,21 +109,5 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
                 new NamedRoot("rightChest", llama.rightChest, legsChestWrap),
                 new NamedRoot("leftChest", llama.leftChest, legsChestWrap)
         );
-    }
-
-    /**
-     * One of {@code LlamaModel.renderToBuffer}'s three independent young-only wraps (head; body; legs +
-     * chest) — a no-op on an adult, whose render has no wrap at all. {@code young} is re-checked on every
-     * call for the same reason as {@link #rabbitHeadWrap}.
-     */
-    private static Consumer<PoseStack> llamaYoungWrap(LlamaModel<?> llama, float sx, float sy, float sz,
-                                                        float yOffset, float zOffset) {
-        return poseStack -> {
-            if (!llama.young) {
-                return;
-            }
-            poseStack.scale(sx, sy, sz);
-            poseStack.translate(0.0F, yOffset, zOffset);
-        };
     }
 }

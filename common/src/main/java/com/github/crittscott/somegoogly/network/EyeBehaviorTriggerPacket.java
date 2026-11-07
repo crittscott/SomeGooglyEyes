@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Server → client: "play behavior {@code behaviorId} on entity {@code entityId} for {@code duration}
+ * Server → client: "play {@code behavior} on entity {@code entityId} for {@code duration}
  * ticks, seeded with {@code seed}." Sent to a mob's trackers when the server scheduler starts a behavior
  * (and to a newly-tracking player mid-effect, with the full duration and the ticks already {@code elapsed}),
  * so every viewer animates the
@@ -19,74 +19,33 @@ import net.minecraft.resources.ResourceLocation;
  * <p>The client retains the latest trigger for a known entity independently of its render tracker and
  * derives its current age from elapsed simulation time, including when the tracker is rebuilt.
  */
-public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
+public record EyeBehaviorTriggerPacket(int entityId, EyeBehavior behavior, int duration, long seed, int elapsed)
+        implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE =
-            new CustomPacketPayload.Type<>(NetworkHandler.EYE_BEHAVIOR);
+    public static final ResourceLocation ID = NetworkProtocol.id("eye_behavior");
+    public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeBehaviorTriggerPacket::write, EyeBehaviorTriggerPacket::new);
+            StreamCodec.ofMember(EyeBehaviorTriggerPacket::write, EyeBehaviorTriggerPacket::read);
 
     private static final int MAX_DURATION_TICKS = 1_200;
 
-    private final ResourceLocation behaviorId;
-    private final int duration;
-    private final int elapsed;
-    private final int entityId;
-    private final long seed;
-
-    public EyeBehaviorTriggerPacket(int entityId, ResourceLocation behaviorId, int duration, long seed, int elapsed) {
-        this.entityId = entityId;
-        this.behaviorId = behaviorId;
-        this.duration = duration;
-        this.seed = seed;
-        this.elapsed = elapsed;
-    }
-
-    private EyeBehaviorTriggerPacket(FriendlyByteBuf buffer) {
-        this.entityId = buffer.readInt();
-        this.behaviorId = buffer.readResourceLocation();
-        this.duration = buffer.readVarInt();
-        this.seed = buffer.readLong();
-        this.elapsed = buffer.readVarInt();
+    private static EyeBehaviorTriggerPacket read(FriendlyByteBuf buffer) {
+        int entityId = buffer.readVarInt();
+        EyeBehavior behavior = EyeBehavior.byWireId(buffer.readVarInt());
+        if (behavior == null) {
+            throw new DecoderException("Unknown eye behavior");
+        }
+        int duration = buffer.readVarInt();
+        long seed = buffer.readLong();
+        int elapsed = buffer.readVarInt();
         if (!validTiming(duration, elapsed)) {
             throw new DecoderException("Invalid eye behavior timing");
         }
+        return new EyeBehaviorTriggerPacket(entityId, behavior, duration, seed, elapsed);
     }
 
-    private void write(FriendlyByteBuf buffer) {
-        if (!validTiming(duration, elapsed)) {
-            throw new EncoderException("Invalid eye behavior timing");
-        }
-        buffer.writeInt(entityId);
-        buffer.writeResourceLocation(behaviorId);
-        buffer.writeVarInt(duration);
-        buffer.writeLong(seed);
-        buffer.writeVarInt(elapsed);
-    }
-
-    /** The behavior to play. */
-    public ResourceLocation behaviorId() {
-        return behaviorId;
-    }
-
-    /** The behavior's total length in ticks. */
-    public int duration() {
-        return duration;
-    }
-
-    /** Ticks already played before this viewer started tracking; {@code 0} for a fresh start. */
-    public int elapsed() {
-        return elapsed;
-    }
-
-    /** The network id of the entity to play on. */
-    public int entityId() {
-        return entityId;
-    }
-
-    /** The seed that makes the behavior's randomness identical on every viewer. */
-    public long seed() {
-        return seed;
+    private static boolean validTiming(int duration, int elapsed) {
+        return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
     }
 
     @Override
@@ -94,7 +53,11 @@ public class EyeBehaviorTriggerPacket implements CustomPacketPayload {
         return TYPE;
     }
 
-    private static boolean validTiming(int duration, int elapsed) {
-        return duration > 0 && duration <= MAX_DURATION_TICKS && elapsed >= 0 && elapsed <= duration;
+    private void write(FriendlyByteBuf buffer) {
+        buffer.writeVarInt(entityId);
+        buffer.writeVarInt(behavior.wireId());
+        buffer.writeVarInt(duration);
+        buffer.writeLong(seed);
+        buffer.writeVarInt(elapsed);
     }
 }

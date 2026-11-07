@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
@@ -69,25 +70,8 @@ public class TwilightForestResolver extends ModelPartTreeResolver {
         }
 
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, "head", ageable.headParts(), headWrap);
-        index(roots, "body", ageable.bodyParts(), bodyWrap);
+        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), headWrap);
+        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), bodyWrap);
         return roots;
-    }
-
-    /**
-     * A young-gated uniform-axis scale followed by a translate. {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link AttachmentCache#ATTACHMENTS} caches the
-     * resolved chain per (model, token) and the same model instance renders every baby and adult of its
-     * type.
-     */
-    private static Consumer<PoseStack> youngWrap(AgeableListModel<?> ageable, float sx, float sy, float sz,
-                                                   float tx, float ty, float tz) {
-        return poseStack -> {
-            if (!ageable.young) {
-                return;
-            }
-            poseStack.scale(sx, sy, sz);
-            poseStack.translate(tx, ty, tz);
-        };
     }
 }

@@ -1,17 +1,17 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 
 /**
  * Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
@@ -22,6 +22,8 @@ public final class ClientRenderLayers {
     private static final Set<EntityRenderer<?>> INSTALLED =
             Collections.newSetFromMap(new WeakHashMap<>());
 
+    private static boolean loggedFirstInstall;
+
     private ClientRenderLayers() {
     }
 
@@ -29,6 +31,10 @@ public final class ClientRenderLayers {
     private static void addLiving(LivingEntityRenderer renderer) {
         if (!INSTALLED.add(renderer)) {
             return;
+        }
+        if (!loggedFirstInstall) {
+            loggedFirstInstall = true;
+            SomeGooglyCommon.LOGGER.info("Installing googly-eye layers on entity renderers");
         }
         LayerGooglyEyes eyes = new LayerGooglyEyes<>(renderer);
         List<RenderLayer> layers = renderer.layers;

@@ -27,12 +27,12 @@ public class EyeDraft {
     public float[] irisColors;
     public boolean glows;
     /**
-     * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, {@code -1} =
-     * none) — authoring space, matching what {@code /sg list eyes} shows. It's resolved to the on-disk
+     * Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, or
+     * {@link EyePlacement#NO_CROSS_TARGET}) — authoring space, matching what {@code /sg list eyes} shows. It's resolved to the on-disk
      * <i>within-head</i> index only at export ({@link com.github.crittscott.somegoogly.client.picker.PickerState}),
      * so this stays valid as eyes move between heads while authoring.
      */
-    public int crossTarget = -1;
+    public int crossTarget = EyePlacement.NO_CROSS_TARGET;
 
     public EyeDraft() {
         loadDefinition(EyeDefinition.DEFAULT);

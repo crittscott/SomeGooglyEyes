@@ -64,7 +64,7 @@ public final class Resolvers {
         return FALLBACK;
     }
 
-    /** @return a specialized resolver for the model, or the child-map fallback. */
+    /** @return the specialized resolver for this model, or the child-map fallback. */
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
     }

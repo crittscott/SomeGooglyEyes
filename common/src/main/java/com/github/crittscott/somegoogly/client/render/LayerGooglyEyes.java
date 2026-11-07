@@ -1,11 +1,10 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,8 +15,6 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Sheep;
-
-import java.util.List;
 
 /**
  * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It draws from the {@link EyeRenderData}
@@ -33,16 +30,11 @@ import java.util.List;
  * per-bone callback.
  */
 public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    /** Attachment part whose eyes sit on a sheep's wool. */
-    private static final String SHEEP_BODY_PART = "body";
     /** Thickness of the adult sheep's wool beyond its body, in blocks (1.75 model pixels). */
     private static final float SHEEP_WOOL_DEPTH = 1.75F / 16.0F;
 
-    private final ModelGooglyEye modelGooglyEye;
-
     public LayerGooglyEyes(RenderLayerParent<T, M> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override
@@ -82,14 +74,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
             // Move into this head's animated space, by the configured string part name.
             if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex))) {
                 insetShearedSheepBody(poseStack, living, helper.getAttachToken(headIndex));
-                int eyeCount = helper.getEyeCount(headIndex);
-                for (int eyeIndex = 0; eyeIndex < eyeCount; eyeIndex++) {
-                    if (helper.getEyeScale(headIndex, eyeIndex) > 0F) {
-                        GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                                tracker.eyes[headIndex][eyeIndex], helper, overrides, headIndex, eyeIndex,
-                                partialTicks);
-                    }
-                }
+                GooglyEyeRenderer.renderHead(poseStack, bufferSource, packedLight, overlay,
+                        tracker.eyes[headIndex], helper, overrides, headIndex, partialTicks);
             }
             poseStack.popPose();
         }
@@ -102,39 +88,27 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
      */
     private static void insetShearedSheepBody(PoseStack poseStack, LivingEntity living, String part) {
         if (living instanceof Sheep sheep && sheep.isSheared() && !sheep.isBaby()
-                && SHEEP_BODY_PART.equals(part)) {
+                && EyeConfigModel.PART_BODY.equals(part)) {
             poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
         }
     }
 
     private void renderPreview(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
                                M model, EyeAttachmentResolver resolver) {
-        // Saved eyes of the variant being edited. The selected one is skipped — shown live as the current eye.
-        List<PickerState.ListedEye> eyes = PickerState.currentEyes();
-        for (int i = 0; i < eyes.size(); i++) {
-            PickerState.ListedEye listed = eyes.get(i);
-            if (i == PickerState.selectedIndex() || listed.part == null) {
-                continue;
-            }
+        for (PickerState.ListedEye listed : PickerState.previewEyes()) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
-                GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, overlay,
-                        listed.eye);
+                GooglyEyeRenderer.renderPreviewEye(poseStack, bufferSource, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
         }
 
-        // Gizmo on the active placement part, plus the live draft eye — but only when one is being
-        // shaped. With no draft (the empty state) the mob shows just its saved eyes, or nothing at all.
+        // With no active part (the empty state) the mob shows just its saved eyes, or nothing at all.
         String token = PickerState.currentPart();
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
-                Gizmo.draw(poseStack, bufferSource);
-                if (PickerState.currentEye() != null) {
-                    GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight,
-                            overlay, PickerState.currentEye());
-                }
+                GooglyEyeRenderer.renderPreviewPlacement(poseStack, bufferSource, packedLight, overlay);
             }
             poseStack.popPose();
         }

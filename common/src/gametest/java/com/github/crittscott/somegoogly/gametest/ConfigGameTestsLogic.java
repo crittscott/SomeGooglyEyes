@@ -21,7 +21,7 @@ import java.util.Map;
  * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), the reload
  * listener's exact Minecraft-version selection, and the pure {@link ServerConfig#percentFor} resolution.
  * Tests that mutate shared state (config values via their public {@code set}, the loaded eye configs
- * via {@code replaceAll}) restore the originals in a {@code finally} so later tests aren't affected.
+ * via {@link TestEyeConfigs}) restore the originals in a {@code finally} so later tests aren't affected.
  */
 public final class ConfigGameTestsLogic {
 
@@ -150,7 +150,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
                     "the baby entry of the exact generation must be selected with it");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -228,7 +228,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
                     "other entities in the same batch still load");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -260,7 +260,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(s != null && s.variants.get(0).weight == 3.0,
                     "an invalid age is ignored while its file's valid entries still load");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -279,7 +279,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
                     "an entry that matches no loaded version falls back to its nearest generation");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -309,7 +309,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
                     "server stop clears the installed set, so the next reload installs anew");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }

@@ -9,9 +9,12 @@ import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -22,9 +25,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Map;
-import javax.annotation.Nullable;
-
 /**
  * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
  * service is called on that service directly (behavior ticks, tracking, and reactions go to
@@ -33,16 +33,17 @@ import javax.annotation.Nullable;
 public final class ServerServices {
 
     @Nullable
-    private static Boolean loggedGooglyEyesEnabled;
+    private static String loggedConfig;
 
     /**
-     * The definitions connected clients last received, with the master switch and behavior settings below, or
-     * {@code null} before the first send since server start. Read and written on the server thread only.
+     * The definitions connected clients last received, or {@code null} before the first send since server
+     * start. Read and written on the server thread only.
      */
     @Nullable
     private static Map<ResourceLocation, RuntimeConfigSet> sentEyeConfigs;
-    private static BehaviorSettings sentBehaviors = BehaviorSettings.DEFAULTS;
-    private static boolean sentGooglyEyesEnabled;
+    /** The settings connected clients last received, on the same terms as {@link #sentEyeConfigs}. */
+    @Nullable
+    private static EyeSettingsPacket sentSettings;
 
     private ServerServices() {
     }
@@ -62,26 +63,24 @@ public final class ServerServices {
     }
 
     /**
-     * Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
-     * when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
-     * apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.
+     * Send every player the eye definitions and the settings, each only when it differs from what clients last
+     * received. Runs once after each datapack reload and each server-config apply, on the server thread. New
+     * definitions restart client eye motion, because trackers are built from them; new settings don't.
      */
-    public static void broadcastEyeConfigsIfChanged(MinecraftServer server) {
-        if (sentEyeConfigs == ServerEyeConfigs.all()
-                && sentGooglyEyesEnabled == ServerConfig.GOOGLY_EYES_ENABLED.get()
-                && sentBehaviors.equals(BehaviorSettings.fromConfig())) {
-            return;
+    public static void broadcastEyeSyncIfChanged(MinecraftServer server) {
+        if (sentEyeConfigs != ServerEyeConfigs.all()) {
+            sentEyeConfigs = ServerEyeConfigs.all();
+            Networking.sendToAll(server, eyeConfigPacket());
         }
-        recordSentEyeConfigs();
-        EyeConfigSyncPacket packet = eyeConfigPacket();
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            Networking.sendToPlayer(player, packet);
+        EyeSettingsPacket settings = settingsPacket();
+        if (!settings.equals(sentSettings)) {
+            sentSettings = settings;
+            Networking.sendToAll(server, settings);
         }
     }
 
     private static EyeConfigSyncPacket eyeConfigPacket() {
-        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded(),
-                ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
+        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded());
     }
 
     /**
@@ -108,12 +107,14 @@ public final class ServerServices {
         PickerGate.onPlayerLeft(player.getUUID());
     }
 
-    /** Record the applied world switch once at startup and whenever its effective value changes. */
+    /** Record the settings that decide who gets eyes, once at startup and whenever they change. */
     public static void onServerConfigApplied() {
-        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        if (loggedGooglyEyesEnabled == null || loggedGooglyEyesEnabled != enabled) {
-            SomeGooglyCommon.LOGGER.info("Server configuration applied (googlyEyesEnabled={})", enabled);
-            loggedGooglyEyesEnabled = enabled;
+        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d".formatted(
+                ServerConfig.GOOGLY_EYES_ENABLED.get(), ServerConfig.GLOBAL_PERCENT.get(),
+                ServerConfig.ENTITY_OVERRIDES.parsed().size());
+        if (!applied.equals(loggedConfig)) {
+            SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);
+            loggedConfig = applied;
         }
     }
 
@@ -123,8 +124,9 @@ public final class ServerServices {
         PickerFreezeService.onServerStopping(server);
         PickerGate.onServerStopping();
         ServerEyeConfigs.onServerStopping();
-        loggedGooglyEyesEnabled = null;
+        loggedConfig = null;
         sentEyeConfigs = null;
+        sentSettings = null;
     }
 
     /**
@@ -140,18 +142,26 @@ public final class ServerServices {
         }
     }
 
-    private static void recordSentEyeConfigs() {
-        sentEyeConfigs = ServerEyeConfigs.all();
-        sentGooglyEyesEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-        sentBehaviors = BehaviorSettings.fromConfig();
+    /** A player stopped tracking {@code entity}; only living entities are scheduled. */
+    public static void onStopTracking(Entity entity) {
+        if (entity instanceof LivingEntity living) {
+            ServerBehaviorScheduler.onStopTracking(living);
+        }
     }
 
-    /** Send the current resolved eye definitions, master switch, and behavior settings to a joining player. */
-    public static void syncEyeConfigs(ServerPlayer player) {
+    private static EyeSettingsPacket settingsPacket() {
+        return new EyeSettingsPacket(ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
+    }
+
+    /** Send a joining player the current resolved eye definitions and settings. */
+    public static void syncJoiningPlayer(ServerPlayer player) {
+        EyeSettingsPacket settings = settingsPacket();
         if (sentEyeConfigs == null) {
             // Nobody has received a view yet, so every connected client now holds this one.
-            recordSentEyeConfigs();
+            sentEyeConfigs = ServerEyeConfigs.all();
+            sentSettings = settings;
         }
         Networking.sendToPlayer(player, eyeConfigPacket());
+        Networking.sendToPlayer(player, settings);
     }
 }

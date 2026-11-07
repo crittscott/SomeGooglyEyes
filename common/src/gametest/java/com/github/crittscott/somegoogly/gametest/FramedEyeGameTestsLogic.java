@@ -344,10 +344,12 @@ public final class FramedEyeGameTestsLogic {
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             test.run();
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
     }
 }

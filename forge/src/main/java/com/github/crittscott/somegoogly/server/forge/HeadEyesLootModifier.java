@@ -17,8 +17,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
  * to every loot table through {@code data/forge/loot_modifiers/global_loot_modifiers.json}; it acts only on
- * loot generated for a head block entity that has eyes.
- * Its data files live in this loader's resources.
+ * loot generated for a head block entity that has eyes. Its data files live in this loader's resources. Fabric's
+ * counterpart is the {@code CopyComponentsFunction} in {@code FabricServerEvents}; both copy only a head's eyes onto
+ * that head's item.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
