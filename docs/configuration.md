@@ -84,8 +84,8 @@ Location: `config/somegoogly-client.toml` (per player, affects rendering only).
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `disableGooglyEyes` | `false` | Hide all googly eyes on this client. |
-| `disabledEntities` | empty | Entity ids that should not display eyes, e.g. `"minecraft:zombie"`. |
-| `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. |
+| `disabledEntities` | empty | Entity ids that should not display eyes, e.g. `"minecraft:zombie"`. Also hides their placed heads. |
+| `disabledMods` | empty | Mod namespaces whose entities should not display eyes, e.g. `"minecraft"`. Also hides their placed heads. |
 
 These are personal preferences: the mob still *has* eyes (other players see them, and they can still be harvested); you just don't render them. Forge applies edits as soon as it reloads the file; on Fabric, restart the client.
 
