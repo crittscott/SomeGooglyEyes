@@ -15,8 +15,8 @@ import org.jspecify.annotations.Nullable;
  * The eight named one-shot eye expressions a mob can play, keyed by a {@link Identifier} id; the
  * behaviors that last as long as a mob stays in some state are the {@link OngoingBehavior}s. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
- * behavior by id in the trigger packet and the client looks it up to play. All per-play state lives in
- * a {@link BehaviorInstance}.
+ * behavior by its {@link #wireId} in the trigger packet and the client looks it up to play. All per-play
+ * state lives in a {@link BehaviorInstance}.
  *
  * <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never compose.
  * They participate in the eye <b>physics simulation</b>, not the renderer: once per simulation tick the
@@ -34,7 +34,7 @@ public enum EyeBehavior {
      * center spring whose stiffness eases in, holds, and eases back out; when it fades, gravity carries
      * the pupil down naturally (no snap).
      */
-    STARE("stare", 50) {
+    STARE("stare", 0, 50) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             float t = (float) i.age / i.duration;
@@ -50,7 +50,7 @@ public enum EyeBehavior {
      * once from the seed, so a "wink" (one eye) and a full blink are the same behavior at different
      * counts. Non-physical overlay: drives the squash channel only — the pupil keeps wobbling underneath.
      */
-    BLINK("blink", 8) {
+    BLINK("blink", 1, 8) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             if (i.mask[head][eye]) {
@@ -95,7 +95,7 @@ public enum EyeBehavior {
     },
 
     /** Eyes briefly bulge larger and settle back. Non-physical overlay: drives the eye-scale channel. */
-    GROW("grow", 14) {
+    GROW("grow", 2, 14) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             out.eyeScaleMul = 1f + GROW_AMOUNT * sinPulse((float) i.age / i.duration);
@@ -107,7 +107,7 @@ public enum EyeBehavior {
      * pupil-size channel only — the pupil keeps wobbling underneath, though a pupil swollen to the cornea
      * rim has no room left to move.
      */
-    LOVE("love", 60) {
+    LOVE("love", 3, 60) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             float swell = trapezoid((float) i.age / i.duration, LOVE_RAMP_FRAC, LOVE_RAMP_FRAC);
@@ -119,7 +119,7 @@ public enum EyeBehavior {
      * Blends the cornea toward a color and back. The color is chosen from the seed (a random hue).
      * Non-physical overlay: drives the cornea-tint channel.
      */
-    COLOR_CHANGE("color_change", 50) {
+    COLOR_CHANGE("color_change", 4, 50) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             out.corneaTint = i.tintColor;
@@ -140,7 +140,7 @@ public enum EyeBehavior {
      * effect ends. A firm spring to a moving anchor; because the anchor itself spirals to center, the
      * pupil ends near center and the release is soft (no drop from the rim).
      */
-    SWIRL("swirl", 70) {
+    SWIRL("swirl", 5, 70) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             float t = (float) i.age / i.duration;
@@ -157,7 +157,7 @@ public enum EyeBehavior {
      * holds there before the spring releases. The stiffness eases in during the brief centering and out
      * at the very end, so the held side-glance drops back to physics naturally.
      */
-    SIDE_EYE("side_eye", 90) {
+    SIDE_EYE("side_eye", 6, 90) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             float t = (float) i.age / i.duration;
@@ -179,7 +179,7 @@ public enum EyeBehavior {
      * its own pupil plane, so convergence is correct regardless of how many eyes a head has or how
      * they're aimed. An eye with no configured target (the default) simply doesn't cross.
      */
-    CROSS_EYE("cross_eye", 70) {
+    CROSS_EYE("cross_eye", 7, 70) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             // A lone eye has no partner to look at.
@@ -238,18 +238,22 @@ public enum EyeBehavior {
     private static final float COLOR_CHANGE_RAMP_FRAC = 0.2f;
 
     private static final Map<Identifier, EyeBehavior> BY_ID = new HashMap<>();
+    private static final Map<Integer, EyeBehavior> BY_WIRE_ID = new HashMap<>();
 
     static {
         for (EyeBehavior behavior : values()) {
             BY_ID.put(behavior.id, behavior);
+            BY_WIRE_ID.put(behavior.wireId, behavior);
         }
     }
 
     private final Identifier id;
     private final int defaultDuration;
+    private final int wireId;
 
-    EyeBehavior(String name, int defaultDuration) {
+    EyeBehavior(String name, int wireId, int defaultDuration) {
         this.id = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.wireId = wireId;
         this.defaultDuration = defaultDuration;
     }
 
@@ -259,7 +263,13 @@ public enum EyeBehavior {
         return BY_ID.get(id);
     }
 
-    /** The id (e.g. {@code somegoogly:stare}); used on the wire and as the config key. */
+    /** Look up a behavior by {@link #wireId}, or {@code null} for an unassigned number. */
+    @Nullable
+    public static EyeBehavior byWireId(int wireId) {
+        return BY_WIRE_ID.get(wireId);
+    }
+
+    /** The id (e.g. {@code somegoogly:stare}); used as the config key and in behavior settings. */
     public Identifier id() {
         return id;
     }
@@ -278,6 +288,11 @@ public enum EyeBehavior {
 
     /** Resolve seeded params (blink mask, color, direction) once when the effect starts. */
     public void onStart(BehaviorInstance instance) {
+    }
+
+    /** The stable number the trigger packet names this behavior by, independent of declaration order. */
+    public int wireId() {
+        return wireId;
     }
 
     /** Smoothstep ease 0 → 1 over t ∈ [0,1]. */

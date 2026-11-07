@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -28,7 +29,6 @@ import java.util.Map;
  */
 public class RootModelResolver implements EyeAttachmentResolver {
 
-    private static final String ROOT = "root";
 
     @Override
     public boolean handles(EntityModel<?> model) {
@@ -38,7 +38,7 @@ public class RootModelResolver implements EyeAttachmentResolver {
     @Override
     public List<String> enumerateParts(EntityModel<?> model) {
         List<String> out = new ArrayList<>();
-        enumerate("", ROOT, model.root(), out);
+        enumerate("", EyeConfigModel.PART_ROOT, model.root(), out);
         return out;
     }
 
@@ -77,7 +77,7 @@ public class RootModelResolver implements EyeAttachmentResolver {
     @Nullable
     public Attachment resolve(EntityModel<?> model, String partToken) {
         ArrayDeque<ModelPart> chain = new ArrayDeque<>();
-        return search("", ROOT, model.root(), partToken, chain)
+        return search("", EyeConfigModel.PART_ROOT, model.root(), partToken, chain)
                 ? new PartChain(chain.toArray(new ModelPart[0]))
                 : null;
     }
@@ -86,7 +86,7 @@ public class RootModelResolver implements EyeAttachmentResolver {
     @Nullable
     public static ModelPart part(EntityModel<?> model, String partToken) {
         ArrayDeque<ModelPart> chain = new ArrayDeque<>();
-        return search("", ROOT, model.root(), partToken, chain) ? chain.getLast() : null;
+        return search("", EyeConfigModel.PART_ROOT, model.root(), partToken, chain) ? chain.getLast() : null;
     }
 
     /**

@@ -102,8 +102,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">FabricNetworkTransport.Handshake</span>()
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
-<div class="block">Configuration-phase marker that is registered but never sent. A client that registers a receiver
- for it declares that it runs this network version, which the server checks before the player joins.</div>
+<div class="block">The server's version question, the first exchange of a connection's configuration phase. A client that
+ lacks a receiver for it is refused; one that has it answers with a <a href="FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric"><code>FabricNetworkTransport.HandshakeReply</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

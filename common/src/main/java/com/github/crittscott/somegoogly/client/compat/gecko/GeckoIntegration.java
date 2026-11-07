@@ -6,9 +6,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.event.GeoRenderEvent;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public final class GeckoIntegration {
      * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
      * model.
      */
-    @SuppressWarnings({"rawtypes", "unchecked", "removal"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
@@ -46,7 +46,7 @@ public final class GeckoIntegration {
         GeoEntityRenderer<?, ?> renderer = event.getRenderer();
         try {
             event.addLayer(geoRenderer -> new GooglyGeoLayer((GeoEntityRenderer) geoRenderer));
-        } catch (Throwable failure) {
+        } catch (RuntimeException | LinkageError failure) {
             ClientIntegrationFailures.warnOnce(
                     "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
         }

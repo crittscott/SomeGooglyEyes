@@ -153,13 +153,19 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreVersionedAndUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerNumbersIgnoreTheComputersLanguage</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingsPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -193,11 +199,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>networkProtocolIdsAreVersionedAndUnique</h3>
+<section class="detail" id="networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>networkProtocolIdsAreUnique</h3>
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=100)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreVersionedAndUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 <li>
@@ -302,6 +308,22 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=100)
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>pickerNumbersIgnoreTheComputersLanguage</h3>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=40)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerNumbersIgnoreTheComputersLanguage</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>settingsPacketRoundTrips</h3>
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=40)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingsPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </section>
 </li>
 </ul>

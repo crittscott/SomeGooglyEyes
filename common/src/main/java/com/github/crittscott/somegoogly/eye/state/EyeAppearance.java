@@ -26,6 +26,9 @@ public record EyeAppearance(EyeColor cornea, EyeColor iris, boolean glow) {
 
     /** This appearance with the override's present fields layered on top — the single merge op. */
     public EyeAppearance overlay(AppearanceOverride o) {
+        if (o.isEmpty()) {
+            return this;
+        }
         return new EyeAppearance(
                 o.cornea().orElse(cornea),
                 o.iris().orElse(iris),

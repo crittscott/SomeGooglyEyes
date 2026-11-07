@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:eyeitemservicegametests/another_players_eyes_follow_the_pvp_rules",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 40
+}

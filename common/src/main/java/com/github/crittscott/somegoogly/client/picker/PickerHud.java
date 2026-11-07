@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -9,6 +11,9 @@ import net.minecraft.client.resources.language.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
 
 /**
  * Text HUD for the part picker: a live, read-only view of the locked mob, the selected part, and the
@@ -32,6 +37,10 @@ public final class PickerHud {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int YELLOW = 0xFFFFE060;
 
+    /** The panel's text, rebuilt at most once per client tick; {@code null} while the picker is off. */
+    private static List<List<Line>> cachedRows;
+    private static int cachedRowsTick;
+
     private PickerHud() {
     }
 
@@ -50,11 +59,11 @@ public final class PickerHud {
      */
     private static void appendEye(List<List<Line>> out, String label, String part, EyeDraft e, int colorA, int colorB) {
         out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
-                String.format("%.2f", e.position[0]), String.format("%.2f", e.position[1]), String.format("%.2f", e.position[2])), colorA)));
-        String cross = e.crossTarget >= 0 ? I18n.get("somegoogly.picker.cross_target_mark", e.crossTarget + 1) : "";
+                compact(e.position[0]), compact(e.position[1]), compact(e.position[2])), colorA)));
+        String cross = e.crossTarget != EyePlacement.NO_CROSS_TARGET ? I18n.get("somegoogly.picker.cross_target_mark", e.crossTarget + 1) : "";
         out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
-                String.format("%.0f", e.inclination), String.format("%.0f", e.azimuth),
-                String.format("%.2f", e.eyeScale), String.format("%.2f", e.irisScale), String.format("%.2f", e.depth),
+                angle(e.inclination), angle(e.azimuth),
+                compact(e.eyeScale), compact(e.irisScale), compact(e.depth),
                 I18n.get(e.glows ? "somegoogly.picker.hud.glow_on" : "somegoogly.picker.hud.glow_off"),
                 hex(e.corneaColors), hex(e.irisColors), cross), colorB)));
     }
@@ -68,7 +77,7 @@ public final class PickerHud {
         List<List<Line>> out = new ArrayList<>();
 
         if (PickerState.target() == null) {
-            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerKeys.LOCK)), GRAY)));
+            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerInput.LOCK)), GRAY)));
             return out;
         }
 
@@ -79,7 +88,7 @@ public final class PickerHud {
                 new Line(" " + PickerState.targetType() + "  ", WHITE),
                 new Line(I18n.get("somegoogly.picker.hud.variant_label"), GREEN),
                 new Line(" " + I18n.get("somegoogly.picker.hud.variant_value", PickerState.variantIndex() + 1,
-                        PickerState.variantCount(), String.format("%.2f", PickerState.currentVariant().weight)) + "  ", WHITE),
+                        PickerState.variantCount(), compact(PickerState.currentVariant().weight)) + "  ", WHITE),
                 new Line(I18n.get("somegoogly.picker.hud.age_label"), GREEN),
                 new Line(" " + I18n.get(ageKey), WHITE)));
 
@@ -89,7 +98,7 @@ public final class PickerHud {
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.part_label"), GREEN),
                 new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n,
-                        keyName(PickerKeys.PART_PREV), keyName(PickerKeys.PART_NEXT)), WHITE)));
+                        keyName(PickerInput.PART_PREV), keyName(PickerInput.PART_NEXT)), WHITE)));
 
         out.add(row(
                 new Line(I18n.get("somegoogly.picker.hud.eyes_header_label"), GREEN),
@@ -108,7 +117,7 @@ public final class PickerHud {
             }
         }
 
-        if (PickerState.selectedIndex() < 0 && PickerState.currentEye() != null) {
+        if (PickerState.selectedIndex() == PickerState.NO_SELECTION && PickerState.currentEye() != null) {
             appendEye(out, I18n.get("somegoogly.picker.hud.new_unsaved"), token, PickerState.currentEye(), YELLOW, YELLOW);
         }
 
@@ -125,12 +134,18 @@ public final class PickerHud {
     }
 
     /** Draw the picker HUD while the picker is active. */
-    public static void render(GuiGraphics graphics, int width, int height) {
+    public static void render(GuiGraphics graphics, int width) {
         if (!PickerState.isActive()) {
+            cachedRows = null;
             return;
         }
         Font font = Minecraft.getInstance().font;
-        List<List<Line>> rows = lines();
+        int tick = ClientEyeRuntime.clientTicks();
+        if (cachedRows == null || cachedRowsTick != tick) {
+            cachedRows = lines();
+            cachedRowsTick = tick;
+        }
+        List<List<Line>> rows = cachedRows;
 
         int widest = 0;
         for (List<Line> row : rows) {

@@ -81,37 +81,16 @@ public final class ServerEyeConfigs {
         return set == null ? null : set.get(baby);
     }
 
-    /** Return the entity's config for {@code living}'s current age. */
-    @Nullable
-    public static RuntimeConfig get(Identifier entity, LivingEntity living) {
-        return get(entity, living.isBaby());
-    }
-
     /** Resolve the selected variant for the requested age without sharing the client's renderer cache. */
     public static HeadInfo resolve(Identifier entity, boolean baby, float variantRoll) {
         RuntimeConfig config = get(entity, baby);
         return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
-    /** Resolve the selected variant for {@code living}'s current age. */
-    public static HeadInfo resolve(Identifier entity, LivingEntity living, float variantRoll) {
-        return resolve(entity, living.isBaby(), variantRoll);
-    }
-
     /** Resolve the variant a placed head of {@code entity}'s kind shows ({@link SkullEyeState#variantIndex}). */
     public static HeadInfo resolveHead(Identifier entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
         return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
-    }
-
-    /**
-     * Whether this entity can wear eyes <b>right now, at its current age</b>: it has an age-appropriate
-     * config that is enabled and has at least one head. Used by Slimy Eye application
-     * ({@code EyeItemService.applySlimyEye}), which should only apply to targets the eyes would visibly
-     * appear on immediately. Players have a definition ({@code player.json}) and so are eligible.
-     */
-    public static boolean isEligible(LivingEntity living) {
-        return RuntimeConfig.isUsable(get(BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()), living));
     }
 
     /** Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. */
@@ -122,11 +101,6 @@ public final class ServerEyeConfigs {
                     .encodeStart(NbtOps.INSTANCE, entry.getValue()).getOrThrow());
         }
         return Map.copyOf(encoded);
-    }
-
-    /** Unconditionally install a snapshot. This is the replacement path used by tests. */
-    public static void replaceAll(Map<Identifier, RuntimeConfigSet> next) {
-        installed = new Installed(Map.copyOf(next), encode(next));
     }
 
     /**

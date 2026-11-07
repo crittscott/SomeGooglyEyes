@@ -2,8 +2,10 @@ package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
+import com.github.crittscott.somegoogly.client.picker.Gizmo;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
@@ -13,10 +15,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.entity.state.BoatRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * The mod's one eye-drawing path: mob eyes for both render layers (the vanilla {@link LayerGooglyEyes}
@@ -52,18 +58,24 @@ public final class GooglyEyeRenderer {
     private static final float[] CORNEA = new float[3];
     private static final float[] IRIS = new float[3];
 
+    /** The pupil of an eye drawn without a simulation. */
+    private static final GooglyTracker.EyeInfo REST = rest();
+
     private GooglyEyeRenderer() {
     }
 
     /**
      * Capture the eye plane for the next physics tick after composing the eye pose and before
      * expression scaling. The pupil's gravity mode selects world-down or GUI screen-down and
-     * determines whether display scale is removed.
+     * determines whether display scale is removed. Only the first draw after a tick captures.
      */
     public static void captureGravity(PoseStack pose, GooglyTracker.EyeInfo eyeInfo) {
+        if (!eyeInfo.poseStale) {
+            return;
+        }
         GRAVITY_POSE.set(pose.last().pose());
         // Submitted entity/item poses are in world space; the camera is applied later.
-        eyeInfo.capturePose(GRAVITY_POSE, null);
+        eyeInfo.capturePose(GRAVITY_POSE);
     }
 
     /**
@@ -160,12 +172,29 @@ public final class GooglyEyeRenderer {
     }
 
     /**
+     * Draw the eyes extracted onto {@code state} in the hull model's space, which already includes vanilla yaw,
+     * damage rocking, and bubble rotation. The caller retains the hull pose; ordinary boat rendering and water
+     * masking stay with vanilla.
+     */
+    public static void renderBoat(BoatRenderState state, PoseStack pose, SubmitNodeCollector buffers, int light) {
+        PresentationEyes.Draw draw = ((PresentationEyes.Holder) state).somegoogly$draw();
+        PresentationEyes eyes = draw.eyes();
+        if (eyes == null) {
+            return;
+        }
+        for (int part : eyes.parts) {
+            renderHead(pose, buffers, light, OverlayTexture.NO_OVERLAY, eyes.eyes[part], eyes.helper,
+                    eyes.snapshot.properties(), part, draw.partialTick());
+        }
+    }
+
+    /**
      * Draw a single eye, simulated by {@code eyeInfo}, applying both the per-mob (or per-head) {@code overrides}
      * and the active behavior. The pose is expected to already sit in the head's attachment space; this method
      * applies the eye's own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it
      * found it.
      */
-    public static void renderEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+    private static void renderEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
                                  GooglyTracker.EyeInfo eyeInfo, HeadInfo helper,
                                  AppearanceOverride overrides, int headIndex, int eyeIndex, float partialTicks) {
         pose.pushPose();
@@ -182,7 +211,9 @@ public final class GooglyEyeRenderer {
         // The pose now sits in this eye's pupil plane (post offset + aim, pre-scale): capture which way
         // world-down points here, for the next tick's gravity. This is the one spot that knows the eye's
         // fully-animated orientation.
-        captureGravity(pose, eyeInfo);
+        if (eyeInfo != REST) {
+            captureGravity(pose, eyeInfo);
+        }
 
         drawAnimatedEye(pose, collector, packedLight, overlay, eyeInfo, placement.eyeScale(),
                 placement.depth(), look.cornea(), look.iris(), placement.irisScale(), look.glow(), partialTicks);
@@ -191,19 +222,60 @@ public final class GooglyEyeRenderer {
     }
 
     /**
+     * Draw head {@code head}'s visible eyes at the current pose, which sits in that head's attachment space, each
+     * simulated by its entry in {@code row}, or at rest when {@code row} is {@code null}.
+     */
+    public static void renderHead(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
+                                  GooglyTracker.EyeInfo @Nullable [] row, HeadInfo helper,
+                                  AppearanceOverride overrides, int head, float partialTicks) {
+        int eyeCount = helper.getEyeCount(head);
+        for (int eye = 0; eye < eyeCount; eye++) {
+            if (helper.getEyeScale(head, eye) > 0F) {
+                renderEye(pose, collector, packedLight, overlay, row == null ? REST : row[eye], helper, overrides,
+                        head, eye, partialTicks);
+            }
+        }
+    }
+
+    /**
      * Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
      * the caller has already moved into the draft's attachment space. Used by both the vanilla and the
      * GeckoLib eye layers.
      */
-    public static void renderPreviewEye(PoseStack pose, SubmitNodeCollector collector, int packedLight, int overlay,
-                                        EyeDraft eye) {
+    public static void renderPreviewEye(PoseStack pose, SubmitNodeCollector collector,
+                                        int packedLight, int overlay, EyeDraft eye) {
         pose.pushPose();
         pose.translate(eye.position[0], eye.position[1], eye.position[2]);
         pose.mulPose(EyePlacement.orientation(eye.inclination, eye.azimuth));
         float scale = eye.eyeScale;
         pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH * eye.depth);
-        drawEye(pose, collector, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale, 0F, 0F,
-                eye.glows);
+        drawEye(pose, collector, packedLight, overlay, eye.corneaColors, eye.irisColors, eye.irisScale,
+                0F, 0F, eye.glows);
         pose.popPose();
+    }
+
+    /**
+     * Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the current pose,
+     * which the caller has already moved into the active part's attachment space.
+     */
+    public static void renderPreviewPlacement(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                              int overlay) {
+        renderPreviewPlacement(pose, collector, packedLight, overlay, PickerState.currentEye());
+    }
+
+    /** Draw the gizmo and a draft supplied by the caller's render state. */
+    public static void renderPreviewPlacement(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                              int overlay, @Nullable EyeDraft draft) {
+        Gizmo.draw(pose, collector);
+        if (draft != null) {
+            renderPreviewEye(pose, collector, packedLight, overlay, draft);
+        }
+    }
+
+    private static GooglyTracker.EyeInfo rest() {
+        GooglyTracker.EyeInfo rest = new GooglyTracker.EyeInfo();
+        rest.deltaY = 0F;
+        rest.prevDeltaY = 0F;
+        return rest;
     }
 }

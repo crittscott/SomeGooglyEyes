@@ -14,10 +14,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Server-owned picker mob freezing: a picker-targeted mob is held {@code NoAi=true} while edited and
@@ -84,7 +84,7 @@ public final class PickerFreezeService {
         CompoundTag data = EntityPersistentData.get(mob);
         // Prefer a stale marker over the live flag: if a crash left the mob forced-NoAi with its marker
         // intact (and onMobJoin hasn't run for it), the marker holds the true pre-picker value.
-        boolean prevNoAi = data.getBooleanOr(PREV_NO_AI_TAG, mob.isNoAi());
+        boolean prevNoAi = data.contains(PREV_NO_AI_TAG) ? data.getBooleanOr(PREV_NO_AI_TAG, false) : mob.isNoAi();
         data.putBoolean(PREV_NO_AI_TAG, prevNoAi);
         mob.setNoAi(true);
         mob.setDeltaMovement(Vec3.ZERO);
@@ -154,15 +154,6 @@ public final class PickerFreezeService {
         for (FrozenRecord record : FROZEN_BY_PLAYER.values()) {
             restore(server, record);
         }
-        FROZEN_BY_PLAYER.clear();
-    }
-
-    /**
-     * Drop all live records <b>without restoring</b> — the state after a hard crash, which the marker
-     * tags then recover from on next load ({@link #onMobJoin}). Exists for the gametests that pin that
-     * recovery; real shutdown goes through {@link #onServerStopping}.
-     */
-    public static void clear() {
         FROZEN_BY_PLAYER.clear();
     }
 

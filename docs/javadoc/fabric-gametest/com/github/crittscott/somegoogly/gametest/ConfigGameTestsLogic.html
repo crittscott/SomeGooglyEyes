@@ -94,7 +94,7 @@ loadScripts(document, 'script');</script>
  gametest server — the manual <code>somegoogly-test-datapack</code> is not mounted here), the reload
  listener's exact Minecraft-version selection, and the pure <code>ServerConfig.percentFor(net.minecraft.resources.Identifier)</code> resolution.
  Tests that mutate shared state (config values via their public <code>set</code>, the loaded eye configs
- via <code>replaceAll</code>) restore the originals in a <code>finally</code> so later tests aren't affected.</div>
+ via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a>) restore the originals in a <code>finally</code> so later tests aren't affected.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -196,8 +196,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Shared schema constants name the sections used by the immediately preceding release. This checks
  names only; the loader-specific scenarios exercise native file correction. In game: open a world
- saved by the 1.21.4 release whose server config sets <code>globalPercent = 17</code> and has its
- <code>squintOnSleep</code> line deleted; that value remains after the file regains the missing key.</div>
+ saved by the 0.8.2 release for Minecraft 1.21.4 whose server config sets <code>globalPercent = 17</code>; that value remains
+ after the file gains newly introduced keys.</div>
 </section>
 </li>
 <li>

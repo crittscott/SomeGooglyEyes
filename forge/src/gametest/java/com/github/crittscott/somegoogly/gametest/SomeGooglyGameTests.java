@@ -60,4 +60,8 @@ public final class SomeGooglyGameTests {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, survivalPlayer(helper));
     }
+
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, survivalPlayer(helper));
+    }
 }

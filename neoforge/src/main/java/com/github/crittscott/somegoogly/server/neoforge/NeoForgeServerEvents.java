@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.server.neoforge;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TriState;
@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -36,9 +37,9 @@ public final class NeoForgeServerEvents {
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
-            ServerServices.syncEyeConfigs(player);
+            ServerServices.syncJoiningPlayer(player);
         } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+            ServerServices.broadcastEyeSyncIfChanged(event.getPlayerList().getServer());
         }
     }
 
@@ -52,6 +53,18 @@ public final class NeoForgeServerEvents {
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
+        }
+    }
+
+    /** Handle an armor stand before its specific interaction can take the held item. */
+    private static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (event.getTarget() instanceof ArmorStand) {
+            InteractionResult result = EyeItemService.interact(
+                    event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
+            if (result != InteractionResult.PASS) {
+                event.setCancellationResult(result);
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -140,9 +153,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
-        }
+        ServerServices.onStopTracking(event.getTarget());
     }
 
     private static void onTrade(TradeWithVillagerEvent event) {
@@ -154,9 +165,10 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST,
                 (PlayerInteractEvent.EntityInteract event) -> onEntityInteract(event));
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onEntityInteractSpecific);
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onRightClickItem);
-        // Late enough to see the heads other mods add to the drops, such as the Heads mod's.
+        // Late enough to see the heads other mods add to the drops.
         gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingDrops);
         gameBus.addListener(NeoForgeServerEvents::onEntityJoinLevel);
         gameBus.addListener(NeoForgeServerEvents::onPlayerLoggedOut);
@@ -166,7 +178,7 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onStartTracking);
         gameBus.addListener(NeoForgeServerEvents::onStopTracking);
         gameBus.addListener(NeoForgeServerEvents::onLivingDamage);
-        gameBus.addListener(NeoForgeServerEvents::onLivingHeal);
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingHeal);
         gameBus.addListener(NeoForgeServerEvents::onTrade);
         gameBus.addListener(NeoForgeServerEvents::onPlayerClone);
         gameBus.addListener(NeoForgeServerEvents::onLivingConversion);

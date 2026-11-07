@@ -2,10 +2,10 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -30,8 +30,7 @@ public final class BehaviorDeterminismGameTestsLogic {
     }
 
     private static BehaviorInstance playTo(EyeBehavior behavior, HeadInfo helper, int ticks, long seed) {
-        BehaviorInstance instance = new BehaviorInstance(behavior, helper, 8, seed);
-        behavior.onStart(instance);
+        BehaviorInstance instance = BehaviorInstance.start(behavior, helper, 8, seed);
         instance.age = Math.max(0, Math.min(ticks, instance.duration));
         return instance;
     }
@@ -88,6 +87,6 @@ public final class BehaviorDeterminismGameTestsLogic {
     private static HeadInfo helperFor(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
-        return ServerEyeConfigs.resolve(type, cow, EyeState.getVariantRoll(cow));
+        return ServerEyeConfigs.resolve(type, cow.isBaby(), EyeState.getVariantRoll(cow));
     }
 }

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:skulleyegametests/head_keeps_only_its_eye_state",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 40
+}
