@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.picker;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -99,6 +100,10 @@ public final class PickerGate {
         return null;
     }
 
+    private static Component prefixed(Component message) {
+        return Component.translatable("somegoogly.command.picker.feedback", message);
+    }
+
     /** Arm the success cooldown after an export was written. */
     public static void exportSucceeded(MinecraftServer server, UUID playerId) {
         LAST_EXPORT_TICK.put(playerId, server.getTickCount());
@@ -117,5 +122,20 @@ public final class PickerGate {
         LAST_EXPORT_ATTEMPT_TICK.clear();
         LAST_EXPORT_TICK.clear();
         lastSpawnAllTick = Integer.MIN_VALUE;
+    }
+
+    /** Send {@code message} to {@code player} under the shared picker prefix. */
+    public static void tell(ServerPlayer player, Component message) {
+        player.sendSystemMessage(prefixed(message));
+    }
+
+    /** Report a refusal to the command's sender, under the shared picker prefix. */
+    public static void tellFailure(CommandSourceStack source, String key, Object... args) {
+        source.sendFailure(prefixed(Component.translatable(key, args)));
+    }
+
+    /** Report a result to the command's sender alone, under the shared picker prefix. */
+    public static void tellSuccess(CommandSourceStack source, String key, Object... args) {
+        source.sendSuccess(() -> prefixed(Component.translatable(key, args)), false);
     }
 }

@@ -119,4 +119,19 @@ public final class BehaviorSchedulerGameTests {
     public void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayer.get(helper.getLevel()));
+    }
 }

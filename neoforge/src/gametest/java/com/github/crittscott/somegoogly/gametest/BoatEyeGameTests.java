@@ -18,8 +18,8 @@ public final class BoatEyeGameTests {
         BoatEyeGameTestsLogic.boatsCrossOnlyWithConfiguredPartners(helper);
     }
 
-    public static void boatsEvictIdleAndPauseSimulations(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsEvictIdleAndPauseSimulations(helper);
+    public static void boatsEvictIdleSimulations(GameTestHelper helper) {
+        BoatEyeGameTestsLogic.boatsEvictIdleSimulations(helper);
     }
 
     public static void boatsFollowGravityAndOwnerMotion(GameTestHelper helper) {
@@ -61,4 +61,6 @@ public final class BoatEyeGameTests {
     public static void boatsSaveAndSynchronizeSnapshots(GameTestHelper helper) {
         BoatEyeGameTestsLogic.boatsSaveAndSynchronizeSnapshots(helper);
     }
+
+
 }

@@ -60,8 +60,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#field-detail" tabindex="0">Field Details</a>
 <ol class="toc-list">
 <li><a href="#CODEC" tabindex="0">CODEC</a></li>
-<li><a href="#STREAM_CODEC" tabindex="0">STREAM_CODEC</a></li>
 <li><a href="#NONE" tabindex="0">NONE</a></li>
+<li><a href="#STREAM_CODEC" tabindex="0">STREAM_CODEC</a></li>
 </ol>
 </li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">EyeState.Snapshot</span>(boolean&nbsp;hasEyes, float&nbsp;variantRoll, <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+<div class="block">The full portable eye state of one supported entity or placed mob head, and its one NBT form: the three
 keys above in a mod-owned compound. A head item carries it as a data component instead, through
 <a href="#CODEC"><code>CODEC</code></a> and <a href="#STREAM_CODEC"><code>STREAM_CODEC</code></a>.</div>
 </div>
@@ -228,20 +228,20 @@ keys above in a mod-owned compound. A head item carries it as a data component i
 </section>
 </li>
 <li>
-<section class="detail" id="STREAM_CODEC">
-<h3>STREAM_CODEC</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.network.codec.StreamCodec&lt;io.netty.buffer.ByteBuf, <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;</span>&nbsp;<span class="element-name">STREAM_CODEC</span></div>
-<div class="block">The roll is clamped on decode, as a stored roll is.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="NONE">
 <h3>NONE</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></span>&nbsp;<span class="element-name">NONE</span></div>
 <div class="block">No eyes, the first variant, no appearance overrides; what an absent compound reads as.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="STREAM_CODEC">
+<h3>STREAM_CODEC</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.network.codec.StreamCodec&lt;io.netty.buffer.ByteBuf, <a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;</span>&nbsp;<span class="element-name">STREAM_CODEC</span></div>
+<div class="block">The roll is clamped on decode, as a stored roll is.</div>
 </div>
 </section>
 </li>

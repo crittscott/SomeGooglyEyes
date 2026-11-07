@@ -11,8 +11,8 @@ public final class SerializationGameTests {
     private SerializationGameTests() {
     }
 
-    public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
-        SerializationGameTestsLogic.networkProtocolIdsAreVersionedAndUnique(helper);
+    public static void networkProtocolIdsAreUnique(GameTestHelper helper) {
+        SerializationGameTestsLogic.networkProtocolIdsAreUnique(helper);
     }
 
     public static void appearanceOverrideSparseNbtRoundTrips(GameTestHelper helper) {
@@ -65,5 +65,13 @@ public final class SerializationGameTests {
 
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRejectsNonFiniteValues(helper);
+    }
+
+    public static void pickerNumbersIgnoreTheComputersLanguage(GameTestHelper helper) {
+        SerializationGameTestsLogic.pickerNumbersIgnoreTheComputersLanguage(helper);
+    }
+
+    public static void settingsPacketRoundTrips(GameTestHelper helper) {
+        SerializationGameTestsLogic.settingsPacketRoundTrips(helper);
     }
 }

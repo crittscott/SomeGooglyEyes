@@ -60,7 +60,6 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#DEFAULTS" tabindex="0">DEFAULTS</a></li>
 <li><a href="#NONE" tabindex="0">NONE</a></li>
-<li><a href="#WIRE_MAXIMUM" tabindex="0">WIRE_MAXIMUM</a></li>
 </ol>
 </li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
@@ -70,11 +69,11 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
+<li><a href="#drawAmbientTicks(int,int,net.minecraft.util.RandomSource)" tabindex="0">drawAmbientTicks(int, int, RandomSource)</a></li>
 <li><a href="#enabled(com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior)" tabindex="0">enabled(OngoingBehavior)</a></li>
 <li><a href="#fromConfig()" tabindex="0">fromConfig()</a></li>
 <li><a href="#meanTicks()" tabindex="0">meanTicks()</a></li>
 <li><a href="#nextAmbientTicks(net.minecraft.util.RandomSource)" tabindex="0">nextAmbientTicks(RandomSource)</a></li>
-<li><a href="#plays()" tabindex="0">plays()</a></li>
 <li><a href="#read(net.minecraft.network.FriendlyByteBuf)" tabindex="0">read(FriendlyByteBuf)</a></li>
 <li><a href="#write(net.minecraft.network.FriendlyByteBuf)" tabindex="0">write(FriendlyByteBuf)</a></li>
 <li><a href="#toString()" tabindex="0">toString()</a></li>
@@ -118,7 +117,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">BehaviorSettings</span>(boolean&nbsp;ambient, int&nbsp;minTicks, int&nbsp;maxTicks, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;&nbsp;pool, int&nbsp;growOnHitPercent, boolean&nbsp;swirlOnHeal, int&nbsp;swirlHealCooldownTicks, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&gt;&nbsp;ongoing)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">The server's behavior settings as clients receive them with the eye definitions, for what clients run
+<div class="block">The server's behavior settings as clients receive them, for what clients run
 themselves: the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s on every eyed mob, and the expressions of placed mob heads and the
 held Googly Eye. Mob expressions stay scheduled by the server (<a href="ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>ServerBehaviorScheduler</code></a>) from
 <a href="../../config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerConfig</code></a> directly.</div>
@@ -144,11 +143,6 @@ held Googly Eye. Mob expressions stay scheduled by the server (<a href="ServerBe
 <div class="col-second odd-row-color"><code><a href="#NONE" class="member-name-link">NONE</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Inactive client state before server settings arrive and after disconnect.</div>
-</div>
-<div class="col-first even-row-color"><code>static final <a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
-<div class="col-second even-row-color"><code><a href="#WIRE_MAXIMUM" class="member-name-link">WIRE_MAXIMUM</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Largest supported behavior block, reserving space even when the server configuration later changes.</div>
 </div>
 </div>
 </section>
@@ -191,61 +185,64 @@ held Googly Eye. Mob expressions stay scheduled by the server (<a href="ServerBe
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-ambient"><code>ambient</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enabled(com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior)" class="member-name-link">enabled</a><wbr>(<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&nbsp;behavior)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawAmbientTicks(int,int,net.minecraft.util.RandomSource)" class="member-name-link">drawAmbientTicks</a><wbr>(int&nbsp;min,
+ int&nbsp;max,
+ net.minecraft.util.RandomSource&nbsp;rand)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>min</code> alone when
+<code>max</code> doesn't exceed it.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enabled(com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior)" class="member-name-link">enabled</a><wbr>(<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&nbsp;behavior)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether <code>behavior</code>'s switch is on.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromConfig()" class="member-name-link">fromConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromConfig()" class="member-name-link">fromConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The server's current settings.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#growOnHitPercent()" class="member-name-link">growOnHitPercent</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#growOnHitPercent()" class="member-name-link">growOnHitPercent</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-growOnHitPercent"><code>growOnHitPercent</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#maxTicks()" class="member-name-link">maxTicks</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#maxTicks()" class="member-name-link">maxTicks</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-maxTicks"><code>maxTicks</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#meanTicks()" class="member-name-link">meanTicks</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#meanTicks()" class="member-name-link">meanTicks</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The mean wait between ambient expressions, as the server's own scheduler draws it: uniform between the
 two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#minTicks()" class="member-name-link">minTicks</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#minTicks()" class="member-name-link">minTicks</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <a href="#param-minTicks"><code>minTicks</code></a> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#nextAmbientTicks(net.minecraft.util.RandomSource)" class="member-name-link">nextAmbientTicks</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">A wait between ambient expressions, drawn as the server's own scheduler draws it.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#ongoing()" class="member-name-link">ongoing</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#nextAmbientTicks(net.minecraft.util.RandomSource)" class="member-name-link">nextAmbientTicks</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <a href="#param-ongoing"><code>ongoing</code></a> record component.</div>
+<div class="block">A wait between ambient expressions under these bounds.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#plays()" class="member-name-link">plays</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a><wbr>&lt;<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#ongoing()" class="member-name-link">ongoing</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether any ambient expression can play.</div>
+<div class="block">Returns the value of the <a href="#param-ongoing"><code>ongoing</code></a> record component.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pool()" class="member-name-link">pool</a>()</code></div>
@@ -310,15 +307,6 @@ two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 </div>
 </section>
 </li>
-<li>
-<section class="detail" id="WIRE_MAXIMUM">
-<h3>WIRE_MAXIMUM</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></span>&nbsp;<span class="element-name">WIRE_MAXIMUM</span></div>
-<div class="block">Largest supported behavior block, reserving space even when the server configuration later changes.</div>
-</div>
-</section>
-</li>
 </ul>
 </section>
 </li>
@@ -363,6 +351,18 @@ two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="drawAmbientTicks(int,int,net.minecraft.util.RandomSource)">
+<h3>drawAmbientTicks</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">drawAmbientTicks</span><wbr><span class="parameters">(int&nbsp;min,
+ int&nbsp;max,
+ net.minecraft.util.RandomSource&nbsp;rand)</span></div>
+<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>min</code> alone when
+<code>max</code> doesn't exceed it. Mobs, held eyes, and heads all draw it here.</div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="enabled(com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior)">
 <h3>enabled</h3>
 <div class="horizontal-scroll">
@@ -395,16 +395,7 @@ two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 <h3>nextAmbientTicks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">nextAmbientTicks</span><wbr><span class="parameters">(net.minecraft.util.RandomSource&nbsp;rand)</span></div>
-<div class="block">A wait between ambient expressions, drawn as the server's own scheduler draws it.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="plays()">
-<h3>plays</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">plays</span>()</div>
-<div class="block">Whether any ambient expression can play.</div>
+<div class="block">A wait between ambient expressions under these bounds.</div>
 </div>
 </section>
 </li>

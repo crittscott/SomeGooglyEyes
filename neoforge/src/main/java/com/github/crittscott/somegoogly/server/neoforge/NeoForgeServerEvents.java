@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.server.neoforge;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TriState;
@@ -36,9 +36,9 @@ public final class NeoForgeServerEvents {
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
-            ServerServices.syncEyeConfigs(player);
+            ServerServices.syncJoiningPlayer(player);
         } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+            ServerServices.broadcastEyeSyncIfChanged(event.getPlayerList().getServer());
         }
     }
 
@@ -140,9 +140,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
-        }
+        ServerServices.onStopTracking(event.getTarget());
     }
 
     private static void onTrade(TradeWithVillagerEvent event) {
@@ -166,7 +164,7 @@ public final class NeoForgeServerEvents {
         gameBus.addListener(NeoForgeServerEvents::onStartTracking);
         gameBus.addListener(NeoForgeServerEvents::onStopTracking);
         gameBus.addListener(NeoForgeServerEvents::onLivingDamage);
-        gameBus.addListener(NeoForgeServerEvents::onLivingHeal);
+        gameBus.addListener(EventPriority.LOWEST, NeoForgeServerEvents::onLivingHeal);
         gameBus.addListener(NeoForgeServerEvents::onTrade);
         gameBus.addListener(NeoForgeServerEvents::onPlayerClone);
         gameBus.addListener(NeoForgeServerEvents::onLivingConversion);

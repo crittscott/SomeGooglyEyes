@@ -99,4 +99,16 @@ public final class BehaviorSchedulerGameTests {
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
+
+    public static void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    public static void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
 }

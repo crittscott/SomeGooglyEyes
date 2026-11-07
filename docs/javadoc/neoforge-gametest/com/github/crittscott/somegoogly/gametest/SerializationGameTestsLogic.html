@@ -56,11 +56,13 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">networkProtocolIdsAreVersionedAndUnique(GameTestHelper)</a></li>
+<li><a href="#networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">networkProtocolIdsAreUnique(GameTestHelper)</a></li>
 <li><a href="#appearanceOverrideSparseNbtRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">appearanceOverrideSparseNbtRoundTrips(GameTestHelper)</a></li>
 <li><a href="#behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">behaviorTriggerPacketRoundTrips(GameTestHelper)</a></li>
 <li><a href="#angerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">angerPacketRoundTrips(GameTestHelper)</a></li>
 <li><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">configSyncPacketRoundTrips(GameTestHelper)</a></li>
+<li><a href="#settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">settingsPacketRoundTrips(GameTestHelper)</a></li>
+<li><a href="#pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">pickerNumbersIgnoreTheComputersLanguage(GameTestHelper)</a></li>
 <li><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper)</a></li>
 <li><a href="#eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">eyeColorRejectsWrongChannelCount(GameTestHelper)</a></li>
 <li><a href="#eyeColorRejectsOutOfRangeChannels(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">eyeColorRejectsOutOfRangeChannels(GameTestHelper)</a></li>
@@ -87,7 +89,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SerializationGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Serialization contracts: the flat-JSON eye codecs round-trip by value, and all six native
+<div class="block">Serialization contracts: the flat-JSON eye codecs round-trip by value, and all seven native
 payloads preserve their wire representation through encode/decode. World-less.</div>
 </div>
 </section>
@@ -117,12 +119,12 @@ payloads preserve their wire representation through encode/decode. World-less.</
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">behaviorTriggerPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The behavior trigger survives the wire.</div>
+<div class="block">The behavior trigger survives the wire, and every behavior has its own wire id.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-definition sync survives the wire, behavior settings included.</div>
+<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -164,9 +166,9 @@ not as the <code>0.2199999988079071</code> a double-widened float prints as.</di
 <div class="block">Entity eye state survives the wire, with and without appearance overrides.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreVersionedAndUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreUnique</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every payload id is unique and carries the network version.</div>
+<div class="block">Every payload id is unique.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -177,6 +179,16 @@ not as the <code>0.2199999988079071</code> a double-widened float prints as.</di
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Picker choose and release requests survive the wire.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerNumbersIgnoreTheComputersLanguage</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Picker numbers print the way <code>/sg</code> parses them on any computer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingsPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The master switch and behavior settings survive the wire.</div>
 </div>
 </div>
 </div>
@@ -196,12 +208,11 @@ not as the <code>0.2199999988079071</code> a double-widened float prints as.</di
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="networkProtocolIdsAreVersionedAndUnique(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>networkProtocolIdsAreVersionedAndUnique</h3>
+<section class="detail" id="networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>networkProtocolIdsAreUnique</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreVersionedAndUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every payload id is unique and carries the network version. No in-game form; guards that a client and
-server with different network versions refuse each other instead of misreading packets.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every payload id is unique. No in-game form; guards that no two payloads are misread as each other.</div>
 </div>
 </section>
 </li>
@@ -222,8 +233,8 @@ shows <code>somegoogly:eyeOverrides</code> in <code>NeoForgeData</code> or <code
 <h3>behaviorTriggerPacketRoundTrips</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">behaviorTriggerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The behavior trigger survives the wire. No in-game form; guards that every client sees the expression
-the server started.</div>
+<div class="block">The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
+that every client sees the expression the server started and refuses a number it doesn't know.</div>
 </div>
 </section>
 </li>
@@ -242,9 +253,28 @@ server shares.</div>
 <h3>configSyncPacketRoundTrips</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-definition sync survives the wire, behavior settings included. No in-game form; guards that joining
-clients draw the same eyes the server's datapacks define, and run ongoing behaviors and placed heads' and
-the held eye's expressions from the server's settings.</div>
+<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
+guards that joining clients draw the same eyes the server's datapacks define.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>settingsPacketRoundTrips</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingsPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The master switch and behavior settings survive the wire. No in-game form; guards that clients run ongoing
+behaviors and placed heads' and the held eye's expressions from the server's settings.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>pickerNumbersIgnoreTheComputersLanguage</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerNumbersIgnoreTheComputersLanguage</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Picker numbers print the way <code>/sg</code> parses them on any computer. In game, on a system set to German:
+<code>/sg list eyes</code> and the picker HUD show <code>1.250</code>, not <code>1,250</code>.</div>
 </div>
 </section>
 </li>

@@ -35,4 +35,9 @@ public final class RecipeGameTests {
     public void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RecipeGameTestsLogic.slimyEyeCarriesTheEyesAppearance(helper);
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        RecipeGameTestsLogic.slimyEyeRecipeUnlocksByAdvancement(helper);
+    }
 }

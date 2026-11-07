@@ -37,17 +37,13 @@ public final class ModelMemo<K, V> {
     }
 
     /**
-     * The value for {@code token} in {@code model}, resolving and caching it on first ask. A {@code null}
-     * model or token resolves to {@code null} without consulting {@code resolver}.
+     * The value for {@code token} in {@code model}, resolving and caching it on first ask.
      *
      * <p>Pass the resolver as an object rather than a bound method reference: a capturing lambda would
      * allocate on every call, and this is on the per-frame render path.
      */
     @Nullable
-    public V get(@Nullable K model, @Nullable String token, Resolver<K, V> resolver) {
-        if (model == null || token == null) {
-            return null;
-        }
+    public V get(K model, String token, Resolver<K, V> resolver) {
         Map<String, V> tokens = byModel.computeIfAbsent(model, key -> new HashMap<>());
         // A miss walks the whole part tree, so it is cached as null and containsKey decides.
         V cached = tokens.get(token);

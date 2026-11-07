@@ -65,6 +65,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#eyes" tabindex="0">eyes</a></li>
 <li><a href="#helper" tabindex="0">helper</a></li>
 <li><a href="#parts" tabindex="0">parts</a></li>
+<li><a href="#properties" tabindex="0">properties</a></li>
 <li><a href="#snapshot" tabindex="0">snapshot</a></li>
 </ol>
 </li>
@@ -117,14 +118,14 @@ supplied clock determine expression age; physics is local and disposable. The re
 <div class="table-header col-second">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="PresentationEyes.FrameData.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">PresentationEyes.FrameData</a></code></div>
+<div class="col-second even-row-color"><code><a href="PresentationEyes.Draw.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">PresentationEyes.Draw</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Animation selected during frame-state extraction, carried to its item draw.</div>
+<div class="block">The animation a draw uses and that draw's partial tick; <a href="PresentationEyes.Draw.html#NONE"><code>PresentationEyes.Draw.NONE</code></a> outside animated draws.</div>
 </div>
 <div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="PresentationEyes.Holder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client">PresentationEyes.Holder</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Implemented by the frame render-state mixin.</div>
+<div class="block">Implemented on render states, so an animation chosen at extraction reaches the later draw.</div>
 </div>
 </div>
 </section>
@@ -158,9 +159,14 @@ supplied clock determine expression age; physics is local and disposable. The re
 <div class="col-first odd-row-color"><code>final int[]</code></div>
 <div class="col-second odd-row-color"><code><a href="#parts" class="member-name-link">parts</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final @Nullable <a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
-<div class="col-second even-row-color"><code><a href="#snapshot" class="member-name-link">snapshot</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>final <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
+<div class="col-second even-row-color"><code><a href="#properties" class="member-name-link">properties</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The appearance this presentation draws, decoded once.</div>
+</div>
+<div class="col-first odd-row-color"><code>final @Nullable <a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#snapshot" class="member-name-link">snapshot</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -210,7 +216,7 @@ supplied clock determine expression age; physics is local and disposable. The re
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(net.minecraft.world.item.ItemStack)" class="member-name-link">matches</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Item changes that affect layout or appearance replace a head simulation.</div>
+<div class="block">Whether <code>stack</code> is still the presented item; a different count or stack copy still is.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#placedHead(long,net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,com.github.crittscott.somegoogly.eye.HeadInfo,int%5B%5D)" class="member-name-link">placedHead</a><wbr>(long&nbsp;seed,
@@ -311,6 +317,15 @@ supplied clock determine expression age; physics is local and disposable. The re
 </section>
 </li>
 <li>
+<section class="detail" id="properties">
+<h3>properties</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">properties</span></div>
+<div class="block">The appearance this presentation draws, decoded once.</div>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="snapshot">
 <h3>snapshot</h3>
 <div class="horizontal-scroll">
@@ -391,7 +406,7 @@ supplied clock determine expression age; physics is local and disposable. The re
 <h3>matches</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">Item changes that affect layout or appearance replace a head simulation.</div>
+<div class="block">Whether <code>stack</code> is still the presented item; a different count or stack copy still is.</div>
 </div>
 </section>
 </li>

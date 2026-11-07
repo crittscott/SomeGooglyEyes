@@ -4,12 +4,12 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
-import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.client.KeyMapping;
@@ -41,7 +41,7 @@ public final class ForgeClientBootstrap {
     private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
                 Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
-                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
+                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 
     /**
@@ -105,6 +105,7 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register();
         }
+        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -122,10 +123,10 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        KeyMapping.Category.register(PickerKeys.CATEGORY.id());
-        event.register(PickerKeys.LOCK);
-        event.register(PickerKeys.PART_NEXT);
-        event.register(PickerKeys.PART_PREV);
-        event.register(PickerKeys.TOGGLE);
+        KeyMapping.Category.register(PickerInput.CATEGORY.id());
+        event.register(PickerInput.LOCK);
+        event.register(PickerInput.PART_NEXT);
+        event.register(PickerInput.PART_PREV);
+        event.register(PickerInput.TOGGLE);
     }
 }

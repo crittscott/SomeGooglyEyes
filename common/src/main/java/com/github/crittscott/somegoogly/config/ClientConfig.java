@@ -3,6 +3,9 @@ package com.github.crittscott.somegoogly.config;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.resources.Identifier;
 
+import org.jspecify.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,25 +18,29 @@ public final class ClientConfig {
     public static final String FILE_NAME = SomeGooglyCommon.MOD_ID + "-client.toml";
     public static final String SECTION = "Client Settings";
 
-    public static final String DISABLE_GOOGLY_EYES_KEY = "disableGooglyEyes";
-    public static final boolean DISABLE_GOOGLY_EYES_DEFAULT = false;
-    public static final String DISABLED_ENTITIES_KEY = "disabledEntities";
-    public static final List<String> DISABLED_ENTITIES_DEFAULT = List.of();
-    public static final String DISABLED_MODS_KEY = "disabledMods";
-    public static final List<String> DISABLED_MODS_DEFAULT = List.of();
+    // Precedes the settings, whose initializers fill it.
+    private static final List<ConfigValue<?>> SETTINGS = new ArrayList<>();
 
-    public static final String DISABLE_GOOGLY_EYES_COMMENT = "Disable display of all googly eyes on this client.";
-    public static final String DISABLED_ENTITIES_COMMENT = "Entity ids that should not display googly eyes";
-    public static final String DISABLED_MODS_COMMENT = "Mod namespaces whose entities should not display googly eyes";
+    // Declaration order is file order.
+    public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = add(ConfigValue.bool(
+            SECTION, "disableGooglyEyes", false, "Disable display of all googly eyes on this client."));
+    public static final ConfigValue.Parsed<Set<Identifier>> DISABLED_ENTITIES = add(ConfigValue.parsedStrings(
+            SECTION, "disabledEntities", List.of(), ServerConfig::validateIdentifier,
+            entries -> entries.stream().map(Identifier::parse).collect(Collectors.toUnmodifiableSet()),
+            "Entity ids that should not display googly eyes"));
+    public static final ConfigValue.Parsed<Set<String>> DISABLED_MODS = add(ConfigValue.parsedStrings(
+            SECTION, "disabledMods", List.of(), ServerConfig::validateNamespace, Set::copyOf,
+            "Mod namespaces whose entities should not display googly eyes"));
 
-    public static final ConfigValue<Boolean> DISABLE_GOOGLY_EYES = ConfigValue.bool(DISABLE_GOOGLY_EYES_DEFAULT);
-    public static final ConfigValue.Parsed<Set<Identifier>> DISABLED_ENTITIES = ConfigValue.parsedStrings(
-            DISABLED_ENTITIES_DEFAULT, ServerConfig::validateIdentifier,
-            entries -> entries.stream().map(Identifier::parse).collect(Collectors.toUnmodifiableSet()));
-    public static final ConfigValue.Parsed<Set<String>> DISABLED_MODS = ConfigValue.parsedStrings(
-            DISABLED_MODS_DEFAULT, ServerConfig::validateNamespace, Set::copyOf);
+    @Nullable
+    private static String loggedConfig;
 
     private ClientConfig() {
+    }
+
+    private static <V extends ConfigValue<?>> V add(V setting) {
+        SETTINGS.add(setting);
+        return setting;
     }
 
     /** Whether the client hides eyes on this entity type, by its id or its namespace. */
@@ -42,10 +49,18 @@ public final class ClientConfig {
                 || DISABLED_ENTITIES.parsed().contains(entityType);
     }
 
-    /** Restore built-in defaults before a loader applies values from disk. */
-    public static void resetDefaults() {
-        DISABLE_GOOGLY_EYES.reset();
-        DISABLED_ENTITIES.reset();
-        DISABLED_MODS.reset();
+    /** Record the settings that hide eyes on this client, once at load and whenever they change. */
+    public static void onApplied() {
+        String applied = "disableGooglyEyes=%s, disabledEntities=%d, disabledMods=%d".formatted(
+                DISABLE_GOOGLY_EYES.get(), DISABLED_ENTITIES.parsed().size(), DISABLED_MODS.parsed().size());
+        if (!applied.equals(loggedConfig)) {
+            SomeGooglyCommon.LOGGER.info("Client configuration applied ({})", applied);
+            loggedConfig = applied;
+        }
+    }
+
+    /** Every setting, in the order of the client config file. */
+    public static List<ConfigValue<?>> settings() {
+        return Collections.unmodifiableList(SETTINGS);
     }
 }

@@ -53,7 +53,17 @@ loadScripts(document, 'script');</script>
 <div class="toc-header">Contents&nbsp;<input type="text" class="filter-input" disabled placeholder="Filter contents (type .)" aria-label="Filter table of contents" autocomplete="off" spellcheck="false"><input type="reset" class="reset-filter" disabled tabindex="-1" value="Reset"></div>
 <ol class="toc-list" tabindex="-1">
 <li><a href="#" tabindex="0">Description</a></li>
+<li><a href="#field-summary" tabindex="0">Field Summary</a></li>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
+<li><a href="#field-detail" tabindex="0">Field Details</a>
+<ol class="toc-list">
+<li><a href="#CATEGORY" tabindex="0">CATEGORY</a></li>
+<li><a href="#LOCK" tabindex="0">LOCK</a></li>
+<li><a href="#PART_NEXT" tabindex="0">PART_NEXT</a></li>
+<li><a href="#PART_PREV" tabindex="0">PART_PREV</a></li>
+<li><a href="#TOGGLE" tabindex="0">TOGGLE</a></li>
+</ol>
+</li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#consumePendingKeys()" tabindex="0">consumePendingKeys()</a></li>
@@ -75,8 +85,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerInput</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Routes key presses to <a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> while the picker is active. Driven from each loader's
-client key-mapping and tick hooks; only the toggle key works when the picker is off.
+<div class="block">The picker's keybindings, all rebindable in Options → Controls, and the routing of their presses to
+<a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> while the picker is active. Driven from each loader's client key-mapping and tick hooks;
+only the toggle key works when the picker is off.
 
 <p>The keyboard is navigation + a live view only: toggle the picker, lock onto a mob, and cycle
 parts. All eye editing (position, rotation, properties, save/delete, export) is done through the
@@ -85,6 +96,33 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping.Category</code></div>
+<div class="col-second even-row-color"><code><a href="#CATEGORY" class="member-name-link">CATEGORY</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
+<div class="col-second odd-row-color"><code><a href="#LOCK" class="member-name-link">LOCK</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
+<div class="col-second even-row-color"><code><a href="#PART_NEXT" class="member-name-link">PART_NEXT</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
+<div class="col-second odd-row-color"><code><a href="#PART_PREV" class="member-name-link">PART_PREV</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
+<div class="col-second even-row-color"><code><a href="#TOGGLE" class="member-name-link">TOGGLE</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -118,6 +156,54 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="CATEGORY">
+<h3>CATEGORY</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.client.KeyMapping.Category</span>&nbsp;<span class="element-name">CATEGORY</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="LOCK">
+<h3>LOCK</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.client.KeyMapping</span>&nbsp;<span class="element-name">LOCK</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="PART_NEXT">
+<h3>PART_NEXT</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.client.KeyMapping</span>&nbsp;<span class="element-name">PART_NEXT</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="PART_PREV">
+<h3>PART_PREV</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.client.KeyMapping</span>&nbsp;<span class="element-name">PART_PREV</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="TOGGLE">
+<h3>TOGGLE</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.client.KeyMapping</span>&nbsp;<span class="element-name">TOGGLE</span></div>
+</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">

@@ -1,28 +1,44 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.locale.Language;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.network.ConfigurationTask;
+import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 
-/** Fabric payload codecs and server receivers. */
+import java.util.function.Consumer;
+
+/** Fabric payload codecs, the configuration-phase version check, and server receivers. */
 public final class FabricNetworkTransport {
 
+    /** Longest network version a client's handshake reply may hold. */
+    private static final int MAX_VERSION_LENGTH = 16;
+
     /**
-     * Configuration-phase marker that is registered but never sent. A client that registers a receiver
-     * for it declares that it runs this network version, which the server checks before the player joins.
+     * The server's version question, the first exchange of a connection's configuration phase. A client that
+     * lacks a receiver for it is refused; one that has it answers with a {@link HandshakeReply}.
      */
     public record Handshake() implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<Handshake> TYPE =
-                new CustomPacketPayload.Type<>(NetworkHandler.versioned("handshake"));
+                new CustomPacketPayload.Type<>(NetworkProtocol.id("handshake"));
         public static final StreamCodec<FriendlyByteBuf, Handshake> STREAM_CODEC = StreamCodec.unit(new Handshake());
 
         @Override
@@ -31,22 +47,90 @@ public final class FabricNetworkTransport {
         }
     }
 
+    /** The client's network version, which must equal the server's. */
+    public record HandshakeReply(String version) implements CustomPacketPayload {
+        public static final CustomPacketPayload.Type<HandshakeReply> TYPE =
+                new CustomPacketPayload.Type<>(NetworkProtocol.id("handshake_reply"));
+        public static final StreamCodec<ByteBuf, HandshakeReply> STREAM_CODEC = ByteBufCodecs.stringUtf8(MAX_VERSION_LENGTH)
+                .map(HandshakeReply::new, HandshakeReply::version);
+
+        @Override
+        public CustomPacketPayload.Type<HandshakeReply> type() {
+            return TYPE;
+        }
+    }
+
+    /** Holds the player in the configuration phase until the client's {@link HandshakeReply} arrives. */
+    private record HandshakeTask() implements ConfigurationTask {
+        static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(NetworkProtocol.id("handshake").toString());
+
+        @Override
+        public void start(Consumer<Packet<?>> sender) {
+            sender.accept(ServerConfigurationNetworking.createClientboundPacket(new Handshake()));
+        }
+
+        @Override
+        public ConfigurationTask.Type type() {
+            return TYPE;
+        }
+    }
+
     private FabricNetworkTransport() {
     }
 
-    /** Register every payload type and the serverbound receivers; called once from the mod initializer. */
+    /** Register every payload type, the version check, and the serverbound receivers; called once from the mod initializer. */
     public static void register() {
         PayloadTypeRegistry.clientboundConfiguration().register(Handshake.TYPE, Handshake.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundConfiguration().register(HandshakeReply.TYPE, HandshakeReply.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EyeSettingsPacket.TYPE, EyeSettingsPacket.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC);
 
+        // Refuse a client without this network version before it joins the world.
+        ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
+            if (ServerConfigurationNetworking.canSend(handler, Handshake.TYPE)) {
+                handler.addTask(new HandshakeTask());
+            } else {
+                SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {}",
+                        handler.getOwner().name(), SomeGooglyCommon.MOD_NAME);
+                handler.disconnect(requiredClientMessage());
+            }
+        });
+        ServerConfigurationNetworking.registerGlobalReceiver(HandshakeReply.TYPE,
+                (payload, context) -> checkVersion(context.packetListener(), payload.version()));
+
         ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.TYPE,
                 (payload, context) -> PickerFreezePacket.handle(payload, context.player()));
         ServerPlayNetworking.registerGlobalReceiver(PickerExportPacket.TYPE,
                 (payload, context) -> PickerExportPacket.handle(payload, context.player()));
+    }
+
+    private static void checkVersion(ServerConfigurationPacketListenerImpl handler, String version) {
+        if (version.equals(NetworkProtocol.NETWORK_VERSION)) {
+            handler.completeTask(HandshakeTask.TYPE);
+        } else {
+            SomeGooglyCommon.LOGGER.info("Refusing {}: client runs {} network version {}, server runs {}",
+                    handler.getOwner().name(), SomeGooglyCommon.MOD_NAME, version, NetworkProtocol.NETWORK_VERSION);
+            handler.disconnect(versionMismatchMessage(version));
+        }
+    }
+
+    /** A refusal that also reads right to a client lacking our language file; Fabric API loads it on the server. */
+    private static Component refusal(String key, Object... arguments) {
+        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key), arguments);
+    }
+
+    /** The refusal shown to a client without this mod. */
+    public static Component requiredClientMessage() {
+        return refusal("somegoogly.network.required_client");
+    }
+
+    /** The refusal shown to a client running network version {@code clientVersion}. */
+    public static Component versionMismatchMessage(String clientVersion) {
+        return refusal("somegoogly.network.version_mismatch", NetworkProtocol.NETWORK_VERSION, clientVersion);
     }
 }

@@ -87,7 +87,7 @@ loadScripts(document, 'script');</script>
 gametest server — the manual <code>somegoogly-test-datapack</code> is not mounted here), the reload
 listener's exact Minecraft-version selection, and the pure <code>ServerConfig.percentFor(Identifier)</code> resolution.
 Tests that mutate shared state (config values via their public <code>set</code>, the loaded eye configs
-via <code>replaceAll</code>) restore the originals in a <code>finally</code> so later tests aren't affected.</div>
+via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a>) restore the originals in a <code>finally</code> so later tests aren't affected.</div>
 </div>
 </section>
 <section class="summary">
@@ -193,8 +193,8 @@ mobs from eggs: every zombie has eyes, about half of the cows do, and only the o
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Shared schema constants name the sections used by the immediately preceding release. This checks
 names only; the loader-specific scenarios exercise native file correction. In game: open a world
-saved by the 1.21.4 release whose server config sets <code>globalPercent = 17</code> and has its
-<code>squintOnSleep</code> line deleted; that value remains after the file regains the missing key.</div>
+saved by the 0.8.2 release for Minecraft 1.21.4 whose server config sets <code>globalPercent = 17</code>; that value remains
+after the file gains newly introduced keys.</div>
 </div>
 </section>
 </li>
@@ -205,8 +205,9 @@ saved by the 1.21.4 release whose server config sets <code>globalPercent = 17</c
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAllDefaultsOff</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
 opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-those namespaces must ship excluded. In game: in a new world, the generated
-<code>serverconfig/somegoogly-server.toml</code> has <code>allowSpawnAll = false</code> and
+those namespaces must ship excluded. In game: in a new world, the generated server config
+(<code>serverconfig/somegoogly-server.toml</code> in the world on Fabric and Forge,
+<code>config/somegoogly-server.toml</code> on NeoForge) has <code>allowSpawnAll = false</code> and
 <code>spawnExcludedMods = ["minecolonies", "create"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
 </div>
 </section>
