@@ -26,7 +26,15 @@
 - Picker preview eyes glow like real eyes.
 - Living Things eye definitions attach to that mod's renamed `root` model part.
 - Problems with the config files, picker spawns, and eye definitions are now logged at warning level.
-- Network version is now 14; clients and servers must both run this version.
+- Network version is now 18; clients and servers must both run this version.
+
+### Fixed
+- Eyes on heads, frames, boats, and mobs fall toward world down wherever the camera points, and eyes coming back into view are already settled.
+- The shears-kill Googly Eye honors the `doMobLoot` game rule, and shearing an eyed armor stand on NeoForge or Forge takes its eyes instead of handing it the shears.
+- Optometrist shears can't take eyes from a player protected from PvP, and spectators can't use eye items on heads or shear themselves.
+- Healing at full health no longer swirls eyes, and using eye items counts in statistics.
+- A settings change no longer restarts eye motion on connected clients.
+- The Slimy Eye recipe unlocks by picking up a Googly Eye.
 
 ### Compatibility
 - Worlds saved with the 1.21.1 release load with their eyed mobs, eye items, and settings intact. Worlds from 1.20.1 must first be opened with the 1.21.1 release.

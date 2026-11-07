@@ -3,11 +3,12 @@ package com.github.crittscott.somegoogly.server.forge;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -36,9 +37,9 @@ public final class ForgeServerEvents {
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
-            ServerServices.syncEyeConfigs(player);
+            ServerServices.syncJoiningPlayer(player);
         } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+            ServerServices.broadcastEyeSyncIfChanged(event.getPlayerList().getServer());
         }
     }
 
@@ -47,6 +48,24 @@ public final class ForgeServerEvents {
      * gets first refusal — this handler consumes the event as soon as it acts.
      */
     private static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        InteractionResult result = EyeItemService.interact(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
+        }
+    }
+
+    /**
+     * An armor stand takes the held item in its own {@code interactAt}, which ends the click before
+     * {@link #onEntityInteract} can see it, so a stand is handled at this earlier event. Other entities stay
+     * with the later one: their click goes on to {@code interact} whatever happens here, and a mob just
+     * harvested here would then be sheared or otherwise used by the same click.
+     */
+    private static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (!(event.getTarget() instanceof ArmorStand)) {
+            return;
+        }
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         if (result != InteractionResult.PASS) {
@@ -140,9 +159,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
-        }
+        ServerServices.onStopTracking(event.getTarget());
     }
 
     private static void onTrade(TradeWithVillagerEvent event) {
@@ -153,6 +170,7 @@ public final class ForgeServerEvents {
     public static void register(IEventBus gameBus) {
         gameBus.addListener(ForgeServerEvents::onRegisterCommands);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteract);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onEntityInteractSpecific);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickBlock);
         gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops.
@@ -164,8 +182,9 @@ public final class ForgeServerEvents {
         gameBus.addListener(ForgeServerEvents::onServerTick);
         gameBus.addListener(ForgeServerEvents::onStartTracking);
         gameBus.addListener(ForgeServerEvents::onStopTracking);
-        gameBus.addListener(ForgeServerEvents::onLivingDamage);
-        gameBus.addListener(ForgeServerEvents::onLivingHeal);
+        // Lowest priority so eyes react only to damage and healing no other mod cancelled.
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingDamage);
+        gameBus.addListener(EventPriority.LOWEST, ForgeServerEvents::onLivingHeal);
         gameBus.addListener(ForgeServerEvents::onTrade);
         gameBus.addListener(ForgeServerEvents::onPlayerClone);
         gameBus.addListener(ForgeServerEvents::onLivingConversion);

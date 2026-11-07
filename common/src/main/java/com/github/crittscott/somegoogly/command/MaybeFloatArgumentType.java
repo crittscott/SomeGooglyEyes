@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,6 +22,21 @@ import java.util.concurrent.CompletableFuture;
 public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "0.5", "~", "-1.25");
+
+    /** {@code value} whole, as this argument parses it whatever the computer's language: for angles. */
+    public static String angle(double value) {
+        return String.format(Locale.ROOT, "%.0f", value);
+    }
+
+    /** {@code value} to two places, as this argument parses it: for scales, weights, and tight displays. */
+    public static String compact(double value) {
+        return String.format(Locale.ROOT, "%.2f", value);
+    }
+
+    /** {@code value} to three places, as this argument parses it: for positions. */
+    public static String position(double value) {
+        return String.format(Locale.ROOT, "%.3f", value);
+    }
 
     /** Read the parsed argument; empty means {@code ~} (unchanged). */
     @SuppressWarnings("unchecked")

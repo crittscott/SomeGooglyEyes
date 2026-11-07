@@ -120,4 +120,19 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void completedTradeSwirlsEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void playerHitBulgesEyes(GameTestHelper helper) {
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayer.get(helper.getLevel()));
+    }
 }

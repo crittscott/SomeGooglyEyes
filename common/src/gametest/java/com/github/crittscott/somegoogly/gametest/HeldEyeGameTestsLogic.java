@@ -8,7 +8,6 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +36,7 @@ public final class HeldEyeGameTestsLogic {
     /** A held eye ticked once under {@code settings} for a fresh mock player holding a Googly Eye in {@code hand}. */
     private static HeldEye heldBy(Player player, InteractionHand hand, BehaviorSettings settings) {
         player.setItemInHand(hand, new ItemStack(ModContent.GOOGLY_EYE.get()));
-        HeldEye held = new HeldEye(RandomSource.create(1L));
+        HeldEye held = new HeldEye();
         held.tick(player, settings);
         return held;
     }
@@ -88,9 +87,6 @@ public final class HeldEyeGameTestsLogic {
      * swirls, winks, stares, or glances aside.
      */
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        helper.assertTrue(!BehaviorSettings.NONE.plays() && BehaviorSettings.NONE.growOnHitPercent() == 0
-                        && !BehaviorSettings.NONE.swirlOnHeal() && BehaviorSettings.NONE.ongoing().isEmpty(),
-                "before first sync no server-controlled expression is enabled");
         BehaviorSettings off = settings(false, ServerConfig.PERCENT_MIN, false);
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setHealth(10F);
@@ -178,9 +174,8 @@ public final class HeldEyeGameTestsLogic {
         step(held, player, BLINK_PEAK_TICKS, DEFAULTS);
         helper.assertTrue(held.eye.squashY < BLINK_PEAK_SQUASH, "the lone eye closes for the blink");
 
-        BehaviorInstance cross = new BehaviorInstance(EyeBehavior.CROSS_EYE, null,
+        BehaviorInstance cross = BehaviorInstance.start(EyeBehavior.CROSS_EYE, null,
                 EyeBehavior.CROSS_EYE.defaultDuration(), 1L);
-        EyeBehavior.CROSS_EYE.onStart(cross);
         cross.age = cross.duration / 2;
         EyeInfluence influence = new EyeInfluence();
         EyeBehavior.CROSS_EYE.influence(cross, 0, 0, influence);

@@ -157,15 +157,6 @@ public final class PickerFreezeService {
         FROZEN_BY_PLAYER.clear();
     }
 
-    /**
-     * Drop all live records <b>without restoring</b> — the state after a hard crash, which the marker
-     * tags then recover from on next load ({@link #onMobJoin}). Exists for the gametests that pin that
-     * recovery; real shutdown goes through {@link #onServerStopping}.
-     */
-    public static void clear() {
-        FROZEN_BY_PLAYER.clear();
-    }
-
     private static String nameOf(MinecraftServer server, UUID playerId) {
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
         return player != null ? player.getGameProfile().getName() : playerId.toString();

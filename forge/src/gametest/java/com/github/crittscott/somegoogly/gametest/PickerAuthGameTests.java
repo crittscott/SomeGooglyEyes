@@ -1,8 +1,11 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -10,6 +13,8 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 
 import java.util.function.Consumer;
+
+import java.util.UUID;
 
 /**
  * Forge GameTest entry points for {@link PickerAuthGameTestsLogic}; see that class for the actual
@@ -76,5 +81,13 @@ public final class PickerAuthGameTests {
         } finally {
             MinecraftForge.EVENT_BUS.unregister(refusal);
         }
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        // The mock player always reports creative, so this needs a plain survival player.
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper,
+                new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                        new GameProfile(UUID.randomUUID(), "survival_operator"), ClientInformation.createDefault()));
     }
 }

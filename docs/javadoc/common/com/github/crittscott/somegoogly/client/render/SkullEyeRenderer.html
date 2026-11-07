@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with <a href="#begin(net.minecraft.world.level.block.entity.SkullBlockEntity,float)"><code>begin(net.minecraft.world.level.block.entity.SkullBlockEntity, float)</code></a>
  and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after
- the head model is drawn, in the model's space. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); an item's
- are drawn at rest, pupils centered, like the Googly Eye item's. Worn heads share the model draw without
+ the head model is drawn, in the model's space. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI, hand, and framed head items use
+ their presentation's pupils and expressions; other items rest. Worn heads share the model draw without
  either bracket, so they draw no eyes.
 
  <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's

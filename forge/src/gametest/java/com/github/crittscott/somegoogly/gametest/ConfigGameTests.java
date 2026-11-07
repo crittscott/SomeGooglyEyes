@@ -75,15 +75,15 @@ public final class ConfigGameTests {
 
     /**
      * Native file correction retains released values and adds absent keys. In game: open a world saved
-     * by the 1.21.1 release with globalPercent set to 17; correction keeps 17 and adds squintOnSleep.
+     * by the 0.8.2 release for Minecraft 1.21.1 with globalPercent set to 17; correction keeps 17 and adds squintOnSleep.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void releasedConfigSurvivesNativeCorrection(GameTestHelper helper) {
         CommentedConfig config = new TomlParser().parse("[\"Server Settings\"]\nglobalPercent = 17\n");
         ForgeServerConfig.SPEC.correct(config);
-        helper.assertTrue(config.<Number>get(List.of(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT_KEY)).intValue() == 17,
+        helper.assertTrue(config.<Number>get(List.of(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT.key())).intValue() == 17,
                 "native correction retains a released non-default value");
-        helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP_KEY)),
+        helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP.key())),
                 "native correction supplies an absent behavior key");
         helper.succeed();
     }

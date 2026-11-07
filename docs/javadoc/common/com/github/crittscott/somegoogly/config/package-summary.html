@@ -94,17 +94,26 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Client-side store of the resolved server eye state, populated from the server via
- <code>EyeConfigSyncPacket</code>: the per-entity eye geometry configs, the current
- <code>googlyEyesEnabled</code> master switch, and the behavior settings clients run behaviors from.</div>
+<div class="block">Client-side store of the resolved server eye state: the per-entity eye geometry configs, from
+ <code>EyeConfigSyncPacket</code>, and the current <code>googlyEyesEnabled</code> master switch and the behavior settings
+ clients run behaviors from, from <code>EyeSettingsPacket</code>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a>&lt;T&gt;</div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Mutable, validated runtime view of a loader-owned configuration value.</div>
+<div class="block">One configuration setting: everything each loader needs to declare it in its config file, plus the mutable,
+ validated runtime view of the value that file holds.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a>&lt;D&gt;</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ConfigValue.Flag.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Flag</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">A string-list value with a derived view; see <a href="ConfigValue.html#parsedStrings(java.util.List,java.util.function.Predicate,java.util.function.Function)"><code>ConfigValue.parsedStrings(java.util.List&lt;java.lang.String&gt;, java.util.function.Predicate&lt;java.lang.String&gt;, java.util.function.Function&lt;java.util.List&lt;java.lang.String&gt;, D&gt;)</code></a>.</div>
+<div class="block">A boolean setting.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a>&lt;D&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">A string-list setting with a derived view; see <a href="ConfigValue.html#parsedStrings(java.lang.String,java.lang.String,java.util.List,java.util.function.Predicate,java.util.function.Function,java.lang.String)"><code>ConfigValue.parsedStrings(java.lang.String, java.lang.String, java.util.List&lt;java.lang.String&gt;, java.util.function.Predicate&lt;java.lang.String&gt;, java.util.function.Function&lt;java.util.List&lt;java.lang.String&gt;, D&gt;, java.lang.String)</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ConfigValue.Ranged.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Ranged</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">An integer setting clamped to <code>[min, max]</code>.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">

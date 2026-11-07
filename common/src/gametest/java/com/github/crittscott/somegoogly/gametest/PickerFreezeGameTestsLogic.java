@@ -127,12 +127,9 @@ public final class PickerFreezeGameTestsLogic {
      */
     public static void staleMarkerIsRestoredOnJoin(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
-        UUID editor = UUID.randomUUID();
-
-        PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
-        // A hard crash drops the live records without restoring; the marker survives with the mob.
-        PickerFreezeService.clear();
-        helper.assertTrue(cow.isNoAi(), "precondition: the mob is still stuck NoAi after the 'crash'");
+        // What a hard crash leaves: the frozen mob and its marker, with no live record of the freeze.
+        cow.setNoAi(true);
+        EntityPersistentData.get(cow).putBoolean(PickerFreezeService.PREV_NO_AI_TAG, false);
 
         PickerFreezeService.onMobJoin(cow);
         helper.assertTrue(!cow.isNoAi(), "a stale marker must restore the pre-freeze NoAi on next join");

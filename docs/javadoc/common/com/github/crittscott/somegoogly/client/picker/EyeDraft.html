@@ -119,8 +119,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>int</code></div>
 <div class="col-second even-row-color"><code><a href="#crossTarget" class="member-name-link">crossTarget</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, <code>-1</code> =
- none) — authoring space, matching what <code>/sg list eyes</code> shows.</div>
+<div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, or
+ <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code> shows.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#depth" class="member-name-link">depth</a></code></div>
@@ -265,8 +265,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="crossTarget">
 <h3>crossTarget</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">crossTarget</span></div>
-<div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, <code>-1</code> =
- none) — authoring space, matching what <code>/sg list eyes</code> shows. It's resolved to the on-disk
+<div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, or
+ <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code> shows. It's resolved to the on-disk
  <i>within-head</i> index only at export (<a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>),
  so this stays valid as eyes move between heads while authoring.</div>
 </section>

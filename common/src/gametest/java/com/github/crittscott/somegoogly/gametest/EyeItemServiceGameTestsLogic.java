@@ -7,12 +7,15 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import net.minecraft.core.BlockPos;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,9 +29,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * {@link EyeItemService#interact} (the Optometrist right-click harvest) and
@@ -43,6 +49,65 @@ import java.util.Map;
 public final class EyeItemServiceGameTestsLogic {
 
     private EyeItemServiceGameTestsLogic() {
+    }
+
+    /**
+     * Eyes go on or come off another player only where you could hurt them. In game, on a server with
+     * {@code pvp=false}: right-click another player with a Slimy Eye, then give them eyes with
+     * {@code /sg admin eyes true} and right-click them with Optometrist shears; nothing happens either way and
+     * nothing is spent. With {@code pvp=true}, put both players on a team with {@code friendlyFire false} and
+     * repeat; nothing happens. With {@code friendlyFire true} the shears take the eyes.
+     */
+    public static void anotherPlayersEyesFollowThePvpRules(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        ServerPlayer actor = new ServerPlayer(server, helper.getLevel(), new GameProfile(UUID.randomUUID(), "pvp_actor"), ClientInformation.createDefault());
+        ServerPlayer victim = new ServerPlayer(server, helper.getLevel(), new GameProfile(UUID.randomUUID(), "pvp_victim"), ClientInformation.createDefault());
+        Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
+        // A player without a connection can't take moveTo, which resets the connection's position.
+        victim.setPos(at.x, at.y, at.z);
+        ItemStack shears = optometristShears(helper);
+        ItemStack slimy = new ItemStack(ModContent.SLIMY_EYE.get());
+        Runnable refused = () -> {
+            EyeState.setHasEyes(victim, true);
+            actor.setItemInHand(InteractionHand.MAIN_HAND, shears);
+            helper.assertTrue(EyeItemService.interact(actor, helper.getLevel(), InteractionHand.MAIN_HAND, victim)
+                    == InteractionResult.FAIL, "a protected player refuses the harvest");
+            helper.assertTrue(EyeState.hasEyes(victim) && shears.getDamageValue() == 0,
+                    "a refused harvest changes nothing");
+            EyeState.setHasEyes(victim, false);
+            actor.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+            helper.assertTrue(EyeItemService.interact(actor, helper.getLevel(), InteractionHand.MAIN_HAND, victim)
+                    == InteractionResult.FAIL, "a protected player refuses a Slimy Eye");
+            helper.assertTrue(!EyeState.hasEyes(victim) && slimy.getCount() == 1,
+                    "a refused application changes nothing");
+        };
+
+        boolean pvp = server.isPvpAllowed();
+        Scoreboard scoreboard = server.getScoreboard();
+        PlayerTeam team = scoreboard.addPlayerTeam("somegoogly_pvp_test");
+        try {
+            server.setPvpAllowed(false);
+            refused.run();
+
+            server.setPvpAllowed(true);
+            scoreboard.addPlayerToTeam(actor.getScoreboardName(), team);
+            scoreboard.addPlayerToTeam(victim.getScoreboardName(), team);
+            team.setAllowFriendlyFire(false);
+            refused.run();
+
+            team.setAllowFriendlyFire(true);
+            EyeState.setHasEyes(victim, true);
+            actor.setItemInHand(InteractionHand.MAIN_HAND, shears);
+            helper.assertTrue(EyeItemService.interact(actor, helper.getLevel(), InteractionHand.MAIN_HAND, victim)
+                    == InteractionResult.CONSUME, "a player you could hurt can be harvested");
+            helper.assertTrue(!EyeState.hasEyes(victim) && shears.getDamageValue() == 1,
+                    "the allowed harvest takes the eyes for one durability");
+        } finally {
+            server.setPvpAllowed(pvp);
+            scoreboard.removePlayerTeam(team);
+            droppedEyes(helper, victim).forEach(ItemEntity::discard);
+        }
+        helper.succeed();
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {
@@ -79,7 +144,7 @@ public final class EyeItemServiceGameTestsLogic {
         InteractionResult result = EyeItemService.interact(
                 player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
 
-        helper.assertTrue(result == InteractionResult.SUCCESS, "the Optometrist harvest consumes the interaction");
+        helper.assertTrue(result == InteractionResult.CONSUME, "the Optometrist harvest consumes the interaction");
         helper.assertTrue(!EyeState.hasEyes(cow), "the harvest clears the mob's eyes");
         helper.assertTrue(shears.getDamageValue() == 1, "a successful harvest spends one shears durability");
 
@@ -120,12 +185,12 @@ public final class EyeItemServiceGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             EyeState.setHasEyes(cow, true);
-            ServerEyeConfigs.replaceAll(Map.of());
+            TestEyeConfigs.install(Map.of());
             helper.assertTrue(
                     EyeItemService.interact(player, level, InteractionHand.MAIN_HAND, cow) == InteractionResult.PASS,
                     "an unconfigured mob passes rather than dropping a config-less eye");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
 
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
@@ -171,7 +236,7 @@ public final class EyeItemServiceGameTestsLogic {
         ItemStack opto = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, opto);
         InteractionResult clean = EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(clean == InteractionResult.SUCCESS, "Optometrist self-removal succeeds");
+        helper.assertTrue(clean == InteractionResult.CONSUME, "Optometrist self-removal succeeds");
         helper.assertTrue(!EyeState.hasEyes(player), "the player loses their eyes");
         helper.assertTrue(opto.getDamageValue() == 1, "one durability for the clean removal");
         helper.assertTrue(player.getHealth() == player.getMaxHealth(),
@@ -185,7 +250,7 @@ public final class EyeItemServiceGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, plain);
         EyeState.setHasEyes(player, true);
         InteractionResult costly = EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(costly == InteractionResult.SUCCESS, "plain-shears self-removal still succeeds");
+        helper.assertTrue(costly == InteractionResult.CONSUME, "plain-shears self-removal still succeeds");
         helper.assertTrue(plain.getDamageValue() == 1, "one durability for the plain removal");
         helper.assertTrue(!EyeState.hasEyes(player), "the plain-shears path also removes the eyes");
         helper.assertTrue(droppedEyes(helper, player).size() == 2, "the plain removal drops a second Googly Eye");

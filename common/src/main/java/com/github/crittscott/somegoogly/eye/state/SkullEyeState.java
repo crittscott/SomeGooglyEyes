@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -44,8 +45,6 @@ public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
-    /** The last segment of an attachment token that names a model's head part. */
-    private static final String HEAD_PART = "head";
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -66,14 +65,22 @@ public final class SkullEyeState {
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
+
+        /** Save the compound into {@code tag} while the head has eyes; a head without them saves nothing. */
+        default void somegoogly$saveEyes(CompoundTag tag) {
+            CompoundTag data = somegoogly$find();
+            if (data != null && data.getBoolean(EyeState.HAS_EYES)) {
+                tag.put(DATA_KEY, data.copy());
+            }
+        }
     }
 
     /**
-     * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
+     * Whether a head can have eyes under its mob's adult {@code config}: it is usable and
      * has a weighted variant with eyes on its head part.
      */
-    public static boolean canHaveEyes(@Nullable ResourceLocation entity, @Nullable RuntimeConfig config) {
-        if (entity == null || !RuntimeConfig.isUsable(config)) {
+    public static boolean canHaveEyes(@Nullable RuntimeConfig config) {
+        if (!RuntimeConfig.isUsable(config)) {
             return false;
         }
         for (Variant variant : config.variants) {
@@ -84,7 +91,11 @@ public final class SkullEyeState {
         return false;
     }
 
-    /** Copy an eyed head block's snapshot onto its generated head items. */
+    /**
+     * Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
+     * {@code HeadEyesLootModifier}s call this; Fabric's counterpart is the {@code copy_components} function its
+     * loot-table event adds.
+     */
     public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
         if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
             Snapshot state = snapshot(skull);
@@ -96,6 +107,27 @@ public final class SkullEyeState {
                 }
             }
         }
+    }
+
+    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    @Nullable
+    public static CompoundTag data(SkullBlockEntity skull) {
+        return ((Holder) skull).somegoogly$find();
+    }
+
+    /**
+     * The eye-state compound of a head loading from {@code tag}, or {@code null} if it holds none. Only the state
+     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
+     * saved and sent to everyone near the head.
+     */
+    @Nullable
+    public static CompoundTag loadedData(CompoundTag tag) {
+        if (!tag.contains(DATA_KEY, Tag.TAG_COMPOUND)) {
+            return null;
+        }
+        CompoundTag data = new CompoundTag();
+        Snapshot.read(tag.getCompound(DATA_KEY)).write(data);
+        return data;
     }
 
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
@@ -116,13 +148,13 @@ public final class SkullEyeState {
 
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(SkullBlockEntity skull) {
-        CompoundTag data = ((Holder) skull).somegoogly$find();
+        CompoundTag data = data(skull);
         return data != null && data.getBoolean(EyeState.HAS_EYES);
     }
 
     /**
      * The indexes of {@code helper}'s heads that a head shows, in order: those attached to the model's head part
-     * (an attachment token whose last segment is {@value #HEAD_PART}).
+     * (an attachment token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -136,8 +168,14 @@ public final class SkullEyeState {
     }
 
     /** Whether eyes attached at {@code token} sit on the model's head part, the part a head shows. */
-    private static boolean isHeadPart(@Nullable String token) {
-        return token != null && token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART);
+    private static boolean isHeadPart(String token) {
+        return token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD);
+    }
+
+    /** Whether a head item's eye state has eyes; safe on any item. */
+    public static boolean itemHasEyes(ItemStack stack) {
+        Snapshot snapshot = stack.get(ModContent.HEAD_EYES.get());
+        return snapshot != null && snapshot.hasEyes();
     }
 
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
@@ -173,7 +211,7 @@ public final class SkullEyeState {
 
     /** The placed head's eye state; {@link Snapshot#NONE} when it has never had any. */
     public static Snapshot snapshot(SkullBlockEntity skull) {
-        CompoundTag data = ((Holder) skull).somegoogly$find();
+        CompoundTag data = data(skull);
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 

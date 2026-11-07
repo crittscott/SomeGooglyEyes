@@ -1,8 +1,6 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.client.ModelGooglyEye;
-import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
@@ -37,8 +35,6 @@ import java.util.List;
  */
 public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
 
-    private final ModelGooglyEye modelGooglyEye;
-
     /**
      * State computed in {@link #preRender} for the entity currently being rendered, consumed by
      * {@link #renderForBone}, cleared in {@link #render}. The layer is a per-renderer singleton, but
@@ -56,8 +52,8 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         GooglyTracker tracker;
         GeoBone[] headBones;
 
-        // Picker preview: the edited variant's saved eyes (the selected one stays null — it is shown
-        // live as the current eye), plus the bone carrying the gizmo and the live eye.
+        // Picker preview: the edited variant's previewed eyes with the bone each attaches to, plus the
+        // bone carrying the gizmo and the live eye.
         boolean preview;
         List<PickerState.ListedEye> savedEyes;
         GeoBone[] savedEyeBones;
@@ -66,7 +62,6 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
 
     public GooglyGeoLayer(GeoRenderer<T> renderer) {
         super(renderer);
-        this.modelGooglyEye = new ModelGooglyEye();
     }
 
     @Override
@@ -79,13 +74,10 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
         if (data.pickerTarget()) {
             Frame frame = new Frame();
             frame.preview = true;
-            frame.savedEyes = PickerState.currentEyes();
+            frame.savedEyes = PickerState.previewEyes();
             frame.savedEyeBones = new GeoBone[frame.savedEyes.size()];
             for (int i = 0; i < frame.savedEyes.size(); i++) {
-                PickerState.ListedEye listed = frame.savedEyes.get(i);
-                if (i != PickerState.selectedIndex() && listed.part != null) {
-                    frame.savedEyeBones[i] = GeoBones.findBone(bakedModel, listed.part);
-                }
+                frame.savedEyeBones[i] = GeoBones.findBone(bakedModel, frame.savedEyes.get(i).part);
             }
             if (PickerState.currentPart() != null) {
                 frame.gizmoBone = GeoBones.findBone(bakedModel, PickerState.currentPart());
@@ -146,15 +138,8 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             if (frame.headBones[h] != bone) {
                 continue;
             }
-            int eyeCount = frame.helper.getEyeCount(h);
-            for (int i = 0; i < eyeCount; i++) {
-                if (frame.helper.getEyeScale(h, i) <= 0F) {
-                    continue;
-                }
-                GooglyEyeRenderer.renderEye(poseStack, modelGooglyEye, bufferSource, packedLight,
-                        packedOverlay, frame.tracker.eyes[h][i], frame.helper, frame.overrides, h, i, partialTick);
-                drew = true;
-            }
+            drew |= GooglyEyeRenderer.renderHead(poseStack, bufferSource, packedLight, packedOverlay,
+                    frame.tracker.eyes[h], frame.helper, frame.overrides, h, partialTick);
         }
         return drew;
     }
@@ -166,16 +151,12 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
             if (frame.savedEyeBones[i] != bone) {
                 continue;
             }
-            GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
+            GooglyEyeRenderer.renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay,
                     frame.savedEyes.get(i).eye);
             drew = true;
         }
         if (frame.gizmoBone == bone) {
-            Gizmo.draw(poseStack, bufferSource);
-            if (PickerState.currentEye() != null) {
-                GooglyEyeRenderer.renderPreviewEye(poseStack, modelGooglyEye, bufferSource, packedLight, packedOverlay,
-                        PickerState.currentEye());
-            }
+            GooglyEyeRenderer.renderPreviewPlacement(poseStack, bufferSource, packedLight, packedOverlay);
             drew = true;
         }
         return drew;

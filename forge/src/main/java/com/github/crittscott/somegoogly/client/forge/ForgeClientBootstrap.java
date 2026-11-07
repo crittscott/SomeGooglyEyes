@@ -4,12 +4,12 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
-import com.github.crittscott.somegoogly.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import net.minecraft.client.color.item.ItemTintSources;
@@ -104,6 +104,7 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
+        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -113,8 +114,7 @@ public final class ForgeClientBootstrap {
     private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
                 ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
-                (graphics, partialTick) -> PickerHud.render(
-                        graphics, graphics.guiWidth(), graphics.guiHeight()));
+                (graphics, partialTick) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 
     /**
@@ -128,9 +128,9 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(PickerKeys.LOCK);
-        event.register(PickerKeys.PART_NEXT);
-        event.register(PickerKeys.PART_PREV);
-        event.register(PickerKeys.TOGGLE);
+        event.register(PickerInput.LOCK);
+        event.register(PickerInput.PART_NEXT);
+        event.register(PickerInput.PART_PREV);
+        event.register(PickerInput.TOGGLE);
     }
 }

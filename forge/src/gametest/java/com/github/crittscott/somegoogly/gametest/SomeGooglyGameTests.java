@@ -74,4 +74,9 @@ public final class SomeGooglyGameTests {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, survivalPlayer(helper));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, helper.makeMockServerPlayerInLevel());
+    }
 }

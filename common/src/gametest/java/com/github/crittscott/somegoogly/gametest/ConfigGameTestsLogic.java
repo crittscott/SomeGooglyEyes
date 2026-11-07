@@ -21,7 +21,7 @@ import java.util.Map;
  * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), the reload
  * listener's exact Minecraft-version selection, and the pure {@link ServerConfig#percentFor} resolution.
  * Tests that mutate shared state (config values via their public {@code set}, the loaded eye configs
- * via {@code replaceAll}) restore the originals in a {@code finally} so later tests aren't affected.
+ * via {@link TestEyeConfigs}) restore the originals in a {@code finally} so later tests aren't affected.
  */
 public final class ConfigGameTestsLogic {
 
@@ -64,7 +64,7 @@ public final class ConfigGameTestsLogic {
     /**
      * Shared schema constants name the sections used by the immediately preceding release. This checks
      * names only; the loader-specific scenarios exercise native file correction. In game: open a world
-     * saved by the 1.21.1 release whose server config sets {@code globalPercent = 17}; that value remains
+     * saved by the 0.8.2 release for Minecraft 1.21.4 whose server config sets {@code globalPercent = 17}; that value remains
      * after the file gains newly introduced keys.
      */
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
@@ -150,7 +150,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
                     "the baby entry of the exact generation must be selected with it");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -228,7 +228,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
                     "other entities in the same batch still load");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -260,7 +260,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(s != null && s.variants.get(0).weight == 3.0,
                     "an invalid age is ignored while its file's valid entries still load");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -279,7 +279,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
                     "an entry that matches no loaded version falls back to its nearest generation");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }
@@ -309,7 +309,7 @@ public final class ConfigGameTestsLogic {
             helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
                     "server stop clears the installed set, so the next reload installs anew");
         } finally {
-            ServerEyeConfigs.replaceAll(original);
+            TestEyeConfigs.install(original);
         }
         helper.succeed();
     }

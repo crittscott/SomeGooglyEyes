@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.neoforge;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.neoforge.NeoForgeClient;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
+import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
 import com.github.crittscott.somegoogly.registry.neoforge.NeoForgeContentRegistrar;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
@@ -32,7 +33,8 @@ public final class SomeGooglyNeoForge {
         NeoForgeServerEvents.register(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(SomeGooglyNeoForge::addReloadListeners);
 
-        SomeGooglyCommon.LOGGER.info("{} initialized on NeoForge", SomeGooglyCommon.MOD_NAME);
+        SomeGooglyCommon.LOGGER.info("{} {} registered on NeoForge", SomeGooglyCommon.MOD_NAME,
+                ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 
     private static void addReloadListeners(AddServerReloadListenersEvent event) {

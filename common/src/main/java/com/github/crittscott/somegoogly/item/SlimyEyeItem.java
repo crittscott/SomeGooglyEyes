@@ -1,8 +1,5 @@
 package com.github.crittscott.somegoogly.item;
 
-import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,13 +32,6 @@ public class SlimyEyeItem extends GooglyEyeItem {
 
     public SlimyEyeItem(Properties properties) {
         super(properties);
-    }
-
-    /** A new slimy-eye stack carrying {@code properties}. */
-    public static ItemStack create(AppearanceOverride properties, int count) {
-        ItemStack stack = new ItemStack(ModContent.SLIMY_EYE.get(), count);
-        EyeItemProperties.set(stack, properties);
-        return stack;
     }
 
     /** Sneak + use: eye yourself. Without the sneak this would fire on every stray right-click. */

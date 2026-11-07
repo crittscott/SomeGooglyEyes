@@ -64,4 +64,9 @@ public final class SomeGooglyGameTests {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
 }

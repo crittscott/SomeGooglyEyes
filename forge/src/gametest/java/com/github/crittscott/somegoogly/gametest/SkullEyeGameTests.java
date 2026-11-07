@@ -73,4 +73,24 @@ public final class SkullEyeGameTests {
             }
         });
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.adventureCanPlaceOnReadsTheClickedHead(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void eyeUsesAreCountedInStatistics(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyeUsesAreCountedInStatistics(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headKeepsOnlyItsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
 }

@@ -48,4 +48,24 @@ public final class SkullEyeGameTests implements FabricGameTest {
     public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
         SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.adventureCanPlaceOnReadsTheClickedHead(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void eyeUsesAreCountedInStatistics(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyeUsesAreCountedInStatistics(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headKeepsOnlyItsEyeState(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
 }

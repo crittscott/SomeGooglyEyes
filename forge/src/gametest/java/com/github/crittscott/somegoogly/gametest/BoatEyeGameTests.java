@@ -25,8 +25,8 @@ public final class BoatEyeGameTests {
     }
 
     @GameTest(template = TEMPLATE)
-    public static void boatsEvictIdleAndPauseSimulations(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsEvictIdleAndPauseSimulations(helper);
+    public static void boatsEvictIdleSimulations(GameTestHelper helper) {
+        BoatEyeGameTestsLogic.boatsEvictIdleSimulations(helper);
     }
 
     @GameTest(template = TEMPLATE)

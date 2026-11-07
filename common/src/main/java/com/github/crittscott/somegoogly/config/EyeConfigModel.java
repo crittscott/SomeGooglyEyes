@@ -34,7 +34,10 @@ public final class EyeConfigModel {
     public static final String AGE_ADULT = "adult";
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
-
+    /** The attachment tokens the renderers name a model's body, head, and root by, and eye files use. */
+    public static final String PART_BODY = "body";
+    public static final String PART_HEAD = "head";
+    public static final String PART_ROOT = "root";
 
     private EyeConfigModel() {
     }
@@ -135,13 +138,6 @@ public final class EyeConfigModel {
             }
             ConfigFile file = new ConfigFile();
             file.entries = entries;
-            return file;
-        }
-
-        /** A file holding one entry for {@code config}. */
-        public static ConfigFile single(String versionRange, String age, RuntimeConfig config) {
-            ConfigFile file = new ConfigFile();
-            file.entries = List.of(VersionedEntry.of(versionRange, age, config));
             return file;
         }
 
