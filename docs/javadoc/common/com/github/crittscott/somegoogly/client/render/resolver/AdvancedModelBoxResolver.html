@@ -63,10 +63,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#available()" tabindex="0">available()</a></li>
 <li><a href="#boxClass()" tabindex="0">boxClass()</a></li>
 <li><a href="#handles(net.minecraft.client.model.EntityModel)" tabindex="0">handles(EntityModel)</a></li>
-<li><a href="#collectParts(net.minecraft.client.model.EntityModel)" tabindex="0">collectParts(EntityModel)</a></li>
+<li><a href="#rawParts(net.minecraft.client.model.EntityModel)" tabindex="0">rawParts(EntityModel)</a></li>
 <li><a href="#intrinsicName(java.lang.Object)" tabindex="0">intrinsicName(Object)</a></li>
-<li><a href="#parentOf(java.lang.Object)" tabindex="0">parentOf(Object)</a></li>
-<li><a href="#applyTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)" tabindex="0">applyTransform(Object, PoseStack)</a></li>
+<li><a href="#rawParent(java.lang.Object)" tabindex="0">rawParent(Object)</a></li>
+<li><a href="#rawTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)" tabindex="0">rawTransform(Object, PoseStack)</a></li>
 <li><a href="#clearModelCache()" tabindex="0">clearModelCache()</a></li>
 <li><a href="#integrationFailed()" tabindex="0">integrationFailed()</a></li>
 <li><a href="#disableIntegration(java.lang.String,java.lang.Object,java.lang.Throwable)" tabindex="0">disableIntegration(String, Object, Throwable)</a></li>
@@ -135,43 +135,32 @@ recovers.</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#applyTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">applyTransform</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#available()" class="member-name-link">available</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Apply the box's local pose transform (the family's translate+rotate).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#available()" class="member-name-link">available</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether the reflective handles all loaded (the family's classes are present and API-shaped as expected).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;?&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#boxClass()" class="member-name-link">boxClass</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;?&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#boxClass()" class="member-name-link">boxClass</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The family's box class, for instance checks and the field-name fallback scan.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
 path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
 and exported configs all speak.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#citadel()" class="member-name-link">citadel</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#citadel()" class="member-name-link">citadel</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Citadel's copy of the toolkit: Alex's Mobs, Ice and Fire.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearModelCache()" class="member-name-link">clearModelCache</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Drop any per-model state this resolver caches.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#collectParts(net.minecraft.client.model.EntityModel)" class="member-name-link">collectParts</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearModelCache()" class="member-name-link">clearModelCache</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">All of the model's boxes in the family's stable order; empty on any reflection failure.</div>
+<div class="block">Drop any per-model state this resolver caches.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#disableIntegration(java.lang.String,java.lang.Object,java.lang.Throwable)" class="member-name-link">disableIntegration</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;operation,
@@ -206,9 +195,20 @@ and exported configs all speak.</div>
 <div class="block">The box's author-set name, or <code>""</code> when the family has none / it is unset.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parentOf(java.lang.Object)" class="member-name-link">parentOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rawParent(java.lang.Object)" class="member-name-link">rawParent</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The box's parent box, or <code>null</code> for a root (or on reflection failure).</div>
+<div class="block">The box's parent, or <code>null</code> for a root.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rawParts(net.minecraft.client.model.EntityModel)" class="member-name-link">rawParts</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The family's iterable of all the model's boxes, in its stable order.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rawTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">rawTransform</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Apply the box's local pose transform (the family's translate+rotate).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
@@ -299,11 +299,16 @@ serving several libraries must override so its warnings say which one failed.</d
 </section>
 </li>
 <li>
-<section class="detail" id="collectParts(net.minecraft.client.model.EntityModel)">
-<h3>collectParts</h3>
+<section class="detail" id="rawParts(net.minecraft.client.model.EntityModel)">
+<h3>rawParts</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</span>&nbsp;<span class="element-name">collectParts</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
-<div class="block">All of the model's boxes in the family's stable order; empty on any reflection failure.</div>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">rawParts</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span>
+                   throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></span></div>
+<div class="block">The family's iterable of all the model's boxes, in its stable order.</div>
+<dl class="notes">
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></code></dd>
+</dl>
 </div>
 </section>
 </li>
@@ -317,21 +322,31 @@ serving several libraries must override so its warnings say which one failed.</d
 </section>
 </li>
 <li>
-<section class="detail" id="parentOf(java.lang.Object)">
-<h3>parentOf</h3>
+<section class="detail" id="rawParent(java.lang.Object)">
+<h3>rawParent</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">parentOf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</span></div>
-<div class="block">The box's parent box, or <code>null</code> for a root (or on reflection failure).</div>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">rawParent</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</span>
+                    throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></span></div>
+<div class="block">The box's parent, or <code>null</code> for a root.</div>
+<dl class="notes">
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></code></dd>
+</dl>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="applyTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)">
-<h3>applyTransform</h3>
+<section class="detail" id="rawTransform(java.lang.Object,com.mojang.blaze3d.vertex.PoseStack)">
+<h3>rawTransform</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">applyTransform</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</span></div>
-<div class="block">Apply the box's local pose transform (the family's translate+rotate). False on reflection failure.</div>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">rawTransform</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</span>
+                     throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></span></div>
+<div class="block">Apply the box's local pose transform (the family's translate+rotate).</div>
+<dl class="notes">
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></code></dd>
+</dl>
 </div>
 </section>
 </li>

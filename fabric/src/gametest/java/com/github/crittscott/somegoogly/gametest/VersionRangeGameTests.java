@@ -46,10 +46,6 @@ public final class VersionRangeGameTests {
         VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
-    }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void shorterVersionPadsWithZero(GameTestHelper helper) {
@@ -59,5 +55,15 @@ public final class VersionRangeGameTests {
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.loaderNamesDoNotChangeAVersion(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.longSegmentsCompareAsNumbers(helper);
     }
 }

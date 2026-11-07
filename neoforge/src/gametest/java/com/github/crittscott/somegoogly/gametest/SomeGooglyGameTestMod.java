@@ -15,6 +15,26 @@ public final class SomeGooglyGameTestMod {
     public SomeGooglyGameTestMod(IEventBus modBus) {
         DeferredRegister<Consumer<GameTestHelper>> functions =
                 DeferredRegister.create(BuiltInRegistries.TEST_FUNCTION, "somegoogly");
+        functions.register("boateyegametests/boats_evict_idle_simulations", () -> BoatEyeGameTests::boatsEvictIdleSimulations);
+        functions.register("behaviorschedulergametests/completed_trade_swirls_eyes", () -> BehaviorSchedulerGameTests::completedTradeSwirlsEyes);
+        functions.register("behaviorschedulergametests/heal_at_full_health_plays_no_swirl", () -> BehaviorSchedulerGameTests::healAtFullHealthPlaysNoSwirl);
+        functions.register("behaviorschedulergametests/player_hit_bulges_eyes", () -> BehaviorSchedulerGameTests::playerHitBulgesEyes);
+        functions.register("eyeitemservicegametests/another_players_eyes_follow_the_pvp_rules", () -> EyeItemServiceGameTests::anotherPlayersEyesFollowThePvpRules);
+        functions.register("eyeitemservicegametests/harvest_breaking_shears_reports_them", () -> EyeItemServiceGameTests::harvestBreakingShearsReportsThem);
+        functions.register("eyeitemservicegametests/optometrist_acts_on_armor_stand_before_it_takes_the_shears", () -> EyeItemServiceGameTests::optometristActsOnArmorStandBeforeItTakesTheShears);
+        functions.register("pickerauthgametests/picker_commands_fail_for_survival_operators", () -> PickerAuthGameTests::pickerCommandsFailForSurvivalOperators);
+        functions.register("pickerexportgametests/export_rejects_what_the_sync_could_not_carry", () -> PickerExportGameTests::exportRejectsWhatTheSyncCouldNotCarry);
+        functions.register("recipegametests/slimy_eye_recipe_unlocks_by_advancement", () -> RecipeGameTests::slimyEyeRecipeUnlocksByAdvancement);
+        functions.register("serializationgametests/network_protocol_ids_are_unique", () -> SerializationGameTests::networkProtocolIdsAreUnique);
+        functions.register("serializationgametests/picker_numbers_ignore_the_computers_language", () -> SerializationGameTests::pickerNumbersIgnoreTheComputersLanguage);
+        functions.register("serializationgametests/settings_packet_round_trips", () -> SerializationGameTests::settingsPacketRoundTrips);
+        functions.register("skulleyegametests/adventure_can_place_on_reads_the_clicked_head", () -> SkullEyeGameTests::adventureCanPlaceOnReadsTheClickedHead);
+        functions.register("skulleyegametests/eye_uses_are_counted_in_statistics", () -> SkullEyeGameTests::eyeUsesAreCountedInStatistics);
+        functions.register("skulleyegametests/head_keeps_only_its_eye_state", () -> SkullEyeGameTests::headKeepsOnlyItsEyeState);
+        functions.register("skulleyegametests/spectators_leave_heads_and_themselves_alone", () -> SkullEyeGameTests::spectatorsLeaveHeadsAndThemselvesAlone);
+        functions.register("somegooglygametests/real_shears_kills_harvest_an_eye", () -> SomeGooglyGameTests::realShearsKillsHarvestAnEye);
+        functions.register("versionrangegametests/loader_names_do_not_change_a_version", () -> VersionRangeGameTests::loaderNamesDoNotChangeAVersion);
+        functions.register("versionrangegametests/long_segments_compare_as_numbers", () -> VersionRangeGameTests::longSegmentsCompareAsNumbers);
         functions.register("handitemeyegametests/hand_eyes_react_to_holder_motion", () -> HandItemEyeGameTests::handEyesReactToHolderMotion);
         functions.register("handitemeyegametests/hand_eyes_follow_world_gravity_across_views", () -> HandItemEyeGameTests::handEyesFollowWorldGravityAcrossViews);
         functions.register("boateyegametests/boats_save_and_synchronize_snapshots", () -> BoatEyeGameTests::boatsSaveAndSynchronizeSnapshots);
@@ -27,7 +47,6 @@ public final class SomeGooglyGameTestMod {
         functions.register("boateyegametests/boats_have_independent_ambient_and_physics", () -> BoatEyeGameTests::boatsHaveIndependentAmbientAndPhysics);
         functions.register("boateyegametests/boats_harvest_one_eye", () -> BoatEyeGameTests::boatsHarvestOneEye);
         functions.register("boateyegametests/boats_follow_gravity_and_owner_motion", () -> BoatEyeGameTests::boatsFollowGravityAndOwnerMotion);
-        functions.register("boateyegametests/boats_evict_idle_and_pause_simulations", () -> BoatEyeGameTests::boatsEvictIdleAndPauseSimulations);
         functions.register("boateyegametests/boats_cross_only_with_configured_partners", () -> BoatEyeGameTests::boatsCrossOnlyWithConfiguredPartners);
         functions.register("boateyegametests/boats_begin_eyeless_and_select_geometry", () -> BoatEyeGameTests::boatsBeginEyelessAndSelectGeometry);
         functions.register("behaviordeterminismgametests/every_behavior_is_seed_deterministic_over_its_run", () -> BehaviorDeterminismGameTests::everyBehaviorIsSeedDeterministicOverItsRun);
@@ -152,7 +171,6 @@ public final class SomeGooglyGameTestMod {
         functions.register("serializationgametests/eye_fields_serialize_at_float_precision", () -> SerializationGameTests::eyeFieldsSerializeAtFloatPrecision);
         functions.register("serializationgametests/eye_state_packet_rejects_non_finite_values", () -> SerializationGameTests::eyeStatePacketRejectsNonFiniteValues);
         functions.register("serializationgametests/eye_state_packet_round_trips", () -> SerializationGameTests::eyeStatePacketRoundTrips);
-        functions.register("serializationgametests/network_protocol_ids_are_versioned_and_unique", () -> SerializationGameTests::networkProtocolIdsAreVersionedAndUnique);
         functions.register("serializationgametests/picker_export_packet_round_trips", () -> SerializationGameTests::pickerExportPacketRoundTrips);
         functions.register("serializationgametests/picker_freeze_packet_round_trips", () -> SerializationGameTests::pickerFreezePacketRoundTrips);
         functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
@@ -174,7 +192,6 @@ public final class SomeGooglyGameTestMod {
         functions.register("spawngatinggametests/spawn_always_assigns_a_variant_roll", () -> SpawnGatingGameTests::spawnAlwaysAssignsAVariantRoll);
         functions.register("variantselectiongametests/cumulative_weight_boundaries_pick_expected_variant", () -> VariantSelectionGameTests::cumulativeWeightBoundariesPickExpectedVariant);
         functions.register("variantselectiongametests/degenerate_configs_fall_to_first_variant", () -> VariantSelectionGameTests::degenerateConfigsFallToFirstVariant);
-        functions.register("versionrangegametests/entirely_below_splits_stale_from_downgrade", () -> VersionRangeGameTests::entirelyBelowSplitsStaleFromDowngrade);
         functions.register("versionrangegametests/exact_version_matches_only_itself", () -> VersionRangeGameTests::exactVersionMatchesOnlyItself);
         functions.register("versionrangegametests/malformed_range_does_not_match", () -> VersionRangeGameTests::malformedRangeDoesNotMatch);
         functions.register("versionrangegametests/nearest_gap_resolves_to_older_neighbor", () -> VersionRangeGameTests::nearestGapResolvesToOlderNeighbor);

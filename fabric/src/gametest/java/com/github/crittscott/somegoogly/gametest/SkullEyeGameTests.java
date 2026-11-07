@@ -47,4 +47,24 @@ public final class SkullEyeGameTests {
     public void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
         SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.adventureCanPlaceOnReadsTheClickedHead(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void eyeUsesAreCountedInStatistics(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyeUsesAreCountedInStatistics(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headKeepsOnlyItsEyeState(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
 }

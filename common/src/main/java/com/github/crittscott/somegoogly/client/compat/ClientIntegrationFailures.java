@@ -2,10 +2,11 @@ package com.github.crittscott.somegoogly.client.compat;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 
+import org.jspecify.annotations.Nullable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Logs recoverable client integration failures once while allowing affected eyes to be skipped. */
+/** Logs recoverable client integration failures once each. */
 public final class ClientIntegrationFailures {
 
     private static final Set<String> WARNED = ConcurrentHashMap.newKeySet();
@@ -13,14 +14,16 @@ public final class ClientIntegrationFailures {
     private ClientIntegrationFailures() {
     }
 
-    /** Log a renderer-integration failure, once per integration, operation, and subject. */
-    public static void warnOnce(String integration, String operation, String subject, Throwable failure) {
+    /**
+     * Log a renderer-integration failure, once per integration, operation, and subject; {@code failure} is
+     * {@code null} when no exception lies behind it.
+     */
+    public static void warnOnce(String integration, String operation, String subject, @Nullable Throwable failure) {
         String key = integration + '\0' + operation + '\0' + subject;
         if (!WARNED.add(key)) {
             return;
         }
         SomeGooglyCommon.LOGGER.warn(
-                "Googly-eye {} integration failed during {} for {}; affected eyes will be skipped",
-                integration, operation, subject, failure);
+                "Googly-eye {} integration failed during {} for {}", integration, operation, subject, failure);
     }
 }

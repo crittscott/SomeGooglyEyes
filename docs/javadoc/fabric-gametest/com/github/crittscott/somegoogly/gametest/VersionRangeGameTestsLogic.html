@@ -63,9 +63,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#nearestPicksOldestNewerGenerationOnDowngrade(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">nearestPicksOldestNewerGenerationOnDowngrade(GameTestHelper)</a></li>
 <li><a href="#nearestGapResolvesToOlderNeighbor(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">nearestGapResolvesToOlderNeighbor(GameTestHelper)</a></li>
 <li><a href="#nearestHandlesExactAndMalformedDeclarations(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">nearestHandlesExactAndMalformedDeclarations(GameTestHelper)</a></li>
-<li><a href="#entirelyBelowSplitsStaleFromDowngrade(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">entirelyBelowSplitsStaleFromDowngrade(GameTestHelper)</a></li>
 <li><a href="#shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">shorterVersionPadsWithZero(GameTestHelper)</a></li>
 <li><a href="#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">optionalModVersionRangeSynthesis(GameTestHelper)</a></li>
+<li><a href="#longSegmentsCompareAsNumbers(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">longSegmentsCompareAsNumbers(GameTestHelper)</a></li>
+<li><a href="#loaderNamesDoNotChangeAVersion(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">loaderNamesDoNotChangeAVersion(GameTestHelper)</a></li>
 </ol>
 </li>
 </ol>
@@ -85,12 +86,12 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Pure-logic coverage of <code>VersionRangeMatcher</code>: <code>matches</code> (bracket-range bounds,
 exact-version matching, the zero-padding equivalence <code>1.20</code> ≡ <code>1.20.0</code>, malformed input)
-and the nearest-generation fallback (<code>nearestVersion</code> / <code>isEntirelyBelow</code>) used when no
+and the nearest-generation fallback (<code>nearestVersion</code>) used when no
 entry matches the installed version. These need no world; they spawn nothing and <code>succeed()</code>
 immediately. The matcher gates whether (and which) eye config loads for a namespace, so its bounds
 behavior is worth pinning.
 
-<p>The in-game steps below run on Minecraft 1.21.4 with <code>entityOverrides = ["minecraft:zombie,100"]</code>
+<p>The in-game steps below run on Minecraft 1.21.8 with <code>entityOverrides = ["minecraft:zombie,100"]</code>
 and a datapack whose <code>data/minecraft/eyes/zombie.json</code> holds only the listed adult entries, each
 with its own iris color; after <code>/reload</code>, newly spawned zombies show which entry loaded.</div>
 </div>
@@ -109,53 +110,58 @@ with its own iris color; after <code>/reload</code>, newly spawned zombies show 
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entirelyBelowSplitsStaleFromDowngrade(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">entirelyBelowSplitsStaleFromDowngrade</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactVersionMatchesOnlyItself(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactVersionMatchesOnlyItself</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether a range lies wholly below the installed version, which picks the fallback's log message.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exactVersionMatchesOnlyItself(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactVersionMatchesOnlyItself</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An exact version matches only itself.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loaderNamesDoNotChangeAVersion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">loaderNamesDoNotChangeAVersion</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A loader name in a version says nothing about its age, so <code>1.0.0-forge</code> is <code>1.0.0</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#malformedRangeDoesNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">malformedRangeDoesNotMatch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#longSegmentsCompareAsNumbers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">longSegmentsCompareAsNumbers</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A segment of any length compares as a number, so a date-stamped build sorts after an older one.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#malformedRangeDoesNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">malformedRangeDoesNotMatch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A malformed range or blank version never matches.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestGapResolvesToOlderNeighbor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestGapResolvesToOlderNeighbor</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestGapResolvesToOlderNeighbor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestGapResolvesToOlderNeighbor</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A version in a gap between ranges uses the older neighbor.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestHandlesExactAndMalformedDeclarations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestHandlesExactAndMalformedDeclarations</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestHandlesExactAndMalformedDeclarations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestHandlesExactAndMalformedDeclarations</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The fallback treats exact versions as point ranges and skips malformed ones.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestPicksNewestOlderGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestPicksNewestOlderGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestPicksNewestOlderGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestPicksNewestOlderGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">With every range below the installed version, the newest generation is used.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestPicksOldestNewerGenerationOnDowngrade(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestPicksOldestNewerGenerationOnDowngrade</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestPicksOldestNewerGenerationOnDowngrade(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nearestPicksOldestNewerGenerationOnDowngrade</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">With every range above the installed version, the oldest generation is used.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optionalModVersionRangeSynthesis</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optionalModVersionRangeSynthesis</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Exports declare another mod's definitions for that mod's current minor release.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rangeBoundsRespectInclusivity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rangeBoundsRespectInclusivity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rangeBoundsRespectInclusivity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rangeBoundsRespectInclusivity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Square brackets include a bound and parentheses exclude it.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shorterVersionPadsWithZero</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">shorterVersionPadsWithZero</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A shorter version pads with zeros, so <code>1.20</code> equals <code>1.20.0</code>.</div>
 </div>
 </div>
@@ -180,7 +186,7 @@ with its own iris color; after <code>/reload</code>, newly spawned zombies show 
 <h3>exactVersionMatchesOnlyItself</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exactVersionMatchesOnlyItself</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An exact version matches only itself. In game: entries <code>"1.21.3"</code> (blue) and <code>"1.21.4"</code>
+<div class="block">An exact version matches only itself. In game: entries <code>"1.21"</code> (blue) and <code>"1.21.8"</code>
 (red); zombies spawn with red irises.</div>
 </div>
 </section>
@@ -191,7 +197,7 @@ with its own iris color; after <code>/reload</code>, newly spawned zombies show 
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">malformedRangeDoesNotMatch</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A malformed range or blank version never matches. In game: entries <code>"[1.21"</code> (blue) and
-<code>"1.21.4"</code> (red); the server log reports the invalid range and zombies spawn with red irises.</div>
+<code>"1.21.8"</code> (red); the server log reports the invalid range and zombies spawn with red irises.</div>
 </div>
 </section>
 </li>
@@ -200,8 +206,8 @@ with its own iris color; after <code>/reload</code>, newly spawned zombies show 
 <h3>rangeBoundsRespectInclusivity</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">rangeBoundsRespectInclusivity</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Square brackets include a bound and parentheses exclude it. In game: entries <code>"[1.21,1.21.4)"</code>
-(blue) and <code>"1.21.4"</code> (red) give red irises; change the first to <code>"[1.21,1.21.4]"</code> and
+<div class="block">Square brackets include a bound and parentheses exclude it. In game: entries <code>"[1.21,1.21.8)"</code>
+(blue) and <code>"1.21.8"</code> (red) give red irises; change the first to <code>"[1.21,1.21.8]"</code> and
 both match, so the first, blue, wins.</div>
 </div>
 </section>
@@ -213,7 +219,7 @@ both match, so the first, blue, wins.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">nearestPicksNewestOlderGeneration</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">With every range below the installed version, the newest generation is used. In game: entries
 <code>"[1.19,1.20)"</code> (blue) and <code>"[1.20,1.21)"</code> (red); zombies spawn with red irises and the
-server log warns that the configs use their newest entry until re-exported.</div>
+server log notes that the configs use another version's entry.</div>
 </div>
 </section>
 </li>
@@ -224,7 +230,7 @@ server log warns that the configs use their newest entry until re-exported.</div
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">nearestPicksOldestNewerGenerationOnDowngrade</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">With every range above the installed version, the oldest generation is used. In game: entries
 <code>"[1.22,1.23)"</code> (red) and <code>"[1.23,1.24)"</code> (blue); zombies spawn with red irises and the
-server log warns that the configs use their oldest entry, as expected after a mod downgrade.</div>
+server log notes that the configs use another version's entry.</div>
 </div>
 </section>
 </li>
@@ -249,24 +255,12 @@ server log warns that the configs use their oldest entry, as expected after a mo
 </section>
 </li>
 <li>
-<section class="detail" id="entirelyBelowSplitsStaleFromDowngrade(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>entirelyBelowSplitsStaleFromDowngrade</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">entirelyBelowSplitsStaleFromDowngrade</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Whether a range lies wholly below the installed version, which picks the fallback's log message. In
-game: the datapacks of <a href="#nearestPicksNewestOlderGeneration(net.minecraft.gametest.framework.GameTestHelper)"><code>nearestPicksNewestOlderGeneration(GameTestHelper)</code></a> and
-<a href="#nearestPicksOldestNewerGenerationOnDowngrade(net.minecraft.gametest.framework.GameTestHelper)"><code>nearestPicksOldestNewerGenerationOnDowngrade(GameTestHelper)</code></a> log the "re-export" and "mod downgrade"
-warnings respectively.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="shorterVersionPadsWithZero(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>shorterVersionPadsWithZero</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">shorterVersionPadsWithZero</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A shorter version pads with zeros, so <code>1.20</code> equals <code>1.20.0</code>. In game: entries
-<code>"[1.20,1.21)"</code> (blue) and <code>"[1.21.4.0,1.22)"</code> (red); zombies spawn with red irises.</div>
+<code>"[1.20,1.21)"</code> (blue) and <code>"[1.21.8.0,1.22)"</code> (red); zombies spawn with red irises.</div>
 </div>
 </section>
 </li>
@@ -278,6 +272,28 @@ warnings respectively.</div>
 <div class="block">Exports declare another mod's definitions for that mod's current minor release. In game: with an
 optional mod installed (say version 4.12.4), run <code>/sg exportall</code>; that mod's files under
 <code>somegoogly-export</code> declare <code>"version": "[4.12.4,4.13)"</code>.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="longSegmentsCompareAsNumbers(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>longSegmentsCompareAsNumbers</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">longSegmentsCompareAsNumbers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A segment of any length compares as a number, so a date-stamped build sorts after an older one. In game:
+entries <code>"[1.0.202601010000,1.0.202701010000)"</code> (blue) and <code>"[1.1,1.2)"</code> (red) for a mod at
+version <code>1.0.202606010000</code>; its mob spawns with blue irises.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="loaderNamesDoNotChangeAVersion(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>loaderNamesDoNotChangeAVersion</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">loaderNamesDoNotChangeAVersion</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A loader name in a version says nothing about its age, so <code>1.0.0-forge</code> is <code>1.0.0</code>. In game:
+entries <code>"[1.0.0,1.1)"</code> (blue) and <code>"[0.9,1.0)"</code> (red) for a mod at version
+<code>1.0.0-forge</code>; its mob spawns with blue irises and the log reports no fallback.</div>
 </div>
 </section>
 </li>

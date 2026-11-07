@@ -80,10 +80,9 @@ is present</b> (reached through <code>GeckoCompat</code>); it references GeckoLi
 
 <p>Bones are named in the <code>.geo.json</code>, so enumeration yields real names (better than the
 vanilla reflection family's <code>#N</code>). There is deliberately no "move the pose to a bone" here:
-a GeckoLib layer can only draw at a bone from inside GeckoLib's per-bone rendering task, where
-GeckoLib hands it the fully-composed pose — re-walking bone transforms outside the model render
-misses the entity's body rotations (see <a href="GooglyGeoLayer.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GooglyGeoLayer</code></a>). So lookup returns the <code>GeoBone</code>
-itself, matched by identity at render time.
+the tasks registered by <a href="GooglyGeoLayer.html#addPerBoneRender(com.geckolib.renderer.base.RenderPassInfo,java.util.function.BiConsumer)"><code>GooglyGeoLayer.addPerBoneRender(RenderPassInfo, BiConsumer)</code></a> receive the fully composed bone pose
+from GeckoLib, including the entity's body rotations. Lookup returns the <code>GeoBone</code> itself,
+which the layer matches by identity at render time.
 
 <p>The adapter requires <code>BakedGeoModel.topLevelBones()</code>, <code>GeoBone.name()</code>, and
 <code>GeoBone.children()</code>; those methods are its complete GeckoLib bone-enumeration boundary.</div>

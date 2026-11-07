@@ -58,6 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#field-detail" tabindex="0">Field Details</a>
 <ol class="toc-list">
 <li><a href="#ROOT" tabindex="0">ROOT</a></li>
+<li><a href="#SERVER_BRANCHES" tabindex="0">SERVER_BRANCHES</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -112,6 +113,11 @@ under one <code>/sg</code> root; loader client adapters preserve routing to thes
 <div class="col-last even-row-color">
 <div class="block">The <code>/sg</code> root literal, shared by the server tree, the client tree, and Fabric's routing.</div>
 </div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SERVER_BRANCHES" class="member-name-link">SERVER_BRANCHES</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The branches this tree owns under <a href="#ROOT"><code>ROOT</code></a>, which Fabric's client forwards to the server.</div>
+</div>
 </div>
 </section>
 </li>
@@ -163,6 +169,15 @@ under one <code>/sg</code> root; loader client adapters preserve routing to thes
 </ul>
 </dd>
 </dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SERVER_BRANCHES">
+<h3>SERVER_BRANCHES</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">SERVER_BRANCHES</span></div>
+<div class="block">The branches this tree owns under <a href="#ROOT"><code>ROOT</code></a>, which Fabric's client forwards to the server.</div>
 </div>
 </section>
 </li>

@@ -54,4 +54,7 @@ public final class PickerExportGameTests {
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
+    public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsWhatTheSyncCouldNotCarry(helper);
+    }
 }

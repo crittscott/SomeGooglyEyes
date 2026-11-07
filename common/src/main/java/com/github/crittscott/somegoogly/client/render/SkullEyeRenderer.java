@@ -1,10 +1,8 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.PresentationEyes;
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
-import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
@@ -28,17 +26,15 @@ import org.jspecify.annotations.Nullable;
  * is extracted ({@link #extract}) and kept on that state ({@link PlacedHolder}). Mixins bracket a placed head's
  * submission with {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and
  * call {@link #render} right after the head model is submitted, in the model's space. A placed head's eyes are
- * live ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn
- * heads share the model submission without either bracket, so they draw no eyes.
+ * live ({@link PresentationEyes}). Head items in the GUI, in third-person hands, or in frames have independent
+ * pupils and ambient expressions. Unanimated items have centered pupils. Worn heads share the model submission
+ * outside both brackets, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
  * definition places them as they are. Honors the client display settings by the head's mob and the server's
  * {@code googlyEyesEnabled} switch.
  */
 public final class SkullEyeRenderer {
-
-    /** Rest pose for head items drawn outside frames. */
-    private static final GooglyTracker.EyeInfo REST = rest();
 
     /** The placed head's eyes being submitted, or {@code null} outside a placed head's submission. */
     @Nullable
@@ -121,8 +117,7 @@ public final class SkullEyeRenderer {
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
     private static boolean mayShow(@Nullable Identifier entity) {
-        return entity != null && !ClientConfig.DISABLE_GOOGLY_EYES.get() && ClientEyeConfigs.googlyEyesEnabled()
-                && !ClientConfig.isEntityDisabled(entity);
+        return entity != null && ClientEyeConfigs.eyesVisible(entity);
     }
 
     /**
@@ -147,17 +142,23 @@ public final class SkullEyeRenderer {
                     eyes.snapshot.properties(), partialTick);
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot == null || !mayShow(entity)) {
+            if (!mayShow(entity)) {
                 return;
             }
-            PresentationEyes framed = GooglyEyeItemRenderer.itemEyes(stack);
-            HeadInfo helper = framed == null ? ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll())
-                    : framed.helper;
-            if (helper.hasConfig()) {
-                renderEyes(pose, collector, packedLight, head, helper, SkullEyeState.headParts(helper),
-                        framed == null ? null : framed.eyes, snapshot.properties(),
-                        framed == null ? 0F : GooglyEyeItemRenderer.itemPartialTick());
+            PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw(stack);
+            PresentationEyes animated = itemDraw.eyes();
+            if (animated != null) {
+                renderEyes(pose, collector, packedLight, head, animated.helper, animated.parts, animated.eyes,
+                        animated.properties, itemDraw.partialTick());
+                return;
+            }
+            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
+            if (snapshot != null) {
+                HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+                if (helper.hasConfig()) {
+                    renderEyes(pose, collector, packedLight, head, helper, SkullEyeState.headParts(helper), null,
+                            snapshot.properties(), 0F);
+                }
             }
         }
     }
@@ -172,21 +173,9 @@ public final class SkullEyeRenderer {
         pose.pushPose();
         head.translateAndRotate(pose);
         for (int part : parts) {
-            int eyeCount = helper.getEyeCount(part);
-            for (int eye = 0; eye < eyeCount; eye++) {
-                if (helper.getEyeScale(part, eye) > 0F) {
-                    GooglyEyeRenderer.renderEye(pose, collector, packedLight, OverlayTexture.NO_OVERLAY,
-                            eyes == null ? REST : eyes[part][eye], helper, overrides, part, eye, partialTick);
-                }
-            }
+            GooglyEyeRenderer.renderHead(pose, collector, packedLight, OverlayTexture.NO_OVERLAY,
+                    eyes == null ? null : eyes[part], helper, overrides, part, partialTick);
         }
         pose.popPose();
-    }
-
-    private static GooglyTracker.EyeInfo rest() {
-        GooglyTracker.EyeInfo rest = new GooglyTracker.EyeInfo();
-        rest.deltaY = 0F;
-        rest.prevDeltaY = 0F;
-        return rest;
     }
 }

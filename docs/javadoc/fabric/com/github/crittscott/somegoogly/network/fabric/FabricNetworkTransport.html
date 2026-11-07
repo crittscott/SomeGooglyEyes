@@ -58,6 +58,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#register()" tabindex="0">register()</a></li>
+<li><a href="#requiredClientMessage()" tabindex="0">requiredClientMessage()</a></li>
+<li><a href="#versionMismatchMessage(java.lang.String)" tabindex="0">versionMismatchMessage(String)</a></li>
 </ol>
 </li>
 </ol>
@@ -75,7 +77,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FabricNetworkTransport</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Fabric payload codecs and server receivers.</div>
+<div class="block">Fabric payload codecs, the configuration-phase version check, and server receivers.</div>
 </div>
 </section>
 <section class="summary">
@@ -92,7 +94,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="FabricNetworkTransport.Handshake.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Configuration-phase marker that is registered but never sent.</div>
+<div class="block">The server's version question, the first exchange of a connection's configuration phase.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="FabricNetworkTransport.HandshakeReply.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The client's network version, which must equal the server's.</div>
 </div>
 </div>
 </section>
@@ -111,7 +118,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Register every payload type and the serverbound receivers; called once from the mod initializer.</div>
+<div class="block">Register every payload type, the version check, and the serverbound receivers; called once from the mod initializer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#requiredClientMessage()" class="member-name-link">requiredClientMessage</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The refusal shown to a client without this mod.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#versionMismatchMessage(java.lang.String)" class="member-name-link">versionMismatchMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;clientVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The refusal shown to a client running network version <code>clientVersion</code>.</div>
 </div>
 </div>
 </div>
@@ -135,7 +152,25 @@ loadScripts(document, 'script');</script>
 <h3>register</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span>()</div>
-<div class="block">Register every payload type and the serverbound receivers; called once from the mod initializer.</div>
+<div class="block">Register every payload type, the version check, and the serverbound receivers; called once from the mod initializer.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="requiredClientMessage()">
+<h3>requiredClientMessage</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">requiredClientMessage</span>()</div>
+<div class="block">The refusal shown to a client without this mod.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="versionMismatchMessage(java.lang.String)">
+<h3>versionMismatchMessage</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">versionMismatchMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;clientVersion)</span></div>
+<div class="block">The refusal shown to a client running network version <code>clientVersion</code>.</div>
 </div>
 </section>
 </li>

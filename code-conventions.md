@@ -218,7 +218,7 @@ and `PickerState`. When in doubt, alphabetize — reserve this for genuine table
 ### Notes
 
 - Registration/wiring **statements** inside a method (e.g. the `DeferredRegister.register`,
-  event-bus, and config calls in the `SomeGoogly` constructor) are not members and aren't
+  event-bus, and config calls in the `SomeGooglyForge` constructor) are not members and aren't
   alphabetized. They read top-to-bottom and are grouped by concern. Their call order is also
   behaviorally free: each merely subscribes a deferred registry/handler to a bus, and Forge
   fires the actual registration later in its own order (by registry type, event, and listener

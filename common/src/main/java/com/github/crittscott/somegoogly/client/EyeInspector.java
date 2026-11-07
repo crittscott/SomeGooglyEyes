@@ -1,20 +1,14 @@
 package com.github.crittscott.somegoogly.client;
 
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -29,24 +23,22 @@ public final class EyeInspector {
     private EyeInspector() {
     }
 
-    private static Component alreadyHas() {
-        return Component.translatable("somegoogly.inspect.already_has").withStyle(ChatFormatting.AQUA);
-    }
-
-    private static Component canHave() {
-        return Component.translatable("somegoogly.inspect.can_have").withStyle(ChatFormatting.GREEN);
-    }
-
-    private static Component cannot() {
-        return Component.translatable("somegoogly.inspect.cannot").withStyle(ChatFormatting.RED);
-    }
-
     private static boolean holdingEye(LocalPlayer player) {
         return isEye(player.getMainHandItem()) || isEye(player.getOffhandItem());
     }
 
     private static boolean isEye(ItemStack stack) {
         return stack.is(ModContent.GOOGLY_EYE.get()) || stack.is(ModContent.SLIMY_EYE.get());
+    }
+
+    private static Component message(EyeItemService.Verdict verdict) {
+        return switch (verdict) {
+            case ALREADY_HAS -> Component.translatable("somegoogly.inspect.already_has").withStyle(ChatFormatting.AQUA);
+            case CAN_HAVE -> Component.translatable("somegoogly.inspect.can_have").withStyle(ChatFormatting.GREEN);
+            case CANNOT -> Component.translatable("somegoogly.inspect.cannot").withStyle(ChatFormatting.RED);
+            case ONLY_AS_ADULT -> Component.translatable("somegoogly.inspect.only_as_adult").withStyle(ChatFormatting.YELLOW);
+            case ONLY_AS_BABY -> Component.translatable("somegoogly.inspect.only_as_baby").withStyle(ChatFormatting.YELLOW);
+        };
     }
 
     /**
@@ -63,44 +55,15 @@ public final class EyeInspector {
         EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
                 entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
         if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity skull
                 && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
                         < player.getEyePosition().distanceToSqr(target.getLocation()))) {
-            player.sendOverlayMessage(verdict(skull));
-        } else if (target != null) {
-            player.sendOverlayMessage(target.getEntity() instanceof AbstractBoat boat
-                    ? verdict(boat) : verdict((LivingEntity) target.getEntity()));
+            if (minecraft.level.getBlockEntity(hit.getBlockPos()) instanceof SkullBlockEntity head) {
+                player.sendOverlayMessage(message(EyeItemService.verdictFor(head)));
+                return;
+            }
         }
-    }
-
-    private static Component verdict(AbstractBoat boat) {
-        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
-        if (!BoatEyeLayout.isEligible(boat, ClientEyeConfigs.get(type, false))) {
-            return cannot();
+        if (target != null) {
+            player.sendOverlayMessage(message(EyeItemService.verdictFor(target.getEntity())));
         }
-        return EyeState.hasEyes(boat) ? alreadyHas() : canHave();
-    }
-
-    private static Component verdict(LivingEntity target) {
-        Identifier type = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
-        boolean baby = target.isBaby();
-        if (RuntimeConfig.isUsable(ClientEyeConfigs.get(type, baby))) {
-            return EyeState.hasEyes(target) ? alreadyHas() : canHave();
-        }
-        if (RuntimeConfig.isUsable(ClientEyeConfigs.get(type, !baby))) {
-            return Component.translatable(baby
-                            ? "somegoogly.inspect.only_as_adult" : "somegoogly.inspect.only_as_baby")
-                    .withStyle(ChatFormatting.YELLOW);
-        }
-        return cannot();
-    }
-
-    /** A placed head can have eyes when its mob has an adult definition, which it borrows, with eyes it shows. */
-    private static Component verdict(SkullBlockEntity skull) {
-        Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (entity == null || !SkullEyeState.canHaveEyes(entity, ClientEyeConfigs.get(entity, false))) {
-            return cannot();
-        }
-        return SkullEyeState.hasEyes(skull) ? alreadyHas() : canHave();
     }
 }

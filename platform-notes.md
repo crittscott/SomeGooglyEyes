@@ -76,6 +76,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
+- Fabric API 0.145.4+26.1.1: networking classes use `createClientboundPacket`, packet contexts expose `packetListener()`, and `PayloadTypeRegistry` uses `clientboundPlay`, `serverboundPlay`, `clientboundConfiguration`, and `serverboundConfiguration`. [source]
+- Fabric API 0.145.4+26.1.1: `SYNC_DATA_PACK_CONTENTS` passes `(player, joined)` and fires for joining players as well as successful reloads. [source]
 
 ## Mixin
 
@@ -95,4 +97,5 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 ## Libraries and other mods
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
+- GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]

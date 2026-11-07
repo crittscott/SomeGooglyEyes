@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,10 +14,10 @@ import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Client-side store of the resolved server eye state, populated from the server via
- * {@code EyeConfigSyncPacket}: the per-entity eye geometry configs, the current
- * {@code googlyEyesEnabled} master switch, and the behavior settings clients run behaviors from. This store also owns the resolved-view cache used by
- * renderers.
+ * Client-side store of the resolved server eye state: the per-entity eye geometry configs, from
+ * {@code EyeConfigSyncPacket}, and the current {@code googlyEyesEnabled} master switch and the behavior settings
+ * clients run behaviors from, from {@code EyeSettingsPacket}. This store also owns the resolved-view cache used
+ * by renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
  * integrated server fills the server store and the local sync fills this one independently. Installed
@@ -44,6 +43,12 @@ public final class ClientEyeConfigs {
      */
     public static Map<Identifier, RuntimeConfigSet> all() {
         return configs;
+    }
+
+    /** Take the server's {@code googlyEyesEnabled} master switch and behavior settings. */
+    public static void applySettings(boolean googlyEyesEnabled, BehaviorSettings behaviors) {
+        ClientEyeConfigs.behaviors = behaviors;
+        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
     }
 
     /** The server's behavior settings, as of the last sync. */
@@ -73,6 +78,16 @@ public final class ClientEyeConfigs {
         resolved.clear();
     }
 
+    /** Whether eyes may show on this client at all: the server's master switch and the player's own setting. */
+    public static boolean eyesVisible() {
+        return googlyEyesEnabled && !ClientConfig.DISABLE_GOOGLY_EYES.get();
+    }
+
+    /** Whether eyes may show on this client on {@code entity}'s kind: {@link #eyesVisible()} and not disabled for it. */
+    public static boolean eyesVisible(Identifier entity) {
+        return eyesVisible() && !ClientConfig.isEntityDisabled(entity);
+    }
+
     /** The server's current {@code googlyEyesEnabled} master switch, as of the last sync. */
     public static boolean googlyEyesEnabled() {
         return googlyEyesEnabled;
@@ -91,11 +106,6 @@ public final class ClientEyeConfigs {
         return cached(entity, baby, config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
     }
 
-    /** Resolve and cache the selected variant for {@code living}'s current age. */
-    public static HeadInfo resolve(Identifier entity, LivingEntity living, float variantRoll) {
-        return resolve(entity, living.isBaby(), variantRoll);
-    }
-
     /**
      * Resolve and cache the variant a placed head of {@code entity}'s kind shows
      * ({@link SkullEyeState#variantIndex}), for client rendering.
@@ -109,13 +119,9 @@ public final class ClientEyeConfigs {
      * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
      * rendering view. The supplied model values become store-owned and must not be mutated afterward.
      */
-    public static void replaceAll(Map<Identifier, RuntimeConfigSet> next, boolean googlyEyesEnabled,
-                                  BehaviorSettings behaviors) {
+    public static void replaceAll(Map<Identifier, RuntimeConfigSet> next) {
         configs = Map.copyOf(next);
-        ClientEyeConfigs.behaviors = behaviors;
-        ClientEyeConfigs.googlyEyesEnabled = googlyEyesEnabled;
         resolved.clear();
-        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server (googlyEyesEnabled={})",
-                configs.size(), googlyEyesEnabled);
+        SomeGooglyCommon.LOGGER.info("Received {} eye configs from the server", configs.size());
     }
 }
