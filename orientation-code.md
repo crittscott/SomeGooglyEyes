@@ -94,7 +94,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 184, Forge 186, NeoForge 186. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
+GameTest scenarios: Fabric 185, Forge 187, NeoForge 187. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
 
 ## Operational boundaries
 
