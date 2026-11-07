@@ -6,11 +6,13 @@ Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
+Now with item frame, skull, head, and boat support. Eyed mobs drop eyed heads. Add eyes to skulls and boats. Supports [Heads by Mrbysco](https://www.curseforge.com/minecraft/mc-mods/heads).
+
 Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![Googly Eyes splash](docs/googlyeyes-splash-0.8.2.png)
 
-![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1 to 26.3](https://img.shields.io/badge/Minecraft-1.20.1%20to%2026.3-8A5A9B?style=for-the-badge)
+![Loaders: Fabric + NeoForge + Forge](https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge) ![Minecraft: 1.20.1, 1.21.1/4/8/11, 26.*](https://img.shields.io/badge/Minecraft-1.20.1%2C%201.21.1%2F4%2F8%2F11%2C%2026.%2A-8A5A9B?style=for-the-badge)
 
 ## Getting eyes
 

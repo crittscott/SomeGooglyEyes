@@ -35,6 +35,8 @@ A head groups eyes onto one model part:
 
 The easiest way to discover a mob's part names is the picker (`/sg list parts` on a chosen mob).
 
+Vanilla boats use their per-wood entity IDs, such as `oak_boat.json`, `oak_chest_boat.json`, `bamboo_raft.json`, and `bamboo_chest_raft.json`. Every vanilla wood, including pale oak, has a separate boat and cargo definition. Exact attachment tokens are `hull` for wooden boats and `raft` for bamboo, in composed hull-model space. Bundled layouts have two outward-facing eyes, one per side, without cross-eye partners. Boats accept Slimy Eyes rather than rolling spawn chance; edit their layouts as JSON rather than through the picker.
+
 For vanilla boats in 1.21.1, `boat.json` and `chest_boat.json` each describe all wood variants of that entity type. Use the exact `attachPoint` token `hull` for wooden boats and `raft` for bamboo; each uses the composed hull model space. Bundled layouts place one outward-facing eye near the front of each side, without cross-eye partners. Give both geometry groups their own positions. A boat selects only weighted variants containing its matching attachment, then renders and simulates only those groups. Boat definitions use `age: "any"` or `"adult"`; the picker does not edit them. Other attachment tokens do not attach to boats. Boats acquire eyes by Slimy Eye application rather than spawn chance.
 
 ## Eye fields

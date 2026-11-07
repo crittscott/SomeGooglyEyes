@@ -30,8 +30,9 @@
 
 <h1 id="some-googly-eyes">Some Googly Eyes</h1>
 <p>A complete rewrite and expansion of <a href="https://www.curseforge.com/minecraft/mc-mods/googlyeyes">iChun's Googly Eyes</a>. (Also look to <a href="https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes">Regoogly Eyes</a> by EmeryTheModder if you want a pure port of the original.)</p>
-<p>Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.</p>
+<p>Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and react to what happens to them. Eyes bulge when a mob is hit, milked, or sheared; pupils swell with affection and swirl after a trade or a heal; angry mobs' pupils turn red; sleepers and ramming goats squint; skeletons and players drawing a bow close one eye to aim; a swelling creeper's pupils rattle; and a provoked enderman's pupils throb. Each reaction has its own server switch.</p>
 <p>Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.</p>
+<p>Now with item frame, skull, head, and boat support. Eyed mobs drop eyed heads. Add eyes to skulls and boats. Supports <a href="https://www.curseforge.com/minecraft/mc-mods/heads">Heads by Mrbysco</a>.</p>
 <p>Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.</p>
 <p><img src="https://raw.githubusercontent.com/crittscott/SomeGooglyEyes/1.21.1/docs/googlyeyes-splash-0.8.2.png" alt="A field of mobs wearing googly eyes" /></p>
 <p><img src="https://img.shields.io/badge/Loaders-Fabric%20%2B%20NeoForge%20%2B%20Forge-5C7C8A?style=for-the-badge" alt="Loaders: Fabric + NeoForge + Forge" /> <img src="https://img.shields.io/badge/Minecraft-1.21.1-8A5A9B?style=for-the-badge" alt="Minecraft: 1.21.1" /></p>
@@ -40,11 +41,12 @@
 <p><strong>Find the Optometrist enchantment</strong>: put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.</p>
 <p><strong>Customize it in a crafting grid</strong>: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.</p>
 <p><strong>Set it in slime</strong>: googly eye + slimeball → a <strong>Slimy Eye</strong>, which inherits the eye's colors.</p>
-<p><strong>Apply it</strong>: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.</p>
-<p><strong>Decorate with heads</strong>: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed on NeoForge, most of its mob heads work the same way.</p>
+<p><strong>Apply it</strong>: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle. To take your own off, sneak and right-click the air with shears.</p>
+<p><strong>Loose eyes are lively too</strong>: a Googly Eye's pupils roll around in your hand, in item frames, and in your inventory, bulge when you're hurt, and swirl when you heal.</p>
+<p><strong>Decorate with heads</strong>: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. On NeoForge, most of the Heads mod's mob heads and Twilight Forest's trophies and skull candles work the same way.</p>
 <p><strong>Decorate your boat</strong>: Vanilla boats and chest boats, including bamboo rafts, can receive a Slimy Eye and play ambient expressions. Optometrist shears remove their eyes. Eyes survive world saves, but breaking and replacing a boat resets them.</p>
 <h2 id="eye-potential">Eye potential</h2>
-<p>Don't waste your slimy eye: hold an eye and sneak while targeting a mob or vanilla boat to see whether it can have eyes at all.</p>
+<p>Don't waste your slimy eye: hold an eye and sneak while targeting a mob, vanilla boat, or placed head to see whether it can have eyes at all.</p>
 <h2 id="configuration">Configuration</h2>
 <ul>
 <li><strong>Server settings</strong> (<code>&lt;world&gt;/serverconfig/somegoogly-server.toml</code>): global and per-mob spawn chances, harvest chance, and which eye expressions play and how often.</li>
