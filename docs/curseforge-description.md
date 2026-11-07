@@ -2,9 +2,11 @@
 
 A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes). (Also look to [Regoogly Eyes](https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes) by EmeryTheModder if you want a pure port of the original.)
 
-Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
+Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and react to what happens to them. Eyes bulge when a mob is hit, milked, or sheared; pupils swell with affection and swirl after a trade or a heal; angry mobs' pupils turn red; sleepers and ramming goats squint; skeletons and players drawing a bow close one eye to aim; a swelling creeper's pupils rattle; and a provoked enderman's pupils throb. Each reaction has its own server switch.
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
+
+Now with item frame, skull, head, and boat support. Eyed mobs drop eyed heads. Add eyes to skulls and boats.
 
 Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
@@ -22,7 +24,9 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle. To take your own off, sneak and right-click the air with shears.
+
+**Loose eyes are lively too**: a Googly Eye's pupils roll around in your hand, in item frames, and in your inventory, bulge when you're hurt, and swirl when you heal.
 
 **Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again.
 
@@ -30,7 +34,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 ## Eye potential
 
-Don't waste your slimy eye: hold an eye and sneak while targeting a mob or vanilla boat to see whether it can have eyes at all.
+Don't waste your slimy eye: hold an eye and sneak while targeting a mob, vanilla boat, or placed head to see whether it can have eyes at all.
 
 ## Configuration
 
