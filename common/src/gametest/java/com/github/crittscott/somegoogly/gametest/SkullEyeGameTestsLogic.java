@@ -563,6 +563,7 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, purpleSlimyEye());
         helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, "the head takes the Slimy Eye");
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, MOB);
+        EyeState.setHasEyes(cow, false);
         helper.assertTrue(EyeItemService.applySlimyEye(purpleSlimyEye(), player, cow) == InteractionResult.CONSUME,
                 "the cow takes the Slimy Eye");
         helper.assertTrue(player.getStats().getValue(Stats.ITEM_USED.get(ModContent.SLIMY_EYE.get())) == 2,
