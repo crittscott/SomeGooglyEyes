@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
-import com.github.crittscott.somegoogly.client.picker.Gizmo;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
@@ -113,12 +112,8 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
                 frame.currentPart = PickerState.currentPart();
                 frame.currentEye = PickerState.currentEye() == null ? null : PickerState.currentEye().copy();
                 frame.savedEyes = new ArrayList<>();
-                List<PickerState.ListedEye> eyes = PickerState.currentEyes();
-                for (int i = 0; i < eyes.size(); i++) {
-                    if (i != PickerState.selectedIndex()) {
-                        PickerState.ListedEye eye = eyes.get(i);
-                        frame.savedEyes.add(new PickerState.ListedEye(eye.part, eye.eye.copy()));
-                    }
+                for (PickerState.ListedEye eye : PickerState.previewEyes()) {
+                    frame.savedEyes.add(new PickerState.ListedEye(eye.part, eye.eye.copy()));
                 }
             } else if (data.helper() != null) {
                 frame = new Frame();
@@ -137,14 +132,8 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
             if (frame.headBones[h] != bone) {
                 continue;
             }
-            int eyeCount = frame.helper.getEyeCount(h);
-            for (int i = 0; i < eyeCount; i++) {
-                if (frame.helper.getEyeScale(h, i) <= 0F) {
-                    continue;
-                }
-                GooglyEyeRenderer.renderEye(poseStack, collector, packedLight, packedOverlay,
-                        frame.tracker.eyes[h][i], frame.helper, frame.overrides, h, i, partialTick);
-            }
+            GooglyEyeRenderer.renderHead(poseStack, collector, packedLight, packedOverlay,
+                    frame.tracker.eyes[h], frame.helper, frame.overrides, h, partialTick);
         }
     }
 
@@ -158,11 +147,7 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
                     frame.savedEyes.get(i).eye);
         }
         if (frame.gizmoBone == bone) {
-            Gizmo.draw(poseStack, collector);
-            if (frame.currentEye != null) {
-                GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, packedOverlay,
-                        frame.currentEye);
-            }
+            GooglyEyeRenderer.renderPreviewPlacement(poseStack, collector, packedLight, packedOverlay, frame.currentEye);
         }
     }
 }

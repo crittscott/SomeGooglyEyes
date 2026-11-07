@@ -26,7 +26,7 @@ public final class GeckoIntegration {
      * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
      * model.
      */
-    @SuppressWarnings({"rawtypes", "unchecked", "removal"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!(renderer instanceof GeoEntityRenderer geo)) {
             return List.of();
@@ -46,7 +46,7 @@ public final class GeckoIntegration {
         GeoEntityRenderer<?, ?> renderer = event.getRenderer();
         try {
             event.addLayer(geoRenderer -> new GooglyGeoLayer((GeoEntityRenderer) geoRenderer));
-        } catch (Throwable failure) {
+        } catch (RuntimeException | LinkageError failure) {
             ClientIntegrationFailures.warnOnce(
                     "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
         }

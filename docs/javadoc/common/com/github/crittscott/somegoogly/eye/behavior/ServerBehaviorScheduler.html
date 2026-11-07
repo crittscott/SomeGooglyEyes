@@ -105,8 +105,8 @@ something: mobs known to have eyes, plus any mob mid-behavior (started via <code
 the debug <a href="#trigger(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long)"><code>trigger(LivingEntity, EyeBehavior, int, long)</code></a>). A tracked-but-eyeless mob — the overwhelming majority, since the default
 spawn chance is 5% — costs one map entry and nothing per tick. <a href="#onEyesGained(net.minecraft.world.entity.LivingEntity)"><code>onEyesGained(LivingEntity)</code></a> promotes a mob
 into <code>ACTIVE</code> the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
-eye / admin toggle), called from <a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>. Once promoted, a mob stays in <code>ACTIVE</code> for
-the rest of its tracked lifetime, even if it loses its eyes.
+eye / admin toggle), called from <a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>. A promoted mob that loses its eyes leaves <code>ACTIVE</code>
+when its next ambient roll finds them gone.
 
 <p>State is per (integrated-or-dedicated) server lifetime; <a href="#clear()"><code>clear()</code></a> is called on server stop so
 a single-player JVM doesn't carry one world's mobs into the next.</div>
@@ -151,7 +151,7 @@ to be angry at.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onHealed(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onHealed</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>mob</code> was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.</div>
+<div class="block"><code>mob</code> is about to be healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMilked(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onMilked</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob)</code></div>
@@ -245,7 +245,7 @@ flower, an ocelot gaining trust) play 'love' if enabled; every other event is ig
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEyesGained</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
 <div class="block">Promote <code>mob</code> into the per-tick-walked <code>ACTIVE</code> set now that it's known to have eyes.
 A no-op if nobody is currently tracking it (no <code>ServerBehaviorScheduler.MobState</code> to promote) — <a href="#onStartTracking(net.minecraft.world.entity.LivingEntity,net.minecraft.server.level.ServerPlayer)"><code>onStartTracking(LivingEntity, ServerPlayer)</code></a> independently checks <a href="../state/EyeState.html#hasEyes(net.minecraft.world.entity.Entity)"><code>EyeState.hasEyes(Entity)</code></a> for that case. Called from
-<a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a> wherever the persisted has-eyes flag turns on.</div>
+<a href="../state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a> whenever it synchronizes an eyed mob.</div>
 </div>
 </section>
 </li>
@@ -254,7 +254,8 @@ A no-op if nobody is currently tracking it (no <code>ServerBehaviorScheduler.Mob
 <h3>onHealed</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onHealed</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob)</span></div>
-<div class="block"><code>mob</code> was healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.</div>
+<div class="block"><code>mob</code> is about to be healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.
+Every loader calls this ahead of the heal, since vanilla also asks a mob at full health to heal.</div>
 </div>
 </section>
 </li>

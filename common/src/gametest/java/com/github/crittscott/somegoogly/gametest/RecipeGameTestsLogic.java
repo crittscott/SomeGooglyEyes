@@ -6,10 +6,13 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -29,13 +32,17 @@ import java.util.Optional;
  *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact RGB, so
  *       they don't pin a particular dye palette.</li>
  *   <li>{@code slimy_eye} — eye plus slimeball, a vanilla {@code crafting_transmute}, which must carry
- *       the eye's appearance onto the applicator.</li>
+ *       every component of the eye onto the applicator.</li>
  * </ul>
  */
 public final class RecipeGameTestsLogic {
 
     private static final Identifier EYE_MODIFIER =
             Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
+    private static final Identifier SLIMY_EYE =
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye");
+    private static final Identifier SLIMY_EYE_ADVANCEMENT =
+            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
 
     private RecipeGameTestsLogic() {
     }
@@ -140,6 +147,19 @@ public final class RecipeGameTestsLogic {
                 Component.literal("the slimy eye should render its iris color with full alpha"));
         helper.assertTrue(EyeItemProperties.slimyEyeIrisColor(new ItemStack(ModContent.SLIMY_EYE.get())) == 0xFF000000,
                 Component.literal("the slimy eye should render its default black iris with full alpha"));
+        helper.succeed();
+    }
+
+    /**
+     * Picking up a Googly Eye unlocks the Slimy Eye recipe. In game: in a new survival world, {@code /give}
+     * yourself a Googly Eye; the recipe book offers the Slimy Eye, and it can be crafted with the
+     * {@code doLimitedCrafting} game rule on.
+     */
+    public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        AdvancementHolder advancement = helper.getLevel().getServer().getAdvancements().get(SLIMY_EYE_ADVANCEMENT);
+        helper.assertTrue(advancement != null, Component.literal("the Slimy Eye recipe should have an unlock advancement"));
+        helper.assertTrue(advancement.value().rewards().recipes().contains(ResourceKey.create(Registries.RECIPE, SLIMY_EYE)),
+                Component.literal("the advancement should reward the Slimy Eye recipe"));
         helper.succeed();
     }
 }

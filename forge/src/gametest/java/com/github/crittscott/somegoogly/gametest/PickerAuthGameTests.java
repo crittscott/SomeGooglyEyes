@@ -1,6 +1,10 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.mojang.authlib.GameProfile;
+import java.util.UUID;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -68,5 +72,17 @@ public final class PickerAuthGameTests {
         } finally {
             EntityJoinLevelEvent.BUS.removeListener(listener);
         }
+    }
+
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        var level = helper.getLevel();
+        ServerPlayer player = new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "survival_op"), ClientInformation.createDefault()) {
+            @Override
+            public boolean isCreative() {
+                return false;
+            }
+        };
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, player);
     }
 }

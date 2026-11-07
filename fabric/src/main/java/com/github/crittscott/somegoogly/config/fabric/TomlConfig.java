@@ -44,6 +44,28 @@ public final class TomlConfig {
         return changed;
     }
 
+    /** Load the file, adding missing keys before replacing the effective configuration. */
+    public static void load(Path path, List<ConfigValue<?>> settings) throws IOException {
+        String defaults = render(settings);
+        CommentedConfig document = readOrCreate(path, defaults);
+        for (ConfigValue<?> setting : settings) {
+            section(document, setting.section());
+        }
+        completeIfMissing(path, document, defaults);
+        settings.forEach(ConfigValue::reset);
+        for (ConfigValue<?> setting : settings) {
+            Map<String, Object> values = section(document, setting.section());
+            String key = setting.key();
+            if (setting instanceof ConfigValue.Flag flag) {
+                flag.set(bool(values, key, flag.defaultValue()));
+            } else if (setting instanceof ConfigValue.Ranged ranged) {
+                assign(ranged, key, integer(values, key, ranged.defaultValue()));
+            } else if (setting instanceof ConfigValue.Parsed<?> list) {
+                assign(list, key, strings(values, key, list.defaultValue()));
+            }
+        }
+    }
+
     /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
     public static void assign(ConfigValue<Integer> target, String key, int raw) {
         target.set(raw);
@@ -140,6 +162,28 @@ public final class TomlConfig {
             throw new IllegalArgumentException("Config section is not a table: " + section);
         }
         return config.valueMap();
+    }
+
+    /** Render {@code settings} at their defaults as a commented file, section by section. */
+    public static String render(List<ConfigValue<?>> settings) {
+        StringBuilder toml = new StringBuilder();
+        String section = null;
+        for (ConfigValue<?> setting : settings) {
+            if (!setting.section().equals(section)) {
+                if (section != null) {
+                    toml.append('\n');
+                }
+                section = setting.section();
+                toml.append(table(section)).append('\n');
+            }
+            for (String line : setting.comment().split("\n")) {
+                toml.append("# ").append(line).append('\n');
+            }
+            String value = setting instanceof ConfigValue.Parsed<?> list ? stringList(list.defaultValue())
+                    : String.valueOf(setting.defaultValue());
+            toml.append(setting.key()).append(" = ").append(value).append('\n');
+        }
+        return toml.toString();
     }
 
     /** Render {@code values} as a TOML array of escaped basic strings, for writing config files. */

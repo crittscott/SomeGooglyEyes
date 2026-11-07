@@ -82,7 +82,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        somegoogly$data = input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null);
+        somegoogly$data = SkullEyeState.loadedData(input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null));
     }
 
     @Override
@@ -94,7 +94,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        if (somegoogly$data != null) {
+        if (somegoogly$data != null && somegoogly$data.getBooleanOr(EyeState.HAS_EYES, false)) {
             output.store(SkullEyeState.DATA_KEY, CompoundTag.CODEC, somegoogly$data.copy());
         }
     }

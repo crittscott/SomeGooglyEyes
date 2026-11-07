@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#playerConversionKeepsEyes(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">playerConversionKeepsEyes(GameTestHelper)</a></li>
 <li><a href="#dispenserConversionKeepsEyes(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">dispenserConversionKeepsEyes(GameTestHelper)</a></li>
 <li><a href="#lichTrophyTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">lichTrophyTakesKeepsAndGivesUpEyes(GameTestHelper)</a></li>
+<li><a href="#trophyKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">trophyKeepsOnlyItsEyeState(GameTestHelper)</a></li>
 </ol>
 </li>
 </ol>
@@ -107,6 +108,12 @@ Optometrist shears.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">In game, give a skeleton skull eyes, right-click it with a red candle, and break it.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#trophyKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">trophyKeepsOnlyItsEyeState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item carried is saved or
+sent to players.</div>
+</div>
 </div>
 </div>
 </div>
@@ -151,6 +158,18 @@ The replacement skull candle should keep the eyes.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">lichTrophyTakesKeepsAndGivesUpEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">In game, apply a Slimy Eye to a Lich trophy, break and replace the trophy, then shear it with
 Optometrist shears. A second client should see the same eyes until they are sheared.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="trophyKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>trophyKeepsOnlyItsEyeState</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">trophyKeepsOnlyItsEyeState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item carried is saved or
+sent to players. In game, in creative: <code>/give</code> a Lich trophy whose <code>block_entity_data</code> has a
+<code>somegoogly:data</code> compound with <code>hasGooglyEyes</code> true and an extra key, and place it;
+<code>/data get block</code> shows the eye state without that key.</div>
 </div>
 </section>
 </li>

@@ -37,9 +37,10 @@ abstract class TwilightSkullConversionMixin {
             target = "Lnet/minecraft/world/level/Level;setBlockEntity(Lnet/minecraft/world/level/block/entity/BlockEntity;)V",
             remap = false))
     private static void somegoogly$transferEyes(Level level, BlockEntity candle) {
-        Snapshot snapshot = somegoogly$conversion.get().pop();
+        // Empty if a Twilight Forest update left only this redirect applying.
+        Snapshot snapshot = somegoogly$conversion.get().poll();
         level.setBlockEntity(candle);
-        if (snapshot.hasEyes() && level.getBlockEntity(candle.getBlockPos()) == candle) {
+        if (snapshot != null && snapshot.hasEyes() && level.getBlockEntity(candle.getBlockPos()) == candle) {
             SkullEyeState.set(candle, snapshot);
         }
     }

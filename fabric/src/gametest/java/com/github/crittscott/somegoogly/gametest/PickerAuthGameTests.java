@@ -27,4 +27,9 @@ public final class PickerAuthGameTests {
     public void entityTargetingStopsAtWalls(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, FakePlayer.get(helper.getLevel()));
+    }
 }

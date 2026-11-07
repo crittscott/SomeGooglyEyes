@@ -64,6 +64,10 @@ loadScripts(document, 'script');</script>
 <li><a href="#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" tabindex="0">brokenHeadKeepsItsEyes(GameTestHelper, Player)</a></li>
 <li><a href="#eyedMobDropsAnEyedHead(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">eyedMobDropsAnEyedHead(GameTestHelper)</a></li>
 <li><a href="#headEyesSurviveSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">headEyesSurviveSaveLoad(GameTestHelper)</a></li>
+<li><a href="#adventureCanPlaceOnReadsTheClickedHead(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">adventureCanPlaceOnReadsTheClickedHead(GameTestHelper)</a></li>
+<li><a href="#eyeUsesAreCountedInStatistics(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">eyeUsesAreCountedInStatistics(GameTestHelper)</a></li>
+<li><a href="#headKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">headKeepsOnlyItsEyeState(GameTestHelper)</a></li>
+<li><a href="#spectatorsLeaveHeadsAndThemselvesAlone(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper)</a></li>
 <li><a href="#eyedMobsHeadsModHeadInheritsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">eyedMobsHeadsModHeadInheritsItsEyes(GameTestHelper)</a></li>
 <li><a href="#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">headsModBlocksMapToTheirMobs(GameTestHelper)</a></li>
 <li><a href="#headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" tabindex="0">headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper, Player)</a></li>
@@ -108,28 +112,38 @@ expressions need a client.
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">brokenHeadKeepsItsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#adventureCanPlaceOnReadsTheClickedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adventureCanPlaceOnReadsTheClickedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them.</div>
+<div class="block">In Adventure mode an item's <code>CanPlaceOn</code> list is read against the head itself, from any side.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deniedItemUseLeavesHeadsUntouched(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player,java.util.function.BiConsumer)" class="member-name-link">deniedItemUseLeavesHeadsUntouched</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">brokenHeadKeepsItsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#deniedItemUseLeavesHeadsUntouched(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player,java.util.function.BiConsumer)" class="member-name-link">deniedItemUseLeavesHeadsUntouched</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;net.minecraft.world.phys.BlockHitResult, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;interact)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A native item-use denial prevents both applying and harvesting head eyes, without consuming the
 item, damaging shears, or spawning a drop.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyedMobDropsAnEyedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobDropsAnEyedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyedMobDropsAnEyedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobDropsAnEyedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An eyed mob's head inherits the mob's eyes; an eyeless mob's head doesn't.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyedMobsHeadsModHeadInheritsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobsHeadsModHeadInheritsItsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyedMobsHeadsModHeadInheritsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyedMobsHeadsModHeadInheritsItsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An eyed mob's own Heads-mod head inherits the mob's eyes; another mob's head doesn't.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeUsesAreCountedInStatistics(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeUsesAreCountedInStatistics</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Applying and harvesting count as using the item.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headEyesSurviveSaveLoad(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headEyesSurviveSaveLoad</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -137,47 +151,58 @@ item, damaging shears, or spawning a drop.</div>
 <div class="block">A head's eyes survive saving and loading its block entity.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModBlocksMapToTheirMobs</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headKeepsOnlyItsEyeState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts.</div>
+<div class="block">A head keeps only its eye state from the data it loads, so nothing else a head item carried is saved or sent
+to players.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">headsModHeadTakesKeepsAndGivesUpEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModBlocksMapToTheirMobs(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModBlocksMapToTheirMobs</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The Heads mod's floor and wall heads map to their mobs by block id, and only its namespace counts.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModHeadTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">headsModHeadTakesKeepsAndGivesUpEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
 shears, as a vanilla head does.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModMobsHaveHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headsModMobsHaveHeadEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">headsModMobsHaveHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
 variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
 (a cow's on its body).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristHarvestsAPlacedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristHarvestsAPlacedHead(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristHarvestsAPlacedHead</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#placedHeadUsesSharedAmbientSlots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">placedHeadUsesSharedAmbientSlots</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#placedHeadUsesSharedAmbientSlots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">placedHeadUsesSharedAmbientSlots</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">In game: give a placed head a one-eye layout and enable blink and cross-eye at the shortest
 interval.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeGivesAPlacedHeadEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeGivesAPlacedHeadEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A Slimy Eye gives an eyeless placed head eyes carrying its appearance; an eyed head refuses another.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A head without a definition, or any head while the switch is off, refuses a Slimy Eye.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spectatorsLeaveHeadsAndThemselvesAlone(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spectatorsLeaveHeadsAndThemselvesAlone</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Spectators cannot use eye items on heads or shear themselves.</div>
 </div>
 </div>
 </div>
@@ -292,6 +317,52 @@ its loader wrappers are commented out until the cause is found.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headEyesSurviveSaveLoad</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A head's eyes survive saving and loading its block entity. In game: give a placed skeleton skull purple eyes,
 leave and rejoin the world; the eyes are still there.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="adventureCanPlaceOnReadsTheClickedHead(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>adventureCanPlaceOnReadsTheClickedHead</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adventureCanPlaceOnReadsTheClickedHead</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">In Adventure mode an item's <code>CanPlaceOn</code> list is read against the head itself, from any side. In game:
+in Adventure mode, hold a Slimy Eye given with <code>[can_place_on={blocks:"minecraft:skeleton_skull"}]</code> and
+right-click a skeleton skull's side; it gains eyes. Hold one listing <code>minecraft:stone</code> and right-click
+the top of another skull standing on stone; nothing happens.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeUsesAreCountedInStatistics(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeUsesAreCountedInStatistics</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeUsesAreCountedInStatistics</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Applying and harvesting count as using the item. In game: note the Used counts of Slimy Eye and Shears on the
+Statistics screen's Items tab, apply a Slimy Eye to a cow and to a skeleton skull, and take the skull's eyes
+with Optometrist shears; Slimy Eye rises by two and Shears by one.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="headKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>headKeepsOnlyItsEyeState</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">headKeepsOnlyItsEyeState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A head keeps only its eye state from the data it loads, so nothing else a head item carried is saved or sent
+to players. In game, in creative: <code>/give</code> a skeleton skull whose <code>block_entity_data</code> has a
+<code>somegoogly:data</code> compound with <code>hasGooglyEyes</code> true and an extra key, and place it; <code>/data
+get block</code> shows the eye state without that key.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="spectatorsLeaveHeadsAndThemselvesAlone(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>spectatorsLeaveHeadsAndThemselvesAlone</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spectatorsLeaveHeadsAndThemselvesAlone</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Spectators cannot use eye items on heads or shear themselves. In game: in spectator mode, hold a Slimy Eye and
+right-click a skeleton skull, then sneak and right-click with shears while wearing eyes; nothing changes and
+nothing is used up.</div>
 </div>
 </section>
 </li>

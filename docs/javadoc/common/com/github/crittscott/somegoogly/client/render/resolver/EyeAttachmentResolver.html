@@ -287,7 +287,7 @@ models themselves are replaced. Default: the resolver keeps none.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">segments</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</span></div>
 <div class="block">Split a slash-delimited attach token into normalized, non-empty path segments. A bare name (no
-slash) yields a one-element list; <code>null</code>/blank yields an empty list. Each segment is
+slash) yields a one-element list; a blank token yields an empty list. Each segment is
 <a href="#normalize(java.lang.String)"><code>normalize(String)</code></a>d, so <code>"Body/leftHead"</code> and <code>"body/left_head"</code> produce the same list.</div>
 </div>
 </section>

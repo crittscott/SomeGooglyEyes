@@ -12,6 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.WallSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -100,6 +102,31 @@ public final class TwilightHeadGameTests {
                 .getOrThrow(ModContent.OPTOMETRIST), 1);
         use(helper, player, shears);
         helper.assertTrue(!SkullEyeState.hasEyes(helper.getBlockEntity(HEAD, BlockEntity.class)), Component.literal("shearing removes the trophy eyes"));
+        helper.succeed();
+    }
+
+    /**
+     * A trophy keeps only its eye state from the data it loads, so nothing else a trophy item carried is saved or
+     * sent to players. In game, in creative: {@code /give} a Lich trophy whose {@code block_entity_data} has a
+     * {@code somegoogly:data} compound with {@code hasGooglyEyes} true and an extra key, and place it;
+     * {@code /data get block} shows the eye state without that key.
+     */
+    public static void trophyKeepsOnlyItsEyeState(GameTestHelper helper) {
+        requireTwilightForest(helper);
+        helper.setBlock(HEAD, twilightBlock("lich_trophy"));
+        BlockEntity trophy = helper.getBlockEntity(HEAD, BlockEntity.class);
+        var registries = helper.getLevel().registryAccess();
+        CompoundTag data = new CompoundTag();
+        EYES.write(data);
+        data.putString("padding", "x".repeat(1024));
+        CompoundTag tag = trophy.saveWithoutMetadata(registries);
+        tag.put(SkullEyeState.DATA_KEY, data);
+
+        trophy.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, registries, tag));
+
+        helper.assertTrue(EYES.equals(SkullEyeState.snapshot(trophy)), Component.literal("the trophy keeps its eyes"));
+        helper.assertTrue(!trophy.saveWithoutMetadata(registries).getCompoundOrEmpty(SkullEyeState.DATA_KEY).contains("padding"),
+                Component.literal("the trophy doesn't keep data that isn't eye state"));
         helper.succeed();
     }
 

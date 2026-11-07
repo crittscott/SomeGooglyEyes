@@ -66,8 +66,11 @@ loadScripts(document, 'script');</script>
 <li><a href="#captureGravity(com.mojang.blaze3d.vertex.PoseStack,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo)" tabindex="0">captureGravity(PoseStack, GooglyTracker.EyeInfo)</a></li>
 <li><a href="#drawAnimatedEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,float,float,com.github.crittscott.somegoogly.eye.state.EyeColor,com.github.crittscott.somegoogly.eye.state.EyeColor,float,boolean,float)" tabindex="0">drawAnimatedEye(PoseStack, SubmitNodeCollector, int, int, GooglyTracker.EyeInfo, float, float, EyeColor, EyeColor, float, boolean, float)</a></li>
 <li><a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" tabindex="0">drawEye(PoseStack, SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</a></li>
-<li><a href="#renderEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" tabindex="0">renderEye(PoseStack, SubmitNodeCollector, int, int, GooglyTracker.EyeInfo, HeadInfo, AppearanceOverride, int, int, float)</a></li>
+<li><a href="#renderBoat(net.minecraft.client.renderer.entity.state.BoatRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int)" tabindex="0">renderBoat(BoatRenderState, PoseStack, SubmitNodeCollector, int)</a></li>
+<li><a href="#renderHead(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo%5B%5D,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,float)" tabindex="0">renderHead(PoseStack, SubmitNodeCollector, int, int, GooglyTracker.EyeInfo[], HeadInfo, AppearanceOverride, int, float)</a></li>
 <li><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" tabindex="0">renderPreviewEye(PoseStack, SubmitNodeCollector, int, int, EyeDraft)</a></li>
+<li><a href="#renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int)" tabindex="0">renderPreviewPlacement(PoseStack, SubmitNodeCollector, int, int)</a></li>
+<li><a href="#renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" tabindex="0">renderPreviewPlacement(PoseStack, SubmitNodeCollector, int, int, EyeDraft)</a></li>
 </ol>
 </li>
 </ol>
@@ -173,29 +176,55 @@ configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size 
 set, the same two parts again in the emissive render type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)" class="member-name-link">renderEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderBoat(net.minecraft.client.renderer.entity.state.BoatRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int)" class="member-name-link">renderBoat</a><wbr>(net.minecraft.client.renderer.entity.state.BoatRenderState&nbsp;state,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;buffers,
+ int&nbsp;light)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw the eyes extracted onto <code>state</code> in the hull model's space, which already includes vanilla yaw,
+damage rocking, and bubble rotation.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderHead(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo%5B%5D,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,float)" class="member-name-link">renderHead</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  int&nbsp;overlay,
- <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo,
+ <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a> @Nullable []&nbsp;row,
  <a href="../../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  <a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;overrides,
- int&nbsp;headIndex,
- int&nbsp;eyeIndex,
+ int&nbsp;head,
  float&nbsp;partialTicks)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw a single eye, simulated by <code>eyeInfo</code>, applying both the per-mob (or per-head) <code>overrides</code>
-and the active behavior.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's attachment space, each
+simulated by its entry in <code>row</code>, or at rest when <code>row</code> is <code>null</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  int&nbsp;overlay,
  <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
 the caller has already moved into the draft's attachment space.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int)" class="member-name-link">renderPreviewPlacement</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the current pose,
+which the caller has already moved into the active part's attachment space.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewPlacement</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay,
+ @Nullable <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;draft)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw the gizmo and a draft supplied by the caller's render state.</div>
 </div>
 </div>
 </div>
@@ -246,7 +275,7 @@ the caller has already moved into the draft's attachment space.</div>
  <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo)</span></div>
 <div class="block">Capture the eye plane for the next physics tick after composing the eye pose and before
 expression scaling. The pupil's gravity mode selects world-down or GUI screen-down and
-determines whether display scale is removed.</div>
+determines whether display scale is removed. Only the first draw after a tick captures.</div>
 </div>
 </section>
 </li>
@@ -297,23 +326,34 @@ preview, item) comes through here.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="renderEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,int,float)">
-<h3>renderEye</h3>
+<section class="detail" id="renderBoat(net.minecraft.client.renderer.entity.state.BoatRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int)">
+<h3>renderBoat</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderEye</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderBoat</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.state.BoatRenderState&nbsp;state,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;buffers,
+ int&nbsp;light)</span></div>
+<div class="block">Draw the eyes extracted onto <code>state</code> in the hull model's space, which already includes vanilla yaw,
+damage rocking, and bubble rotation. The caller retains the hull pose; ordinary boat rendering and water
+masking stay with vanilla.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="renderHead(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo[],com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,float)">
+<h3>renderHead</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderHead</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  int&nbsp;overlay,
- <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a>&nbsp;eyeInfo,
+ <a href="../GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a> @Nullable []&nbsp;row,
  <a href="../../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  <a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;overrides,
- int&nbsp;headIndex,
- int&nbsp;eyeIndex,
+ int&nbsp;head,
  float&nbsp;partialTicks)</span></div>
-<div class="block">Draw a single eye, simulated by <code>eyeInfo</code>, applying both the per-mob (or per-head) <code>overrides</code>
-and the active behavior. The pose is expected to already sit in the head's attachment space; this method
-applies the eye's own offset/rotation/scale within its own push/pop, so it leaves the pose stack as it
-found it.</div>
+<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's attachment space, each
+simulated by its entry in <code>row</code>, or at rest when <code>row</code> is <code>null</code>.</div>
 </div>
 </section>
 </li>
@@ -329,6 +369,32 @@ found it.</div>
 <div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
 the caller has already moved into the draft's attachment space. Used by both the vanilla and the
 GeckoLib eye layers.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int)">
+<h3>renderPreviewPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderPreviewPlacement</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay)</span></div>
+<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the current pose,
+which the caller has already moved into the active part's attachment space.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)">
+<h3>renderPreviewPlacement</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderPreviewPlacement</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay,
+ @Nullable <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;draft)</span></div>
+<div class="block">Draw the gizmo and a draft supplied by the caller's render state.</div>
 </div>
 </section>
 </li>

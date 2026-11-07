@@ -65,4 +65,8 @@ public final class PickerExportGameTests {
     public void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
+        PickerExportGameTestsLogic.exportRejectsWhatTheSyncCouldNotCarry(helper);
+    }
 }

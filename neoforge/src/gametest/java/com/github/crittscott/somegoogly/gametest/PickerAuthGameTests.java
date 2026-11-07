@@ -68,4 +68,8 @@ public final class PickerAuthGameTests {
             NeoForge.EVENT_BUS.unregister(refusal);
         }
     }
+
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
 }

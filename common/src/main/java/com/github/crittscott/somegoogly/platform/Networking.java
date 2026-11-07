@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -9,6 +10,12 @@ import net.minecraft.world.entity.Entity;
 public final class Networking {
 
     private Networking() {
+    }
+
+    /** Send a clientbound payload to every player on {@code server}, encoding it once. */
+    @ExpectPlatform
+    public static void sendToAll(MinecraftServer server, CustomPacketPayload payload) {
+        throw new AssertionError();
     }
 
     /** Send a clientbound payload to one player. */

@@ -51,11 +51,11 @@ public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
-    /** The last segment of an attachment token that names a model's head part. */
-    private static final String HEAD_PART = "head";
+    /** Twilight Forest's namespace; declared first because the entries below read it. */
+    private static final String TWILIGHT_NAMESPACE = "twilightforest";
     /**
      * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
-     * every other mob's head shows the eyes on parts named {@value #HEAD_PART}.
+     * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
      */
     private static final Map<Identifier, String> HEAD_PART_TOKENS = Map.ofEntries(
             Map.entry(EntityType.getKey(EntityType.BEE), "bone"),
@@ -69,8 +69,8 @@ public final class SkullEyeState {
             Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), "root"),
             Map.entry(EntityType.getKey(EntityType.SLIME), "root/right_eye"),
             Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0"),
-            Map.entry(Identifier.fromNamespaceAndPath("twilightforest", "naga"), "#0"),
-            Map.entry(Identifier.fromNamespaceAndPath("twilightforest", "ur_ghast"), "root/body"));
+            Map.entry(Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "naga"), "#0"),
+            Map.entry(Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "ur_ghast"), "root/body"));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
      * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
@@ -79,7 +79,7 @@ public final class SkullEyeState {
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */
     public static final String HEADS_NAMESPACE = "heads";
-    public static final Identifier HYDRA_TROPHY_LAYOUT = Identifier.fromNamespaceAndPath("twilightforest", "hydra_trophy");
+    public static final Identifier HYDRA_TROPHY_LAYOUT = Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "hydra_trophy");
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -118,7 +118,11 @@ public final class SkullEyeState {
         return false;
     }
 
-    /** Copy an eyed head block's snapshot onto its generated head items. */
+    /**
+     * Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
+     * {@code HeadEyesLootModifier}s call this; Fabric's counterpart is the {@code copy_components} function its
+     * loot-table event adds.
+     */
     public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
         BlockEntity skull = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (skull instanceof Holder) {
@@ -131,6 +135,27 @@ public final class SkullEyeState {
                 }
             }
         }
+    }
+
+    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    @Nullable
+    public static CompoundTag data(@Nullable BlockEntity skull) {
+        return skull instanceof Holder holder ? holder.somegoogly$find() : null;
+    }
+
+    /**
+     * The eye-state validated copy of a head's stored eye-state compound, or {@code null} if absent. Only the state
+     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
+     * saved and sent to everyone near the head.
+     */
+    @Nullable
+    public static CompoundTag loadedData(@Nullable CompoundTag tag) {
+        if (tag == null) {
+            return null;
+        }
+        CompoundTag data = new CompoundTag();
+        Snapshot.read(tag).write(data);
+        return data;
     }
 
     /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
@@ -169,7 +194,7 @@ public final class SkullEyeState {
 
     @Nullable
     private static Identifier twilightHead(Identifier id) {
-        if (!id.getNamespace().equals("twilightforest")) {
+        if (!id.getNamespace().equals(TWILIGHT_NAMESPACE)) {
             return null;
         }
         String path = id.getPath().replace("_wall_", "_");
@@ -190,14 +215,14 @@ public final class SkullEyeState {
 
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
     public static boolean hasEyes(BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data != null && data.getBooleanOr(EyeState.HAS_EYES, false);
     }
 
     /**
      * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
      * order: those attached to the part the head reproduces, by default the model's head part (an attachment
-     * token whose last segment is {@value #HEAD_PART}).
+     * token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(Identifier entity, HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -282,8 +307,13 @@ public final class SkullEyeState {
             return false;
         }
         String partToken = HEAD_PART_TOKENS.get(entity);
-        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(HEAD_PART)
+        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
+    }
+
+    /** Whether this item carries an enabled head-eye component. */
+    public static boolean itemHasEyes(ItemStack stack) {
+        return itemSnapshot(stack) != null;
     }
 
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
@@ -319,7 +349,7 @@ public final class SkullEyeState {
 
     /** The placed head's eye state; {@link Snapshot#NONE} when it has never had any. */
     public static Snapshot snapshot(@Nullable BlockEntity skull) {
-        CompoundTag data = skull instanceof Holder holder ? holder.somegoogly$find() : null;
+        CompoundTag data = data(skull);
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 
