@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.util;
 
 import java.util.function.Predicate;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +10,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Ray-picks the living entity a player is aiming at, out to {@code reach} blocks. Shared by the

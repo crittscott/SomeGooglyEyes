@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.crittscott.somegoogly.mixin.fabric",
+  "compatibilityLevel": "JAVA_${java_version}",
+  "mixins": [
+    "AbstractVillagerTradeMixin",
+    "EntityHeadDropMixin",
+    "LivingEntityDeathLootMixin",
+    "LivingEntityReactionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

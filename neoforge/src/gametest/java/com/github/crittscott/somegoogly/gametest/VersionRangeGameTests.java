@@ -39,9 +39,6 @@ public final class VersionRangeGameTests {
         VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
     }
 
-    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        VersionRangeGameTestsLogic.entirelyBelowSplitsStaleFromDowngrade(helper);
-    }
 
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);
@@ -49,5 +46,13 @@ public final class VersionRangeGameTests {
 
     public static void optionalModVersionRangeSynthesis(GameTestHelper helper) {
         VersionRangeGameTestsLogic.optionalModVersionRangeSynthesis(helper);
+    }
+
+    public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.loaderNamesDoNotChangeAVersion(helper);
+    }
+
+    public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        VersionRangeGameTestsLogic.longSegmentsCompareAsNumbers(helper);
     }
 }

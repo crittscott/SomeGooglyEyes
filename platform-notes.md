@@ -38,6 +38,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
+- 26.2: `CriteriaTriggers` moved from `net.minecraft.advancements` to `net.minecraft.advancements.triggers`, and `BlockPredicate` from `net.minecraft.advancements.criterion` to `net.minecraft.advancements.predicates`. [source, NeoForged 26.2 primer]
 
 ### Commands
 
@@ -58,6 +59,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: `onPlayerDestroyItem` is called from `Player.interactOn` and similar callers, not `hurtAndBreak`. A cancelled interaction that breaks a tool must call it itself. [tested]
 - 1.20.1: `RightClickBlock` fires before vanilla's spectator check; so does `EntityInteractSpecific`. [recalled]
 - 1.20.1: `EntityInteractSpecific` fires before an armor stand's own `interactAt`. [tested]
+- NeoForge 26.2.0.57: `PlayerInteractEvent.EntityInteractSpecific` does not exist, so `EntityInteract` is the entity-click event. [tested]
 - 1.20.1: `getPersistentData` has no non-creating read. [recalled]
 - 1.20.1: `SimpleChannel` prepends a one-byte handler index to the encoded body, which counts against the vanilla packet limit. `IndexedMessageCodec.consume` validates packet direction before decoding. [settled during review; not re-verified]
 - 1.20.1: a loot modifier is the normal way to change existing loot, because Forge has no way to add a function to an existing pool. [recalled]
@@ -76,6 +78,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
+- Fabric API 0.161.0+26.2: networking classes use `createClientboundPacket`, packet contexts expose `packetListener()`, and `PayloadTypeRegistry` uses `clientboundPlay`, `serverboundPlay`, `clientboundConfiguration`, and `serverboundConfiguration`. [source]
+- Fabric API 0.161.0+26.2: `SYNC_DATA_PACK_CONTENTS` passes `(player, joined)` and fires for joining players as well as successful reloads. [source]
 
 ## Mixin
 
@@ -95,4 +99,5 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 ## Libraries and other mods
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
+- GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]

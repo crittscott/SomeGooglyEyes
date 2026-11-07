@@ -62,7 +62,7 @@ public record EyeRenderData(boolean pickerTarget, @Nullable HeadInfo helper, @Nu
         if (living.isInvisible()) {
             return null;
         }
-        HeadInfo helper = ClientEyeConfigs.resolve(entityType, living, EyeState.getVariantRoll(living));
+        HeadInfo helper = ClientEyeConfigs.resolve(entityType, living.isBaby(), EyeState.getVariantRoll(living));
         return helper.hasConfig() ? helper : null;
     }
 

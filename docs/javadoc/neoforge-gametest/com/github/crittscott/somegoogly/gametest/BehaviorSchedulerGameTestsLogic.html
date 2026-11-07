@@ -76,6 +76,9 @@ loadScripts(document, 'script');</script>
 <li><a href="#sleepingVillagerClosesLids(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">sleepingVillagerClosesLids(GameTestHelper)</a></li>
 <li><a href="#swellingCreeperRattles(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">swellingCreeperRattles(GameTestHelper)</a></li>
 <li><a href="#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">switchedOffOngoingBehaviorsStayNeutral(GameTestHelper)</a></li>
+<li><a href="#completedTradeSwirlsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">completedTradeSwirlsEyes(GameTestHelper, ServerPlayer)</a></li>
+<li><a href="#playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">playerHitBulgesEyes(GameTestHelper, ServerPlayer)</a></li>
+<li><a href="#healAtFullHealthPlaysNoSwirl(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" tabindex="0">healAtFullHealthPlaysNoSwirl(GameTestHelper, ServerPlayer)</a></li>
 </ol>
 </li>
 </ol>
@@ -154,30 +157,42 @@ eye for a bow in the off hand or a left-handed player's main hand.</div>
 server's anger report does the same, and a tracker built for a mob already reported angry starts red.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">creepyEndermanPulses</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#completedTradeSwirlsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">completedTradeSwirlsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A completed trade swirls the villager's eyes through the loader's trade hook.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">creepyEndermanPulses</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A creepy enderman's pupils swell and shrink around their size, keep pulsing under a behavior, and settle
 when it calms down.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">disabledEyesSuspendAutomaticBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#disabledEyesSuspendAutomaticBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">disabledEyesSuspendAutomaticBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Disabling the master switch suspends automatic reactions and ambient work but keeps tracked mobs
 ready to resume.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective
 triggers.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#healAtFullHealthPlaysNoSwirl(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healAtFullHealthPlaysNoSwirl</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A heal that restores nothing plays no swirl and doesn't spend the cooldown.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#healSwirlIsRateLimited(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">healSwirlIsRateLimited</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -200,52 +215,58 @@ is idle.</div>
 elapses.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rammingGoatSquints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rammingGoatSquints</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">playerHitBulgesEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;attacker)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A player's real hit bulges the eyes of a mob or of another player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rammingGoatSquints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">rammingGoatSquints</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A goat lowering its head to ram squints, still plays behaviors while it does, and opens its eyes again
 once the ram ends and its head comes back up.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A received expression survives first-render delay and render-cache replacement and expires while
 offscreen.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverOnlyAngerIsShared(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverOnlyAngerIsShared</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverOnlyAngerIsShared(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverOnlyAngerIsShared</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
 as angry while <code>angryEyes</code> is off.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shearingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">shearingPlaysGrow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Shearing a sheep plays grow, and only while <code>growOnShear</code> is on.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleepingMobPlaysNoBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sleepingMobPlaysNoBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shearingPlaysGrow(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">shearingPlaysGrow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Shearing a sheep plays grow, and only while <code>growOnShear</code> is on.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleepingMobPlaysNoBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">sleepingMobPlaysNoBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A sleeping mob plays nothing: the admin trigger, heal, trade, affection, and ambient rolls are all
 dropped until it wakes.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleepingVillagerClosesLids(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">sleepingVillagerClosesLids</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleepingVillagerClosesLids(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">sleepingVillagerClosesLids</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A sleeping villager's eyelids close to a slit over its full-size eyes, stay closed until it wakes, and
 open back out of sight; a tracker built for an already-sleeping villager starts with them closed, and
 no behavior starts on the client while it sleeps.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#swellingCreeperRattles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">swellingCreeperRattles</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#swellingCreeperRattles(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">swellingCreeperRattles</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
 rest they hang still.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchedOffOngoingBehaviorsStayNeutral</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#switchedOffOngoingBehaviorsStayNeutral(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">switchedOffOngoingBehaviorsStayNeutral</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Each ongoing behavior stays neutral while its server switch is off, and a sleeping mob still plays no
 expression with its squint off.</div>
 </div>
@@ -500,9 +521,11 @@ and vanish.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">swellingCreeperRattles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
-rest they hang still. Uses a stationary, gravity-free server creeper ticked by hand with fixed pupil
-randomness, measuring calm motion only after settling. Agitation comes from vanilla's synced swell;
-the swell is reversed well before the fuse runs out. In game: walk up to an eyed creeper until it hisses, then
+rest they hang still. Drives the client-side <code>GooglyTracker</code> directly against a server creeper
+ticked by hand, since the agitation is derived from vanilla's synced swell rather than sent; the swell
+is reversed well before the fuse runs out. The fixture floats motionless, uses seeded pupil noise,
+and discards settling ticks before measuring either calm window.
+In game: walk up to an eyed creeper until it hisses, then
 back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.</div>
 </div>
 </section>
@@ -521,6 +544,40 @@ eyed villager shows no lids and a sleeping player with a Slimy Eye keeps their e
 drawing its bow keeps both eyes open; with <code>rattleOnSwell</code>, a hissing eyed creeper's pupils hang
 still; with <code>pulseWhenCreepy</code>, a screaming eyed enderman's pupils hold their size; with
 <code>angryEyes</code>, an eyed zombie chasing you keeps its pupil color.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="completedTradeSwirlsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>completedTradeSwirlsEyes</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">completedTradeSwirlsEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
+<code>swirlOnTrade = true</code>, trade with an eyed villager; its eyes swirl as you take the item.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>playerHitBulgesEyes</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playerHitBulgesEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;attacker)</span></div>
+<div class="block">A player's real hit bulges the eyes of a mob or of another player. In game: with
+<code>growOnHitPercent = 100</code>, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
+eyes grow.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="healAtFullHealthPlaysNoSwirl(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>healAtFullHealthPlaysNoSwirl</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">healAtFullHealthPlaysNoSwirl</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with <code>swirlOnHeal</code>
+on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.</div>
 </div>
 </section>
 </li>

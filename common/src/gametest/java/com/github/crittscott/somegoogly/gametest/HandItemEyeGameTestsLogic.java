@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.HandEyeAnimations;
+import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Matrix3f;
-import org.joml.Quaternionf;
 
 /** Hand simulation checks; holder attachment and extracted draws need the client checklist. */
 public final class HandItemEyeGameTestsLogic {
@@ -45,27 +44,33 @@ public final class HandItemEyeGameTestsLogic {
 
     /**
      * World gravity ignores camera rotation and item display scale. In game: disable ambient expressions,
-     * tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down.
+     * tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down. A new
+     * simulation starts at rest. In game: look away from a framed eye for a second and back; its pupil is
+     * already down rather than dropping from the center.
      */
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
-        var camera = new Quaternionf().rotationYXZ(0.7F, -0.4F, 0.2F);
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
-        var viewPose = new Matrix3f().rotation(new Quaternionf(camera).conjugate()).mul(localToWorld);
         var rotated = new PresentationEyes(FIRST);
-        rotated.eye.capturePose(viewPose, camera);
+        rotated.eye.capturePose(localToWorld);
         helper.assertTrue(Math.abs(rotated.eye.gravX - 1F) < PHYSICS_TOLERANCE
                         && Math.abs(rotated.eye.gravY) < PHYSICS_TOLERANCE,
-                Component.literal("camera rotation cancels and display scale does not weaken gravity"));
+                Component.literal("a world-aligned pose keeps its gravity and display scale does not weaken it"));
+        helper.assertTrue(Math.abs(rotated.eye.deltaX - 1F) < PHYSICS_TOLERANCE
+                        && Math.abs(rotated.eye.prevDeltaX - 1F) < PHYSICS_TOLERANCE
+                        && Math.abs(rotated.eye.deltaY) < PHYSICS_TOLERANCE,
+                Component.literal("the first capture rests a new pupil on the rim toward gravity"));
         for (int tick = 0; tick < GRAVITY_TICKS; tick++) {
             rotated.tick(tick, BehaviorSettings.NONE);
         }
         helper.assertTrue(rotated.eye.deltaX > 0.5F && Math.abs(rotated.eye.deltaY) < 0.1F,
                 Component.literal("the pupil falls along projected world-down"));
         var horizontal = new PresentationEyes(FIRST);
-        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), new Quaternionf());
+        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)));
         helper.assertTrue(Math.abs(horizontal.eye.gravX) < PHYSICS_TOLERANCE
                         && Math.abs(horizontal.eye.gravY) < PHYSICS_TOLERANCE,
                 Component.literal("an upward-facing eye has no in-plane gravity"));
+        helper.assertTrue(horizontal.eye.deltaX == 0F && horizontal.eye.deltaY == 0F,
+                Component.literal("with no in-plane gravity a new pupil stays centered"));
         helper.succeed();
     }
 
@@ -74,33 +79,33 @@ public final class HandItemEyeGameTestsLogic {
      * F5, and start/stop walking or jumping; the pupils lag acceleration and settle after movement stops.
      */
     public static void handEyesReactToHolderMotion(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity moving = holder(helper, FIRST);
         LivingEntity still = holder(helper, SECOND);
-        var movingEyes = cache.get(moving, InteractionHand.MAIN_HAND, eye(), true);
-        var stillEyes = cache.get(still, InteractionHand.MAIN_HAND, eye(), true);
-        movingEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), new Quaternionf());
-        stillEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F), new Quaternionf());
+        var movingEyes = cache.get(moving, InteractionHand.MAIN_HAND, eye());
+        var stillEyes = cache.get(still, InteractionHand.MAIN_HAND, eye());
+        movingEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F));
+        stillEyes.eye.capturePose(new Matrix3f().scaling(-1F, -1F, 1F));
         for (int tick = 0; tick < 2; tick++) {
-            cache.get(moving, InteractionHand.MAIN_HAND, eye(), true);
-            cache.get(still, InteractionHand.MAIN_HAND, eye(), true);
+            cache.get(moving, InteractionHand.MAIN_HAND, eye());
+            cache.get(still, InteractionHand.MAIN_HAND, eye());
             cache.tick(tick, true, BehaviorSettings.NONE);
         }
         moving.setPos(moving.getX() + MOTION_STEP, moving.getY(), moving.getZ());
-        cache.get(moving, InteractionHand.MAIN_HAND, eye(), true);
-        cache.get(still, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(moving, InteractionHand.MAIN_HAND, eye());
+        cache.get(still, InteractionHand.MAIN_HAND, eye());
         cache.tick(2L, true, BehaviorSettings.NONE);
         helper.assertTrue(movingEyes.eye.deltaX < stillEyes.eye.deltaX - 0.2F,
                 Component.literal("movement acceleration reaches the actual holder's pupil simulation"));
         moving.setYHeadRot(35F);
         moving.setXRot(20F);
-        cache.get(moving, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(moving, InteractionHand.MAIN_HAND, eye());
         cache.tick(3L, true, BehaviorSettings.NONE);
         helper.assertTrue(movingEyes.eye.rotationYaw == moving.getYHeadRot()
                         && movingEyes.eye.rotationPitch == moving.getXRot(), Component.literal("holder rotation reaches the physics inputs"));
         float before = movingEyes.eye.deltaX;
         moving.setPos(moving.getX() + 100D, moving.getY(), moving.getZ());
-        cache.get(moving, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(moving, InteractionHand.MAIN_HAND, eye());
         cache.tick(100L, true, BehaviorSettings.NONE);
         helper.assertTrue(movingEyes.eye.deltaX == before, Component.literal("offscreen time gaps re-prime motion instead of kicking from stale positions"));
         helper.succeed();
@@ -111,24 +116,25 @@ public final class HandItemEyeGameTestsLogic {
      * glowing copy, a plain skull, and an ordinary item; no previous layout or color persists.
      */
     public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         ItemStack stack = eye();
-        var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, stack, true);
+        var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, stack);
         ItemStack copy = stack.copy();
         copy.setCount(2);
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, copy, true) == first,
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, copy) == first,
                 Component.literal("stack copies and counts retain the hand simulation"));
         EyeItemProperties.set(copy, AppearanceOverride.EMPTY.withGlow(true));
-        var changed = cache.get(firstHolder, InteractionHand.MAIN_HAND, copy, true);
+        var changed = cache.get(firstHolder, InteractionHand.MAIN_HAND, copy);
         helper.assertTrue(changed != first, Component.literal("appearance changes replace the hand simulation"));
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, copy, false) == null,
-                Component.literal("master/client gates retire hand animation"));
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.SKELETON_SKULL), true) == null,
+        cache.clear();
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, copy) != changed,
+                Component.literal("hiding eyes clears hand animation, so showing them again starts fresh"));
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.SKELETON_SKULL)) == null,
                 Component.literal("plain heads do not acquire eyes"));
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND), true) == null,
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND)) == null,
                 Component.literal("ordinary items are unsupported"));
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, ItemStack.EMPTY, true) == null,
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, ItemStack.EMPTY) == null,
                 Component.literal("empty hands are unsupported"));
         helper.succeed();
     }
@@ -138,26 +144,26 @@ public final class HandItemEyeGameTestsLogic {
      * unload its chunk, reload resources, and reconnect; no old hand state remains attached.
      */
     public static void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
-        var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
-        var offhand = cache.get(firstHolder, InteractionHand.OFF_HAND, eye(), true);
-        var other = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true);
+        var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
+        var offhand = cache.get(firstHolder, InteractionHand.OFF_HAND, eye());
+        var other = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye());
         cache.remove(FIRST);
-        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true) != first
-                        && cache.get(firstHolder, InteractionHand.OFF_HAND, eye(), true) != offhand,
+        helper.assertTrue(cache.get(firstHolder, InteractionHand.MAIN_HAND, eye()) != first
+                        && cache.get(firstHolder, InteractionHand.OFF_HAND, eye()) != offhand,
                 Component.literal("entity removal drops both hands"));
-        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true) == other,
+        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye()) == other,
                 Component.literal("another holder survives removal"));
         for (int tick = 0; tick < IDLE_TICKS; tick++) {
             cache.tick(tick, true, BehaviorSettings.NONE);
         }
-        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true) != other,
+        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye()) != other,
                 Component.literal("unseen hands expire"));
-        var current = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true);
+        var current = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye());
         cache.clear();
-        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true) != current,
+        helper.assertTrue(cache.get(secondHolder, InteractionHand.MAIN_HAND, eye()) != current,
                 Component.literal("resource/world reset drops hand state"));
         helper.succeed();
     }
@@ -167,12 +173,12 @@ public final class HandItemEyeGameTestsLogic {
      * both hands beside another player holding eyes; all presentations animate independently.
      */
     public static void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
-        var main = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
-        var offhand = cache.get(firstHolder, InteractionHand.OFF_HAND, eye(), true);
-        var other = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye(), true);
+        var main = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
+        var offhand = cache.get(firstHolder, InteractionHand.OFF_HAND, eye());
+        var other = cache.get(secondHolder, InteractionHand.MAIN_HAND, eye());
         helper.assertTrue(main != offhand && main != other && offhand != other,
                 Component.literal("each holder and hand owns its pupils"));
         helper.assertTrue(main.eye.itemGravity && !main.eye.guiGravity
@@ -186,21 +192,21 @@ public final class HandItemEyeGameTestsLogic {
      * resume, and compare with inventory animation; only the world presentation freezes.
      */
     public static void handEyesUseWorldClockAndPause(GameTestHelper helper) {
-        HandEyeAnimations cache = new HandEyeAnimations();
+        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
-        var eye = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
+        var eye = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
         BehaviorSettings blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK),
                 0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
         cache.tick(1L, true, blink);
         helper.assertTrue(eye.active != null && eye.active.age == 1, Component.literal("world time selects expression age"));
-        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         cache.tick(2L, false, blink);
         helper.assertTrue(eye.active.age == 1, Component.literal("pause freezes the hand expression"));
-        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         cache.tick(2L, true, blink);
         helper.assertTrue(eye.active.age == 2, Component.literal("resume follows world time"));
-        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye(), true);
+        cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         cache.tick(3L, true, BehaviorSettings.NONE);
         helper.assertTrue(eye.active == null, Component.literal("ambient off removes expressions while physics remains"));
         helper.succeed();
@@ -215,12 +221,13 @@ public final class HandItemEyeGameTestsLogic {
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
-            HandEyeAnimations cache = new HandEyeAnimations();
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
             LivingEntity firstHolder = holder(helper, FIRST);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
-            var eyes = cache.get(firstHolder, InteractionHand.MAIN_HAND, head, true);
+            var eyes = cache.get(firstHolder, InteractionHand.MAIN_HAND, head);
             helper.assertTrue(eyes != null && eyes.helper != null, Component.literal("eyed heads resolve their configured layout"));
             for (int part : eyes.parts) {
                 for (var pupil : eyes.eyes[part]) {
@@ -232,19 +239,20 @@ public final class HandItemEyeGameTestsLogic {
                     0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
             boolean played = false;
             for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
-                cache.get(firstHolder, InteractionHand.MAIN_HAND, head, true);
+                cache.get(firstHolder, InteractionHand.MAIN_HAND, head);
                 cache.tick(tick, true, cross);
                 played |= eyes.active != null;
             }
             helper.assertTrue(played, Component.literal("a paired hand-held head can play cross-eye"));
             helper.succeed();
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
     }
 
     private static LivingEntity holder(GameTestHelper helper, UUID uuid) {
-        LivingEntity holder = Objects.requireNonNull(EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.LOAD));
+        LivingEntity holder = Objects.requireNonNull(EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.COMMAND));
         holder.setUUID(uuid);
         return holder;
     }

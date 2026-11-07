@@ -62,4 +62,20 @@ public final class SkullEyeGameTests {
             }
         });
     }
+
+    public static void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.adventureCanPlaceOnReadsTheClickedHead(helper);
+    }
+
+    public static void eyeUsesAreCountedInStatistics(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.eyeUsesAreCountedInStatistics(helper);
+    }
+
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.headKeepsOnlyItsEyeState(helper);
+    }
+
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        SkullEyeGameTestsLogic.spectatorsLeaveHeadsAndThemselvesAlone(helper);
+    }
 }

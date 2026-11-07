@@ -101,7 +101,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeState</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
+<div class="block">Persistent, mutable entity eye state — the override layer that sits on top of the
 shared datapack config (<a href="../../config/EyeConfigModel.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigModel</code></a>).
 
 <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
@@ -136,7 +136,7 @@ snapshot without sending it back to the server.</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="EyeState.Snapshot.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+<div class="block">The full portable eye state of one supported entity or placed mob head, and its one NBT form: the three
 keys above in a mod-owned compound.</div>
 </div>
 </div>
@@ -235,7 +235,7 @@ no eyes and no appearance overrides.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.nbt.CompoundTag</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overridesTagOrNull(net.minecraft.world.entity.Entity)" class="member-name-link">overridesTagOrNull</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The overrides compound, or <code>null</code> if absent (used by the sync packet).</div>
+<div class="block">The overrides compound, or <code>null</code> if absent.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#readProperties(net.minecraft.world.entity.Entity)" class="member-name-link">readProperties</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
@@ -469,7 +469,7 @@ that has to be transitioned back to the default.</div>
 <h3>overridesTagOrNull</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable net.minecraft.nbt.CompoundTag</span>&nbsp;<span class="element-name">overridesTagOrNull</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
-<div class="block">The overrides compound, or <code>null</code> if absent (used by the sync packet).</div>
+<div class="block">The overrides compound, or <code>null</code> if absent.</div>
 </div>
 </section>
 </li>
@@ -479,8 +479,8 @@ that has to be transitioned back to the default.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">readProperties</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
 <div class="block">Read the mob's appearance override as <a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (<a href="AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a>
-when none). The override compound is serialized via the shared <code>AppearanceOverride</code> codec —
-the same schema an eye item carries — so item↔mob transfer is a straight property copy.</div>
+when none). The override compound is the same <a href="AppearanceOverride.html#toNbt()"><code>AppearanceOverride.toNbt()</code></a> schema an eye item
+carries, so item↔mob transfer is a straight property copy.</div>
 </div>
 </section>
 </li>

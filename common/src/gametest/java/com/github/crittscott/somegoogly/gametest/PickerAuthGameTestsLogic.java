@@ -1,10 +1,15 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.entity.EntityTypes;
 
 /**
  * The server-side authorization and rate limits behind the client-driven picker verbs:
@@ -62,6 +67,28 @@ public final class PickerAuthGameTestsLogic {
         } finally {
             PickerGate.onServerStopping();
         }
+        helper.succeed();
+    }
+
+    /**
+     * The picker verbs reach an operator in any game mode, so tab completion doesn't go stale on {@code /gamemode},
+     * and refuse at execution outside creative with a failure result. In game: as an operator in survival, run
+     * {@code /sg spawn minecraft:cow}; a red message names the requirement and no cow appears. Switch to creative
+     * and tab completion offers {@code /sg spawn} without rejoining.
+     */
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper, ServerPlayer player) {
+        helper.assertTrue(!player.isCreative(), Component.literal("the fixture reports survival"));
+        CommandSourceStack operator = player.createCommandSourceStack()
+                .withPermission(Permissions.COMMANDS_GAMEMASTER::equals).withSuppressedOutput();
+        try {
+            helper.assertTrue(helper.getLevel().getServer().getCommands().getDispatcher()
+                            .execute("sg spawn minecraft:cow", operator) == 0,
+                    Component.literal("a survival operator's spawn should run and report failure"));
+        } catch (CommandSyntaxException e) {
+            helper.fail(Component.literal("a survival operator should reach the command, not a parse error: " + e.getMessage()));
+        }
+        helper.assertTrue(!PickerSpawnService.spawnOne(operator, player, EntityTypes.ENDER_DRAGON),
+                Component.literal("a refused spawn should report failure"));
         helper.succeed();
     }
 }
