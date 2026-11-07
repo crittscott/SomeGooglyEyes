@@ -78,7 +78,7 @@ public final class EyeConfigLimits {
     }
 
     private static Issue validateConfigSet(RuntimeConfigSet set, Budget budget) {
-        if (set == null || !set.hasAnyConfig()) {
+        if (!set.hasAnyConfig()) {
             return issue("no_age", "config set has no age configuration");
         }
         Issue error = validateOptional(AGE_ADULT, set.adult, budget);
@@ -155,8 +155,7 @@ public final class EyeConfigLimits {
             int variantEyes = 0;
             for (int headIndex = 0; headIndex < variant.heads.size(); headIndex++) {
                 HeadConfig head = variant.heads.get(headIndex);
-                if (head.attachPoint == null || head.attachPoint.isBlank()
-                        || head.attachPoint.length() > MAX_ATTACH_TOKEN_LENGTH) {
+                if (head.attachPoint.isBlank() || head.attachPoint.length() > MAX_ATTACH_TOKEN_LENGTH) {
                     return issue("invalid_attachment", "variant %s head %s has invalid attachment token", variantIndex, headIndex);
                 }
                 if (head.eyes.isEmpty()) {

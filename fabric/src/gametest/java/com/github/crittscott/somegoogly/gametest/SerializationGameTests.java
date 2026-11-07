@@ -12,8 +12,8 @@ public final class SerializationGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
-        SerializationGameTestsLogic.networkProtocolIdsAreVersionedAndUnique(helper);
+    public void networkProtocolIdsAreUnique(GameTestHelper helper) {
+        SerializationGameTestsLogic.networkProtocolIdsAreUnique(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
@@ -79,5 +79,15 @@ public final class SerializationGameTests {
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         SerializationGameTestsLogic.eyeStatePacketRejectsNonFiniteValues(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void pickerNumbersIgnoreTheComputersLanguage(GameTestHelper helper) {
+        SerializationGameTestsLogic.pickerNumbersIgnoreTheComputersLanguage(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void settingsPacketRoundTrips(GameTestHelper helper) {
+        SerializationGameTestsLogic.settingsPacketRoundTrips(helper);
     }
 }

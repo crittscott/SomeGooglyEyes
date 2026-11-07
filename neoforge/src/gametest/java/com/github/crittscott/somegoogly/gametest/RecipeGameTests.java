@@ -30,4 +30,8 @@ public final class RecipeGameTests {
     public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RecipeGameTestsLogic.slimyEyeCarriesTheEyesAppearance(helper);
     }
+
+    public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
+        RecipeGameTestsLogic.slimyEyeRecipeUnlocksByAdvancement(helper);
+    }
 }

@@ -60,19 +60,19 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 
 Modifiers stack. Googly Eyes come from harvesting or creative.
 
-Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
+Picking up a Googly Eye unlocks the Slimy Eye recipe. Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
 
-Eyed or ineligible mobs refuse application; harvest before restyling. Sneak-use on air applies to yourself. Other-player application requires server PvP and team permission.
+Harvest before restyling. Sneak-use on air applies to yourself. Applying or taking another player’s eyes requires level PvP and team permission.
 
 To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 
-Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need build permission there.
+Placed skeleton, wither skeleton, zombie, creeper, piglin, and player heads can have googly eyes, laid out and colored by their mob's definition. Dragon and other modded heads can't. An eyed mob's own head, dropped at death (a charged creeper's kill, a wither skeleton's drop), keeps its eyes. A Slimy Eye on an eyeless placed head gives it eyes; Optometrist shears pop one Googly Eye out of an eyed one. Both need use permission at the clicked head, including the item's Adventure-mode block rule.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play synchronized idle expressions. Cross-eye requires a paired layout. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 
-Vanilla boats, chest boats, and bamboo rafts start eyeless. Slimy Eyes apply two outward-facing eyes, one per side; Optometrist shears remove them and drop one eye for one durability. Eyes and applied appearance survive saves, not breaking into items. Successful use consumes boarding/cargo interaction. Boats use world gravity, owner motion, and ambient expressions; bundled eyes do not cross. Boat picker/admin editing and modded boats are unsupported.
+Vanilla boats and rafts start eyeless. Slimy Eyes add two outward-facing eyes. Optometrist shears remove them and drop one eye for one durability. Eyes survive saves. Using eye items takes priority over boarding or opening cargo. Boat pupils respond to gravity and movement.
 
 ## Checking a target
 
@@ -87,7 +87,7 @@ The check reaches about 16 blocks. Client settings that hide eyes do not affect 
 
 ## Creative tab
 
-The Some Googly Eyes tab contains a Googly Eye, a Slimy Eye, and an Optometrist enchanted book. Creative eye items have no appearance overrides.
+The Some Googly Eyes tab contains both eye items and an Optometrist book.
 
 ## Configuration
 

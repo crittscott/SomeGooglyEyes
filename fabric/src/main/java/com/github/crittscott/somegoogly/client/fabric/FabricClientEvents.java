@@ -4,20 +4,18 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
-import com.github.crittscott.somegoogly.client.picker.PickerKeys;
+import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -25,7 +23,6 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -51,27 +48,21 @@ public final class FabricClientEvents {
                 Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
                 (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
-        KeyMapping.Category.register(PickerKeys.CATEGORY.id());
-        KeyMappingHelper.registerKeyMapping(PickerKeys.LOCK);
-        KeyMappingHelper.registerKeyMapping(PickerKeys.PART_NEXT);
-        KeyMappingHelper.registerKeyMapping(PickerKeys.PART_PREV);
-        KeyMappingHelper.registerKeyMapping(PickerKeys.TOGGLE);
+        KeyMapping.Category.register(PickerInput.CATEGORY.id());
+        KeyMappingHelper.registerKeyMapping(PickerInput.LOCK);
+        KeyMappingHelper.registerKeyMapping(PickerInput.PART_NEXT);
+        KeyMappingHelper.registerKeyMapping(PickerInput.PART_PREV);
+        KeyMappingHelper.registerKeyMapping(PickerInput.TOGGLE);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             ClientEyeRuntime.onEntityRemoved(entity);
         });
         ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE) && client.getConnection() != null) {
-                client.getConnection().getConnection()
-                        .disconnect(Component.translatable("somegoogly.network.required_server"));
-            }
-        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES,
                 Identifier.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
-                        PickerHud.render(graphics, graphics.guiWidth(), graphics.guiHeight()));
+                        PickerHud.render(graphics, graphics.guiWidth()));
 
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->
                 EyeItemProperties.appendHeadTooltip(stack, lines));

@@ -20,8 +20,8 @@ public final class BoatEyeGameTests {
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
-    public void boatsEvictIdleAndPauseSimulations(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsEvictIdleAndPauseSimulations(helper);
+    public void boatsEvictIdleSimulations(GameTestHelper helper) {
+        BoatEyeGameTestsLogic.boatsEvictIdleSimulations(helper);
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
@@ -73,4 +73,6 @@ public final class BoatEyeGameTests {
     public void boatsSaveAndSynchronizeSnapshots(GameTestHelper helper) {
         BoatEyeGameTestsLogic.boatsSaveAndSynchronizeSnapshots(helper);
     }
+
+
 }

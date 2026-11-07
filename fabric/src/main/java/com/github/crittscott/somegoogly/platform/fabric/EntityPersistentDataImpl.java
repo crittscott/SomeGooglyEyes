@@ -7,9 +7,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Fabric implementation of the shared entity-persistence boundary: a persistent data attachment holding
- * the same compound the Forge-family loaders keep in their entity persistent data.
+ * the same compound NeoForge and Forge keep in their entity persistent data.
  */
 public final class EntityPersistentDataImpl {
 
@@ -19,6 +21,12 @@ public final class EntityPersistentDataImpl {
             .buildAndRegister(Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "persistent_data"));
 
     private EntityPersistentDataImpl() {
+    }
+
+    /** The attached compound, if any; reading must not add a persistent attachment. */
+    @Nullable
+    public static CompoundTag find(Entity entity) {
+        return entity.getAttached(TYPE);
     }
 
     /** Registers {@link #TYPE}; must run during mod initialization, before any entity loads. */

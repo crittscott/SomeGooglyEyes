@@ -194,7 +194,7 @@ public final class ConfigGameTests {
             Files.writeString(file, source);
             CommentedConfig document = TomlConfig.readOrCreate(file, "");
             helper.assertTrue(TomlConfig.integer(TomlConfig.section(document, ServerConfig.SECTION_SERVER),
-                            ServerConfig.GLOBAL_PERCENT_KEY, 5) == 10,
+                            ServerConfig.GLOBAL_PERCENT.key(), 5) == 10,
                     Component.literal("quoted keys and digit separators are parsed in the declared table"));
             helper.assertTrue(TomlConfig.completeIfMissing(file, document,
                             "[\"Server Settings\"]\nglobalPercent=5\ngooglyEyesEnabled=true\n"),
@@ -204,7 +204,7 @@ public final class ConfigGameTests {
             helper.assertTrue(completed.contains("An administrator's spawn policy.")
                             && TomlConfig.section(reread, ServerConfig.SECTION_SERVER).containsKey("unknown")
                             && TomlConfig.strings(TomlConfig.section(reread, ServerConfig.SECTION_BEHAVIORS),
-                                    ServerConfig.AMBIENT_BEHAVIOR_POOL_KEY, List.of())
+                                    ServerConfig.AMBIENT_BEHAVIOR_POOL.key(), List.of())
                                     .contains("somegoogly:unknown"),
                     Component.literal("completion preserves comments, unknown keys, and unrecognized list entries"));
             helper.assertTrue(Files.readString(file.resolveSibling("server.toml.bak")).equals(source),

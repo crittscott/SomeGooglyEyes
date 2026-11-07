@@ -6,8 +6,6 @@ import net.minecraft.client.model.EntityModel;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Resolver for the {@code AdvancedEntityModel} / {@code AdvancedModelBox} toolkit, shipped by two
@@ -54,9 +52,10 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
 
     private record Handles(Class<?> modelClass, Class<?> boxClass, Method getAllParts,
                            Method getParent, Method translateAndRotate, Field boxName) {
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+
         boolean available() {
-            return modelClass != null && boxClass != null && getAllParts != null
-                    && getParent != null && translateAndRotate != null && boxName != null;
+            return modelClass != null;
         }
 
         static Handles load(String familyLabel, String modelClassName, String boxClassName) {
@@ -69,13 +68,11 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
                 Field boxName = boxClass.getField("boxName");
                 return new Handles(modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
             } catch (ClassNotFoundException absent) {
-                return new Handles(null, null, null, null,
-                        null, null);
-            } catch (Throwable failure) {
+                return ABSENT;
+            } catch (ReflectiveOperationException | LinkageError failure) {
                 ClientIntegrationFailures.warnOnce(
                         familyLabel, "API discovery", modelClassName, failure);
-                return new Handles(null, null, null, null,
-                        null, null);
+                return ABSENT;
             }
         }
     }
@@ -101,26 +98,8 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected List<Object> collectParts(EntityModel<?> model) {
-        if (!available()) {
-            return List.of();
-        }
-        try {
-            Object raw = api.getAllParts().invoke(model);
-            if (!(raw instanceof Iterable<?> iterable)) {
-                return List.of();
-            }
-            List<Object> parts = new ArrayList<>();
-            for (Object part : iterable) {
-                if (api.boxClass().isInstance(part)) {
-                    parts.add(part);
-                }
-            }
-            return parts;
-        } catch (Throwable failure) {
-            disableIntegration("part collection", model, failure);
-            return List.of();
-        }
+    protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
+        return api.getAllParts().invoke(model);
     }
 
     @Override
@@ -128,7 +107,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
         try {
             Object value = api.boxName().get(part);
             return value instanceof String s ? s : "";
-        } catch (Throwable failure) {
+        } catch (ReflectiveOperationException | RuntimeException failure) {
             ClientIntegrationFailures.warnOnce(
                     familyLabel, "box-name access", part.getClass().getName(), failure);
             return "";
@@ -136,27 +115,12 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected Object parentOf(Object part) {
-        try {
-            Object parent = api.getParent().invoke(part);
-            return api.boxClass().isInstance(parent) ? parent : null;
-        } catch (Throwable failure) {
-            disableIntegration("parent lookup", part, failure);
-            return null;
-        }
+    protected Object rawParent(Object part) throws ReflectiveOperationException {
+        return api.getParent().invoke(part);
     }
 
     @Override
-    protected boolean applyTransform(Object part, PoseStack poseStack) {
-        if (integrationFailed()) {
-            return false;
-        }
-        try {
-            api.translateAndRotate().invoke(part, poseStack);
-            return true;
-        } catch (Throwable failure) {
-            disableIntegration("pose transform", part, failure);
-            return false;
-        }
+    protected void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException {
+        api.translateAndRotate().invoke(part, poseStack);
     }
 }

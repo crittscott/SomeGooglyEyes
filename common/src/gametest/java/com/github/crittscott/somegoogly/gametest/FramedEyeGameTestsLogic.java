@@ -69,8 +69,10 @@ public final class FramedEyeGameTestsLogic {
             left.tick(tick, BehaviorSettings.NONE);
             right.tick(tick, BehaviorSettings.NONE);
         }
-        helper.assertTrue(left.eye.deltaX < -0.5F && right.eye.deltaX > 0.5F, Component.literal("opposite mounted gravity directions send pupils to opposite rims"));
-        helper.assertTrue(Math.abs(left.eye.deltaY) < 0.1F && Math.abs(right.eye.deltaY) < 0.1F, Component.literal("eye-local down does not pull against the supplied gravity"));
+        helper.assertTrue(left.eye.deltaX < -0.5F && right.eye.deltaX > 0.5F,
+                Component.literal("opposite mounted gravity directions send pupils to opposite rims"));
+        helper.assertTrue(Math.abs(left.eye.deltaY) < 0.1F && Math.abs(right.eye.deltaY) < 0.1F,
+                Component.literal("eye-local down does not pull against the supplied gravity"));
         helper.succeed();
     }
 
@@ -86,12 +88,15 @@ public final class FramedEyeGameTestsLogic {
         helper.assertTrue(first != null && first.age == 0, Component.literal("first short slot starts a blink"));
         int duration = EyeBehavior.BLINK.defaultDuration();
         eye.tick(duration - 1L, shortSlots);
-        helper.assertTrue(eye.active == first && eye.active.age == duration - 1, Component.literal("the same expression lasts to its final tick"));
+        helper.assertTrue(eye.active == first && eye.active.age == duration - 1,
+                Component.literal("the same expression lasts to its final tick"));
         eye.tick(duration, shortSlots);
-        helper.assertTrue(eye.active != null && eye.active != first && eye.active.age == 0, Component.literal("the next expression starts only when the previous one finishes"));
+        helper.assertTrue(eye.active != null && eye.active != first && eye.active.age == 0,
+                Component.literal("the next expression starts only when the previous one finishes"));
         long later = duration * 100L + duration / 2;
         eye.tick(later, shortSlots);
-        helper.assertTrue(eye.active != null && eye.active.age == duration / 2, Component.literal("returning after a long absence joins the current expression"));
+        helper.assertTrue(eye.active != null && eye.active.age == duration / 2,
+                Component.literal("returning after a long absence joins the current expression"));
         helper.succeed();
     }
 
@@ -127,7 +132,8 @@ public final class FramedEyeGameTestsLogic {
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             eye.tick(tick, settings);
             if (eye.active != null) {
-                helper.assertTrue(eye.active.behavior == EyeBehavior.BLINK && eye.active.mask[0][0], Component.literal("a lone eye participates in the blink and never crosses"));
+                helper.assertTrue(eye.active.behavior == EyeBehavior.BLINK && eye.active.mask[0][0],
+                        Component.literal("a lone eye participates in the blink and never crosses"));
                 winked |= eye.eye.squashY < 0.5F;
             }
         }
@@ -153,7 +159,8 @@ public final class FramedEyeGameTestsLogic {
                 BehaviorInstance b = arriving.active;
                 helper.assertTrue(b != null && a.behavior == b.behavior && a.age == b.age
                                 && a.duration == b.duration && a.dirSign == b.dirSign
-                                && Arrays.equals(a.tintColor, b.tintColor) && Arrays.deepEquals(a.mask, b.mask), Component.literal("late viewers reconstruct the same expression and seeded parameters"));
+                                && Arrays.equals(a.tintColor, b.tintColor) && Arrays.deepEquals(a.mask, b.mask),
+                        Component.literal("late viewers reconstruct the same expression and seeded parameters"));
                 reconstructed = true;
             }
         }
@@ -174,7 +181,8 @@ public final class FramedEyeGameTestsLogic {
             eye.tick(tick, settings);
             played |= eye.active != null;
             if (played && eye.active == null) {
-                helper.assertTrue(eye.eye.squashY == 1F && eye.eye.scaleMul == 1F, Component.literal("completed expressions release their overlays"));
+                helper.assertTrue(eye.eye.squashY == 1F && eye.eye.scaleMul == 1F,
+                        Component.literal("completed expressions release their overlays"));
                 released = true;
             }
         }
@@ -218,7 +226,8 @@ public final class FramedEyeGameTestsLogic {
                 frame.tick(tick, settings);
                 if (frame.active != null) {
                     helper.assertTrue(frame.active.behavior == EyeBehavior.CROSS_EYE
-                                    && frame.active.helper == frame.helper, Component.literal("paired expressions receive the head's full placement definition"));
+                                    && frame.active.helper == frame.helper,
+                            Component.literal("paired expressions receive the head's full placement definition"));
                     crossed = true;
                     if (frame.active.age == frame.active.duration / 2) {
                         int part = frame.parts[0];
@@ -247,15 +256,19 @@ public final class FramedEyeGameTestsLogic {
             ItemStack stack = eyedHead(Items.SKELETON_SKULL, snapshot);
             PresentationEyes frame = PresentationEyes.create(FIRST_FRAME, stack);
             helper.assertTrue(frame != null && frame.matches(stack.copy()), Component.literal("equal head state keeps its tracker"));
-            helper.assertTrue(!frame.matches(eyedHead(Items.CREEPER_HEAD, snapshot)), Component.literal("a different species replaces the layout"));
+            helper.assertTrue(!frame.matches(eyedHead(Items.CREEPER_HEAD, snapshot)),
+                    Component.literal("a different species replaces the layout"));
             helper.assertTrue(!frame.matches(eyedHead(Items.SKELETON_SKULL,
                     new Snapshot(true, 0.5F, AppearanceOverride.EMPTY))), Component.literal("a different variant replaces the layout"));
             helper.assertTrue(!frame.matches(eyedHead(Items.SKELETON_SKULL,
-                    new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)))), Component.literal("appearance changes replace the head snapshot"));
+                    new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)))),
+                    Component.literal("appearance changes replace the head snapshot"));
             helper.assertTrue(!PresentationEyes.supports(new ItemStack(Items.SKELETON_SKULL))
-                            && PresentationEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null, Component.literal("a plain skull has no animated eyes"));
+                            && PresentationEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null,
+                    Component.literal("a plain skull has no animated eyes"));
             helper.assertTrue(!frame.matches(new ItemStack(ModContent.GOOGLY_EYE.get()))
-                            && !new PresentationEyes(FIRST_FRAME).matches(stack), Component.literal("head and loose-eye simulations cannot be reused for each other"));
+                            && !new PresentationEyes(FIRST_FRAME).matches(stack),
+                    Component.literal("head and loose-eye simulations cannot be reused for each other"));
             helper.succeed();
         });
     }
@@ -284,7 +297,8 @@ public final class FramedEyeGameTestsLogic {
                     PresentationEyes arriving = PresentationEyes.create(FIRST_FRAME, stack);
                     arriving.tick(tick, settings);
                     helper.assertTrue(arriving.active != null && arriving.active.age == original.active.age
-                                    && Arrays.deepEquals(arriving.active.mask, original.active.mask), Component.literal("head viewers reconstruct the same blink age and participation"));
+                                    && Arrays.deepEquals(arriving.active.mask, original.active.mask),
+                            Component.literal("head viewers reconstruct the same blink age and participation"));
                     reconstructed = true;
                 }
             }
@@ -295,7 +309,7 @@ public final class FramedEyeGameTestsLogic {
 
     /**
      * Eyed heads carry their mob's configured head parts and pupil arrays, including mounted gravity.
-     * In game: frame an eyed skeleton skull and a supported Heads-mod head; their eyes retain their
+     * In game: frame an eyed skeleton skull and an eyed zombie head; their eyes retain their
      * normal positions, colors, and sizes while their pupils animate.
      */
     public static void framedHeadUsesConfiguredLayout(GameTestHelper helper) {
@@ -303,11 +317,13 @@ public final class FramedEyeGameTestsLogic {
             Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
             ItemStack stack = eyedHead(Items.SKELETON_SKULL, snapshot);
             PresentationEyes frame = PresentationEyes.create(FIRST_FRAME, stack);
-            helper.assertTrue(frame != null && frame.helper != null && frame.helper.hasConfig(), Component.literal("a framed eyed skull resolves its mob's definition"));
+            helper.assertTrue(frame != null && frame.helper != null && frame.helper.hasConfig(),
+                    Component.literal("a framed eyed skull resolves its mob's definition"));
             helper.assertTrue(snapshot.equals(frame.snapshot), Component.literal("the head keeps its stored appearance and roll"));
             int pupils = 0;
             for (int part : frame.parts) {
-                helper.assertTrue(frame.eyes[part].length == frame.helper.getEyeCount(part), Component.literal("each visible part has its configured pupil count"));
+                helper.assertTrue(frame.eyes[part].length == frame.helper.getEyeCount(part),
+                        Component.literal("each visible part has its configured pupil count"));
                 for (var pupil : frame.eyes[part]) {
                     helper.assertTrue(pupil.itemGravity, Component.literal("mounted pupils remove item display scale from gravity"));
                     pupils++;
@@ -329,10 +345,12 @@ public final class FramedEyeGameTestsLogic {
         BehaviorSettings behaviors = ClientEyeConfigs.behaviors();
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
-            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all(), true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
+            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
             test.run();
         } finally {
-            ClientEyeConfigs.replaceAll(definitions, enabled, behaviors);
+            ClientEyeConfigs.replaceAll(definitions);
+            ClientEyeConfigs.applySettings(enabled, behaviors);
         }
     }
 }

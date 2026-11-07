@@ -29,4 +29,9 @@ public final class EyeItemServiceGameTests {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, FakePlayer.get(helper.getLevel()));
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void anotherPlayersEyesFollowThePvpRules(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.anotherPlayersEyesFollowThePvpRules(helper);
+    }
 }

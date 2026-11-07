@@ -56,13 +56,14 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)" tabindex="0">broadcastEyeConfigsIfChanged(MinecraftServer)</a></li>
+<li><a href="#broadcastEyeSyncIfChanged(net.minecraft.server.MinecraftServer)" tabindex="0">broadcastEyeSyncIfChanged(MinecraftServer)</a></li>
 <li><a href="#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)" tabindex="0">onLivingEntityLoaded(LivingEntity)</a></li>
 <li><a href="#onPlayerLeft(net.minecraft.server.level.ServerPlayer)" tabindex="0">onPlayerLeft(ServerPlayer)</a></li>
 <li><a href="#onServerConfigApplied()" tabindex="0">onServerConfigApplied()</a></li>
 <li><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" tabindex="0">onServerStopping(MinecraftServer)</a></li>
 <li><a href="#onStartTracking(net.minecraft.world.entity.Entity,net.minecraft.server.level.ServerPlayer)" tabindex="0">onStartTracking(Entity, ServerPlayer)</a></li>
-<li><a href="#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" tabindex="0">syncEyeConfigs(ServerPlayer)</a></li>
+<li><a href="#onStopTracking(net.minecraft.world.entity.Entity)" tabindex="0">onStopTracking(Entity)</a></li>
+<li><a href="#syncJoiningPlayer(net.minecraft.server.level.ServerPlayer)" tabindex="0">syncJoiningPlayer(ServerPlayer)</a></li>
 </ol>
 </li>
 </ol>
@@ -99,10 +100,10 @@ service is called on that service directly (behavior ticks, tracking, and reacti
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)" class="member-name-link">broadcastEyeConfigsIfChanged</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#broadcastEyeSyncIfChanged(net.minecraft.server.MinecraftServer)" class="member-name-link">broadcastEyeSyncIfChanged</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
-when any of them differs from what clients last received.</div>
+<div class="block">Send every player the eye definitions and the settings, each only when it differs from what clients last
+received.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)" class="member-name-link">onLivingEntityLoaded</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
@@ -118,7 +119,7 @@ freeze marker after that state is available.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerConfigApplied()" class="member-name-link">onServerConfigApplied</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Record the applied world switch once at startup and whenever its effective value changes.</div>
+<div class="block">Record the settings that decide who gets eyes, once at startup and whenever they change.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
@@ -133,9 +134,14 @@ freeze marker after that state is available.</div>
 whose registration may immediately send a mid-behavior catch-up packet.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#syncEyeConfigs(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncEyeConfigs</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onStopTracking(net.minecraft.world.entity.Entity)" class="member-name-link">onStopTracking</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to a joining player.</div>
+<div class="block">A player stopped tracking <code>entity</code>; only living entities are scheduled.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#syncJoiningPlayer(net.minecraft.server.level.ServerPlayer)" class="member-name-link">syncJoiningPlayer</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Send a joining player the current resolved eye definitions and settings.</div>
 </div>
 </div>
 </div>
@@ -155,13 +161,13 @@ whose registration may immediately send a mid-behavior catch-up packet.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="broadcastEyeConfigsIfChanged(net.minecraft.server.MinecraftServer)">
-<h3>broadcastEyeConfigsIfChanged</h3>
+<section class="detail" id="broadcastEyeSyncIfChanged(net.minecraft.server.MinecraftServer)">
+<h3>broadcastEyeSyncIfChanged</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">broadcastEyeConfigsIfChanged</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
-<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to every player, but only
-when any of them differs from what clients last received. Runs once after each datapack reload and each server-config
-apply, on the server thread; an unchanged reload sends nothing, so clients keep their eye motion.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">broadcastEyeSyncIfChanged</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
+<div class="block">Send every player the eye definitions and the settings, each only when it differs from what clients last
+received. Runs once after each datapack reload and each server-config apply, on the server thread. New
+definitions restart client eye motion, because trackers are built from them; new settings don't.</div>
 </div>
 </section>
 </li>
@@ -191,7 +197,7 @@ never their own tracker, so the start-tracking sync doesn't cover them.</div>
 <h3>onServerConfigApplied</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerConfigApplied</span>()</div>
-<div class="block">Record the applied world switch once at startup and whenever its effective value changes.</div>
+<div class="block">Record the settings that decide who gets eyes, once at startup and whenever they change.</div>
 </div>
 </section>
 </li>
@@ -216,11 +222,20 @@ whose registration may immediately send a mid-behavior catch-up packet.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="syncEyeConfigs(net.minecraft.server.level.ServerPlayer)">
-<h3>syncEyeConfigs</h3>
+<section class="detail" id="onStopTracking(net.minecraft.world.entity.Entity)">
+<h3>onStopTracking</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">syncEyeConfigs</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">Send the current resolved eye definitions, master switch, and behavior settings to a joining player.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onStopTracking</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
+<div class="block">A player stopped tracking <code>entity</code>; only living entities are scheduled.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="syncJoiningPlayer(net.minecraft.server.level.ServerPlayer)">
+<h3>syncJoiningPlayer</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">syncJoiningPlayer</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Send a joining player the current resolved eye definitions and settings.</div>
 </div>
 </section>
 </li>

@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * Pure-logic coverage of {@link VersionRangeMatcher}: {@code matches} (bracket-range bounds,
  * exact-version matching, the zero-padding equivalence {@code 1.20} ≡ {@code 1.20.0}, malformed input)
- * and the nearest-generation fallback ({@code nearestVersion} / {@code isEntirelyBelow}) used when no
+ * and the nearest-generation fallback ({@code nearestVersion}) used when no
  * entry matches the installed version. These need no world; they spawn nothing and {@code succeed()}
  * immediately. The matcher gates whether (and which) eye config loads for a namespace, so its bounds
  * behavior is worth pinning.
  *
- * <p>The in-game steps below run on Minecraft 1.21.4 with {@code entityOverrides = ["minecraft:zombie,100"]}
+ * <p>The in-game steps below run on Minecraft 1.21.8 with {@code entityOverrides = ["minecraft:zombie,100"]}
  * and a datapack whose {@code data/minecraft/eyes/zombie.json} holds only the listed adult entries, each
  * with its own iris color; after {@code /reload}, newly spawned zombies show which entry loaded.
  */
@@ -24,7 +24,7 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
-     * An exact version matches only itself. In game: entries {@code "1.21.3"} (blue) and {@code "1.21.4"}
+     * An exact version matches only itself. In game: entries {@code "1.21"} (blue) and {@code "1.21.8"}
      * (red); zombies spawn with red irises.
      */
     public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
@@ -35,7 +35,7 @@ public final class VersionRangeGameTestsLogic {
 
     /**
      * A malformed range or blank version never matches. In game: entries {@code "[1.21"} (blue) and
-     * {@code "1.21.4"} (red); the server log reports the invalid range and zombies spawn with red irises.
+     * {@code "1.21.8"} (red); the server log reports the invalid range and zombies spawn with red irises.
      */
     public static void malformedRangeDoesNotMatch(GameTestHelper helper) {
         helper.assertTrue(!VersionRangeMatcher.matches("[1.20.1", "1.20.1"), Component.literal("range with no closing bracket should not match"));
@@ -46,8 +46,8 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
-     * Square brackets include a bound and parentheses exclude it. In game: entries {@code "[1.21,1.21.4)"}
-     * (blue) and {@code "1.21.4"} (red) give red irises; change the first to {@code "[1.21,1.21.4]"} and
+     * Square brackets include a bound and parentheses exclude it. In game: entries {@code "[1.21,1.21.8)"}
+     * (blue) and {@code "1.21.8"} (red) give red irises; change the first to {@code "[1.21,1.21.8]"} and
      * both match, so the first, blue, wins.
      */
     public static void rangeBoundsRespectInclusivity(GameTestHelper helper) {
@@ -66,7 +66,7 @@ public final class VersionRangeGameTestsLogic {
     /**
      * With every range below the installed version, the newest generation is used. In game: entries
      * {@code "[1.19,1.20)"} (blue) and {@code "[1.20,1.21)"} (red); zombies spawn with red irises and the
-     * server log warns that the configs use their newest entry until re-exported.
+     * server log notes that the configs use another version's entry.
      */
     public static void nearestPicksNewestOlderGeneration(GameTestHelper helper) {
         // Installed version newer than every range: the stale-datapack case.
@@ -79,7 +79,7 @@ public final class VersionRangeGameTestsLogic {
     /**
      * With every range above the installed version, the oldest generation is used. In game: entries
      * {@code "[1.22,1.23)"} (red) and {@code "[1.23,1.24)"} (blue); zombies spawn with red irises and the
-     * server log warns that the configs use their oldest entry, as expected after a mod downgrade.
+     * server log notes that the configs use another version's entry.
      */
     public static void nearestPicksOldestNewerGenerationOnDowngrade(GameTestHelper helper) {
         // Installed version older than every range: the mod-downgrade case.
@@ -116,23 +116,8 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
-     * Whether a range lies wholly below the installed version, which picks the fallback's log message. In
-     * game: the datapacks of {@link #nearestPicksNewestOlderGeneration} and
-     * {@link #nearestPicksOldestNewerGenerationOnDowngrade} log the "re-export" and "mod downgrade"
-     * warnings respectively.
-     */
-    public static void entirelyBelowSplitsStaleFromDowngrade(GameTestHelper helper) {
-        // Picks the fallback's log message: below = stale datapack, not below = mod downgrade.
-        helper.assertTrue(VersionRangeMatcher.isEntirelyBelow("[1.0,1.1)", "1.2"),
-                Component.literal("a range wholly under the installed version is entirely below it"));
-        helper.assertTrue(!VersionRangeMatcher.isEntirelyBelow("[1.3,1.4)", "1.2"),
-                Component.literal("a range above the installed version is not entirely below it"));
-        helper.succeed();
-    }
-
-    /**
      * A shorter version pads with zeros, so {@code 1.20} equals {@code 1.20.0}. In game: entries
-     * {@code "[1.20,1.21)"} (blue) and {@code "[1.21.4.0,1.22)"} (red); zombies spawn with red irises.
+     * {@code "[1.20,1.21)"} (blue) and {@code "[1.21.8.0,1.22)"} (red); zombies spawn with red irises.
      */
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         // 1.20 and 1.20.0 compare equal (missing trailing tokens pad to zero).
@@ -151,6 +136,34 @@ public final class VersionRangeGameTestsLogic {
                 Component.literal("an optional-mod version becomes an inclusive-to-next-minor range"));
         helper.assertTrue("banana".equals(VersionRangeMatcher.rangeFor("banana")),
                 Component.literal("an unparseable version falls back to an exact-match entry"));
+        helper.succeed();
+    }
+
+    /**
+     * A segment of any length compares as a number, so a date-stamped build sorts after an older one. In game:
+     * entries {@code "[1.0.202601010000,1.0.202701010000)"} (blue) and {@code "[1.1,1.2)"} (red) for a mod at
+     * version {@code 1.0.202606010000}; its mob spawns with blue irises.
+     */
+    public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
+        String range = "[1.0.202601010000,1.0.202701010000)";
+        helper.assertTrue(VersionRangeMatcher.matches(range, "1.0.202606010000"), Component.literal("a build inside the range should match"));
+        helper.assertTrue(!VersionRangeMatcher.matches(range, "1.0.202501010000"), Component.literal("an older build should not match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.0.5,1.1)", "1.0.alpha"), Component.literal("text still sorts below a number"));
+        helper.succeed();
+    }
+
+    /**
+     * A loader name in a version says nothing about its age, so {@code 1.0.0-forge} is {@code 1.0.0}. In game:
+     * entries {@code "[1.0.0,1.1)"} (blue) and {@code "[0.9,1.0)"} (red) for a mod at version
+     * {@code 1.0.0-forge}; its mob spawns with blue irises and the log reports no fallback.
+     */
+    public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
+        helper.assertTrue(VersionRangeMatcher.matches("[1.0.0,1.1)", "1.0.0-forge"), Component.literal("a suffixed lower bound should match"));
+        helper.assertTrue(!VersionRangeMatcher.matches("[1.0.0,1.1)", "1.1-fabric"), Component.literal("a suffixed upper bound should not"));
+        helper.assertTrue(VersionRangeMatcher.matches("[1.20.1-1.5.2-neoforge,1.21)", "1.20.1-1.5.2-neoforge"),
+                Component.literal("a declared suffix should still match itself"));
+        helper.assertTrue(VersionRangeMatcher.matches("[7.14.0+1.20.1-forge,7.15)", "7.14.1+1.20.1-forge"),
+                Component.literal("a suffix after a build number should change nothing"));
         helper.succeed();
     }
 }
