@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The server's behavior settings as clients receive them with the eye definitions, for what clients run
+ * The server's behavior settings as clients receive them, for what clients run
  * themselves: the {@link OngoingBehavior}s on every eyed mob, and the expressions of placed mob heads and the
  * held Googly Eye. Mob expressions stay scheduled by the server ({@link ServerBehaviorScheduler}) from
  * {@link ServerConfig} directly.
@@ -41,16 +41,19 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     public static final BehaviorSettings NONE = new BehaviorSettings(false, DEFAULTS.minTicks(), DEFAULTS.maxTicks(),
             List.of(), 0, false, DEFAULTS.swirlHealCooldownTicks(), Set.of());
 
-    /** Largest supported behavior block, reserving space even when the server configuration later changes. */
-    public static final BehaviorSettings WIRE_MAXIMUM = new BehaviorSettings(true, ServerConfig.TICKS_MAX,
-            ServerConfig.TICKS_MAX, List.of(EyeBehavior.values()), ServerConfig.PERCENT_MAX, true,
-            ServerConfig.TICKS_MAX, EnumSet.allOf(OngoingBehavior.class));
-
     public BehaviorSettings {
         pool = List.copyOf(pool);
         EnumSet<OngoingBehavior> copy = EnumSet.noneOf(OngoingBehavior.class);
         copy.addAll(ongoing);
         ongoing = Collections.unmodifiableSet(copy);
+    }
+
+    /**
+     * A wait between ambient expressions: uniform between {@code min} and {@code max}, or {@code min} alone when
+     * {@code max} doesn't exceed it. Mobs, held eyes, and heads all draw it here.
+     */
+    public static int drawAmbientTicks(int min, int max, RandomSource rand) {
+        return max <= min ? min : min + rand.nextInt(max - min);
     }
 
     /** Whether {@code behavior}'s switch is on. */
@@ -61,7 +64,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     /** The server's current settings. */
     public static BehaviorSettings fromConfig() {
         return new BehaviorSettings(ServerConfig.AMBIENT_BEHAVIORS.get(), ServerConfig.AMBIENT_MIN_TICKS.get(),
-                ServerConfig.AMBIENT_MAX_TICKS.get(), ServerConfig.enabledBehaviors(),
+                ServerConfig.AMBIENT_MAX_TICKS.get(), ServerConfig.AMBIENT_BEHAVIOR_POOL.parsed(),
                 ServerConfig.GROW_ON_HIT_PERCENT.get(), ServerConfig.SWIRL_ON_HEAL.get(),
                 ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get(), switchedOn(false));
     }
@@ -74,14 +77,9 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return maxTicks <= minTicks ? minTicks : (minTicks + maxTicks) / 2;
     }
 
-    /** A wait between ambient expressions, drawn as the server's own scheduler draws it. */
+    /** A wait between ambient expressions under these bounds. */
     public int nextAmbientTicks(RandomSource rand) {
-        return maxTicks <= minTicks ? minTicks : minTicks + rand.nextInt(maxTicks - minTicks);
-    }
-
-    /** Whether any ambient expression can play. */
-    public boolean plays() {
-        return ambient && !pool.isEmpty();
+        return drawAmbientTicks(minTicks, maxTicks, rand);
     }
 
     /** Decode and validate settings written by {@link #write}. */

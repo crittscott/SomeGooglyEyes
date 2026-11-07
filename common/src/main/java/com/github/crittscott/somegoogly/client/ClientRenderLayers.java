@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import java.util.Collections;
@@ -20,6 +21,8 @@ public final class ClientRenderLayers {
     private static final Set<EntityRenderer<?, ?>> INSTALLED =
             Collections.newSetFromMap(new WeakHashMap<>());
 
+    private static boolean loggedFirstInstall;
+
     private ClientRenderLayers() {
     }
 
@@ -27,6 +30,10 @@ public final class ClientRenderLayers {
     private static void addLiving(LivingEntityRenderer renderer) {
         if (!INSTALLED.add(renderer)) {
             return;
+        }
+        if (!loggedFirstInstall) {
+            loggedFirstInstall = true;
+            SomeGooglyCommon.LOGGER.info("Installing googly-eye layers on entity renderers");
         }
         LayerGooglyEyes eyes = new LayerGooglyEyes<>(renderer);
         List<RenderLayer> layers = renderer.layers;

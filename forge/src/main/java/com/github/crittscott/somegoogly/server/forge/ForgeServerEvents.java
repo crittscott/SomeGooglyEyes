@@ -3,13 +3,14 @@ package com.github.crittscott.somegoogly.server.forge;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -47,9 +48,9 @@ public final class ForgeServerEvents {
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
-            ServerServices.syncEyeConfigs(player);
+            ServerServices.syncJoiningPlayer(player);
         } else {
-            ServerServices.broadcastEyeConfigsIfChanged(event.getPlayerList().getServer());
+            ServerServices.broadcastEyeSyncIfChanged(event.getPlayerList().getServer());
         }
     }
 
@@ -61,6 +62,12 @@ public final class ForgeServerEvents {
         InteractionResult result = EyeItemService.interact(
                 event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         return consumed(event, result);
+    }
+
+    /** Handle an armor stand before its specific interaction can take the held item. */
+    private static boolean onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+        return event.getTarget() instanceof ArmorStand && consumed(event, EyeItemService.interact(
+                event.getEntity(), event.getLevel(), event.getHand(), event.getTarget()));
     }
 
     private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
@@ -142,9 +149,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onStopTracking(PlayerEvent.StopTracking event) {
-        if (event.getTarget() instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onStopTracking(living);
-        }
+        ServerServices.onStopTracking(event.getTarget());
     }
 
     private static void onTrade(TradeWithVillagerEvent event) {
@@ -155,6 +160,7 @@ public final class ForgeServerEvents {
     public static void register() {
         RegisterCommandsEvent.BUS.addListener(ForgeServerEvents::onRegisterCommands);
         PlayerInteractEvent.EntityInteract.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteract);
+        PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteractSpecific);
         PlayerInteractEvent.RightClickBlock.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickBlock);
         PlayerInteractEvent.RightClickItem.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops.
@@ -166,8 +172,8 @@ public final class ForgeServerEvents {
         TickEvent.ServerTickEvent.Post.BUS.addListener(ForgeServerEvents::onServerTick);
         PlayerEvent.StartTracking.BUS.addListener(ForgeServerEvents::onStartTracking);
         PlayerEvent.StopTracking.BUS.addListener(ForgeServerEvents::onStopTracking);
-        LivingDamageEvent.BUS.addListener(ForgeServerEvents::onLivingDamage);
-        LivingHealEvent.BUS.addListener(ForgeServerEvents::onLivingHeal);
+        LivingDamageEvent.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onLivingDamage);
+        LivingHealEvent.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onLivingHeal);
         TradeWithVillagerEvent.BUS.addListener(ForgeServerEvents::onTrade);
         PlayerEvent.Clone.BUS.addListener(ForgeServerEvents::onPlayerClone);
         LivingConversionEvent.Post.BUS.addListener(ForgeServerEvents::onLivingConversion);

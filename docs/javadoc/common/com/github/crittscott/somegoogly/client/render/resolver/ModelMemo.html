@@ -200,13 +200,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="get(K,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)">
 <h3 id="get(java.lang.Object,java.lang.String,com.github.crittscott.somegoogly.client.render.resolver.ModelMemo.Resolver)">get</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(@Nullable
- <a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
- @Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(<a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token,
  <a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;<a href="ModelMemo.html" title="type parameter in ModelMemo">K</a>,<wbr><a href="ModelMemo.html" title="type parameter in ModelMemo">V</a>&gt;&nbsp;resolver)</span></div>
-<div class="block">The value for <code>token</code> in <code>model</code>, resolving and caching it on first ask. A <code>null</code>
- model or token resolves to <code>null</code> without consulting <code>resolver</code>.
+<div class="block">The value for <code>token</code> in <code>model</code>, resolving and caching it on first ask.
 
  <p>Pass the resolver as an object rather than a bound method reference: a capturing lambda would
  allocate on every call, and this is on the per-frame render path.</div>

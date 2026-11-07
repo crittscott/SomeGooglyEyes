@@ -143,47 +143,41 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop all live records <b>without restoring</b> — the state after a hard crash, which the marker
- tags then recover from on next load (<a href="#onMobJoin(net.minecraft.world.entity.Mob)"><code>onMobJoin(net.minecraft.world.entity.Mob)</code></a>).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freeze(net.minecraft.server.level.ServerLevel,java.util.UUID,java.util.UUID)" class="member-name-link">freeze</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#freeze(net.minecraft.server.level.ServerLevel,java.util.UUID,java.util.UUID)" class="member-name-link">freeze</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;mobId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Freeze <code>mobId</code> in <code>level</code> for <code>playerId</code>, releasing any mob that player had
  frozen before.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#frozenMobId(java.util.UUID)" class="member-name-link">frozenMobId</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#frozenMobId(java.util.UUID)" class="member-name-link">frozenMobId</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The mob <code>playerId</code> currently has frozen, or <code>null</code> if they have none.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMobJoin(net.minecraft.world.entity.Mob)" class="member-name-link">onMobJoin</a><wbr>(net.minecraft.world.entity.Mob&nbsp;mob)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMobJoin(net.minecraft.world.entity.Mob)" class="member-name-link">onMobJoin</a><wbr>(net.minecraft.world.entity.Mob&nbsp;mob)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A mob (re)joined a server level carrying the freeze marker: if some player's live record still
  claims it, re-assert the freeze (its chunk reloaded mid-edit); otherwise the marker is stale
  (crash, or an unfreeze that found it unloaded) — restore the pre-picker value and strip it.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLoggedOut</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLoggedOut</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The disappearing-client hook: a leaving player's frozen mob is always released.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Restore every frozen mob synchronously at server stop — before the final world save — so a
  forced <code>NoAi</code> is never persisted by a clean shutdown (markers included).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">unfreeze</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">unfreeze</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Release <code>playerId</code>'s frozen mob (restore NoAi + strip the marker), if there is one.</div>
 </div>
 </div>
@@ -278,15 +272,6 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerStopping</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server)</span></div>
 <div class="block">Restore every frozen mob synchronously at server stop — before the final world save — so a
  forced <code>NoAi</code> is never persisted by a clean shutdown (markers included).</div>
-</section>
-</li>
-<li>
-<section class="detail" id="clear()">
-<h3>clear</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
-<div class="block">Drop all live records <b>without restoring</b> — the state after a hard crash, which the marker
- tags then recover from on next load (<a href="#onMobJoin(net.minecraft.world.entity.Mob)"><code>onMobJoin(net.minecraft.world.entity.Mob)</code></a>). Exists for the gametests that pin that
- recovery; real shutdown goes through <a href="#onServerStopping(net.minecraft.server.MinecraftServer)"><code>onServerStopping(net.minecraft.server.MinecraftServer)</code></a>.</div>
 </section>
 </li>
 </ul>

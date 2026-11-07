@@ -62,7 +62,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">EntityPersistentDataImpl</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric implementation of the shared entity-persistence boundary: a persistent data attachment holding
- the same compound the Forge-family loaders keep in their entity persistent data.</div>
+ the same compound NeoForge and Forge keep in their entity persistent data.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/client/fabric/FabricClientCommands.html" title="class in com.github.crittscott.somegoogly.client.fabric">FabricClientCommands</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -91,20 +91,28 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Fabric payload codecs and server receivers.</div>
+<div class="block">Fabric payload codecs, the configuration-phase version check, and server receivers.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
-<div class="block">Configuration-phase marker that is registered but never sent.</div>
+<div class="block">The server's version question, the first exchange of a connection's configuration phase.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The client's network version, which must equal the server's.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Creates and loads the active world's server TOML when the server starts and again at the start of
  each <code>/reload</code>, since Fabric has no config system; values return to defaults when the server stops.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html" title="class in com.github.crittscott.somegoogly.server.fabric">FabricServerEvents</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html" title="class in com.github.crittscott.somegoogly.server.fabric">FabricServerEvents</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Fabric event wiring for the loader-neutral authoritative server services.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/ItemDestructionImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">ItemDestructionImpl</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Fabric has no item-destroyed event, so there is no one to report to.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/github/crittscott/somegoogly/platform/fabric/MobSpawningImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">MobSpawningImpl</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">

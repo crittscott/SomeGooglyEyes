@@ -35,7 +35,7 @@ One expression plays at a time; all are cosmetic. Sleepers play nothing else; vi
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears means vanilla shears or any `c:tools/shear` item. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A direct kill with shears requires `doMobLoot`. Shears means vanilla shears or any `c:tools/shear` item. A successful harvest costs one shears durability.
 
 ### Optometrist
 
@@ -60,9 +60,9 @@ The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier
 
 Modifiers stack. Googly Eyes come from harvesting or creative.
 
-Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
+Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Obtaining a Googly Eye unlocks the recipe. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
 
-Eyed or ineligible mobs refuse application; harvest before restyling. Sneak-use on air applies to yourself. Other-player application requires server PvP and team permission.
+Eyed or ineligible mobs refuse application; harvest before restyling. Sneak-use on air applies to yourself. Applying or harvesting another player's eyes requires server PvP and team permission. Spectators cannot change eyes.
 
 To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 

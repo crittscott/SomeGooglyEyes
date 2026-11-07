@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.platform.Networking;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,8 +15,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
+
 /**
- * Per-mob, mutable, mid-life eye state — the override layer that sits on top of the
+ * Persistent, mutable entity eye state — the override layer that sits on top of the
  * shared datapack config ({@link com.github.crittscott.somegoogly.config.EyeConfigModel}).
  *
  * <p>State lives in the mod-owned persistent entity compound and survives entity save/load,
@@ -39,8 +40,7 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public final class EyeState {
 
-    // The namespace is written out rather than composed from SomeGooglyCommon.MOD_ID: these are
-    // persisted NBT keys, and a future mod-id change must not silently orphan saved eye state.
+    // Persisted NBT keys, so the namespace is written out rather than composed from SomeGooglyCommon.MOD_ID.
     public static final String EYE_OVERRIDES = "somegoogly:eyeOverrides";
     public static final String HAS_EYES = "somegoogly:hasGooglyEyes";
     public static final String VARIANT_ROLL = "somegoogly:eyeVariantRoll";
@@ -49,7 +49,7 @@ public final class EyeState {
     }
 
     /**
-     * The full portable eye state of one living entity or placed mob head, and its one NBT form: the three
+     * The full portable eye state of one supported entity or placed mob head, and its one NBT form: the three
      * keys above in a mod-owned compound. A head item carries it as a data component instead, through
      * {@link #CODEC} and {@link #STREAM_CODEC}.
      */
@@ -61,6 +61,9 @@ public final class EyeState {
                 AppearanceOverride.CODEC.optionalFieldOf("properties", AppearanceOverride.EMPTY)
                         .forGetter(Snapshot::properties)
         ).apply(instance, Snapshot::new));
+        /** No eyes, the first variant, no appearance overrides; what an absent compound reads as. */
+        public static final Snapshot NONE = new Snapshot(false, 0.0F, AppearanceOverride.EMPTY);
+
         /** The roll is clamped on decode, as a stored roll is. */
         public static final StreamCodec<ByteBuf, Snapshot> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, Snapshot::hasEyes,
@@ -68,13 +71,10 @@ public final class EyeState {
                 AppearanceOverride.STREAM_CODEC, Snapshot::properties,
                 Snapshot::new);
 
-        /** No eyes, the first variant, no appearance overrides; what an absent compound reads as. */
-        public static final Snapshot NONE = new Snapshot(false, 0.0F, AppearanceOverride.EMPTY);
-
         /** Read the state keys of {@code data}; absent keys read as {@link #NONE}'s values. */
         public static Snapshot read(CompoundTag data) {
-            return new Snapshot(data.getBooleanOr(HAS_EYES, false), EyeState.variantRoll(data), AppearanceOverride.fromNbt(
-                    data.getCompound(EYE_OVERRIDES).orElse(null)));
+            return new Snapshot(data.getBooleanOr(HAS_EYES, false), EyeState.variantRoll(data),
+                    AppearanceOverride.fromNbt(overridesTag(data)));
         }
 
         /** Write every state key into {@code data}, removing the overrides compound when there are none. */
@@ -112,9 +112,6 @@ public final class EyeState {
             return;
         }
         snapshot(source).write(EntityPersistentData.get(target));
-        if (hasEyes(target)) {
-            ServerBehaviorScheduler.onEyesGained(target);
-        }
         sync(target);
     }
 
@@ -129,12 +126,10 @@ public final class EyeState {
     /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
     public static void enableWithProperties(Entity entity, AppearanceOverride properties) {
         CompoundTag data = EntityPersistentData.get(entity);
-        data.putFloat(VARIANT_ROLL, (entity instanceof LivingEntity living ? living.getRandom() : entity.level().random).nextFloat());
+        float roll = (entity instanceof LivingEntity living ? living.getRandom() : entity.level().random).nextFloat();
+        data.putFloat(VARIANT_ROLL, roll);
         writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
-        if (entity instanceof LivingEntity living) {
-            ServerBehaviorScheduler.onEyesGained(living);
-        }
         sync(entity);
     }
 
@@ -145,12 +140,14 @@ public final class EyeState {
      * clamped into range, and a non-finite one as 0.
      */
     public static float getVariantRoll(Entity entity) {
-        return variantRoll(EntityPersistentData.get(entity));
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data == null ? Snapshot.NONE.variantRoll() : variantRoll(data);
     }
 
     /** Whether the entity currently has eyes; {@code false} when the flag has never been set. */
     public static boolean hasEyes(Entity entity) {
-        return EntityPersistentData.get(entity).getBooleanOr(HAS_EYES, false);
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data != null && data.getBooleanOr(HAS_EYES, false);
     }
 
     /**
@@ -163,9 +160,6 @@ public final class EyeState {
         data.putBoolean(HAS_EYES, hasEyes);
         data.putFloat(VARIANT_ROLL, variantRoll);
         if (hasEyes) {
-            if (entity instanceof LivingEntity living) {
-                ServerBehaviorScheduler.onEyesGained(living);
-            }
             sync(entity);
         }
     }
@@ -182,14 +176,20 @@ public final class EyeState {
 
     /** Whether the server has made this entity's one-time natural-eye decision. */
     public static boolean isInitialized(Entity entity) {
-        return EntityPersistentData.get(entity).contains(HAS_EYES);
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data != null && data.contains(HAS_EYES);
     }
 
-    /** The overrides compound, or {@code null} if absent (used by the sync packet). */
+    @Nullable
+    private static CompoundTag overridesTag(CompoundTag data) {
+        return data.getCompound(EYE_OVERRIDES).orElse(null);
+    }
+
+    /** The overrides compound, or {@code null} if absent. */
     @Nullable
     public static CompoundTag overridesTagOrNull(Entity entity) {
-        CompoundTag data = EntityPersistentData.get(entity);
-        return data.getCompound(EYE_OVERRIDES).orElse(null);
+        CompoundTag data = EntityPersistentData.find(entity);
+        return data == null ? null : overridesTag(data);
     }
 
     private static EyeStatePacket packet(Entity entity) {
@@ -198,8 +198,8 @@ public final class EyeState {
 
     /**
      * Read the mob's appearance override as {@link AppearanceOverride} ({@link AppearanceOverride#EMPTY}
-     * when none). The override compound is serialized via the shared {@code AppearanceOverride} codec —
-     * the same schema an eye item carries — so item↔mob transfer is a straight property copy.
+     * when none). The override compound is the same {@link AppearanceOverride#toNbt} schema an eye item
+     * carries, so item↔mob transfer is a straight property copy.
      */
     public static AppearanceOverride readProperties(Entity entity) {
         return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
@@ -228,11 +228,6 @@ public final class EyeState {
     /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
     public static void setHasEyes(Entity entity, boolean hasEyes) {
         EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
-        if (hasEyes) {
-            if (entity instanceof LivingEntity living) {
-                ServerBehaviorScheduler.onEyesGained(living);
-            }
-        }
         sync(entity);
     }
 
@@ -255,7 +250,11 @@ public final class EyeState {
         return Snapshot.read(EntityPersistentData.get(entity));
     }
 
+    /** Tell the scheduler an eyed mob now has eyes, then send every viewer the state; every write ends here. */
     private static void sync(Entity entity) {
+        if (entity instanceof LivingEntity living && hasEyes(living)) {
+            ServerBehaviorScheduler.onEyesGained(living);
+        }
         Networking.sendTrackingAndSelf(entity, packet(entity));
     }
 

@@ -11,7 +11,6 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,8 +31,8 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Ocelot;
-import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Pillager;
@@ -44,6 +43,8 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
@@ -51,6 +52,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
@@ -313,7 +317,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo info = headInfo(helper, zombie);
         ClientEyeRuntime.onLevelChanged();
         BehaviorSettings originalBehaviors = ClientEyeConfigs.behaviors();
-        ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), ON);
+        ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), ON);
         try {
             ClientEyeRuntime.setAngry(zombie, true);
             GooglyTracker initial = ClientEyeRuntime.get(zombie, info);
@@ -341,7 +345,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                     Component.literal("client world replacement drops both trackers and anger"));
         } finally {
             ClientEyeRuntime.onLevelChanged();
-            ClientEyeConfigs.replaceAll(ClientEyeConfigs.all(), ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
+            ClientEyeConfigs.applySettings(ClientEyeConfigs.googlyEyesEnabled(), originalBehaviors);
         }
         helper.succeed();
     }
@@ -496,6 +500,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
             EyeState.setHasEyes(cow, false);
 
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
@@ -528,6 +533,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerConfig.SWIRL_ON_HEAL.set(false);
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
                     Component.literal("swirlOnHeal=false suppresses the heal swirl"));
@@ -555,7 +561,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob, EyeState.getVariantRoll(mob));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
         helper.assertTrue(headInfo != null, Component.literal(type + " has an eye config"));
         return headInfo;
     }
@@ -579,11 +585,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
                     Component.literal("the first heal starts a swirl"));
 
             advance(EyeBehavior.SWIRL.defaultDuration());
+            cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
             helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
                     Component.literal("a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle"));
@@ -909,6 +917,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
                     Component.literal("a trigger on a sleeping mob is dropped"));
+            villager.setHealth(1F);
             ServerBehaviorScheduler.onHealed(villager);
             ServerBehaviorScheduler.onTrade(villager);
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
@@ -941,7 +950,7 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager, EyeState.getVariantRoll(villager));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, villager.isBaby(), EyeState.getVariantRoll(villager));
         helper.assertTrue(headInfo != null, Component.literal("villagers have an eye config"));
 
         GooglyTracker tracker = new GooglyTracker(villager, headInfo, false, ON);
@@ -992,9 +1001,11 @@ public final class BehaviorSchedulerGameTestsLogic {
 
     /**
      * A swelling creeper's pupils keep rattling around its eyes, and settle again once it shrinks back; at
-     * rest they hang still. Uses a stationary, gravity-free server creeper ticked by hand with fixed pupil
-     * randomness, measuring calm motion only after settling. Agitation comes from vanilla's synced swell;
-     * the swell is reversed well before the fuse runs out. In game: walk up to an eyed creeper until it hisses, then
+     * rest they hang still. Drives the client-side {@link GooglyTracker} directly against a server creeper
+     * ticked by hand, since the agitation is derived from vanilla's synced swell rather than sent; the swell
+     * is reversed well before the fuse runs out. The fixture floats motionless, uses seeded pupil noise,
+     * and discards settling ticks before measuring either calm window.
+     * In game: walk up to an eyed creeper until it hisses, then
      * back away; its pupils fly around frantically while it swells and drop back to rest after it shrinks.
      */
     public static void swellingCreeperRattles(GameTestHelper helper) {
@@ -1002,29 +1013,27 @@ public final class BehaviorSchedulerGameTestsLogic {
         creeper.setNoGravity(true);
         creeper.setDeltaMovement(Vec3.ZERO);
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
-        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper, EyeState.getVariantRoll(creeper));
-        helper.assertTrue(headInfo.hasConfig(), Component.literal("creepers have a usable eye config"));
+        HeadInfo headInfo = ServerEyeConfigs.resolve(type, creeper.isBaby(), EyeState.getVariantRoll(creeper));
+        helper.assertTrue(headInfo != null && headInfo.hasConfig(), Component.literal("creepers have usable eye geometry"));
 
         GooglyTracker tracker = new GooglyTracker(creeper, headInfo, false, ON);
         tracker.rand.setSeed(CREEPER_RATTLE_SEED);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
         float calmStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
         helper.assertTrue(calmStep < CALM_PUPIL_STEP,
-                Component.literal("a calm creeper's pupils hang still: measured " + calmStep + ", expected < " + CALM_PUPIL_STEP));
+                Component.literal("a calm creeper's mean pupil step must be below " + CALM_PUPIL_STEP + ", got " + calmStep));
 
         creeper.setSwellDir(1);
         meanPupilStep(creeper, tracker, SWELL_RAMP_TICKS);
-        float agitatedStep = meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS);
-        helper.assertTrue(agitatedStep > AGITATED_PUPIL_STEP,
-                Component.literal("a swelling creeper's pupils keep moving fast: measured " + agitatedStep
-                        + ", expected > " + AGITATED_PUPIL_STEP));
+        float swellingStep = meanPupilStep(creeper, tracker, SWELL_WINDOW_TICKS);
+        helper.assertTrue(swellingStep > AGITATED_PUPIL_STEP,
+                Component.literal("a swelling creeper's mean pupil step must exceed " + AGITATED_PUPIL_STEP + ", got " + swellingStep));
 
         creeper.setSwellDir(-1);
         meanPupilStep(creeper, tracker, CALM_SETTLE_TICKS);
         float settledStep = meanPupilStep(creeper, tracker, CALM_WINDOW_TICKS);
         helper.assertTrue(settledStep < CALM_PUPIL_STEP,
-                Component.literal("once the creeper shrinks back its pupils settle: measured " + settledStep
-                        + ", expected < " + CALM_PUPIL_STEP));
+                Component.literal("a settled creeper's mean pupil step must be below " + CALM_PUPIL_STEP + ", got " + settledStep));
         helper.succeed();
     }
 
@@ -1074,11 +1083,8 @@ public final class BehaviorSchedulerGameTestsLogic {
         helper.assertTrue(allSquash(skeletonTracker, 1F), Component.literal("winkOnAim=false: an aiming skeleton keeps both eyes open"));
 
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
-        creeper.setNoGravity(true);
-        creeper.setDeltaMovement(Vec3.ZERO);
         BehaviorSettings noRattle = without(OngoingBehavior.SWELL_RATTLE);
         GooglyTracker creeperTracker = new GooglyTracker(creeper, headInfo(helper, creeper), false, noRattle);
-        creeperTracker.rand.setSeed(CREEPER_RATTLE_SEED);
         meanPupilStep(creeper, creeperTracker, CALM_SETTLE_TICKS, noRattle);
         creeper.setSwellDir(1);
         meanPupilStep(creeper, creeperTracker, SWELL_RAMP_TICKS, noRattle);
@@ -1137,5 +1143,95 @@ public final class BehaviorSchedulerGameTestsLogic {
         on.remove(off);
         return new BehaviorSettings(ON.ambient(), ON.minTicks(), ON.maxTicks(), ON.pool(), ON.growOnHitPercent(),
                 ON.swirlOnHeal(), ON.swirlHealCooldownTicks(), on);
+    }
+
+    /**
+     * A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
+     * {@code swirlOnTrade = true}, trade with an eyed villager; its eyes swirl as you take the item.
+     */
+    public static void completedTradeSwirlsEyes(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_TRADE.set(true);
+            Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(villager, true);
+            ServerBehaviorScheduler.onStartTracking(villager, player);
+            villager.setTradingPlayer(player);
+
+            villager.notifyTrade(new MerchantOffer(
+                    new ItemCost(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 5, 1L),
+                    Component.literal("the completed trade starts a swirl"));
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A player's real hit bulges the eyes of a mob or of another player. In game: with
+     * {@code growOnHitPercent = 100}, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
+     * eyes grow.
+     */
+    public static void playerHitBulgesEyes(GameTestHelper helper, ServerPlayer attacker) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(100);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Player victim = helper.makeMockPlayer(GameType.SURVIVAL);
+            for (LivingEntity target : List.of(cow, victim)) {
+                EyeState.setHasEyes(target, true);
+                ServerBehaviorScheduler.onStartTracking(target, attacker);
+                helper.assertTrue(target.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(attacker), 1F),
+                        Component.literal("the hit lands"));
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 3, 1L),
+                        Component.literal("the hit starts the grow, so another behavior can't start"));
+            }
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with {@code swirlOnHeal}
+     * on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.
+     */
+    public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper, ServerPlayer player) {
+        boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            EyeState.setHasEyes(cow, true);
+            ServerBehaviorScheduler.onStartTracking(cow, player);
+
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 1L),
+                    Component.literal("a heal at full health starts nothing"));
+            advance(1);
+
+            cow.setHealth(1F);
+            ServerBehaviorScheduler.onHealed(cow);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 2L),
+                    Component.literal("a heal of a hurt mob swirls, so the one at full health left its cooldown unspent"));
+        } finally {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+        }
+        helper.succeed();
     }
 }

@@ -2,12 +2,12 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
-import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -25,20 +25,19 @@ import java.util.UUID;
  */
 public class PickerFreezePacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE =
-            new CustomPacketPayload.Type<>(NetworkHandler.PICKER_FREEZE);
+    public static final ResourceLocation ID = NetworkProtocol.id("picker_freeze");
+    public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC =
             StreamCodec.ofMember(PickerFreezePacket::write, PickerFreezePacket::new);
 
     /**
-     * Server-side sanity bound on the freeze target's distance from the requester: the picker reach
-     * ({@link LookTarget#DEFAULT_REACH}) plus slack for the gap between the client's raytrace hit on
-     * the mob's box and the mob's position the server measures to. Keeps an authorized client from
-     * freezing an arbitrary mob in any loaded chunk by UUID.
+     * Server-side sanity bound on the freeze target's distance from the requester. Well past the crosshair
+     * reach the picker chooses mobs at, because the client hits the mob's box and the server measures to its
+     * position, which are far apart on a very large mob. Keeps an authorized client from freezing an
+     * arbitrary mob in any loaded chunk by UUID.
      */
-    private static final double FREEZE_DISTANCE_SLACK = 4.0;
-    private static final double MAX_FREEZE_DISTANCE_SQ = (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK)
-            * (LookTarget.DEFAULT_REACH + FREEZE_DISTANCE_SLACK);
+    private static final double MAX_FREEZE_DISTANCE = 24.0;
+    private static final double MAX_FREEZE_DISTANCE_SQ = MAX_FREEZE_DISTANCE * MAX_FREEZE_DISTANCE;
 
     private final boolean freeze;
     @Nullable
@@ -79,13 +78,12 @@ public class PickerFreezePacket implements CustomPacketPayload {
             }
             Entity target = sender.level().getEntity(packet.mobId);
             if (target != null && sender.distanceToSqr(target) > MAX_FREEZE_DISTANCE_SQ) {
-                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback",
-                        Component.translatable("somegoogly.command.picker.freeze_too_far")));
+                PickerGate.tell(sender, Component.translatable("somegoogly.command.picker.freeze_too_far"));
                 return;
             }
             Component error = PickerFreezeService.freeze(sender.level(), sender.getUUID(), packet.mobId);
             if (error != null) {
-                sender.sendSystemMessage(Component.translatable("somegoogly.command.picker.feedback", error));
+                PickerGate.tell(sender, error);
             }
         } else {
             PickerFreezeService.unfreeze(sender.level().getServer(), sender.getUUID());

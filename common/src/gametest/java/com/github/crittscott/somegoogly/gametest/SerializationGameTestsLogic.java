@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -18,19 +19,21 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
+import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkHandler;
+import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -39,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -46,7 +50,7 @@ import java.util.UUID;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
 /**
- * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all six native
+ * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all seven native
  * payloads preserve their wire representation through encode/decode. World-less.
  */
 public final class SerializationGameTestsLogic {
@@ -55,24 +59,20 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * Every payload id is unique and carries the network version. No in-game form; guards that a client and
-     * server with different network versions refuse each other instead of misreading packets.
+     * Every payload id is unique. No in-game form; guards that no two payloads are misread as each other.
      */
-    public static void networkProtocolIdsAreVersionedAndUnique(GameTestHelper helper) {
-        String prefix = "v" + NetworkHandler.NETWORK_VERSION + "/";
-        List<ResourceLocation> gameplay = List.of(
-                NetworkHandler.EYE_STATE, NetworkHandler.EYE_CONFIG, NetworkHandler.EYE_BEHAVIOR,
-                NetworkHandler.EYE_ANGER, NetworkHandler.PICKER_FREEZE, NetworkHandler.PICKER_EXPORT);
-        for (ResourceLocation id : gameplay) {
-            helper.assertTrue(id.getPath().startsWith(prefix),
-                    Component.literal("gameplay channel " + id + " must carry protocol prefix " + prefix));
-        }
-        helper.assertTrue(Set.copyOf(gameplay).size() == gameplay.size(),
-                Component.literal("every gameplay payload must have a unique channel id"));
+    public static void networkProtocolIdsAreUnique(GameTestHelper helper) {
         List<ResourceLocation> typedPayloads = List.of(
-                EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeBehaviorTriggerPacket.TYPE.id(),
-                EyeAngerPacket.TYPE.id(), PickerFreezePacket.TYPE.id(), PickerExportPacket.TYPE.id());
-        helper.assertTrue(typedPayloads.equals(gameplay),
+                EyeStatePacket.TYPE.id(), EyeConfigSyncPacket.TYPE.id(), EyeSettingsPacket.TYPE.id(),
+                EyeBehaviorTriggerPacket.TYPE.id(), EyeAngerPacket.TYPE.id(), PickerFreezePacket.TYPE.id(),
+                PickerExportPacket.TYPE.id());
+        helper.assertTrue(Set.copyOf(typedPayloads).size() == typedPayloads.size(),
+                Component.literal("every gameplay payload must have a unique channel id"));
+        List<ResourceLocation> established = List.of(
+                NetworkProtocol.id("eye_state"), NetworkProtocol.id("eye_config"), NetworkProtocol.id("eye_settings"),
+                NetworkProtocol.id("eye_behavior"), NetworkProtocol.id("eye_anger"),
+                NetworkProtocol.id("picker_freeze"), NetworkProtocol.id("picker_export"));
+        helper.assertTrue(typedPayloads.equals(established),
                 Component.literal("the native payload types must preserve every established wire id"));
         helper.succeed();
     }
@@ -149,14 +149,27 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The behavior trigger survives the wire. No in-game form; guards that every client sees the expression
-     * the server started.
+     * The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
+     * that every client sees the expression the server started and refuses a number it doesn't know.
      */
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
-        EyeBehaviorTriggerPacket packet =
-                new EyeBehaviorTriggerPacket(7,
-                        ResourceLocation.fromNamespaceAndPath("somegoogly", "blink"), 8, 12345L, 3);
-        roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC, packet, "EyeBehaviorTriggerPacket");
+        for (EyeBehavior behavior : EyeBehavior.values()) {
+            EyeBehaviorTriggerPacket decoded = roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC,
+                    new EyeBehaviorTriggerPacket(7, behavior, 8, 12345L, 3), "EyeBehaviorTriggerPacket");
+            helper.assertTrue(decoded.behavior() == behavior, Component.literal(behavior + " should survive the round-trip"));
+        }
+        RegistryFriendlyByteBuf unknown = buffer(helper);
+        unknown.writeVarInt(7);
+        unknown.writeVarInt(EyeBehavior.values().length);
+        boolean rejected = false;
+        try {
+            EyeBehaviorTriggerPacket.STREAM_CODEC.decode(unknown);
+        } catch (DecoderException e) {
+            rejected = e.getMessage().contains("Unknown eye behavior");
+        } finally {
+            unknown.release();
+        }
+        helper.assertTrue(rejected, Component.literal("a trigger with an unassigned behavior number should fail to decode"));
         helper.succeed();
     }
 
@@ -172,28 +185,50 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire, behavior settings included. No in-game form; guards that joining
-     * clients draw the same eyes the server's datapacks define, and run ongoing behaviors and placed heads' and
-     * the held eye's expressions from the server's settings.
+     * The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
+     * guards that joining clients draw the same eyes the server's datapacks define.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
                 Map.of(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
+        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
+        EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
+        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
+        helper.assertTrue(decoded.configs().size() == 1, Component.literal("the definitions should survive the round-trip"));
+        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet).length == EyeConfigSyncPacket.wireSize(encoded),
+                Component.literal("the reload budget must measure the packet exactly"));
+        helper.succeed();
+    }
+
+    /**
+     * The master switch and behavior settings survive the wire. No in-game form; guards that clients run ongoing
+     * behaviors and placed heads' and the held eye's expressions from the server's settings.
+     */
+    public static void settingsPacketRoundTrips(GameTestHelper helper) {
         BehaviorSettings behaviors = new BehaviorSettings(true, 300, 100,
                 List.of(EyeBehavior.BLINK, EyeBehavior.CROSS_EYE), 40, false, 60,
                 EnumSet.of(OngoingBehavior.ANGER, OngoingBehavior.SWELL_RATTLE));
-        EyeConfigSyncPacket packet =
-                new EyeConfigSyncPacket(configs, ServerEyeConfigs.encode(configs), false, behaviors);
-        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
+        EyeSettingsPacket decoded = roundTrip(helper, EyeSettingsPacket.STREAM_CODEC,
+                new EyeSettingsPacket(false, behaviors), "EyeSettingsPacket");
         helper.assertTrue(!decoded.googlyEyesEnabled(), Component.literal("the googlyEyesEnabled flag should survive the round-trip"));
         helper.assertTrue(decoded.behaviors().equals(behaviors), Component.literal("the behavior settings should survive the round-trip"));
-        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
-        int budget = EyeConfigSyncPacket.wireSize(encoded);
-        EyeConfigSyncPacket maximum = new EyeConfigSyncPacket(configs, encoded, true, BehaviorSettings.WIRE_MAXIMUM);
-        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, maximum).length == budget,
-                Component.literal("the reload budget must include the largest supported behavior block"));
-        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet).length <= budget,
-                Component.literal("a non-default settings packet must fit the reload budget"));
+        helper.succeed();
+    }
+
+    /**
+     * Picker numbers print the way {@code /sg} parses them on any computer. In game, on a system set to German:
+     * {@code /sg list eyes} and the picker HUD show {@code 1.250}, not {@code 1,250}.
+     */
+    public static void pickerNumbersIgnoreTheComputersLanguage(GameTestHelper helper) {
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.GERMANY);
+            helper.assertTrue(MaybeFloatArgumentType.position(1.25).equals("1.250"), Component.literal("positions use a dot"));
+            helper.assertTrue(MaybeFloatArgumentType.compact(1.25).equals("1.25"), Component.literal("scales use a dot"));
+            helper.assertTrue(MaybeFloatArgumentType.angle(90.0).equals("90"), Component.literal("angles are whole"));
+        } finally {
+            Locale.setDefault(original);
+        }
         helper.succeed();
     }
 
@@ -252,8 +287,6 @@ public final class SerializationGameTestsLogic {
         buffer.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
         buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
                 .result().orElseThrow());
-        buffer.writeBoolean(true);
-        BehaviorSettings.DEFAULTS.write(buffer);
         return buffer;
     }
 
@@ -311,7 +344,7 @@ public final class SerializationGameTestsLogic {
 
         // Every field is required: an empty object is a parse failure, not a tree of defaults.
         boolean parsedEmpty = EyeDefinition.CODEC
-                .parse(JsonOps.INSTANCE, new com.google.gson.JsonObject()).result().isPresent();
+                .parse(JsonOps.INSTANCE, new JsonObject()).result().isPresent();
         helper.assertTrue(!parsedEmpty, Component.literal("an eye with no fields must fail to parse"));
         helper.succeed();
     }

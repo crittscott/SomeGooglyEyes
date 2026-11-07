@@ -145,9 +145,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Optometrist goes only on shears and is treasure-only.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>(package private) static net.minecraft.nbt.CompoundTag</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveEntity(net.minecraft.world.entity.Entity)" class="member-name-link">saveEntity</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#realShearsKillsHarvestAnEye(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">realShearsKillsHarvestAnEye</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A real shears kill harvests through each loader's own death path, and a baby harvests like an adult though it
+ drops no loot of its own.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>(package private) static net.minecraft.nbt.CompoundTag</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveEntity(net.minecraft.world.entity.Entity)" class="member-name-link">saveEntity</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The data a world save writes for <code>entity</code>, logging any problems writing it.</div>
 </div>
 </div>
@@ -194,14 +201,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="loadEntity(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)">
-<h3>loadEntity</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">loadEntity</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
- net.minecraft.nbt.CompoundTag&nbsp;saved)</span></div>
-<div class="block">Load <code>entity</code> from <code>saved</code> the way a world load does, logging any problems reading it.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="optometristAcceptsOnlyShears(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>optometristAcceptsOnlyShears</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristAcceptsOnlyShears</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -228,7 +227,25 @@ loadScripts(document, 'script');</script>
 <div class="block">Only a qualifying kill harvests. In game, with <code>harvestOnKillPercent = 100</code>: no Googly Eye drops when
  an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
  player, an eyed cow shot by a player holding shears, or an eyed cow with shears while <code>harvestOnKillPercent = 0</code> or
- <code>googlyEyesEnabled = false</code>.</div>
+ <code>googlyEyesEnabled = false</code> or the <code>doMobLoot</code> game rule off.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="realShearsKillsHarvestAnEye(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)">
+<h3>realShearsKillsHarvestAnEye</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">realShearsKillsHarvestAnEye</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
+<div class="block">A real shears kill harvests through each loader's own death path, and a baby harvests like an adult though it
+ drops no loot of its own. In game: set <code>harvestOnKillPercent = 100</code> and kill an eyed cow and an eyed calf
+ with shears; each drops one Googly Eye.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="loadEntity(net.minecraft.world.entity.Entity,net.minecraft.nbt.CompoundTag)">
+<h3>loadEntity</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">loadEntity</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity,
+ net.minecraft.nbt.CompoundTag&nbsp;saved)</span></div>
+<div class="block">Load <code>entity</code> from <code>saved</code> the way a world load does, logging any problems reading it.</div>
 </section>
 </li>
 <li>

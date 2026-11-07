@@ -92,8 +92,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block"><code>EyeConfigModel.RuntimeConfig.isUsable(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)</code> is the single eligibility predicate behind the slimy eye's targeting,
  the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- <code>ServerEyeConfigs.isEligible(net.minecraft.world.entity.LivingEntity)</code> delegating to it — are what keep those three in agreement.
- The delegation test swaps the config store via <code>replaceAll</code> (restored afterwards, the same
+ <code>EyeItemService.verdictFor(net.minecraft.world.entity.Entity)</code> reading it — are what keep those three in agreement.
+ The delegation test swaps the config store via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a> (restored afterwards, the same
  force-and-restore pattern as <code>SpawnGatingGameTests</code>) rather than depending on which configs
  happen to ship.
 

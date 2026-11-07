@@ -45,15 +45,7 @@ public final class HeldEye {
     private float prevHealth;
     private boolean prevHurt;
     private double prevX, prevY, prevZ;
-    private final RandomSource rand;
-
-    public HeldEye() {
-        this(RandomSource.create());
-    }
-
-    public HeldEye(RandomSource rand) {
-        this.rand = rand;
-    }
+    private final RandomSource rand = RandomSource.create();
 
     /** Whether {@code entity} holds a Googly Eye in either hand. */
     public static boolean holdsGooglyEye(LivingEntity entity) {
@@ -89,9 +81,7 @@ public final class HeldEye {
         if (eye == null || active != null) {
             return false;
         }
-        BehaviorInstance instance = new BehaviorInstance(behavior, null, behavior.defaultDuration(), rand.nextLong());
-        behavior.onStart(instance);
-        active = instance;
+        active = BehaviorInstance.start(behavior, null, behavior.defaultDuration(), rand.nextLong());
         return true;
     }
 
@@ -127,11 +117,8 @@ public final class HeldEye {
         }
 
         // Retire a finished behavior first, so this tick's triggers can start the next one.
-        if (active != null) {
-            active.age++;
-            if (active.age >= active.duration) {
-                active = null;
-            }
+        if (active != null && active.advance()) {
+            active = null;
         }
         if (healCooldown > 0) {
             healCooldown--;
@@ -162,12 +149,6 @@ public final class HeldEye {
         prevY = holder.getY();
         prevZ = holder.getZ();
 
-        influence.reset();
-        if (active != null) {
-            active.behavior.influence(active, 0, 0, influence);
-        }
-        eye.applyOverlays(influence, 1F, 1F, 0F, 0F);
-        eye.update(rand, holder.getYHeadRot(), holder.getXRot(), mx, my, mz,
-                influence.anchorX, influence.anchorY, influence.stiffness, 0F);
+        eye.step(influence, active, 0, 0, rand, holder.getYHeadRot(), holder.getXRot(), mx, my, mz);
     }
 }

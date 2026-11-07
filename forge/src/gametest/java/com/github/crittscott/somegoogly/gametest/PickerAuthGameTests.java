@@ -1,5 +1,9 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import java.util.UUID;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ClientInformation;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
@@ -68,5 +72,12 @@ public final class PickerAuthGameTests {
         } finally {
             EntityJoinLevelEvent.BUS.removeListener(listener);
         }
+    }
+
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        // The mock player always reports creative, so this needs a plain survival player.
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper,
+                new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                        new GameProfile(UUID.randomUUID(), "survival_operator"), ClientInformation.createDefault()));
     }
 }

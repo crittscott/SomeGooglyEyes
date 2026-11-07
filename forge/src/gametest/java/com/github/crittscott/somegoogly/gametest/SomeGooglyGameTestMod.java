@@ -27,9 +27,9 @@ public final class SomeGooglyGameTestMod {
         functions.register("boateyegametests/boats_have_independent_ambient_and_physics", () -> BoatEyeGameTests::boatsHaveIndependentAmbientAndPhysics);
         functions.register("boateyegametests/boats_harvest_one_eye", () -> BoatEyeGameTests::boatsHarvestOneEye);
         functions.register("boateyegametests/boats_follow_gravity_and_owner_motion", () -> BoatEyeGameTests::boatsFollowGravityAndOwnerMotion);
-        functions.register("boateyegametests/boats_evict_idle_and_pause_simulations", () -> BoatEyeGameTests::boatsEvictIdleAndPauseSimulations);
         functions.register("boateyegametests/boats_cross_only_with_configured_partners", () -> BoatEyeGameTests::boatsCrossOnlyWithConfiguredPartners);
         functions.register("boateyegametests/boats_begin_eyeless_and_select_geometry", () -> BoatEyeGameTests::boatsBeginEyelessAndSelectGeometry);
+        functions.register("boateyegametests/boats_evict_idle_simulations", () -> BoatEyeGameTests::boatsEvictIdleSimulations);
         functions.register("behaviordeterminismgametests/every_behavior_is_seed_deterministic_over_its_run", () -> BehaviorDeterminismGameTests::everyBehaviorIsSeedDeterministicOverItsRun);
         functions.register("behaviorschedulergametests/affection_events_play_love", () -> BehaviorSchedulerGameTests::affectionEventsPlayLove);
         functions.register("behaviorschedulergametests/aiming_archer_winks", () -> BehaviorSchedulerGameTests::aimingArcherWinks);
@@ -51,6 +51,9 @@ public final class SomeGooglyGameTestMod {
         functions.register("behaviorschedulergametests/sleeping_villager_closes_lids", () -> BehaviorSchedulerGameTests::sleepingVillagerClosesLids);
         functions.register("behaviorschedulergametests/swelling_creeper_rattles", () -> BehaviorSchedulerGameTests::swellingCreeperRattles);
         functions.register("behaviorschedulergametests/switched_off_ongoing_behaviors_stay_neutral", () -> BehaviorSchedulerGameTests::switchedOffOngoingBehaviorsStayNeutral);
+        functions.register("behaviorschedulergametests/completed_trade_swirls_eyes", () -> BehaviorSchedulerGameTests::completedTradeSwirlsEyes);
+        functions.register("behaviorschedulergametests/heal_at_full_health_plays_no_swirl", () -> BehaviorSchedulerGameTests::healAtFullHealthPlaysNoSwirl);
+        functions.register("behaviorschedulergametests/player_hit_bulges_eyes", () -> BehaviorSchedulerGameTests::playerHitBulgesEyes);
         functions.register("configgametests/config_sections_match_released_files", () -> ConfigGameTests::configSectionsMatchReleasedFiles);
         functions.register("configgametests/every_shipped_minecraft_definition_loads", () -> ConfigGameTests::everyShippedMinecraftDefinitionLoads);
         functions.register("configgametests/exact_minecraft_generation_is_selected", () -> ConfigGameTests::exactMinecraftGenerationIsSelected);
@@ -78,6 +81,9 @@ public final class SomeGooglyGameTestMod {
         functions.register("eyeitemservicegametests/optometrist_interact_harvests_eyes_for_one_durability", () -> EyeItemServiceGameTests::optometristInteractHarvestsEyesForOneDurability);
         functions.register("eyeitemservicegametests/optometrist_interact_passes_when_not_applicable", () -> EyeItemServiceGameTests::optometristInteractPassesWhenNotApplicable);
         functions.register("eyeitemservicegametests/self_remove_with_shears_drops_an_eye_and_costs_durability", () -> EyeItemServiceGameTests::selfRemoveWithShearsDropsAnEyeAndCostsDurability);
+        functions.register("eyeitemservicegametests/another_players_eyes_follow_the_pvp_rules", () -> EyeItemServiceGameTests::anotherPlayersEyesFollowThePvpRules);
+        functions.register("eyeitemservicegametests/harvest_breaking_shears_reports_them", () -> EyeItemServiceGameTests::harvestBreakingShearsReportsThem);
+        functions.register("eyeitemservicegametests/optometrist_acts_on_armor_stand_before_it_takes_the_shears", () -> EyeItemServiceGameTests::optometristActsOnArmorStandBeforeItTakesTheShears);
         functions.register("eyestateoverridegametests/clearing_every_field_removes_the_compound", () -> EyeStateOverrideGameTests::clearingEveryFieldRemovesTheCompound);
         functions.register("eyestateoverridegametests/clearing_tint_removes_only_that_field", () -> EyeStateOverrideGameTests::clearingTintRemovesOnlyThatField);
         functions.register("eyestateoverridegametests/clearing_tints_preserves_glow", () -> EyeStateOverrideGameTests::clearingTintsPreservesGlow);
@@ -119,6 +125,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("pickerauthgametests/refused_finalization_leaves_terrain", () -> PickerAuthGameTests::refusedFinalizationLeavesTerrain);
         functions.register("pickerauthgametests/refused_insertion_leaves_terrain", () -> PickerAuthGameTests::refusedInsertionLeavesTerrain);
         functions.register("pickerauthgametests/spawn_all_has_a_server_wide_cooldown", () -> PickerAuthGameTests::spawnAllHasAServerWideCooldown);
+        functions.register("pickerauthgametests/picker_commands_fail_for_survival_operators", () -> PickerAuthGameTests::pickerCommandsFailForSurvivalOperators);
         functions.register("pickerexportgametests/canonical_json_writes_default_valued_fields", () -> PickerExportGameTests::canonicalJsonWritesDefaultValuedFields);
         functions.register("pickerexportgametests/drafts_retain_species_and_age", () -> PickerExportGameTests::draftsRetainSpeciesAndAge);
         functions.register("pickerexportgametests/export_overlay_combines_draft_ages", () -> PickerExportGameTests::exportOverlayCombinesDraftAges);
@@ -130,6 +137,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("pickerexportgametests/export_rejects_garbage_typed_field", () -> PickerExportGameTests::exportRejectsGarbageTypedField);
         functions.register("pickerexportgametests/export_rejects_unknown_entity_type", () -> PickerExportGameTests::exportRejectsUnknownEntityType);
         functions.register("pickerexportgametests/export_rejects_unsafe_numeric_config", () -> PickerExportGameTests::exportRejectsUnsafeNumericConfig);
+        functions.register("pickerexportgametests/export_rejects_what_the_sync_could_not_carry", () -> PickerExportGameTests::exportRejectsWhatTheSyncCouldNotCarry);
         functions.register("pickerfreezegametests/freeze_captures_and_unfreeze_restores", () -> PickerFreezeGameTests::freezeCapturesAndUnfreezeRestores);
         functions.register("pickerfreezegametests/freeze_preserves_already_forced_no_ai", () -> PickerFreezeGameTests::freezePreservesAlreadyForcedNoAi);
         functions.register("pickerfreezegametests/freeze_refuses_second_editor", () -> PickerFreezeGameTests::freezeRefusesSecondEditor);
@@ -141,6 +149,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("recipegametests/glowstone_and_redstone_toggle_glow", () -> RecipeGameTests::glowstoneAndRedstoneToggleGlow);
         functions.register("recipegametests/slimy_eye_carries_the_eyes_appearance", () -> RecipeGameTests::slimyEyeCarriesTheEyesAppearance);
         functions.register("recipegametests/two_eyes_do_not_match", () -> RecipeGameTests::twoEyesDoNotMatch);
+        functions.register("recipegametests/slimy_eye_recipe_unlocks_by_advancement", () -> RecipeGameTests::slimyEyeRecipeUnlocksByAdvancement);
         functions.register("serializationgametests/anger_packet_round_trips", () -> SerializationGameTests::angerPacketRoundTrips);
         functions.register("serializationgametests/appearance_override_sparse_nbt_round_trips", () -> SerializationGameTests::appearanceOverrideSparseNbtRoundTrips);
         functions.register("serializationgametests/behavior_trigger_packet_round_trips", () -> SerializationGameTests::behaviorTriggerPacketRoundTrips);
@@ -152,9 +161,11 @@ public final class SomeGooglyGameTestMod {
         functions.register("serializationgametests/eye_fields_serialize_at_float_precision", () -> SerializationGameTests::eyeFieldsSerializeAtFloatPrecision);
         functions.register("serializationgametests/eye_state_packet_rejects_non_finite_values", () -> SerializationGameTests::eyeStatePacketRejectsNonFiniteValues);
         functions.register("serializationgametests/eye_state_packet_round_trips", () -> SerializationGameTests::eyeStatePacketRoundTrips);
-        functions.register("serializationgametests/network_protocol_ids_are_versioned_and_unique", () -> SerializationGameTests::networkProtocolIdsAreVersionedAndUnique);
         functions.register("serializationgametests/picker_export_packet_round_trips", () -> SerializationGameTests::pickerExportPacketRoundTrips);
         functions.register("serializationgametests/picker_freeze_packet_round_trips", () -> SerializationGameTests::pickerFreezePacketRoundTrips);
+        functions.register("serializationgametests/network_protocol_ids_are_unique", () -> SerializationGameTests::networkProtocolIdsAreUnique);
+        functions.register("serializationgametests/picker_numbers_ignore_the_computers_language", () -> SerializationGameTests::pickerNumbersIgnoreTheComputersLanguage);
+        functions.register("serializationgametests/settings_packet_round_trips", () -> SerializationGameTests::settingsPacketRoundTrips);
         functions.register("skulleyegametests/broken_head_keeps_its_eyes", () -> SkullEyeGameTests::brokenHeadKeepsItsEyes);
         functions.register("skulleyegametests/placed_head_uses_shared_ambient_slots", () -> SkullEyeGameTests::placedHeadUsesSharedAmbientSlots);
         functions.register("skulleyegametests/denied_item_use_leaves_heads_untouched", () -> SkullEyeGameTests::deniedItemUseLeavesHeadsUntouched);
@@ -162,6 +173,10 @@ public final class SomeGooglyGameTestMod {
         functions.register("skulleyegametests/optometrist_harvests_a_placed_head", () -> SkullEyeGameTests::optometristHarvestsAPlacedHead);
         functions.register("skulleyegametests/slimy_eye_gives_a_placed_head_eyes", () -> SkullEyeGameTests::slimyEyeGivesAPlacedHeadEyes);
         functions.register("skulleyegametests/slimy_eye_refuses_unconfigured_heads_and_the_switch", () -> SkullEyeGameTests::slimyEyeRefusesUnconfiguredHeadsAndTheSwitch);
+        functions.register("skulleyegametests/adventure_can_place_on_reads_the_clicked_head", () -> SkullEyeGameTests::adventureCanPlaceOnReadsTheClickedHead);
+        functions.register("skulleyegametests/eye_uses_are_counted_in_statistics", () -> SkullEyeGameTests::eyeUsesAreCountedInStatistics);
+        functions.register("skulleyegametests/head_keeps_only_its_eye_state", () -> SkullEyeGameTests::headKeepsOnlyItsEyeState);
+        functions.register("skulleyegametests/spectators_leave_heads_and_themselves_alone", () -> SkullEyeGameTests::spectatorsLeaveHeadsAndThemselvesAlone);
         functions.register("somegooglygametests/command_spawn_finalizes_before_applying_picker_state", () -> SomeGooglyGameTests::commandSpawnFinalizesBeforeApplyingPickerState);
         functions.register("somegooglygametests/conversion_keeps_eye_state", () -> SomeGooglyGameTests::conversionKeepsEyeState);
         functions.register("somegooglygametests/death_harvest_rejects_nonqualifying_kills", () -> SomeGooglyGameTests::deathHarvestRejectsNonqualifyingKills);
@@ -170,11 +185,11 @@ public final class SomeGooglyGameTestMod {
         functions.register("somegooglygametests/googly_eye_item_stores_appearance_override", () -> SomeGooglyGameTests::googlyEyeItemStoresAppearanceOverride);
         functions.register("somegooglygametests/optometrist_accepts_only_shears", () -> SomeGooglyGameTests::optometristAcceptsOnlyShears);
         functions.register("somegooglygametests/spawn_commands_refuse_dragon_players_and_excluded_types", () -> SomeGooglyGameTests::spawnCommandsRefuseDragonPlayersAndExcludedTypes);
+        functions.register("somegooglygametests/real_shears_kills_harvest_an_eye", () -> SomeGooglyGameTests::realShearsKillsHarvestAnEye);
         functions.register("spawngatinggametests/full_percent_grants_eyes_and_zero_denies_them", () -> SpawnGatingGameTests::fullPercentGrantsEyesAndZeroDeniesThem);
         functions.register("spawngatinggametests/spawn_always_assigns_a_variant_roll", () -> SpawnGatingGameTests::spawnAlwaysAssignsAVariantRoll);
         functions.register("variantselectiongametests/cumulative_weight_boundaries_pick_expected_variant", () -> VariantSelectionGameTests::cumulativeWeightBoundariesPickExpectedVariant);
         functions.register("variantselectiongametests/degenerate_configs_fall_to_first_variant", () -> VariantSelectionGameTests::degenerateConfigsFallToFirstVariant);
-        functions.register("versionrangegametests/entirely_below_splits_stale_from_downgrade", () -> VersionRangeGameTests::entirelyBelowSplitsStaleFromDowngrade);
         functions.register("versionrangegametests/exact_version_matches_only_itself", () -> VersionRangeGameTests::exactVersionMatchesOnlyItself);
         functions.register("versionrangegametests/malformed_range_does_not_match", () -> VersionRangeGameTests::malformedRangeDoesNotMatch);
         functions.register("versionrangegametests/nearest_gap_resolves_to_older_neighbor", () -> VersionRangeGameTests::nearestGapResolvesToOlderNeighbor);
@@ -184,6 +199,8 @@ public final class SomeGooglyGameTestMod {
         functions.register("versionrangegametests/optional_mod_version_range_synthesis", () -> VersionRangeGameTests::optionalModVersionRangeSynthesis);
         functions.register("versionrangegametests/range_bounds_respect_inclusivity", () -> VersionRangeGameTests::rangeBoundsRespectInclusivity);
         functions.register("versionrangegametests/shorter_version_pads_with_zero", () -> VersionRangeGameTests::shorterVersionPadsWithZero);
+        functions.register("versionrangegametests/loader_names_do_not_change_a_version", () -> VersionRangeGameTests::loaderNamesDoNotChangeAVersion);
+        functions.register("versionrangegametests/long_segments_compare_as_numbers", () -> VersionRangeGameTests::longSegmentsCompareAsNumbers);
         functions.register(context.getModBusGroup());
     }
 }

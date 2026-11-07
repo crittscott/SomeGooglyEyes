@@ -1,8 +1,11 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import net.minecraft.network.chat.contents.TranslatableContents;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 
 /**
  * Fabric GameTest entry points for the shared core and picker-spawn assertions. Listed under the
@@ -57,5 +60,18 @@ public final class SomeGooglyGameTests {
     public void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void requiredClientRefusalCarriesItsText(GameTestHelper helper) {
+        TranslatableContents refusal = (TranslatableContents) FabricNetworkTransport.requiredClientMessage().getContents();
+        helper.assertTrue(refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
+                Component.literal("the refusal should carry the English text for a client without our language file"));
+        helper.succeed();
     }
 }

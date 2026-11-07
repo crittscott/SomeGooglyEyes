@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
 <h2 class="title" id="I:A">A</h2>
 <dl class="index">
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#assign(com.github.crittscott.somegoogly.config.ConfigValue,java.lang.String,int)" class="member-name-link">assign(ConfigValue&lt;Integer&gt;, String, int)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
@@ -98,9 +98,13 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform.fabric">EntityPersistentDataImpl</a> - Class in <a href="com/github/crittscott/somegoogly/platform/fabric/package-summary.html">com.github.crittscott.somegoogly.platform.fabric</a></dt>
 <dd>
 <div class="block">Fabric implementation of the shared entity-persistence boundary: a persistent data attachment holding
- the same compound the Forge-family loaders keep in their entity persistent data.</div>
+ the same compound NeoForge and Forge keep in their entity persistent data.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
@@ -138,11 +142,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a> - Class in <a href="com/github/crittscott/somegoogly/network/fabric/package-summary.html">com.github.crittscott.somegoogly.network.fabric</a></dt>
 <dd>
-<div class="block">Fabric payload codecs and server receivers.</div>
+<div class="block">Fabric payload codecs, the configuration-phase version check, and server receivers.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a> - Record Class in <a href="com/github/crittscott/somegoogly/network/fabric/package-summary.html">com.github.crittscott.somegoogly.network.fabric</a></dt>
 <dd>
-<div class="block">Configuration-phase marker that is registered but never sent.</div>
+<div class="block">The server's version question, the first exchange of a connection's configuration phase.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a> - Record Class in <a href="com/github/crittscott/somegoogly/network/fabric/package-summary.html">com.github.crittscott.somegoogly.network.fabric</a></dt>
+<dd>
+<div class="block">The client's network version, which must equal the server's.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/FabricServerConfig.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.config.fabric">FabricServerConfig</a> - Class in <a href="com/github/crittscott/somegoogly/config/fabric/package-summary.html">com.github.crittscott.somegoogly.config.fabric</a></dt>
 <dd>
@@ -155,6 +163,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/MobSpawningImpl.html#finalizeSpawn(net.minecraft.world.entity.Mob,net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.EntitySpawnReason)" class="member-name-link">finalizeSpawn(Mob, ServerLevel, EntitySpawnReason)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/MobSpawningImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">MobSpawningImpl</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html#find(net.minecraft.world.entity.Entity)" class="member-name-link">find(Entity)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">EntityPersistentDataImpl</a></dt>
+<dd>
+<div class="block">The attached compound, if any; reading must not add a persistent attachment.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
@@ -169,7 +181,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>Handshake</code> record class.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#%3Cinit%3E(java.lang.String)" class="member-name-link">HandshakeReply(String)</a> - Constructor for record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>HandshakeReply</code> record class.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
@@ -179,6 +199,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#integer(java.util.Map,java.lang.String,int)" class="member-name-link">integer(Map&lt;String, Object&gt;, String, int)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
 <div class="block">The integer at <code>key</code>, or <code>fallback</code> when absent or, logged, of another type.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/fabric/ItemDestructionImpl.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform.fabric">ItemDestructionImpl</a> - Class in <a href="com/github/crittscott/somegoogly/platform/fabric/package-summary.html">com.github.crittscott.somegoogly.platform.fabric</a></dt>
+<dd>
+<div class="block">Fabric has no item-destroyed event, so there is no one to report to.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:L">L</h2>
@@ -191,6 +215,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Load the server config at <code>path</code> into <code>ServerConfig</code>, writing the defaults there if it is absent
  and adding any keys it lacks.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#load(java.nio.file.Path,java.util.List)" class="member-name-link">load(Path, List&lt;ConfigValue&lt;?&gt;&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dd>
+<div class="block">Load the file, adding missing keys before replacing the effective configuration.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
@@ -236,15 +264,15 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricClientNetworkTransport.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricClientNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricClientNetworkTransport</a></dt>
 <dd>
-<div class="block">Register the client's receivers for every clientbound payload.</div>
+<div class="block">Register the client's version answer, its refusal of a server without the mod, and its payload receivers.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a></dt>
 <dd>
-<div class="block">Register every payload type and the serverbound receivers; called once from the mod initializer.</div>
+<div class="block">Register every payload type, the version check, and the serverbound receivers; called once from the mod initializer.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">EntityPersistentDataImpl</a></dt>
 <dd>
-<div class="block">Registers <code>EntityPersistentDataImpl.TYPE</code>; must run during mod initialization, before any entity loads.</div>
+<div class="block">Registers <a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html#TYPE"><code>EntityPersistentDataImpl.TYPE</code></a>; must run during mod initialization, before any entity loads.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html#register()" class="member-name-link">register()</a> - Static method in class com.github.crittscott.somegoogly.server.fabric.<a href="com/github/crittscott/somegoogly/server/fabric/FabricServerEvents.html" title="class in com.github.crittscott.somegoogly.server.fabric">FabricServerEvents</a></dt>
 <dd>
@@ -262,6 +290,16 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html#registerRecipeSerializer(java.lang.String,java.util.function.Supplier)" class="member-name-link">registerRecipeSerializer(String, Supplier&lt;T&gt;)</a> - Method in class com.github.crittscott.somegoogly.registry.fabric.<a href="com/github/crittscott/somegoogly/registry/fabric/FabricContentRegistrar.html" title="class in com.github.crittscott.somegoogly.registry.fabric">FabricContentRegistrar</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#render(java.util.List)" class="member-name-link">render(List&lt;ConfigValue&lt;?&gt;&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
+<dd>
+<div class="block">Render <code>settings</code> at their defaults as a commented file, section by section.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/fabric/ItemDestructionImpl.html#report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">report(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/ItemDestructionImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">ItemDestructionImpl</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html#requiredClientMessage()" class="member-name-link">requiredClientMessage()</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a></dt>
+<dd>
+<div class="block">The refusal shown to a client without this mod.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
@@ -269,6 +307,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Values from exactly the schema's declared table; similarly named keys elsewhere do not apply.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html#sendToAll(net.minecraft.server.MinecraftServer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToAll(MinecraftServer, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">NetworkingImpl</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html#sendToPlayer(net.minecraft.server.level.ServerPlayer,net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToPlayer(ServerPlayer, CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/NetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">NetworkingImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/fabric/ClientNetworkingImpl.html#sendToServer(net.minecraft.network.protocol.common.custom.CustomPacketPayload)" class="member-name-link">sendToServer(CustomPacketPayload)</a> - Static method in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/ClientNetworkingImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">ClientNetworkingImpl</a></dt>
@@ -288,6 +328,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/client/fabric/SomeGooglyFabricClient.html#%3Cinit%3E()" class="member-name-link">SomeGooglyFabricClient()</a> - Constructor for class com.github.crittscott.somegoogly.client.fabric.<a href="com/github/crittscott/somegoogly/client/fabric/SomeGooglyFabricClient.html" title="class in com.github.crittscott.somegoogly.client.fabric">SomeGooglyFabricClient</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html#stringList(java.util.List)" class="member-name-link">stringList(List&lt;String&gt;)</a> - Static method in class com.github.crittscott.somegoogly.config.fabric.<a href="com/github/crittscott/somegoogly/config/fabric/TomlConfig.html" title="class in com.github.crittscott.somegoogly.config.fabric">TomlConfig</a></dt>
 <dd>
@@ -312,12 +354,33 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#toString()" class="member-name-link">toString()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#type()" class="member-name-link">type()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#type()" class="member-name-link">type()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html#TYPE" class="member-name-link">TYPE</a> - Static variable in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.Handshake.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.Handshake</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#TYPE" class="member-name-link">TYPE</a> - Static variable in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html#TYPE" class="member-name-link">TYPE</a> - Static variable in class com.github.crittscott.somegoogly.platform.fabric.<a href="com/github/crittscott/somegoogly/platform/fabric/EntityPersistentDataImpl.html" title="class in com.github.crittscott.somegoogly.platform.fabric">EntityPersistentDataImpl</a></dt>
+<dd>&nbsp;</dd>
 </dl>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
+<h2 class="title" id="I:V">V</h2>
+<dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html#version()" class="member-name-link">version()</a> - Method in record class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.HandshakeReply.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.HandshakeReply</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>version</code> record component.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html#versionMismatchMessage(java.lang.String)" class="member-name-link">versionMismatchMessage(String)</a> - Static method in class com.github.crittscott.somegoogly.network.fabric.<a href="com/github/crittscott/somegoogly/network/fabric/FabricNetworkTransport.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport</a></dt>
+<dd>
+<div class="block">The refusal shown to a client running network version <code>clientVersion</code>.</div>
+</dd>
+</dl>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:V">V</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
 </div>
 </div>
 </body>

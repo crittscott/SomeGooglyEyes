@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.util.ProblemReporter;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -18,15 +20,25 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.server.EyeItemService;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import java.util.Set;
+import java.util.UUID;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.world.item.AdventureModePredicate;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.stats.Stats;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -153,7 +165,7 @@ public final class SkullEyeGameTestsLogic {
         ItemStack slimy = purpleSlimyEye();
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
 
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, Component.literal("a Slimy Eye applies to a head"));
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("a Slimy Eye applies to a head"));
         helper.assertTrue(SkullEyeState.hasEyes(skull), Component.literal("the head has eyes"));
         helper.assertTrue(IRIS.equals(SkullEyeState.snapshot(skull).properties().iris().orElse(null)),
                 Component.literal("the head's eyes carry the Slimy Eye's iris color"));
@@ -209,7 +221,7 @@ public final class SkullEyeGameTestsLogic {
 
         ItemStack shears = optometristShears(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.SUCCESS, Component.literal("Optometrist shears harvest"));
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("Optometrist shears harvest"));
         helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the harvest clears the head's eyes"));
         helper.assertTrue(shears.getDamageValue() == 1, Component.literal("the harvest spends one shears durability"));
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
@@ -289,6 +301,115 @@ public final class SkullEyeGameTestsLogic {
         helper.succeed();
     }
 
+    /**
+     * In Adventure mode an item's {@code CanPlaceOn} list is read against the head itself, from any side. In game:
+     * in Adventure mode, hold a Slimy Eye given with {@code [can_place_on={blocks:"minecraft:skeleton_skull"}]} and
+     * right-click a skeleton skull's side; it gains eyes. Hold one listing {@code minecraft:stone} and right-click
+     * the top of another skull standing on stone; nothing happens.
+     */
+    public static void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {
+        ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "head_adventurer"), ClientInformation.createDefault());
+        player.getAbilities().mayBuild = false;
+        helper.setBlock(HEAD.below(), Blocks.STONE);
+
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        ItemStack listingFloor = adventureSlimyEye(Blocks.STONE);
+        player.setItemInHand(InteractionHand.MAIN_HAND, listingFloor);
+        helper.assertTrue(use(helper, player, skull, Direction.UP) == InteractionResult.FAIL,
+                Component.literal("an item listing the block under the head is refused from the top"));
+        helper.assertTrue(!SkullEyeState.hasEyes(skull) && listingFloor.getCount() == 1,
+                Component.literal("the refused use changes nothing"));
+
+        for (Direction face : List.of(Direction.UP, Direction.NORTH)) {
+            helper.setBlock(HEAD, Blocks.AIR);
+            skull = placeHead(helper, Blocks.SKELETON_SKULL);
+            player.setItemInHand(InteractionHand.MAIN_HAND, adventureSlimyEye(Blocks.SKELETON_SKULL));
+            helper.assertTrue(use(helper, player, skull, face) == InteractionResult.CONSUME,
+                    Component.literal("an item listing the head applies from " + face));
+            helper.assertTrue(SkullEyeState.hasEyes(skull), Component.literal("the listed head gains eyes from " + face));
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Applying and harvesting count as using the item. In game: note the Used counts of Slimy Eye and Shears on the
+     * Statistics screen's Items tab, apply a Slimy Eye to a cow and to a skeleton skull, and take the skull's eyes
+     * with Optometrist shears; Slimy Eye rises by two and Shears by one.
+     */
+    public static void eyeUsesAreCountedInStatistics(GameTestHelper helper) {
+        ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "head_statistician"), ClientInformation.createDefault());
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, purpleSlimyEye());
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("the head takes the Slimy Eye"));
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, MOB);
+        EyeState.setHasEyes(cow, false);
+        helper.assertTrue(EyeItemService.applySlimyEye(purpleSlimyEye(), player, cow) == InteractionResult.CONSUME,
+                Component.literal("the cow takes the Slimy Eye"));
+        helper.assertTrue(player.getStats().getValue(Stats.ITEM_USED.get(ModContent.SLIMY_EYE.get())) == 2,
+                Component.literal("both applications count as using a Slimy Eye"));
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, optometristShears(helper));
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("the shears harvest the head"));
+        helper.assertTrue(player.getStats().getValue(Stats.ITEM_USED.get(Items.SHEARS)) == 1,
+                Component.literal("the harvest counts as using the shears"));
+        helper.succeed();
+    }
+
+    /**
+     * A head keeps only its eye state from the data it loads, so nothing else a head item carried is saved or sent
+     * to players. In game, in creative: {@code /give} a skeleton skull whose {@code block_entity_data} has a
+     * {@code somegoogly:data} compound with {@code hasGooglyEyes} true and an extra key, and place it; {@code /data
+     * get block} shows the eye state without that key.
+     */
+    public static void headKeepsOnlyItsEyeState(GameTestHelper helper) {
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        CompoundTag data = new CompoundTag();
+        purpleEyes().write(data);
+        data.putString("padding", "x".repeat(1024));
+        CompoundTag tag = skull.saveWithoutMetadata(helper.getLevel().registryAccess());
+        tag.put(SkullEyeState.DATA_KEY, data);
+
+        skull.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, helper.getLevel().registryAccess(), tag));
+
+        helper.assertTrue(purpleEyes().equals(SkullEyeState.snapshot(skull)), Component.literal("the head keeps its eyes"));
+        helper.assertTrue(!skull.saveWithoutMetadata(helper.getLevel().registryAccess()).getCompoundOrEmpty(SkullEyeState.DATA_KEY).contains("padding"),
+                Component.literal("the head doesn't keep data that isn't eye state"));
+        helper.succeed();
+    }
+
+    /**
+     * Spectators cannot use eye items on heads or shear themselves. In game: in spectator mode, hold a Slimy Eye and
+     * right-click a skeleton skull, then sneak and right-click with shears while wearing eyes; nothing changes and
+     * nothing is used up.
+     */
+    public static void spectatorsLeaveHeadsAndThemselvesAlone(GameTestHelper helper) {
+        ServerPlayer spectator = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "head_spectator"), ClientInformation.createDefault()) {
+            @Override
+            public boolean isSpectator() {
+                return true;
+            }
+        };
+        SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
+        ItemStack slimy = purpleSlimyEye();
+        spectator.setItemInHand(InteractionHand.MAIN_HAND, slimy);
+        helper.assertTrue(use(helper, spectator, skull) == InteractionResult.PASS, Component.literal("a spectator's head click passes"));
+        helper.assertTrue(!SkullEyeState.hasEyes(skull) && slimy.getCount() == 1,
+                Component.literal("a spectator's Slimy Eye changes nothing"));
+
+        ItemStack shears = new ItemStack(Items.SHEARS);
+        spectator.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        spectator.setShiftKeyDown(true);
+        EyeState.applySnapshot(spectator, purpleEyes());
+        helper.assertTrue(EyeItemService.selfRemoveWithShears(spectator, InteractionHand.MAIN_HAND)
+                == InteractionResult.PASS, Component.literal("a spectator's self-shear passes"));
+        helper.assertTrue(EyeState.hasEyes(spectator) && shears.getDamageValue() == 0,
+                Component.literal("a spectator keeps their eyes and their shears' durability"));
+        helper.succeed();
+    }
+
     /** Kill {@code mob} with a fresh charged creeper's explosion, the kill that makes it drop its head. */
     private static void blowUpWithChargedCreeper(GameTestHelper helper, Skeleton mob) {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(3, 2, 3));
@@ -329,8 +450,19 @@ public final class SkullEyeGameTestsLogic {
     }
 
     private static InteractionResult use(GameTestHelper helper, Player player, SkullBlockEntity skull) {
+        return use(helper, player, skull, Direction.UP);
+    }
+
+    private static InteractionResult use(GameTestHelper helper, Player player, SkullBlockEntity skull, Direction face) {
         BlockPos pos = skull.getBlockPos();
         return EyeItemService.useOnSkull(player, helper.getLevel(), InteractionHand.MAIN_HAND,
-                new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
+                new BlockHitResult(Vec3.atCenterOf(pos), face, pos, false));
+    }
+
+    private static ItemStack adventureSlimyEye(Block canPlaceOn) {
+        ItemStack slimy = purpleSlimyEye();
+        slimy.set(DataComponents.CAN_PLACE_ON, new AdventureModePredicate(
+                List.of(BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, canPlaceOn).build())));
+        return slimy;
     }
 }

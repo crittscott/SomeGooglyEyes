@@ -10,12 +10,12 @@ import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.level.Level;
@@ -97,7 +97,7 @@ public final class PickerSpawnServiceGameTestsLogic {
                     }
                 }
             }
-            PickerSpawnService.spawn(player, "minecraft");
+            PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
             before.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
                     Component.literal("refused bulk spawn must leave terrain unchanged at " + pos)));
             helper.assertTrue(helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
