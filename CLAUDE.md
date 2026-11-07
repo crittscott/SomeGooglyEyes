@@ -1,4 +1,4 @@
-###### v19
+###### v20
 
 YOU ARE NOT TO DECOMPILE OR UNARCHIVE ANYTHING, EVER. NO EXCEPTIONS. YOU ARE NOT TO TREAT EVERY TASK AS OF WORLD-ENDING IMPORTANCE TO GET RIGHT. YOU ARE NOT TO SEARCH THE ENTIRE INTERNET IN AN ATTEMPT TO MAKE SURE YOU HAVE AN IRREFUTABLE PROOF THAT EVERY WORD OF YOUR AS YET UNWRITTEN ANSWER IS PERFECTLY CORRECT. DO NOT CHECK EVERY THING YOU DID MULTIPLE TIMES. DO IT AND MOVE ON.
 
@@ -12,6 +12,13 @@ Do not decompile Minecraft or the loaders (Forge, NeoForge), and do not read, ex
 
 You are a programmer; you write code. Do not build unless asked. Everything not explicitly a command to build is a discussion.
 
+Without those sources, what you know about a Minecraft or loader API comes from memory, and memory is often wrong. Treat a recalled signature, event order, or call flow as a hypothesis. Do not replace working code on the strength of one, and find out why existing code has its shape before calling it a mistake.
+
+# Reference files
+
+- `code-conventions.md` holds the rules for writing code, organized by what you are doing. Read it before writing or changing code.
+- `platform-notes.md` records how specific Minecraft versions, loaders, and libraries actually behave. Read the parts that apply before writing a hook, Mixin, packet, or port. When you learn such a fact, add it there, marked with how it is known. This file stays free of version-specific and loader-specific detail.
+
 # Project Principles
 
 - This is a Minecraft mod, not a mission-critical enterprise suite. Only one version of the mod ever runs at a time, so it never interoperates with earlier versions of itself. When code or behavior changes, remove the old path entirely: no shims, fallbacks, deprecated aliases, or readers for formats that never shipped.
@@ -19,14 +26,20 @@ You are a programmer; you write code. Do not build unless asked. Everything not 
 - Player worlds are the exception, and they are handled as migration, not compatibility. A world saved by the previous released version must load. Convert its saved data to the current form as soon as the mod first reads it, and write only the current form afterward. Keep this conversion in a dedicated migration layer so the rest of the code sees only current state. Support only the immediately preceding released version. Never silently discard saved player data that can't be recognized; set it aside and log it.
 - Boring beats clever. Do things the vanilla, Forge, NeoForge, and Fabric way: if Minecraft or the loader has a facility for a goal, use it, even when a home-grown version would be shorter or already works. An expert Minecraft modder should look at our code and find nothing surprising.
 - The mod acts as the player. Anything the mod does to the world on a player's behalf passes the same permission checks and fires the same events vanilla would if the player did it by hand, so protection, claims, and other mods' hooks apply without special handling.
-- Each concept has one home. A behavior lives in exactly one place; when code is replaced, the old version is deleted, not left beside it.
+- Each concept has one home. A behavior lives in exactly one place; when code is replaced, the old version is deleted, not left beside it. Anything two places must agree on is one function or one declaration that both use: a client hint and the server action it predicts, an action and its undo, the same rule on two loaders. A missed line that compiles and silently does nothing is a design defect.
+- An event means what vanilla means. Hook the point where the thing actually happened, not a method that merely ran on the way. A hook standing in for a missing loader event must cover every case that event covers. Intercepting vanilla's flow makes you responsible for everything vanilla would have done on the path you skipped.
 - Share what is the same; diverge only where the loader forces it. Common code holds what is truly common, and each loader-specific difference has a loader-specific reason. Do not contort code to share a few lines.
 - Work happens when something changes, not on a schedule. Prefer events and maintained lists over per-tick polling, broad area scans, and repeated sorting. Send network traffic only when state changes.
-- Nothing crosses a trust boundary unchecked. The server validates everything a client sends; the client validates everything a server sends. Trusting Minecraft and the loader does not extend to the other end of the connection.
+- Nothing crosses a trust boundary unchecked. The server validates everything a client sends; the client validates everything a server sends. Trusting Minecraft and the loader does not extend to the other end of the connection. Validate on decode, once; never re-validate data you built yourself.
 - Everything visible is deliberate. Player-facing text lives in the lang file; tunable numbers are named constants or config options; logs record milestones, not traffic, and debug logging does not stay in the code; every player-visible behavior has a gametest whose javadoc tells a person how to reproduce it in-game.
-- When assessing code for safety issues, do not worry that Minecraft or the loader itself may misbehave; it is not our job to protect against every conceivable error. Only known unreliable interfaces need to be protected against.
+- When assessing code for safety issues, do not worry that Minecraft or the loader itself may misbehave; it is not our job to protect against every conceivable error. Only known unreliable interfaces need to be protected against: other mods reached by reflection, and code that runs other mods' code. Do not guard against what the caller, a codec, or the type system already excludes.
 - The mod should be server friendly; we need to pay attention to how much work we require the server to do (and the client, of course, but that's a much smaller problem). The configuration should provide the server admin with the abilities an admin would find useful.
-- Conceptual efficiency is more important than lines-of-code efficiency: I prefer deeper classes of coherent content to an atomized single-function-per-class architecture. Some duplication is better than yet one more small class.
+- Conceptual efficiency is more important than lines-of-code efficiency: I prefer deeper classes of coherent content to an atomized single-function-per-class architecture. Some duplication is better than yet one more small class. That tolerance covers mechanics, not decisions: repeated wiring may stay, a repeated rule, formula, or tunable value may not.
+- Code fits its target. A version checkout holds only what its target Minecraft version can use: no hooks, abstractions, or data for another version's systems or content.
+- Shipped code serves the shipped mod. Nothing exists only so tests can call it; test helpers live in test source.
+- A test proves what a player would see. Drive the real trigger, not the service behind the hook, and do not derive the expected value from the same assumption as the code. A bug fix comes with a test that fails without it wherever a gametest can reach the bug.
+- Deliberate surprises are explained. When code departs from the expected way for a good reason, a comment at that spot says what the expected way fails at.
+- Do not add a required dependency without my approval.
 
 # Orientation files
 
@@ -58,6 +71,14 @@ You are a programmer; you write code. Do not build unless asked. Everything not 
 - I run the builds and tests. If you believe a build or test run is warranted, say so and let me decide.
 - Do not decompile anything (Minecraft or the loaders) without permission.
 
+# Finishing a change
+
+These are part of writing the change, not a second audit.
+
+- After a rename, move, or removal, search code, comments, docs, data, and tests for the old name and for text that described it.
+- On a multi-loader change, follow the path on each loader from the trigger to the shared code. Do not assume the second loader matches the first.
+- In your report, name any recalled API fact the change depends on and anything only an in-game check can confirm.
+
 # Version Control and Commit Messages
 
 - You are not to modify git or interact with github unless explicitly asked.
@@ -70,7 +91,4 @@ Commit messages are not part of the current conversation; do not talk to the use
 - Code comments are for existing code, not for recording what changed from some historical version, and not for recording future hypotheticals. Just as there is no legacy support in code, there should be no legacy commentary or reference to what was done in the past.
 - Migration code may describe the released format it reads; that format is a current input, not history.
 - Code comments are not part of the current conversation. They should be interpretable without knowledge of it.
-
-# Minecraft and loader architecture details
-
-- There is no Forge FakePlayer after 1.20.1.
+- A comment must be true of the code beside it. Do not state counts of things elsewhere or promise that one piece of code mirrors another; share the code instead.
