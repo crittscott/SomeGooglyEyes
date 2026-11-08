@@ -82,7 +82,7 @@ Sends go through the platform bridges. Clientbound registrations link the client
 
 `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Vanilla inserts each passenger group. The spawn service removes partial groups on refusal and edits terrain only after success. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack declares the running game’s major and minor data-pack format.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack declares the running game’s major and minor data-pack format.
 
 `LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches.
 
@@ -94,7 +94,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 185, Forge 187, NeoForge 187. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
+GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
 
 ## Operational boundaries
 
