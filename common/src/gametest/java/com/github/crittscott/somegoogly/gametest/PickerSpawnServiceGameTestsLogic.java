@@ -36,6 +36,46 @@ public final class PickerSpawnServiceGameTestsLogic {
     }
 
     /**
+     * An accepted distant spawn does not require immediate UUID lookup visibility. In game: stand over
+     * air and run {@code /sg spawnall minecraft}; mobs and their platforms continue beyond the nearby
+     * chunk area instead of every remaining type being discarded at the first distant cell.
+     */
+    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper, ServerPlayer player) {
+        var originalPosition = player.position();
+        float originalYaw = player.getYRot();
+        float originalPitch = player.getXRot();
+        List<String> excluded = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        List<String> excludedMods = ServerConfig.SPAWN_EXCLUDED_MODS.get();
+        try {
+            List<String> otherTypes = new ArrayList<>();
+            BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                    otherTypes.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                }
+            });
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
+            // Move the command's player reference, without a connected player loading this distant area.
+            BlockPos origin = helper.absolutePos(new BlockPos(4096, 128, 0));
+            player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            helper.assertTrue(helper.getLevel().getBlockState(origin.below()).isAir(),
+                    "the distant command origin must select platform mode");
+            int spawned = PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
+            helper.assertTrue(spawned == 3, "all three distant candidates must be accepted, got " + spawned);
+            for (int distance : new int[]{3, 8, 13}) {
+                BlockPos floor = new BlockPos(origin.getX(), origin.getY() - 1, origin.getZ() + distance);
+                helper.assertTrue(helper.getLevel().getBlockState(floor).is(Blocks.SANDSTONE),
+                        "each accepted candidate must receive its own platform at " + floor);
+            }
+        } finally {
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
+            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+        }
+        helper.succeed();
+    }
+
+    /**
      * Extended entity targeting stops at blocks. In game: stand behind a wall from an eyed cow and aim at
      * it with an eye item or an admin command; neither inspection nor editing selects it through the wall.
      */

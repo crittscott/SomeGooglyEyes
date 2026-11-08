@@ -328,7 +328,7 @@ public final class PickerExportGameTestsLogic {
 
     /**
      * An export that would push the whole definition set over the sync limits is refused before it is written.
-     * In game: this needs a datapack whose definitions already total 4,096 eyes; then one more exported eye reports
+     * In game: this needs a datapack whose definitions already reach {@link EyeConfigLimits#MAX_TOTAL_EYES_PER_SYNC} eyes; then one more exported eye reports
      * the unsafe payload in chat, and no file appears in the world's {@code somegoogly-picker} pack.
      */
     public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {

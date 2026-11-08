@@ -25,6 +25,11 @@ public final class PickerAuthGameTests {
     private PickerAuthGameTests() {
     }
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.bulkSpawnContinuesBeyondNearbyChunks(helper, SomeGooglyGameTests.survivalPlayer(helper));
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
         PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(

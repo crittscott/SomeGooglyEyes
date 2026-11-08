@@ -153,10 +153,10 @@ public final class PickerExportService {
         if (limitsError != null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
         }
-        int wireSize = EyeConfigSyncPacket.wireSize(ServerEyeConfigs.encode(next));
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+        EyeConfigLimits.Issue sizeError = EyeConfigSyncPacket.sizeIssue(ServerEyeConfigs.encode(next));
+        if (sizeError != null) {
             return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload",
-                    Component.translatable("somegoogly.validation.sync_size", wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES));
+                    sizeError.message());
         }
         return null;
     }

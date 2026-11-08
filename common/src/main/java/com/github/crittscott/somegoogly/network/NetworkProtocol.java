@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class NetworkProtocol {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "18";
+    public static final String NETWORK_VERSION = "19";
 
     private NetworkProtocol() {
     }

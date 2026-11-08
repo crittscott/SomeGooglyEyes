@@ -79,6 +79,20 @@ public final class PickerSpawnService {
     private PickerSpawnService() {
     }
 
+    /** Insertion failures with distinct feedback for single and bulk command spawns. */
+    private enum InsertionFailure {
+        MOB_REFUSED("somegoogly.command.spawn.refused", "somegoogly.command.spawnall.dropped_add_refused"),
+        PASSENGER_REFUSED("somegoogly.command.spawn.passenger_refused", "somegoogly.command.spawnall.dropped_passenger_refused");
+
+        private final String spawnAllKey;
+        private final String spawnKey;
+
+        InsertionFailure(String spawnKey, String spawnAllKey) {
+            this.spawnAllKey = spawnAllKey;
+            this.spawnKey = spawnKey;
+        }
+    }
+
     /**
      * Why {@code /sg spawn} and {@code /sg spawnall} refuse an entity type, in the order {@link #refusal}
      * checks them, with the feedback each command gives. Players are covered by {@link #NOT_SUMMONABLE}.
@@ -126,16 +140,29 @@ public final class PickerSpawnService {
     private record Candidate(ResourceLocation id, Entity entity) {
     }
 
-    /** Insert the mob and its riders as {@code /summon} does; a refused mob takes its riders with it. */
-    private static boolean addCommandEntity(ServerLevel level, Entity entity) {
-        if (!level.tryAddFreshEntityWithPassengers(entity)) {
-            return false;
+    /** Insert each member using its insertion result, rolling back accepted members if another is refused. */
+    @Nullable
+    private static InsertionFailure addCommandEntity(ServerLevel level, Entity entity) {
+        List<Entity> members = entity.getSelfAndPassengers().toList();
+        List<Entity> added = new ArrayList<>();
+        boolean complete = false;
+        try {
+            for (Entity member : members) {
+                // UUID lookup visibility depends on chunk tracking; the insertion result is authoritative here.
+                if (!level.addFreshEntity(member)) {
+                    return member == entity ? InsertionFailure.MOB_REFUSED : InsertionFailure.PASSENGER_REFUSED;
+                }
+                added.add(member);
+            }
+            complete = true;
+            return null;
+        } finally {
+            if (!complete) {
+                for (int index = added.size() - 1; index >= 0; index--) {
+                    added.get(index).discard();
+                }
+            }
         }
-        if (level.getEntity(entity.getUUID()) == entity) {
-            return true;
-        }
-        entity.getSelfAndPassengers().toList().forEach(Entity::discard);
-        return false;
     }
 
     /** Report a world change to the sender, other operators, and the console, per vanilla convention. */
@@ -352,7 +379,8 @@ public final class PickerSpawnService {
                 continue;
             }
 
-            if (addCommandEntity(level, entity)) {
+            InsertionFailure insertionFailure = addCommandEntity(level, entity);
+            if (insertionFailure == null) {
                 // No terrain is touched until every spawn refusal has been resolved.
                 for (BlockChange change : terrain) {
                     level.setBlockAndUpdate(change.pos(), change.state());
@@ -363,7 +391,7 @@ public final class PickerSpawnService {
                 skipped++;
                 if (filtering) {
                     dropped.add(Component.translatable(
-                            "somegoogly.command.spawnall.dropped_add_refused", candidate.id.toString()));
+                            insertionFailure.spawnAllKey, candidate.id.toString()));
                 }
             }
         }
@@ -459,11 +487,12 @@ public final class PickerSpawnService {
             return false;
         }
 
-        if (addCommandEntity(level, entity)) {
+        InsertionFailure insertionFailure = addCommandEntity(level, entity);
+        if (insertionFailure == null) {
             announce(source, "somegoogly.command.spawn.spawned", id.toString());
             return true;
         }
-        PickerGate.tellFailure(source, "somegoogly.command.spawn.refused", id.toString());
+        PickerGate.tellFailure(source, insertionFailure.spawnKey, id.toString());
         return false;
     }
 

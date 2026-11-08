@@ -458,7 +458,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#capturePose(org.joml.Matrix3fc,org.joml.Quaternionfc)" class="member-name-link">capturePose(Matrix3fc, Quaternionfc)</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
 <dd>
-<div class="block">Capture a world draw's view-space pose and camera rotation, or a GUI pose with no camera.</div>
+<div class="block">Capture a world draw's view-space pose and camera rotation, or a pose that holds no view rotation with
+ a <code>null</code> camera.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/ChildMapResolver.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render.resolver">ChildMapResolver</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/resolver/package-summary.html">com.github.crittscott.somegoogly.client.render.resolver</a></dt>
 <dd>
@@ -2407,6 +2408,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Longest attach-point token a head may name.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#MAX_COMPRESSED_BYTES" class="member-name-link">MAX_COMPRESSED_BYTES</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
+<dd>
+<div class="block">Compressed wire body; retains the existing transport budget on both loaders.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html#MAX_CONFIGS_PER_SYNC" class="member-name-link">MAX_CONFIGS_PER_SYNC</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigLimits.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits</a></dt>
 <dd>
 <div class="block">Most entity types one eye-definition sync may carry.</div>
@@ -2424,7 +2429,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Most heads one variant may declare.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#MAX_PAYLOAD_BYTES" class="member-name-link">MAX_PAYLOAD_BYTES</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Maximum inflated body, bounded before parsing NBT.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/ModelGooglyEye.html#MAX_PUPIL_SIZE" class="member-name-link">MAX_PUPIL_SIZE</a> - Static variable in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client.render">ModelGooglyEye</a></dt>
 <dd>
 <div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
@@ -3617,6 +3624,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/HandItemEyes.Simulations.html#%3Cinit%3E()" class="member-name-link">Simulations()</a> - Constructor for class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/HandItemEyes.Simulations.html" title="class in com.github.crittscott.somegoogly.client">HandItemEyes.Simulations</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#sizeIssue(java.util.Map)" class="member-name-link">sizeIssue(Map&lt;ResourceLocation, CompoundTag&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
+<dd>
+<div class="block">Refusal shared by reload and picker export, covering decoded work and transmitted bytes.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/SkullEyeRenderer.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer</a> - Class in <a href="com/github/crittscott/somegoogly/client/render/package-summary.html">com.github.crittscott.somegoogly.client.render</a></dt>
 <dd>
 <div class="block">Draws the eyes of placed mob heads and head items.</div>
@@ -4314,7 +4325,7 @@ the order they are declared.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html#wireSize(java.util.Map)" class="member-name-link">wireSize(Map&lt;ResourceLocation, CompoundTag&gt;)</a> - Static method in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></dt>
 <dd>
-<div class="block">The packet size of <code>encoded</code>.</div>
+<div class="block">The compressed packet size of <code>encoded</code>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor(EyeColor)</a> - Method in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>

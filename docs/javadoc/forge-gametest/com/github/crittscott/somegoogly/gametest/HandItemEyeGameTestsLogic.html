@@ -148,7 +148,9 @@ loadScripts(document, 'script');</script>
 <h3>handEyesFollowWorldGravityAcrossViews</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handEyesFollowWorldGravityAcrossViews</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">World gravity ignores camera rotation and item display scale. In game: disable ambient expressions,
- tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down.</div>
+ tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down. A new
+ simulation starts at rest. In game: look away from a framed eye for a second and back; its pupil is
+ already down rather than dropping from the center.</div>
 </section>
 </li>
 <li>

@@ -137,11 +137,11 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
             return;
         }
         Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
-        int wireSize = EyeConfigSyncPacket.wireSize(encoded);
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
+        EyeConfigLimits.Issue sizeError = EyeConfigSyncPacket.sizeIssue(encoded);
+        if (sizeError != null) {
             SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload encodes to {} bytes, exceeding the {}-byte sync limit; keeping the previous configs",
-                    wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES);
+                    "Eye config reload exceeds sync size limits; keeping the previous configs: {}",
+                    sizeError.diagnostic());
             return;
         }
         boolean changed = ServerEyeConfigs.replaceIfChanged(selected, encoded);

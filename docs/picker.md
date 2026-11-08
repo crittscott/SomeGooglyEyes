@@ -65,6 +65,8 @@ Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAl
 
 To keep junk entities out of the grid, list namespaces in `spawnExcludedMods` or specific ids in `spawnExcludedEntities` (same `picker` section). Both `/sg spawn` and `/sg spawnall` skip anything they match; a namespace-scoped `spawnall` run reports each skipped id so you can see why it's missing. `spawnExcludedMods` ships with `minecolonies` and `create` excluded by default for the world-corruption reason above — only remove either entry on a world you're prepared to lose.
 
+Each mob and passenger is inserted individually, with the insertion call's result deciding acceptance. A mob refusal and a passenger refusal have distinct diagnostics; if a passenger is refused, previously added members are discarded. Immediate UUID lookup visibility is not used to reject an accepted spawn. Planned platforms, roofs, and basins are written only after all members are accepted. The distant-grid regression scenario on both loaders checks that multiple accepted candidates beyond the nearby chunk area each receive a platform.
+
 ## Admin commands
 
 `/sg admin` (operator level 2, creative mode) mutates the *live* eye state of the mob you're looking at (the same state the shears/slimy-eye/dye gameplay drives):

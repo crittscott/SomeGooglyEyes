@@ -39,13 +39,17 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -223,6 +227,30 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(decoded.configs().size() == 1, "the definitions should survive the round-trip");
         helper.assertTrue(bytes(helper, packet).length == EyeConfigSyncPacket.wireSize(encoded),
                 "the reload budget must measure the packet exactly");
+
+        Map<ResourceLocation, RuntimeConfigSet> large = new HashMap<>();
+        for (int i = 0; i < 1_200; i++) {
+            RuntimeConfigSet set = sampleConfigSet();
+            set.any.variants.get(0).heads.get(0).eyes = Collections.nCopies(4, EyeDefinition.DEFAULT);
+            large.put(new ResourceLocation("somegoogly", "sync_test_" + i), set);
+        }
+        Map<ResourceLocation, CompoundTag> largeEncoded = ServerEyeConfigs.encode(large);
+        helper.assertTrue(EyeConfigLimits.validateSync(large) == null,
+                "4,800 eyes must fit the shared work budget");
+        helper.assertTrue(EyeConfigSyncPacket.sizeIssue(largeEncoded) == null,
+                "a full modpack's definitions must fit the decoded and compressed size budgets");
+        FriendlyByteBuf largeWire = buffer(helper);
+        try {
+            new EyeConfigSyncPacket(large, largeEncoded).write(largeWire);
+            EyeConfigSyncPacket largeDecoded = EyeConfigSyncPacket.read(largeWire);
+            // Entity-map iteration order is not part of the protocol; it can change the compressed bytes.
+            helper.assertTrue(ServerEyeConfigs.encode(largeDecoded.configs()).equals(largeEncoded),
+                    "every entity and its complete eye definition must survive the compressed round-trip");
+            helper.assertTrue(largeWire.readableBytes() == 0,
+                    "the compressed round-trip must consume the entire packet");
+        } finally {
+            largeWire.release();
+        }
         helper.succeed();
     }
 
@@ -256,8 +284,21 @@ public final class SerializationGameTestsLogic {
         }
         FriendlyByteBuf oversized = buffer(helper);
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
-        helper.assertTrue(rejectsConfig(oversized, "Eye config count exceeds network limit"),
+        helper.assertTrue(rejectsConfig(compressedPayload(helper, oversized), "Eye config count exceeds network limit"),
                 "config sync must reject an oversized outer count before allocating entries");
+
+        FriendlyByteBuf expanded = buffer(helper);
+        expanded.writeBytes(new byte[EyeConfigSyncPacket.MAX_PAYLOAD_BYTES + 1]);
+        helper.assertTrue(rejectsConfig(compressedPayload(helper, expanded), "Decoded eye config sync exceeds network limit"),
+                "a small compressed payload must not expand beyond the decoded byte cap");
+        FriendlyByteBuf tooManyBytes = buffer(helper);
+        tooManyBytes.writeBytes(new byte[EyeConfigSyncPacket.MAX_COMPRESSED_BYTES + 1]);
+        helper.assertTrue(rejectsConfig(tooManyBytes, "Eye config sync payload exceeds network limit"),
+                "an oversized wire payload must be refused before decompression");
+        FriendlyByteBuf malformed = buffer(helper);
+        malformed.writeByte(0);
+        helper.assertTrue(rejectsConfig(malformed, "Malformed compressed eye config sync"),
+                "invalid gzip must be refused");
 
         RuntimeConfigSet tooManyVariants = sampleConfigSet();
         tooManyVariants.any.variants = Collections.nCopies(EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
@@ -289,14 +330,30 @@ public final class SerializationGameTestsLogic {
         }
     }
 
-    /** A config-sync payload carrying {@code set} for one entity, written without the encoder's own limit check. */
+    /** Compress an independently authored wire body, releasing the original buffer. */
+    private static FriendlyByteBuf compressedPayload(GameTestHelper helper, FriendlyByteBuf raw) {
+        byte[] bytes = new byte[raw.readableBytes()];
+        raw.readBytes(bytes);
+        raw.release();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzip = new GZIPOutputStream(output)) {
+            gzip.write(bytes);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        FriendlyByteBuf compressed = buffer(helper);
+        compressed.writeBytes(output.toByteArray());
+        return compressed;
+    }
+
+    /** A compressed config-sync fixture carrying {@code set} for one entity. */
     private static FriendlyByteBuf singleConfigPayload(GameTestHelper helper, RuntimeConfigSet set) {
         FriendlyByteBuf buffer = buffer(helper);
         buffer.writeVarInt(1);
         buffer.writeResourceLocation(new ResourceLocation("minecraft", "cow"));
         buffer.writeNbt((CompoundTag) RuntimeConfigSet.CODEC.encodeStart(NbtOps.INSTANCE, set)
                 .result().orElseThrow());
-        return buffer;
+        return compressedPayload(helper, buffer);
     }
 
     /**
