@@ -4,11 +4,11 @@ import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
-import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,8 +18,6 @@ import net.minecraft.world.phys.HitResult;
 
 /** Client action-bar verdict for whether the aimed entity or placed mob head can currently receive googly eyes. */
 public final class EyeInspector {
-
-    private static final double REACH = 16.0D;
 
     private EyeInspector() {
     }
@@ -43,8 +41,8 @@ public final class EyeInspector {
     }
 
     /**
-     * Each client tick, while the player sneaks holding an eye item, show the verdict for the aimed entity, or for
-     * the aimed placed head when it is nearer, on the action bar.
+     * Each client tick, while the player sneaks holding an eye item, show the verdict for the entity or placed head
+     * under the crosshair, the target a right-click would use, on the action bar.
      */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
@@ -53,19 +51,16 @@ public final class EyeInspector {
                 || !player.isShiftKeyDown() || !holdingEye(player)) {
             return;
         }
-        EntityHitResult target = LookTarget.hitInCrosshair(player, REACH,
-                entity -> entity instanceof LivingEntity || BoatEyeLayout.supports(entity));
-        if (player.pick(REACH, 1.0F, false) instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
-                && (target == null || player.getEyePosition().distanceToSqr(hit.getLocation())
-                        < player.getEyePosition().distanceToSqr(target.getLocation()))) {
+        if (minecraft.hitResult instanceof EntityHitResult hit) {
+            Entity target = hit.getEntity();
+            if (target instanceof LivingEntity || BoatEyeLayout.supports(target)) {
+                player.displayClientMessage(message(EyeItemService.verdictFor(target)), true);
+            }
+        } else if (minecraft.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
             BlockEntity head = minecraft.level.getBlockEntity(hit.getBlockPos());
             if (head instanceof SkullEyeState.Holder) {
                 player.displayClientMessage(message(EyeItemService.verdictFor(head)), true);
-                return;
             }
-        }
-        if (target != null) {
-            player.displayClientMessage(message(EyeItemService.verdictFor(target.getEntity())), true);
         }
     }
 }

@@ -33,6 +33,10 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
+/**
+ * Twilight Forest-only head scenarios: trophies and skull candles taking, keeping, and giving up eyes. They need
+ * Twilight Forest loaded.
+ */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class TwilightHeadGameTests {

@@ -11,7 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Selects GUI animation before the item is drawn. */
+/**
+ * Brackets every GUI item draw, giving the item's eyes their GUI animation and position-based identity. Neither
+ * loader has a render event around a single GUI item.
+ */
 @Mixin(GuiGraphics.class)
 abstract class GuiItemEyesMixin {
 

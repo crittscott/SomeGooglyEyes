@@ -9,7 +9,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Logical slot and carried-item identities survive movement, layout changes, and stack copies. */
+/**
+ * Brackets each slot's draw and the carried item's draw with a GUI presentation key, so a slot's or the cursor's
+ * eyes keep their state through movement, layout changes, and stack copies. Neither loader has a per-slot or
+ * carried-item render event; their container-screen events cover the whole screen.
+ */
 @Mixin(AbstractContainerScreen.class)
 abstract class ContainerItemEyesMixin {
 

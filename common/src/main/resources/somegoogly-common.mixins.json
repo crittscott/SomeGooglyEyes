@@ -4,6 +4,7 @@
   "package": "com.github.crittscott.somegoogly.mixin.common",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
   "mixins": [
+    "EnchantmentResultsMixin",
     "MilkingMixin",
     "MushroomCowShearMixin",
     "ServerLevelEntityEventMixin",

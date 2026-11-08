@@ -42,8 +42,7 @@ public record EyeColor(float r, float g, float b) {
     public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
 
     private static int channel(float v) {
-        int i = Math.round(v * 255F);
-        return i < 0 ? 0 : Math.min(i, 255);
+        return Math.round(v * 255F);
     }
 
     /** A color from a three-element {@code [r, g, b]} array. */

@@ -10,7 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Supplies frame identity only during the contained item's draw, after vanilla's mounting transforms. */
+/**
+ * Supplies frame identity only during the contained item's draw, after vanilla's mounting transforms. Forge's
+ * frame-item render event fires before the draw with no matching event after it, and Fabric has none, so one
+ * bracket serves both loaders.
+ */
 @Mixin(ItemFrameRenderer.class)
 abstract class ItemFrameRendererMixin {
 

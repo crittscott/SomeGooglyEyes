@@ -10,6 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Adds a skull candle's eyes, and the owner profile Twilight Forest's own update tag leaves out, to the tag that
+ * syncs the block to clients. Twilight Forest is an optional mod with no API for this, and its skull candle
+ * builds its own update tag, which leaves out the eye data {@code SkullBlockEntityDataMixin} saves.
+ */
 @Pseudo
 @Mixin(targets = "twilightforest.block.entity.SkullCandleBlockEntity", remap = false)
 abstract class TwilightSkullCandleDataMixin {

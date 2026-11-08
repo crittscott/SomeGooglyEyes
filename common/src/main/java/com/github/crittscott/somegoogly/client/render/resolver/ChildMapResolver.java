@@ -20,7 +20,7 @@ import java.util.WeakHashMap;
  * reflecting fields <b>by type</b> (never by name — those are SRG-mangled in production) and keeping only
  * those that aren't a descendant of another collected part, so genuine roots aren't double-counted.
  *
- * <p>Roots get positional names ({@code #0}, {@code #1}, … in superclass-first field order), but every
+ * <p>Roots get positional names ({@code #0}, {@code #1}, … in subclass-first field order), but every
  * descendant below a root is named by its real {@code children}-map key (made readable by the mod's access
  * transformer). So a model that nests named parts under a root yields stable paths like {@code #0/head1},
  * while a model whose head is a bare nameless root resolves as {@code #0}. Matching is the shared suffix
@@ -47,15 +47,15 @@ public class ChildMapResolver extends ModelPartTreeResolver {
     }
 
     /**
-     * Collect {@link ModelPart} fields by type (superclass-first, so a humanoid/quadruped head lands at
-     * index 0), drop any that are a descendant of another collected part, and name the survivors
+     * Collect {@link ModelPart} fields by type (subclass-first: a model's own fields precede those it
+     * inherits), drop any that are a descendant of another collected part, and name the survivors
      * positionally. Every access is guarded, so an unreflectable model just yields no roots (no eyes) —
      * never a crash.
      */
     private static List<NamedRoot> reflectRoots(EntityModel<?> model) {
         Set<ModelPart> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         List<ModelPart> ordered = new ArrayList<>();
-        for (Class<?> c = model.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+        for (Class<?> c = model.getClass(); c != Object.class; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
                 if (field.getType() != ModelPart.class) {
                     continue;

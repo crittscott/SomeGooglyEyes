@@ -114,6 +114,11 @@ public final class EyeItemServiceGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.optometristRollsOnlyOntoShearsAndBooks(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));

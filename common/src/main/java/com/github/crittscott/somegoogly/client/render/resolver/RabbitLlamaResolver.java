@@ -14,12 +14,12 @@ import java.util.function.Consumer;
  * {@link EntityModel} directly (neither {@link net.minecraft.client.model.HierarchicalModel} nor
  * {@link net.minecraft.client.model.AgeableListModel}) and hand-roll their own scale/translate wraps
  * around groups of their top-level parts inside {@code renderToBuffer}, applied and popped entirely
- * outside the part tree — invisible to a render layer's {@link PoseStack} otherwise, the same bug class
- * {@link AgeableListResolver} fixes for its own family, but with a model-specific part grouping instead of
- * a uniform head/body split. It must precede {@link ChildMapResolver}, whose positional fallback has no
+ * outside the part tree, where a render layer's {@link PoseStack} never sees them. This resolver replays
+ * each wrap for the parts it encloses, grouped per model rather than by a uniform head/body split as in
+ * {@link AgeableListResolver}. It must precede {@link ChildMapResolver}, whose positional fallback has no
  * concept of either wrap.
  *
- * <p>Rabbit's wrap is unusual among this bug family: its <b>adult</b> render also lives inside its own
+ * <p>Rabbit's wrap is unusual: its <b>adult</b> render also lives inside its own
  * wrap (not just the baby one), so both ages need a replayed transform, split into a head-group
  * ({@code head}, {@code rightEar}, {@code leftEar}, {@code nose}) and a body-group (everything else).
  * Llama's adult render has no wrap at all; its three groups ({@code head}; {@code body}; the four legs

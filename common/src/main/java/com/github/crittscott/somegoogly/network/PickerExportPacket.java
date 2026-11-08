@@ -16,7 +16,7 @@ import java.util.UUID;
  * Client → server: "write this authored eye config for {@code entityTypeId} into the world datapack
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
  * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); all validation,
- * path construction, the 10-second cooldown, the file write, and the {@code /reload} live in
+ * path construction, the export cooldown, the file write, and the {@code /reload} live in
  * {@link PickerExportService}. It requires {@link PickerGate#authorized}.
  *
  * <p>The client refuses to send a packet that fails {@link #fitsServerbound()}, so a malformed or

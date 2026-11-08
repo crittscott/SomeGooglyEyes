@@ -24,8 +24,8 @@ public interface Attachment {
      * Move {@code poseStack} into the part's current (this-frame, post-animation) space. The caller owns
      * the surrounding {@code pushPose()}/{@code popPose()}.
      *
-     * @return {@code false} if a transform could not be applied (a reflected model family whose handles
-     *         failed); the caller should skip drawing.
+     * @return {@code false} if a transform could not be applied (reflection failed on a third-party
+     *         model); the caller should skip drawing.
      */
     boolean apply(PoseStack poseStack);
 }

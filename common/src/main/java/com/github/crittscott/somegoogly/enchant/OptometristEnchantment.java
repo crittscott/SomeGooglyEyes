@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.enchant;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
@@ -16,13 +17,24 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
  * books and librarian trades without needing any loot-table or trade datapack edits.
  *
  * <p>The closest closed vanilla category is {@link EnchantmentCategory#BREAKABLE};
- * {@link #canEnchant(ItemStack)} narrows that category to shears on both loaders.
+ * {@link #canEnchant(ItemStack)} narrows that category to shears on both loaders, and {@link #canRollOn} narrows
+ * loot's enchant-by-level roll the same way.
  */
 public class OptometristEnchantment extends Enchantment {
 
     public OptometristEnchantment() {
         super(Rarity.RARE, EnchantmentCategory.BREAKABLE,
                 new EquipmentSlot[]{EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND});
+    }
+
+    @Override
+    public boolean canEnchant(ItemStack stack) {
+        return stack.is(ModContent.SHEARS);
+    }
+
+    /** Whether loot rolling enchantments by level may put Optometrist on {@code stack}: shears, or a book. */
+    public static boolean canRollOn(ItemStack stack) {
+        return stack.is(Items.BOOK) || ModContent.OPTOMETRIST.get().canEnchant(stack);
     }
 
     @Override
@@ -38,10 +50,5 @@ public class OptometristEnchantment extends Enchantment {
     @Override
     public boolean isTreasureOnly() {
         return true;
-    }
-
-    @Override
-    public boolean canEnchant(ItemStack stack) {
-        return stack.is(ModContent.SHEARS);
     }
 }

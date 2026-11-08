@@ -22,6 +22,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -204,6 +206,32 @@ public final class EyeItemServiceGameTestsLogic {
     }
 
     /**
+     * Loot that rolls enchantments by level with treasure allowed, as fishing treasure and End City chests do,
+     * can put Optometrist on shears or a book but on nothing else. In game: run
+     * {@code /loot give @s loot minecraft:chests/end_city_treasure} many times; no tool, weapon, or armor piece
+     * comes with Optometrist.
+     */
+    public static void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        int level = 30; // within Optometrist's cost range, as fishing treasure rolls
+        helper.assertTrue(rollsOptometrist(level, new ItemStack(Items.SHEARS)), "shears can roll Optometrist");
+        helper.assertTrue(rollsOptometrist(level, new ItemStack(Items.BOOK)), "a book can roll Optometrist");
+        for (ItemStack other : List.of(new ItemStack(Items.BOW), new ItemStack(Items.FISHING_ROD),
+                new ItemStack(Items.DIAMOND_SWORD), new ItemStack(Items.DIAMOND_CHESTPLATE))) {
+            helper.assertTrue(!rollsOptometrist(level, other), other.getItem() + " cannot roll Optometrist");
+        }
+        helper.succeed();
+    }
+
+    private static boolean rollsOptometrist(int level, ItemStack stack) {
+        for (EnchantmentInstance result : EnchantmentHelper.getAvailableEnchantmentResults(level, stack, true)) {
+            if (result.enchantment == ModContent.OPTOMETRIST.get()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
      * Optometrist; only a non-sneaking use is left to the vanilla item. The plain-shears self-damage
      * (a melee hit's worth of health) is not asserted here — fake players are inert to {@code hurt} —
@@ -211,8 +239,8 @@ public final class EyeItemServiceGameTestsLogic {
      * air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
      * and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
      * with {@code googlyEyesEnabled = false}, nothing happens.
-     * With a protection listener refusing item use, repeat with plain and Optometrist shears: eyes,
-     * drops, durability, and health stay unchanged. Remove the veto and repeat; self-removal works.
+     * The refusal case has no in-game form without a protection mod; it guards that a loader's denial of
+     * item use leaves eyes, drops, durability, and health unchanged.
      * Callback ordering needs a connected client; this service test bypasses the loader callback.
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {

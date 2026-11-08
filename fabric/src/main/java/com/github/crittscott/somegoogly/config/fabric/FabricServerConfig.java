@@ -14,9 +14,9 @@ import java.nio.file.Path;
 /**
  * Creates and loads the active world's server TOML when the server starts and again at the start of
  * each {@code /reload}, since Fabric has no config system; values return to defaults when the server stops.
- * {@link ServerConfig#settings} drives the commented file and the load, as it does the native Forge server spec.
- * Like Forge, a file missing any key, such as one from an earlier release, is
- * completed with only absent keys at their defaults; existing values and comments are retained.
+ * {@link ServerConfig#settings} drives the commented file and the load. A file missing any key, such as one from an
+ * earlier release, is completed with only the absent keys at their defaults; existing values and comments are
+ * retained.
  */
 public final class FabricServerConfig {
 

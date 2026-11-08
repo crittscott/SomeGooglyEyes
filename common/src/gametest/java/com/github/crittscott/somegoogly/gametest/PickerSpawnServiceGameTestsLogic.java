@@ -106,8 +106,8 @@ public final class PickerSpawnServiceGameTestsLogic {
 
     /**
      * A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.
-     * The loader wrapper installs the refusing listener. In game: refuse command spawns with a listener,
-     * stand over air, and run spawnall; the command skips the mobs without replacing terrain or head data.
+     * The loader wrapper installs the refusing listener. No in-game form without a mod that refuses spawns;
+     * guards that a refused spawn leaves terrain and head data as they were.
      */
     public static void refusedBulkSpawnLeavesTerrain(GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();

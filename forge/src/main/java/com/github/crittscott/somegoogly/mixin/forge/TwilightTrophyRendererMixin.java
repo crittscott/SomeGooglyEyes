@@ -15,6 +15,11 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.injection.Coerce;
 
+/**
+ * Brackets a placed trophy's draw and draws its eyes after the trophy model, as {@code SkullBlockRendererMixin}
+ * does for vanilla heads. Twilight Forest is an optional mod with no API for this, and its trophy renderer draws
+ * its boss models itself instead of going through vanilla's head renderer.
+ */
 @Pseudo
 @Mixin(targets = "twilightforest.client.renderer.tileentity.TrophyTileEntityRenderer", remap = false)
 abstract class TwilightTrophyRendererMixin {

@@ -10,7 +10,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/** Loader-neutral registration boundary for the mod's four content registries. */
+/** Loader-neutral registration boundary for the mod's content registries. */
 public interface ContentRegistrar {
 
     /** Register an item; the factory receives fresh item properties. */

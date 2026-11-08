@@ -168,8 +168,9 @@ public final class SkullEyeGameTestsLogic {
 
     /**
      * A native item-use denial prevents both applying and harvesting head eyes, without consuming the
-     * item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
-     * listener while leaving the event uncanceled, then try a Slimy Eye and Optometrist shears.
+     * item, damaging shears, or spawning a drop. No in-game form without a protection mod that denies item use while
+     * leaving the click event uncanceled; guards that such a denial leaves the head, the item, and the shears as
+     * they were.
      */
     public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper, Player player,
                                                          BiConsumer<BlockHitResult, Boolean> interact) {
@@ -460,8 +461,7 @@ public final class SkullEyeGameTestsLogic {
      * A Heads-mod head takes a Slimy Eye, keeps its eyes when broken and re-placed, and gives them up to Optometrist
      * shears, as a vanilla head does. Needs the Heads mod. In game, with Heads installed: place a Heads cow head
      * and repeat {@link #slimyEyeGivesAPlacedHeadEyes}, {@link #brokenHeadKeepsItsEyes}, and
-     * {@link #optometristHarvestsAPlacedHead} on it, checking eye state with {@code /data get block} where the eyes
-     * aren't drawn yet.
+     * {@link #optometristHarvestsAPlacedHead} on it; the eyes show on the head throughout.
      */
     public static void headsModHeadTakesKeepsAndGivesUpEyes(GameTestHelper helper, Player player) {
         Block cowHead = headsBlock(helper, "cow_head");
@@ -496,7 +496,7 @@ public final class SkullEyeGameTestsLogic {
      * Every Heads-mod head with a mob can have eyes, and whatever its roll, it shows the eyes of one of its mob's
      * variants with eyes on the part the head reproduces, though that mob has variants with eyes only elsewhere
      * (a cow's on its body). Runs with or without that mod. In game, with Heads installed: apply Slimy Eyes to
-     * several Heads cow heads; once rendering is in, every one shows eyes on its face.
+     * several Heads cow heads; every one shows eyes on its face.
      */
     public static void headsModMobsHaveHeadEyes(GameTestHelper helper) {
         SkullEyeState.HEADS_MOBS.forEach((path, type) -> {

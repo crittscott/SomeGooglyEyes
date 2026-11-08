@@ -7,11 +7,13 @@ import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
@@ -90,8 +92,8 @@ public class ServerConfig {
             SECTION_BEHAVIORS, "ambientBehaviorPool", List.of(EyeBehavior.BLINK.id().toString(), EyeBehavior.CROSS_EYE.id().toString(),
                     EyeBehavior.SIDE_EYE.id().toString(), EyeBehavior.STARE.id().toString()),
             ServerConfig::validateResourceLocation, ServerConfig::parseBehaviorPool, """
-            Expressions idle mobs choose from, e.g. "somegoogly:blink". Available: blink, cross_eye,
-            side_eye, stare, grow, love, swirl, color_change. Unknown ids are ignored."""));
+            Expressions idle mobs choose from, e.g. "somegoogly:blink". Available:""" + " "
+                    + availableBehaviors() + ". Unknown ids are ignored."));
 
     /** Chance (0–100) that player damage makes an eyed mob's eyes bulge. */
     public static final ConfigValue<Integer> GROW_ON_HIT_PERCENT = add(ConfigValue.integer(
@@ -195,6 +197,11 @@ public class ServerConfig {
     private static <V extends ConfigValue<?>> V add(V setting) {
         SETTINGS.add(setting);
         return setting;
+    }
+
+    /** The ids an admin may list in {@link #AMBIENT_BEHAVIOR_POOL}, for its config comment. */
+    private static String availableBehaviors() {
+        return Arrays.stream(EyeBehavior.values()).map(b -> b.id().getPath()).collect(Collectors.joining(", "));
     }
 
     private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {

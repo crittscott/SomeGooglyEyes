@@ -90,6 +90,7 @@ public final class HandItemEyes {
         }
     }
 
+    /** Drop every held item's simulation. */
     public static void clear() {
         SIMULATIONS.clear();
     }
@@ -111,10 +112,12 @@ public final class HandItemEyes {
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
     }
 
+    /** Drop the simulations of the items {@code holder} holds. */
     public static void remove(UUID holder) {
         SIMULATIONS.remove(holder);
     }
 
+    /** Advance held items' simulations once per client tick; with no level or eyes hidden, drop them all. */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {

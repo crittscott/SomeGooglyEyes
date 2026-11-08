@@ -23,7 +23,7 @@ import java.util.Map;
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
  * client-rendered, but the <i>schedule</i> is server-owned so the "one at a time, non-interruptable"
  * rule holds across every viewer and so server-only game events drive the same path. Triggers are the
- * ambient idle timer below plus game-event reactions (hurt/milked → grow, trade/heal → swirl, vanilla
+ * ambient idle timer below plus game-event reactions (hurt/milked/sheared → grow, trade/heal → swirl, vanilla
  * affection entity events → love). A sleeping mob plays nothing: every trigger is dropped as if the mob
  * were busy, and each client derives the sleeping squint from vanilla's synced sleep state.
  *
@@ -37,7 +37,7 @@ import java.util.Map;
  * eye state), but {@link #serverTick} only walks {@link #ACTIVE}, the subset that can actually do
  * something: mobs known to have eyes, plus any mob mid-behavior (started via {@link #start}, including
  * the debug {@link #trigger}). A tracked-but-eyeless mob — the overwhelming majority, since the default
- * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
+ * spawn chance is {@link ServerConfig#GLOBAL_PERCENT} — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  * eye / admin toggle), called from {@link EyeState}. A promoted mob that loses its eyes leaves {@link #ACTIVE}
  * at once ({@link #onEyesLost}), or when the behavior it is playing retires.

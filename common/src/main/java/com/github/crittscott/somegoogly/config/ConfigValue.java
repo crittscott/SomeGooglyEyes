@@ -48,7 +48,7 @@ public abstract class ConfigValue<T> {
         return values -> {
             List<String> accepted = new ArrayList<>();
             for (String value : values) {
-                if (value != null && valid.test(value)) {
+                if (valid.test(value)) {
                     accepted.add(value);
                 }
             }

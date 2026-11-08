@@ -37,11 +37,11 @@ One expression plays at a time; all are cosmetic. Sleepers play nothing else; vi
 
 ### Killing with shears
 
-Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears here and throughout mean vanilla shears or any item in the conventional `c:tools/shear` tag. A successful harvest costs one shears durability.
+Kill an eyed mob with a direct melee blow from shears for a default 25 percent chance to add one Googly Eye to its drops. A projectile or indirect kill does not qualify. Shears here and throughout mean vanilla shears or any item in the `c:shears` or `forge:shears` tag. A successful harvest costs one shears durability.
 
 ### Optometrist
 
-Optometrist is a one-level, treasure-only shears enchantment. Right-click an eyed mob with Optometrist shears to remove its eyes without harming it. One Googly Eye drops, the shears lose one durability, and the standard shearing sound plays. Plain shears retain their usual interactions.
+Optometrist is a one-level, treasure-only shears enchantment; loot gives it only to shears and books. Right-click an eyed mob with Optometrist shears to remove its eyes without harming it. One Googly Eye drops, the shears lose one durability, and the standard shearing sound plays.
 
 Harvested eyes keep effective iris/cornea colors and glow, not species or placement.
 
@@ -85,7 +85,7 @@ While holding either eye item, sneak and aim at a living entity, vanilla boat, o
 - supports eyes only at another life stage; or
 - has no configuration.
 
-The check reaches about 16 blocks and stops at walls. Client settings that hide eyes do not affect the result.
+The check answers for the crosshair target within reach. Client settings that hide eyes do not affect the result.
 
 ## Creative tab
 
