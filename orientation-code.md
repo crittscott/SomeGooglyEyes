@@ -84,7 +84,7 @@ Seven payloads carry definitions, settings, entity eye state, expressions, anger
 
 The client owns picker drafts and previews; the server owns freezing, spawning, movement, and export. `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Each mob/rider insertion result is checked; partial additions are removed on refusal. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity, target, completed count, and exception.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity, target, completed count, and exception.
 
 `LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards `SERVER_BRANCHES` explicitly, since its client root would capture them.
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 188, Forge 187, NeoForge 187. Item coverage: twelve frame, seven GUI, seven hand scenarios; thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
+GameTest scenarios: Fabric 189, Forge 190, NeoForge 190. Item coverage: twelve frame, seven GUI, seven hand scenarios; thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
 
 ## Operational boundaries
 

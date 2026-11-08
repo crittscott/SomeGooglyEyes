@@ -221,7 +221,7 @@ It does not change the world. Both exports replace authored ages and preserve th
 
 `/sg spawnall [namespace]` builds an audit grid for all available types, optionally restricted to a namespace. It overwrites blocks, has no undo, and is disabled by default; use it only in a disposable test world.
 
-Spawn commands exclude the dragon, unsummonable entities, and configured `spawnExcludedEntities`/`spawnExcludedMods`. Canceled spawns place nothing and leave bulk cells unchanged. Scoped `/sg spawnall` reports skipped types/reasons; `/sg spawn` suggests only allowed types.
+Spawn commands exclude the dragon, unsummonable entities, and configured `spawnExcludedEntities`/`spawnExcludedMods`. Refused mobs/riders leave bulk cells unchanged. Scoped `/sg spawnall` reports skipped types/reasons; `/sg spawn` suggests only allowed types.
 
 Move or rotate the chosen mob with `/sg mob move <dx> <dy> <dz>` and `/sg mob rot <azimuth>`.
 
