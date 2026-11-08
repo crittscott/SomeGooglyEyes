@@ -20,10 +20,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
- * the installed set and that set's precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
- * validated when installed. Construction compresses it once; each connection copies those bytes. The client decodes and
- * re-validates everything it receives.
+ * Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding. The
+ * server builds one per candidate set ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#packetFor}),
+ * checks it with {@link #refusal}, and installs it, so construction serializes and compresses once and every
+ * joining or reloading connection copies those bytes. The client decodes and re-validates everything it receives.
  */
 public class EyeConfigSyncPacket implements Payload {
 
@@ -33,14 +33,28 @@ public class EyeConfigSyncPacket implements Payload {
     /** Maximum inflated body, bounded before parsing NBT. */
     public static final int MAX_PAYLOAD_BYTES = 2 * 1024 * 1024;
 
+    private final int bodySize;
     private final byte[] compressed;
     private final Map<ResourceLocation, RuntimeConfigSet> configs;
+    private final Map<ResourceLocation, CompoundTag> encoded;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
                                Map<ResourceLocation, CompoundTag> encoded) {
-        this.configs = configs;
-        this.compressed = compress(body(encoded));
+        this(configs, encoded, body(encoded));
+    }
+
+    private EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
+                                Map<ResourceLocation, CompoundTag> encoded, byte[] body) {
+        this(configs, encoded, body.length, compress(body));
+    }
+
+    private EyeConfigSyncPacket(Map<ResourceLocation, RuntimeConfigSet> configs,
+                                Map<ResourceLocation, CompoundTag> encoded, int bodySize, byte[] compressed) {
+        this.configs = Map.copyOf(configs);
+        this.encoded = Map.copyOf(encoded);
+        this.bodySize = bodySize;
+        this.compressed = compressed;
     }
 
     private static byte[] body(Map<ResourceLocation, CompoundTag> encoded) {
@@ -65,9 +79,14 @@ public class EyeConfigSyncPacket implements Payload {
         return output.toByteArray();
     }
 
-    /** The resolved eye definitions, by entity type. */
+    /** The resolved eye definitions, by entity type; read-only, values included. */
     public Map<ResourceLocation, RuntimeConfigSet> configs() {
         return configs;
+    }
+
+    /** {@link #configs} encoded through {@link RuntimeConfigSet#CODEC}; read-only. */
+    public Map<ResourceLocation, CompoundTag> encoded() {
+        return encoded;
     }
 
     @Override
@@ -93,13 +112,14 @@ public class EyeConfigSyncPacket implements Payload {
         }
         FriendlyByteBuf body = new FriendlyByteBuf(Unpooled.wrappedBuffer(decoded));
         try {
-            return readBody(body);
+            return readBody(body, compressed);
         } finally {
             body.release();
         }
     }
 
-    private static EyeConfigSyncPacket readBody(FriendlyByteBuf buffer) {
+    private static EyeConfigSyncPacket readBody(FriendlyByteBuf buffer, byte[] compressed) {
+        int bodySize = buffer.readableBytes();
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
@@ -127,26 +147,28 @@ public class EyeConfigSyncPacket implements Payload {
         if (buffer.isReadable()) {
             throw new DecoderException("Trailing eye config sync data");
         }
-        return new EyeConfigSyncPacket(configs, encoded);
+        return new EyeConfigSyncPacket(configs, encoded, bodySize, compressed);
     }
 
-    /** Refusal shared by reload and picker export, covering decoded work and transmitted bytes. */
+    /**
+     * Why clients would refuse this packet, or {@code null} if they accept it: the work its definitions ask of a
+     * client, then its decoded and transmitted sizes. Shared by reload and picker export, so an export is checked
+     * exactly as the reload it triggers will be.
+     */
     @Nullable
-    public static EyeConfigLimits.Issue sizeIssue(Map<ResourceLocation, CompoundTag> encoded) {
-        byte[] body = body(encoded);
-        int size = body.length;
+    public EyeConfigLimits.Issue refusal() {
+        EyeConfigLimits.Issue limits = EyeConfigLimits.validateSync(configs);
+        if (limits != null) {
+            return limits;
+        }
+        int size = bodySize;
         int limit = MAX_PAYLOAD_BYTES;
         if (size <= limit) {
-            size = wireSize(encoded);
+            size = compressed.length;
             limit = MAX_COMPRESSED_BYTES;
         }
         return size > limit ? new EyeConfigLimits.Issue("somegoogly.validation.sync_size",
                 List.of(size, limit), "Eye config sync size " + size + " exceeds " + limit + " bytes") : null;
-    }
-
-    /** The compressed packet size of {@code encoded}. */
-    public static int wireSize(Map<ResourceLocation, CompoundTag> encoded) {
-        return compress(body(encoded)).length;
     }
 
     @Override

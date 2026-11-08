@@ -5,13 +5,12 @@ import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -28,10 +27,11 @@ import java.util.UUID;
  * <p>Robustness, in layers:
  * <ul>
  *   <li><b>Live records</b> — one per editing player ({@link #FROZEN_BY_PLAYER}); freezing a new mob
- *       releases the player's previous one, logout ({@link #onPlayerLoggedOut}) releases it too, and
+ *       releases the player's previous one, logout ({@link #unfreeze}) releases it too, and
  *       server stop ({@link #onServerStopping}) restores everything synchronously before the final
  *       save. A mob already frozen by another player is refused, since a second capture would read the
- *       forced value as the original.</li>
+ *       forced value as the original. A frozen mob that converts into another ({@link #onConverted})
+ *       hands its record and marker to its replacement.</li>
  *   <li><b>Persistent marker</b> — {@link #PREV_NO_AI_TAG} on the mob holds the pre-picker value for
  *       as long as the freeze is live, so an autosave + hard crash (or the mob's chunk unloading
  *       mid-edit) can't strand the forced {@code NoAi}: on the mob's next join
@@ -52,8 +52,8 @@ public final class PickerFreezeService {
 
     private static final Map<UUID, FrozenRecord> FROZEN_BY_PLAYER = new HashMap<>();
 
-    /** One player's frozen mob: where it lives, which it is, and the NoAi value to give back. */
-    private record FrozenRecord(ResourceKey<Level> dim, UUID mobId, boolean prevNoAi) {
+    /** One player's frozen mob, and the NoAi value to give back. */
+    private record FrozenRecord(UUID mobId, boolean prevNoAi) {
     }
 
     private PickerFreezeService() {
@@ -61,20 +61,19 @@ public final class PickerFreezeService {
 
     /**
      * Freeze {@code mobId} in {@code level} for {@code playerId}, releasing any mob that player had
-     * frozen before. Returns localized error feedback when the mob is already being edited by someone
-     * else, or {@code null} on success — including the silent no-op cases (not found in this level, or
-     * not a {@link Mob}; non-mob living entities have no AI to freeze).
+     * frozen before. Returns localized error feedback, and keeps the player's current freeze, when the mob is
+     * already being edited by someone else; otherwise {@code null} — including the silent no-op cases (not
+     * found in this level, or not a {@link Mob}; non-mob living entities have no AI to freeze).
      */
     @Nullable
     public static Component freeze(ServerLevel level, UUID playerId, UUID mobId) {
-        unfreeze(level.getServer(), playerId); // release the player's previous mob, if any
-
         for (Map.Entry<UUID, FrozenRecord> entry : FROZEN_BY_PLAYER.entrySet()) {
-            if (entry.getValue().mobId().equals(mobId)) {
+            if (!entry.getKey().equals(playerId) && entry.getValue().mobId().equals(mobId)) {
                 return Component.translatable(
                         "somegoogly.command.picker.freeze_conflict", nameOf(level.getServer(), entry.getKey()));
             }
         }
+        unfreeze(level.getServer(), playerId); // release the player's previous mob, if any
 
         Entity entity = level.getEntity(mobId);
         if (!(entity instanceof Mob mob)) {
@@ -88,7 +87,7 @@ public final class PickerFreezeService {
         data.putBoolean(PREV_NO_AI_TAG, prevNoAi);
         mob.setNoAi(true);
         mob.setDeltaMovement(Vec3.ZERO);
-        FROZEN_BY_PLAYER.put(playerId, new FrozenRecord(level.dimension(), mobId, prevNoAi));
+        FROZEN_BY_PLAYER.put(playerId, new FrozenRecord(mobId, prevNoAi));
         return null;
     }
 
@@ -107,15 +106,41 @@ public final class PickerFreezeService {
         }
     }
 
+    /** The record's mob in whichever level it is in now, since it may have gone through a portal. */
     private static void restore(MinecraftServer server, FrozenRecord record) {
-        ServerLevel level = server.getLevel(record.dim());
-        Entity entity = level == null ? null : level.getEntity(record.mobId());
-        if (entity instanceof Mob mob) {
-            mob.setNoAi(record.prevNoAi());
-            EntityPersistentData.get(mob).remove(PREV_NO_AI_TAG);
+        for (ServerLevel level : server.getAllLevels()) {
+            if (level.getEntity(record.mobId()) instanceof Mob mob) {
+                mob.setNoAi(record.prevNoAi());
+                EntityPersistentData.get(mob).remove(PREV_NO_AI_TAG);
+                return;
+            }
         }
         // Not loaded (chunk unloaded mid-edit): the marker was saved with the mob, so onMobJoin
         // restores it on next load. A dead/removed mob simply has nothing to restore.
+    }
+
+    /**
+     * {@code source}, about to be replaced by {@code target} (lightning, curing, a mooshroom's shearing),
+     * hands its freeze to the replacement: vanilla carries the forced {@code NoAi} across but not the marker,
+     * and the record names the source's UUID, so otherwise the replacement could never be released. A
+     * replacement that isn't a {@link Mob} has no AI to hold, so the freeze simply ends.
+     */
+    public static void onConverted(LivingEntity source, LivingEntity target) {
+        UUID sourceId = source.getUUID();
+        for (Map.Entry<UUID, FrozenRecord> entry : FROZEN_BY_PLAYER.entrySet()) {
+            FrozenRecord record = entry.getValue();
+            if (!record.mobId().equals(sourceId)) {
+                continue;
+            }
+            if (target instanceof Mob mob) {
+                EntityPersistentData.get(mob).putBoolean(PREV_NO_AI_TAG, record.prevNoAi());
+                mob.setNoAi(true);
+                entry.setValue(new FrozenRecord(mob.getUUID(), record.prevNoAi()));
+            } else {
+                FROZEN_BY_PLAYER.remove(entry.getKey());
+            }
+            return;
+        }
     }
 
     /**
@@ -141,10 +166,6 @@ public final class PickerFreezeService {
         data.remove(PREV_NO_AI_TAG);
     }
 
-    /** The disappearing-client hook: a leaving player's frozen mob is always released. */
-    public static void onPlayerLoggedOut(ServerPlayer player) {
-        unfreeze(player.serverLevel().getServer(), player.getUUID());
-    }
 
     /**
      * Restore every frozen mob synchronously at server stop — before the final world save — so a

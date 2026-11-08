@@ -29,6 +29,6 @@ abstract class HeadItemRendererMixin {
     private void somegoogly$endItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack pose,
                                     MultiBufferSource bufferSource, int packedLight, int packedOverlay,
                                     CallbackInfo callback) {
-        SkullEyeRenderer.end();
+        SkullEyeRenderer.endItem(stack);
     }
 }

@@ -175,11 +175,6 @@ public final class ClientEyeRuntime {
         TRACKERS.clear();
     }
 
-    /** Forget every server-reported anger; call on client disconnect. */
-    public static void clearAnger() {
-        ANGRY.clear();
-    }
-
     /** The client-tick counter this runtime advances once per {@link #tick(Level, boolean)}. */
     public static int clientTicks() {
         return clientTicks;
@@ -220,7 +215,7 @@ public final class ClientEyeRuntime {
         if (tracker == null || !tracker.matches(helper)) {
             tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()), ClientEyeConfigs.behaviors());
             TRACKERS.put(living, tracker);
-            synchronizeBehavior(living, tracker, 0);
+            synchronizeBehavior(living, tracker);
         }
         return tracker;
     }
@@ -253,7 +248,7 @@ public final class ClientEyeRuntime {
     /** Forget simulations and anger when the client replaces or unloads its level. */
     public static void onLevelChanged() {
         clear();
-        clearAnger();
+        ANGRY.clear();
         BEHAVIORS.clear();
         HELD.reset();
         simulationTicks = 0;
@@ -283,7 +278,7 @@ public final class ClientEyeRuntime {
         BEHAVIORS.put(living, new ReceivedBehavior(behavior, duration, seed, simulationTicks - elapsed));
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker != null) {
-            synchronizeBehavior(living, tracker, 0);
+            synchronizeBehavior(living, tracker);
         }
     }
 
@@ -337,7 +332,7 @@ public final class ClientEyeRuntime {
         }
     }
 
-    private static void synchronizeBehavior(LivingEntity living, GooglyTracker tracker, int ageOffset) {
+    private static void synchronizeBehavior(LivingEntity living, GooglyTracker tracker) {
         ReceivedBehavior received = BEHAVIORS.get(living);
         if (received == null) {
             return;
@@ -350,12 +345,10 @@ public final class ClientEyeRuntime {
             return;
         }
         if (tracker.receivedBehavior != received) {
-            tracker.active = null;
-            tracker.startBehavior(received.behavior(), received.duration(), received.seed(), (int) elapsed);
+            tracker.install(received.behavior(), received.duration(), received.seed(), (int) elapsed);
             tracker.receivedBehavior = received;
-        }
-        if (tracker.active != null) {
-            tracker.active.age = (int) elapsed + ageOffset;
+        } else if (tracker.active != null) {
+            tracker.active.age = (int) elapsed;
         }
     }
 
@@ -382,7 +375,7 @@ public final class ClientEyeRuntime {
                 (pos, eyes) -> eyes.tick(level.getGameTime(), behaviors));
         sweep(TRACKERS, clientTicks, tracker -> tracker.lastRenderTick, (living, tracker) -> false,
                 (living, tracker) -> {
-                    synchronizeBehavior(tracker.parent, tracker, -1);
+                    synchronizeBehavior(tracker.parent, tracker);
                     tracker.update(behaviors);
                 });
     }
@@ -393,7 +386,7 @@ public final class ClientEyeRuntime {
     }
 
     /** Advance received expression time once per unpaused simulation tick, even for unrendered entities. */
-    public static void tickBehaviors() {
+    private static void tickBehaviors() {
         simulationTicks++;
         BEHAVIORS.entrySet().removeIf(entry -> {
             boolean expired = simulationTicks - entry.getValue().startedAt() >= entry.getValue().duration();

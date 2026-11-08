@@ -2,14 +2,15 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as long
  * as its model lives, so a datapack reload never clears anything here; {@link #clear()} drops every entry
- * when models are replaced. Keys are weak, but an entry whose value refers back to its own model (Citadel
- * and LLibrary boxes) is reclaimed only by {@link #clear()}.
+ * when models are replaced, which is also the only way an entry goes. Models are matched by identity: the
+ * cached values are parts of that very instance, and GeckoLib's baked models are records that compare equal
+ * to any model of the same structure, including the one a resource reload replaces.
  *
  * <p>Client main thread only.
  *
@@ -26,10 +27,7 @@ public final class ModelMemo<K, V> {
         V resolve(K model, String token);
     }
 
-    // Weak keys reclaim an entry once its model dies, unless the cached value reaches back to the model:
-    // vanilla ModelParts and GeckoLib GeoBones cannot, but Citadel's AdvancedModelBox and LLibrary's
-    // AdvancedModelRenderer hold a field pointing at their model, which pins the key.
-    private final Map<K, Map<String, V>> byModel = new WeakHashMap<>();
+    private final Map<K, Map<String, V>> byModel = new IdentityHashMap<>();
 
     /** Drop every entry. Called when the models being keyed on are replaced wholesale. */
     public void clear() {

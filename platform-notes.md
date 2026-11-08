@@ -33,6 +33,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `LivingEntity.hurt` returns false on the client before `actuallyHurt`, and the client's trade menu uses `ClientSideMerchant`, not an `AbstractVillager`. [recalled]
 - `ItemStack.isSameItemSameTags` is the 1.20.1 name; later versions need the component equivalent. [tested on 1.20.1]
 - The name of `DamageSource.isDirect` appears to differ between release lines. [recalled]
+- `DamageSources.thorns(wearer)` names the wearer as both causing and direct entity; a player's melee hit is the `PLAYER_ATTACK` damage type. [recalled]
+- Tamable animals and horses broadcast `EntityEvent.TAMING_SUCCEEDED` when tamed. [recalled]
 
 ### Data and block entities
 
@@ -56,6 +58,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: `LivingDamageEvent` fires from both `actuallyHurt` implementations. `LivingHealEvent` fires before the heal. [tested]
 - 1.20.1: `ForgeEventFactory.onLivingConvert` is patched into the hand-built lightning conversions, so `LivingConversionEvent` covers them. [tested]
 - 1.20.1: `TradeWithVillagerEvent` is posted from `AbstractVillager.notifyTrade`. [tested]
+- 1.20.1: `ModConfigEvent.Reloading` fires on the config file watcher's thread, not the server thread. [recalled]
+- 1.20.1: `LivingConversionEvent.Post` is posted when a tadpole grows into a frog. [recalled, unverified]
 - 1.20.1: `onPlayerDestroyItem` is called from `Player.interactOn` and similar callers, not `hurtAndBreak`. A cancelled interaction that breaks a tool must call it itself. [tested]
 - 1.20.1: `RightClickBlock` fires before vanilla's spectator check; so does `EntityInteractSpecific`. [recalled]
 - 1.20.1: `EntityInteractSpecific` fires before an armor stand's own `interactAt`. [tested]
@@ -76,6 +80,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `getAttachedOrCreate` on a persistent attachment makes a read write to the save. Use `getAttached` for reads. [tested]
 - For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
+- `BuiltinItemRendererRegistry` renders a registered item from a cancelling `HEAD` injection into `BlockEntityWithoutLevelRenderer.renderByItem`, so another mod's `RETURN` injection there never runs for that item. [recalled]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
 
 ## Mixin
@@ -97,3 +102,4 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
+- GeckoLib 4: the entity compile-render-layers event fires for every `GeoEntityRenderer`, non-living entities included. `BakedGeoModel` is a record and `GeoBone` defines `equals`, so two baked models of the same structure compare equal; key caches by identity. [recalled]

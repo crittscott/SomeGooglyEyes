@@ -126,9 +126,15 @@ public final class SkullEyeRenderer {
         DRAWS.push(new DrawContext(skull, null, partialTick));
     }
 
-    /** A head item's draw starts; any other item's draw is ignored, since it never reaches {@link #render}. */
+    /**
+     * An item's draw starts; only a head item's is recorded, since no other reaches {@link #render}. Other mods'
+     * built-in item renderers may end the draw early without its matching {@link #endItem}, so an unrecorded
+     * item must leave nothing behind.
+     */
     public static void beginItem(ItemStack stack) {
-        DRAWS.push(new DrawContext(null, stack, 0F));
+        if (SkullEyeState.entityFor(stack) != null) {
+            DRAWS.push(new DrawContext(null, stack, 0F));
+        }
     }
 
     /** Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models. */
@@ -136,9 +142,17 @@ public final class SkullEyeRenderer {
         PLACEMENTS.clear();
     }
 
-    /** The placed head's or head item's draw ends. */
+    /** The placed head's draw ends. */
     public static void end() {
         DRAWS.pop();
+    }
+
+    /** The draw {@link #beginItem} began for {@code stack} ends; it recorded nothing for any item but a head. */
+    public static void endItem(ItemStack stack) {
+        DrawContext top = DRAWS.peek();
+        if (top != null && top.item() == stack) {
+            DRAWS.pop();
+        }
     }
 
     /**

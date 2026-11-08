@@ -14,7 +14,7 @@ Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Lo
 
 ## Mobs with eyes
 
-Eligible mobs default to a 5 percent chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death, by shearing them off themselves, or to another player's Optometrist shears where that player could hurt them. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
+Eligible mobs default to a 5% chance of eyes at spawn. Players receive eyes only from a Slimy Eye, and lose them on death, by shearing them off themselves, or to another player's Optometrist shears where that player could hurt them. The ender dragon is excluded. Converted mobs and players leaving the End keep their eyes.
 
 A mob must have an enabled eye definition for its type and current life stage. A baby without a baby definition may gain eyes when it becomes an adult.
 
@@ -27,7 +27,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
 - sheared (sheep): bulge;
-- showing affection (love mode, villager breeding, golem flowers, ocelot trust): pupils swell;
+- showing affection (love mode, villager breeding, golem flowers, ocelot trust, taming): pupils swell;
 - completing a villager or wandering-trader trade: swirl;
 - healed, when the heal restores health: swirl, 200-tick default cooldown.
 
@@ -64,9 +64,9 @@ Modifiers may be applied in successive crafting operations. Googly Eyes have no 
 
 Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
 
-An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
+An eyed mob or one without a definition for its current life stage refuses the item, and the click acts as usual. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a normal melee hit's worth of health, even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost you a bare-handed hit's worth of health even where PvP is off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 

@@ -22,7 +22,8 @@ abstract class TwilightHeadItemRendererMixin {
     }
 
     @Inject(method = {"renderByItem", "m_108829_"}, at = @At("RETURN"))
-    private void somegoogly$end(CallbackInfo callback) {
-        SkullEyeRenderer.end();
+    private void somegoogly$end(ItemStack stack, ItemDisplayContext display, PoseStack pose,
+                               MultiBufferSource buffers, int light, int overlay, CallbackInfo callback) {
+        SkullEyeRenderer.endItem(stack);
     }
 }

@@ -109,9 +109,6 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(PickerInput.LOCK);
-        event.register(PickerInput.PART_NEXT);
-        event.register(PickerInput.PART_PREV);
-        event.register(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(event::register);
     }
 }

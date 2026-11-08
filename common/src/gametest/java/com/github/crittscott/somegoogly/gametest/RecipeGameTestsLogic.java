@@ -82,12 +82,14 @@ public final class RecipeGameTestsLogic {
 
     /**
      * A cobweb clears every appearance override. In game: craft a Googly Eye with red dye, then craft the
-     * result with a cobweb; the new eye's tooltip lists no colors or glow.
+     * result with a cobweb; the new eye's tooltip lists no colors or glow, and it stacks with a plain Googly Eye.
      */
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
         ItemStack tinted = GooglyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(1F, 0F, 0F)), 1);
         ItemStack result = craftWithModifier(helper, grid(tinted, new ItemStack(Items.COBWEB)));
         helper.assertTrue(EyeItemProperties.get(result).isEmpty(), "cobweb should clear every override");
+        helper.assertTrue(ItemStack.isSameItemSameTags(result, new ItemStack(result.getItem())),
+                "a cleared eye should stack with one that never had an appearance");
         helper.succeed();
     }
 

@@ -53,7 +53,7 @@ public final class HandItemEyeGameTestsLogic {
         var camera = new Quaternionf().rotationYXZ(-yaw, pitch, 0F);
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
         var viewPose = new Matrix3f().rotationX(pitch).rotateY(yaw + (float) Math.PI).mul(localToWorld);
-        var rotated = new PresentationEyes(FIRST);
+        var rotated = PresentationEyes.create(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
         rotated.eye.capturePose(viewPose, camera);
         helper.assertTrue(Math.abs(rotated.eye.gravX - 1F) < PHYSICS_TOLERANCE
                         && Math.abs(rotated.eye.gravY) < PHYSICS_TOLERANCE,
@@ -67,7 +67,7 @@ public final class HandItemEyeGameTestsLogic {
         }
         helper.assertTrue(rotated.eye.deltaX > 0.5F && Math.abs(rotated.eye.deltaY) < 0.1F,
                 "the pupil falls along projected world-down");
-        var horizontal = new PresentationEyes(FIRST);
+        var horizontal = PresentationEyes.create(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
         horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), null);
         helper.assertTrue(Math.abs(horizontal.eye.gravX) < PHYSICS_TOLERANCE
                         && Math.abs(horizontal.eye.gravY) < PHYSICS_TOLERANCE,
@@ -198,7 +198,7 @@ public final class HandItemEyeGameTestsLogic {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
         LivingEntity firstHolder = holder(helper, FIRST);
         var eye = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
-        BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
+        BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
         BehaviorSettings blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK),
                 0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
         cache.tick(1L, true, blink);
@@ -225,7 +225,7 @@ public final class HandItemEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
             LivingEntity firstHolder = holder(helper, FIRST);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
@@ -237,7 +237,7 @@ public final class HandItemEyeGameTestsLogic {
                     helper.assertTrue(pupil.itemGravity && !pupil.guiGravity, "each head pupil uses world gravity");
                 }
             }
-            BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
+            BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
             BehaviorSettings cross = new BehaviorSettings(true, 200, 200, List.of(EyeBehavior.CROSS_EYE),
                     0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
             boolean played = false;

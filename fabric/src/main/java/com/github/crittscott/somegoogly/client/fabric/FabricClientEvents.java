@@ -56,10 +56,7 @@ public final class FabricClientEvents {
                     }
                 });
 
-        KeyBindingHelper.registerKeyBinding(PickerInput.LOCK);
-        KeyBindingHelper.registerKeyBinding(PickerInput.PART_NEXT);
-        KeyBindingHelper.registerKeyBinding(PickerInput.PART_PREV);
-        KeyBindingHelper.registerKeyBinding(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(KeyBindingHelper::registerKeyBinding);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             ClientEyeRuntime.onEntityRemoved(entity);

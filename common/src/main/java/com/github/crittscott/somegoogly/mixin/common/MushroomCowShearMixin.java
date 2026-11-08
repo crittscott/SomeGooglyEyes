@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common;
 
-import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
  * Shearing a mooshroom builds its replacement cow by hand rather than through {@code Mob#convertTo}, so neither
- * loader's mob-conversion event fires for it. This copies the mooshroom's eyes onto that cow as it is added to the
- * level, as the conversion listeners do for every other conversion. Forge's shearing may spawn the cow from its
+ * loader's mob-conversion event fires for it. This hands the mooshroom's eyes (and any picker freeze) to that cow as it is
+ * added to the level, as the conversion listeners do for every other conversion. Forge's shearing may spawn the cow from its
  * shared {@code shearInternal} helper rather than {@code shear} itself, so both are targeted; the helper doesn't
  * exist on Fabric.
  */
@@ -22,7 +22,7 @@ abstract class MushroomCowShearMixin {
             target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
     private Entity somegoogly$keepEyesOnShear(Entity spawned) {
         if (spawned instanceof Cow cow) {
-            EyeState.copy((MushroomCow) (Object) this, cow);
+            ServerServices.onConverted((MushroomCow) (Object) this, cow);
         }
         return spawned;
     }

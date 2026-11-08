@@ -8,7 +8,6 @@ import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
@@ -70,7 +69,7 @@ public final class ServerServices {
     public static void broadcastEyeSyncIfChanged(MinecraftServer server) {
         if (sentEyeConfigs != ServerEyeConfigs.all()) {
             sentEyeConfigs = ServerEyeConfigs.all();
-            Networking.sendToAll(server, eyeConfigPacket());
+            Networking.sendToAll(server, ServerEyeConfigs.packet());
         }
         EyeSettingsPacket settings = settingsPacket();
         if (!settings.equals(sentSettings)) {
@@ -79,15 +78,20 @@ public final class ServerServices {
         }
     }
 
-    private static EyeConfigSyncPacket eyeConfigPacket() {
-        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded());
+    /**
+     * Minecraft is replacing {@code source} with {@code target} (a mob conversion): carry the eye state and any
+     * picker freeze across. Every loader conversion hook calls this.
+     */
+    public static void onConverted(LivingEntity source, LivingEntity target) {
+        EyeState.copy(source, target);
+        PickerFreezeService.onConverted(source, target);
     }
 
     /**
      * Initialize persistent eye state once for a server-side living entity, then reconcile any picker
      * freeze marker after that state is available. A player joining a level (login, respawn, dimension
-     * change) gets their own snapshot: their client has just built a fresh local player, and a player is
-     * never their own tracker, so the start-tracking sync doesn't cover them.
+     * change) gets their own snapshot and becomes a watcher of their own eyes: their client has just built a
+     * fresh local player, and a player is never their own tracker, so the start-tracking path covers neither.
      */
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EyeState.isInitialized(living)) {
@@ -95,16 +99,33 @@ public final class ServerServices {
         }
         if (living instanceof ServerPlayer player) {
             EyeState.sendTo(player, player);
+            ServerBehaviorScheduler.onPlayerJoined(player);
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);
         }
     }
 
-    /** Release all per-player picker state when a server player leaves. */
+    /**
+     * Minecraft replaced {@code original} with {@code replacement} on respawn ({@code alive} false) or on
+     * leaving the End ({@code alive} true). Eyes applied to a player carry over only when alive; either way the
+     * original stops watching its own eyes.
+     */
+    public static void onPlayerCloned(ServerPlayer original, ServerPlayer replacement, boolean alive) {
+        if (alive) {
+            EyeState.copy(original, replacement);
+        }
+        ServerBehaviorScheduler.onPlayerLeft(original);
+    }
+
+    /**
+     * Release all per-player state when a server player leaves; a leaving player's frozen mob is always
+     * released, since their client can no longer do it.
+     */
     public static void onPlayerLeft(ServerPlayer player) {
-        PickerFreezeService.onPlayerLoggedOut(player);
+        PickerFreezeService.unfreeze(player.serverLevel().getServer(), player.getUUID());
         PickerGate.onPlayerLeft(player.getUUID());
+        ServerBehaviorScheduler.onPlayerLeft(player);
     }
 
     /** Record the settings that decide who gets eyes, once at startup and whenever they change. */
@@ -161,7 +182,7 @@ public final class ServerServices {
             sentEyeConfigs = ServerEyeConfigs.all();
             sentSettings = settings;
         }
-        Networking.sendToPlayer(player, eyeConfigPacket());
+        Networking.sendToPlayer(player, ServerEyeConfigs.packet());
         Networking.sendToPlayer(player, settings);
     }
 }

@@ -215,7 +215,7 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
+     * The eye-definition sync survives the wire, and a full modpack's set fits its budgets. No in-game form;
      * guards that joining clients draw the same eyes the server's datapacks define.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
@@ -225,8 +225,6 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket::read, packet, "EyeConfigSyncPacket");
         helper.assertTrue(decoded.configs().size() == 1, "the definitions should survive the round-trip");
-        helper.assertTrue(bytes(helper, packet).length == EyeConfigSyncPacket.wireSize(encoded),
-                "the reload budget must measure the packet exactly");
 
         Map<ResourceLocation, RuntimeConfigSet> large = new HashMap<>();
         for (int i = 0; i < 1_200; i++) {
@@ -237,11 +235,12 @@ public final class SerializationGameTestsLogic {
         Map<ResourceLocation, CompoundTag> largeEncoded = ServerEyeConfigs.encode(large);
         helper.assertTrue(EyeConfigLimits.validateSync(large) == null,
                 "4,800 eyes must fit the shared work budget");
-        helper.assertTrue(EyeConfigSyncPacket.sizeIssue(largeEncoded) == null,
+        EyeConfigSyncPacket largePacket = new EyeConfigSyncPacket(large, largeEncoded);
+        helper.assertTrue(largePacket.refusal() == null,
                 "a full modpack's definitions must fit the decoded and compressed size budgets");
         FriendlyByteBuf largeWire = buffer(helper);
         try {
-            new EyeConfigSyncPacket(large, largeEncoded).write(largeWire);
+            largePacket.write(largeWire);
             EyeConfigSyncPacket largeDecoded = EyeConfigSyncPacket.read(largeWire);
             // Entity-map iteration order is not part of the protocol; it can change the compressed bytes.
             helper.assertTrue(ServerEyeConfigs.encode(largeDecoded.configs()).equals(largeEncoded),

@@ -73,12 +73,18 @@ public final class EyeItemProperties {
         return AppearanceOverride.fromNbt(stack.getTagElement(TAG_EYE_PROPERTIES));
     }
 
-    /** Store {@code properties} on the stack; an empty override removes the compound. */
+    /**
+     * Store {@code properties} on the stack; an empty override removes the compound, and the stack's tag too when
+     * nothing else is left in it, so the eye stacks with one that never had an appearance.
+     */
     public static void set(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
                 tag.remove(TAG_EYE_PROPERTIES);
+                if (tag.isEmpty()) {
+                    stack.setTag(null);
+                }
             }
         } else {
             stack.getOrCreateTag().put(TAG_EYE_PROPERTIES, properties.toNbt());

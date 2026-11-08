@@ -64,6 +64,11 @@ public final class ForgeServerConfig {
         return () -> copies.forEach(Runnable::run);
     }
 
+    private static void applyValues() {
+        COPY_VALUES.run();
+        ServerServices.onServerConfigApplied();
+    }
+
     /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
     public static void register(FMLJavaModLoadingContext context) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
@@ -78,12 +83,16 @@ public final class ForgeServerConfig {
             ServerConfig.resetDefaults();
             return;
         }
-        COPY_VALUES.run();
-        ServerServices.onServerConfigApplied();
-        // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
+        // A reload arrives off the server thread from the file watcher, and can find clients connected, so the
+        // whole change is handed to the server thread: no tick sees it half copied.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
-            server.execute(() -> ServerServices.broadcastEyeSyncIfChanged(server));
+            server.execute(() -> {
+                applyValues();
+                ServerServices.broadcastEyeSyncIfChanged(server);
+            });
+        } else {
+            applyValues();
         }
     }
 }

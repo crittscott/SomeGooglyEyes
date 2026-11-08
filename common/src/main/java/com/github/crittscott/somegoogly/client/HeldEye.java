@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -48,7 +49,7 @@ public final class HeldEye {
     private final RandomSource rand = RandomSource.create();
 
     /** Whether {@code entity} holds a Googly Eye in either hand. */
-    public static boolean holdsGooglyEye(LivingEntity entity) {
+    private static boolean holdsGooglyEye(LivingEntity entity) {
         return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
                 || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
     }
@@ -108,7 +109,8 @@ public final class HeldEye {
      * {@code settings}, and step the pupil with the behavior folded in.
      */
     public void tick(@Nullable LivingEntity holder, BehaviorSettings settings) {
-        if (holder == null || !holdsGooglyEye(holder)) {
+        // Eyes switched off (by the server or the client) leave a plain, unanimated eye in hand.
+        if (holder == null || !ClientEyeConfigs.eyesVisible() || !holdsGooglyEye(holder)) {
             reset();
             return;
         }

@@ -23,7 +23,7 @@ public final class Resolvers {
 
     // Which resolver handles a given model instance never changes for that instance's life, and the
     // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
-    // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
+    // alone are enough here (nothing in the values pins a stale model alive).
     private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
 
     private static final EyeAttachmentResolver FALLBACK = new ChildMapResolver();
@@ -43,8 +43,7 @@ public final class Resolvers {
     /**
      * Drop every model-keyed cache. Call when the models themselves are replaced — a client resource
      * reload rebuilds each renderer and its model, so every cached part, box, and chain then points into
-     * a dead model. Weak keys alone are not enough: a Citadel/LLibrary box holds its model, so those
-     * entries keep their own key alive (see {@link ModelMemo}).
+     * a dead model, and {@link ModelMemo} entries go only here.
      */
     public static void clearCaches() {
         ATTACHMENTS.clear();
