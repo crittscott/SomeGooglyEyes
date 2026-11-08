@@ -2,6 +2,8 @@
 
 Rules for writing code, organized by what you are doing. Apply them while writing; they are not a final audit. Facts about particular Minecraft versions and loaders are in `platform-notes.md`, and API names used here as examples may differ on your version.
 
+Read code-review-decisions.md before applying a general rule to accepted behavior. Do not turn a deliberate exception into cleanup work.
+
 ## Adding a variant of something that exists
 
 - Before writing the new one, read its siblings. The usual way a mod rots is that each new surface, mob family, or setting copies the last one.
@@ -35,7 +37,8 @@ Rules for writing code, organized by what you are doing. Apply them while writin
 - Do not throw for a case that would otherwise harmlessly do nothing, least of all on a render or send path.
 - Do not wrap an API that reports failure by return value in try/catch.
 - Catch the narrowest exceptions that can occur: `ReflectiveOperationException | LinkageError` around reflection, never `Throwable`. Do not use a caught exception as a type test.
-- A per-item catch in a batch load is fine, so one bad file cannot fail the whole reload. Log which item failed.
+- A per-item catch in a batch load is fine, so one bad file cannot fail the whole reload. Log which item failed. Likewise, a recoverable model or attachment failure must not disable every model in its library family.
+- Trust our code and platform and mod contracts unless the relevant behavior is known to be unreliable or unguaranteed. Guard actual boundaries, including filesystem and reflection failures; do not invent speculative failure paths. Network peers remain untrusted.
 - Do not suppress deprecation or removal warnings. Move to the replacement.
 
 ## Removing what is not needed
@@ -44,12 +47,13 @@ Rules for writing code, organized by what you are doing. Apply them while writin
 - No function that only forwards to one other call. Exceptions: forced platform bridges, overloads that supply a default to several callers, and one-line event adapters.
 - Each type has one decoding entry point, not a static factory beside a private constructor doing the same job.
 - Do not write a branch the caller already excludes, and do not document behavior no production path can reach.
-- When porting, delete what the target version cannot use, including data for content that does not exist in it. Do not keep it to shrink the diff between versions.
+- When porting, delete runtime hooks and abstractions the target cannot use. Shared cross-version build machinery and the accepted bundled eye-definition labels and placements are exceptions; do not remove or retag them solely to make the checkout look version-pure.
 
 ## Values and text
 
 - Name a value when it is tunable, shared, or not obvious from context. A fixed platform fact that reads naturally where it stands, such as 16 pixels per block, may stay literal.
 - Declare a shared value once, and derive from vanilla's constant when one exists. Do not tie two values to one constant because they happen to be equal today.
+- The held/item iris scale is an independent fixed visual choice; do not make it track mob-eye defaults. Keep the shared conservative packet-framing reserve rather than splitting limits to recover one byte.
 - Name sentinel values. Use an enum, not integers, for a closed set.
 - Use imports, not fully qualified names, except in reflective strings, Mixin targets, and javadoc links.
 - Format any number a player may read or paste with `Locale.ROOT`, through one helper. Command arguments do not parse a comma decimal.
@@ -75,6 +79,9 @@ Rules for writing code, organized by what you are doing. Apply them while writin
 - Check the version in one place, and make a mismatch say so rather than look like a missing mod.
 
 ## Commands
+
+- Keep /sg as the only command root, with the client/server routing it needs. Favor a simpler player interface even when the code is more complicated.
+- Visual authoring and admin commands may require a player looking at the target. Do not add selectors or server-console support merely for conventionality.
 
 - `requires` tests stable permission only. Check mutable state, such as game mode, at execution, with a real failure message.
 - Report through `sendSuccess` and `sendFailure`. Return 0 on failure and a count on success, so `execute store` and command blocks read the truth.
@@ -104,7 +111,7 @@ Rules for writing code, organized by what you are doing. Apply them while writin
 ## Tests
 
 - Drive the real hook, not the service behind it. A test that calls the service cannot catch a hook that never fires.
-- Cover the trigger on each loader, including the targets a hook is likely to miss, such as players and babies.
+- Cover the trigger on each loader, including the targets a hook is likely to miss, such as players and babies. The disabled eyed-head test and manual Fabric protection-ordering checks are explicit exceptions in code-review-decisions.md; leave them as they are.
 - Build the expected value independently. A test built on the same model as the code passes on the same mistake.
 - Do not test a path production cannot reach.
 - A permission or gate needs a test in both directions, with a second player where relevant.
@@ -118,7 +125,7 @@ Rules for writing code, organized by what you are doing. Apply them while writin
 
 - Package names must be true. Client-only code lives under `client`, loader code in a package named for its loader, and nothing in a `server` package runs on the client.
 - Matching files on each loader follow one naming scheme, so one name predicts the other.
-- Code that only one loader calls lives in that loader, not in common.
+- Loader-only adapters belong in that loader. Optional integration support may stay in common when it shares the existing pipeline; the accepted Twilight Forest, Heads, and Citadel support is not a placement defect.
 - Use the build layout the toolchain expects. A custom source root needs a reason a build would fail without it.
 
 ## Member ordering
