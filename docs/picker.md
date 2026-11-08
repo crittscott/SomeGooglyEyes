@@ -57,6 +57,8 @@ Both act on the live server mob (feedback comes back as a server message). Not t
 
 `/sg spawn <type>` spawns a single mob at the block you're targeting.
 
+Each mob and passenger is inserted individually, with the insertion call's result deciding acceptance. Root and passenger refusals have distinct diagnostics. If insertion fails or throws, previously accepted members are discarded in reverse order; members never accepted are left alone. Immediate UUID lookup visibility does not decide acceptance. Planned platforms, roofs, and basins are written, and the grid column advances, only after the whole group is accepted. The distant-grid regression is registered on all three loaders; Forge and NeoForge also cover surviving rider chains and rollback after a later rider is refused.
+
 ### The (dangerous) spawn grid
 
 `/sg spawnall [mod]` **spawns one of every summonable living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). **Only run this on a test or throwaway world.** It freely overwrites blocks, and forcing a mob to spawn outside its mod's normal context — MineColonies' and Create's mobs are known cases — can corrupt or destabilize the world. Never run it on a shared or otherwise valuable server.
