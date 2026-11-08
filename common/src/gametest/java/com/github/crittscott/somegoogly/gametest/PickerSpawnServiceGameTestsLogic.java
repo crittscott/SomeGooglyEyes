@@ -46,6 +46,8 @@ public final class PickerSpawnServiceGameTestsLogic {
         float originalPitch = player.getXRot();
         List<String> excluded = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
         List<String> excludedMods = ServerConfig.SPAWN_EXCLUDED_MODS.get();
+        BlockPos origin = helper.absolutePos(new BlockPos(4096, 128, 0));
+        BlockState originalSupport = helper.getLevel().getBlockState(origin.below());
         try {
             List<String> otherTypes = new ArrayList<>();
             BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
@@ -55,8 +57,9 @@ public final class PickerSpawnServiceGameTestsLogic {
             });
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
+            // The distant position is outside the empty structure; establish platform mode explicitly.
+            helper.getLevel().setBlockAndUpdate(origin.below(), Blocks.AIR.defaultBlockState());
             // Move the command's player reference, without a connected player loading this distant area.
-            BlockPos origin = helper.absolutePos(new BlockPos(4096, 128, 0));
             player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
             helper.assertTrue(helper.getLevel().getBlockState(origin.below()).isAir(),
                     "the distant command origin must select platform mode");
@@ -68,6 +71,7 @@ public final class PickerSpawnServiceGameTestsLogic {
                         "each accepted candidate must receive its own platform at " + floor);
             }
         } finally {
+            helper.getLevel().setBlockAndUpdate(origin.below(), originalSupport);
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
             player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
