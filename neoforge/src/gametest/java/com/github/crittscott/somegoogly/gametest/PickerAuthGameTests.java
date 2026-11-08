@@ -1,8 +1,12 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -26,20 +30,48 @@ public final class PickerAuthGameTests {
     private PickerAuthGameTests() {
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
-                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.bulkSpawnContinuesBeyondNearbyChunks(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
+    private static void checkRiderInsertion(GameTestHelper helper, boolean refuseLast) {
+        List<Entity> members = new ArrayList<>();
+        Consumer<FinalizeSpawnEvent> riders = event -> {
+            if (event.getEntity().getType() == EntityType.COW && members.isEmpty()) {
+                PickerSpawnServiceGameTestsLogic.addCommandRiders(helper, event.getEntity(), members);
+            }
+        };
+        Consumer<EntityJoinLevelEvent> refusal = event -> {
+            if (refuseLast && members.size() == 3 && event.getEntity() == members.get(2)) {
+                event.setCanceled(true);
+            }
+        };
+        NeoForge.EVENT_BUS.addListener(riders);
+        NeoForge.EVENT_BUS.addListener(refusal);
+        try {
+            PickerSpawnServiceGameTestsLogic.bulkSpawnRiderInsertion(
+                    helper, FakePlayerFactory.getMinecraft(helper.getLevel()), members, refuseLast);
+        } finally {
+            NeoForge.EVENT_BUS.unregister(refusal);
+            NeoForge.EVENT_BUS.unregister(riders);
+        }
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
         PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -82,7 +114,19 @@ public final class PickerAuthGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+    public static void refusedRiderLeavesTerrain(GameTestHelper helper) {
+        checkRiderInsertion(helper, true);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void riderChainSurvivesInsertion(GameTestHelper helper) {
+        checkRiderInsertion(helper, false);
+        helper.succeed();
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void spawnAllHasAServerWideCooldown(GameTestHelper helper) {
+        PickerAuthGameTestsLogic.spawnAllHasAServerWideCooldown(helper);
     }
 }

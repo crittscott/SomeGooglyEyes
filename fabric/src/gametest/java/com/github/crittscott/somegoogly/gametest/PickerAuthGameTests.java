@@ -13,6 +13,11 @@ public final class PickerAuthGameTests implements FabricGameTest {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
+    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.bulkSpawnContinuesBeyondNearbyChunks(helper, FakePlayer.get(helper.getLevel()));
+    }
+
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void pickerRequestsThrottlePerTick(GameTestHelper helper) {
         PickerAuthGameTestsLogic.pickerRequestsThrottlePerTick(

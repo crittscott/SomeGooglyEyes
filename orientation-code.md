@@ -82,7 +82,7 @@ Networking bridges use `@ExpectPlatform`; clientbound lambdas isolate `ClientNet
 
 Client picker drafts/previews are separate from server freezing/spawning/movement/export. `PickerState.DraftSession` keeps species/age drafts; export-all replaces adult and baby separately. `ModelPartVocabulary` shares attachment grammar between editing and export.
 
-`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization, throttles, and picker feedback. `PickerSpawnService` finalizes through `MobSpawning`, inserts each entity/passenger with checked results, discards partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. Exports write a world datapack or game-directory files and log disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
+`PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization, throttles, and picker feedback. `PickerSpawnService` finalizes through `MobSpawning`, checks individual insertion results, reverses partial additions on failure, and applies terrain only after full acceptance. Its `refusal` also filters suggestions. Exports write a world datapack or game-directory files and log disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
 
 `/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `GooglyServerCommands.SERVER_BRANCHES`.
 
@@ -94,7 +94,7 @@ NeoForge and Forge keep client bootstrap apart from the dedicated server's.
 
 ## Automated verification
 
-GameTest scenarios: Fabric 200, Forge 199, NeoForge 204, including thirteen shared boat scenarios per loader. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/*-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
+GameTest scenarios: Fabric 201, Forge 202, NeoForge 207, including thirteen shared boat scenarios per loader. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/*-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
 
 ## Operational boundaries
 
