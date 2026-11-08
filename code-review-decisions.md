@@ -13,6 +13,7 @@ Settled review policy and accepted behavior for this project. Read this before r
 
 - Manual play-testing uses MultiMC, not the development runServer environment. The GameTest development world is disposable and may be deleted by the test helper.
 - Keep build environments as close across Minecraft versions as reasonable. Inactive cross-version Gradle branches, plugin declarations, pack-format fields, and separate Mixin Java settings are acceptable consequences.
+- Keep `pack.mcmeta` in common. Each Forge-family module copies it into its own resources and de-duplicates it in `shadowJar`, so no loader module carries a hand-maintained copy. Do not propose moving it into the loader modules.
 - Keep optional lightning-conversion injections in their existing shared Mixin; splitting them solely to make every injection required is unnecessary.
 
 ## Commands and player experience
