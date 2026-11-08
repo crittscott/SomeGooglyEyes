@@ -133,6 +133,9 @@ public final class SomeGooglyGameTestMod {
         functions.register("heldeyegametests/held_eye_resets_when_put_away", () -> HeldEyeGameTests::heldEyeResetsWhenPutAway);
         functions.register("heldeyegametests/held_eye_swirls_when_healed", () -> HeldEyeGameTests::heldEyeSwirlsWhenHealed);
         functions.register("heldeyegametests/held_eye_winks_alone", () -> HeldEyeGameTests::heldEyeWinksAlone);
+        functions.register("pickerauthgametests/bulk_spawn_continues_beyond_nearby_chunks", () -> PickerAuthGameTests::bulkSpawnContinuesBeyondNearbyChunks);
+        functions.register("pickerauthgametests/rider_chain_survives_insertion", () -> PickerAuthGameTests::riderChainSurvivesInsertion);
+        functions.register("pickerauthgametests/refused_rider_leaves_terrain", () -> PickerAuthGameTests::refusedRiderLeavesTerrain);
         functions.register("pickerauthgametests/entity_targeting_stops_at_walls", () -> PickerAuthGameTests::entityTargetingStopsAtWalls);
         functions.register("pickerauthgametests/picker_requests_throttle_per_tick", () -> PickerAuthGameTests::pickerRequestsThrottlePerTick);
         functions.register("pickerauthgametests/refused_finalization_leaves_terrain", () -> PickerAuthGameTests::refusedFinalizationLeavesTerrain);
