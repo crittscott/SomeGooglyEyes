@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -34,6 +35,129 @@ import java.util.Map;
 public final class PickerSpawnServiceGameTestsLogic {
 
     private PickerSpawnServiceGameTestsLogic() {
+    }
+
+    /** Build a three-member command-spawn chain from the loader's finalize-spawn listener. */
+    public static void addCommandRiders(GameTestHelper helper, Entity root, List<Entity> members) {
+        members.add(root);
+        Entity vehicle = root;
+        for (int index = 0; index < 2; index++) {
+            Cow rider = new Cow(EntityType.COW, helper.getLevel());
+            rider.setPos(root.position());
+            helper.assertTrue(rider.startRiding(vehicle), Component.literal("the test rider must mount its predecessor"));
+            members.add(rider);
+            vehicle = rider;
+        }
+    }
+
+    /**
+     * An accepted distant spawn does not require immediate UUID lookup visibility. In game: stand over
+     * air and run {@code /sg spawnall minecraft}; mobs and their platforms continue beyond the nearby
+     * chunk area instead of every remaining type being discarded at the first distant cell.
+     */
+    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper, ServerPlayer player) {
+        var originalPosition = player.position();
+        float originalYaw = player.getYRot();
+        float originalPitch = player.getXRot();
+        List<String> excluded = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        List<String> excludedMods = ServerConfig.SPAWN_EXCLUDED_MODS.get();
+        BlockPos origin = helper.absolutePos(new BlockPos(4096, 128, 0));
+        BlockState originalSupport = helper.getLevel().getBlockState(origin.below());
+        try {
+            List<String> otherTypes = new ArrayList<>();
+            BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                    otherTypes.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                }
+            });
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
+            // The distant position is outside the empty structure; establish platform mode explicitly.
+            helper.getLevel().setBlockAndUpdate(origin.below(), Blocks.AIR.defaultBlockState());
+            // Move the command's player reference, without a connected player loading this distant area.
+            player.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            helper.assertTrue(helper.getLevel().getBlockState(origin.below()).isAir(),
+                    Component.literal("the distant command origin must select platform mode"));
+            int spawned = PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
+            helper.assertTrue(spawned == 3, Component.literal("all three distant candidates must be accepted, got " + spawned));
+            for (int distance : new int[]{3, 8, 13}) {
+                BlockPos floor = new BlockPos(origin.getX(), origin.getY() - 1, origin.getZ() + distance);
+                helper.assertTrue(helper.getLevel().getBlockState(floor).is(Blocks.SANDSTONE),
+                        Component.literal("each accepted candidate must receive its own platform at " + floor));
+            }
+        } finally {
+            helper.getLevel().setBlockAndUpdate(origin.below(), originalSupport);
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
+            player.snapTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Drive bulk spawning with riders supplied by a loader listener. In game: spawn a mob whose
+     * finalization adds riders; the whole chain survives, or a later insertion refusal removes earlier
+     * additions and leaves the display cell unchanged.
+     */
+    public static void bulkSpawnRiderInsertion(
+            GameTestHelper helper, ServerPlayer player, List<Entity> members, boolean refuseLast) {
+        var originalPosition = player.position();
+        float originalYaw = player.getYRot();
+        float originalPitch = player.getXRot();
+        List<String> excluded = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
+        List<String> excludedMods = ServerConfig.SPAWN_EXCLUDED_MODS.get();
+        BlockPos origin = helper.absolutePos(new BlockPos(2, 3, 0));
+        BlockState originalSupport = helper.getLevel().getBlockState(origin.below());
+        try {
+            List<String> otherTypes = new ArrayList<>();
+            BuiltInRegistries.ENTITY_TYPE.forEach(type -> {
+                if (type != EntityType.COW) {
+                    otherTypes.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                }
+            });
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
+            helper.getLevel().setBlockAndUpdate(origin.below(), Blocks.AIR.defaultBlockState());
+            player.snapTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
+            helper.assertTrue(helper.getLevel().getBlockState(origin.below()).isAir(),
+                    Component.literal("the rider test origin must select platform mode"));
+            Map<BlockPos, BlockState> terrain = new LinkedHashMap<>();
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = 1; dz <= 5; dz++) {
+                    for (int dy : new int[]{-1, 7}) {
+                        BlockPos pos = origin.offset(dx, dy, dz);
+                        terrain.put(pos, helper.getLevel().getBlockState(pos));
+                    }
+                }
+            }
+            int spawned = PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
+            helper.assertTrue(members.size() == 3, Component.literal("finalization must supply the root and two riders"));
+            helper.assertTrue(spawned == (refuseLast ? 0 : 1), Component.literal("the command must report whole-chain acceptance"));
+            if (refuseLast) {
+                helper.assertTrue(members.get(0).isRemoved() && members.get(1).isRemoved(),
+                        Component.literal("a refused last rider must discard both previously accepted members"));
+                helper.assertTrue(!members.get(2).isRemoved(), Component.literal("the refused member was never accepted and must not be discarded"));
+                terrain.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
+                        Component.literal("a refused rider must leave planned terrain unchanged at " + pos)));
+            } else {
+                for (Entity member : members) {
+                    helper.assertTrue(!member.isRemoved(), Component.literal("every accepted chain member must survive"));
+                    helper.assertTrue(member instanceof Cow cow && cow.isNoAi() && cow.isPersistenceRequired(),
+                            Component.literal("accepted riders retain the picker's frozen persistent state"));
+                }
+                helper.assertTrue(members.get(1).getVehicle() == members.get(0)
+                                && members.get(2).getVehicle() == members.get(1),
+                        Component.literal("successful insertion must preserve both riding links"));
+                helper.assertTrue(helper.getLevel().getBlockState(origin.offset(0, -1, 3)).is(Blocks.SANDSTONE),
+                        Component.literal("a fully accepted chain receives its platform"));
+            }
+        } finally {
+            helper.getLevel().setBlockAndUpdate(origin.below(), originalSupport);
+            members.forEach(Entity::discard);
+            ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
+            ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
+            player.snapTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+        }
     }
 
     /**

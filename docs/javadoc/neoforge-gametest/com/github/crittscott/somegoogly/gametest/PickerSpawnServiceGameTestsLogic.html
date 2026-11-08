@@ -106,25 +106,46 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addCommandRiders(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.Entity,java.util.List)" class="member-name-link">addCommandRiders</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.Entity&nbsp;root,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.world.entity.Entity&gt;&nbsp;members)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it.</div>
+<div class="block">Build a three-member command-spawn chain from the loader's finalize-spawn listener.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">entityTargetingStopsAtWalls</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#bulkSpawnContinuesBeyondNearbyChunks(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">bulkSpawnContinuesBeyondNearbyChunks</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Extended entity targeting stops at blocks.</div>
+<div class="block">An accepted distant spawn does not require immediate UUID lookup visibility.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusedBulkSpawnLeavesTerrain(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">refusedBulkSpawnLeavesTerrain</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#bulkSpawnRiderInsertion(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer,java.util.List,boolean)" class="member-name-link">bulkSpawnRiderInsertion</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.world.entity.Entity&gt;&nbsp;members,
+ boolean&nbsp;refuseLast)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.</div>
+<div class="block">Drive bulk spawning with riders supplied by a loader listener.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#commandSpawnFinalizesBeforeApplyingPickerState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">commandSpawnFinalizesBeforeApplyingPickerState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">entityTargetingStopsAtWalls</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Extended entity targeting stops at blocks.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusedBulkSpawnLeavesTerrain(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">refusedBulkSpawnLeavesTerrain</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>/sg spawn</code> and <code>/sg spawnall</code> refuse the ender dragon, players, and config-excluded types,
  and <code>/sg spawn</code> suggests only types it accepts.</div>
 </div>
@@ -145,6 +166,37 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="addCommandRiders(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.Entity,java.util.List)">
+<h3>addCommandRiders</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addCommandRiders</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.Entity&nbsp;root,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.world.entity.Entity&gt;&nbsp;members)</span></div>
+<div class="block">Build a three-member command-spawn chain from the loader's finalize-spawn listener.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="bulkSpawnContinuesBeyondNearbyChunks(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>bulkSpawnContinuesBeyondNearbyChunks</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">bulkSpawnContinuesBeyondNearbyChunks</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">An accepted distant spawn does not require immediate UUID lookup visibility. In game: stand over
+ air and run <code>/sg spawnall minecraft</code>; mobs and their platforms continue beyond the nearby
+ chunk area instead of every remaining type being discarded at the first distant cell.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="bulkSpawnRiderInsertion(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer,java.util.List,boolean)">
+<h3>bulkSpawnRiderInsertion</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">bulkSpawnRiderInsertion</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.world.entity.Entity&gt;&nbsp;members,
+ boolean&nbsp;refuseLast)</span></div>
+<div class="block">Drive bulk spawning with riders supplied by a loader listener. In game: spawn a mob whose
+ finalization adds riders; the whole chain survives, or a later insertion refusal removes earlier
+ additions and leaves the display cell unchanged.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="entityTargetingStopsAtWalls(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>entityTargetingStopsAtWalls</h3>
