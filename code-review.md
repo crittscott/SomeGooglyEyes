@@ -20,6 +20,7 @@ Topics:
 14. Build-environment: Have we accumulated cruft? Are we doing things the expected way? Are per-loader differences reasonable?
 15. Test-completeness: Tests are cheap. We don't need to target only vital questions. Nor, though, do we need to test everything imaginable or trivial variations. Is the test system complete? Is it over-complete?
 16. Logging: It should be possible to tell if the mod is working from its log messages. But we do not want to log everything. Do we log the various major events of mod startup? Is there any residual debug logging?
+17. Correctness: Does the mod do what a player expects? Look for behavior bugs: wrong or inverted conditions, client predictions that disagree with the server's result, interactions we swallow or cancel that vanilla should have handled, state that is never cleaned up (entity removal, dimension change, logout, server stop), and the same player action behaving differently on each loader.
 
 
 Prompt:
