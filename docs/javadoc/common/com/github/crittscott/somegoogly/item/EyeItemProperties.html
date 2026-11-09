@@ -138,7 +138,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#set(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">set</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound.</div>
+<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the stack's tag too when
+ nothing else is left in it, so the eye stacks with one that never had an appearance.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeTint(net.minecraft.world.item.ItemStack,int)" class="member-name-link">slimyEyeTint</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
@@ -240,7 +241,8 @@ loadScripts(document, 'script');</script>
 <h3>set</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">set</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</span></div>
-<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound.</div>
+<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the stack's tag too when
+ nothing else is left in it, so the eye stacks with one that never had an appearance.</div>
 </section>
 </li>
 </ul>

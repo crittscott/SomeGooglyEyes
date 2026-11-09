@@ -43,7 +43,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -82,13 +82,22 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EyeConfigSyncPacket</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></span></div>
-<div class="block">Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
- the installed set and that set's precomputed NBT (<a href="../config/ServerEyeConfigs.html#encoded()"><code>ServerEyeConfigs.encoded()</code></a>), which was
- validated when installed. Construction compresses it once; each connection copies those bytes. The client decodes and
- re-validates everything it receives.</div>
+<div class="block">Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding. The
+ server builds one per candidate set (<a href="../config/ServerEyeConfigs.html#packetFor(java.util.Map)"><code>ServerEyeConfigs.packetFor(java.util.Map&lt;net.minecraft.resources.ResourceLocation, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet&gt;)</code></a>),
+ checks it with <a href="#refusal()"><code>refusal()</code></a>, and installs it, so construction serializes and compresses once and every
+ joining or reloading connection copies those bytes. The client decodes and re-validates everything it receives.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="inherited-list">
+<h2 id="nested-classes-inherited-from-class-com.github.crittscott.somegoogly.network.Payload">Nested classes/interfaces inherited from interface&nbsp;com.github.crittscott.somegoogly.network.<a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></h2>
+<code><a href="Payload.Clientbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Clientbound</a>&lt;<a href="Payload.Clientbound.html" title="type parameter in Payload.Clientbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;, <a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;<a href="Payload.Serverbound.html" title="type parameter in Payload.Serverbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;</code></div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -112,6 +121,9 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="block">Maximum inflated body, bounded before parsing NBT.</div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="fields-inherited-from-class-com.github.crittscott.somegoogly.network.Payload">Fields inherited from interface&nbsp;com.github.crittscott.somegoogly.network.<a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></h3>
+<code><a href="Payload.html#CLIENTBOUND">CLIENTBOUND</a>, <a href="Payload.html#SERVERBOUND">SERVERBOUND</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -144,29 +156,34 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configs()" class="member-name-link">configs</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The resolved eye definitions, by entity type.</div>
+<div class="block">The resolved eye definitions, by entity type; read-only, values included.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encoded()" class="member-name-link">encoded</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><code>configs</code> encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The channel id this payload is sent on.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Decode and validate a received payload.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sizeIssue(java.util.Map)" class="member-name-link">sizeIssue</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Refusal shared by reload and picker export, covering decoded work and transmitted bytes.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wireSize(java.util.Map)" class="member-name-link">wireSize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The compressed packet size of <code>encoded</code>.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refusal()" class="member-name-link">refusal</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Why clients would refuse this packet, or <code>null</code> if they accept it: the work its definitions ask of a
+ client, then its decoded and transmitted sizes.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Encode this payload's body.</div>
+</div>
 </div>
 </div>
 </div>
@@ -248,13 +265,22 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <section class="detail" id="configs()">
 <h3>configs</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</span>&nbsp;<span class="element-name">configs</span>()</div>
-<div class="block">The resolved eye definitions, by entity type.</div>
+<div class="block">The resolved eye definitions, by entity type; read-only, values included.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="encoded()">
+<h3>encoded</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;</span>&nbsp;<span class="element-name">encoded</span>()</div>
+<div class="block"><code>configs</code> encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="id()">
 <h3>id</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="Payload.html#id()">Payload</a></code></span></div>
+<div class="block">The channel id this payload is sent on.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Payload.html#id()">id</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
@@ -269,24 +295,21 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </section>
 </li>
 <li>
-<section class="detail" id="sizeIssue(java.util.Map)">
-<h3>sizeIssue</h3>
+<section class="detail" id="refusal()">
+<h3>refusal</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">sizeIssue</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
-<div class="block">Refusal shared by reload and picker export, covering decoded work and transmitted bytes.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="wireSize(java.util.Map)">
-<h3>wireSize</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireSize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.ResourceLocation,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
-<div class="block">The compressed packet size of <code>encoded</code>.</div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">refusal</span>()</div>
+<div class="block">Why clients would refuse this packet, or <code>null</code> if they accept it: the work its definitions ask of a
+ client, then its decoded and transmitted sizes. Shared by reload and picker export, so an export is checked
+ exactly as the reload it triggers will be.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
 <h3>write</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">Payload</a></code></span></div>
+<div class="block">Encode this payload's body.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>

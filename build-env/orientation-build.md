@@ -4,90 +4,12 @@
 
 # Some Googly Eyes — build orientation
 
-This document is an orientation to the repository's build environment: its entry points, module layout, version authorities, dependency baselines, and packaging flow. It describes the setup as it exists. It is not build history, a troubleshooting log, release documentation, or a conversation.
-
-`build-env/` is a reference snapshot of the repository's build environment: every checked-in Gradle build input including the wrapper, plus the agent instructions, the build-runner script, the Git settings, and outlines of the three orientation files. It preserves repository-relative paths so that files can be compared or restored without guessing where they belong. The active files at the repository root and under `common/`, `fabric/`, `forge/`, and `gradle/` remain authoritative; Gradle does not read the copies. Keep the snapshot and this description synchronized whenever an active file it covers changes.
-
-The snapshot holds verbatim copies of the manually maintained files that define or launch this Gradle build (Gradle scripts, Gradle properties, wrapper launchers, and wrapper files), the agent instructions (`CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `platform-notes.md`), `gradlews.ps1`, which runs the standard Gradle task sequence and reports each step's result, and the Git settings (`.gitignore`, `.gitattributes`). The orientation entries are outlines, not copies: each holds its file's fixed header followed by every heading in order, with no body text, so it records the files' format without duplicating content that changes with the code. It should not contain caches, generated output, IDE state, run directories, resolved dependency JARs, mod source or resources, GameTest fixtures, loader manifests, or release notes. The wrapper JAR is the sole binary because it is itself a checked-in build launcher.
-
 ## Snapshot contents
-
-Each copy sits at `build-env/` followed by its active path.
-
-| Kind | Active paths |
-| --- | --- |
-| Gradle build | `settings.gradle`, `build.gradle`, `gradle.properties`, `common/build.gradle`, `fabric/build.gradle`, `fabric/gradle.properties`, `forge/build.gradle`, `forge/gradle.properties` |
-| Gradle wrapper | `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle/wrapper/gradle-wrapper.jar` |
-| Agent instructions | `CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `platform-notes.md` |
-| Build runner | `gradlews.ps1` |
-| Git settings | `.gitignore`, `.gitattributes` |
-| Orientation outlines | `orientation-player.md`, `orientation-code.md`, `orientation-build.md` |
 
 ## Build shape
 
-The project is a Groovy-DSL Gradle build with `common`, `fabric`, and `forge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root build applies Architectury Loom and the Architectury plugin to each subproject and establishes shared Minecraft mappings and Java settings. The build declares no Maven publication; the modules expose no stable public API and nothing consumes them through Maven. `common` is transformed for Fabric and Forge; each loader module bundles its transformed common output with Shadow and then remaps the resulting production JAR. Architectury is build-time only: the plugin supplies `@ExpectPlatform` and its transformation, and no loader requires Architectury API at runtime.
-
-`common` depends on Fabric Loader only for the `@Environment` annotation types the common Minecraft jar references and the Mixin annotations its common Mixins use. It also compiles the GeckoLib render integration against the compile-only `geckolib-fabric` artifact from GeckoLib's Cloudsmith Maven, because GeckoLib publishes no common artifact for 1.20.1, and each loader module compiles its GeckoLib render-layer listener against that loader's own artifact with `modCompileOnly`. GeckoLib is optional at runtime, loaded in development runs, and not bundled.
-
-`common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; every loader points its own `loom.accessWidenerPath` at common's. Forge, which reads access transformers rather than wideners, sets `convertAccessWideners` and names that widener in `extraAccessWideners` inside `loom.forge`, so remapping writes the converted, SRG-named rules into its production JAR.
-
-Fabric and Forge each use the legacy Mixin annotation processor and write a fixed `somegoogly.refmap.json` for their own Mixins, Fabric's mapped to intermediary and Forge's to the SRG names Forge runs on. `common` uses the same processor for its shared Mixins and writes `somegoogly-common.refmap.json`, mapped to intermediary. The common config, `somegoogly-common.mixins.json`, names no refmap, so development runs resolve it by Mojang names; Architectury's production transforms add the refmap to it, and `FixForgeMixin` rewrites it to SRG names for Forge. It sits in common's resources: Fabric lists it beside `somegoogly-fabric.mixins.json` in `fabric.mod.json`, and Forge registers it with `somegoogly-forge.mixins.json` through `loom.forge.mixinConfig`. Fabric's `loom.mods` entry also lists common's source set.
-
-Each loader module compiles against common through the `common` configuration. Fabric also places it on its runtime and development classpaths; Forge runs receive common only through its `developmentForge` configuration, which Architectury's runtime transformer rewrites for `@ExpectPlatform`, and not through `loom.mods`, because a second, untransformed copy would split its packages across two modules. Fabric and Forge each call the root `configureGameTests` helper, which creates a `gametest` source set over the shared assertions under `common/src/gametest` and registers `gametestJavadoc`; each loader adds its own wrappers and the `somegoogly_gametest` development mod's metadata, and wires that source set into a `runGameTestServer` run. Every loader clears its development GameTest world before a GameTest server run, and Fabric writes a JUnit-style report to `fabric/build/gametest-report.xml`. Loader metadata is expanded from the root `sharedModProperties` map plus each loader's version ranges.
-
-On Windows, `gradlew.bat` is the normal entry point; `gradlew` is the POSIX launcher. The wrapper selects the Gradle distribution, while the launcher selects its host JVM from the machine's Java configuration. The root build declares a Java 17 toolchain from `java_version`, which also sets Fabric's minimum Java; which Gradle applies by convention to compilation, Javadoc, and Gradle-launched Java executions. Compilation and Javadoc read sources as UTF-8. Every module produces a sources JAR; each enabled loader includes common's main sources before source remapping.
-
-Each subproject has the Java plugin's standard production-source `javadoc` task. Each loader also has a `gametestJavadoc` task over its complete GameTest source set, including the shared package-private assertions under `common/src/gametest/java`. The root `generateDocs` task derives its loader list from `enabled_platforms`, depends on every module's `javadoc` and each loader's `gametestJavadoc`, and synchronizes their HTML output into the committed `docs/javadoc/<module>/` and `docs/javadoc/<loader>-gametest/` trees; separate sections are required because loader modules contain classes with overlapping fully qualified names. `docs/index.html` is the hand-maintained landing page and `docs/.nojekyll` makes GitHub Pages serve the generated files unchanged. Neither file is a Gradle build input, and generated documentation is intentionally excluded from `build-env/`. The build does not produce Javadoc JARs.
-
-The root `collectJars` task copies each enabled loader's already-built production jar (`<archivesName>-<version>.jar` in its `build/libs`, not the dev, dev-shadow, or sources jars) into `../jars`, the directory shared by all version checkouts, for installing into a local launcher. It builds nothing and skips jars that have not been built; it overwrites same-named jars and leaves other versions' jars alone. `gradlews.ps1` runs `clean build`, `runGameTestServer`, `generateDocs`, and `collectJars` in sequence and reports each step's exit code. The root `cleanDev` task empties every module's `build/` and `run/` without removing the directories, and every `clean` empties `build/` rather than removing it, so the Dropbox ignore marks that `../dropbox-ignore.ps1` puts on those directories survive.
-
-Forge owns its native loot declarations. Native `processResources` copies common's version-specific `pack.mcmeta` into the development resource root; `shadowJar` excludes duplicates only for that metadata. Fabric uses `implementation` plus Loom `include` for NightConfig core and TOML, so development and production both have the parser. Both `pack.mcmeta` files take their formats from `gradle.properties` through `processResources` expansion. The Mixin configs' Java level is expanded the same way: `mixin_java_version` for common's and the Forge-family configs, `java_version` for Fabric's.
-
 ## Exact build versions
-
-| Component | Exact version or coordinate | Build role |
-| --- | --- | --- |
-| Gradle | `9.5.1` (`gradle-9.5.1-bin.zip`) | Wrapper-selected build engine |
-| Architectury Loom | `1.17.493` | Minecraft development, mappings, runs, transforms, and remapping |
-| Architectury Gradle plugin | `3.5.170` | Common/Fabric/Forge project organization and `@ExpectPlatform` |
-| GradleUp Shadow plugin | `9.4.3` | Bundles transformed common output into loader JARs |
-| Java toolchain level | `17` | Compilation, Javadoc, and Java execution |
-| Minecraft | `1.20.1` | Compile and runtime target |
-| Mojang mappings | Official mappings for `1.20.1` | Base mapping layer; no separate mapping version is declared |
-| Parchment mappings | `org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip` | Layer over the official mappings |
-| Forge | `net.minecraftforge:forge:1.20.1-47.4.0` | Exact Forge compile and development-run baseline |
-| Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency |
-| Fabric API | `net.fabricmc.fabric-api:fabric-api:0.92.11+1.20.1` | Fabric runtime and development API |
-| GeckoLib | `software.bernie.geckolib:geckolib-<loader>-1.20.1:4.7.4` | Compile-only optional render integration: Fabric's artifact in common, each loader's own in that loader; development runs also load it (`modLocalRuntime`), never published |
-| Heads | `maven.modrinth:heads:X7aPmbm0` (Heads 1.1.3 for Forge 1.20.1) | Forge development runs and GameTests only (`modLocalRuntime`); never compiled against or published |
-| Twilight Forest | `curse.maven:the-twilight-forest-227639:5468648` (Twilight Forest 4.3.2508 for Forge 1.20.1) | Forge development runs and GameTests only (`modLocalRuntime`); never compiled against or published |
-| NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` (`nightconfig_version`) | Fabric TOML parser, nested in its production JAR |
-| JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module because Loom does not expose Minecraft's copy to common |
-
-The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
 
 ## Artifact and runtime version declarations
 
-These values do not select build tools, but they are versioned inputs consumed by resource expansion and are relevant when reproducing the produced artifacts.
-
-Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`) from the root `sharedModProperties`, which include `mod_homepage` and the source (`<homepage>/tree/<minecraft_version>`) and issue-tracker (`<homepage>/issues`) URLs derived from it.
-
-| Subject | Declaration |
-| --- | --- |
-| Some Googly Eyes artifact | `0.8.3` |
-| Fabric and Forge GameTest support mods | `0.8.3` |
-| Minecraft compatibility | exactly `1.20.1`; Forge syntax `[1.20.1]`, Fabric syntax `=1.20.1` |
-| Forge compatibility | `[47.4.0,48)` |
-| Forge JavaFML loader compatibility | `[47,48)` |
-| Fabric Loader compatibility | `>=0.16.14` |
-| Fabric Java compatibility | `>=17` |
-| Fabric API runtime declaration | `>=0.92.11+1.20.1`; compilation uses `0.92.11+1.20.1` |
-| GeckoLib | optional on every loader; `4.7.4` or newer when present |
-| Heads | optional on Forge, any version (`mods.toml`); never required |
-| Twilight Forest | optional on Forge, any version (`mods.toml`); never required |
-
 ## Resolution and version authorities
-
-`gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, and mod versions. It also holds the Java toolchain level and the JSR 305 and external Gradle plugin versions; `settings.gradle` applies the plugin versions through `pluginManagement`. The root `build.gradle` derives the Minecraft and Forge metadata ranges from the exact versions, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle itself. The loader scripts consume the root properties rather than restating dependency versions.
-
-Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Maven Central, Parchment Maven, and GeckoLib's Cloudsmith Maven; Forge also declares Modrinth Maven, exclusively for the `maven.modrinth` group, and CurseMaven, exclusively for the `curse.maven` group; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.

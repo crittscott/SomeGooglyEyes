@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ThirdPartyModelWraps</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Compensates for whole-model render transforms that supported third-party mob models apply <i>outside</i>
+<div class="block">Owns whole-model and named-root-group transforms that models apply <i>outside</i>
  their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
  own <code>renderToBuffer</code>. A resolver can only replay <code>translateAndRotate</code> down the part tree, so
  without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
@@ -88,8 +88,7 @@ loadScripts(document, 'script');</script>
 
  <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  dependency on either mod. The branch is chosen by <code>model.young</code> — the same field the models
- themselves branch on. A <code>null</code> adult transform means that branch renders at identity (those
- models already worked for adults); the Alex's Mobs entries are young-only and always carry a
+ themselves branch on. A <code>null</code> adult transform means that branch renders at identity; the Alex's Mobs entries are young-only and always carry a
  <code>null</code> adult.
 
  <p><b>Alex's Mobs</b> (Citadel models): young-only whole-model scale + translate. <code>ModelKangaroo</code>'s
@@ -99,7 +98,11 @@ loadScripts(document, 'script');</script>
  <p><b>Exotic Birds</b>: the listed model classes use fixed whole-model transforms for every baby and
  for most adults. Compatibility is limited to model versions that retain those class names and
  transforms. Flamingo's per-part lower-beak z-fight adjustment is intentionally outside this
- whole-model table.</div>
+ whole-model table.
+
+ <p><a href="#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)"><code>groupTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> supplies the separate named-root wraps: generic ageable formulas, vanilla
+ rabbit/llama groups, and Twilight overrides of the generic formula. Group overrides replace rather than
+ compose with the generic formula; root membership stays with the resolver.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -114,10 +117,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preTransform(net.minecraft.client.model.EntityModel,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">groupTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both ages.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preTransform(net.minecraft.client.model.EntityModel,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+ com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
  <code>model.young</code>.</div>
 </div>
@@ -138,6 +147,14 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)">
+<h3>groupTransform</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;</span>&nbsp;<span class="element-name">groupTransform</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group)</span></div>
+<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both ages.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="preTransform(net.minecraft.client.model.EntityModel,com.mojang.blaze3d.vertex.PoseStack)">
 <h3>preTransform</h3>

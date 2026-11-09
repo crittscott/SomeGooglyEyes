@@ -43,7 +43,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -91,6 +91,15 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="inherited-list">
+<h2 id="nested-classes-inherited-from-class-com.github.crittscott.somegoogly.network.Payload">Nested classes/interfaces inherited from interface&nbsp;com.github.crittscott.somegoogly.network.<a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></h2>
+<code><a href="Payload.Clientbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Clientbound</a>&lt;<a href="Payload.Clientbound.html" title="type parameter in Payload.Clientbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;, <a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;<a href="Payload.Serverbound.html" title="type parameter in Payload.Serverbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;</code></div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -104,6 +113,9 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <div class="col-second even-row-color"><code><a href="#ID" class="member-name-link">ID</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
+<div class="inherited-list">
+<h3 id="fields-inherited-from-class-com.github.crittscott.somegoogly.network.Payload">Fields inherited from interface&nbsp;com.github.crittscott.somegoogly.network.<a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></h3>
+<code><a href="Payload.html#CLIENTBOUND">CLIENTBOUND</a>, <a href="Payload.html#SERVERBOUND">SERVERBOUND</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -155,7 +167,9 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The channel id this payload is sent on.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -168,7 +182,9 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Encode this payload's body.</div>
+</div>
 </div>
 </div>
 </div>
@@ -232,6 +248,8 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
 <h3>write</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">Payload</a></code></span></div>
+<div class="block">Encode this payload's body.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Payload.html#write(net.minecraft.network.FriendlyByteBuf)">write</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>
@@ -242,6 +260,8 @@ implements <a href="Payload.html" title="interface in com.github.crittscott.some
 <section class="detail" id="id()">
 <h3>id</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="Payload.html#id()">Payload</a></code></span></div>
+<div class="block">The channel id this payload is sent on.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Payload.html#id()">id</a></code>&nbsp;in interface&nbsp;<code><a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></code></dd>

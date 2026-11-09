@@ -43,14 +43,14 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -77,13 +77,61 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Payload</span></div>
-<div class="block">One of the mod's seven payloads: its id and its body. Each payload
- class pairs this with a static <code>read(FriendlyByteBuf)</code> that validates on decode; the loader bridges
+<div class="block">One of the mod's payloads: its id and its body. Each payload class pairs this with a static
+ <code>read(FriendlyByteBuf)</code> that validates on decode; the loader bridges
  <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and
- <a href="../platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.platform"><code>ClientNetworking</code></a> send it on that id.</div>
+ <a href="../client/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.client.platform"><code>ClientNetworking</code></a> send it on that id.
+
+ <p><a href="#CLIENTBOUND"><code>CLIENTBOUND</code></a> and <a href="#SERVERBOUND"><code>SERVERBOUND</code></a> are the one declaration of every payload, its direction, and
+ what handles it on arrival; each loader registers from them. Clientbound handlers reach
+ <a href="../client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientNetworkHandler</code></a> only inside lambda bodies, so a dedicated server never links it.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Interface</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="Payload.Clientbound.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network">Payload.Clientbound</a>&lt;<a href="Payload.Clientbound.html" title="type parameter in Payload.Clientbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;</code></div>
+<div class="col-last even-row-color">
+<div class="block">A payload the server sends.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="Payload.Serverbound.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;<a href="Payload.Serverbound.html" title="type parameter in Payload.Serverbound">T</a> extends <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a>&gt;</code></div>
+<div class="col-last odd-row-color">
+<div class="block">A payload a client sends.</div>
+</div>
+</div>
+</section>
+</li>
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Clientbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Clientbound</a>&lt;?&gt;&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#CLIENTBOUND" class="member-name-link">CLIENTBOUND</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Every payload the server sends, with its client-thread handler.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;?&gt;&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SERVERBOUND" class="member-name-link">SERVERBOUND</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -97,10 +145,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.resources.ResourceLocation</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The channel id this payload is sent on.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write</a><wbr>(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Encode this payload's body.</div>
+</div>
 </div>
 </div>
 </div>
@@ -110,6 +162,28 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="CLIENTBOUND">
+<h3>CLIENTBOUND</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Clientbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Clientbound</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">CLIENTBOUND</span></div>
+<div class="block">Every payload the server sends, with its client-thread handler.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SERVERBOUND">
+<h3>SERVERBOUND</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">SERVERBOUND</span></div>
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -119,12 +193,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="id()">
 <h3>id</h3>
 <div class="member-signature"><span class="return-type">net.minecraft.resources.ResourceLocation</span>&nbsp;<span class="element-name">id</span>()</div>
+<div class="block">The channel id this payload is sent on.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="write(net.minecraft.network.FriendlyByteBuf)">
 <h3>write</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">write</span><wbr><span class="parameters">(net.minecraft.network.FriendlyByteBuf&nbsp;buffer)</span></div>
+<div class="block">Encode this payload's body.</div>
 </section>
 </li>
 </ul>

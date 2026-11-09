@@ -132,21 +132,11 @@ loadScripts(document, 'script');</script>
  <code>EntityModel</code> directly (neither <code>HierarchicalModel</code> nor
  <code>AgeableListModel</code>) and hand-roll their own scale/translate wraps
  around groups of their top-level parts inside <code>renderToBuffer</code>, applied and popped entirely
- outside the part tree — invisible to a render layer's <code>PoseStack</code> otherwise, the same bug class
- <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a> fixes for its own family, but with a model-specific part grouping instead of
- a uniform head/body split.</div>
+ outside the part tree, where a render layer's <code>PoseStack</code> never sees them.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Picks the first <a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> that handles a given model.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="TwilightForestResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">TwilightForestResolver</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Resolver for four Twilight Forest mob models — <code>DeerModel</code>, <code>NewDeerModel</code>,
- <code>PenguinModel</code>, and <code>BunnyModel</code> (Dwarf Rabbit) — that extend an <code>AgeableListModel</code>
- family base (<code>QuadrupedModel</code>/<code>HumanoidModel</code>) but override <code>renderToBuffer</code> with
- their own hand-rolled, hardcoded baby-only scale/translate wraps instead of relying on the inherited
- formula <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a> replays.</div>
 </div>
 </div>
 </div>

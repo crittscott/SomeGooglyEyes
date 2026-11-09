@@ -77,10 +77,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeDefinition</span>(<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&nbsp;placement, <a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a>&nbsp;appearance)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeDefinition</span>(<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&nbsp;placement, <a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a>&nbsp;appearance)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
 <div class="block">The complete datapack description of one eye on a mob: its <a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a> (where/how big/aimed)
- plus its <a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeAppearance</code></a> (color/glow).
+ plus its <a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a> (color/glow).
 
  <p>The two halves are kept as separate value types because the rest of the mod treats them
  differently — appearance is portable/overridable (an eye item carries it), placement is fixed to the
@@ -116,8 +116,8 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.eye.EyePlacement,com.github.crittscott.somegoogly.eye.state.EyeAppearance)" class="member-name-link">EyeDefinition</a><wbr>(<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&nbsp;placement,
- <a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a>&nbsp;appearance)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.github.crittscott.somegoogly.eye.EyePlacement,com.github.crittscott.somegoogly.eye.EyeAppearance)" class="member-name-link">EyeDefinition</a><wbr>(<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&nbsp;placement,
+ <a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a>&nbsp;appearance)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>EyeDefinition</code> record class.</div>
 </div>
@@ -135,7 +135,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#appearance()" class="member-name-link">appearance</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>appearance</code> record component.</div>
@@ -198,10 +198,10 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.eye.EyePlacement,com.github.crittscott.somegoogly.eye.state.EyeAppearance)">
+<section class="detail" id="&lt;init&gt;(com.github.crittscott.somegoogly.eye.EyePlacement,com.github.crittscott.somegoogly.eye.EyeAppearance)">
 <h3>EyeDefinition</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EyeDefinition</span><wbr><span class="parameters">(<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&nbsp;placement,
- <a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a>&nbsp;appearance)</span></div>
+ <a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a>&nbsp;appearance)</span></div>
 <div class="block">Creates an instance of a <code>EyeDefinition</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -273,7 +273,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="appearance()">
 <h3>appearance</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></span>&nbsp;<span class="element-name">appearance</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a></span>&nbsp;<span class="element-name">appearance</span>()</div>
 <div class="block">Returns the value of the <code>appearance</code> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>

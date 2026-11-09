@@ -202,7 +202,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportOverlayCombinesDraftAges</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Export-all can replace both ages and preserve an empty disabled bucket; a newly configured
  species needs no prior definition. In game: author both ages, export-all, and inspect both
- entries; repeat for a previously unconfigured species. An existing disabled any entry remains.</div>
+ entries; repeat for a previously unconfigured species. An existing entry with <code>"age": "any"</code> and
+ <code>"enabled": false</code> remains in the exported file.</div>
 </section>
 </li>
 <li>

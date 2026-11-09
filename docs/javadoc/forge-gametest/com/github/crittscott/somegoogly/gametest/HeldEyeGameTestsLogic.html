@@ -76,11 +76,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">HeldEyeGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Coverage for <code>HeldEye</code>, the live eye a player sees in first person while holding a Googly Eye.
- Drives it directly against a mock player, setting the hurt animation and health by hand, since the held
- eye derives its behaviors from the holder's own vanilla-synced state on the holder's client, under the
- server's synced <code>BehaviorSettings</code>, passed here by hand. How the eye looks in the hand is verified
- in game.</div>
+<div class="block">Real server reactions feed the same per-hand presentation used by first- and third-person draws.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -96,39 +92,40 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeBulgesWhenHurt</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeBulgesWhenHurt</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A held eye bulges when its holder is hurt, at the server's <code>growOnHitPercent</code>; here it is 100.</div>
+<div class="block">In game: hold a Googly Eye and take nonplayer damage; its bulge is visible to you and another viewer.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeHonorsServerSettings</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeHonorsServerSettings</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A held eye follows the server's switches: with <code>growOnHitPercent</code> at 0 being hurt plays nothing,
- with <code>swirlOnHeal</code> off healing plays nothing, and with <code>ambientBehaviors</code> off it never
- plays an idle expression.</div>
+<div class="block">In game: turn hit growth and heal swirl off; damage and healing leave a held eye without reactions.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyePlaysIdleBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyePlaysIdleBehaviors</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A held eye left alone plays an expression from the server's ambient pool now and then, and never
- crosses.</div>
+<div class="block">In game: keep a held eye visible through F5; its stable ambient blink continues on the same pupil.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeResetsWhenPutAway</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeResetsWhenPutAway</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A held eye is dropped when it leaves the holder's hands and starts fresh when picked up again, in either
- hand.</div>
+<div class="block">In game: put the eye away and equip it again; the old hand simulation and received reaction are retired.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeSwirlsWhenHealed</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeSwirlsWhenHealed</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A held eye swirls when its holder heals, at most once per <code>swirlHealCooldownTicks</code>, and a heal while
- something else plays is dropped.</div>
+<div class="block">In game: heal while holding an eye, then heal again after its swirl but before the cooldown; no second swirl.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeWinksAlone</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeWinksAlone</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A lone eye's blink closes it, and cross-eye, which needs a partner eye, leaves it alone.</div>
+<div class="block">In game: a single held eye blinks closed and never selects the paired cross-eye expression.</div>
 </div>
 </div>
 </div>
@@ -148,58 +145,51 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper)">
+<section class="detail" id="heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>heldEyeBulgesWhenHurt</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeBulgesWhenHurt</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A held eye bulges when its holder is hurt, at the server's <code>growOnHitPercent</code>; here it is 100. In
- game: with <code>growOnHitPercent = 100</code>, hold a Googly Eye in first person and take damage (a fall, a
- cactus); the eye in your hand bulges and settles back.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeBulgesWhenHurt</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: hold a Googly Eye and take nonplayer damage; its bulge is visible to you and another viewer.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)">
+<section class="detail" id="heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>heldEyeHonorsServerSettings</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeHonorsServerSettings</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A held eye follows the server's switches: with <code>growOnHitPercent</code> at 0 being hurt plays nothing,
- with <code>swirlOnHeal</code> off healing plays nothing, and with <code>ambientBehaviors</code> off it never
- plays an idle expression. In game: set those three in <code>somegoogly-server.toml</code>, hold a Googly Eye
- in first person, take damage, heal, and stand still for 40 seconds; the eye in your hand never bulges,
- swirls, winks, stares, or glances aside.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeHonorsServerSettings</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: turn hit growth and heal swirl off; damage and healing leave a held eye without reactions.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>heldEyeSwirlsWhenHealed</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeSwirlsWhenHealed</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A held eye swirls when its holder heals, at most once per <code>swirlHealCooldownTicks</code>, and a heal while
- something else plays is dropped. In game: hold a Googly Eye in first person, get hurt, and eat a golden
- apple or drink a potion of healing; the eye swirls. Heal again soon after and it doesn't.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)">
+<section class="detail" id="heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>heldEyePlaysIdleBehaviors</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyePlaysIdleBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A held eye left alone plays an expression from the server's ambient pool now and then, and never
- crosses. In game: hold a Googly Eye in first person and stand still for up to 40 seconds; the eye in
- your hand winks, stares, or glances aside.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyePlaysIdleBehaviors</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: keep a held eye visible through F5; its stable ambient blink continues on the same pupil.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>heldEyeWinksAlone</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeWinksAlone</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A lone eye's blink closes it, and cross-eye, which needs a partner eye, leaves it alone. In game: hold a
- Googly Eye in first person until it winks; the whole eye closes and opens again.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper)">
+<section class="detail" id="heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
 <h3>heldEyeResetsWhenPutAway</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeResetsWhenPutAway</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A held eye is dropped when it leaves the holder's hands and starts fresh when picked up again, in either
- hand. In game: hold a Googly Eye in first person while it is mid-wink, switch to another item and back,
- and it is at rest; move it to your off hand and it is live there too.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeResetsWhenPutAway</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: put the eye away and equip it again; the old hand simulation and received reaction are retired.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>heldEyeSwirlsWhenHealed</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeSwirlsWhenHealed</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: heal while holding an eye, then heal again after its swirl but before the cooldown; no second swirl.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>heldEyeWinksAlone</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">heldEyeWinksAlone</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
+<div class="block">In game: a single held eye blinks closed and never selects the paired cross-eye expression.</div>
 </section>
 </li>
 </ul>

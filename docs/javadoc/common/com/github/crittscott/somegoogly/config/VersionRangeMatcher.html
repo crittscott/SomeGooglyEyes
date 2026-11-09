@@ -79,7 +79,11 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
  nearest-generation fallback pick (<a href="#nearestVersion(java.util.Collection,java.lang.String)"><code>nearestVersion(java.util.Collection&lt;java.lang.String&gt;, java.lang.String)</code></a>) used when no entry matches at all and
- the range synthesis (<a href="#rangeFor(java.lang.String)"><code>rangeFor(java.lang.String)</code></a>) used when exporting definitions for optional mods.</div>
+ the range synthesis (<a href="#rangeFor(java.lang.String)"><code>rangeFor(java.lang.String)</code></a>) used when exporting definitions for optional mods.
+
+ <p>This is one shared data-format ordering on both loaders, including loader-word filtering and
+ nearest-generation fallback. Loader-specific comparators would select different definitions from the same
+ datapack. Bare declarations are exact strings; bracket bounds deliberately use zero-padded components.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

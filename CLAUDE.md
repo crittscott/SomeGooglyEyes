@@ -66,7 +66,7 @@ Without those sources, what you know about a Minecraft or loader API comes from 
 - `README.md` is identical in every checkout and covers every release.
 - `docs/curseforge-description.md` describes only this checkout's Minecraft version and links absolutely to this version's branch; `docs/curseforge-description.html` is its HTML rendering. Change them together.
 - A release checkout carries exactly one changelog, `CHANGELOG-<previous release>-<this release>.md` (versions written without the leading `1.`, e.g. `CHANGELOG-21.8-21.11.md`); earlier releases' changelogs live only in their own checkouts.
-- `.gitignore`, `.gitattributes`, `gradlews.ps1`, the wrapper, and the agent instruction files are identical in every checkout. Gradle files differ between checkouts only where the Minecraft version requires it; every version number lives in `gradle.properties`, and values derivable from it are derived in the build scripts.
+- `.gitignore`, `.gitattributes`, `gradlews.ps1`, the wrapper, and the shared agent instructions (`CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `code-review-decisions.md`) are identical in every release checkout. Platform notes and orientation bodies describe their own checkout. Gradle files differ where the Minecraft version, loader, or optional-mod availability requires it; every version number lives in `gradle.properties`, and values derivable from it are derived in the build scripts. Synchronizing instructions does not authorize changing working target versions or integration settings.
 - `build-env/` is the snapshot described in `orientation-build.md`; update it whenever a file it covers changes.
 
 # Development and Verification

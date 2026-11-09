@@ -86,10 +86,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client.render"><code>ModelGooglyEye</code></a>, tinted by the item's
  <a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>. Reuses the in-world eye model so the item and the mob eyes can't drift.
 
- <p>When the local player holds the item, its first-person view is a live eye, the <a href="../HeldEye.html" title="class in com.github.crittscott.somegoogly.client"><code>HeldEye</code></a> stepped
- from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
- own behaviors. Framed eyes have independent pupil physics and ambient expressions, with their frame
- context supplied by the frame renderer. GUI and third-person hand presentations have independent ambient animation; ground views are static.
+ <p>Both hand views select one holder/hand presentation. The server supplies hurt/heal starts to the holder
+ and other viewers; GUI presentations have their own clock, and ground views are static.
 
  <p>Each loader attaches it as the Googly Eye's custom item renderer; <code>models/item/googly_eye.json</code>
  selects the builtin entity model that hands rendering to it.

@@ -43,7 +43,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -77,10 +77,27 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">FabricNetworkTransport</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Fabric server networking: the login version check, and receivers that decode on the network thread and handle on the server thread.</div>
+<div class="block">Fabric packet types and server networking, with play handlers dispatched by Fabric on the game thread.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="FabricNetworkTransport.FabricPayload.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.FabricPayload</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Fabric's packet contract stays in this loader; the body and its decoder remain shared with Forge.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -119,9 +136,14 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The refusal shown to a client without this mod.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#versionMismatchMessage(java.lang.String)" class="member-name-link">versionMismatchMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;clientVersion)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.fabricmc.fabric.api.networking.v1.PacketType&lt;<a href="FabricNetworkTransport.FabricPayload.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.FabricPayload</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#type(net.minecraft.resources.ResourceLocation)" class="member-name-link">type</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The single Fabric type for a shared payload id, used by registration and sends.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#versionMismatchMessage(java.lang.String)" class="member-name-link">versionMismatchMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;clientVersion)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The refusal shown to a client running network version <code>clientVersion</code>.</div>
 </div>
 </div>
@@ -169,6 +191,13 @@ loadScripts(document, 'script');</script>
 <h3>requiredClientMessage</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">requiredClientMessage</span>()</div>
 <div class="block">The refusal shown to a client without this mod.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="type(net.minecraft.resources.ResourceLocation)">
+<h3>type</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.fabricmc.fabric.api.networking.v1.PacketType&lt;<a href="FabricNetworkTransport.FabricPayload.html" title="class in com.github.crittscott.somegoogly.network.fabric">FabricNetworkTransport.FabricPayload</a>&gt;</span>&nbsp;<span class="element-name">type</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;id)</span></div>
+<div class="block">The single Fabric type for a shared payload id, used by registration and sends.</div>
 </section>
 </li>
 <li>

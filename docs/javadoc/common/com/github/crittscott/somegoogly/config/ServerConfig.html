@@ -267,27 +267,28 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#defaultBehaviors()" class="member-name-link">defaultBehaviors</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSpawnExcluded(net.minecraft.resources.ResourceLocation)" class="member-name-link">isSpawnExcluded</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entityType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The expressions the default <a href="#AMBIENT_BEHAVIOR_POOL"><code>AMBIENT_BEHAVIOR_POOL</code></a> names.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSpawnExcluded(net.minecraft.resources.ResourceLocation)" class="member-name-link">isSpawnExcluded</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entityType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether <code>/sg spawn</code> and <code>/sg spawnall</code> should skip this entity type: its exact id is
  listed in <a href="#SPAWN_EXCLUDED_ENTITIES"><code>SPAWN_EXCLUDED_ENTITIES</code></a>, or its namespace in <a href="#SPAWN_EXCLUDED_MODS"><code>SPAWN_EXCLUDED_MODS</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentFor(net.minecraft.resources.ResourceLocation)" class="member-name-link">percentFor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entityType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentFor(net.minecraft.resources.ResourceLocation)" class="member-name-link">percentFor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;entityType)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The configured eye chance (0–100) for the given entity: an exact override if one matches, else
  the first matching wildcard override, else <a href="#GLOBAL_PERCENT"><code>GLOBAL_PERCENT</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resetDefaults()" class="member-name-link">resetDefaults</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resetDefaults()" class="member-name-link">resetDefaults</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Restore built-in defaults before a loader applies a newly opened world's values.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#roll(net.minecraft.util.RandomSource,int)" class="member-name-link">roll</a><wbr>(net.minecraft.util.RandomSource&nbsp;random,
+ int&nbsp;percent)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Roll one configured percentage, including the never/always endpoints.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#settings()" class="member-name-link">settings</a>()</code></div>
@@ -631,10 +632,12 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="defaultBehaviors()">
-<h3>defaultBehaviors</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span>&nbsp;<span class="element-name">defaultBehaviors</span>()</div>
-<div class="block">The expressions the default <a href="#AMBIENT_BEHAVIOR_POOL"><code>AMBIENT_BEHAVIOR_POOL</code></a> names.</div>
+<section class="detail" id="isSpawnExcluded(net.minecraft.resources.ResourceLocation)">
+<h3>isSpawnExcluded</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpawnExcluded</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entityType)</span></div>
+<div class="block">Whether <code>/sg spawn</code> and <code>/sg spawnall</code> should skip this entity type: its exact id is
+ listed in <a href="#SPAWN_EXCLUDED_ENTITIES"><code>SPAWN_EXCLUDED_ENTITIES</code></a>, or its namespace in <a href="#SPAWN_EXCLUDED_MODS"><code>SPAWN_EXCLUDED_MODS</code></a>. Purely
+ an authoring-command filter — it has no bearing on eye eligibility or natural spawning.</div>
 </section>
 </li>
 <li>
@@ -646,15 +649,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isSpawnExcluded(net.minecraft.resources.ResourceLocation)">
-<h3>isSpawnExcluded</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpawnExcluded</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;entityType)</span></div>
-<div class="block">Whether <code>/sg spawn</code> and <code>/sg spawnall</code> should skip this entity type: its exact id is
- listed in <a href="#SPAWN_EXCLUDED_ENTITIES"><code>SPAWN_EXCLUDED_ENTITIES</code></a>, or its namespace in <a href="#SPAWN_EXCLUDED_MODS"><code>SPAWN_EXCLUDED_MODS</code></a>. Purely
- an authoring-command filter — it has no bearing on eye eligibility or natural spawning.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="resetDefaults()">
 <h3>resetDefaults</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetDefaults</span>()</div>
@@ -662,18 +656,18 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="roll(net.minecraft.util.RandomSource,int)">
+<h3>roll</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">roll</span><wbr><span class="parameters">(net.minecraft.util.RandomSource&nbsp;random,
+ int&nbsp;percent)</span></div>
+<div class="block">Roll one configured percentage, including the never/always endpoints.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="settings()">
 <h3>settings</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">settings</span>()</div>
 <div class="block">Every setting, in the order and sections of the server config file.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="validateResourceLocation(java.lang.String)">
-<h3>validateResourceLocation</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">validateResourceLocation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
-<div class="block">Whether a config string parses as a <code>ResourceLocation</code>; the entry guard for
- <a href="#AMBIENT_BEHAVIOR_POOL"><code>AMBIENT_BEHAVIOR_POOL</code></a>, <a href="#SPAWN_EXCLUDED_ENTITIES"><code>SPAWN_EXCLUDED_ENTITIES</code></a>, and the client's <code>disabledEntities</code>.</div>
 </section>
 </li>
 <li>
@@ -689,6 +683,14 @@ loadScripts(document, 'script');</script>
 <h3>validateOverride</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">validateOverride</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
 <div class="block">Whether a config string is a well-formed override line (<code>parse(java.lang.String)</code>); the entry guard for <a href="#ENTITY_OVERRIDES"><code>ENTITY_OVERRIDES</code></a>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="validateResourceLocation(java.lang.String)">
+<h3>validateResourceLocation</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">validateResourceLocation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value)</span></div>
+<div class="block">Whether a config string parses as a <code>ResourceLocation</code>; the entry guard for
+ <a href="#AMBIENT_BEHAVIOR_POOL"><code>AMBIENT_BEHAVIOR_POOL</code></a>, <a href="#SPAWN_EXCLUDED_ENTITIES"><code>SPAWN_EXCLUDED_ENTITIES</code></a>, and the client's <code>disabledEntities</code>.</div>
 </section>
 </li>
 </ul>

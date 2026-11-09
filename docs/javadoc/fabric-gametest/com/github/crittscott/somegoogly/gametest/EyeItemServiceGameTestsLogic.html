@@ -117,9 +117,15 @@ loadScripts(document, 'script');</script>
 <div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#optometristRollsOnlyOntoShearsAndBooks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristRollsOnlyOntoShearsAndBooks</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Loot that rolls enchantments by level with treasure allowed, as fishing treasure and End City chests do,
+ can put Optometrist on shears or a book but on nothing else.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
  Optometrist; only a non-sneaking use is left to the vanilla item.</div>
 </div>
@@ -174,6 +180,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="optometristRollsOnlyOntoShearsAndBooks(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>optometristRollsOnlyOntoShearsAndBooks</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristRollsOnlyOntoShearsAndBooks</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Loot that rolls enchantments by level with treasure allowed, as fishing treasure and End City chests do,
+ can put Optometrist on shears or a book but on nothing else. In game: run
+ <code>/loot give @s loot minecraft:chests/end_city_treasure</code> many times; no tool, weapon, or armor piece
+ comes with Optometrist.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)">
 <h3>selfRemoveWithShearsDropsAnEyeAndCostsDurability</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">selfRemoveWithShearsDropsAnEyeAndCostsDurability</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -185,8 +201,8 @@ loadScripts(document, 'script');</script>
  air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
  and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
  with <code>googlyEyesEnabled = false</code>, nothing happens.
- With a protection listener refusing item use, repeat with plain and Optometrist shears: eyes,
- drops, durability, and health stay unchanged. Remove the veto and repeat; self-removal works.
+ The refusal case has no in-game form without a protection mod; it guards that a loader's denial of
+ item use leaves eyes, drops, durability, and health unchanged.
  Callback ordering needs a connected client; this service test bypasses the loader callback.</div>
 </section>
 </li>

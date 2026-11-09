@@ -2,6 +2,8 @@
 
 Settled review policy and accepted behavior for this project. Read this before reviewing or implementing a finding. These decisions override general preferences in the review prompt, CLAUDE.md, and code-conventions.md where they conflict. A new, demonstrated defect may justify revisiting a decision; preference, speculation, and a different architecture do not.
 
+These decisions apply across release checkouts where the relevant behavior exists. API names, implementation observations, follow-up work, and verification claims below come from the 1.20.1 review unless explicitly scoped otherwise; they do not establish another checkout's implementation or verification status. Preserve that checkout's working APIs, target versions, and optional-mod settings, and consult its platform notes. An accepted integration placement does not require adding an integration to versions where it is absent.
+
 ## Review scope
 
 - Preserve review findings, their original numbering, and follow-up items for cross-version handoff. Add a verdict to each assessed finding; when fixed, describe the implemented fix, relevant invariants, and verification status. Retain rejected findings with their reasons and qualify superseded claims explicitly rather than deleting or silently rewriting them. The verdict distinguishes the original review from the current code. A later verdict or correction takes precedence over the retained original summary, consequence, and proposed action; those original passages are not instructions to implement rejected work. This retention policy follows the owner's instruction and supersedes the earlier removal policy.

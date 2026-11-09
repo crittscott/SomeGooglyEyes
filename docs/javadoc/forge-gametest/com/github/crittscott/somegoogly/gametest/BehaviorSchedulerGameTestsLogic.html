@@ -78,7 +78,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Server-side coverage for <code>ServerBehaviorScheduler</code> — the authority for which behavior a mob is
  playing and when. <a href="BehaviorDeterminismGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>BehaviorDeterminismGameTestsLogic</code></a> covers the client's animation derivation;
- this drives the server clock by hand (<code>serverTick()</code>) and probes the schedule through
+ this waits for real server ticks and probes the schedule through
  <code>trigger()</code>'s return (a dropped trigger means the mob is busy or asleep). Every test forces the
  scheduler to a clean slate with <code>clear()</code> and force-and-restores the behavior config it touches;
  ambient play is disabled so only the events under test can move the schedule, except where ambient
@@ -324,6 +324,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="completedTradeSwirlsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>completedTradeSwirlsEyes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">completedTradeSwirlsEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
+ <code>swirlOnTrade = true</code>, trade with an eyed villager; its eyes swirl as you take the item.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>creepyEndermanPulses</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">creepyEndermanPulses</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
@@ -365,22 +374,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="completedTradeSwirlsEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>completedTradeSwirlsEyes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">completedTradeSwirlsEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+<section class="detail" id="healAtFullHealthPlaysNoSwirl(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>healAtFullHealthPlaysNoSwirl</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">healAtFullHealthPlaysNoSwirl</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A completed trade swirls the villager's eyes through the loader's trade hook. In game: with
- <code>swirlOnTrade = true</code>, trade with an eyed villager; its eyes swirl as you take the item.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>playerHitBulgesEyes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playerHitBulgesEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;attacker)</span></div>
-<div class="block">A player's real hit bulges the eyes of a mob or of another player. In game: with
- <code>growOnHitPercent = 100</code>, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
- eyes grow.</div>
+<div class="block">A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with <code>swirlOnHeal</code>
+ on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.</div>
 </section>
 </li>
 <li>
@@ -392,15 +391,6 @@ loadScripts(document, 'script');</script>
  is idle. In game: hurt an eyed cow, throw a splash potion of healing at it, and its eyes swirl; hurt
  and heal it again within <code>swirlHealCooldownTicks</code> (default 200) after the first heal, and they do
  not.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="healAtFullHealthPlaysNoSwirl(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
-<h3>healAtFullHealthPlaysNoSwirl</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">healAtFullHealthPlaysNoSwirl</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
- net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A heal that restores nothing plays no swirl and doesn't spend the cooldown. In game: with <code>swirlOnHeal</code>
- on, splash an uninjured eyed cow with Instant Health; its eyes don't swirl. Hurt it and splash it again; they do.</div>
 </section>
 </li>
 <li>
@@ -422,6 +412,16 @@ loadScripts(document, 'script');</script>
  elapses. In game: as a creative operator, look at an eyed mob and run <code>/sg admin behavior swirl</code>,
  then <code>/sg admin behavior blink</code> while it swirls; the blink does not play. Run it again after the
  swirl ends and it does.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)">
+<h3>playerHitBulgesEyes</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playerHitBulgesEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
+ net.minecraft.server.level.ServerPlayer&nbsp;attacker)</span></div>
+<div class="block">A player's real hit bulges the eyes of a mob or of another player. In game: with
+ <code>growOnHitPercent = 100</code>, hit an eyed cow, then an eyed player on a server with PvP on; both sets of
+ eyes grow.</div>
 </section>
 </li>
 <li>

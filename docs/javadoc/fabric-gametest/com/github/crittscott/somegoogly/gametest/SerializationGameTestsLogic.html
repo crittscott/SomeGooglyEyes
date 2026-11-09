@@ -110,7 +110,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly.</div>
+<div class="block">The eye-definition sync survives the wire, and a full modpack's set fits its budgets.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -159,7 +159,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode.</div>
+<div class="block">The picker export request survives the wire; a request with no definition or an unsupported age is refused on decode.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -194,10 +194,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>networkProtocolIdsAreUnique</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every payload id is unique. No in-game form; guards that no two payloads are misread as each other.</div>
+<section class="detail" id="angerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>angerPacketRoundTrips</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The anger report survives the wire. No in-game form; guards that every client sees the anger the
+ server shares.</div>
 </section>
 </li>
 <li>
@@ -215,39 +216,16 @@ loadScripts(document, 'script');</script>
 <h3>behaviorTriggerPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">behaviorTriggerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
- that every client sees the expression the server started and refuses a number it doesn't know.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>pickerNumbersIgnoreTheComputersLanguage</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerNumbersIgnoreTheComputersLanguage</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Picker numbers print the way <code>/sg</code> parses them on any computer. In game, on a system set to German:
- <code>/sg list eyes</code> and the picker HUD show <code>1.250</code>, not <code>1,250</code>.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="angerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>angerPacketRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">angerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The anger report survives the wire. No in-game form; guards that every client sees the anger the
- server shares.</div>
+ that every client sees the expression the server started and refuses an unknown number or an elapsed
+ time outside that expression's lifetime.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
+<div class="block">The eye-definition sync survives the wire, and a full modpack's set fits its budgets. No in-game form;
  guards that joining clients draw the same eyes the server's datapacks define.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>settingsPacketRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingsPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The master switch and behavior settings survive the wire. No in-game form; guards that clients run ongoing
- behaviors and placed heads' and the held eye's expressions from the server's settings.</div>
 </section>
 </li>
 <li>
@@ -259,20 +237,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeColorRejectsWrongChannelCount</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsWrongChannelCount</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A color must have exactly three channels. In game: a datapack eye definition with
- <code>"irisColors": [0.5, 0.5]</code> is ignored on <code>/reload</code>, with an error in the log.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="eyeColorRejectsOutOfRangeChannels(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>eyeColorRejectsOutOfRangeChannels</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsOutOfRangeChannels</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Both color codecs reject a channel outside <code>0..1</code> or non-finite on decode. In-game,
  <code>/give @s somegoogly:googly_eye[somegoogly:eye_properties={irisColor:[2f,0f,0f]}]</code> fails to
  parse instead of producing an eye item.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeColorRejectsWrongChannelCount(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeColorRejectsWrongChannelCount</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeColorRejectsWrongChannelCount</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A color must have exactly three channels. In game: a datapack eye definition with
+ <code>"irisColors": [0.5, 0.5]</code> is ignored on <code>/reload</code>, with an error in the log.</div>
 </section>
 </li>
 <li>
@@ -297,10 +275,33 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeStatePacketRejectsNonFiniteValues</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
+ unmodified server; guards clients against a malicious server.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>eyeStatePacketRoundTrips</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
+ every watching client sees a mob's eyes, placement, and colors as the server has them.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>networkProtocolIdsAreUnique</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">networkProtocolIdsAreUnique</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Every payload id is unique. No in-game form; guards that no two payloads are misread as each other.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>pickerExportPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerExportPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode. No
+<div class="block">The picker export request survives the wire; a request with no definition or an unsupported age is refused on decode. No
  in-game form; guards that <code>/sg export</code> delivers exactly the definition the client authored.</div>
 </section>
 </li>
@@ -313,19 +314,19 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeStatePacketRoundTrips</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Entity eye state survives the wire, with and without appearance overrides. No in-game form; guards that
- every watching client sees a mob's eyes, placement, and colors as the server has them.</div>
+<section class="detail" id="pickerNumbersIgnoreTheComputersLanguage(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>pickerNumbersIgnoreTheComputersLanguage</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerNumbersIgnoreTheComputersLanguage</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Picker numbers print the way <code>/sg</code> parses them on any computer. In game, on a system set to German:
+ <code>/sg list eyes</code> and the picker HUD show <code>1.250</code>, not <code>1,250</code>.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>eyeStatePacketRejectsNonFiniteValues</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
- unmodified server; guards clients against a malicious server.</div>
+<section class="detail" id="settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>settingsPacketRoundTrips</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingsPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">The master switch and behavior settings survive the wire. No in-game form; guards that clients run ongoing
+ behaviors and placed heads' and the held eye's expressions from the server's settings.</div>
 </section>
 </li>
 </ul>

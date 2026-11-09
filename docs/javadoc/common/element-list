@@ -4,6 +4,7 @@ com.github.crittscott.somegoogly.client.command
 com.github.crittscott.somegoogly.client.compat
 com.github.crittscott.somegoogly.client.compat.gecko
 com.github.crittscott.somegoogly.client.picker
+com.github.crittscott.somegoogly.client.platform
 com.github.crittscott.somegoogly.client.render
 com.github.crittscott.somegoogly.client.render.resolver
 com.github.crittscott.somegoogly.command

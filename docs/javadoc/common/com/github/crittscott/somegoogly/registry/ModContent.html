@@ -77,7 +77,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ModContent</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Everything the mod registers, declared once and bound through each loader's <a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry"><code>ContentRegistrar</code></a>:
+<div class="block">Everything the mod registers, declared once and registered through <a href="../platform/Registration.html" title="class in com.github.crittscott.somegoogly.platform"><code>Registration</code></a>:
  the Googly Eye (an ingredient) and the Slimy Eye it crafts into (the applicator), which carry the same
  appearance NBT; the shears-only Optometrist enchantment; the mod's creative tab; and the serializers for
  the eye-modifier and Slimy Eye recipes. The self-shear damage type is data-driven, so only its resource
@@ -94,18 +94,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.CreativeModeTab&gt;</code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.CreativeModeTab&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#CREATIVE_TAB" class="member-name-link">CREATIVE_TAB</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The mod's own creative tab, icon'd with the googly eye.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer&lt;<a href="../recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a>&gt;&gt;</code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer&lt;<a href="../recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a>&gt;&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#EYE_MODIFIER_RECIPE" class="member-name-link">EYE_MODIFIER_RECIPE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a>&gt;</code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#GOOGLY_EYE" class="member-name-link">GOOGLY_EYE</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#OPTOMETRIST" class="member-name-link">OPTOMETRIST</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final net.minecraft.resources.ResourceKey&lt;net.minecraft.world.damagesource.DamageType&gt;</code></div>
@@ -119,10 +119,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:shears</code> and
  <code>forge:shears</code> tags, so modded shears count without extending <code>ShearsItem</code>.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final <a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SLIMY_EYE_RECIPE" class="member-name-link">SLIMY_EYE_RECIPE</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 </div>
@@ -140,9 +140,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(com.github.crittscott.somegoogly.registry.ContentRegistrar)" class="member-name-link">register</a><wbr>(<a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry">ContentRegistrar</a>&nbsp;registrar)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Bind every handle.</div>
+<div class="block">Load this class, which registers everything declared above.</div>
 </div>
 </div>
 </div>
@@ -162,21 +162,27 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="OPTOMETRIST">
+<h3>OPTOMETRIST</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</span>&nbsp;<span class="element-name">OPTOMETRIST</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="GOOGLY_EYE">
 <h3>GOOGLY_EYE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a>&gt;</span>&nbsp;<span class="element-name">GOOGLY_EYE</span></div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../item/GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a>&gt;</span>&nbsp;<span class="element-name">GOOGLY_EYE</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="SLIMY_EYE">
 <h3>SLIMY_EYE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</span>&nbsp;<span class="element-name">SLIMY_EYE</span></div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</span>&nbsp;<span class="element-name">SLIMY_EYE</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="CREATIVE_TAB">
 <h3>CREATIVE_TAB</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.CreativeModeTab&gt;</span>&nbsp;<span class="element-name">CREATIVE_TAB</span></div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.CreativeModeTab&gt;</span>&nbsp;<span class="element-name">CREATIVE_TAB</span></div>
 <div class="block">The mod's own creative tab, icon'd with the googly eye. It gathers everything the mod adds (the
  eye, the slimy eye that applies it, and an Optometrist book) in one place rather than scattered
  across vanilla tabs.</div>
@@ -185,19 +191,13 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="EYE_MODIFIER_RECIPE">
 <h3>EYE_MODIFIER_RECIPE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer&lt;<a href="../recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a>&gt;&gt;</span>&nbsp;<span class="element-name">EYE_MODIFIER_RECIPE</span></div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer&lt;<a href="../recipe/EyeModifierRecipe.html" title="class in com.github.crittscott.somegoogly.recipe">EyeModifierRecipe</a>&gt;&gt;</span>&nbsp;<span class="element-name">EYE_MODIFIER_RECIPE</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="SLIMY_EYE_RECIPE">
 <h3>SLIMY_EYE_RECIPE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</span>&nbsp;<span class="element-name">SLIMY_EYE_RECIPE</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="OPTOMETRIST">
-<h3>OPTOMETRIST</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ContentRegistrar.Handle.html" title="class in com.github.crittscott.somegoogly.registry">ContentRegistrar.Handle</a>&lt;net.minecraft.world.item.enchantment.Enchantment&gt;</span>&nbsp;<span class="element-name">OPTOMETRIST</span></div>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../recipe/SlimyEyeRecipe.Serializer.html" title="class in com.github.crittscott.somegoogly.recipe">SlimyEyeRecipe.Serializer</a>&gt;</span>&nbsp;<span class="element-name">SLIMY_EYE_RECIPE</span></div>
 </section>
 </li>
 <li>
@@ -225,10 +225,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="register(com.github.crittscott.somegoogly.registry.ContentRegistrar)">
-<h3>register</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="ContentRegistrar.html" title="interface in com.github.crittscott.somegoogly.registry">ContentRegistrar</a>&nbsp;registrar)</span></div>
-<div class="block">Bind every handle.</div>
+<section class="detail" id="init()">
+<h3>init</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">init</span>()</div>
+<div class="block">Load this class, which registers everything declared above. Called once from each loader's entry point,
+ while the loader still accepts registrations.</div>
 </section>
 </li>
 </ul>

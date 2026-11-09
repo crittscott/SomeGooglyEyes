@@ -162,8 +162,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">refusedBulkSpawnLeavesTerrain</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
 <div class="block">A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.
- The loader wrapper installs the refusing listener. In game: refuse command spawns with a listener,
- stand over air, and run spawnall; the command skips the mobs without replacing terrain or head data.</div>
+ The loader wrapper installs the refusing listener. No in-game form without a mod that refuses spawns;
+ guards that a refused spawn leaves terrain and head data as they were.</div>
 </section>
 </li>
 <li>

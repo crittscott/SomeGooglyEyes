@@ -100,9 +100,9 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>globalPercent = 100</code> always grants eyes and <code>0</code> never does.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAlwaysAssignsAVariantRoll</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onlyEyedMobsStoreAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">onlyEyedMobsStoreAVariantRoll</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Every spawned mob stores a placement roll, with or without eyes.</div>
+<div class="block">Only a mob that gets eyes stores a placement roll, and one switched on later draws its own.</div>
 </div>
 </div>
 </div>
@@ -131,13 +131,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>spawnAlwaysAssignsAVariantRoll</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAlwaysAssignsAVariantRoll</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every spawned mob stores a placement roll, with or without eyes. In game: set <code>globalPercent = 0</code>,
- spawn a pig, and on Forge <code>/data get entity &lt;pig&gt;</code> shows a
+<section class="detail" id="onlyEyedMobsStoreAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>onlyEyedMobsStoreAVariantRoll</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onlyEyedMobsStoreAVariantRoll</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Only a mob that gets eyes stores a placement roll, and one switched on later draws its own. In game: set
+ <code>globalPercent = 0</code>, spawn a pig, and on Forge <code>/data get entity &lt;pig&gt;</code> shows no
  <code>somegoogly:eyeVariantRoll</code> key in <code>ForgeData</code>. Aiming at it and running
- <code>/sg admin eyes true</code> gives it the placement that stored roll selects.</div>
+ <code>/sg admin eyes true</code> gives it eyes and the key.</div>
 </section>
 </li>
 </ul>

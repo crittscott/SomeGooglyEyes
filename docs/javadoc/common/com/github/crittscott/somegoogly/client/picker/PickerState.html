@@ -284,7 +284,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
  connection may already be gone, and the server's own logout handling
- (<a href="../../picker/PickerFreezeService.html#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)"><code>PickerFreezeService.onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)</code></a>) releases any frozen mob regardless.</div>
+ (<a href="../../picker/PickerFreezeService.html#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)"><code>PickerFreezeService.unfreeze(net.minecraft.server.MinecraftServer, java.util.UUID)</code></a>) releases any frozen mob regardless.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#save()" class="member-name-link">save</a>()</code></div>
@@ -323,12 +323,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setDepth(float)" class="member-name-link">setDepth</a><wbr>(float&nbsp;v)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Thickness multiplier along the look axis (1 = standard; clamped >= 0).</div>
+<div class="block">Thickness multiplier along the look axis (1 = standard).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setEyeScale(float)" class="member-name-link">setEyeScale</a><wbr>(float&nbsp;v)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Set the current draft eye's overall scale, clamped to <code>&gt;= 0</code>.</div>
+<div class="block">Set the current draft eye's overall scale.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setGlow(boolean)" class="member-name-link">setGlow</a><wbr>(boolean&nbsp;v)</code></div>
@@ -345,7 +345,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setIrisScale(float)" class="member-name-link">setIrisScale</a><wbr>(float&nbsp;v)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Set the current draft eye's iris scale, clamped to <code>&gt;= 0</code>.</div>
+<div class="block">Set the current draft eye's iris scale.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setPartByName(java.lang.String)" class="member-name-link">setPartByName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</code></div>
@@ -373,7 +373,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setVariantWeight(double)" class="member-name-link">setVariantWeight</a><wbr>(double&nbsp;w)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The CLI <code>variant weight &lt;w&gt;</code> op: set the current variant's relative weight (clamped >= 0).</div>
+<div class="block">The CLI <code>variant weight &lt;w&gt;</code> op: set the current variant's relative weight.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#target()" class="member-name-link">target</a>()</code></div>
@@ -556,7 +556,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="delete(int)">
 <h3>delete</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">delete</span><wbr><span class="parameters">(int&nbsp;oneBased)</span></div>
-<div class="block">The CLI <code>delete &lt;n&gt;</code> op (1-based): remove an eye from the current variant.</div>
+<div class="block">The CLI <code>delete &lt;n&gt;</code> op (1-based): remove an eye from the current variant. Cross targets are flat list
+ indexes, so every later eye's target moves down one and a target on the deleted eye is cleared.</div>
 </section>
 </li>
 <li>
@@ -632,7 +633,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetOnDisconnect</span>()</div>
 <div class="block">Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
  connection may already be gone, and the server's own logout handling
- (<a href="../../picker/PickerFreezeService.html#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)"><code>PickerFreezeService.onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)</code></a>) releases any frozen mob regardless.
+ (<a href="../../picker/PickerFreezeService.html#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)"><code>PickerFreezeService.unfreeze(net.minecraft.server.MinecraftServer, java.util.UUID)</code></a>) releases any frozen mob regardless.
 
  <p>The authored drafts go too, along with <a href="#targetType()"><code>targetType()</code></a>. They were authored against — and
  seeded from — the server we're leaving, and <code>export</code> would happily send them to the next
@@ -699,14 +700,14 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setDepth(float)">
 <h3>setDepth</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setDepth</span><wbr><span class="parameters">(float&nbsp;v)</span></div>
-<div class="block">Thickness multiplier along the look axis (1 = standard; clamped >= 0).</div>
+<div class="block">Thickness multiplier along the look axis (1 = standard).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="setEyeScale(float)">
 <h3>setEyeScale</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEyeScale</span><wbr><span class="parameters">(float&nbsp;v)</span></div>
-<div class="block">Set the current draft eye's overall scale, clamped to <code>&gt;= 0</code>.</div>
+<div class="block">Set the current draft eye's overall scale.</div>
 </section>
 </li>
 <li>
@@ -729,7 +730,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setIrisScale(float)">
 <h3>setIrisScale</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setIrisScale</span><wbr><span class="parameters">(float&nbsp;v)</span></div>
-<div class="block">Set the current draft eye's iris scale, clamped to <code>&gt;= 0</code>.</div>
+<div class="block">Set the current draft eye's iris scale.</div>
 </section>
 </li>
 <li>
@@ -769,7 +770,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setVariantWeight(double)">
 <h3>setVariantWeight</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setVariantWeight</span><wbr><span class="parameters">(double&nbsp;w)</span></div>
-<div class="block">The CLI <code>variant weight &lt;w&gt;</code> op: set the current variant's relative weight (clamped >= 0).</div>
+<div class="block">The CLI <code>variant weight &lt;w&gt;</code> op: set the current variant's relative weight.</div>
 </section>
 </li>
 <li>
