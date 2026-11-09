@@ -27,7 +27,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
 - sheared (sheep): bulge;
-- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust): pupils swell to twice their size;
+- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust, taming): pupils swell to twice their size;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
@@ -64,9 +64,9 @@ Modifiers stack across crafts. Googly Eyes have no creation recipe; they must be
 
 Craft a Googly Eye with a slimeball to make a Slimy Eye; it keeps the eye's appearance and any name. Right-click an eligible, eyeless mob to apply it. The mob receives an arrangement from its own definition, with the item's appearance applied to every eye. A slime squelch plays, and the Slimy Eye is consumed unless the player is in creative mode.
 
-An eyed mob or one without a definition for its current life stage refuses the item. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
+An eyed mob or one without a definition for its current life stage refuses the item, and the click acts as usual. Harvest existing eyes before restyling a mob. Sneak-use a Slimy Eye on air to apply it to yourself; another player may also apply one to you, but only where server PvP is on and your teams permit it.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a bare-handed hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 

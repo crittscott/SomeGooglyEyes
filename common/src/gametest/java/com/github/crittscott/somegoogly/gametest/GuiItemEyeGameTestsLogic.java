@@ -39,7 +39,7 @@ public final class GuiItemEyeGameTestsLogic {
         var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var presentation = cache.get(key, stack);
-        BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
+        BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
         BehaviorSettings blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK),
                 0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
         cache.tick(view, blink);
@@ -166,7 +166,7 @@ public final class GuiItemEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
             Object view = new Object();
             var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
@@ -180,7 +180,7 @@ public final class GuiItemEyeGameTestsLogic {
                     helper.assertTrue(pupil.guiGravity && !pupil.itemGravity, "each head pupil has GUI orientation");
                 }
             }
-            BehaviorSettings defaults = BehaviorSettings.DEFAULTS;
+            BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
             BehaviorSettings cross = new BehaviorSettings(true, 200, 200, List.of(EyeBehavior.CROSS_EYE),
                     0, false, defaults.swirlHealCooldownTicks(), defaults.ongoing());
             boolean played = false;

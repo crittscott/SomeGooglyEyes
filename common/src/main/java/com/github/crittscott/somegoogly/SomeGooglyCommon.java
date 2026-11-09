@@ -1,7 +1,5 @@
 package com.github.crittscott.somegoogly;
 
-import com.github.crittscott.somegoogly.registry.ContentRegistrar;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +13,5 @@ public final class SomeGooglyCommon {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     private SomeGooglyCommon() {
-    }
-
-    /** Register content shared by every loader. Called once from each loader's entry point. */
-    public static void init(ContentRegistrar registrar) {
-        ModContent.register(registrar);
     }
 }

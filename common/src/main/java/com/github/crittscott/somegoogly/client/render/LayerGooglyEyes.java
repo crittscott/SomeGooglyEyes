@@ -52,7 +52,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         int overlay = LivingEntityRenderer.getOverlayCoords(living, 0.0F);
 
         if (data.pickerTarget()) {
-            renderPreview(poseStack, bufferSource, packedLight, overlay, model, resolver);
+            renderPreview(poseStack, bufferSource, packedLight, overlay, living, model, resolver);
         } else {
             renderEyes(poseStack, bufferSource, packedLight, overlay, living, model, resolver, data);
         }
@@ -94,10 +94,11 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
     }
 
     private void renderPreview(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int overlay,
-                               M model, EyeAttachmentResolver resolver) {
+                               T living, M model, EyeAttachmentResolver resolver) {
         for (PickerState.ListedEye listed : PickerState.previewEyes()) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, listed.part)) {
+                insetShearedSheepBody(poseStack, living, listed.part);
                 GooglyEyeRenderer.renderPreviewEye(poseStack, bufferSource, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
@@ -108,6 +109,7 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>> e
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token)) {
+                insetShearedSheepBody(poseStack, living, token);
                 GooglyEyeRenderer.renderPreviewPlacement(poseStack, bufferSource, packedLight, overlay);
             }
             poseStack.popPose();

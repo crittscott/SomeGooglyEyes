@@ -1,6 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.fabric;
 
-import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Pig;
@@ -20,14 +20,14 @@ abstract class LightningConversionMixin {
     @ModifyArg(method = "thunderHit", require = 0, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
     private Entity somegoogly$keepPigEyes(Entity converted) {
-        EyeState.copy((LivingEntity) (Object) this, (LivingEntity) converted);
+        ServerServices.onConverted((LivingEntity) (Object) this, (LivingEntity) converted);
         return converted;
     }
 
     @ModifyArg(method = "thunderHit", require = 0, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
     private Entity somegoogly$keepVillagerEyes(Entity converted) {
-        EyeState.copy((LivingEntity) (Object) this, (LivingEntity) converted);
+        ServerServices.onConverted((LivingEntity) (Object) this, (LivingEntity) converted);
         return converted;
     }
 }

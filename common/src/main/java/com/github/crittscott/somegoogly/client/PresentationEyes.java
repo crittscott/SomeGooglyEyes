@@ -73,10 +73,6 @@ public final class PresentationEyes {
     private long startsAt;
     private final boolean stationaryHead;
 
-    public PresentationEyes(UUID uuid) {
-        this(uuid, new ItemStack(ModContent.GOOGLY_EYE.get()));
-    }
-
     private PresentationEyes(UUID uuid, ItemStack looseEye) {
         this(uuidSeed(uuid), looseEye.copyWithCount(1), null, null, null, new int[]{0}, false);
     }

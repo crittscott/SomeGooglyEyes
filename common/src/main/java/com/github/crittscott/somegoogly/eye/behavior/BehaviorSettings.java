@@ -30,16 +30,10 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
                                int growOnHitPercent, boolean swirlOnHeal, int swirlHealCooldownTicks,
                                Set<OngoingBehavior> ongoing) {
 
-    /** The server's built-in defaults. */
-    public static final BehaviorSettings DEFAULTS = new BehaviorSettings(
-            ServerConfig.AMBIENT_BEHAVIORS.defaultValue(), ServerConfig.AMBIENT_MIN_TICKS.defaultValue(),
-            ServerConfig.AMBIENT_MAX_TICKS.defaultValue(), ServerConfig.defaultBehaviors(),
-            ServerConfig.GROW_ON_HIT_PERCENT.defaultValue(), ServerConfig.SWIRL_ON_HEAL.defaultValue(),
-            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.defaultValue(), switchedOn(true));
-
     /** Inactive client state before server settings arrive and after disconnect. */
-    public static final BehaviorSettings NONE = new BehaviorSettings(false, DEFAULTS.minTicks(), DEFAULTS.maxTicks(),
-            List.of(), 0, false, DEFAULTS.swirlHealCooldownTicks(), Set.of());
+    public static final BehaviorSettings NONE = new BehaviorSettings(false,
+            ServerConfig.AMBIENT_MIN_TICKS.defaultValue(), ServerConfig.AMBIENT_MAX_TICKS.defaultValue(), List.of(), 0,
+            false, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.defaultValue(), Set.of());
 
     public BehaviorSettings {
         pool = List.copyOf(pool);
@@ -66,7 +60,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return new BehaviorSettings(ServerConfig.AMBIENT_BEHAVIORS.get(), ServerConfig.AMBIENT_MIN_TICKS.get(),
                 ServerConfig.AMBIENT_MAX_TICKS.get(), ServerConfig.AMBIENT_BEHAVIOR_POOL.parsed(),
                 ServerConfig.GROW_ON_HIT_PERCENT.get(), ServerConfig.SWIRL_ON_HEAL.get(),
-                ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get(), switchedOn(false));
+                ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get(), switchedOn());
     }
 
     /**
@@ -129,11 +123,11 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return ticks;
     }
 
-    /** The ongoing behaviors whose switches are on by default ({@code defaults}) or currently. */
-    private static Set<OngoingBehavior> switchedOn(boolean defaults) {
+    /** The ongoing behaviors whose switches are on. */
+    private static Set<OngoingBehavior> switchedOn() {
         EnumSet<OngoingBehavior> on = EnumSet.noneOf(OngoingBehavior.class);
         for (OngoingBehavior behavior : OngoingBehavior.values()) {
-            if (defaults ? behavior.setting().defaultValue() : behavior.setting().get()) {
+            if (behavior.setting().get()) {
                 on.add(behavior);
             }
         }

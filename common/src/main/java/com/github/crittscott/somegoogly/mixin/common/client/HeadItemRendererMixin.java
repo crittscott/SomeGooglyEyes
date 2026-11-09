@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Head items draw through vanilla's built-in item renderer, which reaches the same head-model draw as placed
- * heads; bracketing every item it draws lets {@link SkullEyeRenderer} give a head item its eyes.
+ * heads; bracketing each head item it draws lets {@link SkullEyeRenderer} give that item its eyes.
  */
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 abstract class HeadItemRendererMixin {
@@ -29,6 +29,6 @@ abstract class HeadItemRendererMixin {
     private void somegoogly$endItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack pose,
                                     MultiBufferSource bufferSource, int packedLight, int packedOverlay,
                                     CallbackInfo callback) {
-        SkullEyeRenderer.end();
+        SkullEyeRenderer.endItem(stack);
     }
 }

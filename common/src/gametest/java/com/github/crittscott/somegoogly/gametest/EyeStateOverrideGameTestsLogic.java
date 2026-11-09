@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
@@ -73,7 +74,8 @@ public final class EyeStateOverrideGameTestsLogic {
         helper.assertTrue(override.iris().isPresent(), "iris override should be present");
         helper.assertTrue(override.cornea().isEmpty(), "cornea should stay absent (sparse override)");
         helper.assertTrue(override.glow().isEmpty(), "glow should stay absent (sparse override)");
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) != null, "an override compound should exist on the entity");
+        helper.assertTrue(EntityPersistentData.get(cow).contains(EyeState.EYE_OVERRIDES),
+                "an override compound should exist on the entity");
         helper.succeed();
     }
 
@@ -89,7 +91,8 @@ public final class EyeStateOverrideGameTestsLogic {
         EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
 
         helper.assertTrue(EyeState.readProperties(cow).isEmpty(), "override should be empty once its only field is cleared");
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) == null, "the override compound should be removed when empty");
+        helper.assertTrue(!EntityPersistentData.get(cow).contains(EyeState.EYE_OVERRIDES),
+                "the override compound should be removed when empty");
         helper.succeed();
     }
 

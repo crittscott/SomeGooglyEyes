@@ -177,7 +177,8 @@ public final class SomeGooglyGameTestsLogic {
     /**
      * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
      * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
-     * player, an eyed cow shot by a player holding shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
+     * player, an eyed cow shot by a player holding shears, an eyed cow killed by the Thorns armor of a player holding
+     * shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
      * {@code googlyEyesEnabled = false} or the {@code doMobLoot} game rule off.
      */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
@@ -206,6 +207,8 @@ public final class SomeGooglyGameTestsLogic {
             Arrow arrow = Objects.requireNonNull(
                     EntityType.ARROW.create(helper.getLevel()));
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().arrow(arrow, player), drops::add);
+
+            EyeItemService.onDeath(cow, helper.getLevel().damageSources().thorns(player), drops::add);
 
             ServerConfig.HARVEST_ON_KILL_PERCENT.set(0);
             EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);

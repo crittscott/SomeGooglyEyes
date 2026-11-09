@@ -30,13 +30,16 @@ public final class GeoBones {
      * model — not the entity — is what makes a model swap correct: a swapped-in model is a different
      * {@link BakedGeoModel} with its own entries, including its own cached "this token names no bone".
      *
-     * <p>Needs no explicit clearing, unlike the vanilla-side caches: a {@link GeoBone} holds its parent and
-     * children but never the {@link BakedGeoModel}, so nothing here keeps its own weak key alive, and a
-     * baked model discarded on resource reload takes its entries with it.
+     * <p>Cleared with the vanilla-side caches ({@link #clear}) when a resource reload replaces the models.
      */
     private static final ModelMemo<BakedGeoModel, GeoBone> BONES = new ModelMemo<>();
 
     private GeoBones() {
+    }
+
+    /** Drop every cached bone; GeckoLib rebakes its models on each resource reload. */
+    public static void clear() {
+        BONES.clear();
     }
 
     private static void collect(GeoBone bone, List<String> out) {

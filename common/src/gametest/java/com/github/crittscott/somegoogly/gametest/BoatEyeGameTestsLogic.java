@@ -147,7 +147,7 @@ public final class BoatEyeGameTestsLogic {
         Boat boat = Objects.requireNonNull(EntityType.BOAT.create(helper.getLevel()));
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
             ClientEyeRuntime.BoatSimulations cache = new ClientEyeRuntime.BoatSimulations();
             var eyes = cache.get(boat);
@@ -375,8 +375,7 @@ public final class BoatEyeGameTestsLogic {
         spectator.setItemInHand(InteractionHand.MAIN_HAND, slimy);
         helper.assertTrue(EyeItemService.interact(spectator, helper.getLevel(), InteractionHand.MAIN_HAND, boat)
                 == InteractionResult.PASS, "spectator interaction passes without mutating the boat");
-        helper.assertTrue(EyeItemService.applySlimyEye(slimy, spectator, boat) == InteractionResult.FAIL
-                && !EyeState.hasEyes(boat) && slimy.getCount() == 2, "the application verb also refuses spectators");
+        helper.assertTrue(!EyeState.hasEyes(boat) && slimy.getCount() == 2, "a spectator's Slimy Eye stays unused");
         EyeState.enableWithProperties(boat, AppearanceOverride.EMPTY.withGlow(true));
         var snapshot = EyeState.snapshot(boat);
         ItemStack shears = new ItemStack(Items.SHEARS);
@@ -399,7 +398,7 @@ public final class BoatEyeGameTestsLogic {
         Boat boat = Objects.requireNonNull(EntityType.BOAT.create(helper.getLevel()));
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
             var first = ClientEyeRuntime.boatEyes(boat);
             helper.assertTrue(first != null && first == ClientEyeRuntime.boatEyes(boat), "unchanged boats retain pupils");
@@ -428,7 +427,7 @@ public final class BoatEyeGameTestsLogic {
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) == null, "invisible boats hide eyes and retire pupils");
             boat.setInvisible(false);
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(false, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(false, TestBehaviorSettings.DEFAULTS);
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) == null, "master-off suppresses animation");
         } finally {
             ClientEyeRuntime.clear();
@@ -485,7 +484,7 @@ public final class BoatEyeGameTestsLogic {
     }
 
     private static BehaviorSettings settings(List<EyeBehavior> pool) {
-        var defaults = BehaviorSettings.DEFAULTS;
+        var defaults = TestBehaviorSettings.DEFAULTS;
         return new BehaviorSettings(true, 1, 1, pool, 0, false,
                 defaults.swirlHealCooldownTicks(), defaults.ongoing());
     }

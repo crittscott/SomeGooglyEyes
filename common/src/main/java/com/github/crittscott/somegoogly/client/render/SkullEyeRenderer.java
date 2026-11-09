@@ -45,7 +45,7 @@ import java.util.Optional;
 
 /**
  * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
- * {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and call
+ * {@link #begin} and {@link #end}, and a head item's with {@link #beginItem} and {@link #endItem}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
  * ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  * share the model draw without either bracket, so they draw no eyes.
@@ -125,9 +125,14 @@ public final class SkullEyeRenderer {
         DRAWS.push(new DrawContext(skull, null, partialTick));
     }
 
-    /** A head item's draw starts; any other item's draw is ignored, since it never reaches {@link #render}. */
+    /**
+     * An item's draw starts. Only a head item opens a context, since no other item reaches {@link #render}; a
+     * loader that cancels the draw before its end hook then leaves nothing behind for any other item.
+     */
     public static void beginItem(ItemStack stack) {
-        DRAWS.push(new DrawContext(null, stack, 0F));
+        if (SkullEyeState.entityFor(stack) != null) {
+            DRAWS.push(new DrawContext(null, stack, 0F));
+        }
     }
 
     /** Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models. */
@@ -135,9 +140,17 @@ public final class SkullEyeRenderer {
         PLACEMENTS.clear();
     }
 
-    /** The placed head's or head item's draw ends. */
+    /** The placed head's draw ends. */
     public static void end() {
         DRAWS.pop();
+    }
+
+    /** An item's draw ends: closes the context {@link #beginItem} opened for {@code stack}, if it opened one. */
+    public static void endItem(ItemStack stack) {
+        DrawContext draw = DRAWS.peek();
+        if (draw != null && draw.item() == stack) {
+            DRAWS.pop();
+        }
     }
 
     /**

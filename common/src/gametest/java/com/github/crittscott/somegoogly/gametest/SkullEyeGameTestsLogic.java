@@ -180,7 +180,8 @@ public final class SkullEyeGameTestsLogic {
 
         ItemStack second = purpleSlimyEye();
         player.setItemInHand(InteractionHand.MAIN_HAND, second);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, "an eyed head refuses another eye");
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS,
+                "an eyed head refuses another eye, leaving the click to the block");
         helper.assertTrue(second.getCount() == 1, "a refused application keeps the Slimy Eye");
         helper.succeed();
     }
@@ -195,14 +196,14 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
 
         SkullBlockEntity dragon = placeHead(helper, Blocks.DRAGON_HEAD);
-        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, "a dragon head refuses eyes");
+        helper.assertTrue(use(helper, player, dragon) == InteractionResult.PASS, "a dragon head refuses eyes");
         helper.assertTrue(!SkullEyeState.hasEyes(dragon), "the dragon head stays eyeless");
 
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL,
+            helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS,
                     "googlyEyesEnabled=false refuses the application");
             helper.assertTrue(!SkullEyeState.hasEyes(skull), "the head stays eyeless");
         } finally {
