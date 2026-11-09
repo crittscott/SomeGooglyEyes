@@ -4,10 +4,12 @@ Settled review policy and accepted behavior for this project. Read this before r
 
 ## Review scope
 
-- Findings describe current actionable problems. Remove entries that have been moved or merged; do not leave numbered placeholders, relocation history, or completed-work narratives.
+- Preserve review findings, their original numbering, and follow-up items for cross-version handoff. Add a verdict to each assessed finding; when fixed, describe the implemented fix, relevant invariants, and verification status. Retain rejected findings with their reasons and qualify superseded claims explicitly rather than deleting or silently rewriting them. The verdict distinguishes the original review from the current code. A later verdict or correction takes precedence over the retained original summary, consequence, and proposed action; those original passages are not instructions to implement rejected work. This retention policy follows the owner's instruction and supersedes the earlier removal policy.
 - Trust our code, Minecraft, loaders, and other mods unless a relevant behavior is known to be unreliable or unguaranteed. Filesystem operations and reflective integration boundaries can need failure handling. A client or server across the network remains untrusted.
 - Keep effort proportional to a Minecraft mod. A theoretical nested rendering call or a variant roll changed to an exact endpoint through /data is not an actionable defect without a realistic consequence.
 - A working deliberate choice is not a finding merely because another implementation is more conventional. General principles do not override the specific decisions below.
+- Distinguish a demonstrated behavioral defect, a maintenance risk, and an implementation preference. State what the project code establishes and which additional platform fact the claimed consequence depends on. A confirmed code shape does not make a recalled runtime consequence confirmed.
+- Keep implementation status separate from verification status. A fix may be implemented while its runtime consequence remains unverified. Compilation, callback tests, complete lifecycle tests, and multiplayer observation establish different things.
 
 ## Development and build
 
@@ -15,6 +17,12 @@ Settled review policy and accepted behavior for this project. Read this before r
 - Keep build environments as close across Minecraft versions as reasonable. Inactive cross-version Gradle branches, plugin declarations, pack-format fields, and separate Mixin Java settings are acceptable consequences.
 - Keep `pack.mcmeta` in common. Each Forge-family module copies it into its own resources and de-duplicates it in `shadowJar`, so no loader module carries a hand-maintained copy. Do not propose moving it into the loader modules.
 - Keep optional lightning-conversion injections in their existing shared Mixin; splitting them solely to make every injection required is unnecessary.
+
+## Organization and naming
+
+- Do not require a resolver rewrite, a universal platform holder, or a merger of picker services solely to reduce file count. Preserve coherent responsibilities, forced Architectury implementations, and optional-library loading boundaries. Consolidate demonstrated duplicated decisions where they belong.
+- Keep independently owned client and server definition stores. Shared lookup and selection rules do not require shared mutable storage or merging client-only resolved-view caches with server state.
+- The `HeadInfo` "helper" terminology and the `AppearanceOverride` "properties" terminology are deferred to one scripted cross-checkout rename. Do not perform either rename in 1.20.1 alone. Rename only the relevant domain identifiers; vanilla `Item.Properties` is unrelated.
 
 ## Commands and player experience
 
@@ -32,6 +40,7 @@ Settled review policy and accepted behavior for this project. Read this before r
 - Keep Twilight Forest, Heads, Citadel, and related optional integration support in common where it shares the existing pipeline, even if only Forge can use it in this checkout.
 - Keep GeckoLib null-name checks. Do not remove third-party integration guards on an unverified contract.
 - A model failure must leave other models a chance to succeed. Scope recoverable reflection failures to the affected model or attachment; family-wide unavailability is appropriate only when the shared API itself cannot load.
+- Preserve the subclass-first positional attachment ordering used by `ChildMapResolver`. The contrary superclass-first description was a documentation error; changing traversal to match it would change saved attachment identities.
 
 ## Data, loot, and networking
 
@@ -40,10 +49,12 @@ Settled review policy and accepted behavior for this project. Read this before r
 - Keep the working Fabric persistent-data representation. A typed-attachment rewrite is not requested.
 - Preserve saved keys and supported numeric color input forms. A reader accepting more in-range numeric types than its writer emits does not itself prove legacy support or a defect.
 - Head and self shearing may remove eyes and wear shears even if current definitions provide no eye to drop.
-- Use vanilla CopyNbtFunction for placed-head loot on both loaders, with one shared declaration of what to copy. Move shears-on-kill eye drops into the normal loot pipeline. These are implementation directions, not claims that the changes are complete.
+- Keep the shared vanilla CopyNbtFunction operation for placed-head loot on both loaders. Move shears-on-kill eye drops into the normal loot pipeline; that remains an implementation direction, not a claim that it is complete.
 - Do not add required dependencies, including Forge Config API Port.
 - Keep the shared packet-size reserve, including the extra framing byte on Fabric. A separate loader-specific limit is unnecessary.
 - Preserve the present requirement that both endpoints have the mod while multiplayer behavior is verified. Dedicated-server multiplayer testing has not yet happened; Fabric's JOIN-time channel check is unverified, not a proven bug.
+- Keep explicit stable numeric behavior wire IDs. A protocol bump or a difference between packet representations is not a reason to replace them with enum ordinals.
+- Keep the shared version-range parser's established data-format semantics, including exact bare-version matching and nearest-version fallback. A loader-specific version API is not a replacement unless it preserves those semantics on every loader.
 
 ## Tests and logging
 
@@ -52,7 +63,10 @@ Settled review policy and accepted behavior for this project. Read this before r
 - Keep Fabric protection-ordering checks manual; do not add permanent flag-gated refusal listeners.
 - Startup logs should report whether optional Twilight Forest Mixins applied, without making the integration required.
 - Effective server-config summaries should include behavior master switches.
+- Existing access to production logic retained for headless tests is accepted where the ordinary entry point requires a live client or connection. This permits access to the existing behavior, not test-only production behavior, configurable lifetimes, fake clocks, or permanent refusal listeners. Keep test fixtures and adapters in test source.
 
 ## Evidence and remaining work
 
 The decisions above do not prove an unexamined API contract. The individual reports retain implementation follow-up and explicitly unverified checks: released Forge 0.8.2 saved-data shape, Forge mooshroom conversion-event coverage, native block-entity persistence equivalence, and Fabric multiplayer channel timing. Preserve working behavior until permitted source or an in-game check justifies a change. The unanswered Correctness question about client-level unload remains in that report.
+
+The proposed removal of the placed-head spawn-protection check and the proposed Fabric interaction-advancement compensation remain unverified. Preserve the working paths until permitted evidence or the prepared runtime checks establish the upstream guarantee or missing credit. Successful builds do not settle either claim.

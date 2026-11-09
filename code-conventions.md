@@ -6,12 +6,12 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 
 ## Adding a variant of something that exists
 
-- Before writing the new one, read its siblings. The usual way a mod rots is that each new surface, mob family, or setting copies the last one.
+- Before writing the new one, read its siblings. The usual way a mod rots is that each new surface, mob family, or setting copies the last one. When changing a rule, find its existing owner and consumers, including predictions, previews, inverse operations, loader adapters, and diagnostics.
 - Decisions go in one place; mechanics may repeat. A gate, a formula, a timing constant, or a choice of which case wins lives in one function that every copy calls. Repeated wiring that holds no decision may stay.
 - Add the shared code to an existing class. If sharing needs a new small class to save a few lines, keep the duplication.
 - When one change would need edits in several lists, make one declaration drive them all. A setting declares its key, default, range, and comment once, and each loader builds from that. A reset list, copy-out list, or schema written by hand beside the real one is a bug waiting for a missed line.
 - A list that mirrors something else in the code, such as command names known to two trees, is built from the same constants.
-- One concept has one test. If a tag defines what counts as shears, nothing else checks the class instead.
+- One concept has one authoritative predicate. If a tag defines what counts as shears, nothing else checks the class instead.
 - A preview, hint, or client prediction calls the same verdict function as the action it predicts. Never restate the rules for display.
 - An action and its inverse share a gate. If adding something requires a permission, removing it requires the same one.
 - Ask whether a total can fail where each part passes. Validate the prospective whole before committing the part.
@@ -23,11 +23,12 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Before a Mixin stands in for a loader event, list what the event covers: subclass overrides that skip super, hand-built paths that never reach the method, and gates around the call. Cover every case, and hook the stage the event fires at.
 - Rules live in shared services; loader adapters only translate an event into a call. A rule in one adapter is a rule the other loader lacks.
 - When you cancel or preempt vanilla's flow, list what that flow would have done and do it yourself: permission checks, game rules, statistics, advancement criteria, durability and destroy events, the arm-swing result.
-- Bracket a call with two `@Inject`s when you only need context around it. Use `@Redirect` or `@Overwrite` only to change the call, since they collide with other mods.
+- Use paired `@Inject`s to bracket context only where the exit hook runs on every supported path, including cancellation. Limit the bracket to calls that need the context. Nested scopes inherit the outer information they need and restore the enclosing scope on exit. Use `@Redirect` or `@Overwrite` only to change the call, since they collide with other mods.
 - Listeners that only observe run at the lowest priority, so they never react to something a later mod cancels.
 - An optional integration never stops the game from starting. Keep its Mixins in a non-required config, and do not give it a version floor that blocks startup.
 - Do not check the side where only one side can reach the code. Keep the check where both can.
 - Use the objects a callback hands you. Do not look up what you were given and then null-check the lookup.
+- Interaction results control what happens next. Return `PASS` when no mod action applies. Use `FAIL` for deliberate refusal and `SUCCESS`/`CONSUME` for a performed action or its matching client prediction. Loader adapters preserve the shared service's result rather than reconstructing it.
 
 ## Guards and failures
 
@@ -37,7 +38,7 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Do not throw for a case that would otherwise harmlessly do nothing, least of all on a render or send path.
 - Do not wrap an API that reports failure by return value in try/catch.
 - Catch the narrowest exceptions that can occur: `ReflectiveOperationException | LinkageError` around reflection, never `Throwable`. Do not use a caught exception as a type test.
-- A per-item catch in a batch load is fine, so one bad file cannot fail the whole reload. Log which item failed. Likewise, a recoverable model or attachment failure must not disable every model in its library family.
+- A per-item catch may isolate an expected filesystem or integration failure so other items can succeed. Log which item failed. Do not catch ordinary processing defects and report them as malformed input; use a codec's failure result for malformed data. Likewise, a recoverable model or attachment failure must not disable every model in its library family.
 - Trust our code and platform and mod contracts unless the relevant behavior is known to be unreliable or unguaranteed. Guard actual boundaries, including filesystem and reflection failures; do not invent speculative failure paths. Network peers remain untrusted.
 - Do not suppress deprecation or removal warnings. Move to the replacement.
 
@@ -56,10 +57,11 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - The held/item iris scale is an independent fixed visual choice; do not make it track mob-eye defaults. Keep the shared conservative packet-framing reserve rather than splitting limits to recover one byte.
 - Name sentinel values. Use an enum, not integers, for a closed set.
 - Use imports, not fully qualified names, except in reflective strings, Mixin targets, and javadoc links.
-- Format any number a player may read or paste with `Locale.ROOT`, through one helper. Command arguments do not parse a comma decimal.
+- Format numbers in player-facing or machine-readable text with `Locale.ROOT`, through one helper. Command arguments do not parse a comma decimal.
 - Lang entries are whole sentences a translator can reorder, never fragments assembled in code.
 - A message read by someone without the mod carries a fallback, because they have no lang file.
 - Logs are readable English on a dedicated server, which may have no lang files loaded.
+- Use the format's existing serializer for structured output rather than assembling JSON, TOML, or similar syntax by hand.
 
 ## Saved data and state
 
@@ -67,16 +69,28 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - The empty state is the absent state. Removing the last of something removes its record, so the object matches and stacks with one that never had it.
 - Store only known fields. Rebuild data taken from an item, a packet, or a block entity load instead of keeping the incoming compound.
 - Never store a permanent decision based on data that is missing or not yet loaded.
+- Validate a proposed replacement before disturbing current state. A refused operation preserves the previous selection, ownership, target state, and item costs. Keep rollback scoped to the unit the operation treats as atomic.
+- When inserting, deleting, or reordering indexed data, update every dependent reference, including the active draft. Preserve identifiers and ordering that saved data uses unless the change includes the required migration.
+
+## Runtime state and scope
+
+- For each retained state, establish its owner, identity key, and lifetime. Handle the transitions that actually affect it: replacement, conversion, dimension change, unequip, entity removal, reload, disconnect, or server stop. Repeated join or load notifications must be idempotent.
+- Choose identity or value equality according to what the cache stores. A cache of bones belonging to one model instance must not return another instance's bones merely because the models compare equal. Clear model-dependent caches when their models are rebuilt.
+- Keep received authoritative state separate from disposable render caches when it must survive cache eviction. Preserve deliberate differences between world and GUI clocks, pause behavior, and whole-model versus per-part transforms when consolidating code.
+- Mutate game-owned state and publish its consequences on the owning game thread. Moving only the notification onto that thread leaves the mutation unsafe.
 
 ## Networking
 
-- Validate in the decoder. Encoders do not validate.
+- Validate structure, field membership, and intrinsic bounds in the decoder. Encoders do not validate. Authorization and checks requiring current server state remain in the execution path.
 - Keep what changes rarely and what changes often in separate packets, so a small setting change does not resend a large definition set or reset client state.
-- Do not send the default. If absence already means the default state, a packet saying so is waste.
+- Do not send the default when the recipient already interprets absence that way. Send a reset when the recipient may retain a previous nondefault state.
 - Encode a broadcast once and send the same packet to everyone.
 - Use explicit, stable ids and compact forms: `VarInt` for entity ids, a small id over a resource name for a closed set.
 - Size limits include the loader's own framing.
 - Check the version in one place, and make a mismatch say so rather than look like a missing mod.
+- For replicated behavior, identify the authoritative endpoint, recipients, and initial or mid-effect catch-up state. Include the acting player where appropriate. A cache shared within one client does not synchronize other clients.
+- Send state only after the recipient has the entity or other object needed to apply it, or explicitly retain it until that prerequisite arrives. Establish the ordering on each loader rather than assuming similarly named tracking events fire at the same stage.
+- A wire-format change updates the target checkout's protocol version and every reader, writer, caller, and serialization test. Preserve established explicit IDs; do not copy another checkout's protocol number.
 
 ## Commands
 
@@ -99,6 +113,7 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Name the file or object at fault. A count alone sends the reader hunting.
 - Code reachable per frame or per tick logs at most once.
 - A shared message states only what is true of every caller. Do not invent an exception to fill a logging parameter.
+- Derive diagnostics from the checks and outcomes the operation actually uses. Do not maintain a second integration-detection list. A decode failure, partial acceptance, and successful installation are different outcomes; the messages and summary counts must describe the chosen outcome consistently.
 
 ## Hot paths
 
@@ -114,12 +129,16 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Cover the trigger on each loader, including the targets a hook is likely to miss, such as players and babies. The disabled eyed-head test and manual Fabric protection-ordering checks are explicit exceptions in code-review-decisions.md; leave them as they are.
 - Build the expected value independently. A test built on the same model as the code passes on the same mistake.
 - Do not test a path production cannot reach.
-- A permission or gate needs a test in both directions, with a second player where relevant.
+- A permission or gate needs a test in both directions, with a second player where relevant. Assert unchanged state and costs on refusal. Include an allowed control so a disconnected hook or an always-refusing implementation cannot pass.
+- Establish age, definitions, configuration, permissions, and other prerequisites before firing the trigger. Demonstrate that the trigger actually occurred: damage reduced health, a trade completed, or the intended command executed. Avoid uncontrolled spawn chances and unrelated ambient behavior.
+- Keep timing tests on the clock production uses, with enough timeout for the scenario. Restore changed configuration, definitions, game rules, equipment, permissions, and temporary listeners after the last scheduled assertion, including failure paths.
+- When replacing internal tests with real-trigger tests, retain their useful assertions and negative cases. State the limit of wrapper coverage: invoking a callback does not establish complete packet ordering, a full respawn transition, or visibility on another client.
 
 ## Comments and docs
 
 - A javadoc states what is true now. "Same as the other loader" is a claim someone must verify, and it is usually how a loader difference hides.
 - Say why a surprising choice was made, naming what the obvious alternative fails at, so the next reader does not undo it.
+- Test reproduction instructions name the setup, action, and expected observation. If a test has no ordinary in-game equivalent, say "No in-game form" and explain what it guards instead of inventing player steps.
 
 ## Organization
 
