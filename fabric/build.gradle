@@ -64,7 +64,8 @@ dependencies {
     // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
     compileOnly "com.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
     // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
-    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    // transitive, so GeckoLib's declared dependencies cannot change the versions this build resolves for
+    // development runs.
     runtimeOnly("com.geckolib:geckolib-fabric-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
         transitive = false
     }
