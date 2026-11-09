@@ -23,6 +23,7 @@ import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
@@ -41,6 +42,10 @@ public final class ForgeClientBootstrap {
             ClientRenderLayers.install(event.getSkin(skin));
         }
         Minecraft.getInstance().getEntityRenderDispatcher().renderers.values().forEach(ClientRenderLayers::install);
+    }
+
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -78,6 +83,7 @@ public final class ForgeClientBootstrap {
         ForgeClientConfig.register(context);
 
         modBus.addListener(ForgeClientBootstrap::addRendererLayers);
+        modBus.addListener(ForgeClientBootstrap::onClientSetup);
         modBus.addListener(ForgeClientBootstrap::registerItemColors);
         modBus.addListener(ForgeClientBootstrap::registerGuiLayers);
         modBus.addListener(ForgeClientBootstrap::registerKeyMappings);
@@ -91,7 +97,6 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

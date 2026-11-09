@@ -1,15 +1,8 @@
 package com.github.crittscott.somegoogly.network.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
-import com.github.crittscott.somegoogly.network.EyeAngerPacket;
-import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
-import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
-import com.github.crittscott.somegoogly.network.PickerExportPacket;
-import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.Payload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -25,7 +18,7 @@ import java.util.function.Supplier;
  */
 public final class ForgeNetworkTransport {
 
-    /** The payload channel; each packet's number below is its wire id, so it stays fixed whatever the order. */
+    /** The payload channel; each payload's {@code index} in {@link Payload} is its wire id here. */
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "network"),
             () -> NetworkProtocol.NETWORK_VERSION,
@@ -37,41 +30,27 @@ public final class ForgeNetworkTransport {
 
     /** Register every payload; called once from the mod constructor, before any send. */
     public static void register() {
-        // Lambda bodies, not method references, so a dedicated server never links the client handler.
-        CHANNEL.messageBuilder(EyeStatePacket.class, 0, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(EyeStatePacket::write)
-                .decoder(EyeStatePacket::read)
-                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleEyeState(payload))
+        for (Payload.Clientbound<?> payload : Payload.CLIENTBOUND) {
+            registerClientbound(payload);
+        }
+        for (Payload.Serverbound<?> payload : Payload.SERVERBOUND) {
+            registerServerbound(payload);
+        }
+    }
+
+    private static <T extends Payload> void registerClientbound(Payload.Clientbound<T> payload) {
+        CHANNEL.messageBuilder(payload.type(), payload.index(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(Payload::write)
+                .decoder(payload.reader())
+                .consumerMainThread((packet, context) -> payload.handler().accept(packet))
                 .add();
-        CHANNEL.messageBuilder(EyeConfigSyncPacket.class, 1, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(EyeConfigSyncPacket::write)
-                .decoder(EyeConfigSyncPacket::read)
-                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleEyeConfigSync(payload))
-                .add();
-        CHANNEL.messageBuilder(EyeBehaviorTriggerPacket.class, 2, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(EyeBehaviorTriggerPacket::write)
-                .decoder(EyeBehaviorTriggerPacket::read)
-                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleBehavior(payload))
-                .add();
-        CHANNEL.messageBuilder(EyeAngerPacket.class, 3, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(EyeAngerPacket::write)
-                .decoder(EyeAngerPacket::read)
-                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleAnger(payload))
-                .add();
-        CHANNEL.messageBuilder(PickerFreezePacket.class, 4, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(PickerFreezePacket::write)
-                .decoder(PickerFreezePacket::read)
-                .consumerMainThread((payload, context) -> PickerFreezePacket.handle(payload, sender(context)))
-                .add();
-        CHANNEL.messageBuilder(PickerExportPacket.class, 5, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(PickerExportPacket::write)
-                .decoder(PickerExportPacket::read)
-                .consumerMainThread((payload, context) -> PickerExportPacket.handle(payload, sender(context)))
-                .add();
-        CHANNEL.messageBuilder(EyeSettingsPacket.class, 6, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(EyeSettingsPacket::write)
-                .decoder(EyeSettingsPacket::read)
-                .consumerMainThread((payload, context) -> ClientNetworkHandler.handleEyeSettings(payload))
+    }
+
+    private static <T extends Payload> void registerServerbound(Payload.Serverbound<T> payload) {
+        CHANNEL.messageBuilder(payload.type(), payload.index(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(Payload::write)
+                .decoder(payload.reader())
+                .consumerMainThread((packet, context) -> payload.handler().accept(packet, sender(context)))
                 .add();
     }
 

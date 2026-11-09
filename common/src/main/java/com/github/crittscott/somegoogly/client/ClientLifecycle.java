@@ -1,29 +1,33 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.config.ModVersionLookup;
+import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Per-tick and disconnect housekeeping for client-side eye state, shared by every loader's client hooks. */
 public final class ClientLifecycle {
 
-    /** The mods with a dedicated client integration, which a player's log should show as found or not. */
-    private static final List<String> INTEGRATIONS =
-            List.of("citadel", "geckolib", "heads", "llibrary", "twilightforest", "uranus");
-
     private ClientLifecycle() {
     }
 
-    /** Record that client setup finished and which integrations are in play; the last step of each loader's setup. */
+    /**
+     * Record that client setup finished and which optional model libraries the eyes attach through, as decided
+     * by the same checks that enable them; called from each loader's client-setup milestone.
+     */
     public static void logStartup() {
-        SomeGooglyCommon.LOGGER.info("{} client setup finished; optional integrations found: {}",
-                SomeGooglyCommon.MOD_NAME,
-                INTEGRATIONS.stream().filter(id -> ModVersionLookup.modVersion(id).isPresent()).toList());
+        List<String> libraries = new ArrayList<>(Resolvers.availableFamilies());
+        if (GeckoCompat.isLoaded()) {
+            libraries.add("GeckoLib");
+        }
+        SomeGooglyCommon.LOGGER.info("{} client setup finished; optional model libraries found: {}",
+                SomeGooglyCommon.MOD_NAME, libraries);
     }
 
     /** Drop all per-connection client eye state when leaving a world or server. */

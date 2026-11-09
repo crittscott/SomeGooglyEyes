@@ -8,10 +8,11 @@
     "AbstractVillagerTradeMixin",
     "EntityHeadDropMixin",
     "EntityPersistentDataMigrationMixin",
+    "HealReactionMixin",
     "HurtReactionMixin",
     "LightningConversionMixin",
     "LivingEntityDeathLootMixin",
-    "LivingEntityReactionMixin"
+    "ServerEntityPairingMixin"
   ],
   "client": [
     "MinecraftLevelMixin"

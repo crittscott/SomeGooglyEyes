@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
@@ -81,12 +80,8 @@ public final class FabricServerEvents {
             }
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> {
-            if (EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
-                return InteractionResultHolder.pass(player.getItemInHand(hand));
-            }
-            return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
-        });
+        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> new InteractionResultHolder<>(
+                EyeItemService.selfRemoveWithShears(player, hand), player.getItemInHand(hand)));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);
@@ -109,9 +104,7 @@ public final class FabricServerEvents {
                 ServerServices.broadcastEyeSyncIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
-        EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
-            ServerServices.onStartTracking(entity, player);
-        });
+        // Tracking starts in ServerEntityPairingMixin, because START_TRACKING fires before the spawn packet.
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerServices.onStopTracking(entity));
     }
 }

@@ -37,6 +37,8 @@ public final class FabricClientEvents {
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
+        // Not helper.register: it appends, and eyes must go before a slime's outer layer, so the shared
+        // installer inserts into the renderer's layer list itself.
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));

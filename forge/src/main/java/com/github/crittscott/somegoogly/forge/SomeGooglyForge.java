@@ -5,9 +5,10 @@ import com.github.crittscott.somegoogly.client.forge.ForgeClientBootstrap;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
+import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
+import com.github.crittscott.somegoogly.platform.forge.RegistrationImpl;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,6 +19,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Forge bootstrap for common registration and server datapack resources. */
 @Mod(SomeGooglyCommon.MOD_ID)
 public final class SomeGooglyForge {
@@ -25,9 +29,8 @@ public final class SomeGooglyForge {
     public SomeGooglyForge() {
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
         IEventBus modEventBus = context.getModEventBus();
-        ForgeContentRegistrar registrar = new ForgeContentRegistrar();
-        ModContent.register(registrar);
-        registrar.register(modEventBus);
+        ModContent.init();
+        RegistrationImpl.attach(modEventBus);
         HeadEyesLootModifier.register(modEventBus);
         ForgeNetworkTransport.register();
         ForgeServerConfig.register(context);
@@ -39,11 +42,21 @@ public final class SomeGooglyForge {
             ForgeClientBootstrap.register(context);
         }
 
-        SomeGooglyCommon.LOGGER.info("{} {} registered on Forge", SomeGooglyCommon.MOD_NAME,
-                ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
+        SomeGooglyCommon.LOGGER.info("{} {} registered on Forge; optional head integrations found: {}",
+                SomeGooglyCommon.MOD_NAME, ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow(),
+                headIntegrations());
     }
 
     private static void addReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new EyeConfigReloadListener());
+    }
+
+    /** The installed mods whose heads can carry eyes, with their versions. */
+    private static List<String> headIntegrations() {
+        List<String> found = new ArrayList<>();
+        ModVersionLookup.modVersion(SkullEyeState.HEADS_NAMESPACE).ifPresent(version -> found.add("Heads " + version));
+        ModVersionLookup.modVersion(SkullEyeState.TWILIGHT_NAMESPACE)
+                .ifPresent(version -> found.add("Twilight Forest " + version));
+        return found;
     }
 }

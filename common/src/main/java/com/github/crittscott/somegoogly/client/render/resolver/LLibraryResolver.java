@@ -68,6 +68,11 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    protected String familyLabel() {
+        return "LLibrary";
+    }
+
+    @Override
     public boolean handles(EntityModel<?> model) {
         return available() && HANDLES.modelClass().isInstance(model) && !failed(model);
     }

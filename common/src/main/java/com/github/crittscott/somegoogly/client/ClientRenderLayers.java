@@ -45,7 +45,7 @@ public final class ClientRenderLayers {
                 return;
             }
         }
-        renderer.addLayer(eyes);
+        layers.add(eyes);
     }
 
     /**

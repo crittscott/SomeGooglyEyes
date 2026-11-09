@@ -61,6 +61,16 @@ public final class ConfigGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void listSettingWithNoValidEntryUsesDefault(GameTestHelper helper) {
+        ConfigGameTestsLogic.listSettingWithNoValidEntryUsesDefault(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    public static void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadRejectsFileWithMalformedEntry(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
         ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
     }

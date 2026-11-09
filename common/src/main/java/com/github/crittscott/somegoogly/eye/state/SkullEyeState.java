@@ -48,7 +48,7 @@ public final class SkullEyeState {
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
     /** Twilight Forest's namespace. Ahead of the maps below, which name it. */
-    private static final String TWILIGHT_NAMESPACE = "twilightforest";
+    public static final String TWILIGHT_NAMESPACE = "twilightforest";
     /** Each mob whose head departs from {@link HeadShape#DEFAULT}. */
     private static final Map<ResourceLocation, HeadShape> HEAD_SHAPES = Map.ofEntries(
             Map.entry(EntityType.getKey(EntityType.BEE), HeadShape.showing("body")),

@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
@@ -91,12 +92,13 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
                 continue;
             }
             // Every field is required, so a typo'd datapack fails to parse rather than quietly
-            // decoding to defaults — say which file and which field rather than dropping it silently.
-            ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
-                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
-                            "Invalid eye config {}: {}", entry.getKey(), error))
-                    .orElse(null);
+            // decoding to defaults. Any decode error rejects the whole file: a partial result would
+            // silently drop the bad entry, eye, or variant and load the rest.
+            DataResult<ConfigFile> parsed = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
+            ConfigFile file = parsed.result().orElse(null);
             if (file == null) {
+                SomeGooglyCommon.LOGGER.error("Ignoring invalid eye config {}: {}",
+                        entry.getKey(), parsed.error().orElseThrow().message());
                 failedParse++;
                 continue;
             }

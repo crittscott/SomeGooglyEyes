@@ -27,9 +27,6 @@ accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layer
 # list them without a cast that fails on non-living renderers.
 accessible	field	net/minecraft/client/renderer/entity/EntityRenderDispatcher	renderers	Ljava/util/Map;
 
-# Forge patches addLayer public. Fabric widens the vanilla protected method for the same adapter API.
-accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
-
 # Forge exposes the full RenderType factory publicly. Vanilla keeps it private, so common and Fabric
 # need equivalent access for the shared picker gizmo's custom no-depth-test line render type.
 accessible	method	net/minecraft/client/renderer/RenderType	create	(Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;

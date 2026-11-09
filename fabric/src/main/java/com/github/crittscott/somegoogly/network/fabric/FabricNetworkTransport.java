@@ -1,9 +1,7 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
-import com.github.crittscott.somegoogly.network.PickerExportPacket;
-import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.Payload;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
@@ -34,25 +32,23 @@ public final class FabricNetworkTransport {
         ServerLoginNetworking.registerGlobalReceiver(HANDSHAKE,
                 (server, handler, understood, buffer, synchronizer, responseSender) -> {
                     if (!understood) {
-                        SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {}",
-                                handler.getUserName(), SomeGooglyCommon.MOD_NAME);
                         handler.disconnect(requiredClientMessage());
                         return;
                     }
                     String version = buffer.readUtf(MAX_VERSION_LENGTH);
                     if (!version.equals(NetworkProtocol.NETWORK_VERSION)) {
-                        SomeGooglyCommon.LOGGER.info("Refusing {}: client runs {} network version {}, server runs {}",
-                                handler.getUserName(), SomeGooglyCommon.MOD_NAME, version, NetworkProtocol.NETWORK_VERSION);
                         handler.disconnect(versionMismatchMessage(version));
                     }
                 });
-        ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.ID, (server, player, handler, buffer, sender) -> {
-            PickerFreezePacket packet = PickerFreezePacket.read(buffer);
-            server.execute(() -> PickerFreezePacket.handle(packet, player));
-        });
-        ServerPlayNetworking.registerGlobalReceiver(PickerExportPacket.ID, (server, player, handler, buffer, sender) -> {
-            PickerExportPacket packet = PickerExportPacket.read(buffer);
-            server.execute(() -> PickerExportPacket.handle(packet, player));
+        for (Payload.Serverbound<?> payload : Payload.SERVERBOUND) {
+            registerServerbound(payload);
+        }
+    }
+
+    private static <T extends Payload> void registerServerbound(Payload.Serverbound<T> payload) {
+        ServerPlayNetworking.registerGlobalReceiver(payload.id(), (server, player, handler, buffer, sender) -> {
+            T packet = payload.reader().apply(buffer);
+            server.execute(() -> payload.handler().accept(packet, player));
         });
     }
 

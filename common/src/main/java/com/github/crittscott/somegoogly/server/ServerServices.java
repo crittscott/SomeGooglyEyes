@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.server;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -12,6 +13,7 @@ import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -128,11 +130,19 @@ public final class ServerServices {
         ServerBehaviorScheduler.onPlayerLeft(player);
     }
 
-    /** Record the settings that decide who gets eyes, once at startup and whenever they change. */
+    /**
+     * Record the settings that decide who gets eyes and which behavior switches are off, once at startup and
+     * whenever they change.
+     */
     public static void onServerConfigApplied() {
-        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d".formatted(
+        List<String> behaviorsOff = ServerConfig.settings().stream()
+                .filter(setting -> setting instanceof ConfigValue.Flag flag
+                        && ServerConfig.SECTION_BEHAVIORS.equals(flag.section()) && !flag.get())
+                .map(ConfigValue::key)
+                .toList();
+        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d, behaviorSwitchesOff=%s".formatted(
                 ServerConfig.GOOGLY_EYES_ENABLED.get(), ServerConfig.GLOBAL_PERCENT.get(),
-                ServerConfig.ENTITY_OVERRIDES.parsed().size());
+                ServerConfig.ENTITY_OVERRIDES.parsed().size(), behaviorsOff);
         if (!applied.equals(loggedConfig)) {
             SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);
             loggedConfig = applied;

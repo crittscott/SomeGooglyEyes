@@ -78,7 +78,8 @@ public abstract class ConfigValue<T> {
      * Create a string-list value whose default and every subsequently assigned list are filtered by
      * {@code valid} and stored as an immutable copy, and which keeps {@code parser}'s view of the accepted
      * entries, rebuilt on every assignment and reset, for lists read far more often than set. Rejected entries
-     * are omitted; reporting them is the job of whichever config reader supplied the raw list.
+     * are omitted, and a non-empty list with none accepted means the default; reporting them is the job of
+     * whichever config reader supplied the raw list.
      */
     public static <D> Parsed<D> parsedStrings(String section, String key, List<String> defaultValue,
                                               Predicate<String> valid, Function<List<String>, D> parser,
@@ -135,9 +136,16 @@ public abstract class ConfigValue<T> {
             parsed = parser.apply(get());
         }
 
+        /**
+         * Assign {@code value}, dropping its invalid entries. A non-empty list with no valid entry falls back to
+         * the default rather than to an empty list, which is how Forge's own list correction treats it.
+         */
         @Override
         public void set(List<String> value) {
             super.set(value);
+            if (get().isEmpty() && !value.isEmpty()) {
+                super.reset();
+            }
             parsed = parser.apply(get());
         }
 
